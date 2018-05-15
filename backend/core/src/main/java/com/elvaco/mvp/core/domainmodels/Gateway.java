@@ -66,13 +66,7 @@ public class Gateway implements Identifiable<UUID> {
   public StatusLogEntry<UUID> currentStatus() {
     return statusLogs.stream()
       .findFirst()
-      .orElse(new StatusLogEntry<>(
-        null,
-        id,
-        StatusType.UNKNOWN,
-        ZonedDateTime.now(),
-        null
-      ));
+      .orElse(StatusLogEntry.unknownFor(this));
   }
 
   public Gateway replaceActiveStatus(StatusType status) {

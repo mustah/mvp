@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.util;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
@@ -17,5 +18,9 @@ public final class Dates {
 
   public static String formatUtc(ZonedDateTime time) {
     return UTC_DATE_TIME_FORMATTER.format(time);
+  }
+
+  public static ZonedDateTime epoch() {
+    return ZonedDateTime.ofInstant(Instant.EPOCH, UTC.toZoneId());
   }
 }
