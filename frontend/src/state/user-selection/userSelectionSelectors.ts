@@ -40,14 +40,19 @@ const arrayDiff = <T>(
   subSet: T[],
 ): T[] => superSet.filter((a) => !subSet.includes(a));
 
+const getDiffCombiner = (entityType: string) => (
+  {result}: DomainModel<SelectionEntity>,
+  selected: SelectedParameters,
+) => arrayDiff(
+  result,
+  selected[entityType] || '',
+);
+
 const deselectedIdsSelector = (entityType: string) =>
   createSelector<LookupState, DomainModel<SelectionEntity>, SelectedParameters, uuid[]>(
     getSelectionGroup(entityType),
     getSelectedIds,
-    ({result}: DomainModel<SelectionEntity>, selected: SelectedParameters) => arrayDiff(
-      result,
-      selected[entityType],
-    ),
+    getDiffCombiner(entityType),
   );
 
 const getDeselectedEntities = (entityType: string) =>
@@ -57,14 +62,17 @@ const getDeselectedEntities = (entityType: string) =>
     (ids: uuid[], {entities}: DomainModel<SelectionEntity>) => ids.map((id) => entities[id]),
   );
 
+const getCombiner = (ids: uuid[] = [], {entities}: DomainModel<SelectionEntity>): any => {
+  return ids
+    .map((id: uuid) => entities[id])
+    .filter((item) => item);
+};
+
 const getSelectedEntities = (entityType: string) =>
   createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: DomainModel<SelectionEntity>) =>
-      ids
-        .map((id: uuid) => entities[id])
-        .filter((item) => item),
+    getCombiner,
   );
 
 export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
@@ -178,7 +186,10 @@ export const getGatewayParameters =
 export const getSelectedPeriod =
   createSelector<UserSelection, SelectionInterval, {period: Period, customDateRange: Maybe<DateRange>}>(
     ({selectionParameters: {dateRange}}: UserSelection) => dateRange,
-    ({period, customDateRange}: SelectionInterval) => ({period, customDateRange: Maybe.maybe(customDateRange)}),
+    ({period, customDateRange}: SelectionInterval) => ({
+      period,
+      customDateRange: Maybe.maybe(customDateRange),
+    }),
   );
 
 export const getSelection = (state: UserSelectionState): UserSelection => state.userSelection;
