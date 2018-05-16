@@ -10,12 +10,12 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {OnClick} from '../../../types/Types';
+import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {Map} from '../../map/containers/Map';
-import {meterLowConfidenceTextInfo} from '../../map/helper/mapHelper';
 import {closeClusterDialog} from '../../map/mapActions';
-import {MapMarker} from '../../map/mapModels';
+import {Bounds, MapMarker} from '../../map/mapModels';
 import {MapState} from '../../map/mapReducer';
+import {getBounds, getMeterLowConfidenceTextInfo} from '../../map/mapSelectors';
 import {Widget} from '../components/widgets/Widget';
 
 interface OwnProps {
@@ -24,6 +24,8 @@ interface OwnProps {
 
 interface StateToProps {
   map: MapState;
+  lowConfidenceText?: string;
+  bounds?: Bounds;
 }
 
 interface DispatchToProps {
@@ -32,7 +34,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-const MapWidget = ({markers, map, closeClusterDialog}: Props) => {
+const MapWidget = ({bounds, lowConfidenceText, markers, map, closeClusterDialog}: Props) => {
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog} autoScrollBodyContent={true}>
@@ -50,7 +52,8 @@ const MapWidget = ({markers, map, closeClusterDialog}: Props) => {
           <Map
             width={800}
             height={600}
-            lowConfidenceText={meterLowConfidenceTextInfo(markers)}
+            bounds={bounds}
+            lowConfidenceText={lowConfidenceText}
           >
             <ClusterContainer markers={markers.entities}/>
           </Map>
@@ -61,11 +64,16 @@ const MapWidget = ({markers, map, closeClusterDialog}: Props) => {
   );
 };
 
-const mapStateToProps = ({map}: RootState): StateToProps => ({map});
+const mapStateToProps = ({map, domainModels: {meterMapMarkers}}: RootState): StateToProps =>
+  ({
+    map,
+    bounds: getBounds(meterMapMarkers),
+    lowConfidenceText: getMeterLowConfidenceTextInfo(meterMapMarkers),
+  });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeClusterDialog,
 }, dispatch);
 
 export const MapWidgetContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MapWidget);
+  connect<StateToProps, DispatchToProps>(() => mapStateToProps, mapDispatchToProps)(MapWidget);

@@ -2,8 +2,8 @@ import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
-import {isSelectionChanged} from '../domain-models/domainModelsReducer';
-import {failureAction, requestAction, successAction} from './summaryApiActions';
+import {failureAction, requestAction, successAction} from '../api/apiActions';
+import {resetReducer} from '../domain-models/domainModelsReducer';
 import {SelectionSummary, SummaryState} from './summaryModels';
 
 export const initialState: SummaryState = {
@@ -16,13 +16,6 @@ type ActionTypes =
   | EmptyAction<string>
   | Action<SelectionSummary>
   | Action<ErrorResponse>;
-
-const resetReducer = (state: SummaryState, action: ActionTypes): SummaryState => {
-  if (isSelectionChanged(action.type)) {
-    return {...initialState};
-  }
-  return state;
-};
 
 export const summary = (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
   switch (action.type) {
@@ -48,6 +41,6 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
     case LOGOUT_USER:
       return {...initialState};
     default:
-      return resetReducer(state, action);
+      return resetReducer(state, action, {...initialState});
   }
 };

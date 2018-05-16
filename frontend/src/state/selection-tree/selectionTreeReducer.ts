@@ -2,8 +2,8 @@ import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
-import {isSelectionChanged} from '../domain-models/domainModelsReducer';
-import {failureAction, requestAction, successAction} from '../summary/summaryApiActions';
+import {failureAction, requestAction, successAction} from '../api/apiActions';
+import {resetReducer} from '../domain-models/domainModelsReducer';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 
 export const initialState: SelectionTreeState = {
@@ -23,13 +23,6 @@ type ActionTypes =
   | EmptyAction<string>
   | Action<NormalizedSelectionTree>
   | Action<ErrorResponse>;
-
-const resetReducer = (state: SelectionTreeState, action: ActionTypes): SelectionTreeState => {
-  if (isSelectionChanged(action.type)) {
-    return {...initialState};
-  }
-  return state;
-};
 
 export const selectionTree = (
   state: SelectionTreeState = initialState,
@@ -58,6 +51,6 @@ export const selectionTree = (
     case LOGOUT_USER:
       return {...initialState};
     default:
-      return resetReducer(state, action);
+      return resetReducer<SelectionTreeState>(state, action, {...initialState});
   }
 };

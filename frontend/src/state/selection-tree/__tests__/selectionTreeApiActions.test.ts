@@ -10,8 +10,8 @@ import {EndPoints} from '../../../services/endPoints';
 import {restClient, restClientWith} from '../../../services/restClient';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
+import {makeActionsOf} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
-import {makeActionsOf} from '../../summary/summaryApiActions';
 import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';
 import {initialState as initialSelectionTreeState} from '../selectionTreeReducer';
@@ -67,7 +67,7 @@ describe('selectionTreeApiActions', () => {
   };
   const normalizedResponse = normalize(responseFromApi, selectionTreeSchema);
 
-  const selectionTreeRequest = makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
+  const actions = makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
   const getSelectionTreeWithResponseOk = async () => {
     mockRestClient.onGet(EndPoints.selectionTree).reply(201, responseFromApi);
     return store.dispatch(fetchSelectionTree());
@@ -152,8 +152,8 @@ describe('selectionTreeApiActions', () => {
     await getSelectionTreeWithResponseOk();
 
     expect(store.getActions()).toEqual([
-      selectionTreeRequest.request(),
-      selectionTreeRequest.success(normalizedResponse),
+      actions.request(),
+      actions.success(normalizedResponse),
     ]);
   });
 
@@ -166,7 +166,12 @@ describe('selectionTreeApiActions', () => {
   });
 
   it('doesnt fetch data if already successfully fetched', async () => {
-    store = configureMockStore({selectionTree: {...initialSelectionTreeState, isSuccessfullyFetched: true}});
+    store = configureMockStore({
+      selectionTree: {
+        ...initialSelectionTreeState,
+        isSuccessfullyFetched: true,
+      },
+    });
 
     await getSelectionTreeWithResponseOk();
 
@@ -174,7 +179,12 @@ describe('selectionTreeApiActions', () => {
   });
 
   it('doesnt fetch data if fetched with an error', async () => {
-    store = configureMockStore({selectionTree: {...initialSelectionTreeState, error: {message: 'an error'}}});
+    store = configureMockStore({
+      selectionTree: {
+        ...initialSelectionTreeState,
+        error: {message: 'an error'},
+      },
+    });
 
     await getSelectionTreeWithResponseOk();
 
@@ -185,8 +195,8 @@ describe('selectionTreeApiActions', () => {
     await getSelectionTreeWithBadRequest();
 
     expect(store.getActions()).toEqual([
-      selectionTreeRequest.request(),
-      selectionTreeRequest.failure({message: 'an error'}),
+      actions.request(),
+      actions.failure({message: 'an error'}),
     ]);
   });
 
@@ -225,7 +235,7 @@ describe('selectionTreeApiActions', () => {
       await getSelectionTreeInvalidToken();
 
       expect(store.getActions()).toEqual([
-        selectionTreeRequest.request(),
+        actions.request(),
         logoutUser(error as Unauthorized),
         routerActions.push(`${routes.login}/${initialState.auth.user.organisation.slug}`),
       ]);

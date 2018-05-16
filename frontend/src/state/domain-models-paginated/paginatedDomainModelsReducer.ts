@@ -3,7 +3,7 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {ObjectsById} from '../domain-models/domainModels';
-import {isSelectionChanged} from '../domain-models/domainModelsReducer';
+import {resetReducer} from '../domain-models/domainModelsReducer';
 import {Meter} from './meter/meterModels';
 import {
   HasPageNumber,
@@ -130,11 +130,6 @@ const reducerFor = <T extends Identifiable>(
     state: NormalizedPaginatedState<T> = makeInitialState<T>(),
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> => {
-
-    if (isSelectionChanged(action.type)) {
-      return {...makeInitialState<T>()};
-    }
-
     switch (action.type) {
       case domainModelsPaginatedRequest(endPoint):
         return setRequest(state, action as Action<number>);
@@ -153,7 +148,7 @@ const reducerFor = <T extends Identifiable>(
       case LOGOUT_USER:
         return {...makeInitialState()};
       default:
-        return state;
+        return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
     }
   };
 

@@ -1,11 +1,15 @@
 import {Medium, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
+import {EndPoints} from '../../../services/endPoints';
+import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
 import {Status} from '../../../types/Types';
 import {LOGOUT_USER} from '../../auth/authActions';
-import {dashboardFailure, dashboardRequest, dashboardSuccess} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
-import {dashboard, DashboardState, initialDashboardState} from '../dashboardReducer';
+import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 
 describe('dashboardReducer', () => {
+
+  const actions: RequestHandler<DashboardModel> =
+    makeActionsOf<DashboardModel>(EndPoints.dashboard);
 
   it('extracts valid widgets from JSON response', () => {
     const widgets: WidgetModel[] = [
@@ -35,12 +39,13 @@ describe('dashboardReducer', () => {
     };
 
     const state: DashboardState = dashboard(
-      initialDashboardState,
-      dashboardSuccess(capturedApiResponse),
+      initialState,
+      actions.success(capturedApiResponse),
     );
 
     const expected = {
       isFetching: false,
+      isSuccessfullyFetched: true,
       record: {
         id: 3,
         widgets: [...widgets],
@@ -52,31 +57,35 @@ describe('dashboardReducer', () => {
   });
 
   it('is fetching when dashboard request is dispatched', () => {
-    const state: DashboardState = dashboard(initialDashboardState, dashboardRequest());
+    const state: DashboardState = dashboard(initialState, actions.request());
 
-    expect(state).toEqual({isFetching: true});
+    expect(state).toEqual({isFetching: true, isSuccessfullyFetched: false});
   });
 
   it('fails with error response', () => {
     const state: DashboardState = dashboard(
-      initialDashboardState,
-      dashboardFailure({message: 'error'}),
+      initialState,
+      actions.failure({message: 'error'}),
     );
 
-    expect(state).toEqual({isFetching: false, error: {message: 'error'}});
+    expect(state).toEqual({
+      isFetching: false,
+      isSuccessfullyFetched: false,
+      error: {message: 'error'},
+    });
   });
 
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
       let state: DashboardState = dashboard(
-        initialDashboardState,
-        dashboardFailure({message: 'error'}),
+        initialState,
+        actions.failure({message: 'error'}),
       );
 
       state = dashboard(state, {type: LOGOUT_USER});
 
-      expect(state).toEqual({isFetching: false});
+      expect(state).toEqual({isFetching: false, isSuccessfullyFetched: false});
     });
   });
 

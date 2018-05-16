@@ -1,7 +1,7 @@
-import {Dictionary, Status} from '../../../../types/Types';
-import {isMapMarker, makeLeafletCompatibleMarkersFrom} from '../../helper/clusterHelper';
-import {isGeoPositionWithinThreshold, metersWithinThreshold} from '../../helper/mapHelper';
-import {MapMarker, Marker} from '../../mapModels';
+import {Dictionary, Status} from '../../../types/Types';
+import {isMapMarker, makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
+import {isGeoPositionWithinThreshold, metersWithinThreshold} from '../helper/mapHelper';
+import {MapMarker, Marker} from '../mapModels';
 
 describe('clusterHelper', () => {
 

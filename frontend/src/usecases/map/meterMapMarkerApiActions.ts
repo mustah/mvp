@@ -3,4 +3,9 @@ import {clearError, fetchIfNeeded} from '../../state/domain-models/domainModelsA
 import {mapMarkerSchema} from './meterMapMarkerSchema';
 
 export const clearErrorMeterMapMarkers = clearError(EndPoints.meterMapMarkers);
-export const fetchMeterMapMarkers = fetchIfNeeded(EndPoints.meterMapMarkers, mapMarkerSchema, 'meterMapMarkers');
+
+export const fetchMeterMapMarkers = fetchIfNeeded(
+  EndPoints.meterMapMarkers,
+  mapMarkerSchema,
+  'meterMapMarkers',
+);

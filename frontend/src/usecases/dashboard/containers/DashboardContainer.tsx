@@ -19,10 +19,10 @@ import {getMeterParameters} from '../../../state/user-selection/userSelectionSel
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
-import {MapWidgetContainer} from './MapWidgetContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
-import {fetchDashboard} from '../dashboardActions';
+import {fetchDashboard} from '../dashboardApiActions';
 import {DashboardModel} from '../dashboardModels';
+import {MapWidgetContainer} from './MapWidgetContainer';
 
 interface StateToProps {
   dashboard?: DashboardModel;
@@ -48,13 +48,19 @@ class DashboardContainerComponent extends React.Component<Props> {
     fetchMeterMapMarkers(parameters);
   }
 
-  componentWillReceiveProps({fetchMeterMapMarkers, parameters}: Props) {
+  componentWillReceiveProps({fetchDashboard, fetchMeterMapMarkers, parameters}: Props) {
     fetchDashboard(parameters);
     fetchMeterMapMarkers(parameters);
   }
 
   render() {
-    const {isFetching, dashboard, meterMapMarkers, error, clearError} = this.props;
+    const {
+      isFetching,
+      dashboard,
+      meterMapMarkers,
+      error,
+      clearError,
+    } = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -77,17 +83,17 @@ class DashboardContainerComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  dashboard,
+  dashboard: {record, isFetching},
   userSelection: {userSelection},
   domainModels: {meterMapMarkers},
 }: RootState): StateToProps => ({
-  dashboard: dashboard.record,
+  dashboard: record,
   parameters: getMeterParameters({
     userSelection,
     now: now(),
   }),
   meterMapMarkers: getDomainModel(meterMapMarkers),
-  isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
+  isFetching: isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),
 });
 

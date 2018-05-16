@@ -15,3 +15,5 @@ export interface Marker {
     mapMarkerItem: uuid;
   };
 }
+
+export type Bounds = LatLngTuple[] | undefined;

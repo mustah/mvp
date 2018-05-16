@@ -71,6 +71,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, OwnProps>(
-  mapStateToProps,
+  () => mapStateToProps,
   mapDispatchToProps,
 )(MeterDetails);

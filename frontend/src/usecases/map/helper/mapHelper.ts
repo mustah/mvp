@@ -2,7 +2,7 @@ import * as Leaflet from 'leaflet';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Dictionary} from '../../../types/Types';
-import {MapMarker} from '../mapModels';
+import {Bounds, MapMarker} from '../mapModels';
 
 export const metersWithinThreshold = (markers: Dictionary<MapMarker>): MapMarker[] =>
   markers
@@ -22,7 +22,7 @@ interface MarkerBounds {
   maxLong: number;
 }
 
-export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Leaflet.LatLngTuple[] | undefined => {
+export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
   const filteredMarkers = metersWithinThreshold(markers);
 
   const bounds = Object.keys(filteredMarkers)
@@ -72,7 +72,10 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Leaflet.LatLn
   }
 };
 
-const lowConfidenceTextInfo = ({result, entities}: DomainModel<MapMarker>, text: string): string | undefined => {
+const lowConfidenceTextInfo = (
+  {result, entities}: DomainModel<MapMarker>,
+  text: string,
+): string | undefined => {
   const numMarkersWithLowConfidence = result.length - metersWithinThreshold(entities).length;
 
   return numMarkersWithLowConfidence
@@ -81,7 +84,15 @@ const lowConfidenceTextInfo = ({result, entities}: DomainModel<MapMarker>, text:
 };
 
 export const meterLowConfidenceTextInfo = (meterMapMarkers: DomainModel<MapMarker>): string | undefined =>
-  lowConfidenceTextInfo(meterMapMarkers, '{{count}} meters are not displayed in the map due to low accuracy');
+  lowConfidenceTextInfo(
+    meterMapMarkers,
+    '{{count}} meters are not displayed in the map due to low accuracy',
+  );
 
 export const gatewayLowConfidenceTextInfo = (mapMarkers: DomainModel<MapMarker>): string | undefined =>
-  lowConfidenceTextInfo(mapMarkers, '{{count}} gateways are not displayed in the map due to low accuracy');
+  lowConfidenceTextInfo(
+    mapMarkers,
+    '{{count}} gateways are not displayed in the map due to low accuracy',
+  );
+
+export const maxZoom = 18;

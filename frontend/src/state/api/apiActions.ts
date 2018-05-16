@@ -1,22 +1,31 @@
 import {AxiosPromise} from 'axios';
-import {normalize, Schema} from 'normalizr';
-import {Dispatch} from 'react-redux';
+import {Dispatch} from 'redux';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse} from '../../types/Types';
+import {
+  Action,
+  emptyActionOf,
+  EncodedUriParameters,
+  ErrorResponse,
+  OnEmptyAction,
+  OnPayloadAction,
+  payloadActionOf,
+} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {makeActionsOf, RequestHandler} from '../api/apiActions';
-import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
-import {selectionTreeSchema} from './selectionTreeSchemas';
+
+export interface RequestHandler<P> {
+  request: OnEmptyAction;
+  success: OnPayloadAction<P>;
+  failure: (error: ErrorResponse) => Action<ErrorResponse>;
+}
 
 interface AsyncRequest<P> extends RequestHandler<P> {
-  onRequest: (parameters?: string) => AxiosPromise<any>;
-  formatData: (data: any) => NormalizedSelectionTree;
-  parameters?: string;
+  onRequest: (parameters?: EncodedUriParameters) => AxiosPromise<P>;
+  parameters?: EncodedUriParameters;
   dispatch: Dispatch<RootState>;
 }
 
@@ -29,14 +38,13 @@ const makeAsyncRequest = async <P>(
     success,
     failure,
     onRequest,
-    formatData = (id) => id,
     parameters,
     dispatch,
   }: AsyncRequest<P>) => {
   dispatch(request());
   try {
     const {data} = await onRequest(parameters);
-    dispatch(success(formatData(data)));
+    dispatch(success(data));
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
@@ -48,22 +56,28 @@ const makeAsyncRequest = async <P>(
   }
 };
 
-const shouldFetch = (selectionTree: SelectionTreeState): boolean =>
-  !selectionTree.isSuccessfullyFetched && !selectionTree.error && !selectionTree.isFetching;
+export type FetchIfNeeded = (getState: GetState) => boolean;
 
-const fetchIfNeeded = <P>(endPoint: EndPoints, schema: Schema) => {
-  const onRequest = (parameters?: string) =>
+export const requestAction = (endPoint: EndPoints): string => `REQUEST${endPoint}`;
+export const successAction = (endPoint: EndPoints): string => `SUCCESS${endPoint}`;
+export const failureAction = (endPoint: EndPoints): string => `FAILURE${endPoint}`;
+
+export const makeActionsOf = <P>(endPoint: EndPoints): RequestHandler<P> => ({
+  request: emptyActionOf(requestAction(endPoint)),
+  success: payloadActionOf<P>(successAction(endPoint)),
+  failure: payloadActionOf<ErrorResponse>(failureAction(endPoint)),
+});
+
+export const fetchIfNeeded = <P>(endPoint: EndPoints, fetchIfNeeded: FetchIfNeeded) => {
+  const onRequest = (parameters?: EncodedUriParameters): AxiosPromise<P> =>
     restClient.get(makeUrl(endPoint, parameters));
 
-  const formatData = (data: any) => normalize(data, schema);
-
-  return (parameters?: string) =>
+  return (parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
-      if (shouldFetch(getState().selectionTree)) {
+      if (fetchIfNeeded(getState)) {
         return makeAsyncRequest<P>({
           ...makeActionsOf<P>(endPoint),
           onRequest,
-          formatData,
           parameters,
           dispatch,
         });
@@ -71,8 +85,3 @@ const fetchIfNeeded = <P>(endPoint: EndPoints, schema: Schema) => {
       return null;
     };
 };
-
-export const fetchSelectionTree = fetchIfNeeded<NormalizedSelectionTree>(
-  EndPoints.selectionTree,
-  selectionTreeSchema,
-);

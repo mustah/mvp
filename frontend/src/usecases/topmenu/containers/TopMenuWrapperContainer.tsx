@@ -47,15 +47,16 @@ const TopMenuWrapper = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({auth}: RootState): StateToProps => {
-  return {
-    user: getUser(auth),
-  };
-};
+const mapStateToProps = ({auth}: RootState): StateToProps => ({
+  user: getUser(auth),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   logout,
 }, dispatch);
 
 export const TopMenuWrapperContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(TopMenuWrapper);
+  connect<StateToProps, DispatchToProps, OwnProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(TopMenuWrapper);

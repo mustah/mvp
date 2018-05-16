@@ -5,9 +5,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {imagePathFor} from '../../../app/routes';
 import {Dictionary} from '../../../types/Types';
+import {makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
+import {maxZoom} from '../helper/mapHelper';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
-import {makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
 
 interface DispatchToProps {
   openClusterDialog: (marker: Marker) => void;
@@ -16,9 +17,6 @@ interface DispatchToProps {
 interface OwnProps {
   markers: Dictionary<MapMarker> | MapMarker;
 }
-
-// TODO needs to be shared with Map
-const maxZoom = 18;
 
 const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {

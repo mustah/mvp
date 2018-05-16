@@ -22,8 +22,8 @@ import {DomainModel} from '../../state/domain-models/domainModels';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Children, Identifiable} from '../../types/Types';
+import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {Map} from '../../usecases/map/containers/Map';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
@@ -80,7 +80,8 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
     const hasConfidentPosition: boolean = meterMapMarker.filter(isGeoPositionWithinThreshold).isJust();
 
-    const noReliablePosition = <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
+    const noReliablePosition =
+      <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
 
     return (
       <Row>

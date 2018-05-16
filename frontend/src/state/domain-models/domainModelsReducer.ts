@@ -161,20 +161,28 @@ const reducerFor = <T extends Identifiable>(
 
 const identity = (state, action, endPoint) => state;
 
-export const isSelectionChanged = (actionType: string) => [
-  SELECT_SAVED_SELECTION,
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
-  RESET_SELECTION,
-  SELECT_PERIOD,
-  SET_CUSTOM_DATE_RANGE,
-].includes(actionType);
-
 const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
-): NormalizedState<T> => {
-  return isSelectionChanged(action.type) ? {...initialDomain<T>()} : state;
+): NormalizedState<T> =>
+  resetReducer<NormalizedState<T>>(state, action, {...initialDomain<T>()});
+
+export const resetReducer = <S>(
+  state: S,
+  {type}: EmptyAction<string>,
+  initialState: S,
+): S => {
+  switch (type) {
+    case SELECT_SAVED_SELECTION:
+    case ADD_PARAMETER_TO_SELECTION:
+    case DESELECT_SELECTION:
+    case RESET_SELECTION:
+    case SELECT_PERIOD:
+    case SET_CUSTOM_DATE_RANGE:
+      return initialState;
+    default:
+      return state;
+  }
 };
 
 export const countries = reducerFor<SelectionEntity>('countries', EndPoints.selections);
@@ -184,19 +192,27 @@ export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections
 export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
 export const media = reducerFor<SelectionEntity>('media', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
+
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
+
 export const meterMapMarkers = reducerFor<MapMarker>(
   'meterMapMarkers',
   EndPoints.meterMapMarkers,
   resetStateReducer,
 );
-export const gatewayMapMarkers =
-  reducerFor<MapMarker>('gatewayMapMarkers', EndPoints.gatewayMapMarkers, resetStateReducer);
+
+export const gatewayMapMarkers = reducerFor<MapMarker>(
+  'gatewayMapMarkers',
+  EndPoints.gatewayMapMarkers,
+  resetStateReducer,
+);
+
 export const organisations = reducerFor<Organisation>(
   'organisations',
   EndPoints.organisations,
   resetStateReducer,
 );
+
 export const userSelections = reducerFor<UserSelection>('userSelections', EndPoints.userSelections);
 
 export const domainModels = combineReducers<DomainModelsState>({

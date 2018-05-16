@@ -1,23 +1,28 @@
 import {EmptyAction} from 'react-redux-typescript';
+import {EndPoints} from '../../services/endPoints';
+import {failureAction, requestAction, successAction} from '../../state/api/apiActions';
+import {resetReducer} from '../../state/domain-models/domainModelsReducer';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
-import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from './dashboardActions';
 import {DashboardModel} from './dashboardModels';
 
 export interface DashboardState {
   isFetching: boolean;
+  isSuccessfullyFetched: boolean;
   record?: DashboardModel;
   error?: ErrorResponse;
 }
 
-export const initialDashboardState: DashboardState = {
+export const initialState: DashboardState = {
   isFetching: false,
+  isSuccessfullyFetched: false,
 };
 
 const success = (state: DashboardState, {payload}: Action<DashboardModel>): DashboardState =>
   ({
     ...state,
     isFetching: false,
+    isSuccessfullyFetched: true,
     record: {
       ...payload,
       widgets: [...payload.widgets],
@@ -28,28 +33,26 @@ const failure = (state: DashboardState, {payload}: Action<ErrorResponse>): Dashb
   ({
     ...state,
     isFetching: false,
+    isSuccessfullyFetched: false,
     error: {...payload},
   });
 
 type ActionTypes = Action<DashboardModel> | Action<ErrorResponse> | EmptyAction<string>;
 
 export const dashboard = (
-  state: DashboardState = initialDashboardState,
+  state: DashboardState = initialState,
   action: ActionTypes,
 ): DashboardState => {
   switch (action.type) {
-    case DASHBOARD_REQUEST:
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case DASHBOARD_SUCCESS:
+    case requestAction(EndPoints.dashboard):
+      return {...state, isFetching: true};
+    case successAction(EndPoints.dashboard):
       return success(state, action as Action<DashboardModel>);
-    case DASHBOARD_FAILURE:
+    case failureAction(EndPoints.dashboard):
       return failure(state, action as Action<ErrorResponse>);
     case LOGOUT_USER:
-      return {...initialDashboardState};
+      return {...initialState};
     default:
-      return state;
+      return resetReducer<DashboardState>(state, action, {...initialState});
   }
 };
