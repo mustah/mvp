@@ -4,7 +4,7 @@ import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.security.TokenAuthenticationFilter;
 import com.elvaco.mvp.web.security.TokenAuthenticationProvider;
 import com.elvaco.mvp.web.security.UserDetailAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -28,17 +29,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
   private final TokenService tokenService;
-
-  @Autowired
-  WebSecurityConfig(
-    UserDetailsService userDetailsService,
-    PasswordEncoder passwordEncoder,
-    TokenService tokenService
-  ) {
-    this.userDetailsService = userDetailsService;
-    this.passwordEncoder = passwordEncoder;
-    this.tokenService = tokenService;
-  }
 
   @Override
   public UserDetailsService userDetailsService() {
@@ -73,7 +63,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .authorizeRequests().antMatchers(API).fullyAuthenticated()
       .and()
-      .httpBasic()
+      .httpBasic().authenticationEntryPoint(new RestAuthenticationEntryPoint())
       .and()
       .addFilterAfter(tokenAuthenticationFilter(), BasicAuthenticationFilter.class);
   }
