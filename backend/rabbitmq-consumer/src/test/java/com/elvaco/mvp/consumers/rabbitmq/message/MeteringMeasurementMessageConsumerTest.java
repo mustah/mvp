@@ -60,6 +60,7 @@ public class MeteringMeasurementMessageConsumerTest {
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
   private static final String ADDRESS = "1234";
+  private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   private static final String ORGANISATION_SLUG = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
   private static final ZonedDateTime CREATED_DATE_TIME =
@@ -90,7 +91,12 @@ public class MeteringMeasurementMessageConsumerTest {
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
         .language(Language.en)
-        .organisation(new Organisation(randomUUID(), "some organisation", ORGANISATION_SLUG))
+        .organisation(new Organisation(
+          randomUUID(),
+          ORGANISATION_EXTERNAL_ID,
+          ORGANISATION_SLUG,
+          ORGANISATION_EXTERNAL_ID
+        ))
         .asSuperAdmin()
         .build(),
       randomUUID().toString()
@@ -194,8 +200,18 @@ public class MeteringMeasurementMessageConsumerTest {
       organisation.externalId,
       "Elvaco Metering",
       asList(
-        new ValueDto(LocalDateTime.parse("2018-03-16T13:07:01"), 35.0, "°C", "Return temp."),
-        new ValueDto(LocalDateTime.parse("2018-03-16T14:07:01"), 36.7, "°C", "Return temp.")
+        new ValueDto(
+          LocalDateTime.parse("2018-03-16T13:07:01"),
+          35.0,
+          "°C",
+          "Return temp."
+        ),
+        new ValueDto(
+          LocalDateTime.parse("2018-03-16T14:07:01"),
+          36.7,
+          "°C",
+          "Return temp."
+        )
       )
     );
 
@@ -318,7 +334,9 @@ public class MeteringMeasurementMessageConsumerTest {
 
   @Test
   public void createdOrganisationIsSlugged() {
-    MeteringMeasurementMessageDto message = newMeasurementMessage("Some Organisation");
+    MeteringMeasurementMessageDto message = newMeasurementMessage(
+      "Some Organisation"
+    );
 
     messageConsumer.accept(message);
 
@@ -534,7 +552,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
   private MeteringMeasurementMessageDto newMeasurementMessage(double value) {
     return newMeasurementMessage(
-      ORGANISATION_SLUG,
+      ORGANISATION_EXTERNAL_ID,
       QUANTITY,
       "kWh",
       value
@@ -550,7 +568,7 @@ public class MeteringMeasurementMessageConsumerTest {
     String unit,
     double value
   ) {
-    return newMeasurementMessage(ORGANISATION_SLUG, quantity, unit, value);
+    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, quantity, unit, value);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(
@@ -570,7 +588,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   private MeteringMeasurementMessageDto measurementMessageWithUnit(String unit) {
-    return newMeasurementMessage(ORGANISATION_SLUG, QUANTITY, unit, 1.0);
+    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, QUANTITY, unit, 1.0);
   }
 
   private Gateway newGateway(UUID organisationId) {
@@ -583,7 +601,12 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   private Organisation newOrganisation() {
-    return new Organisation(randomUUID(), "", ORGANISATION_SLUG);
+    return new Organisation(
+      randomUUID(),
+      ORGANISATION_EXTERNAL_ID,
+      ORGANISATION_SLUG,
+      ORGANISATION_EXTERNAL_ID
+    );
   }
 
   private static PhysicalMeterBuilder physicalMeter() {

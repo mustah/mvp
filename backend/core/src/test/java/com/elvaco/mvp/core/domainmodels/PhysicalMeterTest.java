@@ -67,7 +67,7 @@ public class PhysicalMeterTest {
   ) {
     return new PhysicalMeter(
       meterId,
-      new Organisation(randomUUID(), "an-organisation", "an-organisation"),
+      new Organisation(randomUUID(), "an-organisation", "an-organisation", "an-organisation"),
       "12341234",
       "an-external-id",
       "Hot water",

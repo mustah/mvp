@@ -31,7 +31,12 @@ public class LogicalMeterUseCasesTest {
 
   @Before
   public void setUp() {
-    organisation = new Organisation(randomUUID(), "some organisation", "some-org");
+    organisation = new Organisation(
+      randomUUID(),
+      "some organisation",
+      "some-org",
+      "some organisation"
+    );
   }
 
   @Test

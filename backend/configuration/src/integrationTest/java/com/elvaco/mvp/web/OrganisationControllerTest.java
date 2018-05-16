@@ -24,13 +24,26 @@ public class OrganisationControllerTest extends IntegrationTest {
   private Organisations organisations;
 
   private Organisation secretService =
-    new Organisation(randomUUID(), "Secret Service", "secret-service");
+    new Organisation(
+      randomUUID(),
+      "Secret Service",
+      "secret-service",
+      "Secret Service"
+    );
 
   private Organisation wayneIndustries =
-    new Organisation(randomUUID(), "Wayne Industries", "wayne-industries");
+    new Organisation(randomUUID(),
+      "Wayne Industries",
+      "wayne-industries",
+      "Wayne Industries"
+      );
 
   private Organisation theBeatles =
-    new Organisation(randomUUID(), "The Beatles", "the-beatles");
+    new Organisation(randomUUID(),
+      "The Beatles",
+      "the-beatles",
+      "The Beatles"
+    );
 
   @Before
   public void setUp() {

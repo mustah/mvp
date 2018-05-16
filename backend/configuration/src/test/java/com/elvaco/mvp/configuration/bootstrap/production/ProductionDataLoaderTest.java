@@ -25,12 +25,14 @@ public class ProductionDataLoaderTest {
     Organisation initialOrganisation = new Organisation(
       UUID.randomUUID(),
       "Organisation",
-      "organisation"
+      "organisation",
+      "Organisation"
     );
     Organisation secondOrganisation = new Organisation(
       UUID.randomUUID(), //Different ID
       "Organisation",
-      "organisation"
+      "organisation",
+      "Organisation"
     );
 
     List<Organisation> existingOrganisations = singletonList(initialOrganisation);

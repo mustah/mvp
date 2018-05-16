@@ -108,7 +108,12 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
       .SUPER_ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    Organisation otherOrganisation = new Organisation(UUID.randomUUID(), "other-organisation");
+    Organisation otherOrganisation = new Organisation(
+      UUID.randomUUID(),
+      "other-organisation",
+      "other-organisation",
+      "other-organisation"
+    );
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
       new MockOrganisations(asList(user.getOrganisation(), otherOrganisation)),

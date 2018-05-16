@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.generator.GeneratedData;
 import com.elvaco.mvp.generator.MeterPopulationSpecification;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -62,6 +63,8 @@ class GeneratedDataLoader implements CommandLineRunner {
     UUID organisationUuid = UUID.randomUUID();
     Organisation organisation = organisations.save(new Organisation(
       organisationUuid,
+      organisationUuid.toString(),
+      organisationUuid.toString(),
       organisationUuid.toString()
     ));
 

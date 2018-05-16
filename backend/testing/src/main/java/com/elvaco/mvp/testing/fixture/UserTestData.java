@@ -12,14 +12,16 @@ public final class UserTestData {
     new Organisation(
       randomUUID(),
       "Marvel",
-      "marvel"
+      "marvel",
+      "Marvel"
     );
 
   public static final Organisation DAILY_PLANET =
     new Organisation(
       randomUUID(),
       "Daily Planet",
-      "daily-planet"
+      "daily-planet",
+      "Daily Planet"
     );
 
   public static final User CLARK_KENT = new UserBuilder()

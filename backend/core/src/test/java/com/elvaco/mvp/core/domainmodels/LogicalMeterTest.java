@@ -145,7 +145,12 @@ public class LogicalMeterTest {
   ) {
     return PhysicalMeter.builder()
       .logicalMeterId(logicalMeterId)
-      .organisation(new Organisation(organisationId, "an-organisation", "an-organisation"))
+      .organisation(new Organisation(
+        organisationId,
+        "an-organisation",
+        "an-organisation",
+        "an-organisation"
+      ))
       .address("12341234")
       .externalId("an-external-id")
       .medium("Hot water")

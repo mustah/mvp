@@ -19,18 +19,10 @@ public class Organisation implements Identifiable<UUID>, Serializable {
   public final String slug;
   public final String externalId;
 
-  public Organisation(UUID id, String name) {
-    this(id, name, slugify(name));
-  }
-
-  public Organisation(UUID id, String name, String slug) {
-    this(id, name, slug, slug);
-  }
-
   public Organisation(UUID id, String name, String slug, String externalId) {
     this.id = id;
     this.name = name;
-    this.slug = slug;
+    this.slug = slugify(slug);
     this.externalId = externalId;
   }
 

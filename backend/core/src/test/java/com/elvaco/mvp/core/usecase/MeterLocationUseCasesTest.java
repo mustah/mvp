@@ -23,7 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeterLocationUseCasesTest {
 
-  private final Organisation organisation = new Organisation(randomUUID(), "org ab", "org");
+  private final Organisation organisation = new Organisation(
+    randomUUID(),
+    "org ab",
+    "org",
+    "org ab"
+  );
 
   private MockRequestParameters parameters;
 

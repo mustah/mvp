@@ -17,7 +17,8 @@ public class OrganisationMapper {
     return new Organisation(
       organisationDto.id != null ? organisationDto.id : randomUUID(),
       organisationDto.name,
-      organisationDto.slug
+      organisationDto.slug,
+      organisationDto.name
     );
   }
 }
