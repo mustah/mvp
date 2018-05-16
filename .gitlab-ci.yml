@@ -5,6 +5,7 @@ image:
 stages:
   - prepare
   - build
+  - assemble
   - pre-test
   - test
   - publish
@@ -38,8 +39,10 @@ before_script:
   cache:
     key: "$CI_COMMIT_REF_NAME-gradle"
     paths:
-      - .gradle/caches
+      - .gradle/
       - .yarn
+      - frontend/dist
+      - frontend/node_modules
       - frontend/.fusebox/cache
       - .version
 
@@ -123,13 +126,29 @@ prepare:version:
       - .version
     expire_in: 7 days
 
-gradle:build:
+build:frontend:
   <<: *cache_gradle
   stage: build
   dependencies:
     - prepare:version
   script:
-    - gradle build -x check
+    - gradle frontend:bundle
+
+build:compile:
+  <<: *cache_gradle
+  stage: build
+  dependencies:
+    - prepare:version
+  script:
+    - gradle compileJava checkstyle findbugsMain test
+
+assemble:
+  <<: *cache_gradle
+  stage: assemble
+  dependencies:
+    - prepare:version
+  script:
+    - gradle assemble
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
@@ -145,7 +164,7 @@ pre-test:docker-mvp-app:
   tags:
     - shell
   dependencies:
-    - gradle:build
+    - assemble
     - prepare:version
   script:
     - docker build --build-arg MVP_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile .
@@ -159,7 +178,7 @@ pre-test:docker-geoservice-app:
   tags:
     - shell
   dependencies:
-    - gradle:build
+    - assemble
     - prepare:version
   script:
     - docker build --build-arg GEOSERVICE_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile-geoservice .
@@ -194,7 +213,7 @@ test:jira_script:
     - flake8
     - nose2 --with-coverage --verbose
 
-test:unit_and_IT:
+test:integration:
   <<: *cache_gradle_read_only
   stage: test
   artifacts:
@@ -204,7 +223,7 @@ test:unit_and_IT:
       - backend/configuration/build/reports/tests/integrationTest/*
     expire_in: 7 days
   script:
-    - gradle check -x systemTest
+    - gradle integrationTest
 
 test:upgrade:
   <<: *no_cache
@@ -216,7 +235,7 @@ test:upgrade:
     TEST_HOST: docker-host
   stage: test
   dependencies:
-    - gradle:build
+    - assemble
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   after_script:
@@ -236,7 +255,7 @@ publish:mvp_artifactory:
     - /^release-.*$/
     - tags
   dependencies:
-    - gradle:build
+    - assemble
   script:
     - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
     - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
@@ -253,7 +272,7 @@ publish:geoservice_artifactory:
     - /^release-.*$/
     - tags
   dependencies:
-    - gradle:build
+    - assemble
   script:
     - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
     - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')

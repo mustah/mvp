@@ -92,14 +92,13 @@ echo ":: Message received"
 echo ":: Stopping old MVP application"
 docker-compose stop application
 
-MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application
-echo -n ":: Waiting for new instance of MVP application to start up"
-check_application_startup application
-
 echo ":: Stopping old GEOSERVICE application"
 docker-compose stop geoservice
 
-MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d geoservice
+MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application geoservice
+echo -n ":: Waiting for new instance of MVP application to start up"
+check_application_startup application
+
 echo -n ":: Waiting for new instance of GEOSERVICE application to start up"
 check_application_startup geoservice
 

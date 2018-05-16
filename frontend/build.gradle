@@ -4,7 +4,8 @@ plugins {
 
 apply plugin: 'base'
 
-buildDir = 'dist'
+buildDir = 'build'
+distsDirName = 'dist'
 
 node {
   version = '9.11.1'
@@ -15,7 +16,7 @@ node {
 
 task bundle(type: YarnTask) {
   inputs.dir(new File('src'))
-  outputs.dir(buildDir)
+  outputs.dir(distsDirName)
   args  = ['dist']
 }
 
@@ -29,5 +30,10 @@ task yarn_test(type: YarnTask) {
   args = ['test']
 }
 
+task yarn_install(type: YarnTask) {
+  inputs.files 'yarn.lock', 'package.json'
+  outputs.dir('node_modules')
+  args = ['install']
+}
 check.dependsOn([yarn_install, yarn_test])
 bundle.dependsOn(yarn_install)

@@ -1,21 +1,21 @@
 def getVersion = { ->
-    def versionFile = new File('.version')
-    try {
-        def command = 'git describe --tags --abbrev=7 --dirty'
-        def proc = command.execute()
-        proc.waitFor()
+  def versionFile = new File('.version')
+  try {
+    def command = 'git describe --tags --abbrev=7 --dirty'
+    def proc = command.execute()
+    proc.waitFor()
 
-        versionFile.createNewFile()
-        versionFile.text = proc.text.trim()
+    versionFile.createNewFile()
+    versionFile.text = proc.text.trim()
 
-        return proc.text.trim()
-    } catch (java.io.IOException e) {
-        if (versionFile.exists()) {
-            return versionFile.text.trim()
-        } else {
-            return "UNKNOWN"
-        }
+    return proc.text.trim()
+  } catch (java.io.IOException e) {
+    if (versionFile.exists()) {
+      return versionFile.text.trim()
+    } else {
+      return "UNKNOWN"
     }
+  }
 }
 
 allprojects {
@@ -79,9 +79,9 @@ subprojects { subproject ->
 }
 
 task checkstyle {
-  dependsOn subprojects.collect {it.tasks.withType(Checkstyle)}
+  dependsOn subprojects.collect { it.tasks.withType(Checkstyle) }
 }
 
 task findbugs {
-  dependsOn subprojects.collect {it.tasks.withType(FindBugs)}
+  dependsOn subprojects.collect { it.tasks.withType(FindBugs) }
 }
