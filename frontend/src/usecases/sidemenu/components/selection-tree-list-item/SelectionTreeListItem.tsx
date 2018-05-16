@@ -2,26 +2,28 @@ import * as React from 'react';
 import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import {orUnknown} from '../../../../helpers/translations';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
-import {OnClickWithId, uuid} from '../../../../types/Types';
+import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
 
 interface RenderProps {
   id: uuid;
-  selectionTree: SelectionTree;
-  toggleExpand: OnClickWithId;
-  toggleSelect: OnClickWithId;
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
+  selectionTree: SelectionTree;
+  toggleExpand: OnClickWithId;
+  toggleIncludingChildren: OnClick;
+  toggleSingleEntry: OnClickWithId;
 }
 
-export const renderSelectionTreeCities = ({id, selectionTree, ...other}: RenderProps) => {
+export const renderSelectionTreeCities = ({id, selectionTree, toggleSingleEntry, ...other}: RenderProps) => {
   const city = selectionTree.entities.cities[id];
-  const clusters = city.clusters.sort()
-    .map((id) => renderSelectionTreeClusters({...other, selectionTree, id}));
+  const clusters = [...city.clusters].sort()
+    .map((id) => renderSelectionTreeClusters({...other, toggleSingleEntry, selectionTree, id}));
   return renderSelectableListItem({
     ...other,
+    toggleSingleEntry,
     id,
-    selectable: false,
+    selectable: true,
     primaryText: orUnknown(city.name),
     nestedItems: clusters,
   });
@@ -29,11 +31,15 @@ export const renderSelectionTreeCities = ({id, selectionTree, ...other}: RenderP
 
 const renderSelectionTreeClusters = ({id, selectionTree, ...other}: RenderProps) => {
   const cluster = selectionTree.entities.clusters[id];
-  const addresses = cluster.addresses.sort().map((id) => renderSelectionTreeAddresses({...other, selectionTree, id}));
+  const addresses = [...cluster.addresses].sort().map((id) => renderSelectionTreeAddresses({
+    ...other,
+    selectionTree,
+    id,
+  }));
   return renderSelectableListItem({
     ...other,
     id,
-    selectable: false,
+    selectable: true,
     primaryText: cluster.name,
     nestedItems: addresses,
   });
@@ -41,11 +47,11 @@ const renderSelectionTreeClusters = ({id, selectionTree, ...other}: RenderProps)
 
 const renderSelectionTreeAddresses = ({id, selectionTree, ...other}: RenderProps) => {
   const address = selectionTree.entities.addresses[id];
-  const meters = address.meters.sort().map((id) => renderSelectionTreeMeters({...other, selectionTree, id}));
+  const meters = [...address.meters].sort().map((id) => renderSelectionTreeMeters({...other, selectionTree, id}));
   return renderSelectableListItem({
     ...other,
     id,
-    selectable: false,
+    selectable: true,
     primaryText: orUnknown(address.name),
     nestedItems: meters,
   });
@@ -63,13 +69,14 @@ const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) =
 
 interface Props {
   id: uuid;
-  primaryText: string;
+  nestedItems?: Array<React.ReactElement<any>>;
   openListItems: Set<uuid>;
+  primaryText: string;
+  selectable: boolean;
   selectedListItems: Set<uuid>;
   toggleExpand: OnClickWithId;
-  toggleSelect: OnClickWithId;
-  selectable: boolean;
-  nestedItems?: Array<React.ReactElement<any>>;
+  toggleIncludingChildren: OnClick;
+  toggleSingleEntry: OnClickWithId;
 }
 
 const renderSelectableListItem = ({
@@ -77,13 +84,16 @@ const renderSelectableListItem = ({
   primaryText,
   openListItems,
   toggleExpand,
-  toggleSelect,
+  toggleSingleEntry,
+  toggleIncludingChildren,
   selectedListItems,
   selectable,
   nestedItems,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
-  const onToggleSelect = selectable ? () => toggleSelect(id) : () => null;
+  const onToggleSelect = nestedItems
+    ? () => toggleIncludingChildren(id)
+    : () => toggleSingleEntry(id);
 
   return (
     <SelectableListItem
@@ -98,5 +108,6 @@ const renderSelectableListItem = ({
       onClick={onToggleSelect}
       selectable={selectable}
       selected={selectedListItems.has(id)}
-    />);
+    />
+  );
 };

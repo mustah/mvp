@@ -47,7 +47,7 @@ describe('selectionTreeSelectors', () => {
     },
   };
 
-  it('refactors selectionTreeState type to selectionTree type', () => {
+  it('regroups selectionTreeState into selectionTree', () => {
 
     const expected: SelectionTree = {
       entities: {
@@ -87,10 +87,12 @@ describe('selectionTreeSelectors', () => {
       },
       result: {...selectionTreeState.result},
     };
+
     expect(getSelectionTree(selectionTreeState)).toEqual(expected);
+
   });
 
-  it('doesnt break if selectionTreeState is empty', () => {
+  it('does not break if selectionTreeState is empty', () => {
     const selectionTreeState: SelectionTreeState = {
       isFetching: false,
       isSuccessfullyFetched: true,
