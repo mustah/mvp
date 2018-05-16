@@ -3,6 +3,10 @@
 .SummaryContainer {
   margin-bottom: $space;
   align-items: flex-end;
+
+  .SmallLoader {
+    margin-right: 72px;
+  }
 }
 
 .Summary {
