@@ -1,6 +1,6 @@
 import {GetState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {fetchIfNeeded, FetchIfNeeded} from '../../state/common/apiActions';
+import {fetchIfNeeded, FetchIfNeeded} from '../../state/api/apiActions';
 import {DashboardModel} from './dashboardModels';
 import {DashboardState} from './dashboardReducer';
 

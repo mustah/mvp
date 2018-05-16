@@ -54,7 +54,13 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 
   render() {
-    const {isFetching, dashboard, meterMapMarkers, error, clearError} = this.props;
+    const {
+      isFetching,
+      dashboard,
+      meterMapMarkers,
+      error,
+      clearError,
+    } = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -77,17 +83,17 @@ class DashboardContainerComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  dashboard,
+  dashboard: {record, isFetching},
   userSelection: {userSelection},
   domainModels: {meterMapMarkers},
 }: RootState): StateToProps => ({
-  dashboard: dashboard.record,
+  dashboard: record,
   parameters: getMeterParameters({
     userSelection,
     now: now(),
   }),
   meterMapMarkers: getDomainModel(meterMapMarkers),
-  isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
+  isFetching: isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),
 });
 

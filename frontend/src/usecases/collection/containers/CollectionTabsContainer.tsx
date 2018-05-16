@@ -17,20 +17,37 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
+import {
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
+import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {Map} from '../../map/containers/Map';
-import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/gatewayMapMarkerApiActions';
-import {gatewayLowConfidenceTextInfo} from '../../map/helper/mapHelper';
+import {
+  clearErrorGatewayMapMarkers,
+  fetchGatewayMapMarkers,
+} from '../../map/gatewayMapMarkerApiActions';
 import {closeClusterDialog} from '../../map/mapActions';
-import {MapMarker} from '../../map/mapModels';
-import {getSelectedMapMarker} from '../../map/mapSelectors';
+import {Bounds, MapMarker} from '../../map/mapModels';
+import {
+  getBounds,
+  getGatewayLowConfidenceTextInfo,
+  getSelectedMapMarker,
+} from '../../map/mapSelectors';
 import {GatewayListContainer} from '../components/GatewayListContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
@@ -39,6 +56,8 @@ interface StateToProps extends TabsContainerStateToProps {
   selectedMarker: Maybe<uuid>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
+  bounds?: Bounds;
+  lowConfidenceText?: string;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -63,6 +82,8 @@ class CollectionTabs extends React.Component<Props> {
 
   render() {
     const {
+      bounds,
+      lowConfidenceText,
       selectedTab,
       changeTab,
       selectedMarker,
@@ -97,7 +118,7 @@ class CollectionTabs extends React.Component<Props> {
                 hasContent={gatewayMapMarkers.result.length > 0}
                 fallbackContent={<MissingDataTitle title={firstUpperTranslated('no gateways')}/>}
               >
-                <Map lowConfidenceText={gatewayLowConfidenceTextInfo(gatewayMapMarkers)}>
+                <Map bounds={bounds} lowConfidenceText={lowConfidenceText}>
                   <ClusterContainer markers={gatewayMapMarkers.entities}/>
                 </Map>
               </HasContent>
@@ -110,24 +131,23 @@ class CollectionTabs extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  ui: {pagination, tabs},
-  map,
-  domainModels: {gatewayMapMarkers},
-  userSelection: {userSelection},
-}: RootState): StateToProps => {
-  return {
-    selectedTab: getSelectedTab(tabs.collection),
-    gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
-    parameters: getGatewayParameters({
-      userSelection,
-      now: now(),
-    }),
-    selectedMarker: getSelectedMapMarker(map),
-    isFetching: gatewayMapMarkers.isFetching,
-    error: getError(gatewayMapMarkers),
-  };
-};
+const mapStateToProps =
+  ({
+    ui: {pagination, tabs},
+    map,
+    domainModels: {gatewayMapMarkers},
+    userSelection: {userSelection},
+  }: RootState): StateToProps =>
+    ({
+      bounds: getBounds(gatewayMapMarkers),
+      lowConfidenceText: getGatewayLowConfidenceTextInfo(gatewayMapMarkers),
+      selectedTab: getSelectedTab(tabs.collection),
+      gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
+      parameters: getGatewayParameters({userSelection, now: now()}),
+      selectedMarker: getSelectedMapMarker(map),
+      isFetching: gatewayMapMarkers.isFetching,
+      error: getError(gatewayMapMarkers),
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,

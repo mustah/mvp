@@ -148,7 +148,7 @@ const reducerFor = <T extends Identifiable>(
       case LOGOUT_USER:
         return {...makeInitialState()};
       default:
-        return resetReducer<NormalizedPaginatedState<T>>(state, action, {...makeInitialState<T>()});
+        return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
     }
   };
 

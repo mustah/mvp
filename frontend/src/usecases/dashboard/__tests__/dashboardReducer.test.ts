@@ -1,6 +1,6 @@
 import {Medium, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {EndPoints} from '../../../services/endPoints';
-import {makeActionsOf, RequestHandler} from '../../../state/common/apiActions';
+import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
 import {Status} from '../../../types/Types';
 import {LOGOUT_USER} from '../../auth/authActions';
 import {DashboardModel} from '../dashboardModels';

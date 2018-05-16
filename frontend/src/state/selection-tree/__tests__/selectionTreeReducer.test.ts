@@ -1,7 +1,7 @@
 import {normalize} from 'normalizr';
 import {EndPoints} from '../../../services/endPoints';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
-import {makeActionsOf, RequestHandler} from '../../common/apiActions';
+import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,

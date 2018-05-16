@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {EndPoints} from '../../../services/endPoints';
 import {authenticate} from '../../../services/restClient';
-import {makeActionsOf, RequestHandler} from '../../../state/common/apiActions';
+import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
 import {fetchDashboard} from '../dashboardApiActions';
 import {DashboardModel} from '../dashboardModels';
 import {initialState} from '../dashboardReducer';

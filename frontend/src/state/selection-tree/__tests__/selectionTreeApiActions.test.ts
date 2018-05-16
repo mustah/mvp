@@ -10,7 +10,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {restClient, restClientWith} from '../../../services/restClient';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
-import {makeActionsOf} from '../../common/apiActions';
+import {makeActionsOf} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
 import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';

@@ -9,7 +9,7 @@ import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {makeActionsOf, RequestHandler} from '../common/apiActions';
+import {makeActionsOf, RequestHandler} from '../api/apiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 import {selectionTreeSchema} from './selectionTreeSchemas';
 

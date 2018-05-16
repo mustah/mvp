@@ -31,11 +31,3 @@
   background: $red;
   border-color: $red;
 }
-
-.LowConfidence {
-  background: $white;
-  border: 2px solid rgba(0, 0, 0, 0.2); // same style as leaflet
-  border-radius: 4px;
-  color: $black;
-  padding: $sm-space $lg-space;
-}

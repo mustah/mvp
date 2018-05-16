@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
-import {failureAction, requestAction, successAction} from '../../state/common/apiActions';
+import {failureAction, requestAction, successAction} from '../../state/api/apiActions';
 import {resetReducer} from '../../state/domain-models/domainModelsReducer';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';

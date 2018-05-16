@@ -10,7 +10,7 @@ import {restClient, restClientWith} from '../../../services/restClient';
 import {EncodedUriParameters, ErrorResponse} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
-import {failureAction, requestAction, successAction} from '../../common/apiActions';
+import {failureAction, requestAction, successAction} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
 import {fetchSummary} from '../summaryApiActions';
 import {SelectionSummary} from '../summaryModels';
