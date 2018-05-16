@@ -31,7 +31,10 @@ import {
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 import {
-  getCities, getPaginatedMeterParameters, getSelectedPeriod, getSelection,
+  getCities,
+  getPaginatedMeterParameters,
+  getSelectedPeriod,
+  getSelection,
   UriLookupStatePaginated,
 } from '../userSelectionSelectors';
 
@@ -120,11 +123,49 @@ describe('userSelectionSelectors', () => {
     expect(getCities(state)).toEqual([]);
   });
 
+  it('can handle user selection with missing parameters', () => {
+    const oldState: UserSelectionState = {
+      userSelection: {
+        id: -1,
+        name: 'all',
+        isChanged: false,
+        selectionParameters: {
+          addresses: [],
+          alarms: [],
+          // 'cities' is left out
+          dateRange: {period: Period.latest},
+          gatewayStatuses: [],
+          manufacturers: [],
+          media: [],
+          meterStatuses: [],
+          productModels: [],
+        },
+      },
+    };
+
+    const state: LookupState = {
+      userSelection: oldState,
+      domainModels: domainModels(normalizedSelections) as DomainModelsState,
+    };
+
+    const noneSelected: SelectionListItem[] = [
+      {selected: false, ...gothenburg},
+      {selected: false, ...stockholm},
+      {selected: false, ...vasa},
+    ];
+
+    const actual: SelectionListItem[] = getCities(state);
+    expect(actual).toEqual(noneSelected);
+  });
+
   describe('encodedUriParameters', () => {
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: UserSelectionState = userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
+      const state: UserSelectionState = userSelection(
+        initialState,
+        {type: ADD_PARAMETER_TO_SELECTION, payload},
+      );
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
         userSelection: state.userSelection,
