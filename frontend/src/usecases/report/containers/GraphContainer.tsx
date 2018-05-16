@@ -23,7 +23,10 @@ import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {fetchMeasurements, selectQuantities} from '../../../state/ui/graph/measurement/measurementActions';
+import {
+  fetchMeasurements,
+  selectQuantities,
+} from '../../../state/ui/graph/measurement/measurementActions';
 import {emptyGraphContents, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, ErrorResponse, uuid} from '../../../types/Types';
@@ -133,7 +136,8 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
   async componentWillReceiveProps({
     selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
   }: Props) {
-    const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
+    const somethingChanged = true || period !== this.props.period; // TODO: Should not always
+                                                                   // return "true"
     if (somethingChanged) {
       this.setState({isFetching: true});
       this.resetDots();
@@ -221,9 +225,11 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     );
   }
 
-  renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
+  renderActiveDot = (props: ActiveDotReChartProps) =>
+    <ActiveDot {...props} activeDataKey={this.activeDataKey}/>
 
-  renderToolTip = (props: TooltipProps) => (this.tooltipPayload) ? <CustomizedTooltip {...this.tooltipPayload}/> : null;
+  renderToolTip = (props: TooltipProps) =>
+    this.tooltipPayload ? <CustomizedTooltip {...this.tooltipPayload}/> : null
 
   renderAndStoreDot = ({dataKey, ...rest}: DotReChartProps & {dataKey: uuid}) => {
     const {index, cy} = rest;
@@ -261,18 +267,18 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
 }
 
-const mapStateToProps = (
-  {
+const mapStateToProps =
+  ({
     report: {selectedListItems},
     userSelection: {userSelection},
     ui: {measurements: {selectedQuantities}, indicator: {selectedIndicators: {report}}},
   }: RootState): StateToProps =>
-  ({
-    ...getSelectedPeriod(userSelection),
-    selectedListItems,
-    selectedQuantities,
-    selectedIndicators: report,
-  });
+    ({
+      ...getSelectedPeriod(userSelection),
+      selectedListItems,
+      selectedQuantities,
+      selectedIndicators: report,
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectQuantities,

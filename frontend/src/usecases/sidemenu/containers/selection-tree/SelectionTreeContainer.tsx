@@ -12,17 +12,17 @@ import {
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../../../state/selection-tree/selectionTreeSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
+import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClickWithId, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
-import './SelectionTreeContainer.scss';
 import {renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import './SelectionTreeContainer.scss';
 
 interface StateToProps {
   selectionTree: SelectionTree;
