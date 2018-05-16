@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -8,6 +9,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.helpers.CronHelper;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -130,7 +132,9 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     physicalMeter = physicalMeter.withMedium(meterDto.medium)
       .withManufacturer(meterDto.manufacturer)
       .replaceActiveStatus(StatusType.from(meterDto.status))
-      .withReadIntervalMinutes(meterDto.expectedInterval);
+      .withReadIntervalMinutes(CronHelper.toReportInterval(meterDto.cron)
+        .map(Duration::toMinutes)
+        .orElse(null));
 
     if (logicalMeter != null) {
       physicalMeter = physicalMeter.withLogicalMeterId(logicalMeter.id);

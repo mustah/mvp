@@ -125,7 +125,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     publishMessage(toJson(message).getBytes());
 
     MeteringStructureMessageDto newMessage = getMeteringStructureMessageDto()
-      .withMeter(new MeterDto("1234", "Some medium", "OK", "Acme", 15))
+      .withMeter(new MeterDto("1234", "Some medium", "OK", "Acme", "*/15 * * * *"))
       .withFacility(new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"))
       .withGatewayStatus(null);
 
@@ -170,7 +170,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
   private MeteringStructureMessageDto getMeteringStructureMessageDto() {
     return new MeteringStructureMessageDto(
-      new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
+      new MeterDto("1234", "Some medium", "OK", "A manufacturer", "*/15 * * * *"),
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",
       "Some organisation",
