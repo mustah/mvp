@@ -39,12 +39,12 @@ class GatewayDetails extends React.Component<Props> {
   componentDidMount() {
     const {fetchGateway, gatewayId, gateway, fetchMeterEntities} = this.props;
     fetchGateway(gatewayId);
-    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds, gateway.meterIds.length));
+    gateway.map(({meterIds}) => fetchMeterEntities(meterIds, meterIds.length));
   }
 
   componentWillReceiveProps({fetchGateway, gatewayId, gateway, fetchMeterEntities}: Props) {
     fetchGateway(gatewayId);
-    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds, gateway.meterIds.length));
+    gateway.map(({meterIds}) => fetchMeterEntities(meterIds, meterIds.length));
   }
 
   render() {
@@ -84,4 +84,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const GatewayDetailsContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(GatewayDetails);
+  connect<StateToProps, DispatchToProps, OwnProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(GatewayDetails);

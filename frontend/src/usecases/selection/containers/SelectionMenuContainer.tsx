@@ -49,11 +49,9 @@ export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({userSelection}: RootState): StateToProps => {
-  return {
-    selection: getSelection(userSelection),
-  };
-};
+const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
+  selection: getSelection(userSelection),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeSelectionPage,

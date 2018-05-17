@@ -13,7 +13,10 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
-import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
+import {
+  clearErrorSelections,
+  fetchSelections,
+} from '../../../state/domain-models/selections/selectionsApiActions';
 import {toggleParameterInSelection} from '../../../state/user-selection/userSelectionActions';
 import {
   LookupState,
@@ -93,7 +96,6 @@ class SelectionContent extends React.Component<Props> {
     const mediumStatusSelectionText = translate('medium') + ': ';
 
     return (
-
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column className="SelectionContentBox">
           <Subtitle>{translate('filter')}</Subtitle>

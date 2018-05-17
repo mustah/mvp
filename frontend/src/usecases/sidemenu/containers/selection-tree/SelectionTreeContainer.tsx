@@ -12,19 +12,21 @@ import {
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../../../state/selection-tree/selectionTreeSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
+import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClickWithId, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
-import './SelectionTreeContainer.scss';
+import {LoadingListItem} from '../../components/LoadingListItem';
 import {renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import './SelectionTreeContainer.scss';
 
 interface StateToProps {
+  isFetching: boolean;
   selectionTree: SelectionTree;
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
@@ -51,20 +53,36 @@ class SelectionTreeComponent extends React.Component<Props> {
   }
 
   render() {
-    const {selectionTree, toggleExpand, openListItems, toggleSelect, selectedListItems} = this.props;
-    if (selectionTree.result.cities.length === 0) {
-      return null;
-    }
-    const renderSelectionOverview = (id: uuid) => renderSelectionTreeCities({
-      id,
+    const {
+      isFetching,
       selectionTree,
       toggleExpand,
       openListItems,
       toggleSelect,
       selectedListItems,
-    });
+    } = this.props;
 
-    const nestedItems = selectionTree.result.cities.sort().map(renderSelectionOverview);
+    const renderSelectionOverview = (id: uuid) =>
+      renderSelectionTreeCities({
+        id,
+        selectionTree,
+        toggleExpand,
+        openListItems,
+        toggleSelect,
+        selectedListItems,
+      });
+    const cityIds = selectionTree.result.cities;
+
+    const nestedItems = cityIds.length
+      ? cityIds.sort().map(renderSelectionOverview)
+      : [(
+           <LoadingListItem
+             isFetching={isFetching}
+             text={translate('no meters')}
+             key="loading-list-item"
+           />
+         )];
+
     return (
       <List style={listStyle}>
         <ListItem
@@ -81,23 +99,20 @@ class SelectionTreeComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (
-  {
+const mapStateToProps =
+  ({
     report,
     userSelection: {userSelection},
     selectionTree,
     ui: {selectionTree: selectionTreeUi},
-  }: RootState): StateToProps => {
-  return {
-    selectionTree: getSelectionTree(selectionTree),
-    openListItems: getOpenListItems(selectionTreeUi),
-    selectedListItems: getSelectedListItems(report),
-    parameters: getMeterParameters({
-      userSelection,
-      now: now(),
-    }),
-  };
-};
+  }: RootState): StateToProps =>
+    ({
+      isFetching: selectionTree.isFetching,
+      selectionTree: getSelectionTree(selectionTree),
+      openListItems: getOpenListItems(selectionTreeUi),
+      selectedListItems: getSelectedListItems(report),
+      parameters: getMeterParameters({userSelection, now: now()}),
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleExpand: selectionTreeToggleId,
