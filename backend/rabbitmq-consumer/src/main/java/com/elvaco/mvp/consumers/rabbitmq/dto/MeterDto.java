@@ -12,5 +12,6 @@ public class MeterDto {
   public final String status;
   public final String manufacturer;
   @Nullable
-  public final Integer expectedInterval;
+  public final String cron;
+
 }

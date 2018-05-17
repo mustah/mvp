@@ -10,6 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringStructureMessageParserTest {
 
+  private static final String CRON_FIFTEEN_MINUTES = "*/15 * * * *";
+
   private MeteringMessageParser messageParser;
 
   @Before
@@ -36,7 +38,7 @@ public class MeteringStructureMessageParserTest {
     assertThat(parsedMessage.meter.id).isEqualTo("1");
     assertThat(parsedMessage.meter.medium).isEqualTo("Heat, Return temp");
     assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
-    assertThat(parsedMessage.meter.expectedInterval).isEqualTo(15);
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
     assertThat(parsedMessage.organisationId).isEqualTo("Organisation, Incorporated");
     assertThat(parsedMessage.sourceSystemId).isEqualTo("The Source System");
   }
@@ -60,7 +62,7 @@ public class MeteringStructureMessageParserTest {
     assertThat(parsedMessage.meter.id).isEqualTo("3");
     assertThat(parsedMessage.meter.medium).isEqualTo("Gas");
     assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
-    assertThat(parsedMessage.meter.expectedInterval).isEqualTo(15);
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
     assertThat(parsedMessage.organisationId).isEqualTo("Bromölla bikers");
     assertThat(parsedMessage.sourceSystemId).isEqualTo("The flipside");
   }
@@ -86,10 +88,10 @@ public class MeteringStructureMessageParserTest {
 
   @Test
   public void readIntervalCanBeNull() {
-    String message = parseJsonFile("messages/metering-structure-message-no-interval.json");
+    String message = parseJsonFile("messages/metering-structure-message-no-cron.json");
 
     MeteringStructureMessageDto parsedMessage = messageParser.parseStructureMessage(message).get();
 
-    assertThat(parsedMessage.meter.expectedInterval).isNull();
+    assertThat(parsedMessage.meter.cron).isNull();
   }
 }

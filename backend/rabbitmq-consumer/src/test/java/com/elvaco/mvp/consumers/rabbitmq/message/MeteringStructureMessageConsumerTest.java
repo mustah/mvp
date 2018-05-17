@@ -42,7 +42,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,6 +58,8 @@ public class MeteringStructureMessageConsumerTest {
   private static final String MANUFACTURER = "ELV";
   private static final String PRODUCT_MODEL = "CMi2110";
   private static final String GATEWAY_EXTERNAL_ID = "123";
+  private static final String FIFTEEN_MINUTE_CRON = "*/15 * * * *";
+  private static final String HOUR_CRON = "0 * * * *";
   private static final Integer READ_INTERVAL_IN_MINUTES = 15;
   private static final String HOT_WATER_MEDIUM = "Hot water";
   private static final String ADDRESS = "1234";
@@ -129,7 +130,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void createsMeterAndOrganisation() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     Organisation organisation = findOrganisation();
 
@@ -181,7 +182,7 @@ public class MeteringStructureMessageConsumerTest {
       "OldValue"
     ));
 
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     Gateway gateway = gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get();
     assertThat(gateway.id).isEqualTo(gatewayId);
@@ -206,14 +207,14 @@ public class MeteringStructureMessageConsumerTest {
       .city("Växjö")
       .address("Gatvägen 41")
       .build();
-    messageHandler.accept(newStructureMessage(newLocation));
+    messageHandler.accept(newStructureMessageWithLocation(newLocation));
 
     assertThat(logicalMeters.findById(meterId).get().location).isEqualTo(newLocation);
   }
 
   @Test
   public void createsOrganisationWithSameNameAsExternalId() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     Organisation organisation = findOrganisation();
 
@@ -222,7 +223,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void createsMeterAndGatewayForExistingOrganisation() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     Organisation organisation = findOrganisation();
 
@@ -241,7 +242,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void addsPhysicalMeterToExistingLogicalMeter() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     LogicalMeter saved = findLogicalMeter();
 
@@ -252,19 +253,19 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void resendingSameMessageShouldNotUpdateExistingGateways() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     List<Gateway> allAfterFirstMessage = gateways.findAll(new MockRequestParameters());
     assertThat(allAfterFirstMessage).hasSize(1);
 
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     assertThat(gateways.findAll(new MockRequestParameters())).isEqualTo(allAfterFirstMessage);
   }
 
   @Test
   public void gatewaysAreConnectedToMeters() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     List<Gateway> all = gateways.findAll(new MockRequestParameters());
     assertThat(all.stream().anyMatch(gateway -> gateway.meters.isEmpty())).isFalse();
@@ -278,7 +279,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void setsNoMeterDefinitionForUnmappableMedium() {
-    messageHandler.accept(newStructureMessage("Unmappable medium"));
+    messageHandler.accept(newStructureMessageWithMedium("Unmappable medium"));
 
     List<LogicalMeter> meters = logicalMeters.findAll(new MockRequestParameters());
     assertThat(meters).hasSize(1);
@@ -287,7 +288,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void callsGeocodeService() {
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     LocationWithId expectedLocationWithId = new LocationBuilder()
       .country("Sweden")
@@ -326,7 +327,7 @@ public class MeteringStructureMessageConsumerTest {
     ));
 
     MeteringStructureMessageDto structureMessage =
-      newStructureMessage(HOT_WATER_MEDIUM, "4321");
+      newStructureMessageWithMediumAndPhysicalMeterId(HOT_WATER_MEDIUM, "4321");
 
     messageHandler.accept(structureMessage);
 
@@ -341,7 +342,7 @@ public class MeteringStructureMessageConsumerTest {
     Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
     physicalMeters.save(physicalMeter().organisation(organisation).build());
 
-    messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
+    messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
     assertThat(organisations.findAll()).hasSize(2);
     assertThat(physicalMeters.findAll()).hasSize(2);
@@ -349,7 +350,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void expectedIntervalIsSetForCreatedPhysicalMeter() {
-    MeteringStructureMessageDto message = newStructureMessage(60);
+    MeteringStructureMessageDto message = newStructureMessageWithCron(HOUR_CRON);
 
     messageHandler.accept(message);
 
@@ -359,8 +360,8 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void expectedIntervalIsUpdatedForCreatedPhysicalMeter() {
-    messageHandler.accept(newStructureMessage(15));
-    messageHandler.accept(newStructureMessage(60));
+    messageHandler.accept(newStructureMessageWithCron(FIFTEEN_MINUTE_CRON));
+    messageHandler.accept(newStructureMessageWithCron(HOUR_CRON));
 
     List<PhysicalMeter> all = physicalMeters.findAll();
     assertThat(all).hasSize(1);
@@ -373,7 +374,7 @@ public class MeteringStructureMessageConsumerTest {
       "medium",
       "manufacturer",
       "meter-id",
-      15,
+      FIFTEEN_MINUTE_CRON,
       UNKNOWN_LOCATION,
       ""
     );
@@ -459,8 +460,8 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
-  public void createMeterWithoutReadInterval_UseFallback() {
-    messageHandler.accept(newStructureMessage((Integer) null));
+  public void createMeterWithoutCron_UseFallback() {
+    messageHandler.accept(newStructureMessageWithCron(null));
 
     Organisation organisation = findOrganisation();
 
@@ -470,9 +471,9 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
-  public void readIntervalShouldNotBeReset_WhenSecondStructureMessageHasNoReadInterval() {
-    messageHandler.accept(newStructureMessage(15));
-    messageHandler.accept(newStructureMessage((Integer) null));
+  public void readIntervalShouldNotBeReset_WhenSecondStructureMessageHasNoCron() {
+    messageHandler.accept(newStructureMessageWithCron(FIFTEEN_MINUTE_CRON));
+    messageHandler.accept(newStructureMessageWithCron(null));
 
     Organisation organisation = findOrganisation();
 
@@ -482,8 +483,20 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
-  public void readIntervalShouldBeUpdated_WhenSecondStructureMessageHasReadInterval() {
-    messageHandler.accept(newStructureMessage((Integer) null));
+  public void readIntervalShouldNotBeReset_WhenSecondStructureMessageHasEmptyCron() {
+    messageHandler.accept(newStructureMessageWithCron(FIFTEEN_MINUTE_CRON));
+    messageHandler.accept(newStructureMessageWithCron(""));
+
+    Organisation organisation = findOrganisation();
+
+    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(15);
+  }
+
+  @Test
+  public void readIntervalShouldBeUpdated_WhenSecondStructureMessageHasCron() {
+    messageHandler.accept(newStructureMessageWithCron(null));
 
     Organisation organisation = findOrganisation();
 
@@ -491,7 +504,7 @@ public class MeteringStructureMessageConsumerTest {
 
     assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
 
-    messageHandler.accept(newStructureMessage(60));
+    messageHandler.accept(newStructureMessageWithCron(HOUR_CRON));
 
     physicalMeter = findPhysicalMeterByOrganisationId(organisation);
 
@@ -500,7 +513,7 @@ public class MeteringStructureMessageConsumerTest {
 
   @Test
   public void readIntervalShouldUseFallback_WhenConsecutiveReadIntervalsAreMissing() {
-    messageHandler.accept(newStructureMessage((Integer) null));
+    messageHandler.accept(newStructureMessageWithCron(null));
 
     Organisation organisation = findOrganisation();
 
@@ -508,7 +521,7 @@ public class MeteringStructureMessageConsumerTest {
 
     assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
 
-    messageHandler.accept(newStructureMessage((Integer) null));
+    messageHandler.accept(newStructureMessageWithCron(null));
 
     physicalMeter = findPhysicalMeterByOrganisationId(organisation);
 
@@ -544,7 +557,7 @@ public class MeteringStructureMessageConsumerTest {
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      READ_INTERVAL_IN_MINUTES,
+      FIFTEEN_MINUTE_CRON,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       StatusType.OK,
@@ -559,7 +572,7 @@ public class MeteringStructureMessageConsumerTest {
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      READ_INTERVAL_IN_MINUTES,
+      FIFTEEN_MINUTE_CRON,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       meterStatus,
@@ -567,7 +580,7 @@ public class MeteringStructureMessageConsumerTest {
     );
   }
 
-  private MeteringStructureMessageDto newStructureMessage(
+  private MeteringStructureMessageDto newStructureMessageWithMediumAndPhysicalMeterId(
     String medium,
     String physicalMeterId
   ) {
@@ -575,39 +588,39 @@ public class MeteringStructureMessageConsumerTest {
       medium,
       "KAM",
       physicalMeterId,
-      READ_INTERVAL_IN_MINUTES,
+      FIFTEEN_MINUTE_CRON,
       LOCATION_KUNGSBACKA
     );
   }
 
-  private MeteringStructureMessageDto newStructureMessage(Location location) {
+  private MeteringStructureMessageDto newStructureMessageWithLocation(Location location) {
     return newStructureMessage(
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      READ_INTERVAL_IN_MINUTES,
+      FIFTEEN_MINUTE_CRON,
       location
     );
   }
 
-  private MeteringStructureMessageDto newStructureMessage(
+  private MeteringStructureMessageDto newStructureMessageWithMedium(
     String medium
   ) {
     return newStructureMessage(
       medium,
       MANUFACTURER,
       ADDRESS,
-      READ_INTERVAL_IN_MINUTES,
+      FIFTEEN_MINUTE_CRON,
       LOCATION_KUNGSBACKA
     );
   }
 
-  private MeteringStructureMessageDto newStructureMessage(@Nullable Integer expectedInterval) {
+  private MeteringStructureMessageDto newStructureMessageWithCron(@Nullable String cron) {
     return newStructureMessage(
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      expectedInterval,
+      cron,
       LOCATION_KUNGSBACKA
     );
   }
@@ -616,14 +629,14 @@ public class MeteringStructureMessageConsumerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    @Nullable Integer expectedInterval,
+    @Nullable String cron,
     Location location
   ) {
     return newStructureMessage(
       medium,
       manufacturer,
       physicalMeterId,
-      expectedInterval,
+      cron,
       location,
       EXTERNAL_ID
     );
@@ -633,7 +646,7 @@ public class MeteringStructureMessageConsumerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    @Nullable Integer expectedInterval,
+    @Nullable String cron,
     Location location,
     String externalId
   ) {
@@ -641,7 +654,7 @@ public class MeteringStructureMessageConsumerTest {
       medium,
       manufacturer,
       physicalMeterId,
-      expectedInterval,
+      cron,
       location,
       externalId,
       StatusType.OK,
@@ -653,14 +666,14 @@ public class MeteringStructureMessageConsumerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    @Nullable Integer expectedInterval,
+    @Nullable String cron,
     Location location,
     String externalId,
     StatusType meterStatus,
     StatusType gatewayStatus
   ) {
     return new MeteringStructureMessageDto(
-      new MeterDto(physicalMeterId, medium, meterStatus.name(), manufacturer, expectedInterval),
+      new MeterDto(physicalMeterId, medium, meterStatus.name(), manufacturer, cron),
       new FacilityDto(
         externalId,
         location.getCountry(),

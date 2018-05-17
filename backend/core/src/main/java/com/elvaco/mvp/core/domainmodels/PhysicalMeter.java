@@ -91,7 +91,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     );
   }
 
-  public PhysicalMeter withReadIntervalMinutes(@Nullable Integer readIntervalMinutes) {
+  public PhysicalMeter withReadIntervalMinutes(@Nullable Long readIntervalMinutes) {
     return new PhysicalMeter(
       id,
       organisation,

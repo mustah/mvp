@@ -16,7 +16,7 @@
     "medium": "Gas",
     "manufacturer": "ELV",
     "status": "OK",
-    "expected_interval": 15
+    "cron": "*/15 * * * *"
   },
   "organisation_id": "Bromölla bikers",
   "source_system_id": "The flipside"
