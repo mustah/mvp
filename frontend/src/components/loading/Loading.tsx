@@ -7,7 +7,7 @@ const loadingStyle: React.CSSProperties = {
   marginBottom: 100,
 };
 
-export const Loading = () => (
+export const LoadingLarge = () => (
   <CircularProgress
     size={60}
     thickness={4}
