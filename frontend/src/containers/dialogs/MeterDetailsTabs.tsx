@@ -1,3 +1,4 @@
+import 'MeterDetailsTabs.scss';
 import * as React from 'react';
 import {HasContent} from '../../components/content/HasContent';
 import {DateTime} from '../../components/dates/DateTime';
@@ -95,7 +96,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </TabHeaders>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <Table {...measurements}>
+            <Table {...measurements} className="Measurements">
               <TableColumn
                 header={<TableHead className="first">{translate('quantity')}</TableHead>}
                 renderCell={renderQuantity}

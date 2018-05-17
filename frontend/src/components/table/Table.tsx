@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {Children, uuid} from '../../types/Types';
+import {Children, ClassNamed, uuid} from '../../types/Types';
 import './Table.scss';
 import {TableHeadProps} from './TableHead';
 
@@ -13,7 +13,7 @@ export interface TableColumnProps {
   cellClassName?: string;
 }
 
-interface TableProps {
+interface TableProps extends ClassNamed {
   result: uuid[];
   entities: ObjectsById<any>;
   children: Array<React.ReactElement<TableColumnProps>> | React.ReactElement<TableColumnProps>;
@@ -21,17 +21,21 @@ interface TableProps {
 
 export const TableColumn = (props: TableColumnProps) => <td/>;
 
-export const Table = ({result, entities, children}: TableProps) => {
+export const Table = ({result, entities, children, className}: TableProps) => {
 
   const columns = Array.isArray(children) ? children : [children];
 
-  const tableHeaders = columns.map((column: React.ReactElement<TableColumnProps>, index: number) => {
+  const tableHeaders = columns.map((
+    column: React.ReactElement<TableColumnProps>,
+    index: number,
+  ) => {
     const {header} = column.props;
     const headerProps: TableHeadProps = {...header.props, key: `${index}`};
     return React.cloneElement(header, headerProps);
   });
 
-  const cellRenderFunctions: RenderCellCallback[] = columns.map((column) => column.props.renderCell);
+  const cellRenderFunctions: RenderCellCallback[] =
+    columns.map((column) => column.props.renderCell);
 
   const renderCell = (onRenderCell: RenderCellCallback, id: uuid, index: number) => {
     const item = entities[id];
@@ -40,13 +44,13 @@ export const Table = ({result, entities, children}: TableProps) => {
   };
   const renderRow = (id: uuid) => (
     <tr key={id}>
-      {cellRenderFunctions.map((onRenderCell, index: number) => renderCell(onRenderCell, id, index))}
+      {cellRenderFunctions.map((onRenderCell, index) => renderCell(onRenderCell, id, index))}
     </tr>);
 
   const rows = result.length ? result.map(renderRow) : null;
 
   return (
-    <table className={classNames('Table')} cellPadding={0} cellSpacing={0}>
+    <table className={classNames('Table', className)} cellPadding={0} cellSpacing={0}>
       <thead>
       <tr>
         {tableHeaders}

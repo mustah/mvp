@@ -31,11 +31,12 @@
     }
   }
 
-  th, td {
+  th {
     padding: $sm-space;
   }
 
   td {
+    padding: 2px $sm-space;
     border-bottom: 1px solid $light-grey;
   }
 
