@@ -7,7 +7,6 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,8 +91,6 @@ public class MeteringMessageListenerTest {
     assertThat(messageConsumerSpy.messageReceived).isFalse();
   }
 
-  // TODO[!must!] enable when alarms are implemented
-  @Ignore
   @Test
   public void receiveAlarmMessage() {
     String message =
