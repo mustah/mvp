@@ -65,7 +65,7 @@ before_script:
     when: always
     paths:
       - acceptance_tests/target/cucumber
-    expire_in: 7 days
+    expire_in: 2 days
   script:
     - gradle cucumber '-Pno-docker'
 
@@ -155,7 +155,7 @@ assemble:
       - backend/configuration/build/distributions/
       - backend/geoservice/build/distributions/
       - .version
-    expire_in: 1 week
+    expire_in: 1 hour
 
 pre-test:docker-mvp-app:
   variables:
@@ -200,7 +200,7 @@ test:system:
     when: on_failure
     paths:
       - backend/configuration/build/reports/tests/systemTestCI/*
-    expire_in: 7 days
+    expire_in: 2 days
 
 test:jira_script:
   <<: *no_cache
@@ -221,7 +221,7 @@ test:integration:
     when: on_failure
     paths:
       - backend/configuration/build/reports/tests/integrationTest/*
-    expire_in: 7 days
+    expire_in: 2 days
   script:
     - gradle integrationTest
 
