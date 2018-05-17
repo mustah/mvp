@@ -1,3 +1,4 @@
+import 'GatewayDetailsTabs.scss';
 import * as React from 'react';
 import {HasContent} from '../../components/content/HasContent';
 import {Row} from '../../components/layouts/row/Row';
@@ -65,7 +66,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             </TabHeaders>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab} className="Scrollable-Table">
-            <Table result={gateway.meterIds} entities={meters}>
+            <Table result={gateway.meterIds} entities={meters} className="GatewayMeters">
               <TableColumn
                 header={<TableHead>{translate('facility id')}</TableHead>}
                 renderCell={renderFacility}
