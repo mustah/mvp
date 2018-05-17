@@ -87,6 +87,18 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
+  public void parseStructureMessageEmptyGateway() {
+    String emptyGateway = parseJsonFile("messages/reference-info-empty-gateway.json");
+    assertThat(messageParser.parseStructureMessage(emptyGateway)).isPresent();
+  }
+
+  @Test
+  public void parseStructureMessageEmptyMeter() {
+    String emptyMeter = parseJsonFile("messages/reference-info-empty-meter.json");
+    assertThat(messageParser.parseStructureMessage(emptyMeter)).isPresent();
+  }
+
+  @Test
   public void readIntervalCanBeNull() {
     String message = parseJsonFile("messages/metering-structure-message-no-cron.json");
 

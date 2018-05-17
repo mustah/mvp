@@ -528,6 +528,81 @@ public class MeteringStructureMessageConsumerTest {
     assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
   }
 
+  @Test
+  public void emptyGatewayField_MeterIsUpdatedGatewayIsNotCreated() {
+    UUID meterId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      EXTERNAL_ID,
+      organisation.id,
+      Location.UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+    ));
+
+    messageHandler.accept(
+      newStructureMessageWithLocation(new LocationBuilder().city("Borås").build())
+        .withGatewayStatus(new GatewayStatusDto(null, null, null))
+    );
+
+    assertThat(logicalMeters.findById(meterId).get().location.getCity()).isEqualTo("borås");
+    assertThat(gateways.findAll(new MockRequestParameters())).isEmpty();
+  }
+
+  @Test
+  public void emptyGatewayField_MeterIsCreatedGatewayIsNotCreated() {
+    Organisation organisation = saveDefaultOrganisation();
+
+    messageHandler.accept(
+      newStructureMessageWithLocation(new LocationBuilder().city("Borås").build())
+        .withGatewayStatus(new GatewayStatusDto(null, null, null))
+    );
+
+    assertThat(logicalMeters.findByOrganisationIdAndExternalId(
+      organisation.id,
+      EXTERNAL_ID
+    ).get().location.getCity()).isEqualTo("borås");
+    assertThat(gateways.findAll(new MockRequestParameters())).isEmpty();
+  }
+
+  @Test
+  public void emptyMeterField_GatewayIsUpdatedAndMeterIsCreated() {
+    Organisation organisation = saveDefaultOrganisation();
+    UUID gatewayId = randomUUID();
+    gateways.save(
+      new Gateway(gatewayId, organisation.id, GATEWAY_EXTERNAL_ID, PRODUCT_MODEL)
+    );
+
+    messageHandler.accept(
+      newStructureMessageWithGatewayStatus(StatusType.CRITICAL)
+        .withMeter(new MeterDto(null, null, null, null, null))
+    );
+
+    assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
+      .currentStatus().status).isEqualTo(StatusType.CRITICAL);
+    assertThat(logicalMeters.findByOrganisationIdAndExternalId(
+      organisation.id,
+      EXTERNAL_ID
+    )).isPresent();
+  }
+
+  @Test
+  public void emptyMeterField_GatewayAndMeterIsCreated() {
+    Organisation organisation = saveDefaultOrganisation();
+
+    messageHandler.accept(
+      newStructureMessageWithGatewayStatus(StatusType.CRITICAL)
+        .withMeter(new MeterDto(null, null, null, null, null))
+    );
+
+    assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
+      .currentStatus().status).isEqualTo(StatusType.CRITICAL);
+    assertThat(logicalMeters.findByOrganisationIdAndExternalId(
+      organisation.id,
+      EXTERNAL_ID
+    )).isPresent();
+  }
+
   private PhysicalMeter findPhysicalMeterByOrganisationId(Organisation organisation) {
     return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
       organisation.id,

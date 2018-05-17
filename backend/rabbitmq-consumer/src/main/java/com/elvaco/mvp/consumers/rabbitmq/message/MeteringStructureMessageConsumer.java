@@ -149,7 +149,7 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     @Nullable LogicalMeter logicalMeter,
     UUID organisationId
   ) {
-    if (gatewayStatusDto != null && logicalMeter != null) {
+    if (gatewayStatusDto != null && gatewayStatusDto.id != null && logicalMeter != null) {
       return gatewayUseCases.findBy(
         organisationId,
         gatewayStatusDto.productModel,
