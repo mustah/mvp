@@ -17,6 +17,8 @@ public class CronHelper {
 
   private static final CronParser CRON_PARSER =
     new CronParser(cronDefinition());
+  private static final ZonedDateTime PREDICTABLE_TIME = ZonedDateTime.parse("1970-02-02T00:00:00Z")
+    .truncatedTo(ChronoUnit.SECONDS);
 
   public static Optional<Duration> toReportInterval(String cronExpression) {
     return Optional.ofNullable(cronExpression)
@@ -26,11 +28,25 @@ public class CronHelper {
   }
 
   private static Duration durationBetweenExecutions(Cron cron) {
-    ZonedDateTime now = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     ExecutionTime executionTime = ExecutionTime.forCron(cron);
-    ZonedDateTime lastExecution = executionTime.lastExecution(now).orElse(now);
-    ZonedDateTime nextExecution = executionTime.nextExecution(now).orElse(lastExecution);
+    ZonedDateTime lastExecution = executionTime.lastExecution(PREDICTABLE_TIME.plusSeconds(1))
+      .orElseThrow(() -> new RuntimeException(String.format(
+        "No previous execution time found for cron '%s' at %s",
+        cron.asString(),
+        PREDICTABLE_TIME
+      )));
+    ZonedDateTime nextExecution = executionTime.nextExecution(lastExecution)
+      .orElseThrow(() -> new RuntimeException(String.format(
+        "No next execution time found for cron '%s' at %s",
+        cron.asString(),
+        PREDICTABLE_TIME
+      )));
+
     return Duration.between(lastExecution, nextExecution);
+  }
+
+  private static RuntimeException invalidExecutionTime() {
+    throw new RuntimeException("No execution time found!");
   }
 
   private static CronDefinition cronDefinition() {

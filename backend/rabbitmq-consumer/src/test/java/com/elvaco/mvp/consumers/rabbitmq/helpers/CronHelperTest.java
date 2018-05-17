@@ -25,22 +25,26 @@ public class CronHelperTest {
 
   @Test
   public void oneHourInterval() {
-    assertThat(CronHelper.toReportInterval("0 * * * *").get()).isEqualTo(Duration.ofHours(1));
+    assertThat(CronHelper.toReportInterval("0 * * * *").get())
+      .isEqualTo(Duration.ofHours(1));
   }
 
   @Test
   public void fifteenMinuteInterval() {
-    assertThat(CronHelper.toReportInterval("*/15 * * * *").get()).isEqualTo(Duration.ofMinutes(15));
+    assertThat(CronHelper.toReportInterval("*/15 * * * *").get())
+      .isEqualTo(Duration.ofMinutes(15));
   }
 
   @Test
   public void oneMinuteInterval() {
-    assertThat(CronHelper.toReportInterval("* * * * *").get()).isEqualTo(Duration.ofMinutes(1));
+    assertThat(CronHelper.toReportInterval("* * * * *").get())
+      .isEqualTo(Duration.ofMinutes(1));
   }
 
   @Test
   public void dayInterval() {
-    assertThat(CronHelper.toReportInterval("0 0 * * *").get()).isEqualTo(Duration.ofDays(1));
+    assertThat(CronHelper.toReportInterval("0 0 * * *").get())
+      .isEqualTo(Duration.ofDays(1));
   }
 
   @Test
@@ -89,4 +93,5 @@ public class CronHelperTest {
   public void emptyCronString() {
     assertThat(CronHelper.toReportInterval("")).isEqualTo(Optional.empty());
   }
+
 }
