@@ -138,6 +138,30 @@ public class LogicalMeterTest {
     assertThat(logicalMeter.getManufacturer()).isEqualTo("ELV");
   }
 
+  @Test
+  public void collectionPercentageNaNisNull() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
+      .withCollectionPercentage(Double.NaN);
+
+    assertThat(meter.collectionPercentage).isNull();
+  }
+
+  @Test
+  public void collectionPercentageNullisNull() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
+      .withCollectionPercentage(null);
+
+    assertThat(meter.collectionPercentage).isNull();
+  }
+
+  @Test
+  public void collectionPercentageIsSet() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
+      .withCollectionPercentage(0.5);
+
+    assertThat(meter.collectionPercentage).isEqualTo(0.5);
+  }
+
   private PhysicalMeter newPhysicalMeter(
     UUID organisationId,
     UUID logicalMeterId,

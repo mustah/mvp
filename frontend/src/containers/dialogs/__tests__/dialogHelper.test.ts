@@ -162,7 +162,7 @@ describe('dialogHelper', () => {
           id: 'active',
           name: 'active',
         },
-        collectionStatus: '313.04347826086956',
+        collectionPercentage: 313.04347826086956,
         measurements: [
           {
             id: 1,
@@ -249,7 +249,7 @@ describe('dialogHelper', () => {
           id: 'active',
           name: 'active',
         },
-        collectionStatus: '313.04347826086956',
+        collectionPercentage: 313.04347826086956,
         measurements: [],
         readIntervalMinutes: 60,
         gateway: {
@@ -314,7 +314,7 @@ describe('dialogHelper', () => {
           id: 'active',
           name: 'active',
         },
-        collectionStatus: '313.04347826086956',
+        collectionPercentage: 313.04347826086956,
         measurements: [
           {
             id: 1,

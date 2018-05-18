@@ -114,7 +114,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void collectionStatusZeroPercentWhenNoInterval() {
+  public void collectionStatusIsNullWhenNoInterval() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
@@ -141,7 +141,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       ).getContent().get(0);
 
-    assertThat(logicalMeterDto.collectionStatus).isEqualTo("0.0");
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(null);
   }
 
   @Test
@@ -163,7 +163,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       ).getContent().get(0);
 
-    assertThat(logicalMeterDto.collectionStatus).isEqualTo("0.0");
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(0.0);
   }
 
   @Test
@@ -193,7 +193,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       ).getContent().get(0);
 
-    assertThat(logicalMeterDto.collectionStatus).isEqualTo("50.0");
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(50.0);
   }
 
   @Test
@@ -223,7 +223,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       ).getContent().get(0);
 
-    assertThat(logicalMeterDto.collectionStatus).isEqualTo("33.33333333333333");
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(33.33333333333333);
   }
 
   @Test
@@ -253,7 +253,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       ).getContent().get(0);
 
-    assertThat(logicalMeterDto.collectionStatus).isEqualTo("100.0");
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(100.0);
   }
 
   @Test

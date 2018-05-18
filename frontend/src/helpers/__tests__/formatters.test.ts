@@ -1,5 +1,5 @@
 import {momentWithTimeZone} from '../dateHelpers';
-import {FORMAT_DATE_FULL_MINUTE, formatDate, round, roundMeasurement} from '../formatters';
+import {FORMAT_DATE_FULL_MINUTE, formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
 
 describe('formatters', () => {
 
@@ -59,6 +59,36 @@ describe('formatters', () => {
       const date = momentWithTimeZone('2017-03-21T11:00:00Z').toDate();
 
       expect(formatDate(date, FORMAT_DATE_FULL_MINUTE)).toEqual('17-03-21 11:00');
+    });
+  });
+
+  describe('formatCollectionPercentage', () => {
+    it('formats undefined as dash', () => {
+     expect(formatCollectionPercentage(undefined, 0)).toBe('-');
+    });
+
+    it('formats undefined as dash when interval is non-zero', () => {
+      expect(formatCollectionPercentage(undefined, 15)).toBe('-');
+    });
+
+    it('formats 100% collection percentage as dash when interval is zero', () => {
+      expect(formatCollectionPercentage(100.0, 0)).toBe('-');
+    });
+
+    it('formats as dash when called without parameters', () => {
+      expect(formatCollectionPercentage()).toBe('-');
+    });
+
+    it('formats as dash when interval is undefined', () => {
+      expect(formatCollectionPercentage(15.88)).toBe('-');
+    });
+
+    it('formats 100% collection percentage as 100.0% when interval is non-zero', () => {
+      expect(formatCollectionPercentage(100.0, 15)).toBe('100.0%');
+    });
+
+    it('formats 99.7% collection percentage as 99.7% when interval is non-zero', () => {
+      expect(formatCollectionPercentage(99.7, 15)).toBe('99.7%');
     });
   });
 

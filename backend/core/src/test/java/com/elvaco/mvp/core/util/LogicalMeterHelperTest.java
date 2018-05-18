@@ -366,7 +366,6 @@ public class LogicalMeterHelperTest {
     assertThat(collectionStats.actual).isEqualTo(1.0);
   }
 
-
   @Test
   public void getCollectionPercent_noneExpectedOneReceived() {
     ZonedDateTime now = ZonedDateTime.now();
@@ -385,7 +384,6 @@ public class LogicalMeterHelperTest {
     assertThat(collectionStats.expected).isEqualTo(0.0);
     assertThat(collectionStats.actual).isEqualTo(1.0);
   }
-
 
   private LogicalMeter newMeter(
     UUID meterId,

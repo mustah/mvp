@@ -19,8 +19,6 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterMapper {
 
-  private static final String NO_PERCENTAGE = "";
-
   private final MeterStatusLogMapper meterStatusLogMapper;
   private final GatewayMapper gatewayMapper;
   private final MeasurementMapper measurementMapper;
@@ -71,9 +69,9 @@ public class LogicalMeterMapper {
       .map(m -> m.address)
       .orElse(null);
 
-    meterDto.collectionStatus = logicalMeter.getCollectionPercentage()
-      .map(val -> String.valueOf(val * 100))
-      .orElse(NO_PERCENTAGE);
+    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage()
+      .map(val -> val * 100)
+      .orElse(null);
 
     meterDto.gateway = logicalMeter.gateways
       .stream()
