@@ -23,7 +23,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
-import {indicators} from '../reportModels';
+import {hardcodedIndicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 
 interface DispatchToProps {
@@ -38,6 +38,8 @@ const selectedTab: TabName = TabName.graph;
 
 const ReportComponent = ({selectedIndicatorTypes, toggleReportIndicatorWidget}: Props) => {
   const onChangeTab = () => void(0);
+  const indicators = hardcodedIndicators();
+
   return (
     <MvpPageContainer>
       <Row className="space-between">

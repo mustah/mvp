@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-14 09:56+0200\n"
+"POT-Creation-Date: 2018-05-18 10:54+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -143,6 +143,9 @@ msgstr "insamling"
 msgid "unknown"
 msgstr "okänd"
 
+msgid "no reliable position"
+msgstr "ingen tillförlitlig position"
+
 msgid "meter"
 msgstr "mätare"
 
@@ -160,9 +163,6 @@ msgstr "typ"
 
 msgid "status"
 msgstr "status"
-
-msgid "no reliable position"
-msgstr "ingen tillförlitlig position"
 
 msgid "alarm"
 msgstr "larm"
@@ -367,6 +367,24 @@ msgstr "välj mätare för att inkludera dem i grafen"
 msgid "graph"
 msgstr "graf"
 
+msgid "electricity"
+msgstr "el"
+
+msgid "cold water"
+msgstr "kallvatten"
+
+msgid "hot water"
+msgstr "varmvatten"
+
+msgid "district heating"
+msgstr "fjärrvärme"
+
+msgid "gas"
+msgstr "gas"
+
+msgid "inside temperature"
+msgstr "temp. inomhus"
+
 msgid "save as"
 msgstr "spara som"
 
@@ -391,11 +409,11 @@ msgstr "gatewaystatus"
 msgid "filter"
 msgstr "filtrera"
 
-msgid "no saved selections"
-msgstr "inga sparade urval"
-
 msgid "delete user selection"
 msgstr "ta bort urval"
+
+msgid "no saved selections"
+msgstr "inga sparade urval"
 
 msgid "saved selections"
 msgstr "sparade urval"

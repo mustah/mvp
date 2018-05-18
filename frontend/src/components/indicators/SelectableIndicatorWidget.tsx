@@ -24,9 +24,9 @@ interface IndicatorComponentType {
 const indicatorIconFor: IndicatorComponentType = {
   [Medium.collection]: IconCollection,
   [Medium.measurementQuality]: IconValidation,
-  [Medium.current]: IconCurrent,
+  [Medium.electricity]: IconCurrent,
   [Medium.coldWater]: IconColdWater,
-  [Medium.warmWater]: IconColdWater,
+  [Medium.hotWater]: IconColdWater,
   [Medium.districtHeating]: IconDistrictHeating,
   [Medium.gas]: IconGas,
   [Medium.temperatureInside]: IconTemperature,

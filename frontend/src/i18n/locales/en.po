@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-14 09:56+0200\n"
+"POT-Creation-Date: 2018-05-18 10:53+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -143,6 +143,9 @@ msgstr "collection"
 msgid "unknown"
 msgstr "unknown"
 
+msgid "no reliable position"
+msgstr "no reliable position"
+
 msgid "meter"
 msgstr "meter"
 
@@ -160,9 +163,6 @@ msgstr "type"
 
 msgid "status"
 msgstr "status"
-
-msgid "no reliable position"
-msgstr "no reliable position"
 
 msgid "alarm"
 msgstr "alarm"
@@ -367,6 +367,24 @@ msgstr "select meters to include in graph"
 msgid "graph"
 msgstr "graph"
 
+msgid "electricity"
+msgstr "electricity"
+
+msgid "cold water"
+msgstr "cold water"
+
+msgid "hot water"
+msgstr "hot water"
+
+msgid "district heating"
+msgstr "district heating"
+
+msgid "gas"
+msgstr "gas"
+
+msgid "inside temperature"
+msgstr "inside temperature"
+
 msgid "save as"
 msgstr "save as"
 
@@ -391,11 +409,11 @@ msgstr "gateway status"
 msgid "filter"
 msgstr "filter"
 
-msgid "no saved selections"
-msgstr "no saved selections"
-
 msgid "delete user selection"
 msgstr "delete selection"
+
+msgid "no saved selections"
+msgstr "no saved selections"
 
 msgid "saved selections"
 msgstr "saved selections"

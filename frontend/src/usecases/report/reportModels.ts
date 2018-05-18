@@ -1,5 +1,6 @@
 import {LegendPayload} from 'recharts';
 import {Medium} from '../../components/indicators/indicatorWidgetModels';
+import {firstUpperTranslated} from '../../services/translationService';
 import {Status, uuid} from '../../types/Types';
 
 export interface ReportState {
@@ -52,11 +53,10 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-// TODO[!must!] create this in redux later!
-export const indicators: Indicator[] = [
+export const hardcodedIndicators = (): Indicator[] => ([
   {
-    type: Medium.current,
-    title: 'El',
+    type: Medium.electricity,
+    title: firstUpperTranslated('electricity'),
     state: Status.info,
     value: 0,
     unit: 'kWh/m2',
@@ -64,15 +64,15 @@ export const indicators: Indicator[] = [
   },
   {
     type: Medium.coldWater,
-    title: 'Kallvatten',
+    title: firstUpperTranslated('cold water'),
     state: Status.info,
     value: 0,
     unit: 'l/m2',
     subtitle: '',
   },
   {
-    type: Medium.warmWater,
-    title: 'Varmvatten',
+    type: Medium.hotWater,
+    title: firstUpperTranslated('hot water'),
     state: Status.info,
     value: 0,
     unit: 'l/m2',
@@ -80,7 +80,7 @@ export const indicators: Indicator[] = [
   },
   {
     type: Medium.districtHeating,
-    title: 'Fjärrvärme',
+    title: firstUpperTranslated('district heating'),
     state: Status.info,
     value: 1.1,
     unit: 'kWh/m2',
@@ -88,7 +88,7 @@ export const indicators: Indicator[] = [
   },
   {
     type: Medium.gas,
-    title: 'Gas',
+    title: firstUpperTranslated('gas'),
     state: Status.info,
     value: 1.1,
     unit: 'kWh/m2',
@@ -96,10 +96,10 @@ export const indicators: Indicator[] = [
   },
   {
     type: Medium.temperatureInside,
-    title: 'Temp Inomhus',
+    title: firstUpperTranslated('inside temperature'),
     state: Status.info,
     value: 0,
     unit: '°C',
     subtitle: '',
   },
-];
+]);
