@@ -113,8 +113,8 @@ msgstr "nytt lösenord"
 msgid "password"
 msgstr "lösenord"
 
-msgid "of {{count}} metering point"
-msgstr "av {{count}} mätpunkt"
+msgid "of {{count}} measurement"
+msgstr "av {{count}} mätvärde"
 
 msgid "other"
 msgstr "övriga"
@@ -428,8 +428,8 @@ msgid "logout"
 msgstr "logga ut"
 
 msgctxt "°plural"
-msgid "of {{count}} metering point°"
-msgstr "av {{count}} mätpunkter"
+msgid "of {{count}} measurement°"
+msgstr "av {{count}} mätvärden"
 
 msgctxt "°plural"
 msgid "city°"
