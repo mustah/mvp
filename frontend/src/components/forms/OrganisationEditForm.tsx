@@ -22,14 +22,7 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
 
   constructor(props: OrganisationFormProps) {
     super(props);
-    if (props.organisation) {
-      this.state = {...props.organisation};
-    } else {
-      this.state = {
-        name: '',
-        slug: '',
-      };
-    }
+    this.state = props.organisation ? {...props.organisation} : {name: '', slug: ''};
   }
 
   componentWillReceiveProps({organisation}: OrganisationFormProps) {
@@ -38,15 +31,8 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
     }
   }
 
-  onChange = (event) => this.setState({[event.target.id]: event.target.value});
-
-  wrappedSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit(this.state);
-  }
-
-  // TODO: need check that slug can't contain whitespaces or other characters that aren't allowed in a url.
-  // Also need to be unique
+  // TODO: need check that slug can't contain whitespaces or other characters that aren't allowed
+  // in a url. Also need to be unique
   render() {
     const {name, slug} = this.state;
 
@@ -77,5 +63,12 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
         </Column>
       </form>
     );
+  }
+
+  onChange = (event) => this.setState({[event.target.id]: event.target.value});
+
+  wrappedSubmit = (event) => {
+    event.preventDefault();
+    this.props.onSubmit(this.state);
   }
 }

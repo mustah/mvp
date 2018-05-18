@@ -82,20 +82,19 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  dashboard: {record, isFetching},
-  userSelection: {userSelection},
-  domainModels: {meterMapMarkers},
-}: RootState): StateToProps => ({
-  dashboard: record,
-  parameters: getMeterParameters({
-    userSelection,
-    now: now(),
-  }),
-  meterMapMarkers: getDomainModel(meterMapMarkers),
-  isFetching: isFetching || meterMapMarkers.isFetching,
-  error: getError(meterMapMarkers),
-});
+const mapStateToProps =
+  ({
+    dashboard: {record, isFetching},
+    userSelection: {userSelection},
+    domainModels: {meterMapMarkers},
+  }: RootState): StateToProps =>
+    ({
+      dashboard: record,
+      parameters: getMeterParameters({userSelection, now: now()}),
+      meterMapMarkers: getDomainModel(meterMapMarkers),
+      isFetching: isFetching || meterMapMarkers.isFetching,
+      error: getError(meterMapMarkers),
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,

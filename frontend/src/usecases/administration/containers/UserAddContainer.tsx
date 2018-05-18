@@ -6,21 +6,29 @@ import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
+import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
-import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
+import {
+  clearOrganisationErrors,
+  fetchOrganisations,
+} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {addUser} from '../../../state/domain-models/user/userApiActions';
 import {Role} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {OnClick, Fetch} from '../../../types/Types';
+import {ErrorResponse, Fetch, OnClick} from '../../../types/Types';
 
 interface StateToProps {
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
   organisations: Organisation[];
   roles: Role[];
   languages: Language[];
@@ -29,6 +37,7 @@ interface StateToProps {
 interface DispatchToProps {
   addUser: OnClick;
   fetchOrganisations: Fetch;
+  clearError: OnClick;
 }
 
 type Props = DispatchToProps & StateToProps;
@@ -44,7 +53,7 @@ class UserAdd extends React.Component<Props> {
   }
 
   render() {
-    const {addUser, organisations, roles, languages} = this.props;
+    const {addUser, clearError, isFetching, error, organisations, roles, languages} = this.props;
     return (
       <PageComponent isSideMenuOpen={false}>
         <Row className="space-between">
@@ -54,15 +63,17 @@ class UserAdd extends React.Component<Props> {
         </Row>
 
         <Paper style={paperStyle}>
-          <WrapperIndent>
-            <UserEditForm
-              organisations={organisations}
-              onSubmit={addUser}
-              possibleRoles={roles}
-              isEditSelf={false}
-              languages={languages}
-            />
-          </WrapperIndent>
+          <Loader isFetching={isFetching} error={error} clearError={clearError}>
+            <WrapperIndent>
+              <UserEditForm
+                organisations={organisations}
+                onSubmit={addUser}
+                possibleRoles={roles}
+                isEditSelf={false}
+                languages={languages}
+              />
+            </WrapperIndent>
+          </Loader>
         </Paper>
       </PageComponent>
     );
@@ -73,11 +84,14 @@ const mapStateToProps = ({domainModels: {organisations}, auth: {user}}: RootStat
   organisations: getOrganisations(organisations),
   roles: getRoles(user!),
   languages: getLanguages(),
+  isFetching: organisations.isFetching,
+  error: getError(organisations),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addUser,
   fetchOrganisations,
+  clearError: clearOrganisationErrors,
 }, dispatch);
 
 export const UserAddContainer =
