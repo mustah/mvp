@@ -3,13 +3,13 @@ import {Status} from '../../types/Types';
 export const enum Medium {
   coldWater = 'coldWater',
   collection = 'collection',
-  current = 'current',
+  electricity = 'current',
   districtHeating = 'districtHeating',
   gas = 'gas',
   measurementQuality = 'measurementQuality',
   temperatureInside = 'temperatureInside',
   temperatureOutside = 'temperatureOutside',
-  warmWater = 'warmWater',
+  hotWater = 'warmWater',
 }
 
 export interface WidgetModel {

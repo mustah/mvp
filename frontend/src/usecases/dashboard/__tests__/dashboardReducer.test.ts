@@ -20,7 +20,7 @@ describe('dashboardReducer', () => {
         pending: 20,
       },
       {
-        type: Medium.current,
+        type: Medium.electricity,
         status: Status.ok,
         total: 3000,
         pending: 17,

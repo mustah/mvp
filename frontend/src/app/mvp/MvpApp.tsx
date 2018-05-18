@@ -32,30 +32,27 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu, isReportPage}: Props) => {
+const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu, isReportPage}: Props) => (
+  <Row className="MvpApp">
+    <MvpMainMenuContainer/>
 
-  return (
-    <Row className="MvpApp">
-      <MvpMainMenuContainer/>
+    <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
+      <SideMenuContainer>
+        <AppBar
+          className="AppTitle"
+          title={translate('metering')}
+          showMenuIconButton={false}
+        />
+        <SavedSelectionsContainer/>
+        {isReportPage && <SelectionTreeContainer/>}
+      </SideMenuContainer>
+    </Layout>
+    <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
 
-      <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
-        <SideMenuContainer>
-          <AppBar
-            className="AppTitle"
-            title={translate('metering')}
-            showMenuIconButton={false}
-          />
-          <SavedSelectionsContainer/>
-          {isReportPage && <SelectionTreeContainer/>}
-        </SideMenuContainer>
-      </Layout>
-      <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
-
-      <MvpPages/>
-      <MessageContainer/>
-    </Row>
-  );
-};
+    <MvpPages/>
+    <MessageContainer/>
+  </Row>
+);
 
 const mapStateToProps = ({routing, ui}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
