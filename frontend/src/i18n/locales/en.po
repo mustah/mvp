@@ -113,8 +113,8 @@ msgstr "new password"
 msgid "password"
 msgstr "password"
 
-msgid "of {{count}} metering point"
-msgstr "of {{count}} metering point"
+msgid "of {{count}} measurement"
+msgstr "of {{count}} measurement"
 
 msgid "other"
 msgstr "other"
@@ -428,8 +428,8 @@ msgid "logout"
 msgstr "logout"
 
 msgctxt "°plural"
-msgid "of {{count}} metering point°"
-msgstr "of {{count}} metering points"
+msgid "of {{count}} measurement°"
+msgstr "of {{count}} measurements"
 
 msgctxt "°plural"
 msgid "city°"
