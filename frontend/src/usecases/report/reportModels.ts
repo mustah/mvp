@@ -102,12 +102,4 @@ export const indicators: Indicator[] = [
     unit: '°C',
     subtitle: '',
   },
-  {
-    type: Medium.temperatureOutside,
-    title: 'Temp Utomhus',
-    state: Status.info,
-    value: 0,
-    unit: '°C',
-    subtitle: '',
-  },
 ];
