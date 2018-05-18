@@ -18,45 +18,42 @@ interface StateToProps {
 }
 
 const MvpMainMenu = ({pathname}: StateToProps) => (
-    <MainMenuWrapper>
-        <Column>
-          <Link to={routes.dashboard} className="link">
-            <MenuItem
-              name={translate('dashboard')}
-              isSelected={routes.dashboard === pathname || routes.home === pathname}
-              icon={<IconDashboard className="MenuItem-icon"/>}
-            />
-          </Link>
-          <Link to={routes.collection} className="link">
-            <MenuItem
-              name={translate('collection')}
-              isSelected={routes.collection === pathname}
-              icon={<IconCollection className="MenuItem-icon"/>}
-            />
-          </Link>
-          <Link to={routes.validation} className="link">
-            <MenuItem
-              name={translate('validation')}
-              isSelected={routes.validation === pathname}
-              icon={<IconValidation className="MenuItem-icon"/>}
-            />
-          </Link>
-          <Link to={routes.report} className="link">
-            <MenuItem
-              name={translate('report')}
-              isSelected={pathname.startsWith(routes.report) && !pathname.includes('selection')}
-              icon={<IconReport className="MenuItem-icon"/>}
-            />
-          </Link>
+  <MainMenuWrapper>
+    <Column>
+      <Link to={routes.dashboard} className="link">
+        <MenuItem
+          name={translate('dashboard')}
+          isSelected={routes.dashboard === pathname || routes.home === pathname}
+          icon={<IconDashboard className="MenuItem-icon"/>}
+        />
+      </Link>
+      <Link to={routes.collection} className="link">
+        <MenuItem
+          name={translate('collection')}
+          isSelected={routes.collection === pathname}
+          icon={<IconCollection className="MenuItem-icon"/>}
+        />
+      </Link>
+      <Link to={routes.validation} className="link">
+        <MenuItem
+          name={translate('validation')}
+          isSelected={routes.validation === pathname}
+          icon={<IconValidation className="MenuItem-icon"/>}
+        />
+      </Link>
+      <Link to={routes.report} className="link">
+        <MenuItem
+          name={translate('report')}
+          isSelected={pathname.startsWith(routes.report) && !pathname.includes('selection')}
+          icon={<IconReport className="MenuItem-icon"/>}
+        />
+      </Link>
+    </Column>
+  </MainMenuWrapper>
+);
 
-        </Column>
-    </MainMenuWrapper>
-  );
-
-const mapStateToProps = ({routing}: RootState): StateToProps => {
-  return {
-    pathname: getPathname(routing),
-  };
-};
+const mapStateToProps = ({routing}: RootState): StateToProps => ({
+  pathname: getPathname(routing),
+});
 
 export const MvpMainMenuContainer = connect<StateToProps>(mapStateToProps)(MvpMainMenu);

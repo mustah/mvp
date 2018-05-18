@@ -36,6 +36,8 @@ const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu, isReportPage}: Props) =
   <Row className="MvpApp">
     <MvpMainMenuContainer/>
 
+    <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
+
     <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
       <SideMenuContainer>
         <AppBar
@@ -47,9 +49,9 @@ const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu, isReportPage}: Props) =
         {isReportPage && <SelectionTreeContainer/>}
       </SideMenuContainer>
     </Layout>
-    <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
 
     <MvpPages/>
+
     <MessageContainer/>
   </Row>
 );

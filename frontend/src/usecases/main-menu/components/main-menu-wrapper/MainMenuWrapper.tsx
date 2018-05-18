@@ -8,16 +8,13 @@ interface Props {
   children?: Children;
 }
 
-export const MainMenuWrapper = ({children}: Props) => {
-
-  return (
-    <Column className="MainMenuWrapper">
-      <Column className="MenuItems space-between">
-        {children}
-      </Column>
-      <ColumnBottom className="flex-1">
-        <AppSwitchDropdownContainer/>
-      </ColumnBottom>
+export const MainMenuWrapper = ({children}: Props) => (
+  <Column className="MainMenuWrapper">
+    <Column className="MenuItems space-between">
+      {children}
     </Column>
-  );
-};
+    <ColumnBottom className="flex-1">
+      <AppSwitchDropdownContainer/>
+    </ColumnBottom>
+  </Column>
+);
