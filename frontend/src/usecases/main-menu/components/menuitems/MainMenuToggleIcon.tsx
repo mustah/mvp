@@ -18,8 +18,7 @@ const style: React.CSSProperties = {
   cursor: 'pointer',
 };
 
-export const MainMenuToggleIcon = (props: Props) => {
-  const {onClick, isSideMenuOpen} = props;
+export const MainMenuToggleIcon = ({onClick, isSideMenuOpen}: Props) => {
   const iconsProps: SvgIconProps = {
     style,
     onClick,
@@ -27,9 +26,13 @@ export const MainMenuToggleIcon = (props: Props) => {
     hoverColor: colors.blue,
   };
 
+  const renderArrow = isSideMenuOpen
+    ? (<NavigationChevronLeft {...iconsProps}/>)
+    : (<NavigationChevronRight {...iconsProps}/>);
+
   return (
     <RowRight className={classNames('MainMenuToggleIcon', {isSideMenuOpen})}>
-      {isSideMenuOpen ? (<NavigationChevronLeft {...iconsProps}/>) : (<NavigationChevronRight {...iconsProps}/>)}
+      {renderArrow}
     </RowRight>
   );
 };
