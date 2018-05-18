@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -189,6 +190,202 @@ public class LogicalMeterHelperTest {
       expected
     );
   }
+
+  @Test
+  public void getCollectionPercent_zeroExpectedQuantities() {
+    ZonedDateTime now = ZonedDateTime.now();
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      emptyList(),
+      now,
+      now,
+      0
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.actual).isEqualTo(0.0);
+    assertThat(collectionStats.expected).isEqualTo(0.0);
+  }
+
+  @Test
+  public void getCollectionPercent_zeroMeters() {
+    ZonedDateTime now = ZonedDateTime.now();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      emptyList(),
+      now,
+      now,
+      1
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.actual).isEqualTo(0.0);
+    assertThat(collectionStats.expected).isEqualTo(0.0);
+  }
+
+  @Test
+  public void getCollectionPercent_oneQuantityOneMeter_zeroCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder().readIntervalMinutes(1).build();
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      singletonList(physicalMeter),
+      now,
+      now.plusMinutes(1),
+      1
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
+    assertThat(collectionStats.actual).isEqualTo(0.0);
+  }
+
+  @Test
+  public void getCollectionPercent_oneQuantityOneMeter_allCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(1L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      singletonList(physicalMeter),
+      now,
+      now.plusMinutes(1),
+      1
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(1.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionPercent_oneQuantityOneMeter_halfCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(1L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      singletonList(physicalMeter),
+      now,
+      now.plusMinutes(2),
+      1
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.5);
+    assertThat(collectionStats.expected).isEqualTo(2.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionPercent_oneQuantityTwoMeters_allCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter firstMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(1L)
+      .build();
+
+    PhysicalMeter secondMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(1L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      asList(firstMeter, secondMeter),
+      now,
+      now.plusMinutes(1),
+      1
+    );
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(1.0);
+    assertThat(collectionStats.expected).isEqualTo(2.0);
+    assertThat(collectionStats.actual).isEqualTo(2.0);
+  }
+
+  @Test
+  public void getCollectionPercent_oneQuantityTwoMeters_halfCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter firstMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(1L)
+      .build();
+
+    PhysicalMeter secondMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(0L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      asList(firstMeter, secondMeter),
+      now,
+      now.plusMinutes(1),
+      1
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.5);
+    assertThat(collectionStats.expected).isEqualTo(2.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionPercent_twoQuantitiesOneMeter_allCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(2L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      singletonList(physicalMeter),
+      now,
+      now.plusMinutes(1),
+      2
+    );
+
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(1.0);
+    assertThat(collectionStats.actual).isEqualTo(2.0);
+    assertThat(collectionStats.expected).isEqualTo(2.0);
+  }
+
+  @Test
+  public void getCollectionPercent_twoQuantitiesOneMeter_halfCollected() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(1)
+      .measurementCount(1L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      singletonList(physicalMeter),
+      now,
+      now.plusMinutes(1),
+      2
+    );
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.5);
+    assertThat(collectionStats.expected).isEqualTo(2.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
+
+  @Test
+  public void getCollectionPercent_noneExpectedOneReceived() {
+    ZonedDateTime now = ZonedDateTime.now();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .readIntervalMinutes(0)
+      .measurementCount(1L)
+      .build();
+
+    CollectionStats collectionStats = LogicalMeterHelper.getCollectionPercent(
+      singletonList(physicalMeter),
+      now,
+      now.plusMinutes(1),
+      1
+    );
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.expected).isEqualTo(0.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
 
   private LogicalMeter newMeter(
     UUID meterId,

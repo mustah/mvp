@@ -46,18 +46,14 @@ public class DashboardUseCases {
       )
       .collect(toList());
 
-    double totalExpected = 0.0;
-    double totalActual = 0.0;
+    return sumCollectionStats(meterStats);
+  }
 
-    for (CollectionStats meterStat : meterStats) {
-      totalActual = totalActual + meterStat.actual;
-      totalExpected = totalExpected + meterStat.expected;
-    }
-
-    if (totalExpected > 0.0) {
-      return Optional.of(new CollectionStats(totalActual, totalExpected));
-    } else {
+  static Optional<CollectionStats> sumCollectionStats(List<CollectionStats> meterStats) {
+    CollectionStats sumStats = CollectionStats.asSumOf(meterStats);
+    if (sumStats.expected == 0.0) {
       return Optional.empty();
     }
+    return Optional.of(sumStats);
   }
 }
