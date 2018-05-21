@@ -18,14 +18,14 @@ import org.junit.Test;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class SelectionTreeMapperTest {
+public class SelectionTreeDtoMapperTest {
 
-  private SelectionTreeMapper selectionTreeMapper;
+  private SelectionTreeDtoMapper selectionTreeDtoMapper;
   private SelectionTree selectionTree;
 
   @Before
   public void setUp() {
-    selectionTreeMapper = new SelectionTreeMapper();
+    selectionTreeDtoMapper = new SelectionTreeDtoMapper();
     selectionTree = new SelectionTree();
   }
 
@@ -38,7 +38,7 @@ public class SelectionTreeMapperTest {
       "12345"
     );
 
-    selectionTreeMapper.addToDto(logicalMeter, selectionTree);
+    selectionTreeDtoMapper.addToDto(logicalMeter, selectionTree);
 
     assertThat(selectionTree.getCity("sweden,kungsbacka").name).isEqualTo("kungsbacka");
   }
@@ -52,7 +52,7 @@ public class SelectionTreeMapperTest {
       "12345"
     );
 
-    Stream.of(logicalMeter, logicalMeter).forEach((lm) -> selectionTreeMapper.addToDto(
+    Stream.of(logicalMeter, logicalMeter).forEach((lm) -> selectionTreeDtoMapper.addToDto(
       lm,
       selectionTree
     ));
@@ -73,7 +73,7 @@ public class SelectionTreeMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1245"),
       newLogicalMeter("finland", "kungsbacka", "kabelgatan 1", "1245")
     )
-      .forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+      .forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
     assertThat(selectionTree.getCities().size()).isEqualTo(2);
     assertThat(selectionTree.getCity("sweden,kungsbacka").getAddresses().size()).isEqualTo(1);
@@ -86,7 +86,7 @@ public class SelectionTreeMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1245"),
       newLogicalMeter("sweden", "gothenburg", "kabelgatan 1", "1245")
     )
-      .forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+      .forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
     assertThat(selectionTree.getCity("sweden,kungsbacka").getAddresses().size()).isEqualTo(1);
     assertThat(selectionTree.getCity("sweden,gothenburg").getAddresses().size()).isEqualTo(1);
@@ -100,7 +100,7 @@ public class SelectionTreeMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId, "1245"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", logicalMeterId, "1245")
     )
-      .forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+      .forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
     assertThat(selectionTree.getCity("sweden,kungsbacka")
                  .getAddress("kabelgatan 1")
@@ -122,7 +122,7 @@ public class SelectionTreeMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId1, "1245"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId2, "1245")
     )
-      .forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+      .forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
     assertThat(selectionTree.getCity("sweden,kungsbacka")
                  .getAddress("kabelgatan 1")
@@ -134,7 +134,7 @@ public class SelectionTreeMapperTest {
   public void logicalMeterWithNullLocationDefaultsToUnknownLocation() {
     LogicalMeter logicalMeter = newLogicalMeter(null, null, null, "1245");
 
-    selectionTreeMapper.addToDto(logicalMeter, selectionTree);
+    selectionTreeDtoMapper.addToDto(logicalMeter, selectionTree);
     assertThat(
       selectionTree
         .getCity("unknown,unknown")
@@ -148,9 +148,9 @@ public class SelectionTreeMapperTest {
     Stream.of(
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1245"),
       newLogicalMeter("sweden", "gothenburg", "kabelgatan 1", "1234")
-    ).forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+    ).forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
-    SelectionTreeDto selectionTreeDto = selectionTreeMapper.toDto(selectionTree);
+    SelectionTreeDto selectionTreeDto = selectionTreeDtoMapper.toDto(selectionTree);
 
     assertThat(selectionTreeDto.cities).containsOnly(
       new CityDto("sweden,gothenburg", "gothenburg"),
@@ -163,9 +163,9 @@ public class SelectionTreeMapperTest {
     Stream.of(
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1234"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "1234")
-    ).forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+    ).forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
-    SelectionTreeDto selectionTreeDto = selectionTreeMapper.toDto(selectionTree);
+    SelectionTreeDto selectionTreeDto = selectionTreeDtoMapper.toDto(selectionTree);
 
     assertThat(selectionTreeDto.cities.get(0).addresses).containsOnly(
       new AddressDto("kabelgatan 1"),
@@ -181,9 +181,9 @@ public class SelectionTreeMapperTest {
     Stream.of(
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId1, "1245"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId2, "1234")
-    ).forEach((lm) -> selectionTreeMapper.addToDto(lm, selectionTree));
+    ).forEach((lm) -> selectionTreeDtoMapper.addToDto(lm, selectionTree));
 
-    SelectionTreeDto selectionTreeDto = selectionTreeMapper.toDto(selectionTree);
+    SelectionTreeDto selectionTreeDto = selectionTreeDtoMapper.toDto(selectionTree);
 
     assertThat(selectionTreeDto.cities.get(0).addresses.get(0).meters).containsOnly(
       new MeterDto(logicalMeterId1, "1245"),

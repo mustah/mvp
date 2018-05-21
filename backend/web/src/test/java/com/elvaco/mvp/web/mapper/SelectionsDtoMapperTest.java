@@ -13,14 +13,14 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class SelectionsMapperTest {
+public class SelectionsDtoMapperTest {
 
-  private SelectionsMapper mapper;
+  private SelectionsDtoMapper mapper;
   private SelectionsDto selections;
 
   @Before
   public void setUp() {
-    mapper = new SelectionsMapper();
+    mapper = new SelectionsDtoMapper();
     selections = new SelectionsDto();
   }
 

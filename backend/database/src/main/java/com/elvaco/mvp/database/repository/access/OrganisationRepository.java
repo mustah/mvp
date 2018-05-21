@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
+import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
@@ -22,20 +22,20 @@ public class OrganisationRepository implements Organisations {
   public List<Organisation> findAll() {
     return organisationJpaRepository.findAll()
       .stream()
-      .map(OrganisationMapper::toDomainModel)
+      .map(OrganisationEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Optional<Organisation> findById(UUID id) {
     return Optional.ofNullable(organisationJpaRepository.findOne(id))
-      .map(OrganisationMapper::toDomainModel);
+      .map(OrganisationEntityMapper::toDomainModel);
   }
 
   @Override
   public Organisation save(Organisation organisation) {
-    OrganisationEntity entity = OrganisationMapper.toEntity(organisation);
-    return OrganisationMapper.toDomainModel(organisationJpaRepository.save(entity));
+    OrganisationEntity entity = OrganisationEntityMapper.toEntity(organisation);
+    return OrganisationEntityMapper.toDomainModel(organisationJpaRepository.save(entity));
   }
 
   @Override
@@ -46,12 +46,12 @@ public class OrganisationRepository implements Organisations {
   @Override
   public Optional<Organisation> findBySlug(String slug) {
     return organisationJpaRepository.findBySlug(slug)
-      .map(OrganisationMapper::toDomainModel);
+      .map(OrganisationEntityMapper::toDomainModel);
   }
 
   @Override
   public Optional<Organisation> findByExternalId(String externalId) {
     return organisationJpaRepository.findByExternalId(externalId)
-      .map(OrganisationMapper::toDomainModel);
+      .map(OrganisationEntityMapper::toDomainModel);
   }
 }

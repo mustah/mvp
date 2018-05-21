@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
-public class GatewayMapper {
+public class GatewayEntityMapper {
 
   static Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
     return new Gateway(
@@ -29,7 +29,7 @@ public class GatewayMapper {
       entity.serial,
       entity.productModel,
       emptyList(),
-      entity.statusLogs.stream().map(GatewayStatusLogMapper::toDomainModel).collect(toList())
+      entity.statusLogs.stream().map(GatewayStatusLogEntityMapper::toDomainModel).collect(toList())
     );
   }
 
@@ -39,7 +39,7 @@ public class GatewayMapper {
       domainModel.organisationId,
       domainModel.serial,
       domainModel.productModel,
-      domainModel.statusLogs.stream().map(GatewayStatusLogMapper::toEntity).collect(toSet())
+      domainModel.statusLogs.stream().map(GatewayStatusLogEntityMapper::toEntity).collect(toSet())
     );
   }
 }

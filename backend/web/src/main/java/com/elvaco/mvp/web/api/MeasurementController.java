@@ -24,7 +24,7 @@ import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
-import com.elvaco.mvp.web.mapper.MeasurementMapper;
+import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,23 +41,23 @@ public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
-  private final MeasurementMapper measurementMapper;
+  private final MeasurementDtoMapper measurementDtoMapper;
 
   @Autowired
   MeasurementController(
     MeasurementUseCases measurementUseCases,
     LogicalMeterUseCases logicalMeterUseCases,
-    MeasurementMapper measurementMapper
+    MeasurementDtoMapper measurementDtoMapper
   ) {
     this.measurementUseCases = measurementUseCases;
     this.logicalMeterUseCases = logicalMeterUseCases;
-    this.measurementMapper = measurementMapper;
+    this.measurementDtoMapper = measurementDtoMapper;
   }
 
   @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
     return measurementUseCases.findById(id)
-      .map(measurementMapper::toDto)
+      .map(measurementDtoMapper::toDto)
       .orElseThrow(() -> new MeasurementNotFound(id));
   }
 
@@ -107,7 +107,7 @@ public class MeasurementController {
       )).collect(toList()));
     }
 
-    return measurementMapper.toSeries(foundMeasurements);
+    return measurementDtoMapper.toSeries(foundMeasurements);
   }
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -165,7 +165,7 @@ public class MeasurementController {
                                    )).collect(toList()));
       }
     }
-    return measurementMapper.toSeries(foundMeasurements);
+    return measurementDtoMapper.toSeries(foundMeasurements);
   }
 
   private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {

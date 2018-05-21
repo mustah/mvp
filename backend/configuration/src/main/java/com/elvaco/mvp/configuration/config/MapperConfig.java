@@ -1,11 +1,11 @@
 package com.elvaco.mvp.configuration.config;
 
-import com.elvaco.mvp.web.mapper.GatewayMapper;
-import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
-import com.elvaco.mvp.web.mapper.MeasurementMapper;
-import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
-import com.elvaco.mvp.web.mapper.SelectionTreeMapper;
-import com.elvaco.mvp.web.mapper.SelectionsMapper;
+import com.elvaco.mvp.web.mapper.GatewayDtoMapper;
+import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
+import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
+import com.elvaco.mvp.web.mapper.MeterStatusLogDtoMapper;
+import com.elvaco.mvp.web.mapper.SelectionTreeDtoMapper;
+import com.elvaco.mvp.web.mapper.SelectionsDtoMapper;
 import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,37 +14,37 @@ import org.springframework.context.annotation.Configuration;
 class MapperConfig {
 
   @Bean
-  LogicalMeterMapper logicalMeterMapper() {
-    return new LogicalMeterMapper(
-      new MeterStatusLogMapper(),
-      new GatewayMapper(),
-      new MeasurementMapper()
+  LogicalMeterDtoMapper logicalMeterMapper() {
+    return new LogicalMeterDtoMapper(
+      new MeterStatusLogDtoMapper(),
+      new GatewayDtoMapper(),
+      new MeasurementDtoMapper()
     );
   }
 
   @Bean
-  MeterStatusLogMapper meterStatusLogMapper() {
-    return new MeterStatusLogMapper();
+  MeterStatusLogDtoMapper meterStatusLogMapper() {
+    return new MeterStatusLogDtoMapper();
   }
 
   @Bean
-  GatewayMapper gatewayMapper() {
-    return new GatewayMapper();
+  GatewayDtoMapper gatewayMapper() {
+    return new GatewayDtoMapper();
   }
 
   @Bean
-  MeasurementMapper measurementMapper() {
-    return new MeasurementMapper();
+  MeasurementDtoMapper measurementMapper() {
+    return new MeasurementDtoMapper();
   }
 
   @Bean
-  SelectionsMapper selectionsMapper() {
-    return new SelectionsMapper();
+  SelectionsDtoMapper selectionsMapper() {
+    return new SelectionsDtoMapper();
   }
 
   @Bean
-  SelectionTreeMapper selectionTreeMapper() {
-    return new SelectionTreeMapper();
+  SelectionTreeDtoMapper selectionTreeMapper() {
+    return new SelectionTreeDtoMapper();
   }
 
   @Bean

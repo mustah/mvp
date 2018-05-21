@@ -2,10 +2,10 @@ package com.elvaco.mvp.web.dto;
 
 import java.util.List;
 
-import static com.elvaco.mvp.web.mapper.SelectionsMapper.GATEWAY_STATUSES;
-import static com.elvaco.mvp.web.mapper.SelectionsMapper.MEDIA;
-import static com.elvaco.mvp.web.mapper.SelectionsMapper.METER_ALARMS;
-import static com.elvaco.mvp.web.mapper.SelectionsMapper.METER_STATUSES;
+import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.GATEWAY_STATUSES;
+import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.MEDIA;
+import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.METER_ALARMS;
+import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.METER_STATUSES;
 
 public class SelectionsDto {
 

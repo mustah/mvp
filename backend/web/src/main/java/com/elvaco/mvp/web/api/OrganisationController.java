@@ -7,7 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
-import com.elvaco.mvp.web.mapper.OrganisationMapper;
+import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static com.elvaco.mvp.web.mapper.OrganisationMapper.toDomainModel;
-import static com.elvaco.mvp.web.mapper.OrganisationMapper.toDto;
+import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDomainModel;
+import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDto;
 import static java.util.stream.Collectors.toList;
 
 @AllArgsConstructor
@@ -32,14 +32,14 @@ public class OrganisationController {
   public List<OrganisationDto> allOrganisations() {
     return organisationUseCases.findAll()
       .stream()
-      .map(OrganisationMapper::toDto)
+      .map(OrganisationDtoMapper::toDto)
       .collect(toList());
   }
 
   @GetMapping("{id}")
   public OrganisationDto organisationById(@PathVariable UUID id) {
     return organisationUseCases.findById(id)
-      .map(OrganisationMapper::toDto)
+      .map(OrganisationDtoMapper::toDto)
       .orElseThrow(() -> new OrganisationNotFound(id));
   }
 

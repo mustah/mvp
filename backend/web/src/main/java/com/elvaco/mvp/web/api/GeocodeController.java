@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static com.elvaco.mvp.web.mapper.LocationMapper.toLocationWithId;
+import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
 
 @Slf4j
 @RestApi("/api/v1/geocodes")

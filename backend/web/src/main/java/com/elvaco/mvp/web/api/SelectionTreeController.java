@@ -7,7 +7,7 @@ import com.elvaco.mvp.core.domainmodels.SelectionTree;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
-import com.elvaco.mvp.web.mapper.SelectionTreeMapper;
+import com.elvaco.mvp.web.mapper.SelectionTreeDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SelectionTreeController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
-  private final SelectionTreeMapper selectionTreeMapper;
+  private final SelectionTreeDtoMapper selectionTreeDtoMapper;
 
   @Autowired
   public SelectionTreeController(
     LogicalMeterUseCases logicalMeterUseCases,
-    SelectionTreeMapper selectionTreeMapper
+    SelectionTreeDtoMapper selectionTreeDtoMapper
   ) {
     this.logicalMeterUseCases = logicalMeterUseCases;
-    this.selectionTreeMapper = selectionTreeMapper;
+    this.selectionTreeDtoMapper = selectionTreeDtoMapper;
   }
 
   @GetMapping
@@ -39,11 +39,11 @@ public class SelectionTreeController {
       .setAll(pathVars);
     SelectionTree selectionTree = new SelectionTree();
     logicalMeterUseCases.findAll(parameters)
-      .forEach((logicalMeter -> selectionTreeMapper.addToDto(
+      .forEach((logicalMeter -> selectionTreeDtoMapper.addToDto(
         logicalMeter,
         selectionTree
       )));
 
-    return selectionTreeMapper.toDto(selectionTree);
+    return selectionTreeDtoMapper.toDto(selectionTree);
   }
 }

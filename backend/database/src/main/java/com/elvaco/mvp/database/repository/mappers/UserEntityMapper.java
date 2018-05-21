@@ -12,7 +12,7 @@ import lombok.experimental.UtilityClass;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
-public class UserMapper {
+public class UserEntityMapper {
 
   public static User toDomainModel(UserEntity userEntity) {
     return new User(
@@ -21,7 +21,7 @@ public class UserMapper {
       userEntity.email,
       userEntity.password,
       userEntity.language,
-      OrganisationMapper.toDomainModel(userEntity.organisation),
+      OrganisationEntityMapper.toDomainModel(userEntity.organisation),
       rolesOf(userEntity.roles)
     );
   }
@@ -33,7 +33,7 @@ public class UserMapper {
       user.email,
       user.password,
       user.language,
-      OrganisationMapper.toEntity(user.organisation),
+      OrganisationEntityMapper.toEntity(user.organisation),
       rolesOf(user.roles)
     );
   }

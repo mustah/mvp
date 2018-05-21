@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
-public class PhysicalMeterMapper {
+public class PhysicalMeterEntityMapper {
 
   public static PhysicalMeter toDomainModel(PhysicalMeterEntity entity) {
     return toDomainModel(entity, null);
@@ -32,7 +32,7 @@ public class PhysicalMeterMapper {
   ) {
     return new PhysicalMeter(
       entity.id,
-      OrganisationMapper.toDomainModel(entity.organisation),
+      OrganisationEntityMapper.toDomainModel(entity.organisation),
       entity.address,
       entity.externalId,
       entity.medium,
@@ -40,21 +40,21 @@ public class PhysicalMeterMapper {
       entity.logicalMeterId,
       entity.readIntervalMinutes,
       measurementCount,
-      statuses.stream().map(MeterStatusLogMapper::toDomainModel).collect(toList())
+      statuses.stream().map(MeterStatusLogEntityMapper::toDomainModel).collect(toList())
     );
   }
 
   public static PhysicalMeterEntity toEntity(PhysicalMeter domainModel) {
     return new PhysicalMeterEntity(
       domainModel.id,
-      OrganisationMapper.toEntity(domainModel.organisation),
+      OrganisationEntityMapper.toEntity(domainModel.organisation),
       domainModel.address,
       domainModel.externalId,
       domainModel.medium,
       domainModel.manufacturer,
       domainModel.logicalMeterId,
       domainModel.readIntervalMinutes,
-      domainModel.statuses.stream().map(MeterStatusLogMapper::toEntity).collect(toSet())
+      domainModel.statuses.stream().map(MeterStatusLogEntityMapper::toEntity).collect(toSet())
     );
   }
 }

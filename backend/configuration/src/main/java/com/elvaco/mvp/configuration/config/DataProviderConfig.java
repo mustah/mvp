@@ -41,7 +41,7 @@ import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +91,7 @@ class DataProviderConfig {
       physicalMeterJpaRepository,
       physicalMeterStatusLogJpaRepository,
       measurementJpaRepository,
-      new LogicalMeterSortingMapper()
+      new LogicalMeterSortingEntityMapper()
     );
   }
 

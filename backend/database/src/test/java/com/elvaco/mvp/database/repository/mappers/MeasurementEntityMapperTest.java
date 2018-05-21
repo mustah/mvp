@@ -10,10 +10,10 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.database.repository.mappers.MeasurementMapper.toDomainModel;
+import static com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper.toDomainModel;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeasurementMapperTest {
+public class MeasurementEntityMapperTest {
 
   @Test
   public void mapping() {
@@ -33,7 +33,7 @@ public class MeasurementMapperTest {
       )
       .build();
 
-    MeasurementEntity entity = MeasurementMapper.toEntity(measurement);
+    MeasurementEntity entity = MeasurementEntityMapper.toEntity(measurement);
     assertThat(entity.quantity).isEqualTo("Volume");
     assertThat(entity.value).isEqualTo(MeasurementUnit.from("2.0 m³"));
     assertThat(toDomainModel(entity)).isEqualTo(measurement);

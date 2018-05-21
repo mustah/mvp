@@ -16,7 +16,7 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
+import com.elvaco.mvp.database.repository.mappers.GatewayEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 import com.querydsl.core.types.Predicate;
@@ -73,8 +73,8 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public Gateway save(Gateway gateway) {
-    GatewayEntity entity = repository.save(GatewayMapper.toEntity(gateway));
-    return GatewayMapper.toDomainModel(entity);
+    GatewayEntity entity = repository.save(GatewayEntityMapper.toEntity(gateway));
+    return GatewayEntityMapper.toDomainModel(entity);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class GatewayRepository implements Gateways {
       organisationId,
       productModel,
       serial
-    ).map(GatewayMapper::toDomainModel);
+    ).map(GatewayEntityMapper::toDomainModel);
   }
 
   @Override
@@ -91,7 +91,7 @@ public class GatewayRepository implements Gateways {
     return repository.findByOrganisationIdAndSerial(
       organisationId,
       serial
-    ).map(GatewayMapper::toDomainModel);
+    ).map(GatewayEntityMapper::toDomainModel);
   }
 
   @Override

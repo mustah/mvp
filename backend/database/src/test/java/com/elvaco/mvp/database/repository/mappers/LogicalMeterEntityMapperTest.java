@@ -27,7 +27,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LogicalMeterMapperTest {
+public class LogicalMeterEntityMapperTest {
 
   @Test
   public void mapsPhysicalMeters() {
@@ -47,10 +47,10 @@ public class LogicalMeterMapperTest {
         .build())
     );
 
-    LogicalMeterEntity logicalMeterEntity = LogicalMeterMapper.toEntity(logicalMeter);
+    LogicalMeterEntity logicalMeterEntity = LogicalMeterEntityMapper.toEntity(logicalMeter);
 
     assertThat(logicalMeterEntity.physicalMeters).hasSize(1);
-    assertThat(LogicalMeterMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
+    assertThat(LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class LogicalMeterMapperTest {
     );
     logicalMeterEntity.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
-    LogicalMeter logicalMeter = LogicalMeterMapper.toDomainModel(logicalMeterEntity);
+    LogicalMeter logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
     Location expectedLocation = new LocationBuilder()
       .latitude(3.1)
@@ -118,7 +118,7 @@ public class LogicalMeterMapperTest {
         newMeterDefinitionEntity("Energy", "kWh", "My energy meter")
       );
 
-    LogicalMeter logicalMeter = LogicalMeterMapper.toDomainModel(logicalMeterEntity);
+    LogicalMeter logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
@@ -157,7 +157,7 @@ public class LogicalMeterMapperTest {
     );
     logicalMeterEntityExpected.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
-    LogicalMeterEntity logicalMeterEntity = LogicalMeterMapper.toEntity(
+    LogicalMeterEntity logicalMeterEntity = LogicalMeterEntityMapper.toEntity(
       new LogicalMeter(
         meterId,
         "an-external-id",

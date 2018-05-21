@@ -18,12 +18,12 @@ import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserMapperTest {
+public class UserEntityMapperTest {
 
   @Test
   public void mapsUserEntityWithMoreThanOneRole() {
     UserEntity userEntity = createUserEntity();
-    User user = UserMapper.toDomainModel(userEntity);
+    User user = UserEntityMapper.toDomainModel(userEntity);
 
     assertThat(user.getId()).isEqualTo(userEntity.getId());
     assertThat(user.roles).containsExactly(USER, SUPER_ADMIN);
@@ -31,7 +31,7 @@ public class UserMapperTest {
 
   @Test
   public void mappingUserDtoToEntityShouldHavePassword() {
-    UserEntity userEntity = UserMapper.toEntity(createUser());
+    UserEntity userEntity = UserEntityMapper.toEntity(createUser());
 
     assertThat(userEntity.password).isEqualTo("letmein");
   }
@@ -40,7 +40,7 @@ public class UserMapperTest {
   public void mapUserDtoToEntity() {
     User user = createUser();
 
-    UserEntity userEntity = UserMapper.toEntity(user);
+    UserEntity userEntity = UserEntityMapper.toEntity(user);
 
     assertThat(userEntity).isEqualTo(new UserEntity(
       user.id,

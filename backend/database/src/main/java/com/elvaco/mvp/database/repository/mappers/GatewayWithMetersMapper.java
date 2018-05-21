@@ -30,7 +30,7 @@ public class GatewayWithMetersMapper {
       toLogicalMeters(entity.meters),
       statusLogEntityMap.getOrDefault(entity.id, emptyList())
         .stream()
-        .map(GatewayStatusLogMapper::toDomainModel)
+        .map(GatewayStatusLogEntityMapper::toDomainModel)
         .collect(toList())
     );
   }
@@ -42,14 +42,14 @@ public class GatewayWithMetersMapper {
       entity.serial,
       entity.productModel,
       toLogicalMeters(entity.meters),
-      entity.statusLogs.stream().map(GatewayStatusLogMapper::toDomainModel).collect(toList())
+      entity.statusLogs.stream().map(GatewayStatusLogEntityMapper::toDomainModel).collect(toList())
     );
   }
 
   private static List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {
     return meters
       .stream()
-      .map(LogicalMeterMapper::toDomainModel)
+      .map(LogicalMeterEntityMapper::toDomainModel)
       .collect(toList());
   }
 }

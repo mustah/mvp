@@ -30,16 +30,16 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LogicalMeterMapperTest {
+public class LogicalMeterDtoMapperTest {
 
-  private LogicalMeterMapper mapper;
+  private LogicalMeterDtoMapper mapper;
 
   @Before
   public void setUp() {
-    mapper = new LogicalMeterMapper(
-      new MeterStatusLogMapper(),
-      new GatewayMapper(),
-      new MeasurementMapper()
+    mapper = new LogicalMeterDtoMapper(
+      new MeterStatusLogDtoMapper(),
+      new GatewayDtoMapper(),
+      new MeasurementDtoMapper()
     );
   }
 

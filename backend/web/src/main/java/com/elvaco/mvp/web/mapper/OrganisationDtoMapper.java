@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
 import static java.util.UUID.randomUUID;
 
 @UtilityClass
-public class OrganisationMapper {
+public class OrganisationDtoMapper {
 
   public static OrganisationDto toDto(Organisation organisation) {
     return new OrganisationDto(organisation.id, organisation.name, organisation.slug);

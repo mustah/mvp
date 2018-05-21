@@ -13,7 +13,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
-public class SelectionsMapper {
+public class SelectionsDtoMapper {
 
   public static final List<IdNamedDto> GATEWAY_STATUSES = unmodifiableList(asList(
     new IdNamedDto("ok"),

@@ -12,7 +12,7 @@ import static com.elvaco.mvp.core.domainmodels.SelectionTree.City;
 import static com.elvaco.mvp.core.domainmodels.SelectionTree.Meter;
 import static java.util.stream.Collectors.toList;
 
-public class SelectionTreeMapper {
+public class SelectionTreeDtoMapper {
 
   public void addToDto(LogicalMeter logicalMeter, SelectionTree selectionTree) {
     selectionTree.addToSelectionTree(logicalMeter);
@@ -21,20 +21,20 @@ public class SelectionTreeMapper {
   public SelectionTreeDto toDto(SelectionTree selectionTree) {
     return new SelectionTreeDto(selectionTree.getCities()
                                   .stream()
-                                  .map(SelectionTreeMapper::toCityDto)
+                                  .map(SelectionTreeDtoMapper::toCityDto)
                                   .collect(toList()));
   }
 
   private static CityDto toCityDto(City city) {
     return new CityDto(city.id, city.name, city.getAddresses()
       .stream()
-      .map(SelectionTreeMapper::toAddressDto)
+      .map(SelectionTreeDtoMapper::toAddressDto)
       .collect(toList()));
   }
 
   private static AddressDto toAddressDto(Address address) {
     return new AddressDto(address.name, address.getMeters().stream()
-      .map(SelectionTreeMapper::toMeterDto)
+      .map(SelectionTreeDtoMapper::toMeterDto)
       .collect(toList()));
   }
 

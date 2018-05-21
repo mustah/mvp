@@ -6,7 +6,7 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class MeasurementMapper {
+public class MeasurementEntityMapper {
 
   public static Measurement toDomainModel(MeasurementEntity entity) {
     return new Measurement(
@@ -15,7 +15,7 @@ public class MeasurementMapper {
       entity.quantity,
       entity.value.getValue(),
       entity.value.getUnit(),
-      PhysicalMeterMapper.toDomainModel(entity.physicalMeter)
+      PhysicalMeterEntityMapper.toDomainModel(entity.physicalMeter)
     );
   }
 
@@ -25,7 +25,7 @@ public class MeasurementMapper {
       domainModel.created,
       domainModel.quantity,
       new MeasurementUnit(domainModel.unit, domainModel.value),
-      PhysicalMeterMapper.toEntity(domainModel.physicalMeter)
+      PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
     );
   }
 }

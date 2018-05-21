@@ -5,7 +5,7 @@ import com.elvaco.mvp.database.entity.setting.SettingEntity;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class SettingMapper {
+public class SettingEntityMapper {
 
   public static Setting toDomainModel(SettingEntity entity) {
     return new Setting(entity.id, entity.name, entity.value);

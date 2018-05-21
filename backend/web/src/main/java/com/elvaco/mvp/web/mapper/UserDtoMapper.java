@@ -12,7 +12,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
-public class UserMapper {
+public class UserDtoMapper {
 
   public static UserDto toDto(User user) {
     return new UserDto(
@@ -20,7 +20,7 @@ public class UserMapper {
       user.name,
       user.email,
       user.language,
-      OrganisationMapper.toDto(user.organisation),
+      OrganisationDtoMapper.toDto(user.organisation),
       toRoles(user.roles)
     );
   }
@@ -32,7 +32,7 @@ public class UserMapper {
       userDto.email,
       null,
       userDto.language,
-      OrganisationMapper.toDomainModel(userDto.organisation),
+      OrganisationDtoMapper.toDomainModel(userDto.organisation),
       rolesFrom(userDto.roles)
     );
   }
@@ -44,7 +44,7 @@ public class UserMapper {
       userDto.email,
       userDto.password,
       userDto.language,
-      OrganisationMapper.toDomainModel(userDto.organisation),
+      OrganisationDtoMapper.toDomainModel(userDto.organisation),
       rolesFrom(userDto.roles)
     );
   }

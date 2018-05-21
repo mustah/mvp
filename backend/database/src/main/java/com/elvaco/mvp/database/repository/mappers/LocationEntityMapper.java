@@ -14,7 +14,7 @@ import lombok.experimental.UtilityClass;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 
 @UtilityClass
-public class LocationMapper {
+public class LocationEntityMapper {
 
   public static Location toDomainModel(LocationEntity entity) {
     return entity != null

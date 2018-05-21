@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
+import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 
 public class IntegrationTestFixtureContext {
 
@@ -42,11 +42,11 @@ public class IntegrationTestFixtureContext {
   }
 
   public Organisation organisation() {
-    return OrganisationMapper.toDomainModel(organisationEntity);
+    return OrganisationEntityMapper.toDomainModel(organisationEntity);
   }
 
   public Organisation organisation2() {
-    return OrganisationMapper.toDomainModel(organisationEntity2);
+    return OrganisationEntityMapper.toDomainModel(organisationEntity2);
   }
 
   public UUID getOrganisationId() {

@@ -19,13 +19,13 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeasurementMapperTest {
+public class MeasurementDtoMapperTest {
 
-  private MeasurementMapper mapper;
+  private MeasurementDtoMapper mapper;
 
   @Before
   public void setUp() {
-    mapper = new MeasurementMapper();
+    mapper = new MeasurementDtoMapper();
   }
 
   @Test

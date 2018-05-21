@@ -10,14 +10,14 @@ import lombok.experimental.UtilityClass;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
-public class MeterDefinitionMapper {
+public class MeterDefinitionEntityMapper {
 
   public static MeterDefinition toDomainModel(MeterDefinitionEntity entity) {
     return new MeterDefinition(
       entity.type,
       entity.medium,
       entity.quantities.stream()
-        .map(MeterDefinitionMapper::toQuantity)
+        .map(MeterDefinitionEntityMapper::toQuantity)
         .collect(toSet()),
       entity.systemOwned
     );
@@ -28,7 +28,7 @@ public class MeterDefinitionMapper {
       domainModel.type,
       domainModel.quantities
         .stream()
-        .map(MeterDefinitionMapper::toQuantityEntity)
+        .map(MeterDefinitionEntityMapper::toQuantityEntity)
         .collect(toSet()),
       domainModel.medium,
       domainModel.systemOwned

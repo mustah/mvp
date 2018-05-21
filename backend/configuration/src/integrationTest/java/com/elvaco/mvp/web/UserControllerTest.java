@@ -16,8 +16,8 @@ import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
-import com.elvaco.mvp.web.mapper.OrganisationMapper;
-import com.elvaco.mvp.web.mapper.UserMapper;
+import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
+import com.elvaco.mvp.web.mapper.UserDtoMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -138,7 +138,7 @@ public class UserControllerTest extends IntegrationTest {
         .asUser()
         .build()
     );
-    UserDto userDto = UserMapper.toDto(user);
+    UserDto userDto = UserDtoMapper.toDto(user);
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
 
@@ -360,7 +360,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "secret stuff";
     user.language = Language.en;
-    user.organisation = OrganisationMapper.toDto(context().organisation());
+    user.organisation = OrganisationDtoMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
@@ -371,7 +371,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = password;
     user.language = Language.en;
-    user.organisation = OrganisationMapper.toDto(context().organisation());
+    user.organisation = OrganisationDtoMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role);
     return user;
   }
@@ -382,7 +382,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "i am batman";
     user.language = Language.en;
-    user.organisation = OrganisationMapper.toDto(organisation);
+    user.organisation = OrganisationDtoMapper.toDto(organisation);
     user.roles = singletonList(USER.role);
     return user;
   }

@@ -13,7 +13,7 @@ import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
-import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
+import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -34,15 +34,15 @@ public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final MeteringRequestPublisher meteringRequestPublisher;
-  private final LogicalMeterMapper logicalMeterMapper;
+  private final LogicalMeterDtoMapper logicalMeterDtoMapper;
 
   @Autowired
   LogicalMeterController(
-    LogicalMeterMapper logicalMeterMapper,
+    LogicalMeterDtoMapper logicalMeterDtoMapper,
     LogicalMeterUseCases logicalMeterUseCases,
     MeteringRequestPublisher meteringRequestPublisher
   ) {
-    this.logicalMeterMapper = logicalMeterMapper;
+    this.logicalMeterDtoMapper = logicalMeterDtoMapper;
     this.logicalMeterUseCases = logicalMeterUseCases;
     this.meteringRequestPublisher = meteringRequestPublisher;
   }
@@ -50,7 +50,7 @@ public class LogicalMeterController {
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(@PathVariable UUID id) {
     return logicalMeterUseCases.findByIdWithMeasurements(id)
-      .map(logicalMeterMapper::toDto)
+      .map(logicalMeterDtoMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
@@ -67,7 +67,7 @@ public class LogicalMeterController {
   public List<MapMarkerDto> mapMarkers(@RequestParam MultiValueMap<String, String> requestParams) {
     return logicalMeterUseCases.findAll(requestParametersOf(requestParams))
       .stream()
-      .map(logicalMeterMapper::toMapMarkerDto)
+      .map(logicalMeterDtoMapper::toMapMarkerDto)
       .collect(toList());
   }
 
@@ -82,12 +82,12 @@ public class LogicalMeterController {
     Page<LogicalMeter> page = logicalMeterUseCases.findAllWithMeasurements(parameters, adapter);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(logicalMeterMapper::toDto);
+      .map(logicalMeterDtoMapper::toDto);
   }
 
   @DeleteMapping("{id}")
   public LogicalMeterDto deleteMeter(@PathVariable UUID id) {
-    return logicalMeterMapper.toDto(
+    return logicalMeterDtoMapper.toDto(
       logicalMeterUseCases.deleteById(id)
         .orElseThrow(() -> new MeterNotFound(id))
     );

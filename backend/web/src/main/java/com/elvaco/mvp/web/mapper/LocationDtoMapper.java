@@ -17,7 +17,7 @@ import lombok.experimental.UtilityClass;
 import static java.util.Objects.nonNull;
 
 @UtilityClass
-public class LocationMapper {
+public class LocationDtoMapper {
 
   static final IdNamedDto UNKNOWN_LOCATION = new IdNamedDto("unknown");
 
