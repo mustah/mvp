@@ -134,7 +134,6 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
   {
     id,
     facility: '1',
-    alarm: '1',
     flags: [],
     flagged: false,
     medium: 'asdf',
@@ -160,7 +159,6 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
 export interface MeterDto extends Identifiable, LocationHolder {
   status: Status;
   facility: uuid;
-  alarm: string;
   flags: Flag[];
   flagged: boolean;
   statusChangelog: MeterStatusChangelog[];

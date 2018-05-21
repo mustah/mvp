@@ -13,9 +13,6 @@ interface Props {
 }
 
 export const MeterDetailsInfo = ({meter}: Props) => {
-  const renderAlarm = () => meter.alarm
-    ? <Info label={translate('alarm')} value={meter.alarm}/>
-    : null;
 
   const renderReadInterval = () => {
     if (meter.readIntervalMinutes === 0 || meter.readIntervalMinutes === undefined) {
@@ -62,7 +59,6 @@ export const MeterDetailsInfo = ({meter}: Props) => {
             label={translate('status')}
             value={<Status name={meter.status.name}/>}
           />
-          {renderAlarm()}
         </Row>
         <Row>
           <Column>
@@ -70,7 +66,6 @@ export const MeterDetailsInfo = ({meter}: Props) => {
               <Subtitle>{translate('labels')}</Subtitle>
             </Row>
           </Column>
-          <Info label={translate('sap id')} value={meter.sapId}/>
           <Info label={translate('facility id')} value={meter.facility}/>
         </Row>
       </Column>
