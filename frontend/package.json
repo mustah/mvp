@@ -59,6 +59,7 @@
     "@types/react-dates": "^16.0.5",
     "@types/react-dom": "^16.0.5",
     "@types/react-leaflet": "^1.1.5",
+    "@types/react-redux": "^5.0.16",
     "@types/react-router-dom": "^4.2.6",
     "@types/react-router-redux": "^5.0.13",
     "@types/react-virtualized": "^9.7.6",
