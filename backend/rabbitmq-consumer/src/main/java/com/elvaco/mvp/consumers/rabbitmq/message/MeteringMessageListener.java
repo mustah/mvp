@@ -23,6 +23,15 @@ public class MeteringMessageListener implements MessageListener {
   public String onMessage(String message) {
     MeteringMessageDto meteringMessage = messageParser.parse(message);
 
+    try {
+      return handleMessage(meteringMessage);
+    } catch (RuntimeException exception) {
+      log.warn("Message handling raised exception. Offending message is: {}", message);
+      throw exception;
+    }
+  }
+
+  private String handleMessage(MeteringMessageDto meteringMessage) {
     if (meteringMessage instanceof MeteringMeasurementMessageDto) {
       return measurementMessageConsumer.accept((MeteringMeasurementMessageDto) meteringMessage)
         .map(MessageSerializer::toJson)
