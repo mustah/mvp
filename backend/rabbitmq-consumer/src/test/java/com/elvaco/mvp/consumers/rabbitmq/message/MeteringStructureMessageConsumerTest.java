@@ -42,6 +42,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -385,6 +386,37 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
+  public void nullFacilityIdIsRejected() {
+    MeteringStructureMessageDto message = new MeteringStructureMessageDto(
+      null,
+      new FacilityDto(null, null, null, null),
+      "Test source system",
+      "organisation id",
+      null
+    );
+
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).isEmpty();
+  }
+
+  @Test
+  public void physicalMeterRequiresMeterId() {
+    MeteringStructureMessageDto message = new MeteringStructureMessageDto(
+      new MeterDto(null, null, null, null, null),
+      new FacilityDto("valid facility id", null, null, null),
+      "Test source system",
+      "organisation id",
+      null
+    );
+
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+    assertThat(physicalMeters.findAll()).isEmpty();
+  }
+
+  @Test
   public void meterStatusIsSetForNewMeter() {
     messageHandler.accept(newStructureMessageWithMeterStatus(StatusType.OK));
 
@@ -429,6 +461,28 @@ public class MeteringStructureMessageConsumerTest {
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
+  }
+
+  @Test
+  public void newFacilityWithoutGatewayOrMeterIsNotSaved() {
+    String externalId = "an external id";
+    Location location = Location.UNKNOWN_LOCATION;
+    MeteringStructureMessageDto message = new MeteringStructureMessageDto(
+      null,
+      new FacilityDto(
+        externalId,
+        location.getCountry(),
+        location.getCity(),
+        location.getAddress()
+      ),
+      "Test source system",
+      "an organisation",
+      null
+    );
+
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).isEmpty();
   }
 
   @Test

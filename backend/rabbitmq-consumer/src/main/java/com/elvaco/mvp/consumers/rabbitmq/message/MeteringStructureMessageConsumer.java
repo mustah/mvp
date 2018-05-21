@@ -25,6 +25,7 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,10 +48,12 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     Organisation organisation = organisationUseCases.findOrCreate(structureMessage.organisationId);
     FacilityDto facility = structureMessage.facility;
 
-    if (facility == null || facility.id.trim().isEmpty()) {
+    if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
       log.warn("Discarding message with invalid facility id: '{}'", structureMessage);
       return;
     }
+
+    MeterDto meterDto = structureMessage.meter;
 
     Location location = new LocationBuilder()
       .country(facility.country)
@@ -59,14 +62,14 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
       .build();
 
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
-      structureMessage.meter,
+      meterDto,
       location,
       organisation.id,
       facility.id
     );
 
-    Optional<PhysicalMeter> physicalMeter = Optional.ofNullable(structureMessage.meter)
-      .map(meter ->
+    Optional<PhysicalMeter> physicalMeter = Optional.ofNullable(meterDto)
+      .flatMap(meter ->
         findOrCreatePhysicalMeter(
           meter,
           organisation,
@@ -112,13 +115,16 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
           .orElse(null));
   }
 
-  private PhysicalMeter findOrCreatePhysicalMeter(
+  private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
     MeterDto meterDto,
     Organisation organisation,
     FacilityDto facility,
     @Nullable LogicalMeter logicalMeter
   ) {
     String address = meterDto.id;
+    if (address == null) {
+      return Optional.empty();
+    }
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
       .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address)
@@ -140,7 +146,7 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
       physicalMeter = physicalMeter.withLogicalMeterId(logicalMeter.id);
     }
 
-    return physicalMeter;
+    return Optional.of(physicalMeter);
   }
 
   @Nullable

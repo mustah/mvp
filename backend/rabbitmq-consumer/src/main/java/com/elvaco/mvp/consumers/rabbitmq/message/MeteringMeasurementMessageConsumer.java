@@ -54,7 +54,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto measurementMessage) {
     String facilityId = measurementMessage.facility.id;
     if (facilityId.trim().isEmpty()) {
-      log.warn("Discarding measurement message with invalid facility/external ID '{}'", facilityId);
+      log.warn(
+        "Discarding measurement message with invalid facility/external ID: {}",
+        measurementMessage
+      );
       return Optional.empty();
     }
 

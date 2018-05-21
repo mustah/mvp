@@ -182,7 +182,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      emptyList()
+      measurements
     );
   }
 
@@ -197,7 +197,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      emptyList()
+      measurements
     );
   }
 
@@ -216,7 +216,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      emptyList()
+      measurements
     );
   }
 
@@ -231,7 +231,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       singletonList(gateway),
       collectionPercentage,
-      emptyList()
+      measurements
     );
   }
 
