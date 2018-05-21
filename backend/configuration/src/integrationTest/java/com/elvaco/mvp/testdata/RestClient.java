@@ -8,6 +8,8 @@ import java.util.Base64;
 import java.util.List;
 
 import com.elvaco.mvp.web.dto.UserTokenDto;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -103,6 +105,19 @@ public final class RestClient {
     return this;
   }
 
+  public JsonNode getJson(String url) {
+    return template.getForObject(baseUrl + url, ObjectNode.class);
+  }
+
+  public RestClient tokenAuthorization() {
+    String token = get("/authenticate", UserTokenDto.class).getBody().token;
+    return withBearerToken(token);
+  }
+
+  public RestClient withBearerToken(String token) {
+    return addHeader(AUTHORIZATION, BEARER + token);
+  }
+
   private <T> ResponseEntity<RestResponsePage<T>> getPageResponse(String url, Class<T> pagedClass) {
     ParameterizedTypeReference<RestResponsePage<T>> responseType =
       new ParameterizedTypeReference<RestResponsePage<T>>() {
@@ -119,15 +134,6 @@ public final class RestClient {
 
   private RestClient basicAuthorization(String token) {
     return addHeader(AUTHORIZATION, BASIC + token);
-  }
-
-  public RestClient tokenAuthorization() {
-    String token = get("/authenticate", UserTokenDto.class).getBody().token;
-    return withBearerToken(token);
-  }
-
-  public RestClient withBearerToken(String token) {
-    return addHeader(AUTHORIZATION, BEARER + token);
   }
 
   private RestClient addHeader(String headerName, String value) {
