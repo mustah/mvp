@@ -19,6 +19,7 @@ import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MissingDataTitle} from '../../../components/texts/Titles';
+import {toggle} from '../../../helpers/collections';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
@@ -47,6 +48,7 @@ interface StateToProps {
 }
 
 export interface GraphContainerState {
+  hiddenKeys: string[];
   graphContents: GraphContents;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
@@ -73,10 +75,14 @@ const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = (
   {lines, axes}: GraphContents,
+  hiddenKeys,
   renderDot: (props) => React.ReactNode,
   renderActiveDot: (props) => React.ReactNode,
 ): Children[] => {
-  const components: Children[] = lines.map((props: LineProps, index: number) => {
+
+  const components: Children[] = lines
+    .filter((line) => hiddenKeys.findIndex((disabledKey) => line.dataKey.startsWith(disabledKey)))
+    .map((props: LineProps, index: number) => {
     const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
     return (
       <Line
@@ -108,6 +114,7 @@ const renderGraphContents = (
 class GraphComponent extends React.Component<Props, GraphContainerState> {
 
   state: GraphContainerState = {
+    hiddenKeys: [],
     graphContents: emptyGraphContents,
     isFetching: false,
     error: Maybe.nothing(),
@@ -155,8 +162,8 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
   render() {
     const {selectedListItems, selectedQuantities, selectQuantities, selectedIndicators} = this.props;
-    const {graphContents} = this.state;
-    const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
+    const {graphContents, hiddenKeys} = this.state;
+    const lines = renderGraphContents(graphContents, hiddenKeys, this.renderAndStoreDot, this.renderActiveDot);
     const {data, legend} = graphContents;
 
     const missingData = (
@@ -164,6 +171,10 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
         title={firstUpperTranslated('select meters to include in graph')}
       />
     );
+
+    const legendClick = ({value}: any) => {
+      this.setState({hiddenKeys: toggle(value, this.state.hiddenKeys)});
+    };
 
     return (
       <div>
@@ -196,7 +207,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
                     />
                     <CartesianGrid strokeDasharray="3 3"/>
                     <Tooltip content={this.renderToolTip}/>
-                    <Legend payload={legend}/>
+                    <Legend onClick={legendClick} payload={legend}/>
                     {lines}
                   </LineChart>
                 </ResponsiveContainer>

@@ -223,6 +223,7 @@ describe('measurementActions', () => {
     const logout = (error?: Unauthorized) => error ? loggedOut = error.message : 'logged out';
 
     const initialState: GraphContainerState = {
+      hiddenKeys: [],
       graphContents: emptyGraphContents,
       isFetching: false,
       error: Maybe.nothing(),
