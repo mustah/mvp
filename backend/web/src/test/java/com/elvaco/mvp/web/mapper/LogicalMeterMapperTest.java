@@ -187,7 +187,7 @@ public class LogicalMeterMapperTest {
               )
             )
           ))
-        ).withCollectionPercentage(0.75)))
+        ).withCollectionPercentage(75.0)))
       .isEqualTo(expected);
   }
 

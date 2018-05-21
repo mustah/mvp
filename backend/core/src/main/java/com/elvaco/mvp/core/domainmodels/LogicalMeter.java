@@ -52,6 +52,12 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.physicalMeters = unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
     this.gateways = unmodifiableList(gateways);
+
+    if (collectionPercentage != null
+        && (collectionPercentage < 0.0 || collectionPercentage > 100.0)) {
+      throw new IllegalArgumentException("Collection percentage must be >= 0 and <= 100");
+    }
+
     this.collectionPercentage = Optional.ofNullable(collectionPercentage)
       .filter(percentage -> !percentage.isNaN())
       .orElse(null);

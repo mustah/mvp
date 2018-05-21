@@ -253,7 +253,7 @@ public class LogicalMeterHelperTest {
       1
     );
 
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(1.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
     assertThat(collectionStats.expected).isEqualTo(1.0);
     assertThat(collectionStats.actual).isEqualTo(1.0);
   }
@@ -273,7 +273,7 @@ public class LogicalMeterHelperTest {
       1
     );
 
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.5);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(50.0);
     assertThat(collectionStats.expected).isEqualTo(2.0);
     assertThat(collectionStats.actual).isEqualTo(1.0);
   }
@@ -297,7 +297,7 @@ public class LogicalMeterHelperTest {
       now.plusMinutes(1),
       1
     );
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(1.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
     assertThat(collectionStats.expected).isEqualTo(2.0);
     assertThat(collectionStats.actual).isEqualTo(2.0);
   }
@@ -322,7 +322,7 @@ public class LogicalMeterHelperTest {
       1
     );
 
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.5);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(50.0);
     assertThat(collectionStats.expected).isEqualTo(2.0);
     assertThat(collectionStats.actual).isEqualTo(1.0);
   }
@@ -342,7 +342,7 @@ public class LogicalMeterHelperTest {
       2
     );
 
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(1.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
     assertThat(collectionStats.actual).isEqualTo(2.0);
     assertThat(collectionStats.expected).isEqualTo(2.0);
   }
@@ -361,7 +361,7 @@ public class LogicalMeterHelperTest {
       now.plusMinutes(1),
       2
     );
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.5);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(50.0);
     assertThat(collectionStats.expected).isEqualTo(2.0);
     assertThat(collectionStats.actual).isEqualTo(1.0);
   }

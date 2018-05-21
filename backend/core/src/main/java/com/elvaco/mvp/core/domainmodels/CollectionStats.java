@@ -31,6 +31,6 @@ public class CollectionStats {
   }
 
   public double getCollectionPercentage() {
-    return expected == 0 ? Double.NaN : actual / expected;
+    return expected == 0 ? Double.NaN : (actual / expected) * 100;
   }
 }

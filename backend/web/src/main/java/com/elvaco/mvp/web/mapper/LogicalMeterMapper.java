@@ -70,7 +70,6 @@ public class LogicalMeterMapper {
       .orElse(null);
 
     meterDto.collectionPercentage = logicalMeter.getCollectionPercentage()
-      .map(val -> val * 100)
       .orElse(null);
 
     meterDto.gateway = logicalMeter.gateways
