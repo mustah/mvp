@@ -6,10 +6,8 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {makeActionsOf, RequestHandler} from '../api/apiActions';
+import {makeActionsOf, RequestHandler, responseMessageOrFallback} from '../api/apiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 import {selectionTreeSchema} from './selectionTreeSchemas';
 
@@ -19,9 +17,6 @@ interface AsyncRequest<P> extends RequestHandler<P> {
   parameters?: string;
   dispatch: Dispatch<RootState>;
 }
-
-const responseMessageOrFallback = (response): ErrorResponse => response && response.data ||
-  {message: firstUpperTranslated('an unexpected error occurred')};
 
 const makeAsyncRequest = async <P>(
   {

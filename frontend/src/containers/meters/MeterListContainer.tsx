@@ -18,7 +18,10 @@ import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {
+  clearErrorMeters,
+  fetchMeters,
+} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {
   getPageError,
@@ -42,6 +45,7 @@ import {
 } from '../../types/Types';
 import {fetchMeterMapMarkers} from '../../usecases/map/meterMapMarkerApiActions';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
+import {syncWithMetering} from '../../usecases/validation/validationActions';
 
 interface StateToProps {
   result: uuid[];
@@ -55,6 +59,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
+  syncWithMetering: OnClickWithId;
   fetchMeters: FetchPaginated;
   fetchMeterMapMarkers: Fetch;
   changePaginationPage: OnChangePage;
@@ -85,6 +90,7 @@ class MeterList extends React.Component<Props> {
       result,
       entities,
       selectEntryAdd,
+      syncWithMetering,
       isFetching,
       pagination,
       changePaginationPage,
@@ -97,8 +103,12 @@ class MeterList extends React.Component<Props> {
     const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
     const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
     const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
-    const renderActionDropdown = ({id, manufacturer}: Meter) =>
-      <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
+    const renderActionDropdown = ({id, manufacturer}: Meter) => (
+      <ListActionsDropdown
+        item={{id, name: manufacturer}}
+        selectEntryAdd={selectEntryAdd}
+        syncWithMetering={syncWithMetering}
+      />);
     const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) =>
@@ -207,6 +217,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
+  syncWithMetering,
   fetchMeters,
   fetchMeterMapMarkers,
   changePaginationPage,

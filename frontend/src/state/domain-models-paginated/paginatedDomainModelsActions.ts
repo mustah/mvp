@@ -6,9 +6,9 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, FetchPaginated, Identifiable} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
+import {responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
@@ -69,13 +69,10 @@ const asyncRequest = async <REQ, DAT>(
     } else if (wasRequestCanceled(error)) {
       return;
     } else {
-      const {response} = error;
-      const data: ErrorResponse = response && response.data ||
-        {message: firstUpperTranslated('an unexpected error occurred')};
-      dispatch(failure({...data, page}));
+      const errorResponse: ErrorResponse = responseMessageOrFallback(error.response);
+      dispatch(failure({...errorResponse, page}));
       if (afterFailure) {
-        afterFailure(data, dispatch);
-
+        afterFailure(errorResponse, dispatch);
       }
     }
   }

@@ -3,12 +3,12 @@ import * as React from 'react';
 import {menuItemInnerDivStyle} from '../../app/themes';
 import {OnClick} from '../../types/Types';
 
-interface Props {
+export interface ActionMenuItemProps {
   name: string;
   onClick?: OnClick;
 }
 
-export const ActionMenuItem = ({name, onClick}: Props) => (
+export const ActionMenuItem = ({name, onClick}: ActionMenuItemProps) => (
   <MenuItem
     key={name}
     style={menuItemInnerDivStyle}

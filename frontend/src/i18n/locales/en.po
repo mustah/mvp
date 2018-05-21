@@ -295,8 +295,14 @@ msgstr "failed to update profile: {{error}"
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "successfully deleted the user {{name}} ({{email}})"
 
+msgid "meter will soon be synchronized"
+msgstr "meter will soon be synchronized"
+
 msgid "failed to delete the user: {{error}}"
 msgstr "failed to delete the user: {{error}}"
+
+msgid "sync"
+msgstr "sync"
 
 msgid "swedish"
 msgstr "swedish"

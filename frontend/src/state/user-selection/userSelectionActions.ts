@@ -7,7 +7,12 @@ import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
 import {emptyActionOf, ErrorResponse, payloadActionOf, uuid} from '../../types/Types';
 import {NormalizedState} from '../domain-models/domainModels';
-import {deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
+import {
+  deleteRequest,
+  fetchIfNeeded,
+  postRequest,
+  putRequest,
+} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
 import {FilterParam, SelectionParameter, UserSelection} from './userSelectionModels';
 import {userSelectionSchema} from './userSelectionSchema';
@@ -22,10 +27,8 @@ export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
 
-const addParameterToSelection = payloadActionOf<SelectionParameter>(
-  ADD_PARAMETER_TO_SELECTION);
-const deselectParameterInSelection = payloadActionOf<SelectionParameter>(
-  DESELECT_SELECTION);
+const addParameterToSelection = payloadActionOf<SelectionParameter>(ADD_PARAMETER_TO_SELECTION);
+const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELECT_SELECTION);
 export const resetSelection = emptyActionOf(RESET_SELECTION);
 export const selectPeriod = payloadActionOf<Period>(SELECT_PERIOD);
 
@@ -55,7 +58,8 @@ export const selectSavedSelection = (selectedId: uuid) =>
       });
   };
 
-// TODO: toggleSelectionParameter should not be able to accept array values for "id" as the typing suggest now.
+// TODO: toggleSelectionParameter should not be able to accept array values for "id" as the typing
+// suggest now.
 export const toggleParameterInSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: GetState) => {
     const {parameter, id} = selectionParameter;

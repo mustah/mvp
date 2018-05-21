@@ -1,17 +1,22 @@
 import * as React from 'react';
 import {routes} from '../../app/routes';
+import {superAdminComponent} from '../../helpers/hoc';
 import {history} from '../../index';
 import {translate} from '../../services/translationService';
 import {IdNamed, OnClick, OnClickWithId, RenderFunction} from '../../types/Types';
-import {ActionMenuItem} from './ActionMenuItem';
+import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
 interface Props {
   item: IdNamed;
   selectEntryAdd: OnClickWithId;
+  syncWithMetering?: OnClickWithId;
 }
 
-export const ListActionsDropdown = ({item: {id}, selectEntryAdd}: Props) => {
+const SyncWithMeteringMenuItem = superAdminComponent<ActionMenuItemProps>(ActionMenuItem);
+
+export const ListActionsDropdown = (props: Props) => {
+  const {item: {id}, selectEntryAdd, syncWithMetering} = props;
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onAddToReport = () => {
@@ -19,8 +24,19 @@ export const ListActionsDropdown = ({item: {id}, selectEntryAdd}: Props) => {
       history.push(`${routes.report}/${id}`);
       selectEntryAdd(id);
     };
+
+    const menuItemProps: ActionMenuItemProps = {
+      name: translate('sync'),
+      onClick: () => {
+        onClick();
+        if (syncWithMetering) {
+          syncWithMetering(id);
+        }
+      },
+    };
     return ([
-      <ActionMenuItem name={translate('add to report')} onClick={onAddToReport} key={`3-${id}`}/>,
+      <SyncWithMeteringMenuItem {...menuItemProps} key={`sync-${id}`}/>,
+      <ActionMenuItem name={translate('add to report')} onClick={onAddToReport} key={`add-to-report-${id}`}/>,
     ]);
   };
 

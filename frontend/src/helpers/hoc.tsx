@@ -38,8 +38,9 @@ const mapStateToProps = ({auth}: RootState): AuthenticatedUser => ({
 });
 
 export const superAdminComponent =
-  (Component: React.ComponentType<AuthenticatedUser>) =>
+  <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
     connect<AuthenticatedUser>(mapStateToProps)(onlySuperAdmins(Component));
 
-export const adminComponent = (Component: React.ComponentType<AuthenticatedUser>) =>
-  connect<AuthenticatedUser>(mapStateToProps)(onlyAdmins(Component));
+export const adminComponent =
+  <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
+    connect<AuthenticatedUser>(mapStateToProps)(onlyAdmins(Component));

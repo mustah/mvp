@@ -8,8 +8,7 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {firstUpperTranslated} from '../../../../services/translationService';
-import {Dictionary, EncodedUriParameters, ErrorResponse, uuid} from '../../../../types/Types';
+import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
 import {
@@ -18,6 +17,7 @@ import {
   LineProps,
   ProprietaryLegendProps,
 } from '../../../../usecases/report/reportModels';
+import {responseMessageOrFallback} from '../../../api/apiActions';
 import {
   emptyGraphContents,
   MeasurementApiResponse,
@@ -231,7 +231,8 @@ export const fetchMeasurements =
       EndPoints.measurements,
       measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
-    const measurementsRequest = (): AxiosPromise<MeasurementApiResponse> => restClient.get(measurementUrl);
+    const measurementsRequest = (): AxiosPromise<MeasurementApiResponse> => restClient.get(
+      measurementUrl);
 
     try {
       const response: [AxiosResponse<MeasurementApiResponse>, GraphDataResponse] =
@@ -257,14 +258,11 @@ export const fetchMeasurements =
       } else if (wasRequestCanceled(error)) {
         return;
       } else {
-        const {response} = error;
-        const data: ErrorResponse = response && response.data ||
-          {message: firstUpperTranslated('an unexpected error occurred')};
         updateState({
           hiddenKeys: [],
           graphContents: emptyGraphContents,
           isFetching: false,
-          error: Maybe.maybe(data),
+          error: Maybe.maybe(responseMessageOrFallback(error.response)),
         });
       }
     }
