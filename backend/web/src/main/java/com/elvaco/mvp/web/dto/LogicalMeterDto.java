@@ -26,7 +26,8 @@ public class LogicalMeterDto {
   public List<MeterStatusLogDto> statusChangelog;
   public String created;
   public Object status;
-  public String collectionStatus;
+  @Nullable
+  public Double collectionPercentage;
   public List<MeasurementDto> measurements;
   public Long readIntervalMinutes;
 

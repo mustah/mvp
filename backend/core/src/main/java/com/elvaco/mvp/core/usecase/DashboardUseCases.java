@@ -26,6 +26,11 @@ public class DashboardUseCases {
     this.logicalMeters = logicalMeters;
   }
 
+  static Optional<CollectionStats> sumCollectionStats(List<CollectionStats> meterStats) {
+    return Optional.of(CollectionStats.asSumOf(meterStats))
+      .filter(sumStats -> sumStats.expected != 0.0);
+  }
+
   public Optional<CollectionStats> getMeasurementsStatistics(RequestParameters parameters) {
 
     if (!parameters.hasName("after") || !parameters.hasName("before")) {
@@ -46,18 +51,6 @@ public class DashboardUseCases {
       )
       .collect(toList());
 
-    double totalExpected = 0.0;
-    double totalActual = 0.0;
-
-    for (CollectionStats meterStat : meterStats) {
-      totalActual = totalActual + meterStat.actual;
-      totalExpected = totalExpected + meterStat.expected;
-    }
-
-    if (totalExpected > 0.0) {
-      return Optional.of(new CollectionStats(totalActual, totalExpected));
-    } else {
-      return Optional.empty();
-    }
+    return sumCollectionStats(meterStats);
   }
 }

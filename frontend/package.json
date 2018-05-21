@@ -18,6 +18,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
+    "verify": "node fuse verify",
     "tslint": "./node_modules/tslint/bin/tslint --project tsconfig.json --config tslint.json --format codeFrame",
     "tsfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --config tslint.json --format codeFrame --fix"
   },

@@ -12,6 +12,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterTest {
 
@@ -136,6 +137,46 @@ public class LogicalMeterTest {
       )
     );
     assertThat(logicalMeter.getManufacturer()).isEqualTo("ELV");
+  }
+
+  @Test
+  public void collectionPercentageNaNisNull() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
+      .withCollectionPercentage(Double.NaN);
+
+    assertThat(meter.collectionPercentage).isNull();
+  }
+
+  @Test
+  public void collectionPercentageNullisNull() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
+      .withCollectionPercentage(null);
+
+    assertThat(meter.collectionPercentage).isNull();
+  }
+
+  @Test
+  public void collectionPercentageIsSet() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
+      .withCollectionPercentage(0.5);
+
+    assertThat(meter.collectionPercentage).isEqualTo(0.5);
+  }
+
+  @Test
+  public void collectionPercentageCannotBeLessThanZero() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
+
+    assertThatThrownBy(() -> meter.withCollectionPercentage(-2.0))
+      .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  public void collectionPercentageCannotBeGreaterThanOneHundred() {
+    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
+
+    assertThatThrownBy(() -> meter.withCollectionPercentage(100.1))
+      .isInstanceOf(IllegalArgumentException.class);
   }
 
   private PhysicalMeter newPhysicalMeter(

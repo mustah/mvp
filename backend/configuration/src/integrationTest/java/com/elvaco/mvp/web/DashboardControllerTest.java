@@ -182,7 +182,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
     for (int x = 0; x < values; x++) {
       if (random.nextInt(10) >= 8) {
-        measurementFailedCount = measurementFailedCount + 7;
+        measurementFailedCount += 7;
         continue;
       }
 
@@ -192,7 +192,7 @@ public class DashboardControllerTest extends IntegrationTest {
         DemoDataHelper.heatMeasurement(created, physicalMeterEntity)
       );
 
-      measurementCount = measurementCount + 7;
+      measurementCount += 7;
     }
 
     return measurementEntities;

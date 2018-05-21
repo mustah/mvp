@@ -129,6 +129,8 @@ Sparky.task('default', ['clean', 'config', 'watch:assets'], () => {
   return fuse.run();
 });
 
+Sparky.task('verify', ['run-type-checker', 'tests'], () => {});
+
 const distTasks = [
   'set-production',
   'clean',

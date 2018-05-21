@@ -13,7 +13,7 @@ import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {MissingDataTitle} from '../../components/texts/Titles';
 import {now} from '../../helpers/dateHelpers';
-import {roundCollectionPercentage} from '../../helpers/formatters';
+import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
@@ -104,8 +104,8 @@ class MeterList extends React.Component<Props> {
     const renderStatusChanged = ({statusChanged}: Meter) =>
       <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
     const renderMedium = ({medium}: Meter) => medium;
-    const renderCollectionStatus = ({collectionStatus, readIntervalMinutes}: Meter) =>
-      readIntervalMinutes === 0 ? '-' : roundCollectionPercentage(collectionStatus);
+    const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
+      formatCollectionPercentage(collectionPercentage, readIntervalMinutes);
 
     const collectionPercentageHeader = (
       <TableHead className="number">

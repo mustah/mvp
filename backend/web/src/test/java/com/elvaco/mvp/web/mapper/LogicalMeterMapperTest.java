@@ -128,7 +128,7 @@ public class LogicalMeterMapperTest {
       StatusType.OK.name,
       formatUtc(statusChanged)
     );
-    expected.collectionStatus = "";
+    expected.collectionPercentage = 75.0;
     expected.readIntervalMinutes = 15L;
 
     expected.measurements = emptyList();
@@ -187,8 +187,21 @@ public class LogicalMeterMapperTest {
               )
             )
           ))
-        )))
+        ).withCollectionPercentage(75.0)))
       .isEqualTo(expected);
+  }
+
+  @Test
+  public void nullCollectionStatusIsMappedToNull() {
+    LogicalMeterDto logicalMeterDto = mapper.toDto(new LogicalMeter(
+      randomUUID(),
+      "external-id",
+      ELVACO.id,
+      UNKNOWN_LOCATION,
+      ZonedDateTime.parse("2018-02-12T14:14:25Z")
+    ).withCollectionPercentage(null));
+
+    assertThat(logicalMeterDto.collectionPercentage).isNull();
   }
 
   @Test
