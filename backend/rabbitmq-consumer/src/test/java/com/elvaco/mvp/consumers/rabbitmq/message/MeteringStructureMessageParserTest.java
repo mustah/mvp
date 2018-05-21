@@ -99,6 +99,12 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
+  public void emptyMeterAndGateway() {
+    String message = parseJsonFile("messages/reference-info-missing-meter-and-gateway.json");
+    assertThat(messageParser.parseStructureMessage(message)).isPresent();
+  }
+
+  @Test
   public void readIntervalCanBeNull() {
     String message = parseJsonFile("messages/metering-structure-message-no-cron.json");
 
