@@ -9,11 +9,14 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
+
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static java.util.Objects.nonNull;
 
 @EqualsAndHashCode(callSuper = true)
+@ToString(exclude = "values")
 public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
   public final MeterIdDto meter;
