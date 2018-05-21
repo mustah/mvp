@@ -12,7 +12,12 @@ import {firstUpperTranslated} from '../../../../services/translationService';
 import {Dictionary, EncodedUriParameters, ErrorResponse, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
-import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {
+  Axes,
+  GraphContents,
+  LineProps,
+  ProprietaryLegendProps,
+} from '../../../../usecases/report/reportModels';
 import {
   emptyGraphContents,
   MeasurementApiResponse,
@@ -205,6 +210,7 @@ export const fetchMeasurements =
 
     if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
       updateState({
+        hiddenKeys: [],
         graphContents: emptyGraphContents,
         isFetching: false,
         error: Maybe.nothing(),
@@ -240,6 +246,7 @@ export const fetchMeasurements =
       };
 
       updateState({
+        hiddenKeys: [],
         graphContents: mapApiResponseToGraphData(graphData),
         isFetching: false,
         error: Maybe.nothing(),
@@ -254,6 +261,7 @@ export const fetchMeasurements =
         const data: ErrorResponse = response && response.data ||
           {message: firstUpperTranslated('an unexpected error occurred')};
         updateState({
+          hiddenKeys: [],
           graphContents: emptyGraphContents,
           isFetching: false,
           error: Maybe.maybe(data),
