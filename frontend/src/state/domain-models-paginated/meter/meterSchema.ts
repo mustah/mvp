@@ -1,9 +1,6 @@
 import {schema} from 'normalizr';
 
 export const meterProcessStrategy = (entity: any): schema.StrategyFunction => {
-  if (entity.readIntervalMinutes === null) {
-    delete entity.readIntervalMinutes;
-  }
   if (entity.status) {
     const statusCode = entity.status.toLowerCase();
     const status = {id: statusCode, name: statusCode};

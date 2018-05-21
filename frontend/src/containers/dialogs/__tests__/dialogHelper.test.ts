@@ -123,7 +123,6 @@ describe('dialogHelper', () => {
     it('adds missing quantities to meter\'s measurements', () => {
       const meter: Meter = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
-        alarm: '',
         facility: '426',
         location: {
           city: {
@@ -210,7 +209,6 @@ describe('dialogHelper', () => {
     it('handles meters without any measurements', () => {
       const meter: Meter = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
-        alarm: '',
         facility: '426',
         location: {
           city: {
@@ -275,7 +273,6 @@ describe('dialogHelper', () => {
     it('orders measurements by quantity, in a custom order', () => {
       const meterWithMeasurementsInDifferentOrder: Meter = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
-        alarm: '',
         facility: '426',
         location: {
           city: {

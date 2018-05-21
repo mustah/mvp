@@ -78,6 +78,7 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
     }
   }
   systemProperty "spring.profiles.active", "postgresql"
+  systemProperty "spring.datasource.url", "jdbc:postgresql://localhost:5432/mvp"
   testClassesDir = sourceSets.integrationTest.output.classesDir
   classpath = sourceSets.integrationTest.runtimeClasspath
 }

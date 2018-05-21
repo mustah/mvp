@@ -14,13 +14,11 @@ export interface MeterStatusChangelog extends Identifiable {
 export type MetersState = NormalizedPaginatedState<Meter>;
 
 export interface Meter extends Identifiable, LocationHolder {
-  sapId?: uuid;
   address?: string;
   created: string;
   collectionPercentage?: number;
   readIntervalMinutes?: number;
   facility: uuid;
-  alarm: string;
   flags: Flag[];
   flagged: boolean;
   medium: string;

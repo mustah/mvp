@@ -44,6 +44,7 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -1067,6 +1068,30 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .delete("/meters/" + UUID.randomUUID(), ErrorMessageDto.class);
 
     assertThatStatusIsNotFound(response);
+  }
+
+  @Test
+  public void nullFieldsAreNotIncludedInDto() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeterRepository.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().getOrganisationId(),
+      UNKNOWN_LOCATION,
+      ZonedDateTime.now(),
+      emptyList(),
+      DISTRICT_HEATING_METER,
+      emptyList(),
+      null,
+      emptyList()
+    ));
+
+    JsonNode logicalMeterJson = asTestUser()
+      .getJson(
+        "/meters/" + meterId
+      );
+
+    assertThat(logicalMeterJson.has("collectionPercentage")).isFalse();
   }
 
   private void assertNothingIsRemoved(
