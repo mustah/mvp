@@ -20,7 +20,7 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
-  public void meteringStructureHeatMeterMessageIsParsedCorrectly() {
+  public void heatMeter() {
     String jsonMessage = parseJsonFile("messages/reference-info-valid-heat-meter.json");
 
     MeteringStructureMessageDto parsedMessage =
@@ -44,7 +44,7 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
-  public void meteringStructureGasMeterMessageIsParsedCorrectly() {
+  public void gasMeter() {
     String jsonMessage = parseJsonFile("messages/reference-info-valid-gas-meter.json");
 
     MeteringStructureMessageDto parsedMessage =
@@ -75,25 +75,25 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
-  public void parseStructureMessageMissingGateway() {
+  public void missingGateway() {
     String missingGateway = parseJsonFile("messages/reference-info-missing-gateway.json");
     assertThat(messageParser.parseStructureMessage(missingGateway)).isPresent();
   }
 
   @Test
-  public void parseStructureMessageMissingMeter() {
+  public void missingMeter() {
     String missingMeter = parseJsonFile("messages/reference-info-missing-meter.json");
     assertThat(messageParser.parseStructureMessage(missingMeter)).isPresent();
   }
 
   @Test
-  public void parseStructureMessageEmptyGateway() {
+  public void emptyGateway() {
     String emptyGateway = parseJsonFile("messages/reference-info-empty-gateway.json");
     assertThat(messageParser.parseStructureMessage(emptyGateway)).isPresent();
   }
 
   @Test
-  public void parseStructureMessageEmptyMeter() {
+  public void emptyMeter() {
     String emptyMeter = parseJsonFile("messages/reference-info-empty-meter.json");
     assertThat(messageParser.parseStructureMessage(emptyMeter)).isPresent();
   }
