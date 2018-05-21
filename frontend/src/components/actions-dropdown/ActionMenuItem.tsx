@@ -8,15 +8,13 @@ interface Props {
   onClick?: OnClick;
 }
 
-export const ActionMenuItem = ({name, onClick}: Props) => {
-  return (
-    <MenuItem
-      key={name}
-      style={menuItemInnerDivStyle}
-      className="first-uppercase"
-      onClick={onClick}
-    >
-      {name}
-    </MenuItem>
-  );
-};
+export const ActionMenuItem = ({name, onClick}: Props) => (
+  <MenuItem
+    key={name}
+    style={menuItemInnerDivStyle}
+    className="first-uppercase"
+    onClick={onClick}
+  >
+    {name}
+  </MenuItem>
+);

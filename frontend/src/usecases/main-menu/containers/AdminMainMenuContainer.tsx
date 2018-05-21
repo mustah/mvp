@@ -6,56 +6,58 @@ import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {colors, iconStyle} from '../../../app/themes';
 import {Column} from '../../../components/layouts/column/Column';
+import {onlySuperAdmins} from '../../../helpers/hoc';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
-import {isSuperAdminSelector} from '../../../services/authService';
 import {translate} from '../../../services/translationService';
+import {User} from '../../../state/domain-models/user/userModels';
+import {getUser} from '../../auth/authSelectors';
 import {MainMenuWrapper} from '../components/main-menu-wrapper/MainMenuWrapper';
 import {MenuItem} from '../components/menuitems/MenuItem';
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface StateToProps {
   pathname: string;
-  isSuperAdmin: boolean;
+  user: User;
 }
 
-const AdminMainMenu = ({pathname, isSuperAdmin}: StateToProps) => {
-
-  const organisaionMenuItem = isSuperAdmin ? (
-    <Link to={routes.adminOrganisations} className="link">
-      <MenuItem
-        name={translate('organisations')}
-        isSelected={routes.adminOrganisations === pathname}
-        icon={<SocialDomain style={iconStyle} color={colors.white} className="MenuItem-icon"/>}
-      />
-    </Link>
-  ) : null;
-
-  const usersMenuItem = (
-    <Link to={routes.admin} className="link">
-      <MenuItem
-        name={translate('users')}
-        isSelected={routes.admin === pathname || routes.adminUsers === pathname}
-        icon={<ActionSupervisorAccount style={iconStyle} color={colors.white} className="MenuItem-icon"/>}
-      />
-    </Link>
-  );
-
-  return (
-    <MainMenuWrapper>
-      <Column>
-        {usersMenuItem}
-        {organisaionMenuItem}
-      </Column>
-    </MainMenuWrapper>
-  );
+const iconProps: SvgIconProps = {
+  style: iconStyle,
+  color: colors.white,
+  className: 'MenuItem-icon',
 };
 
-const mapStateToProps = ({routing, ...restOfRootState}: RootState): StateToProps => {
-  return {
-    pathname: getPathname(routing),
-    isSuperAdmin: isSuperAdminSelector({routing, ...restOfRootState}),
-  };
-};
+const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
+  <Link to={routes.adminOrganisations} className="link">
+    <MenuItem
+      name={translate('organisations')}
+      isSelected={routes.adminOrganisations === pathname}
+      icon={<SocialDomain {...iconProps}/>}
+    />
+  </Link>
+);
+
+const OrganisationMenuItem = onlySuperAdmins(AdminOrganisationLinkMenuItem);
+
+const AdminMainMenu = (props: StateToProps) => (
+  <MainMenuWrapper>
+    <Column>
+      <Link to={routes.admin} className="link">
+        <MenuItem
+          name={translate('users')}
+          isSelected={routes.admin === props.pathname || routes.adminUsers === props.pathname}
+          icon={<ActionSupervisorAccount {...iconProps}/>}
+        />
+      </Link>
+      <OrganisationMenuItem {...props}/>
+    </Column>
+  </MainMenuWrapper>
+);
+
+const mapStateToProps = ({routing, auth}: RootState): StateToProps => ({
+  pathname: getPathname(routing),
+  user: getUser(auth),
+});
 
 export const AdminMainMenuContainer =
   connect<StateToProps>(mapStateToProps)(AdminMainMenu);

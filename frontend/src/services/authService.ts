@@ -7,11 +7,15 @@ import {Role} from '../state/domain-models/user/userModels';
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;
 const isNotAuthenticatedSelector = (state: RootState): boolean => !state.auth.isAuthenticated;
 
-export const isAdminSelector = ({auth: {user}}: RootState): boolean =>
-  (user!.roles.includes(Role.ADMIN) || user!.roles.includes(Role.SUPER_ADMIN));
-export const isSuperAdminSelector = ({auth: {user}}: RootState) => user!.roles.includes(Role.SUPER_ADMIN);
+const isAdminSelector = (state: RootState): boolean =>
+  state.auth.user!.roles.includes(Role.ADMIN) || isSuperAdminSelector(state);
 
-const isAdminAuthenticatedSelector = (state: RootState) => isAuthenticatedSelector(state) && isAdminSelector(state);
+const isSuperAdminSelector = ({auth: {user}}: RootState) =>
+  user!.roles.includes(Role.SUPER_ADMIN);
+
+const isAdminAuthenticatedSelector = (state: RootState) =>
+  isAuthenticatedSelector(state) && isAdminSelector(state);
+
 const isSuperAdminAuthenticatedSelector = (state: RootState) =>
   isAuthenticatedSelector(state) && isSuperAdminSelector(state);
 
@@ -34,7 +38,10 @@ export const superAdminIsAuthenticated = connectedRouterRedirect({
 });
 
 export const userIsNotAuthenticated = connectedRouterRedirect({
-  redirectPath: (state, ownProps) => locationHelperBuilder({}).getRedirectQueryParam(ownProps) || routes.home,
+  redirectPath: (
+    state,
+    ownProps,
+  ) => locationHelperBuilder({}).getRedirectQueryParam(ownProps) || routes.home,
   authenticatedSelector: isNotAuthenticatedSelector,
   allowRedirectBack: false,
 });

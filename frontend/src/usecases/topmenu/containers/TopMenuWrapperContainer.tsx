@@ -28,24 +28,21 @@ interface OwnProps {
   className: string;
 }
 
-const TopMenuWrapper = (props: StateToProps & DispatchToProps) => {
-  const {children, className, user, logout} = props;
-  return (
-    <Row className={classNames('SelectionMenuWrapper', className)}>
-      <Row className="SelectionMenu">
-        {children}
-      </Row>
-      <RowCenter>
-        <Link className="Logo" to={routes.home}>
-          <Logo src={getLogoPath(user.organisation.slug)} className="small"/>
-        </Link>
-      </RowCenter>
-      <Row>
-        <Profile user={user!} logout={logout}/>
-      </Row>
+const TopMenuWrapper = ({children, className, user, logout}: StateToProps & DispatchToProps) => (
+  <Row className={classNames('SelectionMenuWrapper', className)}>
+    <Row className="SelectionMenu">
+      {children}
     </Row>
-  );
-};
+    <RowCenter>
+      <Link className="Logo" to={routes.home}>
+        <Logo src={getLogoPath(user.organisation.slug)} className="small"/>
+      </Link>
+    </RowCenter>
+    <Row>
+      <Profile user={user} logout={logout}/>
+    </Row>
+  </Row>
+);
 
 const mapStateToProps = ({auth}: RootState): StateToProps => ({
   user: getUser(auth),
