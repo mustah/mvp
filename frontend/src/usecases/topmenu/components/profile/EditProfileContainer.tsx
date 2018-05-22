@@ -19,6 +19,7 @@ import {getRoles} from '../../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../../state/language/languageModels';
 import {getLanguages} from '../../../../state/language/languageSelectors';
 import {Fetch} from '../../../../types/Types';
+import {getUser} from '../../../auth/authSelectors';
 
 interface StateToProps {
   user: User;
@@ -71,12 +72,12 @@ class EditProfile extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({auth: {user}, domainModels: {organisations}}: RootState): StateToProps => ({
-  user: user!,
+const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): StateToProps => ({
+  user: getUser(auth),
   organisations: getOrganisations(organisations),
-  roles: getRoles(user!),
+  roles: getRoles(getUser(auth)),
   languages: getLanguages(),
-}); // TODO: Perhaps use a selector with a Maybe instead of using the "!" null protection for user.
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   modifyProfile,

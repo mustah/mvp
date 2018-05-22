@@ -298,6 +298,12 @@ msgstr "användaren {{name}} ({{email}}) togs bort"
 msgid "failed to delete the user: {{error}}"
 msgstr "misslyckades med att ta bort användare: {{error}}"
 
+msgid "meter will soon be synchronized"
+msgstr "mätaren uppdateras snart"
+
+msgid "sync"
+msgstr "synka"
+
 msgid "swedish"
 msgstr "svenska"
 

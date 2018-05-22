@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {normalize} from 'normalizr';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
@@ -7,7 +8,7 @@ import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
-import {restClient, restClientWith} from '../../../services/restClient';
+import {restClientWith} from '../../../services/restClient';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
 import {makeActionsOf} from '../../api/apiActions';
@@ -18,19 +19,21 @@ import {initialState as initialSelectionTreeState} from '../selectionTreeReducer
 import {selectionTreeSchema} from '../selectionTreeSchemas';
 import MockAdapter = require('axios-mock-adapter');
 
-const configureMockStore = configureStore([thunk]);
-let store;
-restClientWith('123123123');
-const mockRestClient = new MockAdapter(restClient);
-
 describe('selectionTreeApiActions', () => {
+
+  const configureMockStore = configureStore([thunk]);
+  let store;
+  let mockRestClient;
 
   beforeEach(() => {
     const initialState: Partial<RootState> = {
       selectionTree: {...initialSelectionTreeState},
     };
     store = configureMockStore({...initialState});
+    mockRestClient = new MockAdapter(axios);
+    restClientWith('123123123');
   });
+
   afterEach(() => {
     mockRestClient.reset();
   });

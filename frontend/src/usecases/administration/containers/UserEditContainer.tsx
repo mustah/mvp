@@ -15,20 +15,30 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {
-  clearUserError, fetchUser, modifyUser,
-} from '../../../state/domain-models/user/userApiActions';
-import {
   getEntitiesDomainModels,
   getError,
 } from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
+import {
+  clearUserError,
+  fetchUser,
+  modifyUser,
+} from '../../../state/domain-models/user/userApiActions';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {ClearError, ErrorResponse, OnClick, Fetch, uuid, CallbackWithId} from '../../../types/Types';
+import {
+  CallbackWithId,
+  ClearError,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
+import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -103,12 +113,12 @@ class UserEdit extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = ({auth: {user}, domainModels: {users, organisations}}: RootState): StateToProps => ({
+const mapStateToProps = ({auth, domainModels: {users, organisations}}: RootState): StateToProps => ({
   users: getEntitiesDomainModels(users),
   isFetching: users.isFetching,
   error: getError(users),
   organisations: getOrganisations(organisations),
-  roles: getRoles(user!),
+  roles: getRoles(getUser(auth)),
   languages: getLanguages(),
 });
 

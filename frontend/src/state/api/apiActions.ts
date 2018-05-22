@@ -29,8 +29,9 @@ interface AsyncRequest<P> extends RequestHandler<P> {
   dispatch: Dispatch<RootState>;
 }
 
-const responseMessageOrFallback = (response): ErrorResponse => response && response.data ||
-  {message: firstUpperTranslated('an unexpected error occurred')};
+export const responseMessageOrFallback = (response?: any): ErrorResponse =>
+  (response && response.data)
+  || {message: firstUpperTranslated('an unexpected error occurred')};
 
 const makeAsyncRequest = async <P>(
   {

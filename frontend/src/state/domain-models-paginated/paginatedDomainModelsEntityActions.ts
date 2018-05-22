@@ -1,13 +1,18 @@
 import {Dispatch} from 'react-redux';
-import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {
+  createEmptyAction,
+  createPayloadAction,
+  EmptyAction,
+  PayloadAction,
+} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
+import {responseMessageOrFallback} from '../api/apiActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
   NormalizedPaginatedState,
@@ -68,12 +73,10 @@ const asyncRequestEntities = async <DAT>(
     } else if (wasRequestCanceled(error)) {
       return;
     } else {
-      const {response} = error;
-      const data: ErrorResponse = response && response.data ||
-        {message: firstUpperTranslated('an unexpected error occurred')};
-      dispatch(failure({id, ...data}));
+      const errorResponse: ErrorResponse = responseMessageOrFallback(error.response);
+      dispatch(failure({id, ...errorResponse}));
       if (afterFailure) {
-        afterFailure(data, dispatch);
+        afterFailure(errorResponse, dispatch);
       }
     }
   }

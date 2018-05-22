@@ -25,6 +25,7 @@ import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
 import {ErrorResponse, Fetch, OnClick} from '../../../types/Types';
+import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
   isFetching: boolean;
@@ -80,9 +81,9 @@ class UserAdd extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({domainModels: {organisations}, auth: {user}}: RootState): StateToProps => ({
+const mapStateToProps = ({domainModels: {organisations}, auth}: RootState): StateToProps => ({
   organisations: getOrganisations(organisations),
-  roles: getRoles(user!),
+  roles: getRoles(getUser(auth)),
   languages: getLanguages(),
   isFetching: organisations.isFetching,
   error: getError(organisations),

@@ -9,5 +9,9 @@ interface Props {
 }
 
 export const ActionsDropdown = ({renderPopoverContent, className}: Props) => (
-  <PopoverMenu className={className} IconComponent={IconMore} renderPopoverContent={renderPopoverContent}/>
+  <PopoverMenu
+    className={className}
+    IconComponent={IconMore}
+    renderPopoverContent={renderPopoverContent}
+  />
 );
