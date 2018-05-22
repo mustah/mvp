@@ -6,8 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.exception.UserNotFound;
-import com.elvaco.mvp.web.mapper.UserMapper;
+import com.elvaco.mvp.web.mapper.UserDtoMapper;
 import com.elvaco.mvp.web.security.MvpUserDetails;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,6 +40,9 @@ public class AuthController {
   }
 
   private UserTokenDto toUserTokenDto(MvpUserDetails mvpUserDetails) {
-    return new UserTokenDto(UserMapper.toDto(mvpUserDetails.getUser()), mvpUserDetails.getToken());
+    return new UserTokenDto(
+      UserDtoMapper.toDto(mvpUserDetails.getUser()),
+      mvpUserDetails.getToken()
+    );
   }
 }

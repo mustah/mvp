@@ -7,7 +7,7 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class MeterStatusLogMapper {
+public class MeterStatusLogEntityMapper {
 
   public static StatusLogEntry<UUID> toDomainModel(PhysicalMeterStatusLogEntity entity) {
     return new StatusLogEntry<>(

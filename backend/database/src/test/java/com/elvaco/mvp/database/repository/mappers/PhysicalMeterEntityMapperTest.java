@@ -7,13 +7,13 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PhysicalMeterMapperTest {
+public class PhysicalMeterEntityMapperTest {
 
   @Test
   public void mapToEntity() {
     PhysicalMeter physicalMeter = newPhysicalMeter();
 
-    PhysicalMeterEntity entity = PhysicalMeterMapper.toEntity(physicalMeter);
+    PhysicalMeterEntity entity = PhysicalMeterEntityMapper.toEntity(physicalMeter);
 
     assertThat(entity.address).isEqualTo("567890");
     assertThat(entity.externalId).isEqualTo("external-id");
@@ -24,9 +24,9 @@ public class PhysicalMeterMapperTest {
   @Test
   public void mapToDomainModel() {
     PhysicalMeter physicalMeter = newPhysicalMeter();
-    PhysicalMeterEntity entity = PhysicalMeterMapper.toEntity(physicalMeter);
+    PhysicalMeterEntity entity = PhysicalMeterEntityMapper.toEntity(physicalMeter);
 
-    assertThat(PhysicalMeterMapper.toDomainModel(entity)).isEqualTo(physicalMeter);
+    assertThat(PhysicalMeterEntityMapper.toDomainModel(entity)).isEqualTo(physicalMeter);
   }
 
   private static PhysicalMeter newPhysicalMeter() {

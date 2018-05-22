@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 
-public class LogicalMeterSortingMapper extends SortingMapper {
+public class LogicalMeterSortingEntityMapper extends SortingEntityMapper {
 
   private static final Map<String, String> SORTABLE_PROPERTIES = new HashMap<>();
 

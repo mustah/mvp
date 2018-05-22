@@ -7,7 +7,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
+import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +44,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(OrganisationMapper.toDomainModel(organisation))
+      .organisation(OrganisationEntityMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asUser()
       .build();
@@ -55,7 +55,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "-admin@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(OrganisationMapper.toDomainModel(organisation))
+      .organisation(OrganisationEntityMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asAdmin()
       .build();
@@ -66,7 +66,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "-super-admin@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(OrganisationMapper.toDomainModel(organisation))
+      .organisation(OrganisationEntityMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asSuperAdmin()
       .build();
@@ -87,7 +87,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid2.toString() + "@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(OrganisationMapper.toDomainModel(organisation2))
+      .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
       .id(randomUUID())
       .asUser()
       .build();
@@ -98,7 +98,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid2.toString() + "-admin2@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(OrganisationMapper.toDomainModel(organisation2))
+      .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
       .id(randomUUID())
       .asAdmin()
       .build();
@@ -109,7 +109,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "-super-admin2@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(OrganisationMapper.toDomainModel(organisation2))
+      .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
       .id(randomUUID())
       .asSuperAdmin()
       .build();

@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static com.elvaco.mvp.web.mapper.LocationMapper.toLocationWithId;
+import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 

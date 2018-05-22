@@ -15,7 +15,7 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
-import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
+import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,15 +30,15 @@ public class MeasurementRepository implements Measurements {
   @Override
   public Optional<Measurement> findById(Long id) {
     return Optional.ofNullable(measurementJpaRepository.findOne(id))
-      .map(MeasurementMapper::toDomainModel);
+      .map(MeasurementEntityMapper::toDomainModel);
   }
 
   @Override
   public Measurement save(Measurement measurement) {
     try {
-      return MeasurementMapper.toDomainModel(
+      return MeasurementEntityMapper.toDomainModel(
         measurementJpaRepository.save(
-          MeasurementMapper.toEntity(measurement)
+          MeasurementEntityMapper.toEntity(measurement)
         )
       );
     } catch (DataIntegrityViolationException ex) {
@@ -49,12 +49,12 @@ public class MeasurementRepository implements Measurements {
   @Override
   public Collection<Measurement> save(Collection<Measurement> measurements) {
     List<MeasurementEntity> measurementEntities = measurements.stream()
-      .map(MeasurementMapper::toEntity)
+      .map(MeasurementEntityMapper::toEntity)
       .collect(toList());
     try {
       return measurementJpaRepository.save(measurementEntities)
         .stream()
-        .map(MeasurementMapper::toDomainModel)
+        .map(MeasurementEntityMapper::toDomainModel)
         .collect(toList());
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex);
@@ -91,7 +91,7 @@ public class MeasurementRepository implements Measurements {
   ) {
     return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
       physicalMeterId, quantity, created
-    ).map(MeasurementMapper::toDomainModel);
+    ).map(MeasurementEntityMapper::toDomainModel);
   }
 
   @Override
@@ -100,7 +100,7 @@ public class MeasurementRepository implements Measurements {
       meterId,
       quantity.name,
       quantity.presentationUnit()
-    ).map(MeasurementMapper::toDomainModel);
+    ).map(MeasurementEntityMapper::toDomainModel);
   }
 
   @Override

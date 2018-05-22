@@ -22,7 +22,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
@@ -1367,7 +1367,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return meterDefinitionJpaRepository.save(MeterDefinitionMapper.toEntity(meterDefinition));
+    return meterDefinitionJpaRepository.save(MeterDefinitionEntityMapper.toEntity(meterDefinition));
   }
 
   private MeasurementEntity newButterEnergyMeasurement(

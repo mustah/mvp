@@ -15,11 +15,11 @@ import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
-import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.web.mapper.LocationDtoMapper.UNKNOWN_LOCATION;
 import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class GatewayMapper {
+public class GatewayDtoMapper {
 
   public GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
@@ -79,19 +79,19 @@ public class GatewayMapper {
 
   private IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .map(LocationMapper::toCity)
+      .map(LocationDtoMapper::toCity)
       .orElse(UNKNOWN_LOCATION);
   }
 
   private IdNamedDto toAddress(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .map(LocationMapper::toAddress)
+      .map(LocationDtoMapper::toAddress)
       .orElse(UNKNOWN_LOCATION);
   }
 
   private GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .flatMap(LocationMapper::toGeoPosition)
+      .flatMap(LocationDtoMapper::toGeoPosition)
       .orElseGet(GeoPositionDto::new);
   }
 }

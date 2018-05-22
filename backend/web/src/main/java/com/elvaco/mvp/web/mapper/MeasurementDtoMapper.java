@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 
 import static java.util.stream.Collectors.toList;
 
-public class MeasurementMapper {
+public class MeasurementDtoMapper {
 
   public MeasurementDto toDto(Measurement measurement) {
     return new MeasurementDto(

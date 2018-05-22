@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyList;
@@ -18,12 +19,12 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
-public class LogicalMeterMapper {
+public class LogicalMeterEntityMapper {
 
   public static LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
-      .map(PhysicalMeterMapper::toDomainModel)
+      .map(PhysicalMeterEntityMapper::toDomainModel)
       .collect(toList());
     return toLogicalMeter(logicalMeterEntity, physicalMeters);
   }
@@ -36,7 +37,7 @@ public class LogicalMeterMapper {
 
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
-      .map(physicalMeterEntity -> PhysicalMeterMapper.toDomainModel(
+      .map(physicalMeterEntity -> PhysicalMeterEntityMapper.toDomainModel(
         physicalMeterEntity,
         meterMeasurementCount.get(physicalMeterEntity.getId()),
         meterStatusMap.getOrDefault(physicalMeterEntity.getId(), emptyList())
@@ -55,19 +56,22 @@ public class LogicalMeterMapper {
       logicalMeter.externalId,
       logicalMeter.organisationId,
       logicalMeter.created,
-      MeterDefinitionMapper.toEntity(logicalMeter.meterDefinition)
+      MeterDefinitionEntityMapper.toEntity(logicalMeter.meterDefinition)
     );
 
-    logicalMeterEntity.location = LocationMapper.toEntity(logicalMeter.id, logicalMeter.location);
+    logicalMeterEntity.location = LocationEntityMapper.toEntity(
+      logicalMeter.id,
+      logicalMeter.location
+    );
 
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters
       .stream()
-      .map(PhysicalMeterMapper::toEntity)
+      .map(PhysicalMeterEntityMapper::toEntity)
       .collect(toSet());
 
     logicalMeterEntity.gateways = logicalMeter.gateways
       .stream()
-      .map(GatewayMapper::toEntity)
+      .map(GatewayEntityMapper::toEntity)
       .collect(toSet());
 
     return logicalMeterEntity;
@@ -78,7 +82,7 @@ public class LogicalMeterMapper {
       entity.getId(),
       entity.externalId,
       entity.organisationId,
-      LocationMapper.toDomainModel(entity.location),
+      LocationEntityMapper.toDomainModel(entity.location),
       entity.created
     );
   }
@@ -91,10 +95,10 @@ public class LogicalMeterMapper {
       logicalMeterEntity.id,
       logicalMeterEntity.externalId,
       logicalMeterEntity.organisationId,
-      LocationMapper.toDomainModel(logicalMeterEntity.location),
+      LocationEntityMapper.toDomainModel(logicalMeterEntity.location),
       logicalMeterEntity.created,
       physicalMeters,
-      MeterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition),
+      MeterDefinitionEntityMapper.toDomainModel(logicalMeterEntity.meterDefinition),
       toGateways(logicalMeterEntity.gateways)
     );
   }
@@ -102,7 +106,7 @@ public class LogicalMeterMapper {
   private static List<Gateway> toGateways(Set<GatewayEntity> gateways) {
     return gateways
       .stream()
-      .map(GatewayMapper::toDomainModelWithoutStatusLogs)
+      .map(GatewayEntityMapper::toDomainModelWithoutStatusLogs)
       .collect(toList());
   }
 }

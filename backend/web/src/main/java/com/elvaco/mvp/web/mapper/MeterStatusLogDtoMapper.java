@@ -7,7 +7,7 @@ import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 
-public class MeterStatusLogMapper {
+public class MeterStatusLogDtoMapper {
 
   public MeterStatusLogDto toDto(StatusLogEntry<UUID> meterStatusLog) {
     MeterStatusLogDto meterStatusLogDto = new MeterStatusLogDto();

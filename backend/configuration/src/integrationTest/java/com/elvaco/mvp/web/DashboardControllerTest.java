@@ -19,7 +19,7 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetType;
@@ -59,7 +59,7 @@ public class DashboardControllerTest extends IntegrationTest {
   @Before
   public void setUp() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      MeterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
       startDate
     );
 

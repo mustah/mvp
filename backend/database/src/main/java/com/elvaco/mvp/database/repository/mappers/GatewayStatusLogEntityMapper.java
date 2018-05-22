@@ -7,7 +7,7 @@ import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class GatewayStatusLogMapper {
+public class GatewayStatusLogEntityMapper {
 
   public static StatusLogEntry<UUID> toDomainModel(GatewayStatusLogEntity entity) {
     return new StatusLogEntry<>(

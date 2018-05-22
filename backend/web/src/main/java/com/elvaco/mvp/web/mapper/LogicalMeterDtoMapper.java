@@ -13,24 +13,24 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
-import static com.elvaco.mvp.web.mapper.LocationMapper.toLocationDto;
+import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-public class LogicalMeterMapper {
+public class LogicalMeterDtoMapper {
 
-  private final MeterStatusLogMapper meterStatusLogMapper;
-  private final GatewayMapper gatewayMapper;
-  private final MeasurementMapper measurementMapper;
+  private final MeterStatusLogDtoMapper meterStatusLogDtoMapper;
+  private final GatewayDtoMapper gatewayDtoMapper;
+  private final MeasurementDtoMapper measurementDtoMapper;
 
-  public LogicalMeterMapper(
-    MeterStatusLogMapper meterStatusLogMapper,
-    GatewayMapper gatewayMapper,
-    MeasurementMapper measurementMapper
+  public LogicalMeterDtoMapper(
+    MeterStatusLogDtoMapper meterStatusLogDtoMapper,
+    GatewayDtoMapper gatewayDtoMapper,
+    MeasurementDtoMapper measurementDtoMapper
   ) {
-    this.meterStatusLogMapper = meterStatusLogMapper;
-    this.gatewayMapper = gatewayMapper;
-    this.measurementMapper = measurementMapper;
+    this.meterStatusLogDtoMapper = meterStatusLogDtoMapper;
+    this.gatewayDtoMapper = gatewayDtoMapper;
+    this.measurementDtoMapper = measurementDtoMapper;
   }
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
@@ -75,7 +75,7 @@ public class LogicalMeterMapper {
     meterDto.gateway = logicalMeter.gateways
       .stream()
       .findFirst()
-      .map(gatewayMapper::toGatewayMandatory)
+      .map(gatewayDtoMapper::toGatewayMandatory)
       .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
@@ -84,12 +84,12 @@ public class LogicalMeterMapper {
 
     meterDto.measurements = logicalMeter.measurements
       .stream()
-      .map(measurementMapper::toDto)
+      .map(measurementDtoMapper::toDto)
       .collect(toList());
 
     meterDto.statusChangelog = statusLogs
       .stream()
-      .map(meterStatusLogMapper::toDto)
+      .map(meterStatusLogDtoMapper::toDto)
       .collect(toList());
 
     return meterDto;

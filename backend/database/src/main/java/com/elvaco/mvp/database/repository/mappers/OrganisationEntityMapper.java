@@ -5,7 +5,7 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class OrganisationMapper {
+public class OrganisationEntityMapper {
 
   public static Organisation toDomainModel(OrganisationEntity entity) {
     return new Organisation(entity.id, entity.name, entity.slug, entity.externalId);

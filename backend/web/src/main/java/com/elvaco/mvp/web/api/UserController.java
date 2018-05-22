@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.exception.UserNotFound;
-import com.elvaco.mvp.web.mapper.UserMapper;
+import com.elvaco.mvp.web.mapper.UserDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import static com.elvaco.mvp.web.mapper.UserMapper.toDomainModel;
-import static com.elvaco.mvp.web.mapper.UserMapper.toDto;
+import static com.elvaco.mvp.web.mapper.UserDtoMapper.toDomainModel;
+import static com.elvaco.mvp.web.mapper.UserDtoMapper.toDto;
 import static java.util.stream.Collectors.toList;
 
 @AllArgsConstructor
@@ -33,21 +33,21 @@ public class UserController {
   public List<UserDto> allUsers() {
     return userUseCases.findAll()
       .stream()
-      .map(UserMapper::toDto)
+      .map(UserDtoMapper::toDto)
       .collect(toList());
   }
 
   @GetMapping("{id}")
   public UserDto userById(@PathVariable UUID id) {
     return userUseCases.findById(id)
-      .map(UserMapper::toDto)
+      .map(UserDtoMapper::toDto)
       .orElseThrow(() -> UserNotFound.withId(id));
   }
 
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserWithPasswordDto user) {
     return userUseCases.create(toDomainModel(user))
-      .map(UserMapper::toDto)
+      .map(UserDtoMapper::toDto)
       .map(userDto -> ResponseEntity.status(HttpStatus.CREATED).body(userDto))
       .orElseGet(ResponseEntity.status(HttpStatus.FORBIDDEN)::build);
   }
@@ -55,7 +55,7 @@ public class UserController {
   @PutMapping
   public UserDto updateUser(@RequestBody UserDto user) {
     return userUseCases.update(toDomainModel(user))
-      .map(UserMapper::toDto)
+      .map(UserDtoMapper::toDto)
       .orElseThrow(() -> UserNotFound.withId(user.id));
   }
 

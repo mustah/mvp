@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterStatusLogEntityMapper;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -17,14 +17,16 @@ public class MeterStatusLogsRepository implements MeterStatusLogs {
 
   @Override
   public StatusLogEntry<UUID> save(StatusLogEntry<UUID> meterStatusLog) {
-    return MeterStatusLogMapper.toDomainModel(physicalMeterStatusLogJpaRepository.save(
-      MeterStatusLogMapper.toEntity(meterStatusLog)));
+    return MeterStatusLogEntityMapper.toDomainModel(physicalMeterStatusLogJpaRepository.save(
+      MeterStatusLogEntityMapper.toEntity(meterStatusLog)));
   }
 
   @Override
   public void save(List<StatusLogEntry<UUID>> meterStatusLogs) {
     physicalMeterStatusLogJpaRepository.save(
-      meterStatusLogs.stream().map(MeterStatusLogMapper::toEntity).collect(Collectors.toList())
+      meterStatusLogs.stream()
+        .map(MeterStatusLogEntityMapper::toEntity)
+        .collect(Collectors.toList())
     );
   }
 }

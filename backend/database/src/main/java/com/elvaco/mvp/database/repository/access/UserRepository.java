@@ -12,13 +12,13 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.PasswordEncoder;
 import com.elvaco.mvp.database.entity.user.UserEntity;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.UserMapper;
+import com.elvaco.mvp.database.repository.mappers.UserEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static com.elvaco.mvp.database.repository.mappers.UserMapper.toDomainModel;
-import static com.elvaco.mvp.database.repository.mappers.UserMapper.toEntity;
+import static com.elvaco.mvp.database.repository.mappers.UserEntityMapper.toDomainModel;
+import static com.elvaco.mvp.database.repository.mappers.UserEntityMapper.toEntity;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -31,20 +31,20 @@ public class UserRepository implements Users {
   public List<User> findAll() {
     return userJpaRepository.findAll()
       .stream()
-      .map(UserMapper::toDomainModel)
+      .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Optional<User> findByEmail(String email) {
     return userJpaRepository.findByEmail(email)
-      .map(UserMapper::toDomainModel);
+      .map(UserEntityMapper::toDomainModel);
   }
 
   @Override
   public Optional<User> findById(UUID id) {
     return Optional.ofNullable(userJpaRepository.findOne(id))
-      .map(UserMapper::toDomainModel);
+      .map(UserEntityMapper::toDomainModel);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class UserRepository implements Users {
   public List<User> findByRole(Role role) {
     return userJpaRepository.findByRoles_Role(role.role)
       .stream()
-      .map(UserMapper::toDomainModel)
+      .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -89,7 +89,7 @@ public class UserRepository implements Users {
     return userJpaRepository
       .findByOrganisationId(organisationId)
       .stream()
-      .map(UserMapper::toDomainModel)
+      .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }
 }

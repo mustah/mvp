@@ -13,7 +13,7 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.GatewayNotFound;
-import com.elvaco.mvp.web.mapper.GatewayMapper;
+import com.elvaco.mvp.web.mapper.GatewayDtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,24 +29,24 @@ import static java.util.stream.Collectors.toList;
 public class GatewayController {
 
   private final GatewayUseCases gatewayUseCases;
-  private final GatewayMapper gatewayMapper;
+  private final GatewayDtoMapper gatewayDtoMapper;
   private final AuthenticatedUser currentUser;
 
   @Autowired
   GatewayController(
     GatewayUseCases gatewayUseCases,
-    GatewayMapper gatewayMapper,
+    GatewayDtoMapper gatewayDtoMapper,
     AuthenticatedUser currentUser
   ) {
     this.gatewayUseCases = gatewayUseCases;
-    this.gatewayMapper = gatewayMapper;
+    this.gatewayDtoMapper = gatewayDtoMapper;
     this.currentUser = currentUser;
   }
 
   @GetMapping("{id}")
   public GatewayDto gateway(@PathVariable UUID id) {
     return gatewayUseCases.findById(id)
-      .map(gatewayMapper::toDto)
+      .map(gatewayDtoMapper::toDto)
       .orElseThrow(() -> new GatewayNotFound(id));
   }
 
@@ -54,7 +54,7 @@ public class GatewayController {
   public List<MapMarkerDto> mapMarkers(@RequestParam MultiValueMap<String, String> requestParams) {
     return gatewayUseCases.findAll(requestParametersOf(requestParams))
       .stream()
-      .map(gatewayMapper::toMapMarkerDto)
+      .map(gatewayDtoMapper::toMapMarkerDto)
       .collect(toList());
   }
 
@@ -68,6 +68,6 @@ public class GatewayController {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(gatewayMapper::toDto);
+      .map(gatewayDtoMapper::toDto);
   }
 }

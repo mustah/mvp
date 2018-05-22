@@ -24,8 +24,8 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
@@ -49,7 +49,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
-  private final LogicalMeterSortingMapper sortingMapper;
+  private final LogicalMeterSortingEntityMapper sortingMapper;
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
@@ -92,7 +92,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
     Page<LogicalMeter> page = new PageAdapter<>(
       logicalMeterEntities.map(
-        logicalMeter -> LogicalMeterMapper.toDomainModel(
+        logicalMeter -> LogicalMeterEntityMapper.toDomainModel(
           logicalMeter, mapStatus, mapMeasurementCount
         )
       ));
@@ -111,8 +111,8 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
-    LogicalMeterEntity entity = LogicalMeterMapper.toEntity(logicalMeter);
-    return LogicalMeterMapper.toDomainModel(logicalMeterJpaRepository.save(entity));
+    LogicalMeterEntity entity = LogicalMeterEntityMapper.toEntity(logicalMeter);
+    return LogicalMeterEntityMapper.toDomainModel(logicalMeterJpaRepository.save(entity));
   }
 
   @Override
@@ -121,14 +121,14 @@ public class LogicalMeterRepository implements LogicalMeters {
     String externalId
   ) {
     return logicalMeterJpaRepository.findBy(organisationId, externalId)
-      .map(LogicalMeterMapper::toDomainModel);
+      .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
   @Override
   public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
     return logicalMeterJpaRepository.findByOrganisationId(organisationId)
       .stream()
-      .map(LogicalMeterMapper::toDomainModel)
+      .map(LogicalMeterEntityMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -136,7 +136,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
     return logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters))
       .stream()
-      .map(LogicalMeterMapper::justLocationModel)
+      .map(LogicalMeterEntityMapper::justLocationModel)
       .collect(toList());
   }
 
@@ -192,7 +192,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
     return meters
       .stream()
-      .map(logicalMeterEntity -> LogicalMeterMapper.toDomainModel(
+      .map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
         logicalMeterEntity,
         mappedStatuses,
         meterCounts

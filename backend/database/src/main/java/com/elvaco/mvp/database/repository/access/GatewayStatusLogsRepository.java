@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogMapper;
+import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogEntityMapper;
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
@@ -18,13 +18,13 @@ public class GatewayStatusLogsRepository implements GatewayStatusLogs {
 
   @Override
   public void save(StatusLogEntry<UUID> gatewayStatusLog) {
-    jpaRepository.save(GatewayStatusLogMapper.toEntity(gatewayStatusLog));
+    jpaRepository.save(GatewayStatusLogEntityMapper.toEntity(gatewayStatusLog));
   }
 
   @Override
   public void save(List<StatusLogEntry<UUID>> gatewayStatusLogs) {
     jpaRepository.save(
-      gatewayStatusLogs.stream().map(GatewayStatusLogMapper::toEntity).collect(toList())
+      gatewayStatusLogs.stream().map(GatewayStatusLogEntityMapper::toEntity).collect(toList())
     );
   }
 }
