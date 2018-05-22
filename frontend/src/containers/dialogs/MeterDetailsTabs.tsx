@@ -1,5 +1,6 @@
 import 'MeterDetailsTabs.scss';
 import * as React from 'react';
+import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {HasContent} from '../../components/content/HasContent';
 import {DateTime} from '../../components/dates/DateTime';
 import {Row} from '../../components/layouts/row/Row';
@@ -11,6 +12,7 @@ import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
+import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {Normal} from '../../components/texts/Texts';
 import {timestamp} from '../../helpers/dateHelpers';
@@ -22,7 +24,7 @@ import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/m
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
-import {Children, Identifiable} from '../../types/Types';
+import {Children, Identifiable, OnClickWithId} from '../../types/Types';
 import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
@@ -36,6 +38,8 @@ interface State {
 interface Props {
   meter: Meter;
   meterMapMarker: Maybe<MapMarker>;
+  selectEntryAdd: OnClickWithId;
+  syncWithMetering: OnClickWithId;
 }
 
 export interface RenderableMeasurement extends Identifiable {
@@ -68,7 +72,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
 
   render() {
     const {selectedTab} = this.state;
-    const {meter, meterMapMarker} = this.props;
+    const {meter, meterMapMarker, selectEntryAdd, syncWithMetering} = this.props;
 
     const gateway = meter.gateway;
 
@@ -94,6 +98,13 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
               <Tab tab={TabName.map} title={translate('map')}/>
               <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
             </TabHeaders>
+            <TabSettings>
+              <ListActionsDropdown
+                item={{id: meter.id, name: meter.manufacturer}}
+                selectEntryAdd={selectEntryAdd}
+                syncWithMetering={syncWithMetering}
+              />
+            </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
             <Table {...measurements} className="Measurements">

@@ -16,7 +16,10 @@ import {Maybe} from '../../../helpers/Maybe';
 import {orUnknown} from '../../../helpers/translations';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {clearErrorGateways, fetchGateways} from '../../../state/domain-models-paginated/gateway/gatewayApiActions';
+import {
+  clearErrorGateways,
+  fetchGateways,
+} from '../../../state/domain-models-paginated/gateway/gatewayApiActions';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {
   getPageError,
@@ -29,9 +32,15 @@ import {changePaginationPage} from '../../../state/ui/pagination/paginationActio
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {ClearErrorPaginated, ErrorResponse, FetchPaginated, OnClickWithId, uuid} from '../../../types/Types';
+import {
+  ClearErrorPaginated,
+  ErrorResponse,
+  FetchPaginated,
+  OnClickWithId,
+  uuid,
+} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
-import {GatewayListItem} from './GatewayListItem';
+import {GatewayListItem} from '../components/GatewayListItem';
 
 interface StateToProps {
   result: uuid[];
@@ -176,4 +185,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const GatewayListContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(GatewayList);
+  connect<StateToProps, DispatchToProps, OwnProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(GatewayList);

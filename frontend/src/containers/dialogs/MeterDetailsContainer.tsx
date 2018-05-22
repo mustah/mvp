@@ -9,6 +9,8 @@ import {getMeter} from '../../state/domain-models-paginated/meter/meterSelectors
 import {CallbackWithId, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {getMapMarker} from '../../usecases/map/mapSelectors';
+import {selectEntryAdd} from '../../usecases/report/reportActions';
+import {syncWithMetering} from '../../usecases/validation/validationActions';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfo} from './MeterDetailsInfo';
 import {MeterDetailsTabs} from './MeterDetailsTabs';
@@ -24,6 +26,8 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchMeter: CallbackWithId;
+  selectEntryAdd: CallbackWithId;
+  syncWithMetering: CallbackWithId;
 }
 
 type MeterDetailsContainerProps = StateToProps & DispatchToProps & OwnProps;
@@ -68,6 +72,8 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchMeter,
+  selectEntryAdd,
+  syncWithMetering,
 }, dispatch);
 
 export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, OwnProps>(

@@ -48,7 +48,7 @@ import {
   getGatewayLowConfidenceTextInfo,
   getSelectedMapMarker,
 } from '../../map/mapSelectors';
-import {GatewayListContainer} from '../components/GatewayListContainer';
+import {GatewayListContainer} from './GatewayListContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayMapMarkers: DomainModel<MapMarker>;
