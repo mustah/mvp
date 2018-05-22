@@ -35,7 +35,7 @@ spring:
 
 ehcache:
   heap-entries: 1000
-  idle-time: 20
+  idle-time: 60
 
 liquibase:
   enabled: true
@@ -45,10 +45,6 @@ liquibase:
     application_database: mvp
     application_user: appuser
     application_password: 'RWZ8tKUzDdbncg2J'
-  # Not specifying this causes liquibase's autoconfiguration
-  #  to use the datasource configured for JPA (with the corresponding user)
-  #  which is what we want for H2
-  #url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
 
 
 mvp:
