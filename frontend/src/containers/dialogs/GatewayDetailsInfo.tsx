@@ -1,21 +1,59 @@
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {imagePathFor} from '../../app/routes';
+import {SuperAdminComponent} from '../../components/content/SuperAdminContent';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {MainTitle} from '../../components/texts/Titles';
+import {isSuperAdmin} from '../../helpers/hoc';
+import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
+import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
+import {Organisation} from '../../state/domain-models/organisation/organisationModels';
+import {fetchOrganisation} from '../../state/domain-models/organisation/organisationsApiActions';
+import {getOrganisation} from '../../state/domain-models/organisation/organisationSelectors';
+import {User} from '../../state/domain-models/user/userModels';
+import {CallbackWithId} from '../../types/Types';
+import {getUser} from '../../usecases/auth/authSelectors';
 import {Info} from './Info';
 
-interface Props {
+interface OwnProps {
   gateway: Gateway;
 }
 
-export const GatewayDetailsInfo =
-  ({gateway: {location: {city, address}, serial, productModel, status}}: Props) => {
+interface DispatchToProps {
+  fetchOrganisation: CallbackWithId;
+}
+
+interface StateToProps {
+  organisation: Maybe<Organisation>;
+  user: User;
+}
+
+type Props = OwnProps & StateToProps & DispatchToProps;
+
+class GatewayDetailsInfo extends React.Component<Props> {
+  componentDidMount() {
+    const {fetchOrganisation, gateway, user} = this.props;
+    if (isSuperAdmin(user)) {
+      fetchOrganisation(gateway.organisationId);
+    }
+  }
+
+  componentWillReceiveProps({fetchOrganisation, gateway, user}: Props) {
+    if (isSuperAdmin(user)) {
+      fetchOrganisation(gateway.organisationId);
+    }
+  }
+
+  render() {
+    const {gateway: {location: {city, address}, serial, productModel, status}, organisation} = this.props;
     const gatewayImage = imagePathFor('cme2110.jpg');
+    const organisationName = organisation.map((o) => o.name);
 
     return (
       <Column className="GatewayDetailsInfo">
@@ -26,6 +64,9 @@ export const GatewayDetailsInfo =
             <Info label={translate('product model')} value={productModel}/>
             <Info label={translate('city')} value={orUnknown(city.name)}/>
             <Info label={translate('address')} value={orUnknown(address.name)}/>
+            <SuperAdminComponent>
+              <Info label={translate('organisation')} value={organisationName}/>
+            </SuperAdminComponent>
           </Row>
         </Column>
         <Row>
@@ -39,4 +80,22 @@ export const GatewayDetailsInfo =
         </Row>
       </Column>
     );
-  };
+  }
+}
+
+const mapStateToProps = (
+  {domainModels: {organisations}, auth}: RootState,
+  {gateway}: OwnProps,
+): StateToProps => ({
+    organisation: getOrganisation(organisations, gateway.organisationId),
+    user: getUser(auth),
+});
+
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  fetchOrganisation,
+}, dispatch);
+
+export const GatewayDetailsInfoContainer = connect<StateToProps, DispatchToProps, OwnProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(GatewayDetailsInfo);

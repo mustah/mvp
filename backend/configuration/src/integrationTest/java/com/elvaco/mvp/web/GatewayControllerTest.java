@@ -428,7 +428,8 @@ public class GatewayControllerTest extends IntegrationTest {
             new IdNamedDto("unknown"),
             new GeoPositionDto(1.234, 2.3323, 1.0)
           ),
-          singletonList(meterId1)
+          singletonList(meterId1),
+          gateway1.organisationId
         ),
         new GatewayDto(
           gateway2.id,
@@ -441,7 +442,8 @@ public class GatewayControllerTest extends IntegrationTest {
             new IdNamedDto("kabelgatan 1"),
             new GeoPositionDto(1.12345, 1.3333, 0.6)
           ),
-          singletonList(meterId2)
+          singletonList(meterId2),
+          gateway2.organisationId
         )
       );
   }

@@ -33,7 +33,8 @@ public class GatewayDtoMapper {
       gatewayStatusLog.status.name,
       formatUtc(gatewayStatusLog.start),
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
-      connectedMeterIds(gateway)
+      connectedMeterIds(gateway),
+      gateway.organisationId
     );
   }
 
@@ -66,10 +67,6 @@ public class GatewayDtoMapper {
     return mapMarkerDto;
   }
 
-  private static String formatProductModel(String productModel) {
-    return productModel == null || productModel.trim().isEmpty() ? "Unknown" : productModel.trim();
-  }
-
   private List<UUID> connectedMeterIds(Gateway gateway) {
     return gateway.meters
       .stream()
@@ -93,5 +90,9 @@ public class GatewayDtoMapper {
     return logicalMeter.map(meter -> meter.location)
       .flatMap(LocationDtoMapper::toGeoPosition)
       .orElseGet(GeoPositionDto::new);
+  }
+
+  private static String formatProductModel(String productModel) {
+    return productModel == null || productModel.trim().isEmpty() ? "Unknown" : productModel.trim();
   }
 }

@@ -132,6 +132,7 @@ public class LogicalMeterDtoMapperTest {
     expected.readIntervalMinutes = 15L;
 
     expected.measurements = emptyList();
+    expected.organisationId = ELVACO.id;
 
     UUID organisationId = ELVACO.id;
 

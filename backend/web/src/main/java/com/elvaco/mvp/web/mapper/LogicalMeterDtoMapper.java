@@ -92,6 +92,8 @@ public class LogicalMeterDtoMapper {
       .map(meterStatusLogDtoMapper::toDto)
       .collect(toList());
 
+    meterDto.organisationId = logicalMeter.organisationId;
+
     return meterDto;
   }
 

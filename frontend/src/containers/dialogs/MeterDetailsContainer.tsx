@@ -12,7 +12,7 @@ import {getMapMarker} from '../../usecases/map/mapSelectors';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
 import './MeterDetailsContainer.scss';
-import {MeterDetailsInfo} from './MeterDetailsInfo';
+import {MeterDetailsInfoContainer} from './MeterDetailsInfo';
 import {MeterDetailsTabs} from './MeterDetailsTabs';
 
 interface OwnProps {
@@ -48,7 +48,7 @@ class MeterDetails extends React.Component<MeterDetailsContainerProps> {
       const newProps = {...this.props, meter: this.props.meter.get()};
       return (
         <div>
-          <MeterDetailsInfo {...newProps}/>
+          <MeterDetailsInfoContainer {...newProps}/>
           <MeterDetailsTabs {...newProps}/>
         </div>
       );

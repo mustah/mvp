@@ -153,6 +153,7 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
     created: '',
     readIntervalMinutes: 60,
     measurements: [],
+    organisationId: '',
   }
 );
 

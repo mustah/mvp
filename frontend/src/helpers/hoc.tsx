@@ -8,7 +8,7 @@ interface AuthenticatedUser {
   user: User;
 }
 
-const isSuperAdmin = (user: User): boolean => user.roles.includes(Role.SUPER_ADMIN);
+export const isSuperAdmin = (user: User): boolean => user.roles.includes(Role.SUPER_ADMIN);
 
 const isAdmin = (user: User): boolean => user.roles.includes(Role.ADMIN) || isSuperAdmin(user);
 

@@ -17,6 +17,7 @@ public class GatewayDto extends GatewayMandatoryDto {
   public LocationDto location;
   public List<UUID> meterIds;
   public List<FlagDto> flags;
+  public UUID organisationId;
 
   public GatewayDto(
     UUID id,
@@ -25,11 +26,13 @@ public class GatewayDto extends GatewayMandatoryDto {
     String status,
     String statusChanged,
     LocationDto location,
-    List<UUID> meterIds
+    List<UUID> meterIds,
+    UUID organisationId
   ) {
     super(id, productModel, serial, status, statusChanged);
     this.location = location;
     this.meterIds = meterIds;
     this.flags = emptyList();
+    this.organisationId = organisationId;
   }
 }
