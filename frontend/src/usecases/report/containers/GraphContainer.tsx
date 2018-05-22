@@ -81,7 +81,7 @@ const renderGraphContents = (
 ): Children[] => {
 
   const components: Children[] = lines
-    .filter((line) => hiddenKeys.findIndex((disabledKey) => line.dataKey.startsWith(disabledKey)))
+    .filter((line) => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
     .map((props: LineProps, index: number) => {
     const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
     return (
