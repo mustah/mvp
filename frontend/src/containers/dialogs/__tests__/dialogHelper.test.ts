@@ -73,6 +73,7 @@ describe('dialogHelper', () => {
       }],
       statusChanged: '2017-11-05 23:00',
       meterIds: ['67606228'],
+      organisationId: '',
     };
 
     it('normalizes and uses only statusChangelog property', () => {
@@ -195,6 +196,7 @@ describe('dialogHelper', () => {
             name: 'unknown',
           },
         },
+        organisationId: '',
       };
 
       const {entities, result}: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
@@ -259,6 +261,7 @@ describe('dialogHelper', () => {
             name: 'unknown',
           },
         },
+        organisationId: '',
       };
 
       const {entities, result}: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
@@ -373,6 +376,7 @@ describe('dialogHelper', () => {
             name: 'unknown',
           },
         },
+        organisationId: '',
       };
 
       const {result} = meterMeasurementsForTable(meterWithMeasurementsInDifferentOrder);

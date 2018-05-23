@@ -23,6 +23,7 @@ export interface Gateway extends LocationHolder, GatewayMandatory {
   signalToNoiseRatio?: number;
   statusChangelog: GatewayStatusChangelog[];
   meterIds: uuid[];
+  organisationId: uuid;
 }
 
 export type GatewaysState = NormalizedPaginatedState<Gateway>;

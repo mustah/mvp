@@ -29,6 +29,7 @@ export interface Meter extends Identifiable, LocationHolder {
   date?: string;
   status: IdNamed;
   gateway: GatewayMandatory;
+  organisationId: uuid;
 }
 
 export interface MeterDataSummary {

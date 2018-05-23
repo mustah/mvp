@@ -14,7 +14,7 @@ import {CallbackWithId, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {getMapMarker} from '../../usecases/map/mapSelectors';
 import './GatewayDetailsContainer.scss';
-import {GatewayDetailsInfo} from './GatewayDetailsInfo';
+import {GatewayDetailsInfoContainer} from './GatewayDetailsInfo';
 import {GatewayDetailsTabs} from './GatewayDetailsTabs';
 
 interface OwnProps {
@@ -57,7 +57,7 @@ class GatewayDetails extends React.Component<Props> {
       };
       return (
         <div>
-          <GatewayDetailsInfo gateway={this.props.gateway.get()}/>
+          <GatewayDetailsInfoContainer gateway={this.props.gateway.get()}/>
           <GatewayDetailsTabs {...newProps}/>
         </div>);
     } else {

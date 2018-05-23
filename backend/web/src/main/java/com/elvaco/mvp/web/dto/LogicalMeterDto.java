@@ -27,6 +27,7 @@ public class LogicalMeterDto {
   public Double collectionPercentage;
   public List<MeasurementDto> measurements;
   public Long readIntervalMinutes;
+  public UUID organisationId;
 
   @Nullable
   public GatewayMandatoryDto gateway;

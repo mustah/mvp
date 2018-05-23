@@ -49,6 +49,7 @@ describe('paginatedDomainModelsReducer', () => {
             measurements: [],
             status,
             gateway: {id: 1, serial: '123', productModel: 'Elvaco', status},
+            organisationId: '',
           },
           2: {
             id: 2,
@@ -68,6 +69,7 @@ describe('paginatedDomainModelsReducer', () => {
             measurements: [],
             status,
             gateway: {id: 1, serial: '123-123', productModel: 'Elvaco', status},
+            organisationId: '',
           },
         },
       },
