@@ -116,9 +116,6 @@ msgstr "nytt lösenord"
 msgid "password"
 msgstr "lösenord"
 
-msgid "of {{count}} measurement"
-msgstr "av {{count}} mätvärde"
-
 msgid "other"
 msgstr "övriga"
 
@@ -443,6 +440,9 @@ msgstr "logga ut"
 
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
+
+msgid "of {{count}} measurement"
+msgstr "av {{count}} mätvärde"
 
 msgctxt "°plural"
 msgid "of {{count}} measurement°"
