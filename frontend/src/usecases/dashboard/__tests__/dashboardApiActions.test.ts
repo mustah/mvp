@@ -2,6 +2,7 @@ import MockAdapter = require('axios-mock-adapter');
 import axios from 'axios';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../services/endPoints';
 import {authenticate} from '../../../services/restClient';
 import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
@@ -11,42 +12,46 @@ import {initialState} from '../dashboardReducer';
 
 describe('dashboardActions', () => {
 
-  const configureMockStore = configureStore([thunk]);
+  initTranslations({
+    code: 'en',
+    translation: {
+      'the internet connection appears to be offline': 'offline',
+    },
+  });
 
-  let mockRestClient: MockAdapter;
+  const configureMockStore = configureStore([thunk]);
   let store;
+  let mockRestClient: MockAdapter;
+
   const actions: RequestHandler<DashboardModel> =
     makeActionsOf<DashboardModel>(EndPoints.dashboard);
 
   beforeEach(() => {
     mockRestClient = new MockAdapter(axios);
     authenticate('test');
+    store = configureMockStore({dashboard: initialState});
   });
 
   afterEach(() => {
     mockRestClient.reset();
   });
 
-  it('fetches dashboard', async () => {
-    store = configureMockStore({dashboard: initialState});
+  describe('fetch successfully', () => {
 
-    await onFetchDashboard();
+    it('fetches dashboard', async () => {
+      await onFetchDashboard();
 
-    expect(store.getActions()).toEqual([
-      actions.request(),
-      actions.success({id: 'some-id', widgets: []}),
-    ]);
+      expect(store.getActions()).toEqual([
+        actions.request(),
+        actions.success({id: 'some-id', widgets: []}),
+      ]);
+    });
   });
 
   describe('isFetching', () => {
 
     it('does not fetch while fetching', async () => {
-      store = configureMockStore({
-        dashboard: {
-          initialDashboardState: initialState,
-          isFetching: true,
-        },
-      });
+      store = configureMockStore({dashboard: {isFetching: true}});
 
       await onFetchDashboard();
 
@@ -54,9 +59,27 @@ describe('dashboardActions', () => {
     });
   });
 
+  describe('network error', () => {
+
+    it('display error message when there is not internet connection', async () => {
+      await fetchDashboardWhenOffline();
+
+      expect(store.getActions()).toEqual([
+        actions.request(),
+        actions.failure({message: 'Offline'}),
+      ]);
+    });
+  });
+
   const onFetchDashboard = async () => {
-    mockRestClient.onGet().reply(200, {id: 'some-id', widgets: []});
-    return store.dispatch(fetchDashboard('/id=1'));
+    mockRestClient.onGet(EndPoints.dashboard)
+      .reply(200, {id: 'some-id', widgets: []});
+    return store.dispatch(fetchDashboard());
+  };
+
+  const fetchDashboardWhenOffline = async () => {
+    mockRestClient.onGet(EndPoints.dashboard).networkError();
+    return store.dispatch(fetchDashboard());
   };
 
 });

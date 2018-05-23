@@ -1,5 +1,7 @@
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
+import {Maybe} from '../../../../helpers/Maybe';
 import {Identifiable} from '../../../../types/Types';
+import {GraphContainerState} from '../../../../usecases/report/containers/GraphContainer';
 import {GraphContents} from '../../../../usecases/report/reportModels';
 
 export interface Measurement extends Identifiable {
@@ -11,11 +13,18 @@ export interface Measurement extends Identifiable {
 
 export type Quantity = string;
 
-export const emptyGraphContents: GraphContents = {
+const emptyGraphContents: GraphContents = {
   axes: {},
   data: [],
   legend: [],
   lines: [],
+};
+
+export const initialState: GraphContainerState = {
+  hiddenKeys: [],
+  graphContents: emptyGraphContents,
+  isFetching: false,
+  error: Maybe.nothing(),
 };
 
 export interface MeasurementApiResponsePart {
@@ -47,12 +56,6 @@ export const enum RenderableQuantity {
   forwardTemperature = 'Forward temperature',
   returnTemperature = 'Return temperature',
   differenceTemperature = 'Difference temperature',
-}
-
-export const enum Resolution {
-  hour = 'hour',
-  day = 'day',
-  month = 'month',
 }
 
 export const allQuantities = {

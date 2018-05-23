@@ -17,6 +17,7 @@ export const fetchGateways = fetchIfNeeded<Gateway>(
       {result}: NormalizedPaginated<Gateway>,
       dispatch,
     ) => dispatch(paginationUpdateMetaData({entityType: 'gateways', ...result})),
-  });
+  },
+);
 
 export const fetchGateway = fetchEntityIfNeeded(EndPoints.gateways, 'gateways');

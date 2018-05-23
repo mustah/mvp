@@ -1,7 +1,7 @@
 import {uuid} from '../../../types/Types';
 import {
-  HasPageNumber,
   NormalizedPaginatedResult,
+  PageNumbered,
   PaginatedDomainModelsState,
 } from '../../domain-models-paginated/paginatedDomainModels';
 import {DomainModelsState} from '../../domain-models/domainModels';
@@ -20,7 +20,7 @@ export type EntityTypes = keyof (PaginatedDomainModelsState & DomainModelsState)
 
 export type PaginationChangePayload =
   HasComponentId
-  & HasPageNumber
+  & PageNumbered
   & {entityType: EntityTypes};
 
 export type PaginationMetadataPayload =
@@ -30,7 +30,7 @@ export type PaginationMetadataPayload =
 export type OnChangePage = (payload: PaginationChangePayload) => void;
 
 export interface PaginationModel extends PaginationMetadata {
-  useCases: {[component: string]: HasPageNumber};
+  useCases: {[component: string]: PageNumbered};
 }
 
 export type PaginationState = Paginated & Pageable;
@@ -51,7 +51,7 @@ export interface SortingOptions {
   descending: boolean;
 }
 
-export type Pagination = HasPageNumber & PaginationMetadata;
+export type Pagination = PageNumbered & PaginationMetadata;
 
 export interface PaginationLookupState<T> extends HasComponentId {
   entityType: keyof T;

@@ -33,6 +33,10 @@ export const responseMessageOrFallback = (response?: any): ErrorResponse =>
   (response && response.data)
   || {message: firstUpperTranslated('an unexpected error occurred')};
 
+export const noInternetConnection = (): ErrorResponse => ({
+  message: firstUpperTranslated('the internet connection appears to be offline'),
+});
+
 const makeAsyncRequest = async <P>(
   {
     request,
@@ -42,13 +46,15 @@ const makeAsyncRequest = async <P>(
     parameters,
     dispatch,
   }: AsyncRequest<P>) => {
-  dispatch(request());
   try {
+    dispatch(request());
     const {data} = await onRequest(parameters);
     dispatch(success(data));
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (!error.response) {
+      dispatch(failure(noInternetConnection()));
     } else if (wasRequestCanceled(error)) {
       return;
     } else {

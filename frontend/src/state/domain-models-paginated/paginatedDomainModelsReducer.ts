@@ -6,9 +6,9 @@ import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../domain-models/domainModelsReducer';
 import {Meter} from './meter/meterModels';
 import {
-  HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
+  PageNumbered,
   PaginatedDomainModelsState,
   SingleEntityFailure,
 } from './paginatedDomainModels';
@@ -62,7 +62,7 @@ const setEntities = <T extends Identifiable>(
 
 const setError = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
-  {payload: {page, ...error}}: Action<ErrorResponse & HasPageNumber>,
+  {payload: {page, ...error}}: Action<ErrorResponse & PageNumbered>,
 ): NormalizedPaginatedState<T> => ({
   ...state,
   result: {
@@ -73,7 +73,7 @@ const setError = <T extends Identifiable>(
 
 const clearError = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
-  {payload: {page}}: Action<HasPageNumber>,
+  {payload: {page}}: Action<PageNumbered>,
 ): NormalizedPaginatedState<T> => ({
   ...state,
   result: {
@@ -117,8 +117,8 @@ const entityFailure = <T extends Identifiable>(
 type ActionTypes<T extends Identifiable> =
   | Action<NormalizedPaginated<T>>
   | Action<number>
-  | Action<ErrorResponse & HasPageNumber>
-  | Action<HasPageNumber>
+  | Action<ErrorResponse & PageNumbered>
+  | Action<PageNumbered>
   | Action<T | T[]>
   | Action<SingleEntityFailure>;
 
@@ -136,9 +136,9 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedGetSuccess(endPoint):
         return setEntities<T>(entity, state, action as Action<NormalizedPaginated<T>>);
       case domainModelsPaginatedFailure(endPoint):
-        return setError<T>(state, action as Action<ErrorResponse & HasPageNumber>);
+        return setError<T>(state, action as Action<ErrorResponse & PageNumbered>);
       case domainModelPaginatedClearError(endPoint):
-        return clearError(state, action as Action<HasPageNumber>);
+        return clearError(state, action as Action<PageNumbered>);
       case domainModelsPaginatedEntityRequest(endPoint):
         return entityRequest(state);
       case domainModelsPaginatedEntitySuccess(endPoint):

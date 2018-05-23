@@ -1,10 +1,11 @@
-import {createPayloadAction} from 'react-redux-typescript';
+import {payloadActionOf} from '../../../types/Types';
 import {PaginationChangePayload, PaginationMetadataPayload} from './paginationModels';
 
 export const PAGINATION_UPDATE_METADATA = 'PAGINATION_UPDATE_METADATA';
 export const PAGINATION_CHANGE_PAGE = 'PAGINATION_CHANGE_PAGE';
 
 export const paginationUpdateMetaData =
-  createPayloadAction<string, PaginationMetadataPayload>(PAGINATION_UPDATE_METADATA);
+  payloadActionOf<PaginationMetadataPayload>(PAGINATION_UPDATE_METADATA);
 
-export const changePaginationPage = createPayloadAction<string, PaginationChangePayload>(PAGINATION_CHANGE_PAGE);
+export const changePaginationPage =
+  payloadActionOf<PaginationChangePayload>(PAGINATION_CHANGE_PAGE);

@@ -319,6 +319,9 @@ msgstr "failed to update selection: {{error}}"
 msgid "failed to delete selection: {{error}}"
 msgstr "failed to delete selection: {{error}}"
 
+msgid "the internet connection appears to be offline"
+msgstr "the internet connection appears to be offline"
+
 msgid "users"
 msgstr "users"
 

@@ -11,7 +11,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {restClientWith} from '../../../services/restClient';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
-import {makeActionsOf} from '../../api/apiActions';
+import {makeActionsOf, noInternetConnection} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
 import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';
@@ -20,6 +20,12 @@ import {selectionTreeSchema} from '../selectionTreeSchemas';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('selectionTreeApiActions', () => {
+  initTranslations({
+    code: 'en',
+    translation: {
+      test: 'no translations will default to key',
+    },
+  });
 
   const configureMockStore = configureStore([thunk]);
   let store;
@@ -71,6 +77,7 @@ describe('selectionTreeApiActions', () => {
   const normalizedResponse = normalize(responseFromApi, selectionTreeSchema);
 
   const actions = makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
+
   const getSelectionTreeWithResponseOk = async () => {
     mockRestClient.onGet(EndPoints.selectionTree).reply(201, responseFromApi);
     return store.dispatch(fetchSelectionTree());
@@ -206,12 +213,6 @@ describe('selectionTreeApiActions', () => {
   describe('invalid token', () => {
 
     it('dispatches a logout action if token is invalid', async () => {
-      initTranslations({
-        code: 'en',
-        translation: {
-          test: 'no translations will default to key',
-        },
-      });
       const user: User = {
         id: 1,
         name: 'al',
@@ -228,7 +229,9 @@ describe('selectionTreeApiActions', () => {
         },
       };
       store = configureMockStore(initialState);
+
       const error = new InvalidToken('Token missing or invalid');
+
       const getSelectionTreeInvalidToken = async () => {
         mockRestClient.onGet(EndPoints.selectionTree).reply(401, error);
         mockRestClient.onGet(EndPoints.logout).reply(204);
@@ -244,4 +247,22 @@ describe('selectionTreeApiActions', () => {
       ]);
     });
   });
+
+  describe('network error', () => {
+
+    it('display error message when there is not internet connection', async () => {
+      const getSelectionTreeWhenOffline = async () => {
+        mockRestClient.onGet(EndPoints.selectionTree).networkError();
+        return store.dispatch(fetchSelectionTree());
+      };
+
+      await getSelectionTreeWhenOffline();
+
+      expect(store.getActions()).toEqual([
+        actions.request(),
+        actions.failure(noInternetConnection()),
+      ]);
+    });
+  });
+
 });

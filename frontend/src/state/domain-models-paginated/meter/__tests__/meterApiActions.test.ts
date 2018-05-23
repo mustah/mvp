@@ -8,8 +8,9 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse, uuid} from '../../../../types/Types';
+import {noInternetConnection} from '../../../api/apiActions';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
-import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
+import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
 import {
   domainModelPaginatedClearError,
   makeRequestActionsOf,
@@ -29,6 +30,7 @@ describe('meterApiActions', () => {
       test: 'no translations will default to key',
     },
   });
+
   const configureMockStore = configureStore([thunk]);
   let store;
   let mockRestClient;
@@ -207,6 +209,23 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([]);
     });
 
+    describe('network error', () => {
+
+      it('display error message when there is not internet connection', async () => {
+        const fetchMetersWhenOffline = async (page: number) => {
+          mockRestClient.onGet(EndPoints.meters).networkError();
+          return store.dispatch(fetchMeters(page));
+        };
+
+        await fetchMetersWhenOffline(1);
+
+        expect(store.getActions()).toEqual([
+          requestMeters.request(1),
+          requestMeters.failure({...noInternetConnection(), page: 1}),
+        ]);
+      });
+    });
+
   });
 
   describe('fetchMeter', () => {
@@ -262,8 +281,8 @@ describe('meterApiActions', () => {
   });
 
   describe('fetchMeterEntities', () => {
-
     const fetchMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
+
     const meter1: Partial<Meter> = {id: 1};
     const meter2: Partial<Meter> = {id: 2};
     const meter3: Partial<Meter> = {id: 3};
@@ -291,6 +310,7 @@ describe('meterApiActions', () => {
         fetchMeterEntitiesRequest.success(meters as Meter[]),
       ]);
     });
+
     it('does not fetch if already fetching', async () => {
       const initialState: MetersState = {...makeInitialState(), isFetchingSingle: true};
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});
@@ -326,11 +346,32 @@ describe('meterApiActions', () => {
 
       expect(store.getActions()).toEqual([]);
     });
+
+    describe('network error', () => {
+
+      it('display error message when there is not internet connection', async () => {
+        const fetchMetersWhenOffline = async () => {
+          mockRestClient
+            .onGet(`${EndPoints.meters}?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
+            .networkError();
+          return store.dispatch(fetchMeterEntities(meterIds));
+        };
+
+        await fetchMetersWhenOffline();
+
+        expect(store.getActions()).toEqual([
+          fetchMeterEntitiesRequest.request(),
+          fetchMeterEntitiesRequest.failure({id: -1, ...noInternetConnection()}),
+        ]);
+      });
+    });
+
   });
 
   describe('clear error', () => {
+
     it('send a request to clear error of a specified page', () => {
-      const payload: HasPageNumber = {page: 1};
+      const payload: PageNumbered = {page: 1};
       store.dispatch(clearErrorMeters(payload));
 
       expect(store.getActions()).toEqual([
@@ -338,4 +379,5 @@ describe('meterApiActions', () => {
       ]);
     });
   });
+
 });

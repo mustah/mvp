@@ -13,7 +13,7 @@ import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {responseMessageOrFallback} from '../api/apiActions';
+import {noInternetConnection, responseMessageOrFallback} from '../api/apiActions';
 import {DomainModelsState, Normalized, NormalizedState, RequestType} from './domainModels';
 
 type ActionTypeFactory = (endPoint: EndPoints) => string;
@@ -77,6 +77,8 @@ const asyncRequest = async <REQUEST_MODEL, DATA>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (!error.response) {
+      dispatch(failure(noInternetConnection()));
     } else if (wasRequestCanceled(error)) {
       return;
     } else {
