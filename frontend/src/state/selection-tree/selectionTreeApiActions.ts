@@ -7,7 +7,12 @@ import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {logout} from '../../usecases/auth/authActions';
-import {makeActionsOf, RequestHandler, responseMessageOrFallback} from '../api/apiActions';
+import {
+  makeActionsOf,
+  noInternetConnection,
+  RequestHandler,
+  responseMessageOrFallback,
+} from '../api/apiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 import {selectionTreeSchema} from './selectionTreeSchemas';
 
@@ -28,13 +33,15 @@ const makeAsyncRequest = async <P>(
     parameters,
     dispatch,
   }: AsyncRequest<P>) => {
-  dispatch(request());
   try {
+    dispatch(request());
     const {data} = await onRequest(parameters);
     dispatch(success(formatData(data)));
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (!error.response) {
+      dispatch(failure(noInternetConnection()));
     } else if (wasRequestCanceled(error)) {
       return;
     } else {

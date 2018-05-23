@@ -28,7 +28,7 @@ import {
   fetchMeasurements,
   selectQuantities,
 } from '../../../state/ui/graph/measurement/measurementActions';
-import {emptyGraphContents, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {initialState, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, ErrorResponse, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
@@ -83,23 +83,21 @@ const renderGraphContents = (
   const components: Children[] = lines
     .filter((line) => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
     .map((props: LineProps, index: number) => {
-    const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
-    return (
-      <Line
-        key={index}
-        type="monotone"
-        connectNulls={true}
-        {...props}
-        activeDot={renderActiveDot}
-        dot={newDot}
-      />
-    );
-  });
+      const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
+      return (
+        <Line
+          key={index}
+          type="monotone"
+          connectNulls={true}
+          {...props}
+          activeDot={renderActiveDot}
+          dot={newDot}
+        />
+      );
+    });
 
   if (axes.left) {
-    components.push((
-      <YAxis key="leftYAxis" label={axes.left} yAxisId="left"/>
-    ));
+    components.push(<YAxis key="leftYAxis" label={axes.left} yAxisId="left"/>);
   }
 
   if (axes.right) {
@@ -113,12 +111,7 @@ const renderGraphContents = (
 
 class GraphComponent extends React.Component<Props, GraphContainerState> {
 
-  state: GraphContainerState = {
-    hiddenKeys: [],
-    graphContents: emptyGraphContents,
-    isFetching: false,
-    error: Maybe.nothing(),
-  };
+  state: GraphContainerState = {...initialState};
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
@@ -163,7 +156,12 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
   render() {
     const {selectedListItems, selectedQuantities, selectQuantities, selectedIndicators} = this.props;
     const {graphContents, hiddenKeys} = this.state;
-    const lines = renderGraphContents(graphContents, hiddenKeys, this.renderAndStoreDot, this.renderActiveDot);
+    const lines = renderGraphContents(
+      graphContents,
+      hiddenKeys,
+      this.renderAndStoreDot,
+      this.renderActiveDot,
+    );
     const {data, legend} = graphContents;
 
     const missingData = (

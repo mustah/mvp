@@ -8,7 +8,7 @@ import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {GraphContainerState} from '../../../../../usecases/report/containers/GraphContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
-import {emptyGraphContents, MeasurementApiResponse} from '../measurementModels';
+import {initialState, MeasurementApiResponse} from '../measurementModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
@@ -149,60 +149,63 @@ describe('measurementActions', () => {
         expect(graphContents.axes.right).toEqual('mA');
       });
 
-      it('adjusts the starting position of the x-axis to the first measurement, not average', () => {
-        const firstMeasurement: number = 1516521585107;
-        const slightlyLaterThanFirstAverage: MeasurementApiResponse = [
-          {
-            quantity: 'Power',
-            values: [
-              {
-                when: firstMeasurement,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: 'meter',
-            unit: 'mW',
-          },
-        ];
+      it(
+        'adjusts the starting position of the x-axis to the first measurement, not average',
+        () => {
+          const firstMeasurement: number = 1516521585107;
+          const slightlyLaterThanFirstAverage: MeasurementApiResponse = [
+            {
+              quantity: 'Power',
+              values: [
+                {
+                  when: firstMeasurement,
+                  value: 0.4353763591158477,
+                },
+              ],
+              label: 'meter',
+              unit: 'mW',
+            },
+          ];
 
-        const average: MeasurementApiResponse = [
-          {
-            quantity: 'Power',
-            values: [
-              {
-                when: firstMeasurement - 10,
-                value: 111,
-              },
-            ],
-            label: 'average',
-            unit: 'mW',
-          },
-          {
-            quantity: 'Power',
-            values: [
-              {
-                when: firstMeasurement + 10,
-                value: 222,
-              },
-            ],
-            label: 'average',
-            unit: 'mW',
-          },
-        ];
+          const average: MeasurementApiResponse = [
+            {
+              quantity: 'Power',
+              values: [
+                {
+                  when: firstMeasurement - 10,
+                  value: 111,
+                },
+              ],
+              label: 'average',
+              unit: 'mW',
+            },
+            {
+              quantity: 'Power',
+              values: [
+                {
+                  when: firstMeasurement + 10,
+                  value: 222,
+                },
+              ],
+              label: 'average',
+              unit: 'mW',
+            },
+          ];
 
-        const graphContents = mapApiResponseToGraphData({
-          measurement: slightlyLaterThanFirstAverage,
-          average,
-        });
+          const graphContents = mapApiResponseToGraphData({
+            measurement: slightlyLaterThanFirstAverage,
+            average,
+          });
 
-        expect(graphContents.data).toHaveLength(2);
-        expect(graphContents
-          .data
-          .filter(
-            (value: {[key: string]: number}) => value.name >= firstMeasurement)
-          .length,
-        ).toEqual(2);
-      });
+          expect(graphContents.data).toHaveLength(2);
+          expect(graphContents
+            .data
+            .filter(
+              (value: {[key: string]: number}) => value.name >= firstMeasurement)
+            .length,
+          ).toEqual(2);
+        },
+      );
 
     });
 
@@ -222,13 +225,6 @@ describe('measurementActions', () => {
     const updateState = (updatedState: GraphContainerState) => state = {...updatedState};
     const logout = (error?: Unauthorized) => error ? loggedOut = error.message : 'logged out';
 
-    const initialState: GraphContainerState = {
-      hiddenKeys: [],
-      graphContents: emptyGraphContents,
-      isFetching: false,
-      error: Maybe.nothing(),
-    };
-
     beforeEach(() => {
       state = initialState;
       loggedOut = 'not logged out';
@@ -239,7 +235,15 @@ describe('measurementActions', () => {
       const fetching: GraphContainerState = {...initialState};
       expect(state).not.toEqual(fetching);
 
-      await fetchMeasurements([], [], ['123abc'], Period.currentMonth, Maybe.nothing(), updateState, logout);
+      await fetchMeasurements(
+        [],
+        [],
+        ['123abc'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout,
+      );
       const expected: GraphContainerState = {...initialState};
       expect(state).toEqual(expected);
     });
@@ -262,28 +266,32 @@ describe('measurementActions', () => {
       expect(state).toEqual(expected);
     });
 
-    it('does not include average endpoint when asking for measurements for single meter', async () => {
-      const mockRestClient = new MockAdapter(axios);
-      authenticate('test');
+    it(
+      'does not include average endpoint when asking for measurements for single meter',
+      async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
 
-      const requestedUrls: string[] = [];
-      mockRestClient.onGet().reply((config) => {
-        requestedUrls.push(config.url);
-        return [200, 'some data'];
-      });
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        ['Power'],
-        ['123abc'],
-        Period.currentMonth,
-        Maybe.nothing(),
-        updateState,
-        logout,
-      );
-      expect(requestedUrls.length).toEqual(1);
-      expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
-    });
+        await fetchMeasurements(
+          [Medium.districtHeating],
+          ['Power'],
+          ['123abc'],
+          Period.currentMonth,
+          Maybe.nothing(),
+          updateState,
+          logout,
+        );
+        expect(requestedUrls.length).toEqual(1);
+        expect(requestedUrls[0]).toMatch(
+          /\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
+      },
+    );
 
     it('includes average when asking for measurements for multiple meters', async () => {
       const mockRestClient = new MockAdapter(axios);
@@ -307,9 +315,11 @@ describe('measurementActions', () => {
       expect(requestedUrls).toHaveProperty('length', 2);
       requestedUrls.sort();
       expect(requestedUrls[0])
-        .toMatch(/\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+        .toMatch(
+          /\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
       expect(requestedUrls[1])
-        .toMatch(/\/measurements\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+        .toMatch(
+          /\/measurements\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
     });
 
     it('provides a result suitable for parsing by mapApiResponseToGraphData', async () => {
@@ -380,8 +390,8 @@ describe('measurementActions', () => {
         updateState,
         logout,
       );
-      expect(requestedUrls.length).toEqual(2);
 
+      expect(requestedUrls.length).toEqual(2);
       expect(state.graphContents.axes.left).toEqual('mW');
       expect(state.graphContents.data).toHaveLength(2);
       expect(state.graphContents.lines).toHaveLength(3);

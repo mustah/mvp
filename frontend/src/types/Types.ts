@@ -6,7 +6,7 @@ import {
   PayloadAction,
 } from 'react-redux-typescript';
 import {Maybe} from '../helpers/Maybe';
-import {HasPageNumber} from '../state/domain-models-paginated/paginatedDomainModels';
+import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 
 export type uuid = string | number;
 
@@ -23,7 +23,7 @@ export type Fetch = (parameters?: EncodedUriParameters) => void;
 export type ClearError = () => void;
 
 export type FetchPaginated = (page: number, requestModel?: string) => void;
-export type ClearErrorPaginated = (payload: HasPageNumber) => void;
+export type ClearErrorPaginated = (payload: PageNumbered) => void;
 
 export type Predicate<T> = (value: T) => boolean;
 

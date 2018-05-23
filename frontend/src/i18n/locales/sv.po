@@ -319,6 +319,9 @@ msgstr "kunde inte uppdatera urval: {{error}}"
 msgid "failed to delete selection: {{error}}"
 msgstr "kunde inte ta bort urval: {{error}}"
 
+msgid "the internet connection appears to be offline"
+msgstr "du har ingen internetuppkoppling"
+
 msgid "users"
 msgstr "användare"
 

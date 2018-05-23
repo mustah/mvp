@@ -1,5 +1,4 @@
-import {AxiosPromise, AxiosResponse} from 'axios';
-import {createPayloadAction} from 'react-redux-typescript';
+import {AxiosResponse} from 'axios';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
@@ -8,7 +7,7 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
+import {Dictionary, EncodedUriParameters, payloadActionOf, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
 import {
@@ -17,9 +16,9 @@ import {
   LineProps,
   ProprietaryLegendProps,
 } from '../../../../usecases/report/reportModels';
-import {responseMessageOrFallback} from '../../../api/apiActions';
+import {noInternetConnection, responseMessageOrFallback} from '../../../api/apiActions';
 import {
-  emptyGraphContents,
+  initialState,
   MeasurementApiResponse,
   MeasurementApiResponsePart,
   MeasurementResponses,
@@ -209,12 +208,7 @@ export const fetchMeasurements =
   ): Promise<void> => {
 
     if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
-      updateState({
-        hiddenKeys: [],
-        graphContents: emptyGraphContents,
-        isFetching: false,
-        error: Maybe.nothing(),
-      });
+      updateState({...initialState});
       return;
     }
 
@@ -222,6 +216,7 @@ export const fetchMeasurements =
       EndPoints.measurements.concat('/average'),
       measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
+
     const averageRequest: () => Promise<GraphDataResponse> =
       selectedListItems.length > 1
         ? () => restClient.get(averageUrl)
@@ -231,12 +226,10 @@ export const fetchMeasurements =
       EndPoints.measurements,
       measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
-    const measurementsRequest = (): AxiosPromise<MeasurementApiResponse> => restClient.get(
-      measurementUrl);
 
     try {
       const response: [AxiosResponse<MeasurementApiResponse>, GraphDataResponse] =
-        await Promise.all([measurementsRequest(), averageRequest()]);
+        await Promise.all([restClient.get(measurementUrl), averageRequest()]);
 
       const graphData: MeasurementResponses = {
         measurement: response[0].data,
@@ -245,23 +238,17 @@ export const fetchMeasurements =
           values: averageEntity.values.filter(({value}) => value),
         })),
       };
-
-      updateState({
-        hiddenKeys: [],
-        graphContents: mapApiResponseToGraphData(graphData),
-        isFetching: false,
-        error: Maybe.nothing(),
-      });
+      updateState({...initialState, graphContents: mapApiResponseToGraphData(graphData)});
     } catch (error) {
       if (error instanceof InvalidToken) {
         await logout(error);
+      } else if (!error.response) {
+        updateState({...initialState, error: Maybe.maybe(noInternetConnection())});
       } else if (wasRequestCanceled(error)) {
         return;
       } else {
         updateState({
-          hiddenKeys: [],
-          graphContents: emptyGraphContents,
-          isFetching: false,
+          ...initialState,
           error: Maybe.maybe(responseMessageOrFallback(error.response)),
         });
       }
@@ -271,6 +258,6 @@ export const fetchMeasurements =
 
 export const SAVE_SELECTED_QUANTITIES = 'SAVE_SELECTED_QUANTITIES';
 
-const saveSelectedQuantities = createPayloadAction<string, Quantity[]>(SAVE_SELECTED_QUANTITIES);
+const saveSelectedQuantities = payloadActionOf<Quantity[]>(SAVE_SELECTED_QUANTITIES);
 
 export const selectQuantities = (quantities: Quantity[]) => saveSelectedQuantities(quantities);

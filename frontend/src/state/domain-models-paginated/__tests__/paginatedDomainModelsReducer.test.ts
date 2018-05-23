@@ -7,9 +7,9 @@ import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
 import {
-  HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
+  PageNumbered,
   PaginatedDomainModelsState,
 } from '../paginatedDomainModels';
 import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
@@ -189,7 +189,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('has error when fetching has failed', () => {
       const page = 0;
-      const payload: ErrorResponse & HasPageNumber = {message: 'failed', page};
+      const payload: ErrorResponse & PageNumbered = {message: 'failed', page};
 
       const stateAfterFailure = meters(initialState, getRequest.failure(payload));
 
@@ -209,7 +209,7 @@ describe('paginatedDomainModelsReducer', () => {
 
   describe('clear error', () => {
     it('clears error from a page', () => {
-      const payload: HasPageNumber = {page: 1};
+      const payload: PageNumbered = {page: 1};
       const errorState: MetersState = {
         isFetchingSingle: false,
         nonExistingSingles: {},

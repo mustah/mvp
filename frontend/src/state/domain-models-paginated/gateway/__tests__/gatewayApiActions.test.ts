@@ -50,7 +50,6 @@ describe('gatewayApiActions', () => {
   });
 
   describe('fetchGateways', () => {
-
     const page = 0;
 
     const getGatewaysWithResponseOk = async () => {
@@ -86,8 +85,9 @@ describe('gatewayApiActions', () => {
       id: 1,
       meterIds: [1, 2, 3],
     };
+
     const fetchGatewayWithResponseOk = async (id: uuid) => {
-      mockRestClient.onGet(`${EndPoints.gateways}/${id.toString()}`).reply(201, gateway);
+      mockRestClient.onGet(`${EndPoints.gateways}/${id}`).reply(201, gateway);
       return store.dispatch(fetchGateway(id));
     };
 
@@ -99,6 +99,7 @@ describe('gatewayApiActions', () => {
         gatewayEntityRequest.success(gateway as Gateway),
       ]);
     });
+
     it('does not fetch data if already fetching an entity', async () => {
       const initialState: Partial<GatewaysState> = {...makeInitialState(), isFetchingSingle: true};
       store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
@@ -106,7 +107,6 @@ describe('gatewayApiActions', () => {
       await fetchGatewayWithResponseOk(gateway.id as uuid);
 
       expect(store.getActions()).toEqual([]);
-
     });
 
     it('does not fetch if entity already already exists in state', async () => {
@@ -121,9 +121,7 @@ describe('gatewayApiActions', () => {
       expect(store.getActions()).toEqual([]);
     });
 
-    it(
-      'does not fetch if entity already have been attempted to be fetched but failed',
-      async () => {
+    it('does not fetch if entity already has been been fetched, but failed', async () => {
         const initialState: Partial<GatewaysState> = {
           ...makeInitialState(),
           nonExistingSingles: {1: {id: 1, message: 'gateway not found'}},
@@ -138,6 +136,7 @@ describe('gatewayApiActions', () => {
   });
 
   describe('clear error', () => {
+
     it('dispatches a clear error action', () => {
       const page = 0;
       store.dispatch(clearErrorGateways({page}));

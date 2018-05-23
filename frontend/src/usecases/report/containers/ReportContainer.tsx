@@ -37,7 +37,9 @@ const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 const selectedTab: TabName = TabName.graph;
 
 const ReportComponent = ({selectedIndicatorTypes, toggleReportIndicatorWidget}: Props) => {
+
   const onChangeTab = () => void(0);
+
   const indicators = hardcodedIndicators();
 
   return (
@@ -84,4 +86,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const ReportContainer =
-  connect<SelectedIndicatorWidgetProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ReportComponent);
+  connect<SelectedIndicatorWidgetProps, DispatchToProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(ReportComponent);

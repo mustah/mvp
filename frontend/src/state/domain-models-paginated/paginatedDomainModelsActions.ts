@@ -1,20 +1,25 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {createPayloadAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {ErrorResponse, FetchPaginated, Identifiable} from '../../types/Types';
+import {
+  Action,
+  ErrorResponse,
+  FetchPaginated,
+  Identifiable,
+  payloadActionOf,
+} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {responseMessageOrFallback} from '../api/apiActions';
+import {noInternetConnection, responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
-  HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
+  PageNumbered,
   PaginatedDomainModelsState,
 } from './paginatedDomainModels';
 
@@ -26,12 +31,12 @@ export const domainModelPaginatedClearError = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
 
 export const clearError = (endPoint: EndPoints) =>
-  createPayloadAction<string, HasPageNumber>(domainModelPaginatedClearError(endPoint));
+  payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));
 
 interface PaginatedRequestHandler<T> {
-  request: (payload) => PayloadAction<string, number>;
-  success: (payload) => PayloadAction<string, T>;
-  failure: (payload) => PayloadAction<string, ErrorResponse & HasPageNumber>;
+  request: (payload: number) => Action<number>;
+  success: (payload: T) => Action<T>;
+  failure: (payload: ErrorResponse & PageNumbered) => Action<ErrorResponse & PageNumbered>;
 }
 
 interface AsyncRequest<REQUEST_MODEL, DATA> extends PaginatedRequestHandler<DATA>, RequestCallbacks<DATA> {
@@ -66,6 +71,8 @@ const asyncRequest = async <REQ, DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (!error.response) {
+      dispatch(failure({...noInternetConnection(), page}));
     } else if (wasRequestCanceled(error)) {
       return;
     } else {
@@ -83,11 +90,9 @@ const shouldFetch = (page: number, {result}: NormalizedPaginatedState<Identifiab
   || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
 
 export const makeRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestHandler<T> => ({
-  request: createPayloadAction<string, number>(domainModelsPaginatedRequest(endPoint)),
-  success: createPayloadAction<string, T>(domainModelsPaginatedGetSuccess(endPoint)),
-  failure: createPayloadAction<string, ErrorResponse & HasPageNumber>(
-    domainModelsPaginatedFailure(endPoint),
-  ),
+  request: payloadActionOf<number>(domainModelsPaginatedRequest(endPoint)),
+  success: payloadActionOf<T>(domainModelsPaginatedGetSuccess(endPoint)),
+  failure: payloadActionOf<ErrorResponse & PageNumbered>(domainModelsPaginatedFailure(endPoint)),
 });
 
 export const fetchIfNeeded = <T extends Identifiable>(
@@ -98,8 +103,8 @@ export const fetchIfNeeded = <T extends Identifiable>(
 ): FetchPaginated =>
   (page: number, requestData?: string) =>
     (dispatch: Dispatch<RootState>, getState: GetState) => {
-
       const {paginatedDomainModels} = getState();
+
       if (shouldFetch(page, paginatedDomainModels[entityType])) {
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, NormalizedPaginated<T>>({

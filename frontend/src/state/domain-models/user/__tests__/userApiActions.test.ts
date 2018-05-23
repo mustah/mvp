@@ -5,10 +5,16 @@ import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {authSetUser} from '../../../../usecases/auth/authActions';
+import {noInternetConnection} from '../../../api/apiActions';
 import {CHANGE_LANGUAGE} from '../../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
-import {deleteRequestOf, getEntityRequestOf, postRequestOf, putRequestOf} from '../../domainModelsActions';
+import {
+  deleteRequestOf,
+  getEntityRequestOf,
+  postRequestOf,
+  putRequestOf,
+} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {addUser, deleteUser, fetchUser, modifyProfile, modifyUser} from '../userApiActions';
 import {Role, User} from '../userModels';
@@ -88,6 +94,7 @@ describe('userApiActions', () => {
         showSuccessMessage(`Successfully created the user ${returnedUser.name} (${returnedUser.email})`),
       ]);
     });
+
     it('send a post request to backend and get an error back', async () => {
       await postUserWithBadRequest(newUser);
 
@@ -127,6 +134,7 @@ describe('userApiActions', () => {
         showSuccessMessage(`Successfully updated user ${updatedUser.name} (${updatedUser.email})`),
       ]);
     });
+
     it('sends a put request to backend and an error back', async () => {
       await putUserWithBadRequest(updatedUser);
 
@@ -149,10 +157,12 @@ describe('userApiActions', () => {
     };
 
     const errorResponse = {message: 'An error'};
+
     const putUserWithResponseOk = async (updatedUser: User) => {
       mockRestClient.onPut(EndPoints.users, updatedUser).reply(200, updatedUser);
       return store.dispatch(modifyProfile(updatedUser));
     };
+
     const putUserWithBadRequest = async (updatedUser: User) => {
       mockRestClient.onPut(EndPoints.users, updatedUser).reply(401, errorResponse);
       return store.dispatch(modifyProfile(updatedUser));
@@ -170,6 +180,7 @@ describe('userApiActions', () => {
         showSuccessMessage('Updaterade profilen'),
       ]);
     });
+
     it('sends a put request to backend and an error back', async () => {
       await putUserWithBadRequest(updatedUser);
 
@@ -186,10 +197,12 @@ describe('userApiActions', () => {
       mockRestClient.onDelete(`${EndPoints.users}/${user.id}`).reply(200, user);
       return store.dispatch(deleteUser(user.id));
     };
+
     const deleteUserWithBadRequest = async (user: User) => {
       mockRestClient.onDelete(`${EndPoints.users}/${user.id}`).reply(401, errorResponse);
       return store.dispatch(deleteUser(user.id));
     };
+
     const user: User = {
       id: 3,
       name: 'Eva',
@@ -231,10 +244,12 @@ describe('userApiActions', () => {
       email: 'eva@elvaco.se',
     };
     const errorResponse = {message: 'An error'};
+
     const getUserEntityWithResponseOk = async (user: User) => {
       mockRestClient.onGet(`${EndPoints.users}/${user.id}`).reply(200, user);
       return store.dispatch(fetchUser(user.id));
     };
+
     const getUserEntityWithBadRequest = async (user: User) => {
       mockRestClient.onGet(`${EndPoints.users}/${user.id}`).reply(401, errorResponse);
       return store.dispatch(fetchUser(user.id));
@@ -271,6 +286,23 @@ describe('userApiActions', () => {
       await getUserEntityWithResponseOk(user);
 
       expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('network error', () => {
+
+    it('display error message when there is not internet connection', async () => {
+      const fetchUserWhenOffline = async () => {
+        mockRestClient.onGet(`${EndPoints.users}/1`).networkError();
+        return store.dispatch(fetchUser(1));
+      };
+
+      await fetchUserWhenOffline();
+
+      expect(store.getActions()).toEqual([
+        fetchUserEntity.request(),
+        fetchUserEntity.failure(noInternetConnection()),
+      ]);
     });
   });
 });

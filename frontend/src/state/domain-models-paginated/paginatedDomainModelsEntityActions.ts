@@ -1,18 +1,20 @@
 import {Dispatch} from 'react-redux';
-import {
-  createEmptyAction,
-  createPayloadAction,
-  EmptyAction,
-  PayloadAction,
-} from 'react-redux-typescript';
+import {EmptyAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {
+  Action,
+  emptyActionOf,
+  ErrorResponse,
+  Identifiable,
+  payloadActionOf,
+  uuid,
+} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {responseMessageOrFallback} from '../api/apiActions';
+import {noInternetConnection, responseMessageOrFallback} from '../api/apiActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
   NormalizedPaginatedState,
@@ -29,8 +31,8 @@ export const domainModelsPaginatedEntityFailure = (endPoint: EndPoints) =>
 
 interface PaginatedRequestEntityHandler<T> {
   request: () => EmptyAction<string>;
-  success: (payload: T) => PayloadAction<string, T>;
-  failure: (payload: SingleEntityFailure) => PayloadAction<string, SingleEntityFailure>;
+  success: (payload: T) => Action<T>;
+  failure: (payload: SingleEntityFailure) => Action<SingleEntityFailure>;
 }
 
 interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, RequestCallbacks<DATA> {
@@ -41,10 +43,9 @@ interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, 
 }
 
 export const makeEntityRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
-  request: createEmptyAction<string>(domainModelsPaginatedEntityRequest(endPoint)),
-  success: createPayloadAction<string, T>(domainModelsPaginatedEntitySuccess(endPoint)),
-  failure: createPayloadAction<string, SingleEntityFailure>(domainModelsPaginatedEntityFailure(
-    endPoint)),
+  request: emptyActionOf(domainModelsPaginatedEntityRequest(endPoint)),
+  success: payloadActionOf<T>(domainModelsPaginatedEntitySuccess(endPoint)),
+  failure: payloadActionOf<SingleEntityFailure>(domainModelsPaginatedEntityFailure(endPoint)),
 });
 
 const asyncRequestEntities = async <DAT>(
@@ -70,6 +71,8 @@ const asyncRequestEntities = async <DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (!error.response) {
+      dispatch(failure({id, ...noInternetConnection()}));
     } else if (wasRequestCanceled(error)) {
       return;
     } else {

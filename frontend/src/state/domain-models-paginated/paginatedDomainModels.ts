@@ -21,11 +21,11 @@ export interface NormalizedPaginatedResult {
   totalPages: number;
 }
 
-export interface HasPageNumber {
+export interface PageNumbered {
   page: number;
 }
 
-export interface NormalizedPaginated<T extends Identifiable> extends HasPageNumber {
+export interface NormalizedPaginated<T extends Identifiable> extends PageNumbered {
   entities: {[entityType: string]: ObjectsById<T>};
   result: NormalizedPaginatedResult;
 }
