@@ -5,7 +5,10 @@ import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
 import {momentWithTimeZone, now, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
+import {
+  OnSelectCustomDateRange,
+  OnSelectPeriod,
+} from '../../state/user-selection/userSelectionModels';
 import {OnClick} from '../../types/Types';
 import {PeriodConfirmDialog} from '../dialog/PeriodConfirmDialog';
 import {IconCalendar} from '../icons/IconCalendar';
@@ -19,10 +22,15 @@ const style: React.CSSProperties = {
   height,
   width: 210,
   fontSize: fontSizeNormal,
-  border: `1px solid ${colors.borderColor}`,
+  border: `2px solid ${colors.borderColor}`,
   borderRadius: 3,
   marginLeft: 24,
   marginBottom: 16,
+  borderWidth: 2,
+};
+
+const listStyle: React.CSSProperties = {
+  width: 200,
 };
 
 const underlineStyle: React.CSSProperties = {
@@ -37,6 +45,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: 14,
   display: 'flex',
   alignItems: 'center',
+  width: 210,
 };
 
 const iconStyle: React.CSSProperties = {
@@ -143,6 +152,7 @@ export class PeriodSelection extends React.Component<Props, State> {
           maxHeight={300}
           underlineStyle={underlineStyle}
           labelStyle={labelStyle}
+          listStyle={listStyle}
           iconStyle={iconStyle}
           style={style}
           value={period}
