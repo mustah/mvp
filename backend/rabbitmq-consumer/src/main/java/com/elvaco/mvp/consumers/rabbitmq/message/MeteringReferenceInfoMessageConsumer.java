@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.helpers.CronHelper;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -25,6 +25,7 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +35,7 @@ import static java.util.UUID.randomUUID;
 
 @Slf4j
 @AllArgsConstructor
-public class MeteringStructureMessageConsumer implements StructureMessageConsumer {
+public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessageConsumer {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
@@ -43,16 +44,17 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
   private final GeocodeService geocodeService;
 
   @Override
-  public void accept(MeteringStructureMessageDto structureMessage) {
-    Organisation organisation = organisationUseCases.findOrCreate(structureMessage.organisationId);
-    FacilityDto facility = structureMessage.facility;
+  public void accept(MeteringReferenceInfoMessageDto referenceInfoMessage) {
+    Organisation organisation = organisationUseCases
+      .findOrCreate(referenceInfoMessage.organisationId);
+    FacilityDto facility = referenceInfoMessage.facility;
 
     if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
-      log.warn("Discarding message with invalid facility id: '{}'", structureMessage);
+      log.warn("Discarding message with invalid facility id: '{}'", referenceInfoMessage);
       return;
     }
 
-    MeterDto meterDto = structureMessage.meter;
+    MeterDto meterDto = referenceInfoMessage.meter;
 
     Location location = new LocationBuilder()
       .country(facility.country)
@@ -77,7 +79,7 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
         ));
 
     Optional<Gateway> gateway = Optional.ofNullable(findOrCreateGateway(
-      structureMessage.gateway,
+      referenceInfoMessage.gateway,
       logicalMeter,
       organisation.id
     ));

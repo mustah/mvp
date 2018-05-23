@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 
 import com.google.gson.JsonSyntaxException;
@@ -26,21 +26,27 @@ public class MeteringMessageParser implements MessageParser {
     switch (meteringMessageDto.messageType) {
       case METERING_ALARM_V_1_0:
         return parseAlarmMessage(message)
-          .orElseThrow(() -> new FailedToParse("Failed to parse alarm message: " + message));
+          .orElseThrow(() ->
+            new FailedToParse("Failed to parse alarm message: " + message)
+          );
       case METERING_MEASUREMENT_V_1_0:
         return parseMeasurementMessage(message)
-          .orElseThrow(() -> new FailedToParse("Failed to parse measurement message: " + message));
-      case METERING_METER_STRUCTURE_V_1_0:
-        return parseStructureMessage(message)
-          .orElseThrow(() -> new FailedToParse("Failed to parse structure message: " + message));
+          .orElseThrow(() ->
+            new FailedToParse("Failed to parse measurement message: " + message)
+          );
+      case METERING_REFERENCE_INFO_V_1_0:
+        return parseReferenceInfoMessage(message)
+          .orElseThrow(() ->
+            new FailedToParse("Failed to parse reference info message: " + message)
+          );
       default:
         throw new RuntimeException("Unsupported Metering message type: "
           + meteringMessageDto.messageType.toString());
     }
   }
 
-  protected Optional<MeteringStructureMessageDto> parseStructureMessage(String message) {
-    return parseMessage(message, MeteringStructureMessageDto.class);
+  protected Optional<MeteringReferenceInfoMessageDto> parseReferenceInfoMessage(String message) {
+    return parseMessage(message, MeteringReferenceInfoMessageDto.class);
   }
 
   protected Optional<MeteringMeasurementMessageDto> parseMeasurementMessage(String message) {

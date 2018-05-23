@@ -6,8 +6,8 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringStructureMessageConsumer;
-import com.elvaco.mvp.consumers.rabbitmq.message.StructureMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringReferenceInfoMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
@@ -59,8 +59,8 @@ class RabbitMqConfig {
   }
 
   @Bean
-  StructureMessageConsumer structureMessageConsumer() {
-    return new MeteringStructureMessageConsumer(
+  ReferenceInfoMessageConsumer referenceInfoMessageConsumer() {
+    return new MeteringReferenceInfoMessageConsumer(
       logicalMeterUseCases,
       physicalMeterUseCases,
       organisationUseCases,
@@ -72,12 +72,12 @@ class RabbitMqConfig {
   @Bean
   MessageListener messageListener(
     MeasurementMessageConsumer measurementMessageConsumer,
-    StructureMessageConsumer structureMessageConsumer
+    ReferenceInfoMessageConsumer referenceInfoMessageConsumer
   ) {
     return new MeteringMessageListener(
       new MeteringMessageParser(),
       measurementMessageConsumer,
-      structureMessageConsumer
+      referenceInfoMessageConsumer
     );
   }
 
