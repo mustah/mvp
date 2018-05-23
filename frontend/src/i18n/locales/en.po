@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-18 10:53+0200\n"
+"POT-Creation-Date: 2018-05-23T12:02:27.420Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,13 +9,16 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.7\n"
 
 msgid "admin"
 msgstr "admin"
 
 msgid "metering"
 msgstr "metering"
+
+msgid "sync"
+msgstr "sync"
 
 msgid "add to report"
 msgstr "add to report"
@@ -164,9 +167,6 @@ msgstr "type"
 msgid "status"
 msgstr "status"
 
-msgid "alarm"
-msgstr "alarm"
-
 msgid "hour in short"
 msgstr "h"
 
@@ -181,9 +181,6 @@ msgstr "validation"
 
 msgid "labels"
 msgstr "labels"
-
-msgid "sap id"
-msgstr "sap ID"
 
 msgid "never collected"
 msgstr "never collected"
@@ -227,6 +224,9 @@ msgstr "status change"
 msgid "ok"
 msgstr "OK"
 
+msgid "alarm"
+msgstr "alarm"
+
 msgid "active"
 msgstr "active"
 
@@ -262,6 +262,9 @@ msgstr "bad credentials"
 msgid "an unexpected error occurred"
 msgstr "an unexpected error occurred"
 
+msgid "the internet connection appears to be offline"
+msgstr "the internet connection appears to be offline"
+
 msgid "successfully deleted the organisation {{name}}"
 msgstr "successfully deleted the organisation {{name}}"
 
@@ -295,14 +298,8 @@ msgstr "failed to update profile: {{error}"
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "successfully deleted the user {{name}} ({{email}})"
 
-msgid "meter will soon be synchronized"
-msgstr "meter will soon be synchronized"
-
 msgid "failed to delete the user: {{error}}"
 msgstr "failed to delete the user: {{error}}"
-
-msgid "sync"
-msgstr "sync"
 
 msgid "swedish"
 msgstr "swedish"
@@ -318,9 +315,6 @@ msgstr "failed to update selection: {{error}}"
 
 msgid "failed to delete selection: {{error}}"
 msgstr "failed to delete selection: {{error}}"
-
-msgid "the internet connection appears to be offline"
-msgstr "the internet connection appears to be offline"
 
 msgid "users"
 msgstr "users"
@@ -349,11 +343,11 @@ msgstr "cities"
 msgid "product models"
 msgstr "product models"
 
-msgid "no gateways"
-msgstr "no gateways"
-
 msgid "list"
 msgstr "list"
+
+msgid "no gateways"
+msgstr "no gateways"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -363,6 +357,12 @@ msgstr "all meters in selection"
 
 msgid "report"
 msgstr "report"
+
+msgid "{{count}} meter are not displayed in the map due to low accuracy"
+msgstr "{{count}} meter is not displayed in the map due to low accuracy"
+
+msgid "{{count}} gateway are not displayed in the map due to low accuracy"
+msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
 
 msgid "select medium"
 msgstr "select medium"
@@ -436,6 +436,9 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
+msgid "meter will soon be synchronized"
+msgstr "meter will soon be synchronized"
+
 msgctxt "°plural"
 msgid "of {{count}} measurement°"
 msgstr "of {{count}} measurements"
@@ -453,49 +456,13 @@ msgid "meter°"
 msgstr "meters"
 
 msgctxt "°plural"
+msgid "{{count}} meter are not displayed in the map due to low accuracy°"
+msgstr "{{count}} meters are not displayed in the map due to low accuracy"
+
+msgctxt "°plural"
+msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
+msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
+
+msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
-
-#~ msgid "interval"
-#~ msgstr "interval"
-
-#~ msgid "show only changes"
-#~ msgstr "show only changes"
-
-#~ msgid "email address already exists"
-#~ msgstr "email address already exists"
-
-#~ msgid "deleted selection"
-#~ msgstr "deleted selection"
-
-#~ msgid "{{count}} gateways are not displayed in the map due to low accuracy"
-#~ msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
-
-#~ msgid "table"
-#~ msgstr "table"
-
-#~ msgid "{{count}} meters are not displayed in the map due to low accuracy"
-#~ msgstr "{{count}} meter is not displayed in the map due to low accuracy"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
-#~ msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} meters are not displayed in the map due to low accuracy°"
-#~ msgstr "{{count}} meters are not displayed in the map due to low accuracy"
-
-#~ msgid "export to Excel (.csv)"
-#~ msgstr "export to Excel (.csv)"
-
-#~ msgid "export to JSON"
-#~ msgstr "export to JSON"
-
-#~ msgid "edit"
-#~ msgstr "edit"
-
-#~ msgid "delete"
-#~ msgstr "delete"
-
-#~ msgid "flags"
-#~ msgstr "flags"
