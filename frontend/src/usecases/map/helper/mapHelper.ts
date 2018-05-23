@@ -74,25 +74,26 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
 
 const lowConfidenceTextInfo = (
   {result, entities}: DomainModel<MapMarker>,
-  text: string,
+  translateWith: (count: number) => string,
 ): string | undefined => {
   const numMarkersWithLowConfidence = result.length - metersWithinThreshold(entities).length;
-
-  return numMarkersWithLowConfidence
-    ? firstUpperTranslated(text, {count: numMarkersWithLowConfidence})
-    : undefined;
+  return numMarkersWithLowConfidence ? translateWith(numMarkersWithLowConfidence) : undefined;
 };
 
 export const meterLowConfidenceTextInfo = (meterMapMarkers: DomainModel<MapMarker>): string | undefined =>
   lowConfidenceTextInfo(
     meterMapMarkers,
-    '{{count}} meters are not displayed in the map due to low accuracy',
+    (count: number) => firstUpperTranslated(
+      '{{count}} meter are not displayed in the map due to low accuracy', {count},
+    ),
   );
 
 export const gatewayLowConfidenceTextInfo = (mapMarkers: DomainModel<MapMarker>): string | undefined =>
   lowConfidenceTextInfo(
     mapMarkers,
-    '{{count}} gateways are not displayed in the map due to low accuracy',
+    (count: number) => firstUpperTranslated(
+      '{{count}} gateway are not displayed in the map due to low accuracy', {count},
+    ),
   );
 
 export const maxZoom = 18;
