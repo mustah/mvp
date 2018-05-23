@@ -42,7 +42,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -285,6 +284,32 @@ public class MeteringStructureMessageConsumerTest {
     List<LogicalMeter> meters = logicalMeters.findAll(new MockRequestParameters());
     assertThat(meters).hasSize(1);
     assertThat(meters.get(0).getMedium()).isEqualTo("Unknown medium");
+  }
+
+  @Test
+  public void updatesMeterDefinitionForExistingLogicalMeter() {
+    messageHandler.accept(newStructureMessageWithMedium("Unknown medium"));
+
+    LogicalMeter meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    assertThat(meter.getMedium()).isEqualTo("Unknown medium");
+
+    messageHandler.accept(newStructureMessageWithMedium("Heat, Return temp"));
+
+    meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+  }
+
+  @Test
+  public void doesNotUpdateMeterDefinitionWithUnmappableMedium() {
+    messageHandler.accept(newStructureMessageWithMedium("Unknown medium"));
+
+    LogicalMeter meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    assertThat(meter.getMedium()).isEqualTo("Unknown medium");
+
+    messageHandler.accept(newStructureMessageWithMedium("I don't even know what this is?"));
+
+    meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.UNKNOWN_METER.type);
   }
 
   @Test

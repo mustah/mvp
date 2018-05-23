@@ -25,7 +25,6 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -101,18 +100,21 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     UUID organisationId,
     String facilityId
   ) {
+    MeterDefinition meterDefinition = Optional.ofNullable(meterDto)
+      .map(dto -> MeterDefinition.fromMedium(Medium.from(dto.medium)))
+      .orElse(MeterDefinition.UNKNOWN_METER);
+
     return logicalMeterUseCases.findByOrganisationIdAndExternalId(organisationId, facilityId)
-      .map(logicalMeter -> logicalMeter.withLocation(location))
+      .map(logicalMeter -> logicalMeter.withLocation(location).withMeterDefinition(meterDefinition))
       .orElseGet(() ->
         Optional.ofNullable(meterDto)
-          .map(meter -> new LogicalMeter(
+          .map(dto -> new LogicalMeter(
             randomUUID(),
             facilityId,
             organisationId,
-            MeterDefinition.fromMedium(Medium.from(meter.medium)),
+            meterDefinition,
             location
-          ))
-          .orElse(null));
+          )).orElse(null));
   }
 
   private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
