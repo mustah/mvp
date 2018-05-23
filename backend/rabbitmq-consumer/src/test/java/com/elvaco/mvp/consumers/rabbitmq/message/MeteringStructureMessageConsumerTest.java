@@ -313,6 +313,19 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
+  public void updatesManufacturerForExistingMeter() {
+    messageHandler.accept(newStructureMessageWithManufacturer("ELV"));
+
+    LogicalMeter meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    assertThat(meter.getManufacturer()).isEqualTo("ELV");
+
+    messageHandler.accept(newStructureMessageWithManufacturer("KAM"));
+
+    meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    assertThat(meter.getManufacturer()).isEqualTo("KAM");
+  }
+
+  @Test
   public void callsGeocodeService() {
     messageHandler.accept(newStructureMessageWithMedium(HOT_WATER_MEDIUM));
 
@@ -754,6 +767,16 @@ public class MeteringStructureMessageConsumerTest {
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
       location
+    );
+  }
+
+  private MeteringStructureMessageDto newStructureMessageWithManufacturer(String manufacturer) {
+    return newStructureMessage(
+      HOT_WATER_MEDIUM,
+      manufacturer,
+      ADDRESS,
+      FIFTEEN_MINUTE_CRON,
+      LOCATION_KUNGSBACKA
     );
   }
 
