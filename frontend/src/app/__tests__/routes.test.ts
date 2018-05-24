@@ -7,6 +7,6 @@ describe('routes', () => {
   });
 
   it('returns the default logo path since organisation doesnt have their own logo', () => {
-    expect(getLogoPath('star-wars')).toEqual('assets/images/elvaco_logo.png');
+    expect(getLogoPath('star-wars')).toEqual('assets/images/evo_beta_logo.svg');
   });
 });
