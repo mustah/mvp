@@ -26,7 +26,6 @@ public class GeocodeController {
 
   @PostMapping("/callback/{id}")
   public void callback(@PathVariable UUID id, @RequestBody GeoResponseDto geoResponse) {
-    log.info("/api/v1/geocodes/callback/{}: {}", id, geoResponse);
     locations.save(toLocationWithId(geoResponse, id));
   }
 
