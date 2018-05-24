@@ -27,4 +27,4 @@ const organisationLogo = {
 };
 
 export const getLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || imagePathFor('elvaco_logo.png');
+  organisationLogo[organisationId] || imagePathFor('evo_beta_logo.svg');
