@@ -51,9 +51,7 @@ public class LogicalMeterTest {
 
     LogicalMeter hotWaterMeter = heatingMeter.withMeterDefinition(MeterDefinition.HOT_WATER_METER);
     assertThat(hotWaterMeter.getQuantities()).containsOnly(
-      Quantity.VOLUME,
-      Quantity.VOLUME_FLOW,
-      Quantity.TEMPERATURE
+      Quantity.VOLUME
     );
   }
 
@@ -86,7 +84,7 @@ public class LogicalMeterTest {
       MeterDefinition.HOT_WATER_METER
     );
 
-    assertThat(logicalMeter.getQuantity(Quantity.TEMPERATURE.name)).isNotEmpty();
+    assertThat(logicalMeter.getQuantity(Quantity.VOLUME.name)).isNotEmpty();
     assertThat(logicalMeter.getQuantity("Bildäck")).isEmpty();
   }
 

@@ -54,15 +54,6 @@ public class MeteringMessageMapperTest {
     assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
   }
 
-  @Test
-  public void gasMeterIsMappedFromValueQuantities() {
-    List<ValueDto> values = asList(
-      newValueDto("Volume")
-    );
-
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.GAS_METER);
-  }
-
   private static ValueDto newValueDto(String quantity) {
     return new ValueDto(LocalDateTime.now(), 0.0, "one", quantity);
   }

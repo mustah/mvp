@@ -2,7 +2,6 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,6 +65,78 @@ public class MeteringReferenceInfoMessageParserTest {
     assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
     assertThat(parsedMessage.organisationId).isEqualTo("Bromölla bikers");
     assertThat(parsedMessage.sourceSystemId).isEqualTo("The flipside");
+  }
+
+  @Test
+  public void waterMeter() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-water-meter.json");
+
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
+
+    assertThat(parsedMessage).isNotNull();
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Ankeborg");
+    assertThat(parsedMessage.facility.address).isEqualTo("Kalles hus");
+    assertThat(parsedMessage.gateway).isNotNull();
+    assertThat(parsedMessage.gateway.id).isEqualTo("12031978");
+    assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
+    assertThat(parsedMessage.meter.id).isEqualTo("64");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Water");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
+    assertThat(parsedMessage.organisationId).isEqualTo("Anka AB");
+    assertThat(parsedMessage.sourceSystemId).isEqualTo("AAB");
+  }
+
+  @Test
+  public void hotWaterMeter() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-hot-water-meter.json");
+
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
+
+    assertThat(parsedMessage).isNotNull();
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Ankeborg");
+    assertThat(parsedMessage.facility.address).isEqualTo("Kajsas hus");
+    assertThat(parsedMessage.gateway).isNotNull();
+    assertThat(parsedMessage.gateway.id).isEqualTo("12031979");
+    assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
+    assertThat(parsedMessage.meter.id).isEqualTo("666");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Hot water");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
+    assertThat(parsedMessage.organisationId).isEqualTo("Anka AB");
+    assertThat(parsedMessage.sourceSystemId).isEqualTo("AAB");
+  }
+
+  @Test
+  public void coldWaterMeter() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-cold-water-meter.json");
+
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
+
+    assertThat(parsedMessage).isNotNull();
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Ankeborg");
+    assertThat(parsedMessage.facility.address).isEqualTo("Kajsas hus");
+    assertThat(parsedMessage.gateway).isNotNull();
+    assertThat(parsedMessage.gateway.id).isEqualTo("12031979");
+    assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
+    assertThat(parsedMessage.meter.id).isEqualTo("65");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Cold water");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
+    assertThat(parsedMessage.organisationId).isEqualTo("Anka AB");
+    assertThat(parsedMessage.sourceSystemId).isEqualTo("AAB");
   }
 
   @Test
