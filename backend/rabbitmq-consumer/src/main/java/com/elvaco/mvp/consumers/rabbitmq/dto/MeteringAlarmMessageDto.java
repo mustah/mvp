@@ -7,9 +7,12 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
+
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
+@ToString
 public class MeteringAlarmMessageDto extends MeteringMessageDto {
 
   public final GatewayIdDto gateway;
