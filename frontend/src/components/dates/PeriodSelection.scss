@@ -5,13 +5,13 @@
 
   &:hover {
     .IconCalendar {
-      fill: $black !important;
+      fill: $blue !important;
     }
   }
 
   .PeriodSelection-dropdown {
     &:hover {
-      border: 1px solid $lightest-black !important;
+      border: 2px solid $blue !important;
     }
   }
 }
