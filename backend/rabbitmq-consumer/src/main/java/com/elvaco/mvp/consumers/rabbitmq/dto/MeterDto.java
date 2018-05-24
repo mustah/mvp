@@ -3,8 +3,10 @@ package com.elvaco.mvp.consumers.rabbitmq.dto;
 import javax.annotation.Nullable;
 
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @RequiredArgsConstructor
+@ToString
 public class MeterDto {
 
   public final String id;
