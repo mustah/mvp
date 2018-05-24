@@ -3,6 +3,7 @@ import * as React from 'react';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Bold, Normal} from '../../components/texts/Texts';
+import {superAdminComponent} from '../../helpers/hoc';
 import {Children} from '../../types/Types';
 
 interface InfoProps {
@@ -18,3 +19,5 @@ export const Info = ({label, value}: InfoProps) => {
     </Column>
   ) : null;
 };
+
+export const SuperAdminInfo = superAdminComponent<InfoProps>(Info);
