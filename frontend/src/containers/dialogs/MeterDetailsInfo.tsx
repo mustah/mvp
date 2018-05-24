@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {SuperAdminComponent} from '../../components/content/SuperAdminContent';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -18,7 +17,7 @@ import {getOrganisation} from '../../state/domain-models/organisation/organisati
 import {User} from '../../state/domain-models/user/userModels';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
-import {Info} from './Info';
+import {Info, SuperAdminInfo} from './Info';
 
 interface OwnProps {
   meter: Meter;
@@ -52,16 +51,16 @@ class MeterDetailsInfo extends React.Component<Props> {
 
   render() {
     const {meter, organisation} = this.props;
-    const organisationName = organisation.map((o) => o.name).orElse('unknown');
+    const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
 
     const renderReadInterval = () => {
       if (meter.readIntervalMinutes === 0 || meter.readIntervalMinutes === undefined) {
         return translate('unknown');
       } else if (meter.readIntervalMinutes >= 60) {
         return (meter.readIntervalMinutes / 60) + translate('hour in short');
+      } else {
+        return meter.readIntervalMinutes + translate('minute in short');
       }
-
-      return meter.readIntervalMinutes + translate('minute in short');
     };
 
     const {city, address} = meter.location;
@@ -80,9 +79,7 @@ class MeterDetailsInfo extends React.Component<Props> {
             <Info label={translate('medium')} value={meter.medium}/>
             <Info label={translate('city')} value={orUnknown(city.name)}/>
             <Info label={translate('address')} value={orUnknown(address.name)}/>
-            <SuperAdminComponent>
-              <Info label={translate('organisation')} value={organisationName}/>
-            </SuperAdminComponent>
+            <SuperAdminInfo label={translate('organisation')} value={organisationName}/>
           </Row>
           <Row>
             <Column>

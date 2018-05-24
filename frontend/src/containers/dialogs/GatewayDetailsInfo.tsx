@@ -2,7 +2,6 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {imagePathFor} from '../../app/routes';
-import {SuperAdminComponent} from '../../components/content/SuperAdminContent';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -19,7 +18,7 @@ import {getOrganisation} from '../../state/domain-models/organisation/organisati
 import {User} from '../../state/domain-models/user/userModels';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
-import {Info} from './Info';
+import {Info, SuperAdminInfo} from './Info';
 
 interface OwnProps {
   gateway: Gateway;
@@ -37,6 +36,7 @@ interface StateToProps {
 type Props = OwnProps & StateToProps & DispatchToProps;
 
 class GatewayDetailsInfo extends React.Component<Props> {
+
   componentDidMount() {
     const {fetchOrganisation, gateway, user} = this.props;
     if (isSuperAdmin(user)) {
@@ -53,7 +53,7 @@ class GatewayDetailsInfo extends React.Component<Props> {
   render() {
     const {gateway: {location: {city, address}, serial, productModel, status}, organisation} = this.props;
     const gatewayImage = imagePathFor('cme2110.jpg');
-    const organisationName = organisation.map((o) => o.name);
+    const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
 
     return (
       <Column className="GatewayDetailsInfo">
@@ -64,9 +64,7 @@ class GatewayDetailsInfo extends React.Component<Props> {
             <Info label={translate('product model')} value={productModel}/>
             <Info label={translate('city')} value={orUnknown(city.name)}/>
             <Info label={translate('address')} value={orUnknown(address.name)}/>
-            <SuperAdminComponent>
-              <Info label={translate('organisation')} value={organisationName}/>
-            </SuperAdminComponent>
+            <SuperAdminInfo label={translate('organisation')} value={organisationName}/>
           </Row>
         </Column>
         <Row>
@@ -87,8 +85,8 @@ const mapStateToProps = (
   {domainModels: {organisations}, auth}: RootState,
   {gateway}: OwnProps,
 ): StateToProps => ({
-    organisation: getOrganisation(organisations, gateway.organisationId),
-    user: getUser(auth),
+  organisation: getOrganisation(organisations, gateway.organisationId),
+  user: getUser(auth),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
