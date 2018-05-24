@@ -4,7 +4,7 @@ import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
 import {SelectionTree} from '../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../state/selection-tree/selectionTreeSelectors';
-import {selectedListItemIsMeter} from '../../state/ui/graph/measurement/measurementActions';
+import {isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {uuid} from '../../types/Types';
 
@@ -14,7 +14,7 @@ const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTR
 
 const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
   const limit: number = 20;
-  const newAmount: number = ids.filter(selectedListItemIsMeter).length;
+  const newAmount: number = ids.filter(isSelectedMeter).length;
 
   if (newAmount > limit) {
     dispatch(showFailMessage(firstUpperTranslated(

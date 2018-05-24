@@ -191,7 +191,7 @@ interface GraphDataResponse {
   data: MeasurementApiResponse;
 }
 
-export const selectedListItemIsMeter = (listItem: uuid) =>
+export const isSelectedMeter = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,:]/) || []).length === 0;
 
 export const fetchMeasurements =
@@ -205,7 +205,7 @@ export const fetchMeasurements =
     logout: OnLogout,
   ): Promise<void> => {
 
-    selectedListItems = selectedListItems.filter(selectedListItemIsMeter);
+    selectedListItems = selectedListItems.filter(isSelectedMeter);
 
     if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
       updateState({...initialState});
