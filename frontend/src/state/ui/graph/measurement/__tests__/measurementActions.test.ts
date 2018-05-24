@@ -248,6 +248,30 @@ describe('measurementActions', () => {
       expect(state).toEqual(expected);
     });
 
+    it('includes meters and excludes cities/clusters/addreses in request', async () => {
+      const mockRestClient = new MockAdapter(axios);
+      authenticate('test');
+
+      const requestedUrls: string[] = [];
+      mockRestClient.onGet().reply((config) => {
+        requestedUrls.push(config.url);
+        return [200, 'some data'];
+      });
+
+      await fetchMeasurements(
+        [Medium.districtHeating],
+        ['Power'],
+        ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        (state: GraphContainerState) => void(0),
+        (error?: Unauthorized) => void(0),
+      );
+
+      expect(requestedUrls[0]).toMatch(
+        /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/);
+    });
+
     it('returns empty data if no meter ids are provided', async () => {
       updateState({...initialState, isFetching: true});
       const fetching: GraphContainerState = {...initialState};

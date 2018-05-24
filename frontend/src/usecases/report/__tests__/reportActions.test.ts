@@ -1,61 +1,236 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {selectEntryAdd, selectEntryToggle, SET_SELECTED_ENTRIES} from '../reportActions';
+import {idGenerator} from '../../../helpers/idGenerator';
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
+import {RootState} from '../../../reducers/rootReducer';
+import {SHOW_FAIL_MESSAGE} from '../../../state/ui/message/messageActions';
+import {selectEntryAdd, SET_SELECTED_ENTRIES, toggleIncludingChildren, toggleSingleEntry} from '../reportActions';
 import {ReportState} from '../reportModels';
 
 const configureMockStore = configureStore([thunk]);
 
 describe('reportActions', () => {
 
-  it('makes sure selectEntryToggle dispatch action to ADD "id" to selected entries if not already selected', () => {
-    const initialState: ReportState = {selectedListItems: [2, 3]};
-    const store = configureMockStore({report: {...initialState}});
+  describe('toggleSingleEntry', () => {
 
-    store.dispatch(selectEntryToggle(1));
+    it('dispatches action to ADD id to selected entries if not already selected', () => {
+      const initialState: ReportState = {selectedListItems: [2, 3]};
+      const store = configureMockStore({report: {...initialState}});
 
-    expect(store.getActions()).toEqual([
-      {
-        type: SET_SELECTED_ENTRIES,
-        payload: [2, 3, 1],
+      store.dispatch(toggleSingleEntry(1));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: [2, 3, 1],
+        },
+      ]);
+
+    });
+
+    it('dispatches action to REMOVE id from selected entries if already selected', () => {
+      const initialState: ReportState = {selectedListItems: [1, 2, 3]};
+      const store = configureMockStore({report: {...initialState}});
+
+      store.dispatch(toggleSingleEntry(1));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: [2, 3],
+        },
+      ]);
+    });
+
+  });
+
+  describe('toggleIncludingChildren', () => {
+
+    const initialState: Partial<RootState> = {
+      report: {
+        selectedListItems: [
+          '905a785e-f215-4eb8-b31c-0a00a365a124',
+          'sweden,höganäs,hasselgatan 4',
+        ],
       },
-    ]);
-
-  });
-
-  it('makes sure selectEntryToggle dispatch action to REMOVE "id" from selected entries if already selected', () => {
-    const initialState: ReportState = {selectedListItems: [1, 2, 3]};
-    const store = configureMockStore({report: {...initialState}});
-
-    store.dispatch(selectEntryToggle(1));
-
-    expect(store.getActions()).toEqual([
-      {
-        type: SET_SELECTED_ENTRIES,
-        payload: [2, 3],
+      selectionTree: {
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        entities: {
+          cities: {
+            'sweden,höganäs': {
+              id: 'sweden,höganäs',
+              name: 'höganäs',
+              addresses: [
+                'sweden,höganäs,hasselgatan 4',
+                'sweden,höganäs,storgatan 5',
+                'sweden,höganäs,väpnaregatan 10',
+              ],
+            },
+          },
+          addresses: {
+            'sweden,höganäs,hasselgatan 4': {
+              name: 'hasselgatan 4',
+              meters: [
+                '905a785e-f215-4eb8-b31c-0a00a365a124',
+              ],
+              id: 'sweden,höganäs,hasselgatan 4',
+            },
+            'sweden,höganäs,storgatan 5': {
+              name: 'storgatan 5',
+              meters: [
+                '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+              ],
+              id: 'sweden,höganäs,storgatan 5',
+            },
+            'sweden,höganäs,väpnaregatan 10': {
+              name: 'väpnaregatan 10',
+              meters: [
+                '54c58358-9631-4de3-b76c-f018fbf0fc8b',
+              ],
+              id: 'sweden,höganäs,väpnaregatan 10',
+            },
+          },
+          meters: {
+            '905a785e-f215-4eb8-b31c-0a00a365a124': {
+              id: '905a785e-f215-4eb8-b31c-0a00a365a124',
+              name: '3000',
+            },
+            '22b8fd17-fd83-469e-b0ca-4ab3808beebb': {
+              id: '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+              name: '3001',
+            },
+            '54c58358-9631-4de3-b76c-f018fbf0fc8b': {
+              id: '54c58358-9631-4de3-b76c-f018fbf0fc8b',
+              name: '3002',
+            },
+          },
+        },
+        result: {
+          cities: [
+            'sweden,höganäs',
+          ],
+        },
       },
-    ]);
-  });
+    };
 
-  it('test that selectEntryAdd adds "id" to selected if not there', () => {
-    const initialState: ReportState = {selectedListItems: [1, 2]};
-    const store = configureMockStore({report: {...initialState}});
+    it('selects given address and meters, if address not already selected', () => {
+      const store = configureMockStore(initialState);
+      store.dispatch(toggleIncludingChildren('sweden,höganäs,storgatan 5'));
 
-    store.dispatch(selectEntryAdd(3));
-
-    expect(store.getActions()).toEqual([
-      {
+      expect(store.getActions()).toEqual([{
         type: SET_SELECTED_ENTRIES,
-        payload: [1, 2, 3],
-      },
-    ]);
+        payload: [
+          ...initialState.report!.selectedListItems,
+          'sweden,höganäs,storgatan 5',
+          '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+        ],
+      }]);
+    });
+
+    it('deselects given address and meters, if address already selected', () => {
+      const store = configureMockStore(initialState);
+      store.dispatch(toggleIncludingChildren('sweden,höganäs,hasselgatan 4'));
+
+      expect(store.getActions()).toEqual([{
+        type: SET_SELECTED_ENTRIES,
+        payload: [],
+      }]);
+    });
+
+    it('selects given clusters and meters, if cluster not already selected', () => {
+      const store = configureMockStore(initialState);
+      store.dispatch(toggleIncludingChildren('sweden,höganäs:s'));
+
+      expect(store.getActions()).toEqual([{
+        type: SET_SELECTED_ENTRIES,
+        payload: [
+          ...initialState.report!.selectedListItems,
+          'sweden,höganäs:s',
+          'sweden,höganäs,storgatan 5',
+          '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+        ],
+      }]);
+    });
+
+    it('deselects given clusters and meters, if cluster already selected', () => {
+      const cluster = 'sweden,höganäs:h';
+
+      const store = configureMockStore({
+        ...initialState,
+        report: {
+          ...initialState.report,
+          selectedListItems: [
+            ...initialState.report!.selectedListItems,
+            cluster,
+          ],
+        },
+      });
+      store.dispatch(toggleIncludingChildren(cluster));
+
+      expect(store.getActions()).toEqual([{
+        type: SET_SELECTED_ENTRIES,
+        payload: [],
+      }]);
+    });
+
+    it('shows failure message if trying to select more than 20 meters at a time', () => {
+      const translations = {
+        code: 'en',
+        translation: {
+          'only {{limit}} meters can be selected at the same time':
+            'only {{limit}} meters can be selected at the same time',
+        },
+      };
+      initTranslations(translations);
+      const address = 'sweden,höganäs,storgatan 5';
+      const state = {...initialState};
+      for (let i = 0; i < 30; i++) {
+        const id = idGenerator.uuid();
+        state.selectionTree!.entities.meters[id] = {
+          id,
+          name: `meter-${i}`,
+        };
+
+        state.selectionTree!.entities.addresses[address].meters.push(id);
+      }
+
+      const store = configureMockStore(state);
+      store.dispatch(toggleIncludingChildren(address));
+
+      expect(store.getActions()).toEqual([{
+        type: SHOW_FAIL_MESSAGE,
+        payload: 'Only 20 meters can be selected at the same time',
+      }]);
+    });
+
   });
 
-  it('test that selectEntryAdd does not dispatch when "id" already exist in selected', () => {
-    const initialState: ReportState = {selectedListItems: [1, 2, 3]};
-    const store = configureMockStore({report: {...initialState}});
+  describe('selectEntryAdd', () => {
 
-    store.dispatch(selectEntryAdd(3));
+    it('adds id to selected if not there', () => {
+      const initialState: ReportState = {selectedListItems: [1, 2]};
+      const store = configureMockStore({report: {...initialState}});
 
-    expect(store.getActions()).toEqual([]);
+      store.dispatch(selectEntryAdd(3));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: [1, 2, 3],
+        },
+      ]);
+    });
+
+    it('does not dispatch when id already exist in selected', () => {
+      const initialState: ReportState = {selectedListItems: [1, 2, 3]};
+      const store = configureMockStore({report: {...initialState}});
+
+      store.dispatch(selectEntryAdd(3));
+
+      expect(store.getActions()).toEqual([]);
+    });
+
   });
+
 });

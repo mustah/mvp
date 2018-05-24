@@ -10,12 +10,7 @@ import {restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {Dictionary, EncodedUriParameters, payloadActionOf, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
-import {
-  Axes,
-  GraphContents,
-  LineProps,
-  ProprietaryLegendProps,
-} from '../../../../usecases/report/reportModels';
+import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {noInternetConnection, responseMessageOrFallback} from '../../../api/apiActions';
 import {
   initialState,
@@ -196,6 +191,9 @@ interface GraphDataResponse {
   data: MeasurementApiResponse;
 }
 
+export const isSelectedMeter = (listItem: uuid): boolean =>
+  (listItem.toString().match(/[,:]/) || []).length === 0;
+
 export const fetchMeasurements =
   async (
     selectedIndicators: Medium[],
@@ -206,6 +204,8 @@ export const fetchMeasurements =
     updateState: OnUpdateGraph,
     logout: OnLogout,
   ): Promise<void> => {
+
+    selectedListItems = selectedListItems.filter(isSelectedMeter);
 
     if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
       updateState({...initialState});

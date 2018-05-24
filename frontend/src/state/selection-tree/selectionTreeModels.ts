@@ -1,6 +1,7 @@
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 
+// TODO THERE ARE 2 x "SelectionTreeState" defined!!
 export interface SelectionTreeState extends NormalizedSelectionTree {
   isFetching: boolean;
   isSuccessfullyFetched: boolean;
