@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.MessageSerializer;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class MeteringMessageListener implements MessageListener {
 
   private final MessageParser messageParser;
   private final MeasurementMessageConsumer measurementMessageConsumer;
-  private final StructureMessageConsumer structureMessageConsumer;
+  private final ReferenceInfoMessageConsumer referenceInfoMessageConsumer;
 
   @Nullable
   @Override
@@ -36,8 +36,8 @@ public class MeteringMessageListener implements MessageListener {
       return measurementMessageConsumer.accept((MeteringMeasurementMessageDto) meteringMessage)
         .map(MessageSerializer::toJson)
         .orElse(null);
-    } else if (meteringMessage instanceof MeteringStructureMessageDto) {
-      structureMessageConsumer.accept((MeteringStructureMessageDto) meteringMessage);
+    } else if (meteringMessage instanceof MeteringReferenceInfoMessageDto) {
+      referenceInfoMessageConsumer.accept((MeteringReferenceInfoMessageDto) meteringMessage);
       return null;
     } else if (meteringMessage instanceof MeteringAlarmMessageDto) {
       log.warn("Ignoring unhandled Alarm message");

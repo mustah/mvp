@@ -7,7 +7,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -76,7 +76,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
   @Test
   public void messagesSentToRabbitAreReceivedAndProcessed() throws Exception {
-    MeteringStructureMessageDto message = getMeteringStructureMessageDto();
+    MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
     publishMessage(toJson(message).getBytes());
 
@@ -90,11 +90,11 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
   @Test
   public void processMessageWithMissingMeter() throws Exception {
-    MeteringStructureMessageDto message = getMeteringStructureMessageDto();
+    MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
     publishMessage(toJson(message).getBytes());
 
-    MeteringStructureMessageDto newMessage = getMeteringStructureMessageDto()
+    MeteringReferenceInfoMessageDto newMessage = getMeteringReferenceInfoMessageDto()
       .withMeter(null)
       .withFacility(new FacilityDto("facility-id", "Sweden", "Varberg", "Drottninggatan 1"))
       .withGatewayStatus(new GatewayStatusDto("123987", "Gateway 3100", "OK"));
@@ -120,11 +120,11 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
   @Test
   public void processMessageWithMissingGateway() throws Exception {
-    MeteringStructureMessageDto message = getMeteringStructureMessageDto();
+    MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
     publishMessage(toJson(message).getBytes());
 
-    MeteringStructureMessageDto newMessage = getMeteringStructureMessageDto()
+    MeteringReferenceInfoMessageDto newMessage = getMeteringReferenceInfoMessageDto()
       .withMeter(new MeterDto("1234", "Some medium", "OK", "Acme", "*/15 * * * *"))
       .withFacility(new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"))
       .withGatewayStatus(null);
@@ -168,8 +168,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
         ));
   }
 
-  private MeteringStructureMessageDto getMeteringStructureMessageDto() {
-    return new MeteringStructureMessageDto(
+  private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {
+    return new MeteringReferenceInfoMessageDto(
       new MeterDto("1234", "Some medium", "OK", "A manufacturer", "*/15 * * * *"),
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",

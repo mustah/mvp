@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,17 +15,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MeteringMessageListenerTest {
 
   private MessageConsumerSpy messageConsumerSpy;
-  private StructureMessageConsumerSpy structureMessageConsumerSpy;
+  private ReferenceInfoMessageConsumerSpy referenceInfoMessageConsumerSpy;
   private MessageListener messageListener;
 
   @Before
   public void setUp() {
     messageConsumerSpy = new MessageConsumerSpy();
-    structureMessageConsumerSpy = new StructureMessageConsumerSpy();
+    referenceInfoMessageConsumerSpy = new ReferenceInfoMessageConsumerSpy();
     messageListener = new MeteringMessageListener(
       new MeteringMessageParser(),
       messageConsumerSpy,
-      structureMessageConsumerSpy
+      referenceInfoMessageConsumerSpy
     );
   }
 
@@ -59,7 +59,7 @@ public class MeteringMessageListenerTest {
   }
 
   @Test
-  public void receiveStructureMessage() {
+  public void receiveReferenceInfoMessage() {
     String message =
       ("{\n"
        + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
@@ -87,7 +87,7 @@ public class MeteringMessageListenerTest {
 
     messageListener.onMessage(message);
 
-    assertThat(structureMessageConsumerSpy.messageReceived).isTrue();
+    assertThat(referenceInfoMessageConsumerSpy.messageReceived).isTrue();
     assertThat(messageConsumerSpy.messageReceived).isFalse();
   }
 
@@ -119,7 +119,7 @@ public class MeteringMessageListenerTest {
     messageListener.onMessage(message);
 
     assertThat(messageConsumerSpy.messageReceived).isFalse();
-    assertThat(structureMessageConsumerSpy.messageReceived).isFalse();
+    assertThat(referenceInfoMessageConsumerSpy.messageReceived).isFalse();
   }
 
   @Test
@@ -151,7 +151,7 @@ public class MeteringMessageListenerTest {
     messageListener.onMessage(measurementMessage);
 
     assertThat(messageConsumerSpy.messageReceived).isTrue();
-    assertThat(structureMessageConsumerSpy.messageReceived).isFalse();
+    assertThat(referenceInfoMessageConsumerSpy.messageReceived).isFalse();
   }
 
   private static class MessageConsumerSpy implements MeasurementMessageConsumer {
@@ -165,13 +165,13 @@ public class MeteringMessageListenerTest {
     }
   }
 
-  private static class StructureMessageConsumerSpy
-    implements StructureMessageConsumer {
+  private static class ReferenceInfoMessageConsumerSpy
+    implements ReferenceInfoMessageConsumer {
 
     private boolean messageReceived;
 
     @Override
-    public void accept(MeteringStructureMessageDto message) {
+    public void accept(MeteringReferenceInfoMessageDto message) {
       messageReceived = true;
     }
   }

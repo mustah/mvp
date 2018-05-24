@@ -1,14 +1,15 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.JsonFileReader.parseJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringStructureMessageParserTest {
+public class MeteringReferenceInfoMessageParserTest {
 
   private static final String CRON_FIFTEEN_MINUTES = "*/15 * * * *";
 
@@ -23,11 +24,11 @@ public class MeteringStructureMessageParserTest {
   public void heatMeter() {
     String jsonMessage = parseJsonFile("messages/reference-info-valid-heat-meter.json");
 
-    MeteringStructureMessageDto parsedMessage =
-      messageParser.parseStructureMessage(jsonMessage).orElse(null);
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
 
     assertThat(parsedMessage).isNotNull();
-    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_METER_STRUCTURE_V_1_0);
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
     assertThat(parsedMessage.facility.id).isEqualTo("ABC-123");
     assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
     assertThat(parsedMessage.facility.city).isEqualTo("Perstorp");
@@ -47,11 +48,11 @@ public class MeteringStructureMessageParserTest {
   public void gasMeter() {
     String jsonMessage = parseJsonFile("messages/reference-info-valid-gas-meter.json");
 
-    MeteringStructureMessageDto parsedMessage =
-      messageParser.parseStructureMessage(jsonMessage).orElse(null);
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
 
     assertThat(parsedMessage).isNotNull();
-    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_METER_STRUCTURE_V_1_0);
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
     assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
     assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
     assertThat(parsedMessage.facility.city).isEqualTo("Älmhult");
@@ -68,47 +69,49 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
-  public void parseMalformedStructureMessage() {
-    assertThat(messageParser.parseStructureMessage("")).isEmpty();
-    assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
-    assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
+  public void parseMalformedReferenceInfoMessage() {
+    assertThat(messageParser.parseReferenceInfoMessage("")).isEmpty();
+    assertThat(messageParser.parseReferenceInfoMessage("{\"foo\": 1999}")).isEmpty();
+    assertThat(messageParser.parseReferenceInfoMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
   }
 
   @Test
   public void missingGateway() {
     String missingGateway = parseJsonFile("messages/reference-info-missing-gateway.json");
-    assertThat(messageParser.parseStructureMessage(missingGateway)).isPresent();
+    assertThat(messageParser.parseReferenceInfoMessage(missingGateway)).isPresent();
   }
 
   @Test
   public void missingMeter() {
     String missingMeter = parseJsonFile("messages/reference-info-missing-meter.json");
-    assertThat(messageParser.parseStructureMessage(missingMeter)).isPresent();
+    assertThat(messageParser.parseReferenceInfoMessage(missingMeter)).isPresent();
   }
 
   @Test
   public void missingMeterAndGateway() {
     String message = parseJsonFile("messages/reference-info-missing-meter-and-gateway.json");
-    assertThat(messageParser.parseStructureMessage(message)).isPresent();
+    assertThat(messageParser.parseReferenceInfoMessage(message)).isPresent();
   }
 
   @Test
   public void emptyGateway() {
     String emptyGateway = parseJsonFile("messages/reference-info-empty-gateway.json");
-    assertThat(messageParser.parseStructureMessage(emptyGateway)).isPresent();
+    assertThat(messageParser.parseReferenceInfoMessage(emptyGateway)).isPresent();
   }
 
   @Test
   public void emptyMeter() {
     String emptyMeter = parseJsonFile("messages/reference-info-empty-meter.json");
-    assertThat(messageParser.parseStructureMessage(emptyMeter)).isPresent();
+    assertThat(messageParser.parseReferenceInfoMessage(emptyMeter)).isPresent();
   }
 
   @Test
   public void readIntervalCanBeNull() {
-    String message = parseJsonFile("messages/metering-structure-message-no-cron.json");
+    String message = parseJsonFile("messages/reference-info-message-no-cron.json");
 
-    MeteringStructureMessageDto parsedMessage = messageParser.parseStructureMessage(message).get();
+    MeteringReferenceInfoMessageDto parsedMessage = messageParser
+      .parseReferenceInfoMessage(message)
+      .get();
 
     assertThat(parsedMessage.meter.cron).isNull();
   }

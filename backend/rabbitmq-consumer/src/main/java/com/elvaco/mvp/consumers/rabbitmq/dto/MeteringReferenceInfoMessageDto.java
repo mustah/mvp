@@ -9,7 +9,7 @@ import lombok.ToString;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class MeteringStructureMessageDto extends MeteringMessageDto {
+public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
 
   @Nullable
   public final MeterDto meter;
@@ -23,14 +23,14 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
   @Nullable
   public final GatewayStatusDto gateway;
 
-  public MeteringStructureMessageDto(
+  public MeteringReferenceInfoMessageDto(
     @Nullable MeterDto meter,
     @Nullable FacilityDto facility,
     String sourceSystemId,
     String organisationId,
     @Nullable GatewayStatusDto gateway
   ) {
-    super(MessageType.METERING_METER_STRUCTURE_V_1_0);
+    super(MessageType.METERING_REFERENCE_INFO_V_1_0);
     this.meter = meter;
     this.facility = facility;
     this.sourceSystemId = sourceSystemId;
@@ -38,8 +38,8 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
     this.gateway = gateway;
   }
 
-  public MeteringStructureMessageDto withFacility(FacilityDto facilityDto) {
-    return new MeteringStructureMessageDto(
+  public MeteringReferenceInfoMessageDto withFacility(FacilityDto facilityDto) {
+    return new MeteringReferenceInfoMessageDto(
       meter,
       facilityDto,
       sourceSystemId,
@@ -48,8 +48,8 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
     );
   }
 
-  public MeteringStructureMessageDto withMeter(MeterDto meterDto) {
-    return new MeteringStructureMessageDto(
+  public MeteringReferenceInfoMessageDto withMeter(MeterDto meterDto) {
+    return new MeteringReferenceInfoMessageDto(
       meterDto,
       facility,
       sourceSystemId,
@@ -58,8 +58,8 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
     );
   }
 
-  public MeteringStructureMessageDto withGatewayStatus(GatewayStatusDto gatewayStatusDto) {
-    return new MeteringStructureMessageDto(
+  public MeteringReferenceInfoMessageDto withGatewayStatus(GatewayStatusDto gatewayStatusDto) {
+    return new MeteringReferenceInfoMessageDto(
       meter,
       facility,
       sourceSystemId,

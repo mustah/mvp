@@ -92,13 +92,13 @@ class GeneratedDataLoader implements CommandLineRunner {
 
     start = System.nanoTime();
     log.info("Saving generated data ...");
-    saveStructure(
+    saveReferenceInfo(
       data.stream().map(gd -> gd.gateway).collect(toList()),
       data.stream().map(gd -> gd.logicalMeter).collect(toList()),
       data.stream().map(gd -> gd.physicalMeter).collect(toList())
     );
     log.info(
-      "Saved generated structure data in {} seconds",
+      "Saved generated reference info data in {} seconds",
       Duration.ofNanos(System.nanoTime() - start).getSeconds()
     );
     saveMeasurements(allMeasurements);
@@ -106,7 +106,7 @@ class GeneratedDataLoader implements CommandLineRunner {
   }
 
   @Transactional
-  void saveStructure(
+  void saveReferenceInfo(
     List<Gateway> gatewayList,
     List<LogicalMeter> logicalMeterList,
     List<PhysicalMeter> physicalMeterList

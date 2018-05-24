@@ -63,7 +63,7 @@ public class MeteringAlarmParserTest {
   }
 
   @Test
-  public void parseMalformedStructureMessage() {
+  public void parseMalformedReferenceInfoMessage() {
     assertThat(messageParser.parseAlarmMessage("")).isEmpty();
     assertThat(messageParser.parseAlarmMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseAlarmMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
