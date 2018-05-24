@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-23 15:02+0200\n"
+"POT-Creation-Date: 2018-06-05 11:23+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -125,6 +125,9 @@ msgstr "other"
 msgid "no"
 msgstr "no"
 
+msgid "unknown"
+msgstr "unknown"
+
 msgid "gateway details"
 msgstr "gateway"
 
@@ -142,9 +145,6 @@ msgstr "address"
 
 msgid "collection"
 msgstr "collection"
-
-msgid "unknown"
-msgstr "unknown"
 
 msgid "no reliable position"
 msgstr "no reliable position"
@@ -373,6 +373,9 @@ msgstr "select quantities"
 msgid "select meters to include in graph"
 msgstr "select meters to include in graph"
 
+msgid "no data found for selected meters during chosen interval"
+msgstr "no data found for selected meters during chosen interval"
+
 msgid "graph"
 msgstr "graph"
 
@@ -382,14 +385,14 @@ msgstr "only {{limit}} meters can be selected at the same time"
 msgid "electricity"
 msgstr "electricity"
 
-msgid "water"
-msgstr "water"
-
 msgid "cold water"
 msgstr "cold water"
 
 msgid "hot water"
 msgstr "hot water"
+
+msgid "water"
+msgstr "water"
 
 msgid "district heating"
 msgstr "district heating"

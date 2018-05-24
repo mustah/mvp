@@ -11,8 +11,6 @@ export interface Measurement extends Identifiable {
   unit: string;
 }
 
-export type Quantity = string;
-
 const emptyGraphContents: GraphContents = {
   axes: {},
   data: [],
@@ -44,11 +42,7 @@ export interface MeasurementResponses {
   average: MeasurementApiResponse;
 }
 
-export interface MeasurementState {
-  selectedQuantities: Quantity[];
-}
-
-export const enum RenderableQuantity {
+export const enum Quantity {
   volume = 'Volume',
   flow = 'Flow',
   energy = 'Energy',
@@ -62,36 +56,48 @@ export const enum RenderableQuantity {
   energyReactive = 'Reactive energy',
 }
 
+export const quantityUnits = {
+  [Quantity.energy]: 'kWh',
+  [Quantity.volume]: 'm',
+  [Quantity.power]: 'W',
+  [Quantity.flow]: 'm³/h',
+  [Quantity.forwardTemperature]: '°C',
+  [Quantity.returnTemperature]: '°C',
+  [Quantity.differenceTemperature]: 'K',
+};
+
 export const allQuantities = {
   [Medium.districtHeating]: [
-    RenderableQuantity.energy,
-    RenderableQuantity.volume,
-    RenderableQuantity.power,
-    RenderableQuantity.flow,
-    RenderableQuantity.forwardTemperature,
-    RenderableQuantity.returnTemperature,
-    RenderableQuantity.differenceTemperature,
+    Quantity.energy,
+    Quantity.volume,
+    Quantity.power,
+    Quantity.flow,
+    Quantity.forwardTemperature,
+    Quantity.returnTemperature,
+    Quantity.differenceTemperature,
   ],
   [Medium.gas]: [
-    RenderableQuantity.volume,
+    Quantity.volume,
   ],
   [Medium.water]: [
-    RenderableQuantity.volume,
+    Quantity.volume,
   ],
   [Medium.coldWater]: [
-    RenderableQuantity.volume,
+    Quantity.volume,
   ],
   [Medium.hotWater]: [
-    RenderableQuantity.volume,
+    Quantity.volume,
   ],
   [Medium.temperatureInside]: [
-    RenderableQuantity.temperature,
-    RenderableQuantity.relativeHumidity,
+    Quantity.temperature,
+    Quantity.relativeHumidity,
   ],
   [Medium.electricity]: [
-    RenderableQuantity.energy,
-    RenderableQuantity.energyReactive,
-    RenderableQuantity.energyReturn,
-    RenderableQuantity.power,
+    Quantity.energy,
+    Quantity.energyReactive,
+    Quantity.energyReturn,
+    Quantity.power,
   ],
 };
+
+export const defaultQuantityForMedium = (medium: Medium): Quantity => allQuantities[medium][0];

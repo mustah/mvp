@@ -8,7 +8,6 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {
   allQuantities,
   Quantity,
-  RenderableQuantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Children, HasContent} from '../../../types/Types';
 
@@ -17,6 +16,7 @@ interface Props {
   changeQuantities: (event, index, values) => void;
   children?: Children;
 }
+import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
 
 interface QuantitySelectorProps {
   selectedQuantities: Quantity[];
@@ -25,6 +25,18 @@ interface QuantitySelectorProps {
 }
 
 const style: React.CSSProperties = {padding: '20px 20px 0px'};
+
+const quantityMenuItem =
+  (selectedQuantities: Quantity[]) =>
+    (quantity: Quantity) => (
+      <MenuItem
+        checked={selectedQuantities.includes(quantity)}
+        disabled={!canToggleMedia(selectedQuantities, quantity)}
+        key={quantity}
+        primaryText={quantity}
+        value={quantity}
+      />
+    );
 
 const HintText = () =>
   <Normal className="Bold Italic">{firstUpperTranslated('select medium')}</Normal>;
@@ -53,18 +65,8 @@ export const QuantityDropdown =
     );
 
     const changeQuantities = (event, index, values) => selectQuantities(values);
-
-    const quantityMenuItem = (quantity: RenderableQuantity) => (
-      <MenuItem
-        key={quantity}
-        checked={selectedQuantities.includes(quantity)}
-        value={quantity}
-        primaryText={quantity}
-      />
-    );
-
-    const options: Children[] = Array.from(quantities.values()).map(quantityMenuItem);
-
+    const renderMenuItem = quantityMenuItem(selectedQuantities);
+    const options = Array.from(quantities.values()).map(renderMenuItem);
     if (!options.length && selectedQuantities.length) {
       selectQuantities([]);
     }

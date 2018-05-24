@@ -1,44 +1,37 @@
-import {EmptyAction} from 'react-redux-typescript';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Action} from '../../../types/Types';
-import {IndicatorWithinUseCase, TOGGLE_INDICATOR_WIDGET} from './indicatorActions';
-
-export interface SelectedIndicators {
-  report: Medium[];
-}
+import {Quantity} from '../graph/measurement/measurementModels';
+import {SET_SELECTED_QUANTITIES, SET_REPORT_INDICATOR_WIDGETS} from './indicatorActions';
 
 export interface IndicatorState {
-  selectedIndicators: SelectedIndicators;
+  selectedIndicators: {
+    report: Medium[],
+  };
+  selectedQuantities: Quantity[];
 }
 
 export const initialState: IndicatorState = {
   selectedIndicators: {
     report: [],
   },
+  selectedQuantities: [],
 };
 
-type ActionTypes = EmptyAction<string> | Action<IndicatorWithinUseCase>;
+type ActionTypes = Action<Medium[]> | Action<Quantity[]>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   switch (action.type) {
-    case TOGGLE_INDICATOR_WIDGET:
-      const [section, indicatorTypeToToggle] = (action as Action<IndicatorWithinUseCase>).payload;
-      let selectedInSection = [...state.selectedIndicators[section]];
-
-      if (selectedInSection.includes(indicatorTypeToToggle)) {
-        selectedInSection = selectedInSection.filter(
-          (indicatorType) => indicatorType !== indicatorTypeToToggle,
-        );
-      } else {
-        selectedInSection.push(indicatorTypeToToggle);
-      }
-
+    case SET_REPORT_INDICATOR_WIDGETS:
       return {
         ...state,
         selectedIndicators: {
-          ...state.selectedIndicators,
-          [section]: selectedInSection,
+          report: [...(action.payload as Medium[])],
         },
+      };
+    case SET_SELECTED_QUANTITIES:
+      return {
+        ...state,
+        selectedQuantities: action.payload as Quantity[],
       };
     default:
       return state;

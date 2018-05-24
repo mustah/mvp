@@ -7,52 +7,42 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {Dictionary, EncodedUriParameters, payloadActionOf, uuid} from '../../../../types/Types';
+import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
-import {
-  Axes,
-  GraphContents,
-  LineProps,
-  ProprietaryLegendProps,
-} from '../../../../usecases/report/reportModels';
-import {
-  noInternetConnection,
-  requestTimeout,
-  responseMessageOrFallback,
-} from '../../../api/apiActions';
+import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {
   initialState,
   MeasurementApiResponse,
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
-  RenderableQuantity,
 } from './measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
-    (quantity: RenderableQuantity) =>
+    (quantity: Quantity) =>
       colorSchema[quantity as string];
 
 const colorizeAverage = colorize({
-  [RenderableQuantity.volume as string]: '#5555ff',
-  [RenderableQuantity.flow as string]: '#ff99ff',
-  [RenderableQuantity.energy as string]: '#439c43',
-  [RenderableQuantity.power as string]: '#00aaaa',
-  [RenderableQuantity.forwardTemperature as string]: '#843939',
-  [RenderableQuantity.returnTemperature as string]: '#a7317d',
-  [RenderableQuantity.differenceTemperature as string]: '#004d78',
+  [Quantity.volume as string]: '#5555ff',
+  [Quantity.flow as string]: '#ff99ff',
+  [Quantity.energy as string]: '#439c43',
+  [Quantity.power as string]: '#00aaaa',
+  [Quantity.forwardTemperature as string]: '#843939',
+  [Quantity.returnTemperature as string]: '#a7317d',
+  [Quantity.differenceTemperature as string]: '#004d78',
 });
 
 const colorizeMeters = colorize({
-  [RenderableQuantity.volume as string]: '#0000ff',
-  [RenderableQuantity.flow as string]: '#ff00ff',
-  [RenderableQuantity.energy as string]: '#00ff00',
-  [RenderableQuantity.power as string]: '#00ffff',
-  [RenderableQuantity.forwardTemperature as string]: '#ff0000',
-  [RenderableQuantity.returnTemperature as string]: '#ff49bd',
-  [RenderableQuantity.differenceTemperature as string]: '#0084e6',
+  [Quantity.volume as string]: '#0000ff',
+  [Quantity.flow as string]: '#ff00ff',
+  [Quantity.energy as string]: '#00ff00',
+  [Quantity.power as string]: '#00ffff',
+  [Quantity.forwardTemperature as string]: '#ff0000',
+  [Quantity.returnTemperature as string]: '#ff49bd',
+  [Quantity.differenceTemperature as string]: '#0084e6',
 });
 
 const thickStroke: number = 4;
@@ -92,7 +82,7 @@ export const mapApiResponseToGraphData =
           ...prev,
           [quantity]: {
             type: 'line',
-            color: colorizeMeters(quantity as RenderableQuantity),
+            color: colorizeMeters(quantity as Quantity),
             value: quantity,
           },
         }), {});
@@ -106,7 +96,7 @@ export const mapApiResponseToGraphData =
           ...prev,
           [`average-${quantity}`]: {
             type: 'line',
-            color: colorizeAverage(quantity as RenderableQuantity),
+            color: colorizeAverage(quantity as Quantity),
             value: `Average ${quantity}`,
           },
         }), {});
@@ -141,7 +131,7 @@ export const mapApiResponseToGraphData =
           dataKey,
           key: `line-${dataKey}`,
           name: dataKey,
-          stroke: colorizeMeters(quantity as RenderableQuantity),
+          stroke: colorizeMeters(quantity as Quantity),
           strokeWidth: average.length > 0 ? 1 : thickStroke,
           yAxisId,
         };
@@ -159,7 +149,7 @@ export const mapApiResponseToGraphData =
         dataKey,
         key: `average-${quantity}`,
         name: dataKey,
-        stroke: colorizeAverage(quantity as RenderableQuantity),
+        stroke: colorizeAverage(quantity as Quantity),
         strokeWidth: thickStroke,
         yAxisId,
       };
@@ -266,9 +256,3 @@ export const fetchMeasurements =
     }
 
   };
-
-export const SAVE_SELECTED_QUANTITIES = 'SAVE_SELECTED_QUANTITIES';
-
-const saveSelectedQuantities = payloadActionOf<Quantity[]>(SAVE_SELECTED_QUANTITIES);
-
-export const selectQuantities = (quantities: Quantity[]) => saveSelectedQuantities(quantities);

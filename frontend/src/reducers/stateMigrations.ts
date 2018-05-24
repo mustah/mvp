@@ -12,6 +12,21 @@ export const migrations = {
       },
     },
   }),
+  2: (state: PersistedState | any) => {
+    const quantities = [...state.ui.measurements.selectedQuantities];
+    const newUiState = {...state.ui};
+    delete newUiState.measurements;
+    return {
+      ...state,
+      ui: {
+        ...newUiState,
+        indicator: {
+          ...state.ui.indicator,
+          selectedQuantities: quantities,
+        },
+      },
+    };
+  },
 };
 
-export const currentVersion: number = 1;
+export const currentVersion: number = 2;

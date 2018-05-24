@@ -1,7 +1,5 @@
 import {combineReducers} from 'redux';
 import {sideMenu, SideMenuState} from '../../usecases/sidemenu/sideMenuReducer';
-import {MeasurementState} from './graph/measurement/measurementModels';
-import {measurements} from './graph/measurement/measurementReducer';
 import {indicator, IndicatorState} from './indicator/indicatorReducer';
 import {MessageState} from './message/messageModels';
 import {message} from './message/messageReducer';
@@ -14,7 +12,6 @@ import {tabs} from './tabs/tabsReducer';
 
 export interface UiState {
   indicator: IndicatorState;
-  measurements: MeasurementState;
   message: MessageState;
   pagination: PaginationState;
   selectionTree: SelectionTreeState;
@@ -24,7 +21,6 @@ export interface UiState {
 
 export const ui = combineReducers<UiState>({
   indicator,
-  measurements,
   message,
   pagination,
   selectionTree,

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-23 15:01+0200\n"
+"POT-Creation-Date: 2018-06-05 11:22+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -125,6 +125,9 @@ msgstr "övriga"
 msgid "no"
 msgstr "nej"
 
+msgid "unknown"
+msgstr "okänd"
+
 msgid "gateway details"
 msgstr "gateway"
 
@@ -142,9 +145,6 @@ msgstr "adress"
 
 msgid "collection"
 msgstr "insamling"
-
-msgid "unknown"
-msgstr "okänd"
 
 msgid "no reliable position"
 msgstr "ingen tillförlitlig position"
@@ -375,6 +375,9 @@ msgstr "välj storheter"
 msgid "select meters to include in graph"
 msgstr "välj mätare för att inkludera dem i grafen"
 
+msgid "no data found for selected meters during chosen interval"
+msgstr "ingen data finns för valda mätare under tidsperioden"
+
 msgid "graph"
 msgstr "graf"
 
@@ -384,14 +387,14 @@ msgstr "endast {{limit}} mätare kan väljas samtidigt"
 msgid "electricity"
 msgstr "el"
 
-msgid "water"
-msgstr "vatten"
-
 msgid "cold water"
 msgstr "kallvatten"
 
 msgid "hot water"
 msgstr "varmvatten"
+
+msgid "water"
+msgstr "vatten"
 
 msgid "district heating"
 msgstr "fjärrvärme"

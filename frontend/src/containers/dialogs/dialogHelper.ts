@@ -10,7 +10,7 @@ import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/me
 import {measurement} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
-import {allQuantities, Measurement} from '../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Measurement, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -59,7 +59,7 @@ export const meterMeasurementsForTable = (meter: MeterDetails): DomainModel<Rend
     if (!result.includes(quantity)) {
       entities[quantity] = {
         id: quantity,
-        quantity,
+        quantity: quantity as Quantity,
       };
     }
     orderedResult.push(quantity);
