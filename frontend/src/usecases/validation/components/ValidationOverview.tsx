@@ -2,7 +2,7 @@ import * as React from 'react';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {
   PieChartSelector,
-  PieChartSelectorProps
+  PieChartSelectorProps,
 } from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
@@ -10,7 +10,7 @@ import {MeterDataSummary} from '../../../state/domain-models-paginated/meter/met
 import {
   FilterParam,
   OnSelectParameter,
-  ParameterName
+  ParameterName,
 } from '../../../state/user-selection/userSelectionModels';
 import {ItemOrArray} from '../../../types/Types';
 
@@ -34,17 +34,17 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
 
   const selectStatus = (id: ItemOrArray<FilterParam>) => setSelection({
     parameter: ParameterName.meterStatuses,
-    id
+    id,
   });
   const selectCity = (id: ItemOrArray<FilterParam>) => setSelection({
     parameter: ParameterName.cities,
-    id
+    id,
   });
   const selectManufacturer = (id: ItemOrArray<FilterParam>) =>
     setSelection({parameter: ParameterName.manufacturers, id});
   const selectAlarm = (id: ItemOrArray<FilterParam>) => setSelection({
     parameter: ParameterName.alarms,
-    id
+    id,
   });
 
   if (meterDataSummary.isNothing()) {
@@ -93,10 +93,13 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
         maxSlices: 4,
       },
     ];
+
+    const renderPieCharts = pieCharts.map((pieChart: PieChartSelectorProps, index) =>
+      (<PieChartSelector key={index} {...pieChart}/>));
+
     return (
       <WrapperIndent>
-        {pieCharts.map((pieChart: PieChartSelectorProps, index) =>
-          <PieChartSelector key={index} {...pieChart}/>)}
+        {renderPieCharts}
       </WrapperIndent>
     );
   }

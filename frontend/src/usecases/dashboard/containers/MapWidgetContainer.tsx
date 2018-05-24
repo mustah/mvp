@@ -53,8 +53,8 @@ const MapWidget = ({bounds, lowConfidenceText, markers, map, closeClusterDialog}
           fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
         >
           <Map
-            width={800}
             height={600}
+            width={774}
             bounds={bounds}
             lowConfidenceText={lowConfidenceText}
           >

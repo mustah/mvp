@@ -2,7 +2,7 @@ import * as React from 'react';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {
   PieChartSelector,
-  PieChartSelectorProps
+  PieChartSelectorProps,
 } from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
@@ -10,7 +10,7 @@ import {GatewayDataSummary} from '../../../state/domain-models-paginated/gateway
 import {
   FilterParam,
   OnSelectParameter,
-  ParameterName
+  ParameterName,
 } from '../../../state/user-selection/userSelectionModels';
 import {ItemOrArray} from '../../../types/Types';
 
@@ -68,10 +68,13 @@ export const CollectionOverview = ({gatewayDataSummary, setSelection}: Collectio
         maxSlices: 4,
       },
     ];
+
+    const renderPieCharts = pieCharts.map((pieChart: PieChartSelectorProps, index) =>
+      (<PieChartSelector key={index} {...pieChart}/>));
+
     return (
       <WrapperIndent>
-        {pieCharts.map((pieChart: PieChartSelectorProps, index) =>
-          <PieChartSelector key={index} {...pieChart}/>)}
+        {renderPieCharts}
       </WrapperIndent>
     );
   }

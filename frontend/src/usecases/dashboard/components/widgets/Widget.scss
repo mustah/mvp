@@ -2,10 +2,11 @@
 
 .Widget {
   padding-top: $space;
-  margin-right: $lg-space;
+  margin-bottom: $lg-space;
 
   &.MapWidget {
     padding-bottom: 0;
+    margin-right: $lg-space;
   }
 
   a {
