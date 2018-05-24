@@ -7,7 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
@@ -88,6 +87,24 @@ public class DemoDataHelper {
         created,
         Quantity.VOLUME.name,
         RANDOM.nextDouble(1.0, 3.0),
+        Quantity.VOLUME.presentationUnit(),
+        meter
+      )
+    );
+  }
+
+  public static List<MeasurementEntity> waterMeasurement(
+    ZonedDateTime created,
+    PhysicalMeterEntity meter,
+    double previousMeterReading
+  ) {
+    double value = RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2);
+
+    return asList(
+      new MeasurementEntity(
+        created,
+        Quantity.VOLUME.name,
+        value,
         Quantity.VOLUME.presentationUnit(),
         meter
       )

@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -66,14 +67,13 @@ class CsvDemoDataLoader implements CommandLineRunner {
       return;
     }
 
-    MeterDefinition districtHeating = meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
-    MeterDefinition gas = meterDefinitions.save(MeterDefinition.GAS_METER);
+    log.info("Loading demo data from CSV");
 
     Map<String, Location> locationMap = mapAddressToLocation();
 
-    importFrom("data/meters_fictive_hoganas.csv", locationMap, gas);
-    importFrom("data/meters_perstorp.csv", locationMap, districtHeating);
-    importFrom("data/meters_almhult.csv", locationMap, districtHeating);
+    importFrom("data/meters_fictive_hoganas.csv", locationMap);
+    importFrom("data/meters_perstorp.csv", locationMap);
+    importFrom("data/meters_almhult.csv", locationMap);
 
     statusLogsDataLoader.loadMockData();
 
@@ -82,8 +82,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
 
   private void importFrom(
     String filePath,
-    Map<String, Location> locationMap,
-    MeterDefinition meterDefinition
+    Map<String, Location> locationMap
   ) throws IOException {
     AtomicInteger counter = new AtomicInteger(0);
 
@@ -99,7 +98,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
               locationMap.get(csvData.address.toLowerCase()),
               addDays(),
               emptyList(),
-              meterDefinition,
+              MeterDefinition.fromMedium(Medium.from(csvData.medium)),
               emptyList()
             );
             PhysicalMeter physicalMeter = PhysicalMeter.builder()

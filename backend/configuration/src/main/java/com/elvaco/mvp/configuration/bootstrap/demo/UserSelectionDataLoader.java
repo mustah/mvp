@@ -9,7 +9,6 @@ import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -51,13 +50,16 @@ public class UserSelectionDataLoader implements CommandLineRunner {
       return;
     }
 
+    log.info("Loading demo user selections");
+
     createSelections();
 
     settingUseCases.setDemoUserSelectionsLoaded();
   }
 
   private void createSelections() throws IOException {
-    String unknownJson = "{\"cities\":[\"unknown,unknown\"],\"addresses\":[],"
+    String unknownJson =
+      "{\"cities\":[\"unknown,unknown\"],\"addresses\":[],"
       + "\"meterStatuses\":[],\"gatewayStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
       + "\"productModels\":[],\"period\":\"latest\"}";
 
@@ -65,7 +67,8 @@ public class UserSelectionDataLoader implements CommandLineRunner {
       (ObjectNode) OBJECT_MAPPER.readTree(unknownJson)
     );
 
-    String perstorpJson = "{\"cities\":[\"sweden,perstorp\"],\"addresses\":[],"
+    String perstorpJson =
+      "{\"cities\":[\"sweden,perstorp\"],\"addresses\":[],"
       + "\"meterStatuses\":[],\"gatewayStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
       + "\"productModels\":[],\"period\":\"latest\"}";
 
@@ -98,5 +101,4 @@ public class UserSelectionDataLoader implements CommandLineRunner {
 
     log.info("Demo user selections saved: " + selectionEntities.size());
   }
-
 }

@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -25,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.gasMeasurement;
 import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.heatMeasurement;
+import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.waterMeasurement;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,6 +48,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
       log.info("Demo measurements seems to already be loaded - skipping!");
       return;
     }
+    log.info("Creating demo measurements");
     createMeasurementMockData();
 
     settingUseCases.setDemoMeasurementsLoaded();
@@ -101,6 +102,12 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         measurements = heatMeasurement(created, meter);
       } else if (meter.medium.equals(Medium.GAS.medium)) {
         measurements = gasMeasurement(created, meter, consumingMediumMeterReading);
+      } else if (meter.medium.equals(Medium.WATER.medium)) {
+        measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
+      } else if (meter.medium.equals(Medium.COLD_WATER.medium)) {
+        measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
+      } else if (meter.medium.equals(Medium.HOT_WATER.medium)) {
+        measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
       } else {
         throw new RuntimeException("You need to add support for mocking the medium " + meter
           .medium + " in DemoDataHelper");

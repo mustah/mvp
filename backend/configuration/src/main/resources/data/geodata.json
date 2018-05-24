@@ -8453,5 +8453,30 @@
     "longitude": 12.55541,
     "latitude": 56.19850,
     "confidence": 1
+  },
+  "Hasselgatan 14 :: Höganäs :: Sweden": {
+    "longitude": 12.56165,
+    "latitude": 56.19408,
+    "confidence": 0
+  },
+  "Storgatan 155 :: Höganäs :: Sweden": {
+    "longitude": 12.57390,
+    "latitude": 56.19939,
+    "confidence": 0
+  },
+  "Hasselgatan 24 :: Höganäs :: Sweden": {
+    "longitude": 12.56165,
+    "latitude": 56.19408,
+    "confidence": 0
+  },
+  "Storgatan 25 :: Höganäs :: Sweden": {
+    "longitude": 12.57390,
+    "latitude": 56.19939,
+    "confidence": 0
+  },
+  "Väpnaregatan 8 :: Höganäs :: Sweden": {
+    "longitude": 12.55541,
+    "latitude": 56.19850,
+    "confidence": 0
   }
 }
