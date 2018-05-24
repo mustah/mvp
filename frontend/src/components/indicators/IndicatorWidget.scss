@@ -1,7 +1,7 @@
 @import "../../app/variables";
 
 .Indicator-wrapper {
-  margin-right: $sm-space;
+  margin-right: $space;
 
   .ok {
     background-color: $green;
@@ -24,7 +24,7 @@
   }
 
   .Indicator {
-    border-radius: 3px;
+    border-radius: $border-radius;
     box-shadow: $box-shadow;
     cursor: pointer;
     height: $status-box-height;
@@ -57,7 +57,7 @@
   }
 
   .Indicator-separator {
-    border-radius: 3px;
+    border-radius: $border-radius;
     height: 8px;
     background-color: transparent;
 

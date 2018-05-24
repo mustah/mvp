@@ -1,17 +1,24 @@
 import * as React from 'react';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
-import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
+import {
+  PieChartSelector,
+  PieChartSelectorProps,
+} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models-paginated/meter/meterModels';
-import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/user-selection/userSelectionModels';
+import {
+  FilterParam,
+  OnSelectParameter,
+  ParameterName,
+} from '../../../state/user-selection/userSelectionModels';
 import {ItemOrArray} from '../../../types/Types';
 
 // TODO: Perhaps move this to themes and make customizable.
 const colors: string[][] = [
   ['#E91E63', '#fce8cc', '#3F51B5', '#2196F3', '#009688'],
   ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
-  ['#b7e000', '#f7be29', '#ed4200'],
+  ['#64DD17', '#f7be29', '#ed4200'],
 ];
 
 interface ValidationOverviewProps {
@@ -25,11 +32,20 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
     meterDataSummary,
   } = props;
 
-  const selectStatus = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.meterStatuses, id});
-  const selectCity = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.cities, id});
+  const selectStatus = (id: ItemOrArray<FilterParam>) => setSelection({
+    parameter: ParameterName.meterStatuses,
+    id,
+  });
+  const selectCity = (id: ItemOrArray<FilterParam>) => setSelection({
+    parameter: ParameterName.cities,
+    id,
+  });
   const selectManufacturer = (id: ItemOrArray<FilterParam>) =>
     setSelection({parameter: ParameterName.manufacturers, id});
-  const selectAlarm = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.alarms, id});
+  const selectAlarm = (id: ItemOrArray<FilterParam>) => setSelection({
+    parameter: ParameterName.alarms,
+    id,
+  });
 
   if (meterDataSummary.isNothing()) {
     return null;
@@ -77,9 +93,13 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
         maxSlices: 4,
       },
     ];
+
+    const renderPieCharts = pieCharts.map((pieChart: PieChartSelectorProps, index) =>
+      (<PieChartSelector key={index} {...pieChart}/>));
+
     return (
       <WrapperIndent>
-        {pieCharts.map((pieChart: PieChartSelectorProps, index) => <PieChartSelector key={index} {...pieChart}/>)}
+        {renderPieCharts}
       </WrapperIndent>
     );
   }

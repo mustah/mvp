@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Cell, Legend, LegendPayload, LegendProps, Pie, PieChart, Tooltip} from 'recharts';
 import {FilterParam} from '../../state/user-selection/userSelectionModels';
 import {ItemOrArray, uuid} from '../../types/Types';
-import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
+import {WidgetWithTitle} from '../../usecases/dashboard/components/widgets/Widget';
 import {ColumnCenter, ColumnContent} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {splitDataIntoSlices} from './pieChartHelper';
@@ -62,8 +62,10 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
   const margins = {top: 20, right: 0, bottom: 0, left: 0};
   const viewBoxStyle = {x: 1, y: 2, width: 200, height: 200};
 
-  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(filterParam);
-  const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(filterParam);
+  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(
+    filterParam);
+  const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(
+    filterParam);
 
   const renderCell = (entry: any, index: number) => (
     <Cell
@@ -89,7 +91,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
   };
 
   return (
-    <Widget title={heading}>
+    <WidgetWithTitle title={heading}>
       <ColumnContent>
         <PieChart width={240} height={300}>
           <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110} dataKey="PieChart">
@@ -104,6 +106,6 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
           />
         </PieChart>
       </ColumnContent>
-    </Widget>
+    </WidgetWithTitle>
   );
 };

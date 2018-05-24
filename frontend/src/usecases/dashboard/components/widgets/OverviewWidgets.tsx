@@ -3,8 +3,7 @@ import {Link} from 'react-router-dom';
 import {routes} from '../../../../app/routes';
 import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget';
 import {Medium, WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
-import {ColumnContent} from '../../../../components/layouts/column/Column';
-import {Row} from '../../../../components/layouts/row/Row';
+import {Column} from '../../../../components/layouts/column/Column';
 import {translate} from '../../../../services/translationService';
 import {Status} from '../../../../types/Types';
 import './OverviewWidgets.scss';
@@ -27,14 +26,14 @@ export const OverviewWidgets = (props: Props) => {
     };
 
   return (
-    <Row className="OverviewWidgets">
-      <Widget title={translate('collection')}>
-        <ColumnContent>
+    <Column className="OverviewWidgets">
+      <Widget>
+        <Column>
           <Link to={routes.collection}>
-            <IndicatorWidget widget={collectionWidget}/>
+            <IndicatorWidget widget={collectionWidget} title={translate('collection')}/>
           </Link>
-        </ColumnContent>
+        </Column>
       </Widget>
-    </Row>
+    </Column>
   );
 };

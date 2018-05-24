@@ -16,7 +16,7 @@ import {closeClusterDialog} from '../../map/mapActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
 import {MapState} from '../../map/mapReducer';
 import {getBounds, getMeterLowConfidenceTextInfo} from '../../map/mapSelectors';
-import {Widget} from '../components/widgets/Widget';
+import {WidgetWithTitle} from '../components/widgets/Widget';
 
 interface OwnProps {
   markers: DomainModel<MapMarker>;
@@ -44,21 +44,24 @@ const MapWidget = ({bounds, lowConfidenceText, markers, map, closeClusterDialog}
 
   return (
     <Row>
-      <Widget title={firstUpperTranslated('all meters in selection')} className="MapWidget">
+      <WidgetWithTitle
+        title={firstUpperTranslated('all meters in selection')}
+        className="MapWidget"
+      >
         <HasContent
           hasContent={markers.result.length > 0}
           fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
         >
           <Map
-            width={800}
             height={600}
+            width={774}
             bounds={bounds}
             lowConfidenceText={lowConfidenceText}
           >
             <ClusterContainer markers={markers.entities}/>
           </Map>
         </HasContent>
-      </Widget>
+      </WidgetWithTitle>
       {dialog}
     </Row>
   );

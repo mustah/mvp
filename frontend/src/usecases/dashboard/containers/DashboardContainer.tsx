@@ -2,7 +2,6 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
@@ -72,10 +71,10 @@ class DashboardContainerComponent extends React.Component<Props> {
         </Row>
 
         <Loader isFetching={isFetching} error={error} clearError={clearError}>
-          <Column>
-            {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
+          <Row className="Row-wrap-reverse">
             <MapWidgetContainer markers={meterMapMarkers}/>
-          </Column>
+            {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
+          </Row>
         </Loader>
       </MvpPageContainer>
     );

@@ -9,8 +9,7 @@ $grey: #f2f2f2;
 $dark-grey: #eaeaea;
 $dark-blue: #006da3;
 $blue: #00b6f7;
-$green: #b7e000;
-$dark-green: #4caf50;
+$green: #41c300;
 $orange: #ff9800;
 $dark-orange: #e65100;
 $red: #FF3D00;
@@ -46,6 +45,8 @@ $lg: 18px;
 $xl: 24px;
 $xxl: 56px;
 
+$border-radius: 3px;
+
 // padding and margin
 $xs-space: 4px;
 $sm-space: 8px;
@@ -71,7 +72,7 @@ $side-menu-container-width: 256px;
 $side-menu-tab: 5px;
 $opened-side-menu-width: $side-menu-container-width + $main-menu-width;
 
-$status-box-height: 150px;
+$status-box-height: 128px;
 $status-box-width: 150px;
 
 $input-height: 36px;
