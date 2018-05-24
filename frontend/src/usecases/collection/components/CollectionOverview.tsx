@@ -1,10 +1,17 @@
 import * as React from 'react';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
-import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
+import {
+  PieChartSelector,
+  PieChartSelectorProps
+} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/user-selection/userSelectionModels';
+import {
+  FilterParam,
+  OnSelectParameter,
+  ParameterName
+} from '../../../state/user-selection/userSelectionModels';
 import {ItemOrArray} from '../../../types/Types';
 
 interface CollectionOverviewProps {
@@ -15,7 +22,7 @@ interface CollectionOverviewProps {
 const colors: string[][] = [
   ['#e8a090', '#fce8cc'],
   ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
-  ['#b7e000', '#f7be29', '#ed4200'],
+  ['#64DD17', '#f7be29', '#ed4200'],
 ];
 
 export const CollectionOverview = ({gatewayDataSummary, setSelection}: CollectionOverviewProps) => {
@@ -63,7 +70,8 @@ export const CollectionOverview = ({gatewayDataSummary, setSelection}: Collectio
     ];
     return (
       <WrapperIndent>
-        {pieCharts.map((pieChart: PieChartSelectorProps, index) => <PieChartSelector key={index} {...pieChart}/>)}
+        {pieCharts.map((pieChart: PieChartSelectorProps, index) =>
+          <PieChartSelector key={index} {...pieChart}/>)}
       </WrapperIndent>
     );
   }

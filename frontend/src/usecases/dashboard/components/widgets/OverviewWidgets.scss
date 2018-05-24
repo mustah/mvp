@@ -2,4 +2,14 @@
 
 .OverviewWidgets {
   margin-bottom: $lg-space;
+
+  .Widget {
+    padding-top: 0;
+
+    .Indicator-wrapper {
+      .Indicator {
+        padding: $sm-space;
+      }
+    }
+  }
 }

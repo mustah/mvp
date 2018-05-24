@@ -1,9 +1,8 @@
 @import "../../../../app/variables";
 
 .Widget {
-  padding: $space 0;
+  padding-top: $space;
   margin-right: $lg-space;
-  margin-bottom: $lg-space;
 
   &.MapWidget {
     padding-bottom: 0;
@@ -22,9 +21,9 @@
 
     .Indicator {
       box-shadow: none;
-      border: 1px solid $border-color;
+      border-radius: 2px;
       margin-bottom: 0;
-      width: 180px;
+      width: 172px;
 
       .Indicator-icon {
         width: 32px !important;

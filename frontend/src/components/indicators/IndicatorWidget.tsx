@@ -14,31 +14,34 @@ interface Props {
   widget: WidgetModel;
   children?: Children;
   className?: string;
+  title: string;
 }
 
-export const IndicatorWidget = (props: Props) => {
-  const {widget: {total, status, pending, type}} = props;
+export const IndicatorWidget =
+  ({className, title, widget: {total, status, pending, type}}: Props) => {
+    const value = total ? ((1 - (pending / total)) * 100).toFixed(1) : 0;
+    const pendingPercentage = total ? ((pending / total) * 100).toFixed(1) : 0;
 
-  const value = total ? ((1 - (pending / total)) * 100).toFixed(1) : 0;
-  const pendingPercentage = total ? ((pending / total) * 100).toFixed(1) : 0;
+    const IndicatorIcon = iconComponentFor(type);
 
-  const IndicatorIcon = iconComponentFor(type);
-
-  return (
-    <Column className={classNames('Indicator-wrapper', props.className)}>
-      <ColumnCenter className={classNames('Indicator', status)}>
-        <Row className="Row-center Row-bottom">
-          <Xlarge className="Indicator-value">{value}</Xlarge>
-          <Normal className="Indicator-unit">%</Normal>
-        </Row>
-        <Row className="Indicator-subtitle Row-center">
-          <IndicatorIcon className="Indicator-icon" color={colors.white}/>
-          <Column>
-            <Normal>{pending} / {pendingPercentage}%</Normal>
-            <Normal>{translate('of {{count}} measurement', {count: total})}</Normal>
-          </Column>
-        </Row>
-      </ColumnCenter>
-    </Column>
-  );
-};
+    return (
+      <Column className={classNames('Indicator-wrapper', className)}>
+        <ColumnCenter className={classNames('Indicator', status)}>
+          <Row className="Indicator-name Row-center">
+            <Normal>{title}</Normal>
+          </Row>
+          <Row className="Row-center Row-bottom">
+            <Xlarge className="Indicator-value">{value}</Xlarge>
+            <Normal className="Indicator-unit">%</Normal>
+          </Row>
+          <Row className="Indicator-subtitle Row-center">
+            <IndicatorIcon className="Indicator-icon" color={colors.white}/>
+            <Column>
+              <Normal>{pending} / {pendingPercentage}%</Normal>
+              <Normal>{translate('of {{count}} measurement', {count: total})}</Normal>
+            </Column>
+          </Row>
+        </ColumnCenter>
+      </Column>
+    );
+  };
