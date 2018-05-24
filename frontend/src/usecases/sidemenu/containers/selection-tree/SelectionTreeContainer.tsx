@@ -79,7 +79,7 @@ class SelectionTreeComponent extends React.Component<Props> {
     const cityIds = selectionTree.result.cities;
 
     const nestedItems = cityIds.length
-      ? cityIds.sort().map(renderSelectionOverview)
+      ? [...cityIds].sort().map(renderSelectionOverview)
       : [(
         <LoadingListItem
           isFetching={isFetching}
