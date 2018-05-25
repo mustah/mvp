@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {RowCenter} from '../components/layouts/row/Row';
+import {LoadingLarge} from '../components/loading/Loading';
 import {RootState} from '../reducers/rootReducer';
 import {Role, User} from '../state/domain-models/user/userModels';
 import {getUser} from '../usecases/auth/authSelectors';
@@ -44,3 +46,13 @@ export const superAdminComponent =
 export const adminComponent =
   <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
     connect<AuthenticatedUser>(mapStateToProps)(onlyAdmins(Component));
+
+interface Fetching {
+  isFetching: boolean;
+}
+
+export const withLargeLoader =
+  <P extends Fetching>(Component: React.ComponentType<P>): React.SFC<P> =>
+    (props: P) => props.isFetching
+      ? (<RowCenter><LoadingLarge/></RowCenter>)
+      : (<Component {...props}/>);

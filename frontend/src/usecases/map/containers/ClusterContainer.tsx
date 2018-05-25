@@ -10,14 +10,6 @@ import {maxZoom} from '../helper/mapHelper';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
 
-interface DispatchToProps {
-  openClusterDialog: (marker: Marker) => void;
-}
-
-interface OwnProps {
-  markers: Dictionary<MapMarker> | MapMarker;
-}
-
 const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {
     return 80;
@@ -80,6 +72,14 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
 
   return cssClass;
 };
+
+interface DispatchToProps {
+  openClusterDialog: (marker: Marker) => void;
+}
+
+interface OwnProps {
+  markers: Dictionary<MapMarker> | MapMarker;
+}
 
 const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
   const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(markers);
