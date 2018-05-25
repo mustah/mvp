@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -111,4 +112,5 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("unit") String unit
   );
 
+  List<MeasurementEntity> findAll(Predicate predicate);
 }

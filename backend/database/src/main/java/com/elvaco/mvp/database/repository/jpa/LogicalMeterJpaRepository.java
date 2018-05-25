@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,4 +39,6 @@ public interface LogicalMeterJpaRepository {
   void deleteAll();
 
   void delete(UUID id, UUID organisationId);
+
+  Map<UUID,Long> findMeasurementCounts(Predicate predicate);
 }
