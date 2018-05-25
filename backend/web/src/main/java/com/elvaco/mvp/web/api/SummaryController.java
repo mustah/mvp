@@ -2,10 +2,11 @@ package com.elvaco.mvp.web.api;
 
 import java.util.Map;
 
-import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.core.usecase.MeterLocationUseCases;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
+import com.elvaco.mvp.web.mapper.MeterSummaryDtoMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +18,11 @@ import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestPar
 @RestApi("/api/v1/summary")
 public class SummaryController {
 
-  private final MeterLocationUseCases meterLocationUseCases;
+  private final LogicalMeterUseCases logicalMeterUseCases;
 
   @Autowired
-  public SummaryController(MeterLocationUseCases meterLocationUseCases) {
-    this.meterLocationUseCases = meterLocationUseCases;
+  public SummaryController(LogicalMeterUseCases logicalMeterUseCases) {
+    this.logicalMeterUseCases = logicalMeterUseCases;
   }
 
   @GetMapping("/meters")
@@ -30,11 +31,6 @@ public class SummaryController {
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
-    MeterSummary summary = meterLocationUseCases.findAllForSummaryInfo(parameters);
-    return new MeterSummaryDto(
-      summary.numMeters(),
-      summary.numCities(),
-      summary.numAddresses()
-    );
+    return MeterSummaryDtoMapper.toDto(logicalMeterUseCases.summary(parameters));
   }
 }

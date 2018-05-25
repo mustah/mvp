@@ -77,16 +77,6 @@ public class LogicalMeterEntityMapper {
     return logicalMeterEntity;
   }
 
-  public static LogicalMeter justLocationModel(LogicalMeterEntity entity) {
-    return new LogicalMeter(
-      entity.getId(),
-      entity.externalId,
-      entity.organisationId,
-      LocationEntityMapper.toDomainModel(entity.location),
-      entity.created
-    );
-  }
-
   private static LogicalMeter toLogicalMeter(
     LogicalMeterEntity logicalMeterEntity,
     List<PhysicalMeter> physicalMeters

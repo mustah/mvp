@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -74,8 +75,8 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
-    return allMocks();
+  public MeterSummary summary(RequestParameters parameters) {
+    throw new UnsupportedOperationException("Not implemented yet");
   }
 
   @Override
@@ -115,7 +116,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   private Predicate<LogicalMeter> isWithinOrganisation(RequestParameters parameters) {
     return logicalMeter ->
       !parameters.hasName("organisation")
-      || Objects.equals(
+        || Objects.equals(
         parameters.getFirst("organisation"),
         logicalMeter.organisationId.toString()
       );

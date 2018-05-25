@@ -15,18 +15,18 @@ import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.usecase.MeterLocationUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 class UseCaseConfig {
 
   private final Users users;
@@ -75,11 +75,6 @@ class UseCaseConfig {
   @Bean
   PhysicalMeterUseCases physicalMeterUseCases(AuthenticatedUser currentUser) {
     return new PhysicalMeterUseCases(currentUser, physicalMeters);
-  }
-
-  @Bean
-  MeterLocationUseCases meterLocationUseCases(AuthenticatedUser currentUser) {
-    return new MeterLocationUseCases(logicalMeters, currentUser);
   }
 
   @Bean
