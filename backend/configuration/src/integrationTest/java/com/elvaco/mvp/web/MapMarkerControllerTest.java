@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -48,15 +49,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findMapMarkerWithNoLocation() {
-    UUID logicalMeterId = randomUUID();
-
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      randomUUID().toString(),
-      context().getOrganisationId(),
-      UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+    UUID logicalMeterId = saveLogicalMeterWith(UNKNOWN_LOCATION).id;
 
     ResponseEntity<MapMarkerDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerDto.class);
@@ -73,15 +66,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findLogicalMeterWithLocation() {
-    UUID logicalMeterId = randomUUID();
-
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      randomUUID().toString(),
-      context().getOrganisationId(),
-      newLocation(),
-      ZonedDateTime.now()
-    ));
+    UUID logicalMeterId = saveLogicalMeterWith(newLocation()).id;
 
     ResponseEntity<MapMarkerDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerDto.class);
@@ -98,15 +83,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void userShouldNotBeAbleToFindLocationForAMeterFromAnotherOrganisation() {
-    UUID logicalMeterId = randomUUID();
-
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      randomUUID().toString(),
-      context().getOrganisationId(),
-      newLocation(),
-      ZonedDateTime.now()
-    ));
+    UUID logicalMeterId = saveLogicalMeterWith(newLocation()).id;
 
     ResponseEntity<ErrorMessageDto> response = asOtherUser()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
@@ -114,6 +91,44 @@ public class MapMarkerControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     assertThat(response.getBody().message)
       .isEqualTo("Unable to find meter with ID '" + logicalMeterId + "'");
+  }
+
+  @Test
+  public void findAllMapMarkersForLogicalMeters() {
+    saveLogicalMeterWith(newLocation());
+
+    ResponseEntity<List<MapMarkerDto>> response = asTestUser()
+      .getList("/map-markers/meters", MapMarkerDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().size()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMapMarkersForLogicalMetersWithParameters() {
+    saveLogicalMeterWith(UNKNOWN_LOCATION);
+    saveLogicalMeterWith(newLocation());
+    saveLogicalMeterWith(newLocation());
+
+    ResponseEntity<List<MapMarkerDto>> response = asTestUser()
+      .getList("/map-markers/meters?city=sweden,kungsbacka", MapMarkerDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().size()).isEqualTo(2);
+  }
+
+  private LogicalMeter saveLogicalMeterWith(Location location) {
+    return logicalMeters.save(logicalMeterWith(location));
+  }
+
+  private LogicalMeter logicalMeterWith(Location location) {
+    return new LogicalMeter(
+      randomUUID(),
+      randomUUID().toString(),
+      context().getOrganisationId(),
+      location,
+      ZonedDateTime.now()
+    );
   }
 
   private static Location newLocation() {
