@@ -1,12 +1,11 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
@@ -15,6 +14,7 @@ import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
@@ -45,6 +45,7 @@ public class LogicalMeterQueryDslJpaRepository
     QPhysicalMeterEntity.physicalMeterEntity;
 
   private static final QMeasurementEntity MEASUREMENT = QMeasurementEntity.measurementEntity;
+  private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
 
   @Autowired
   public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
@@ -100,6 +101,19 @@ public class LogicalMeterQueryDslJpaRepository
     ).fetch();
 
     return getPage(all, pageable, countQuery::fetchCount);
+  }
+
+  public Map<UUID, Long> findMeasurementCounts(Predicate predicate) {
+    return createQuery(predicate)
+      .select(MEASUREMENT)
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .join(PHYSICAL_METER.measurements, MEASUREMENT)
+      .join(LOGICAL_METER.location, LOCATION)
+      .groupBy(MEASUREMENT.physicalMeter.id)
+      .transform(
+        GroupBy.groupBy(MEASUREMENT.physicalMeter.id).as(MEASUREMENT.count())
+      );
   }
 
   @Override
@@ -194,14 +208,6 @@ public class LogicalMeterQueryDslJpaRepository
     }
 
     return predicate;
-  }
-
-  private ZonedDateTime parseDateParam(RequestParameters parameters, String name) {
-    try {
-      return ZonedDateTime.parse(parameters.getFirst(name));
-    } catch (Exception exception) {
-      throw new PredicateConstructionFailure(name, parameters.getValues(name), exception);
-    }
   }
 
   private LogicalMeterEntity fetchOne(Predicate predicate) {

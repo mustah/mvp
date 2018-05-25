@@ -44,11 +44,6 @@ public class LogicalMeterUseCases {
       .collect(toList());
   }
 
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
-      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters));
-  }
-
   public Page<LogicalMeter> findAllWithMeasurements(
     RequestParameters parameters,
     Pageable pageable
