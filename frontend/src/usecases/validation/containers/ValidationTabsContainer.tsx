@@ -63,15 +63,21 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
+const fetchMarkersWhenMapTabIsSelected =
+  ({fetchMeterMapMarkers, selectedTab, parameters}: Props) => {
+    if (TabName.map === selectedTab) {
+      fetchMeterMapMarkers(parameters);
+    }
+  };
+
 class ValidationTabs extends React.Component<Props> {
 
   componentDidMount() {
-    const {parameters, fetchMeterMapMarkers} = this.props;
-    fetchMeterMapMarkers(parameters);
+    fetchMarkersWhenMapTabIsSelected(this.props);
   }
 
-  componentWillReceiveProps({parameters, fetchMeterMapMarkers}: Props) {
-    fetchMeterMapMarkers(parameters);
+  componentWillReceiveProps(props: Props) {
+    fetchMarkersWhenMapTabIsSelected(props);
   }
 
   render() {
