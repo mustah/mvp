@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 @RestApi("/api/v1/user/selections")
 public class UserSelectionController {
+
   private final UserSelectionUseCases useCases;
   private final UserSelectionDtoMapper mapper;
 

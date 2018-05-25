@@ -11,29 +11,21 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
+import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class LogicalMeterDtoMapper {
 
   private final MeterStatusLogDtoMapper meterStatusLogDtoMapper;
   private final GatewayDtoMapper gatewayDtoMapper;
   private final MeasurementDtoMapper measurementDtoMapper;
 
-  public LogicalMeterDtoMapper(
-    MeterStatusLogDtoMapper meterStatusLogDtoMapper,
-    GatewayDtoMapper gatewayDtoMapper,
-    MeasurementDtoMapper measurementDtoMapper
-  ) {
-    this.meterStatusLogDtoMapper = meterStatusLogDtoMapper;
-    this.gatewayDtoMapper = gatewayDtoMapper;
-    this.measurementDtoMapper = measurementDtoMapper;
-  }
-
-  public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
+  public static MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = logicalMeter.id;
     mapMarkerDto.status = getCurrentStatus(getMeterStatusLogs(logicalMeter)).name;
@@ -97,14 +89,14 @@ public class LogicalMeterDtoMapper {
     return meterDto;
   }
 
-  private StatusType getCurrentStatus(List<StatusLogEntry<UUID>> statusLogs) {
+  private static StatusType getCurrentStatus(List<StatusLogEntry<UUID>> statusLogs) {
     return statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> meterStatusLog.status)
       .orElse(StatusType.UNKNOWN);
   }
 
-  private List<StatusLogEntry<UUID>> getMeterStatusLogs(LogicalMeter logicalMeter) {
+  private static List<StatusLogEntry<UUID>> getMeterStatusLogs(LogicalMeter logicalMeter) {
     return logicalMeter.physicalMeters.stream()
       .map(physicalMeter -> physicalMeter.statuses)
       .flatMap(Collection::stream)

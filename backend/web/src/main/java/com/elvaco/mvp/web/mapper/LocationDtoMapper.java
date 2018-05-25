@@ -37,6 +37,10 @@ public class LocationDtoMapper {
       .buildLocationWithId();
   }
 
+  public static LocationDto toLocationDto(Location location) {
+    return new LocationDto(toCity(location), toAddress(location), toGeoPositionDto(location));
+  }
+
   static IdNamedDto toCity(Location location) {
     return Optional.ofNullable(location)
       .filter(l -> nonNull(l.getCity()))
@@ -58,10 +62,6 @@ public class LocationDtoMapper {
         coordinate.getLongitude(),
         coordinate.getConfidence()
       ));
-  }
-
-  static LocationDto toLocationDto(Location location) {
-    return new LocationDto(toCity(location), toAddress(location), toGeoPositionDto(location));
   }
 
   private static GeoPositionDto toGeoPositionDto(Location location) {

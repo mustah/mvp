@@ -264,13 +264,7 @@ public class GatewayControllerTest extends IntegrationTest {
       ZonedDateTime.now()
     ));
 
-    MapMarkerDto mapMarker = new MapMarkerDto(
-      gateway.id,
-      "unknown",
-      1.234,
-      2.3323,
-      1.0
-    );
+    MapMarkerDto mapMarker = newMapMarker(gateway);
 
     ResponseEntity<List<MapMarkerDto>> cityAddressResponse = asTestSuperAdmin()
       .getList("/gateways/map-markers?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
@@ -297,13 +291,7 @@ public class GatewayControllerTest extends IntegrationTest {
       ZonedDateTime.now()
     ));
 
-    MapMarkerDto mapMarker = new MapMarkerDto(
-      gateway.id,
-      "unknown",
-      1.234,
-      2.3323,
-      1.0
-    );
+    MapMarkerDto mapMarker = newMapMarker(gateway);
 
     ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
       .getList("/gateways/map-markers?city=unknown,unknown", MapMarkerDto.class);
@@ -536,6 +524,16 @@ public class GatewayControllerTest extends IntegrationTest {
         start,
         stop
       )
+    );
+  }
+
+  private static MapMarkerDto newMapMarker(Gateway gateway) {
+    return new MapMarkerDto(
+      gateway.id,
+      "unknown",
+      1.234,
+      2.3323,
+      1.0
     );
   }
 
