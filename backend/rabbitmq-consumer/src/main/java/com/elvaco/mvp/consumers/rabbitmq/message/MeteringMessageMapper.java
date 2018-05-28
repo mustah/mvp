@@ -9,11 +9,9 @@ import java.util.Set;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
@@ -34,8 +32,6 @@ class MeteringMessageMapper {
       "Energy"
     )));
 
-  private static final Set<String> GAS_METER_QUANTITIES = singleton("Volume");
-
   private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = mapMeterQuantities();
 
   static MeterDefinition resolveMeterDefinition(List<ValueDto> values) {
@@ -46,10 +42,6 @@ class MeteringMessageMapper {
 
     if (quantities.equals(DISTRICT_HEATING_METER_QUANTITIES)) {
       return MeterDefinition.DISTRICT_HEATING_METER;
-    }
-
-    if (quantities.equals(GAS_METER_QUANTITIES)) {
-      return MeterDefinition.GAS_METER;
     }
 
     return MeterDefinition.UNKNOWN_METER;

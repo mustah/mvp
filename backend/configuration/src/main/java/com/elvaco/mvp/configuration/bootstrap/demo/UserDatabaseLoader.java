@@ -70,6 +70,8 @@ class UserDatabaseLoader implements CommandLineRunner {
       return;
     }
 
+    log.info("Loading demo users");
+
     organisations.save(WAYNE_INDUSTRIES);
 
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
@@ -78,8 +80,10 @@ class UserDatabaseLoader implements CommandLineRunner {
     );
 
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken(),
-      authenticatedUser);
+    Authentication authentication = new AuthenticationToken(
+      authenticatedUser.getToken(),
+      authenticatedUser
+    );
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     List<User> users = asList(

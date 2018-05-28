@@ -13,6 +13,7 @@ export const measurements =
   (state: MeasurementState = initialMeasurementState, action: MeasurementAction): MeasurementState => {
     switch (action.type) {
       case SAVE_SELECTED_QUANTITIES:
+
         return {
           ...state,
           selectedQuantities: action.payload as Quantity[],

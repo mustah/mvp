@@ -23,6 +23,12 @@ public class MeterDefinitionTest {
         "Heat, Return temp",
         Medium.DISTRICT_HEATING.quantities()
       ));
+
+    assertThat(MeterDefinition.fromMedium(Medium.from("Water")))
+      .isEqualTo(MeterDefinition.WATER_METER);
+
+    assertThat(MeterDefinition.fromMedium(Medium.from("Cold water")))
+      .isEqualTo(MeterDefinition.COLD_WATER_METER);
   }
 
   @Test

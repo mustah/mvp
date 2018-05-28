@@ -382,6 +382,9 @@ msgstr "only {{limit}} meters can be selected at the same time"
 msgid "electricity"
 msgstr "electricity"
 
+msgid "water"
+msgstr "water"
+
 msgid "cold water"
 msgstr "cold water"
 
