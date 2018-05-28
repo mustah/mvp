@@ -140,6 +140,54 @@ public class MeteringReferenceInfoMessageParserTest {
   }
 
   @Test
+  public void electricityMeter() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-electricity-meter.json");
+
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
+
+    assertThat(parsedMessage).isNotNull();
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Ankeborg");
+    assertThat(parsedMessage.facility.address).isEqualTo("Kajsas hus");
+    assertThat(parsedMessage.gateway).isNotNull();
+    assertThat(parsedMessage.gateway.id).isEqualTo("12031979");
+    assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
+    assertThat(parsedMessage.meter.id).isEqualTo("90");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Electricity");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
+    assertThat(parsedMessage.organisationId).isEqualTo("Anka AB");
+    assertThat(parsedMessage.sourceSystemId).isEqualTo("AAB");
+  }
+
+  @Test
+  public void roomSensorMeter() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-room-sensor.json");
+
+    MeteringReferenceInfoMessageDto parsedMessage =
+      messageParser.parseReferenceInfoMessage(jsonMessage).orElse(null);
+
+    assertThat(parsedMessage).isNotNull();
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_REFERENCE_INFO_V_1_0);
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Ankeborg");
+    assertThat(parsedMessage.facility.address).isEqualTo("Kajsas hus");
+    assertThat(parsedMessage.gateway).isNotNull();
+    assertThat(parsedMessage.gateway.id).isEqualTo("12031979");
+    assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
+    assertThat(parsedMessage.meter.id).isEqualTo("654");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Room sensor");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.cron).isEqualTo(CRON_FIFTEEN_MINUTES);
+    assertThat(parsedMessage.organisationId).isEqualTo("Anka AB");
+    assertThat(parsedMessage.sourceSystemId).isEqualTo("AAB");
+  }
+
+  @Test
   public void parseMalformedReferenceInfoMessage() {
     assertThat(messageParser.parseReferenceInfoMessage("")).isEmpty();
     assertThat(messageParser.parseReferenceInfoMessage("{\"foo\": 1999}")).isEmpty();

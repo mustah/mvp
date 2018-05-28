@@ -29,6 +29,12 @@ public class MeterDefinitionTest {
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Cold water")))
       .isEqualTo(MeterDefinition.COLD_WATER_METER);
+
+    assertThat(MeterDefinition.fromMedium(Medium.from("Electricity")))
+      .isEqualTo(MeterDefinition.ELECTRICITY_METER);
+
+    assertThat(MeterDefinition.fromMedium(Medium.from("Room sensor")))
+      .isEqualTo(MeterDefinition.ROOM_TEMP_METER);
   }
 
   @Test
