@@ -25,6 +25,7 @@ const indicatorIconFor: IndicatorComponentType = {
   [Medium.collection]: IconCollection,
   [Medium.measurementQuality]: IconValidation,
   [Medium.electricity]: IconCurrent,
+  [Medium.water]: IconColdWater,
   [Medium.coldWater]: IconColdWater,
   [Medium.hotWater]: IconColdWater,
   [Medium.districtHeating]: IconDistrictHeating,

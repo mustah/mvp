@@ -10,6 +10,7 @@ export const enum Medium {
   temperatureInside = 'temperatureInside',
   temperatureOutside = 'temperatureOutside',
   hotWater = 'warmWater',
+  water = 'water',
 }
 
 export interface WidgetModel {

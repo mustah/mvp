@@ -71,4 +71,13 @@ export const allQuantities = {
   [Medium.gas]: [
     RenderableQuantity.volume,
   ],
+  [Medium.water]: [
+    RenderableQuantity.volume,
+  ],
+  [Medium.coldWater]: [
+    RenderableQuantity.volume,
+  ],
+  [Medium.hotWater]: [
+    RenderableQuantity.volume,
+  ],
 };
