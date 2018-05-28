@@ -24,7 +24,6 @@ import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
-import com.elvaco.mvp.web.dto.MapMarkerDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -233,74 +232,6 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void mapDataIncludesGatewaysWithoutLocation() {
-    UUID gatewayId = saveGateway(dailyPlanet.id).id;
-
-    ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
-      .getList("/gateways/map-markers", MapMarkerDto.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSize(1);
-    assertThat(response.getBody().get(0).id).isEqualTo(gatewayId);
-  }
-
-  @Test
-  public void mapMarkersIncludesGatewaysWithCityAndAddressLocation() {
-    Gateway gateway = saveGateway(dailyPlanet.id);
-
-    LocationBuilder location = new LocationBuilder()
-      .country("sweden")
-      .city("kungsbacka")
-      .address("super 1")
-      .latitude(1.234)
-      .longitude(2.3323);
-
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "external-1234",
-      dailyPlanet.id,
-      location.build(),
-      singletonList(gateway),
-      ZonedDateTime.now()
-    ));
-
-    MapMarkerDto mapMarker = newMapMarker(gateway);
-
-    ResponseEntity<List<MapMarkerDto>> cityAddressResponse = asTestSuperAdmin()
-      .getList("/gateways/map-markers?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
-
-    ResponseEntity<List<MapMarkerDto>> cityResponse = asTestSuperAdmin()
-      .getList("/gateways/map-markers?city=sweden,kungsbacka", MapMarkerDto.class);
-
-    assertSameMapMarker(cityAddressResponse, mapMarker);
-    assertSameMapMarker(cityResponse, mapMarker);
-  }
-
-  @Test
-  public void findGatewayMapMarkers_WithUnknownCity() {
-    Gateway gateway = saveGateway(dailyPlanet.id);
-
-    LocationBuilder unknownLocation = unknownLocationBuilder();
-
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "external-1234",
-      dailyPlanet.id,
-      unknownLocation.build(),
-      singletonList(gateway),
-      ZonedDateTime.now()
-    ));
-
-    MapMarkerDto mapMarker = newMapMarker(gateway);
-
-    ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
-      .getList("/gateways/map-markers?city=unknown,unknown", MapMarkerDto.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).containsExactly(mapMarker);
-  }
-
-  @Test
   public void findGateways_WithUnknownCity() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
@@ -501,15 +432,6 @@ public class GatewayControllerTest extends IntegrationTest {
     ));
   }
 
-  private void assertSameMapMarker(
-    ResponseEntity<List<MapMarkerDto>> response,
-    MapMarkerDto mapMarker
-  ) {
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSize(1);
-    assertThat(response.getBody().get(0)).isEqualTo(mapMarker);
-  }
-
   private void saveGatewayStatus(
     Gateway gateway,
     StatusType status,
@@ -524,16 +446,6 @@ public class GatewayControllerTest extends IntegrationTest {
         start,
         stop
       )
-    );
-  }
-
-  private static MapMarkerDto newMapMarker(Gateway gateway) {
-    return new MapMarkerDto(
-      gateway.id,
-      "unknown",
-      1.234,
-      2.3323,
-      1.0
     );
   }
 

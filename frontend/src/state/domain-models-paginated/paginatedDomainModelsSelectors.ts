@@ -1,3 +1,4 @@
+import {createSelector} from 'reselect';
 import {Maybe} from '../../helpers/Maybe';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
@@ -17,3 +18,9 @@ export const getPageError =
 
 export const getPaginatedEntities =
   <T extends Identifiable>({entities}: NormalizedPaginatedState<T>): ObjectsById<T> => entities;
+
+export const getPaginatedDomainModelById = <T extends Identifiable>(id: uuid) =>
+  createSelector<NormalizedPaginatedState<T>, ObjectsById<T>, Maybe<T>>(
+    getPaginatedEntities,
+    ((entities: ObjectsById<T>) => Maybe.maybe<T>(entities[id])),
+  );

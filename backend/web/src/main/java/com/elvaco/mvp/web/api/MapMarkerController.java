@@ -3,9 +3,11 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
+import com.elvaco.mvp.web.mapper.GatewayDtoMapper;
 import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.MultiValueMap;
@@ -21,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 public class MapMarkerController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
+  private final GatewayUseCases gatewayUseCases;
 
   @GetMapping("/meters")
   public List<MapMarkerDto> meterMapMarkers(
@@ -32,10 +35,20 @@ public class MapMarkerController {
       .collect(toList());
   }
 
-  @GetMapping("/meters/{id}")
-  public MapMarkerDto findMapMarker(@PathVariable UUID id) {
-    return logicalMeterUseCases.findById(id)
+  @GetMapping("/gateways")
+  public List<MapMarkerDto> mapMarkers(
+    @RequestParam MultiValueMap<String, String> requestParams
+  ) {
+    return gatewayUseCases.findAll(requestParametersOf(requestParams))
+      .stream()
+      .map(GatewayDtoMapper::toMapMarkerDto)
+      .collect(toList());
+  }
+
+  @GetMapping("/meters/{logicalMeterId}")
+  public MapMarkerDto findMeterMapMarker(@PathVariable UUID logicalMeterId) {
+    return logicalMeterUseCases.findById(logicalMeterId)
       .map(LogicalMeterDtoMapper::toMapMarkerDto)
-      .orElseThrow(() -> new MeterNotFound(id));
+      .orElseThrow(() -> new MeterNotFound(logicalMeterId));
   }
 }

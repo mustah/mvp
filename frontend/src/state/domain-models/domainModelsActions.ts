@@ -1,17 +1,12 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {
-  createEmptyAction,
-  createPayloadAction,
-  EmptyAction,
-  PayloadAction,
-} from 'react-redux-typescript';
+import {createEmptyAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {emptyActionOf, ErrorResponse, Identifiable, payloadActionOf, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, responseMessageOrFallback} from '../api/apiActions';
 import {DomainModelsState, Normalized, NormalizedState, RequestType} from './domainModels';
@@ -96,9 +91,9 @@ const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState
 
 const shouldFetchEntity = (
   id: uuid,
-  {isFetching, error, entities}: NormalizedState<Identifiable>,
+  {isSuccessfullyFetched, isFetching, error, entities}: NormalizedState<Identifiable>,
 ): boolean =>
-  !isFetching && !error && !entities[id];
+  !isSuccessfullyFetched && !isFetching && !error && !entities[id];
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
@@ -192,9 +187,9 @@ const makeRequestActionsOf = <T>(
   endPoint: EndPoints,
   requestType: RequestType,
 ): RequestHandler<T> => ({
-  request: createEmptyAction<string>(domainModelsRequest(endPoint)),
-  success: createPayloadAction<string, T>(domainModelsSuccess(requestType)(endPoint)),
-  failure: createPayloadAction<string, ErrorResponse>(domainModelsFailure(endPoint)),
+  request: emptyActionOf(domainModelsRequest(endPoint)),
+  success: payloadActionOf<T>(domainModelsSuccess(requestType)(endPoint)),
+  failure: payloadActionOf<ErrorResponse>(domainModelsFailure(endPoint)),
 });
 
 export const getRequestOf = <T>(endpoint: EndPoints) =>

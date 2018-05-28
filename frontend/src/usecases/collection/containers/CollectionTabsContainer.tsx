@@ -69,15 +69,17 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
+const fetchMapMarkers = ({fetchGatewayMapMarkers, parameters}: Props) =>
+  fetchGatewayMapMarkers(parameters);
+
 class CollectionTabs extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchGatewayMapMarkers, parameters} = this.props;
-    fetchGatewayMapMarkers(parameters);
+    fetchMapMarkers(this.props);
   }
 
-  componentWillReceiveProps({fetchGatewayMapMarkers, parameters}: Props) {
-    fetchGatewayMapMarkers(parameters);
+  componentWillReceiveProps(props: Props) {
+    fetchMapMarkers(props);
   }
 
   render() {

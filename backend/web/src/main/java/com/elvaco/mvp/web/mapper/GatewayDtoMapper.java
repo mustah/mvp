@@ -49,7 +49,7 @@ public class GatewayDtoMapper {
     );
   }
 
-  public MapMarkerDto toMapMarkerDto(Gateway gateway) {
+  public static MapMarkerDto toMapMarkerDto(Gateway gateway) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = gateway.id;
     mapMarkerDto.status = gateway.currentStatus().status.name;

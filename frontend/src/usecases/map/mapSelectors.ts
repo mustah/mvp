@@ -14,9 +14,6 @@ import {MapState} from './mapReducer';
 export const getSelectedMapMarker = (state: MapState): Maybe<uuid> =>
   Maybe.maybe(state.selectedMarker);
 
-export const getMapMarker = ({entities}: NormalizedState<MapMarker>, id: uuid): Maybe<MapMarker> =>
-  Maybe.maybe(entities[id]);
-
 export const getBounds =
   createSelector<NormalizedState<MapMarker>, DomainModel<MapMarker>, Bounds>(
     getDomainModel,

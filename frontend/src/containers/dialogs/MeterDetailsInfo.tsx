@@ -11,9 +11,9 @@ import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
+import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisation} from '../../state/domain-models/organisation/organisationsApiActions';
-import {getOrganisation} from '../../state/domain-models/organisation/organisationSelectors';
 import {User} from '../../state/domain-models/user/userModels';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
@@ -118,7 +118,7 @@ const mapStateToProps = (
   {domainModels: {organisations}, auth}: RootState,
   {meter}: OwnProps,
 ): StateToProps => ({
-  organisation: getOrganisation(organisations, meter.organisationId),
+  organisation: getDomainModelById<Organisation>(meter.organisationId)(organisations),
   user: getUser(auth),
 });
 
