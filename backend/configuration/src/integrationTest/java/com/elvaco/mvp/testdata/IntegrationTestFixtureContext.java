@@ -28,7 +28,6 @@ public class IntegrationTestFixtureContext {
     User user2,
     User admin2,
     User superAdmin2
-
   ) {
     this.organisationEntity = organisation;
     this.user = user;
@@ -38,7 +37,6 @@ public class IntegrationTestFixtureContext {
     this.user2 = user2;
     this.admin2 = admin2;
     this.superAdmin2 = superAdmin2;
-
   }
 
   public Organisation organisation() {

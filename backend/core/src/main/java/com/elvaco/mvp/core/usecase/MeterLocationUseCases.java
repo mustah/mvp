@@ -7,18 +7,15 @@ import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 
+@RequiredArgsConstructor
 public class MeterLocationUseCases {
 
   private final LogicalMeters logicalMeters;
   private final AuthenticatedUser currentUser;
-
-  public MeterLocationUseCases(LogicalMeters logicalMeters, AuthenticatedUser currentUser) {
-    this.logicalMeters = logicalMeters;
-    this.currentUser = currentUser;
-  }
 
   public MeterSummary findAllForSummaryInfo(RequestParameters parameters) {
     return logicalMeters.findAllForSummaryInfo(setCurrentUsersOrganisationId(

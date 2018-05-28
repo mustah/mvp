@@ -17,25 +17,17 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
+import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class LogicalMeterUseCases {
 
-  private final LogicalMeters logicalMeters;
   private final AuthenticatedUser currentUser;
+  private final LogicalMeters logicalMeters;
   private final Measurements measurements;
-
-  public LogicalMeterUseCases(
-    AuthenticatedUser currentUser,
-    LogicalMeters logicalMeters,
-    Measurements measurements
-  ) {
-    this.currentUser = currentUser;
-    this.logicalMeters = logicalMeters;
-    this.measurements = measurements;
-  }
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))

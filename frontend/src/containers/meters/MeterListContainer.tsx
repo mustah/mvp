@@ -38,12 +38,10 @@ import {
   ClearErrorPaginated,
   EncodedUriParameters,
   ErrorResponse,
-  Fetch,
   FetchPaginated,
   OnClickWithId,
   uuid,
 } from '../../types/Types';
-import {fetchMeterMapMarkers} from '../../usecases/map/meterMapMarkerApiActions';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
 
@@ -61,7 +59,6 @@ interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
   fetchMeters: FetchPaginated;
-  fetchMeterMapMarkers: Fetch;
   changePaginationPage: OnChangePage;
   clearError: ClearErrorPaginated;
 }
@@ -75,14 +72,12 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class MeterList extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchMeters, fetchMeterMapMarkers, parameters, pagination: {page}} = this.props;
+    const {fetchMeters, parameters, pagination: {page}} = this.props;
     fetchMeters(page, parameters);
-    fetchMeterMapMarkers(parameters);
   }
 
-  componentWillReceiveProps({fetchMeters, fetchMeterMapMarkers, parameters, pagination: {page}}: Props) {
+  componentWillReceiveProps({fetchMeters, parameters, pagination: {page}}: Props) {
     fetchMeters(page, parameters);
-    fetchMeterMapMarkers(parameters);
   }
 
   render() {
@@ -192,7 +187,11 @@ class MeterList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {userSelection: {userSelection}, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
+  {
+    userSelection: {userSelection},
+    paginatedDomainModels: {meters},
+    ui: {pagination},
+  }: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
 
@@ -219,7 +218,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   syncWithMetering,
   fetchMeters,
-  fetchMeterMapMarkers,
   changePaginationPage,
   clearError: clearErrorMeters,
 }, dispatch);

@@ -21,45 +21,23 @@ import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@RequiredArgsConstructor
 @Configuration
 class UseCaseConfig {
 
   private final Users users;
-  private final LogicalMeters logicalMeters;
   private final Settings settings;
+  private final LogicalMeters logicalMeters;
   private final Measurements measurements;
   private final Organisations organisations;
   private final Gateways gateways;
   private final PhysicalMeters physicalMeters;
   private final TokenService tokenService;
   private final UserSelections userSelections;
-
-  @Autowired
-  UseCaseConfig(
-    Users users,
-    Settings settings,
-    LogicalMeters logicalMeters,
-    Measurements measurements,
-    Organisations organisations,
-    Gateways gateways,
-    PhysicalMeters physicalMeters,
-    TokenService tokenService,
-    UserSelections userSelections
-  ) {
-    this.users = users;
-    this.logicalMeters = logicalMeters;
-    this.settings = settings;
-    this.measurements = measurements;
-    this.organisations = organisations;
-    this.gateways = gateways;
-    this.physicalMeters = physicalMeters;
-    this.tokenService = tokenService;
-    this.userSelections = userSelections;
-  }
 
   @Bean
   SettingUseCases settingUseCases() {

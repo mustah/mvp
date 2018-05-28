@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
@@ -14,7 +13,7 @@ import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.GatewayNotFound;
 import com.elvaco.mvp.web.mapper.GatewayDtoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
@@ -25,23 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 @RestApi("/api/v1/gateways")
 public class GatewayController {
 
   private final GatewayUseCases gatewayUseCases;
   private final GatewayDtoMapper gatewayDtoMapper;
-  private final AuthenticatedUser currentUser;
-
-  @Autowired
-  GatewayController(
-    GatewayUseCases gatewayUseCases,
-    GatewayDtoMapper gatewayDtoMapper,
-    AuthenticatedUser currentUser
-  ) {
-    this.gatewayUseCases = gatewayUseCases;
-    this.gatewayDtoMapper = gatewayDtoMapper;
-    this.currentUser = currentUser;
-  }
 
   @GetMapping("{id}")
   public GatewayDto gateway(@PathVariable UUID id) {
