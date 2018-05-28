@@ -19,7 +19,6 @@ import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -31,17 +30,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterDtoMapperTest {
-
-  private LogicalMeterDtoMapper mapper;
-
-  @Before
-  public void setUp() {
-    mapper = new LogicalMeterDtoMapper(
-      new MeterStatusLogDtoMapper(),
-      new GatewayDtoMapper(),
-      new MeasurementDtoMapper()
-    );
-  }
 
   @Test
   public void mapLogicalMeterToMapMarkerDto() {
@@ -89,9 +77,7 @@ public class LogicalMeterDtoMapperTest {
       emptyList()
     );
 
-    MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(logicalMeter);
-
-    assertThat(mapMarkerDto).isEqualTo(mapMarkerDtoExpected);
+    assertThat(LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter)).isEqualTo(mapMarkerDtoExpected);
   }
 
   @Test
@@ -137,7 +123,7 @@ public class LogicalMeterDtoMapperTest {
     UUID organisationId = ELVACO.id;
 
     assertThat(
-      mapper.toDto(
+      LogicalMeterDtoMapper.toDto(
         new LogicalMeter(
           meterId,
           "an-external-id",
@@ -194,7 +180,7 @@ public class LogicalMeterDtoMapperTest {
 
   @Test
   public void nullCollectionStatusIsMappedToNull() {
-    LogicalMeterDto logicalMeterDto = mapper.toDto(new LogicalMeter(
+    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(new LogicalMeter(
       randomUUID(),
       "external-id",
       ELVACO.id,
@@ -207,7 +193,7 @@ public class LogicalMeterDtoMapperTest {
 
   @Test
   public void dtoCreatedTimeReflectsCallerTimeZone() {
-    LogicalMeterDto logicalMeterDto = mapper.toDto(new LogicalMeter(
+    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(new LogicalMeter(
       randomUUID(),
       "external-id",
       ELVACO.id,

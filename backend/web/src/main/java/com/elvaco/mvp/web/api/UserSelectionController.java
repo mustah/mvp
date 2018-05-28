@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import static com.elvaco.mvp.web.mapper.UserSelectionDtoMapper.toDomainModel;
+import static com.elvaco.mvp.web.mapper.UserSelectionDtoMapper.toDto;
 import static java.util.stream.Collectors.toList;
 
 @AllArgsConstructor
@@ -25,20 +27,19 @@ import static java.util.stream.Collectors.toList;
 public class UserSelectionController {
 
   private final UserSelectionUseCases useCases;
-  private final UserSelectionDtoMapper mapper;
 
   @GetMapping
   public List<UserSelectionDto> getAllUserSelections() {
     return useCases.findAllForCurrentUser()
       .stream()
-      .map(mapper::toDto)
+      .map(UserSelectionDtoMapper::toDto)
       .collect(toList());
   }
 
   @GetMapping("{id}")
   public UserSelectionDto getUserSelectionsById(@PathVariable UUID id) {
     return useCases.findByIdForCurrentUser(id)
-      .map(mapper::toDto)
+      .map(UserSelectionDtoMapper::toDto)
       .orElseThrow(() -> new UserSelectionNotFound(id));
   }
 
@@ -48,7 +49,7 @@ public class UserSelectionController {
   ) {
     return ResponseEntity
       .status(HttpStatus.CREATED)
-      .body(mapper.toDto(useCases.save(mapper.toDomainModel(userSelectionDto))));
+      .body(toDto(useCases.save(toDomainModel(userSelectionDto))));
   }
 
   @PutMapping
@@ -57,7 +58,7 @@ public class UserSelectionController {
     useCases.findByIdForCurrentUser(userSelectionDto.id)
       .orElseThrow(() -> new UserSelectionNotFound(userSelectionDto.id));
 
-    return mapper.toDto(useCases.save(mapper.toDomainModel(userSelectionDto)));
+    return toDto(useCases.save(toDomainModel(userSelectionDto)));
   }
 
   @DeleteMapping("{id}")
@@ -67,6 +68,6 @@ public class UserSelectionController {
 
     useCases.delete(userSelection);
 
-    return mapper.toDto(userSelection);
+    return toDto(userSelection);
   }
 }

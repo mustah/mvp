@@ -11,19 +11,15 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-@RequiredArgsConstructor
+@UtilityClass
 public class LogicalMeterDtoMapper {
-
-  private final MeterStatusLogDtoMapper meterStatusLogDtoMapper;
-  private final GatewayDtoMapper gatewayDtoMapper;
-  private final MeasurementDtoMapper measurementDtoMapper;
 
   public static MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
@@ -40,7 +36,7 @@ public class LogicalMeterDtoMapper {
     return mapMarkerDto;
   }
 
-  public LogicalMeterDto toDto(LogicalMeter logicalMeter) {
+  public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
     List<StatusLogEntry<UUID>> statusLogs = getMeterStatusLogs(logicalMeter);
 
     String created = formatUtc(logicalMeter.created);
@@ -67,7 +63,7 @@ public class LogicalMeterDtoMapper {
     meterDto.gateway = logicalMeter.gateways
       .stream()
       .findFirst()
-      .map(gatewayDtoMapper::toGatewayMandatory)
+      .map(GatewayDtoMapper::toGatewayMandatory)
       .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
@@ -76,12 +72,12 @@ public class LogicalMeterDtoMapper {
 
     meterDto.measurements = logicalMeter.measurements
       .stream()
-      .map(measurementDtoMapper::toDto)
+      .map(MeasurementDtoMapper::toDto)
       .collect(toList());
 
     meterDto.statusChangelog = statusLogs
       .stream()
-      .map(meterStatusLogDtoMapper::toDto)
+      .map(MeterStatusLogDtoMapper::toDto)
       .collect(toList());
 
     meterDto.organisationId = logicalMeter.organisationId;

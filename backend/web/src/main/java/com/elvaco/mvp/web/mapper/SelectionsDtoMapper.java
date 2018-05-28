@@ -8,11 +8,13 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.SelectionsDto;
+import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
+@UtilityClass
 public class SelectionsDtoMapper {
 
   public static final List<IdNamedDto> GATEWAY_STATUSES = unmodifiableList(asList(
@@ -54,7 +56,7 @@ public class SelectionsDtoMapper {
       .collect(toList())
   );
 
-  public void addToDto(Location location, SelectionsDto selectionsDto) {
+  public static void addToDto(Location location, SelectionsDto selectionsDto) {
     selectionsDto.addLocation(
       location.getCountryOrUnknown(),
       location.getCityOrUnknown(),

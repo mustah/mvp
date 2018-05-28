@@ -32,12 +32,11 @@ public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final MeteringRequestPublisher meteringRequestPublisher;
-  private final LogicalMeterDtoMapper logicalMeterDtoMapper;
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(@PathVariable UUID id) {
     return logicalMeterUseCases.findByIdWithMeasurements(id)
-      .map(logicalMeterDtoMapper::toDto)
+      .map(LogicalMeterDtoMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
@@ -61,12 +60,12 @@ public class LogicalMeterController {
     Page<LogicalMeter> page = logicalMeterUseCases.findAllWithMeasurements(parameters, adapter);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(logicalMeterDtoMapper::toDto);
+      .map(LogicalMeterDtoMapper::toDto);
   }
 
   @DeleteMapping("{id}")
   public LogicalMeterDto deleteMeter(@PathVariable UUID id) {
-    return logicalMeterDtoMapper.toDto(
+    return LogicalMeterDtoMapper.toDto(
       logicalMeterUseCases.deleteById(id)
         .orElseThrow(() -> new MeterNotFound(id))
     );
