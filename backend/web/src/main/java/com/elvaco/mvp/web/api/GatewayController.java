@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.api;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,7 +9,6 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
-import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.GatewayNotFound;
 import com.elvaco.mvp.web.mapper.GatewayDtoMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/gateways")
@@ -36,14 +33,6 @@ public class GatewayController {
     return gatewayUseCases.findById(id)
       .map(gatewayDtoMapper::toDto)
       .orElseThrow(() -> new GatewayNotFound(id));
-  }
-
-  @GetMapping("/map-markers")
-  public List<MapMarkerDto> mapMarkers(@RequestParam MultiValueMap<String, String> requestParams) {
-    return gatewayUseCases.findAll(requestParametersOf(requestParams))
-      .stream()
-      .map(gatewayDtoMapper::toMapMarkerDto)
-      .collect(toList());
   }
 
   @GetMapping

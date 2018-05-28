@@ -1,24 +1,38 @@
 import {Maybe} from '../../../../helpers/Maybe';
 import {Identifiable} from '../../../../types/Types';
-import {Gateway} from '../../gateway/gatewayModels';
+import {ObjectsById} from '../../../domain-models/domainModels';
 import {NormalizedPaginatedState} from '../../paginatedDomainModels';
+import {getPaginatedDomainModelById} from '../../paginatedDomainModelsSelectors';
 import {Meter, MetersState} from '../meterModels';
-import {getMeter, getMetersByGateway} from '../meterSelectors';
+import {getMetersByIds} from '../meterSelectors';
 
 describe('meterSelectors', () => {
-  describe('getMeter', () => {
+
+  type IdentifiableMeter = ObjectsById<Partial<Meter> & Identifiable>;
+
+  describe('getPaginatedDomainModelById - Meter', () => {
     const meterState: Partial<NormalizedPaginatedState<Partial<Meter> & Identifiable>> = {
       entities: {1: {id: 1}},
     };
+
     it('returns a Maybe.just() when requesting existing gateway', () => {
-      expect(getMeter(meterState as MetersState, 1)).toEqual(Maybe.just({id: 1}));
+      const state = meterState as MetersState;
+
+      const actual: Maybe<Meter> = getPaginatedDomainModelById<Meter>(1)(state);
+
+      expect(actual).toEqual(Maybe.just<Partial<Meter>>({id: 1}));
     });
+
     it('returns a maybe.nothing when requesting a non-existing gateway', () => {
-      expect(getMeter(meterState as MetersState, 2)).toEqual(Maybe.nothing());
+      const state = meterState as MetersState;
+
+      const actual: Maybe<Meter> = getPaginatedDomainModelById<Meter>(2)(state);
+
+      expect(actual).toEqual(Maybe.nothing<Meter>());
     });
   });
 
-  describe('getMetersByGateway', () => {
+  describe('getMetersById', () => {
     const metersState: Partial<NormalizedPaginatedState<Partial<Meter> & Identifiable>> = {
       entities: {
         1: {id: 1},
@@ -26,24 +40,24 @@ describe('meterSelectors', () => {
         3: {id: 3},
       },
     };
+    const state = metersState as MetersState;
 
     it('returns a Maybe.nothing() if gateway is maybe.nothing()', () => {
-      const gateway: Maybe<Gateway> = Maybe.nothing();
+      const actual: Maybe<ObjectsById<Meter>> = getMetersByIds([])(state);
 
-      expect(getMetersByGateway(metersState as MetersState, gateway)).toEqual(Maybe.nothing());
+      expect(actual).toEqual(Maybe.nothing<ObjectsById<Meter>>());
     });
 
     it('returns a Maybe.nothing() if any of the gateway.meterIds are missing i metersState', () => {
-      const gateway: Maybe<Partial<Gateway>> = Maybe.just({meterIds: [1, 2, 3, 4]});
+      const actual: Maybe<ObjectsById<Meter>> = getMetersByIds([1, 2, 3, 4])(state);
 
-      expect(getMetersByGateway(metersState as MetersState, gateway as Maybe<Gateway>)).toEqual(Maybe.nothing());
+      expect(actual).toEqual(Maybe.nothing<ObjectsById<Meter>>());
     });
 
     it('returns a Maybe.just() if all gateway.meterIds exist in metersState', () => {
-      const gateway: Maybe<Partial<Gateway>> = Maybe.just({meterIds: [1, 2]});
+      const actual: Maybe<ObjectsById<Meter>> = getMetersByIds([1, 2])(state);
 
-      expect(getMetersByGateway(metersState as MetersState, gateway as Maybe<Gateway>))
-        .toEqual(Maybe.just({1: {id: 1}, 2: {id: 2}}));
+      expect(actual).toEqual(Maybe.just<IdentifiableMeter>({1: {id: 1}, 2: {id: 2}}));
     });
   });
 });

@@ -51,9 +51,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const {selectedTab} = this.state;
     const {gateway, meters, gatewayMapMarker} = this.props;
 
-    const hasConfidentPosition: boolean =
-      gatewayMapMarker.filter(isGeoPositionWithinThreshold).isJust();
-
+    const mapMarker: Maybe<MapMarker> = gatewayMapMarker.filter(isGeoPositionWithinThreshold);
     const noReliablePosition = firstUpperTranslated('no reliable position');
 
     return (
@@ -91,11 +89,11 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <HasContent
-              hasContent={hasConfidentPosition}
+              hasContent={mapMarker.isJust()}
               fallbackContent={<MissingDataTitle title={noReliablePosition}/>}
             >
               <Map height={400} viewCenter={gateway.location.position}>
-                <ClusterContainer markers={gatewayMapMarker.get()}/>
+                {mapMarker.isJust() && <ClusterContainer markers={mapMarker.get()}/>}
               </Map>
             </HasContent>
           </TabContent>

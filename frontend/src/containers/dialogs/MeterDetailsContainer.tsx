@@ -6,10 +6,10 @@ import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {fetchMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {getMeter} from '../../state/domain-models-paginated/meter/meterSelectors';
+import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
+import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {CallbackWithId, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {getMapMarker} from '../../usecases/map/mapSelectors';
 import {fetchMeterMapMarker} from '../../usecases/map/meterMapMarkerApiActions';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
@@ -34,9 +34,12 @@ interface DispatchToProps {
   syncWithMetering: CallbackWithId;
 }
 
-type MeterDetailsProps = StateToProps & DispatchToProps & OwnProps;
+type Props = StateToProps & DispatchToProps & OwnProps;
 
-const MeterDetailsContent = (props: MeterDetailsProps) => {
+const MeterDetailsContent = (props: Props) => {
+  if (props.meter.isNothing()) {
+    return null;
+  }
   const newProps = {...props, meter: props.meter.get()};
   return (
     <div>
@@ -48,17 +51,20 @@ const MeterDetailsContent = (props: MeterDetailsProps) => {
 
 const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 
-class MeterDetails extends React.Component<MeterDetailsProps> {
+const fetchMeterAndMapMarker =
+  ({fetchMeter, fetchMeterMapMarker, meterId}: Props) => {
+    fetchMeter(meterId);
+    fetchMeterMapMarker(meterId);
+  };
+
+class MeterDetails extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchMeter, fetchMeterMapMarker, meterId} = this.props;
-    fetchMeter(meterId);
-    fetchMeterMapMarker(meterId);
+    fetchMeterAndMapMarker(this.props);
   }
 
-  componentWillReceiveProps({fetchMeter, fetchMeterMapMarker, meterId}: MeterDetailsProps) {
-    fetchMeter(meterId);
-    fetchMeterMapMarker(meterId);
+  componentWillReceiveProps(props: Props) {
+    fetchMeterAndMapMarker(props);
   }
 
   render() {
@@ -75,8 +81,8 @@ const mapStateToProps = (
 ): StateToProps =>
   ({
     isFetching: meterMapMarkers.isFetching || meters.isFetchingSingle,
-    meter: getMeter(meters, meterId),
-    meterMapMarker: getMapMarker(meterMapMarkers, meterId),
+    meter: getPaginatedDomainModelById<Meter>(meterId)(meters),
+    meterMapMarker: getDomainModelById<MapMarker>(meterId)(meterMapMarkers),
   });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -1,20 +1,19 @@
+import {createSelector} from 'reselect';
 import {Maybe} from '../../../helpers/Maybe';
 import {uuid} from '../../../types/Types';
 import {ObjectsById} from '../../domain-models/domainModels';
-import {Gateway} from '../gateway/gatewayModels';
+import {getPaginatedEntities} from '../paginatedDomainModelsSelectors';
 import {Meter, MetersState} from './meterModels';
 
-export const getMeter = ({entities}: MetersState, id: uuid): Maybe<Meter> =>
-  Maybe.maybe(entities[id]);
-
-export const getMetersByGateway = ({entities}: MetersState, gateway: Maybe<Gateway>): Maybe<ObjectsById<Meter>> => {
-  const allMetersExistInState = (prev, curr) => prev && !!entities[curr];
-  return (
-    gateway.flatMap(({meterIds}) =>
-      meterIds.reduce(allMetersExistInState, true) ?
-        Maybe.just(toMeterDict(meterIds, entities))
-        : Maybe.nothing()));
-};
-
-const toMeterDict = (ids: uuid[], entities: ObjectsById<Meter>) =>
-  ids.reduce((prev, curr) => ({...prev, [curr]: entities[curr]}), {});
+export const getMetersByIds = (meterIds: uuid[]) =>
+  createSelector<MetersState, ObjectsById<Meter>, Maybe<ObjectsById<Meter>>>(
+    getPaginatedEntities,
+    (entities: ObjectsById<Meter>) => {
+      const metersInState = meterIds.filter((id: uuid) => entities[id] !== undefined);
+      return metersInState.length > 0 && (metersInState.length === meterIds.length)
+        ? Maybe.just(metersInState.reduce(
+          (prev, curr: uuid) => ({...prev, [curr]: entities[curr]}), {},
+        ))
+        : Maybe.nothing();
+    },
+  );
