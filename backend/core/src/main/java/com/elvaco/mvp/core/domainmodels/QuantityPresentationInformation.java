@@ -23,14 +23,4 @@ public class QuantityPresentationInformation {
   public Optional<String> getUnit() {
     return Optional.ofNullable(unit);
   }
-
-  QuantityPresentationInformation withUnit(String unit) {
-    return new QuantityPresentationInformation(unit, displayMode);
-  }
-
-  QuantityPresentationInformation withSeriesDisplayMode(
-    SeriesDisplayMode seriesDisplayMode
-  ) {
-    return new QuantityPresentationInformation(unit, seriesDisplayMode);
-  }
 }
