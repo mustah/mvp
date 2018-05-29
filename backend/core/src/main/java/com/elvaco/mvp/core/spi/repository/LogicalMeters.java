@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -25,7 +26,7 @@ public interface LogicalMeters {
 
   List<LogicalMeter> findByOrganisationId(UUID organisationId);
 
-  List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters);
+  MeterSummary summary(RequestParameters parameters);
 
   void delete(LogicalMeter logicalMeter);
 }

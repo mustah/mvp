@@ -9,11 +9,11 @@ import lombok.ToString;
 @ToString
 public class MeterSummaryDto {
 
-  public int numMeters;
-  public int numCities;
-  public int numAddresses;
+  public long numMeters;
+  public long numCities;
+  public long numAddresses;
 
-  public MeterSummaryDto(int numMeters, int numCities, int numAddresses) {
+  public MeterSummaryDto(long numMeters, long numCities, long numAddresses) {
     this.numMeters = numMeters;
     this.numCities = numCities;
     this.numAddresses = numAddresses;

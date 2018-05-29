@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
@@ -14,6 +15,7 @@ import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -29,6 +31,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
+import static com.querydsl.core.types.ExpressionUtils.allOf;
+import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -36,6 +40,7 @@ public class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
+  private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
   private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
@@ -45,7 +50,6 @@ public class LogicalMeterQueryDslJpaRepository
     QPhysicalMeterEntity.physicalMeterEntity;
 
   private static final QMeasurementEntity MEASUREMENT = QMeasurementEntity.measurementEntity;
-  private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
 
   @Autowired
   public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
@@ -147,6 +151,46 @@ public class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
+  public MeterSummary summary(RequestParameters parameters, Predicate predicate) {
+    long meters = createCountQuery(predicate)
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .distinct()
+      .fetchCount();
+
+    /*
+    NOTE: we calculate .size() in Java land which causes extra memory usage.
+
+    JQL does not support multiple distinct values ("select count(distinct a, b)..."),
+    which forces us to count outside of the database.
+     */
+    long cities = createQuery(predicate)
+      .select(Expressions.list(LOCATION.country, LOCATION.city))
+      .where(
+        allOf(
+          isNotNull(LOCATION.country), isNotNull(LOCATION.city)
+        )
+      )
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .distinct()
+      .fetch()
+      .size();
+
+    long addresses = createQuery(predicate)
+      .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress))
+      .where(
+        allOf(
+          isNotNull(LOCATION.country), isNotNull(LOCATION.city), isNotNull(LOCATION.streetAddress)
+        )
+      )
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .distinct()
+      .fetch()
+      .size();
+
+    return new MeterSummary(meters, cities, addresses);
+  }
+
+  @Override
   public void delete(UUID id, UUID organisationId) {
     JPADeleteClause query = new JPADeleteClause(entityManager, LOGICAL_METER);
     query.where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
@@ -155,13 +199,13 @@ public class LogicalMeterQueryDslJpaRepository
 
   private boolean isStatusQuery(RequestParameters parameters) {
     return parameters.hasName("before")
-           && parameters.hasName("after")
-           && parameters.hasName("status");
+      && parameters.hasName("after")
+      && parameters.hasName("status");
   }
 
   private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
     if ((parameters.hasName("minValue") || parameters.hasName("maxValue"))
-        && parameters.hasName("quantity")) {
+      && parameters.hasName("quantity")) {
 
       String quantity = parameters.getFirst("quantity");
 
@@ -211,14 +255,12 @@ public class LogicalMeterQueryDslJpaRepository
   }
 
   private LogicalMeterEntity fetchOne(Predicate predicate) {
-    return queryOf(predicate).fetchOne();
-  }
-
-  private JPQLQuery<LogicalMeterEntity> queryOf(Predicate predicate) {
     return createQuery(predicate)
       .select(path)
       .distinct()
-      .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity).fetchJoin();
+      .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
+      .fetchJoin()
+      .fetchOne();
   }
 
   private JPQLQuery<LogicalMeterEntity> applyJoins(

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -17,6 +18,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
+
 import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
@@ -82,16 +84,20 @@ public class LogicalMeterUseCases {
   public Optional<LogicalMeter> deleteById(UUID id) {
     if (!currentUser.isSuperAdmin()) {
       throw new Unauthorized(
-        "User '"
-        + currentUser.getUsername()
-        + "' is not allowed to "
-        + "delete this meter."
+        "User '" + currentUser.getUsername() + "' is not allowed to delete this meter."
       );
     }
     Optional<LogicalMeter> logicalMeter = findById(id);
     logicalMeter.ifPresent(logicalMeters::delete);
 
     return logicalMeter;
+  }
+
+  public MeterSummary summary(RequestParameters parameters) {
+    return logicalMeters.summary(setCurrentUsersOrganisationId(
+      currentUser,
+      parameters
+    ));
   }
 
   private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter) {
