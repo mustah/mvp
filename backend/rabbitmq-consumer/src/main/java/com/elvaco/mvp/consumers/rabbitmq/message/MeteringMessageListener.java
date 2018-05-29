@@ -40,7 +40,6 @@ public class MeteringMessageListener implements MessageListener {
       referenceInfoMessageConsumer.accept((MeteringReferenceInfoMessageDto) meteringMessage);
       return null;
     } else if (meteringMessage instanceof MeteringAlarmMessageDto) {
-      log.warn("Ignoring unhandled Alarm message");
       return null;
     } else {
       throw new RuntimeException("Unknown message type: " + meteringMessage.getClass().getName());
