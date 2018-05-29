@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -38,21 +39,19 @@ public class LogicalMeterDtoMapper {
   }
 
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
-    List<StatusLogEntry<UUID>> statusLogs = getMeterStatusLogs(logicalMeter);
-
     String created = formatUtc(logicalMeter.created);
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
     meterDto.id = logicalMeter.id;
-    meterDto.status = getCurrentStatus(statusLogs);
+    meterDto.status = Optional.ofNullable(logicalMeter.currentStatus)
+      .map(uuidStatusLogEntry -> uuidStatusLogEntry.status)
+      .orElse(StatusType.UNKNOWN);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
-    meterDto.statusChanged = statusLogs.stream()
-      .findFirst()
-      .map(meterStatusLog -> meterStatusLog.start)
-      .map(Dates::formatUtc)
-      .orElse(created);
+    meterDto.statusChanged = Dates.formatUtc(Optional.ofNullable(logicalMeter.currentStatus)
+      .map(uuidStatusLogEntry -> uuidStatusLogEntry.start)
+      .orElse(logicalMeter.created));
     meterDto.facility = logicalMeter.externalId;
     meterDto.address = logicalMeter.activePhysicalMeter()
       .map(m -> m.address)
@@ -76,7 +75,7 @@ public class LogicalMeterDtoMapper {
       .map(MeasurementDtoMapper::toDto)
       .collect(toList());
 
-    meterDto.statusChangelog = statusLogs
+    meterDto.statusChangelog = getMeterStatusLogs(logicalMeter)
       .stream()
       .map(MeterStatusLogDtoMapper::toDto)
       .collect(toList());

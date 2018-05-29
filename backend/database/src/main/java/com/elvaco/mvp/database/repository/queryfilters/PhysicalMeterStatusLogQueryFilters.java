@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
@@ -16,7 +17,6 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
@@ -27,6 +27,11 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
     switch (filter) {
       case "physicalMeterId":
         return Optional.of(Q.physicalMeterId.in(mapValues(UUID::fromString, values)));
+      case "id":
+        return Optional.of(QLogicalMeterEntity.logicalMeterEntity.id.in(mapValues(
+          UUID::fromString,
+          values
+        )));
       case BEFORE:
         stop = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(

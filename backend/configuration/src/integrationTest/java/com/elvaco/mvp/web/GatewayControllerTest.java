@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -37,6 +38,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -238,13 +240,11 @@ public class GatewayControllerTest extends IntegrationTest {
 
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       randomUUID(),
       "external-1234",
-      dailyPlanet.id,
-      unknownLocation.build(),
       asList(gateway1, gateway2),
-      ZonedDateTime.now()
+      unknownLocation.build()
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
@@ -261,28 +261,24 @@ public class GatewayControllerTest extends IntegrationTest {
 
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       randomUUID(),
       "external-1234",
-      dailyPlanet.id,
-      unknownLocation.build(),
       asList(gateway1, gateway2),
-      ZonedDateTime.now()
+      unknownLocation.build()
     ));
 
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       randomUUID(),
       "external-1235",
-      dailyPlanet.id,
+      singletonList(gateway3),
       new LocationBuilder()
         .country("sweden")
         .city("kungsbacka")
         .address("kabelgatan 1")
         .longitude(1.3333)
         .latitude(1.12345)
-        .build(),
-      singletonList(gateway3),
-      ZonedDateTime.now()
+        .build()
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
@@ -299,14 +295,11 @@ public class GatewayControllerTest extends IntegrationTest {
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
     UUID meterId1 = randomUUID();
-    ZonedDateTime now = ZonedDateTime.now();
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       meterId1,
       "external-1234",
-      dailyPlanet.id,
-      unknownLocation.build(),
       singletonList(gateway1),
-      now
+      unknownLocation.build()
     ));
 
     Location locationWithLowConfidence = new LocationBuilder()
@@ -319,13 +312,11 @@ public class GatewayControllerTest extends IntegrationTest {
       .build();
 
     UUID meterId2 = randomUUID();
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       meterId2,
       "external-1235",
-      dailyPlanet.id,
-      locationWithLowConfidence,
       singletonList(gateway2),
-      now
+      locationWithLowConfidence
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
@@ -378,35 +369,51 @@ public class GatewayControllerTest extends IntegrationTest {
       .latitude(1.12345)
       .build();
 
-    ZonedDateTime now = ZonedDateTime.now();
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       randomUUID(),
       "external-1234",
-      dailyPlanet.id,
-      unknownAddress,
       singletonList(gateway1),
-      now
+      unknownAddress
     ));
 
-    logicalMeters.save(new LogicalMeter(
+    logicalMeters.save(newLogicalMeter(
       randomUUID(),
       "external-1235",
-      dailyPlanet.id,
+      singletonList(gateway2),
       new LocationBuilder()
         .country("sweden")
         .city("kungsbacka")
         .address("kabelgatan 1")
         .longitude(1.3333)
         .latitude(1.12345)
-        .build(),
-      singletonList(gateway2),
-      now
+        .build()
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
       .getPage("/gateways?address=unknown,unknown,unknown", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(1);
+  }
+
+  private LogicalMeter newLogicalMeter(
+    UUID meterId,
+    String externalId,
+    List<Gateway> gateway,
+    Location location
+  ) {
+    return new LogicalMeter(
+      meterId,
+      externalId,
+      dailyPlanet.id,
+      location,
+      ZonedDateTime.now(),
+      emptyList(),
+      MeterDefinition.UNKNOWN_METER,
+      gateway,
+      null,
+      emptyList(),
+      null
+    );
   }
 
   private void assertGatewayStatus(

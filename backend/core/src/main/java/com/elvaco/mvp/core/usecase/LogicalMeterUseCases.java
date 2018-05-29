@@ -43,7 +43,6 @@ public class LogicalMeterUseCases {
     Pageable pageable
   ) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
-      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
       .map(this::withLatestReadouts);
   }
 

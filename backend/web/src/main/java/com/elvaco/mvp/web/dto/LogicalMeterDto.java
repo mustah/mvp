@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -24,8 +25,7 @@ public class LogicalMeterDto {
   public String statusChanged;
   public List<MeterStatusLogDto> statusChangelog;
   public String created;
-  public Object status;
-
+  public StatusType status;
   @Nullable
   public Double collectionPercentage;
 

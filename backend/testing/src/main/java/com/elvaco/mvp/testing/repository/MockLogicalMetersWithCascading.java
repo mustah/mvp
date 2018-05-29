@@ -33,7 +33,8 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
       logicalMeter.meterDefinition,
       logicalMeter.gateways,
       logicalMeter.collectionPercentage,
-      logicalMeter.measurements
+      logicalMeter.measurements,
+      logicalMeter.currentStatus
     ));
   }
 }

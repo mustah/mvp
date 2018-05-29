@@ -23,7 +23,7 @@ public interface LogicalMeterJpaRepository {
 
   List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate, Sort sort);
 
-  Page<LogicalMeterEntity> findAll(
+  Page<PagedLogicalMeter> findAll(
     RequestParameters parameters,
     Predicate predicate,
     Pageable pageable

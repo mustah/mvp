@@ -35,7 +35,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -280,9 +279,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       "external-1234",
       context().getOrganisationId2(),
       location.build(),
-      singletonList(gateway),
       NOW
-    ));
+    ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
       .get("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkersDto.class);
@@ -312,9 +310,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       "external-1234",
       context().getOrganisationId2(),
       new LocationBuilder().build(),
-      singletonList(gateway),
       NOW
-    ));
+    ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways?city=unknown,unknown", MapMarkersDto.class);

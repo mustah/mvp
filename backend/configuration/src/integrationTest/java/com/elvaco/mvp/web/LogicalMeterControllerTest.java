@@ -28,6 +28,7 @@ import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
@@ -54,6 +55,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -144,6 +146,48 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void locationIsAttachedToPagedMeter() {
+
+    UUID meterId = UUID.randomUUID();
+    logicalMeterRepository.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().getOrganisationId(),
+      UNKNOWN_METER,
+      new LocationBuilder().city("kungsbacka").country("sweden").address("kabelgatan 2t").build()
+    ));
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(
+        "/meters",
+        LogicalMeterDto.class
+      ).getContent().get(0);
+
+    assertThat(logicalMeterDto.location.city.name).isEqualTo("kungsbacka");
+    assertThat(logicalMeterDto.location.address.name).isEqualTo("kabelgatan 2t");
+  }
+
+  @Test
+  public void meterDefinitionIsAttachedToPagedMeter() {
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(30)
+      .build()
+    );
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(
+        "/meters",
+        LogicalMeterDto.class
+      ).getContent().get(0);
+
+    assertThat(logicalMeterDto.medium).isEqualTo(DISTRICT_HEATING_METER.medium);
+  }
+
+  @Test
   public void collectionStatusZeroPercentWhenNoMeasurements() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
@@ -195,7 +239,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(50.0);
   }
 
-  @Ignore
   @Test
   public void collectionStatusFiftyPercentWhenMeterHasStatuses() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
@@ -241,6 +284,56 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       ).getContent().get(0);
 
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(50.0);
+  }
+
+  @Test
+  @Ignore
+  public void collectionStatusRespectsChangingIntervalOnPhysicalMeter() {
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+
+    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(60)
+      .build()
+    );
+
+    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(120)
+      .build()
+    );
+
+    addMeasurementsForMeter(
+      firstMeter,
+      districtHeatingMeter.getQuantities(),
+      start,
+      Duration.ofHours(1),
+      firstMeter.readIntervalMinutes,
+      1.0
+    );
+
+
+    addMeasurementsForMeter(
+      secondMeter,
+      districtHeatingMeter.getQuantities(),
+      start.plusHours(1),
+      Duration.ofHours(2),
+      secondMeter.readIntervalMinutes,
+      1.0
+    );
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(
+        "/meters"
+        + "?after=" + start
+        + "&before=" + start.plusHours(3),
+        LogicalMeterDto.class
+      ).getContent().get(0);
+
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(100.0);
   }
 
   @Test
@@ -495,6 +588,151 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getContent().get(0).id)
       .isEqualTo(firstLogicalMeter.id);
+  }
+
+  @Test
+  public void pagedMeterStatusIsUnknownWhenNoActiveStatus() {
+    createLogicalMeter();
+
+    LogicalMeterDto pagedMeter = asTestUser()
+      .getPage("/meters", LogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(pagedMeter.status).isEqualTo(StatusType.UNKNOWN);
+    assertThat(pagedMeter.statusChanged).isEqualTo(pagedMeter.created);
+  }
+
+  @Test
+  public void pagedMetersHaveStatusSet() {
+
+    LogicalMeter firstLogicalMeter = createLogicalMeter();
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
+    createStatusLogForMeter(
+      firstMeter.id,
+      StatusType.OK,
+      start,
+      null
+    );
+
+    LogicalMeterDto pagedMeter = asTestUser()
+      .getPage("/meters", LogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(pagedMeter.status).isEqualTo(StatusType.OK);
+    assertThat(pagedMeter.statusChanged).isEqualTo(Dates.formatUtc(start));
+  }
+
+  @Test
+  public void latestStartedStatusIsSetWhenMeterHasMultipleActiveStatuses() {
+    LogicalMeter firstLogicalMeter = createLogicalMeter();
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
+    createStatusLogForMeter(
+      firstMeter.id,
+      StatusType.OK,
+      start,
+      null
+    );
+
+    createStatusLogForMeter(
+      firstMeter.id,
+      StatusType.ERROR,
+      start.plusSeconds(1),
+      null
+    );
+
+    LogicalMeterDto pagedMeter = asTestUser()
+      .getPage("/meters?after=" + start.minusDays(1)
+               + "&before=" + start.plusHours(1), LogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(pagedMeter.status).isEqualTo(StatusType.ERROR);
+  }
+
+  @Test
+  public void latestStartedStatusIsSetWhenMeterHasMultipleActiveStatusesOnMultiplePhysicalMeters() {
+    LogicalMeter firstLogicalMeter = createLogicalMeter();
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
+
+    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-two")
+      .readIntervalMinutes(15)
+      .build()
+    );
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
+    createStatusLogForMeter(
+      firstMeter.id,
+      StatusType.OK,
+      start.plusSeconds(1),
+      null
+    );
+
+    createStatusLogForMeter(
+      secondMeter.id,
+      StatusType.ERROR,
+      start,
+      null
+    );
+
+    LogicalMeterDto pagedMeter = asTestUser()
+      .getPage("/meters?after=" + start.minusDays(1)
+               + "&before=" + start.plusHours(1), LogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(pagedMeter.status).isEqualTo(StatusType.OK);
+  }
+
+  @Test
+  public void pagedMetersHaveStatusSetInSelectedPeriod() {
+
+    LogicalMeter firstLogicalMeter = createLogicalMeter();
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
+    createStatusLogForMeter(
+      firstMeter.id,
+      StatusType.OK,
+      start,
+      null
+    );
+
+    LogicalMeterDto pagedMeter = asTestUser()
+      .getPage("/meters?after=" + start.minusDays(1)
+               + "&before=" + start.plusHours(1), LogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(pagedMeter.status).isEqualTo(StatusType.OK);
+    assertThat(pagedMeter.statusChanged).isEqualTo(Dates.formatUtc(start));
   }
 
   @Test
@@ -1087,7 +1325,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       DISTRICT_HEATING_METER,
       emptyList(),
       null,
-      emptyList()
+      emptyList(),
+      null
     ));
 
     JsonNode logicalMeterJson = asTestUser()

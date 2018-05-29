@@ -31,6 +31,8 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final Double collectionPercentage;
   public final Long readIntervalMinutes;
   public final List<Measurement> measurements;
+  @Nullable
+  public final StatusLogEntry<UUID> currentStatus;
 
   public LogicalMeter(
     UUID id,
@@ -42,7 +44,8 @@ public class LogicalMeter implements Identifiable<UUID> {
     MeterDefinition meterDefinition,
     List<Gateway> gateways,
     @Nullable Double collectionPercentage,
-    List<Measurement> measurements
+    List<Measurement> measurements,
+    @Nullable StatusLogEntry<UUID> status
   ) {
     this.id = id;
     this.externalId = externalId;
@@ -69,6 +72,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       .map(pm -> pm.readIntervalMinutes)
       .orElse(null);
     this.measurements = measurements;
+    this.currentStatus = status;
   }
 
   public LogicalMeter(
@@ -91,7 +95,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       null,
-      emptyList()
+      emptyList(),
+      null
     );
   }
 
@@ -123,7 +128,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       emptyList(),
       null,
-      emptyList()
+      emptyList(),
+      null
     );
   }
 
@@ -144,29 +150,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       MeterDefinition.UNKNOWN_METER,
       emptyList(),
       null,
-      emptyList()
-    );
-  }
-
-  public LogicalMeter(
-    UUID id,
-    String externalId,
-    UUID organisationId,
-    Location location,
-    List<Gateway> gateways,
-    ZonedDateTime created
-  ) {
-    this(
-      id,
-      externalId,
-      organisationId,
-      location,
-      created,
       emptyList(),
-      MeterDefinition.UNKNOWN_METER,
-      gateways,
-      null,
-      emptyList()
+      null
     );
   }
 
@@ -194,7 +179,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
@@ -209,7 +195,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
@@ -228,7 +215,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
@@ -243,7 +231,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       singletonList(gateway),
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
@@ -260,7 +249,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
@@ -277,7 +267,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
@@ -292,7 +283,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       meterDefinition,
       gateways,
       collectionPercentage,
-      measurements
+      measurements,
+      currentStatus
     );
   }
 
