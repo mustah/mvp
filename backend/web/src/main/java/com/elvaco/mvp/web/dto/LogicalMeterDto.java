@@ -10,8 +10,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class LogicalMeterDto {
+
   public UUID id;
   public String facility;
+
   @Nullable
   public String address;
   public LocationDto location;
@@ -23,8 +25,10 @@ public class LogicalMeterDto {
   public List<MeterStatusLogDto> statusChangelog;
   public String created;
   public Object status;
+
   @Nullable
   public Double collectionPercentage;
+
   public List<MeasurementDto> measurements;
   public Long readIntervalMinutes;
   public UUID organisationId;

@@ -1,17 +1,20 @@
 package com.elvaco.mvp.web.dto;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationDto {
+@EqualsAndHashCode
+@ToString
+public class MapMarkerWithStatusDto {
 
-  public IdNamedDto city;
-  public IdNamedDto address;
-  public GeoPositionDto position;
+  public UUID id;
+  public String status;
+  public double latitude;
+  public double longitude;
 }

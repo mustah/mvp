@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -15,6 +14,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,9 +41,13 @@ public class GatewaysTest extends IntegrationTest {
     UUID gatewayId = randomUUID();
     ZonedDateTime start = ZonedDateTime.now();
     gateways.save(
-      new Gateway(gatewayId, context().getOrganisationId(), "", "", Collections.emptyList(),
-        Collections.singletonList(new StatusLogEntry<>(gatewayId, StatusType.ERROR, start))
-      )
+      Gateway.builder()
+        .id(gatewayId)
+        .organisationId(context().getOrganisationId())
+        .serial("")
+        .productModel("")
+        .statusLogs(singletonList(new StatusLogEntry<>(gatewayId, StatusType.ERROR, start)))
+        .build()
     );
 
     Gateway found = gateways.findById(gatewayId).get();

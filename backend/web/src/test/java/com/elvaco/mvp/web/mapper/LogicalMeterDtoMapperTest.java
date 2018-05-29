@@ -4,8 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -17,7 +15,7 @@ import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.Test;
 
@@ -34,16 +32,6 @@ public class LogicalMeterDtoMapperTest {
   @Test
   public void mapLogicalMeterToMapMarkerDto() {
     UUID meterId = randomUUID();
-    MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
-    mapMarkerDtoExpected.id = meterId;
-    mapMarkerDtoExpected.latitude = 3.1;
-    mapMarkerDtoExpected.longitude = 2.1;
-    mapMarkerDtoExpected.confidence = 1.0;
-    mapMarkerDtoExpected.status = StatusType.OK.name;
-
-    Location location = new LocationBuilder()
-      .coordinate(new GeoCoordinate(3.1, 2.1))
-      .build();
 
     PhysicalMeter physicalMeter = new PhysicalMeter(
       null,
@@ -70,14 +58,23 @@ public class LogicalMeterDtoMapperTest {
       meterId,
       "some-external-id",
       ELVACO.id,
-      location,
+      new LocationBuilder()
+        .latitude(3.1)
+        .longitude(2.1)
+        .build(),
       ZonedDateTime.now(),
       singletonList(physicalMeter),
       null,
       emptyList()
     );
 
-    assertThat(LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter)).isEqualTo(mapMarkerDtoExpected);
+    assertThat(LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter))
+      .isEqualTo(new MapMarkerWithStatusDto(
+        meterId,
+        StatusType.OK.name,
+        3.1,
+        2.1
+      ));
   }
 
   @Test
@@ -158,22 +155,20 @@ public class LogicalMeterDtoMapperTest {
               )
             )),
           MeterDefinition.HOT_WATER_METER,
-          singletonList(new Gateway(
-            expected.gateway.id,
-            organisationId,
-            expected.gateway.serial,
-            expected.gateway.productModel,
-            emptyList(),
-            singletonList(
+          singletonList(Gateway.builder()
+            .id(expected.gateway.id)
+            .organisationId(organisationId)
+            .serial(expected.gateway.serial)
+            .productModel(expected.gateway.productModel)
+            .statusLogs(singletonList(
               new StatusLogEntry<>(
                 1L,
                 randomUUID(),
                 StatusType.OK,
                 statusChanged,
                 statusChanged.plusDays(1)
-              )
-            )
-          ))
+              )))
+            .build())
         ).withCollectionPercentage(75.0)))
       .isEqualTo(expected);
   }

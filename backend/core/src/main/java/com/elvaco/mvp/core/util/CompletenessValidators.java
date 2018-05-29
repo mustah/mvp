@@ -20,13 +20,11 @@ public class CompletenessValidators {
     new CompletenessValidator<>(
       physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM.medium),
       physicalMeter -> physicalMeter.manufacturer != null
-        && !physicalMeter.manufacturer.equals("UNKNOWN")
+                       && !physicalMeter.manufacturer.equals("UNKNOWN")
     );
 
   private static final CompletenessValidator<Gateway> GATEWAY_COMPLETENESS_VALIDATOR =
-    new CompletenessValidator<>(
-      gateway -> !gateway.productModel.isEmpty()
-    );
+    new CompletenessValidator<>(gateway -> !gateway.productModel.isEmpty());
 
   public static CompletenessValidator<LogicalMeter> logicalMeter() {
     return LOGICAL_METER_COMPLETENESS_VALIDATOR;
@@ -39,5 +37,4 @@ public class CompletenessValidators {
   public static CompletenessValidator<Gateway> gateway() {
     return GATEWAY_COMPLETENESS_VALIDATOR;
   }
-
 }

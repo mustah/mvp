@@ -25,12 +25,9 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
 @Slf4j
@@ -167,14 +164,13 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       ).orElseGet(() ->
         gatewayUseCases.findBy(organisationId, gatewayStatusDto.id)
           .orElseGet(() ->
-            new Gateway(
-              randomUUID(),
-              organisationId,
-              gatewayStatusDto.id,
-              gatewayStatusDto.productModel,
-              singletonList(logicalMeter),
-              emptyList() // TODO Save gateway status
-            ))
+            Gateway.builder()
+              .organisationId(organisationId)
+              .serial(gatewayStatusDto.id)
+              .productModel(gatewayStatusDto.productModel)
+              .meter(logicalMeter)
+              .build()
+          )
       )
         .withProductModel(gatewayStatusDto.productModel)
         .replaceActiveStatus(StatusType.from(gatewayStatusDto.status));

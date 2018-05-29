@@ -1,9 +1,26 @@
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
+import {RootState} from '../../../reducers/rootReducer';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {DomainModelsState} from '../../../state/domain-models/domainModels';
+import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
+import {initialState} from '../../../state/summary/summaryReducer';
+import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
-import {getSelectedMapMarker} from '../mapSelectors';
+import {
+  getGatewayLowConfidenceTextInfo,
+  getMeterLowConfidenceTextInfo,
+  getSelectedMapMarker,
+} from '../mapSelectors';
 
 describe('mapSelectors', () => {
+
+  initTranslations({
+    code: 'en',
+    translation: {
+      test: 'no translations will default to key',
+    },
+  });
 
   type MapStateType<T> = MapState | {selectedMarker?: Partial<T>};
 
@@ -37,5 +54,93 @@ describe('mapSelectors', () => {
 
       expect(getSelectedMapMarker(state as MapState).get()).toEqual({id: 1});
     });
+  });
+
+  describe('getTotalMeterMapMarkers', () => {
+
+    it('shows no low confidence info text', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        meterMapMarkers: {...initialDomain<MapMarker>()},
+      };
+
+      const state = {
+        summary: initialState,
+        domainModels,
+      };
+
+      expect(getMeterLowConfidenceTextInfo(state as RootState)).toBeUndefined();
+    });
+
+    it('shows no low confidence info text when meters are markers have same total', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        meterMapMarkers: {...initialDomain<MapMarker>(), total: 10},
+      };
+
+      const state = {
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
+        domainModels,
+      };
+
+      expect(getMeterLowConfidenceTextInfo(state as RootState)).toBeUndefined();
+    });
+
+    it('shows low confidence info text', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        meterMapMarkers: {...initialDomain<MapMarker>(), total: 2},
+      };
+
+      const state = {
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
+        domainModels,
+      };
+
+      expect(getMeterLowConfidenceTextInfo(state as RootState))
+        .toEqual('8 meter are not displayed in the map due to low accuracy');
+    });
+
+  });
+
+  describe('getTotalGatewayMapMarkers', () => {
+
+    it('shows no low confidence info text', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        gatewayMapMarkers: {...initialDomain<MapMarker>()},
+      };
+
+      const state = {
+        summary: initialState,
+        domainModels,
+      };
+
+      expect(getGatewayLowConfidenceTextInfo(state as RootState)).toBeUndefined();
+    });
+
+    it('shows no low confidence info text when meters are markers have same total', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        gatewayMapMarkers: {...initialDomain<MapMarker>(), total: 10},
+      };
+
+      const state = {
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
+        domainModels,
+      };
+
+      expect(getGatewayLowConfidenceTextInfo(state as RootState)).toBeUndefined();
+    });
+
+    it('shows low confidence info text', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        gatewayMapMarkers: {...initialDomain<MapMarker>(), total: 9},
+      };
+
+      const state = {
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
+        domainModels,
+      };
+
+      expect(getGatewayLowConfidenceTextInfo(state as RootState))
+        .toEqual('1 gateway are not displayed in the map due to low accuracy');
+    });
+
   });
 });

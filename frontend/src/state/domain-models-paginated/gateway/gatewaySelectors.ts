@@ -1,3 +1,4 @@
+import {createSelector} from 'reselect';
 import {Maybe} from '../../../helpers/Maybe';
 import {uuid} from '../../../types/Types';
 import {Gateway} from './gatewayModels';

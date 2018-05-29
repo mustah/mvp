@@ -15,7 +15,7 @@ import {
 } from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
 import {FilterParam, SelectionParameter, UserSelection} from './userSelectionModels';
-import {userSelectionSchema} from './userSelectionSchema';
+import {userSelectionsDataFormatter} from './userSelectionSchema';
 import {getSelection} from './userSelectionSelectors';
 
 export const SELECT_PERIOD = 'SELECT_PERIOD';
@@ -40,8 +40,8 @@ export const closeSelectionPage = () => (dispatch) => {
 
 export const fetchUserSelections = fetchIfNeeded<UserSelection>(
   EndPoints.userSelections,
-  userSelectionSchema,
   'userSelections',
+  userSelectionsDataFormatter,
 );
 
 export const setCustomDateRange = payloadActionOf<DateRange>(SET_CUSTOM_DATE_RANGE);

@@ -1,10 +1,9 @@
-import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/testDataFactory';
-import {selectionsSchema} from '../selectionsSchemas';
-
-const normalizedData = normalize(testData.selections, selectionsSchema);
+import {selectionsDataFormatter} from '../selectionsSchemas';
 
 describe('normalize state', () => {
+
+  const normalizedData = selectionsDataFormatter(testData.selections);
 
   it('normalized selection data', () => {
     expect(normalizedData).toEqual({
@@ -50,7 +49,11 @@ describe('normalize state', () => {
             name: 'kungsgatan',
             parentId: 'sweden,stockholm',
           },
-          'finland,vasa,kungsgatan': {id: 'finland,vasa,kungsgatan', name: 'kungsgatan', parentId: 'finland,vasa'},
+          'finland,vasa,kungsgatan': {
+            id: 'finland,vasa,kungsgatan',
+            name: 'kungsgatan',
+            parentId: 'finland,vasa',
+          },
         },
       },
       result: {

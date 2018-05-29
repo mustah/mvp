@@ -1,14 +1,15 @@
 import {EndPoints} from '../../../services/endPoints';
 import {IdNamed} from '../../../types/Types';
 import {clearError, fetchIfNeeded} from '../domainModelsActions';
-import {selectionsSchema} from './selectionsSchemas';
+import {selectionsDataFormatter} from './selectionsSchemas';
 
-// TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if anything
-// have been fetched from 'selections', should perhaps come up with a better way of doing this.
+// TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if
+// anything have been fetched from 'selections', should perhaps come up with a better way of doing
+// this.
 export const fetchSelections = fetchIfNeeded<IdNamed>(
   EndPoints.selections,
-  selectionsSchema,
   'cities',
+  selectionsDataFormatter,
 );
 
 export const clearErrorSelections = clearError(EndPoints.selections);

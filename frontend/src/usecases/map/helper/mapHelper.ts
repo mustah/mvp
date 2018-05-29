@@ -1,19 +1,20 @@
 import * as Leaflet from 'leaflet';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
-import {Dictionary} from '../../../types/Types';
-import {Bounds, MapMarker} from '../mapModels';
+import {Dictionary, Status} from '../../../types/Types';
+import {Bounds, IdentifiablePosition, MapMarker, MapMarkerApiResponse} from '../mapModels';
 
-export const metersWithinThreshold = (markers: Dictionary<MapMarker>): MapMarker[] =>
+export const flattenMapMarkers = (markers: Dictionary<MapMarker>): MapMarker[] =>
   markers
-    ? Object.keys(markers)
-      .map((key: string) => markers[key])
-      .filter(isGeoPositionWithinThreshold)
+    ? Object.keys(markers).map((key: string) => markers[key])
     : [];
 
-export const isGeoPositionWithinThreshold =
-  ({latitude, longitude, confidence}: MapMarker) =>
-    latitude !== undefined && longitude !== undefined && confidence >= 0.75;
+export const flatMapMarkers = (response: MapMarkerApiResponse): MapMarker[] => {
+  const mapMarkers: MapMarker[] = [];
+  Object.keys(response.markers)
+    .forEach((status: Status) => response.markers[status]
+      .forEach((position: IdentifiablePosition) => mapMarkers.push(({...position, status}))));
+  return mapMarkers;
+};
 
 interface MarkerBounds {
   minLat: number;
@@ -23,12 +24,12 @@ interface MarkerBounds {
 }
 
 export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
-  const filteredMarkers = metersWithinThreshold(markers);
+  const mapMarkers = flattenMapMarkers(markers);
 
-  const bounds = Object.keys(filteredMarkers)
+  const bounds = Object.keys(mapMarkers)
     .reduce(
       (sum: MarkerBounds, markerId: string) => {
-        const {latitude, longitude} = filteredMarkers[markerId];
+        const {latitude, longitude} = mapMarkers[markerId];
 
         if (!isNaN(latitude)) {
           if (latitude < sum.minLat) {
@@ -73,24 +74,33 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
 };
 
 const lowConfidenceTextInfo = (
-  {result, entities}: DomainModel<MapMarker>,
+  totalMeters: number,
+  totalMarkers: number,
   translateWith: (count: number) => string,
 ): string | undefined => {
-  const numMarkersWithLowConfidence = result.length - metersWithinThreshold(entities).length;
+  const numMarkersWithLowConfidence = totalMeters - totalMarkers;
   return numMarkersWithLowConfidence ? translateWith(numMarkersWithLowConfidence) : undefined;
 };
 
-export const meterLowConfidenceTextInfo = (meterMapMarkers: DomainModel<MapMarker>): string | undefined =>
+export const meterLowConfidenceTextInfo = (
+  totalMeters: number,
+  totalMarkers: number,
+): string | undefined =>
   lowConfidenceTextInfo(
-    meterMapMarkers,
+    totalMeters,
+    totalMarkers,
     (count: number) => firstUpperTranslated(
       '{{count}} meter are not displayed in the map due to low accuracy', {count},
     ),
   );
 
-export const gatewayLowConfidenceTextInfo = (mapMarkers: DomainModel<MapMarker>): string | undefined =>
+export const gatewayLowConfidenceTextInfo = (
+  totalMeters: number,
+  totalMarkers: number,
+): string | undefined =>
   lowConfidenceTextInfo(
-    mapMarkers,
+    totalMeters,
+    totalMarkers,
     (count: number) => firstUpperTranslated(
       '{{count}} gateway are not displayed in the map due to low accuracy', {count},
     ),

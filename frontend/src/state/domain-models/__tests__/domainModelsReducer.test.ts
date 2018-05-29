@@ -1,10 +1,9 @@
-import {normalize} from 'normalizr';
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {testData} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, IdNamed} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
-import {clearErrorGatewayMapMarkers} from '../../../usecases/map/gatewayMapMarkerApiActions';
+import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {ADD_PARAMETER_TO_SELECTION} from '../../user-selection/userSelectionActions';
@@ -26,13 +25,13 @@ import {
   initialDomain,
   users,
 } from '../domainModelsReducer';
-import {selectionsSchema} from '../selections/selectionsSchemas';
+import {selectionsDataFormatter} from '../selections/selectionsSchemas';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
-  const normalizedSelections = normalize(testData.selections, selectionsSchema);
+  const normalizedSelections = selectionsDataFormatter(testData.selections);
 
   describe('/selections', () => {
     it('does not clear on change in selections', () => {

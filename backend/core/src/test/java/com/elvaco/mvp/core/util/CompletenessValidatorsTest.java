@@ -16,7 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompletenessValidatorsTest {
 
-  public static final Location KNOWN_LOCATION = new LocationBuilder().country("Sweden")
+  private static final Location KNOWN_LOCATION = new LocationBuilder()
+    .country("Sweden")
     .city("City")
     .address("Address")
     .build();
@@ -27,8 +28,7 @@ public class CompletenessValidatorsTest {
       Location.UNKNOWN_LOCATION,
       MeterDefinition.UNKNOWN_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(
-      logicalMeter)).isFalse();
+    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -37,8 +37,7 @@ public class CompletenessValidatorsTest {
       KNOWN_LOCATION,
       MeterDefinition.UNKNOWN_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(
-      logicalMeter)).isFalse();
+    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -47,8 +46,7 @@ public class CompletenessValidatorsTest {
       KNOWN_LOCATION,
       MeterDefinition.DISTRICT_HEATING_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(
-      logicalMeter)).isTrue();
+    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isTrue();
   }
 
   @Test
@@ -57,8 +55,7 @@ public class CompletenessValidatorsTest {
       Location.UNKNOWN_LOCATION,
       MeterDefinition.DISTRICT_HEATING_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(
-      logicalMeter)).isFalse();
+    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -68,8 +65,7 @@ public class CompletenessValidatorsTest {
       .manufacturer("ELV")
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(
-      physicalMeter)).isFalse();
+    assertThat(CompletenessValidators.physicalMeter().isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -90,8 +86,7 @@ public class CompletenessValidatorsTest {
       .manufacturer(null)
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(
-      physicalMeter)).isFalse();
+    assertThat(CompletenessValidators.physicalMeter().isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -101,22 +96,19 @@ public class CompletenessValidatorsTest {
       .manufacturer("UNKNOWN")
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(
-      physicalMeter)).isFalse();
+    assertThat(CompletenessValidators.physicalMeter().isComplete(physicalMeter)).isFalse();
   }
 
   @Test
   public void gatewayValidatorComplete() {
     Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "CMi2110");
-    assertThat(CompletenessValidators.gateway().isComplete(
-      gateway)).isTrue();
+    assertThat(CompletenessValidators.gateway().isComplete(gateway)).isTrue();
   }
 
   @Test
   public void gatewayValidatorUnknownProductModel() {
     Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "");
-    assertThat(CompletenessValidators.gateway().isComplete(
-      gateway)).isFalse();
+    assertThat(CompletenessValidators.gateway().isComplete(gateway)).isFalse();
   }
 
   private LogicalMeter newLogicalMeter(Location location, MeterDefinition meterDefinition) {

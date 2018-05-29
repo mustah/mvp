@@ -1,6 +1,5 @@
 import {Dictionary, Status} from '../../../types/Types';
 import {isMapMarker, makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
-import {isGeoPositionWithinThreshold, metersWithinThreshold} from '../helper/mapHelper';
 import {MapMarker, Marker} from '../mapModels';
 
 describe('clusterHelper', () => {
@@ -10,7 +9,6 @@ describe('clusterHelper', () => {
     status: Status.ok,
     latitude: 57.505402,
     longitude: 12.069364,
-    confidence: 1,
   };
 
   const mapMarker2: MapMarker = {
@@ -18,7 +16,6 @@ describe('clusterHelper', () => {
     status: Status.warning,
     latitude: 57.505412,
     longitude: 12.069374,
-    confidence: 0.76,
   };
 
   const markers: Dictionary<MapMarker> = {
@@ -70,26 +67,6 @@ describe('clusterHelper', () => {
     });
   });
 
-  describe('isGeoPositionWithinThreshold', () => {
-
-    const mapMarker3: MapMarker = {
-      id: 1,
-      status: Status.warning,
-      latitude: 57.505412,
-      longitude: 12.069374,
-      confidence: 0.70,
-    };
-
-    it('it should accept confidence of 0.75 and above', () => {
-      expect(isGeoPositionWithinThreshold(mapMarker1 as MapMarker)).toBe(true);
-      expect(isGeoPositionWithinThreshold(mapMarker2 as MapMarker)).toBe(true);
-    });
-
-    it('it should not accept confidence less than 0.75', () => {
-      expect(isGeoPositionWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
-    });
-  });
-
   describe('isMapMarker', () => {
     it('is of type MapMarker', () => {
       const markers: MapMarker = {
@@ -97,7 +74,6 @@ describe('clusterHelper', () => {
         status: Status.info,
         latitude: 1,
         longitude: 2,
-        confidence: 3,
       };
 
       expect(isMapMarker(markers as MapMarker)).toBe(true);
@@ -110,7 +86,6 @@ describe('clusterHelper', () => {
           status: Status.ok,
           latitude: 1,
           longitude: 2,
-          confidence: 3,
         },
       };
 
@@ -118,33 +93,4 @@ describe('clusterHelper', () => {
     });
   });
 
-  describe('metersWithinThreshold', () => {
-
-    it('can handle undefined input', () => {
-      expect(metersWithinThreshold(undefined!)).toEqual([]);
-    });
-
-    it('filters out meters with low threshold, like 0.1', () => {
-      const filteredMeters = metersWithinThreshold({
-        asdf: {
-          latitude: 1,
-          longitude: 2,
-          confidence: 1,
-          status: Status.ok,
-          id: 'asdf',
-        },
-        asdf2: {
-          latitude: 1,
-          longitude: 2,
-          confidence: 0.1,
-          status: Status.ok,
-          id: 'asdf2',
-        },
-      });
-      expect(filteredMeters.length).toEqual(1);
-    });
-
-  });
-
-})
-;
+});

@@ -2,7 +2,6 @@ import * as Leaflet from 'leaflet';
 import {imagePathFor} from '../../../app/routes';
 import {Dictionary, Status} from '../../../types/Types';
 import {MapMarker, Marker} from '../mapModels';
-import {isGeoPositionWithinThreshold} from './mapHelper';
 
 const icons = {
   [Status.ok]: imagePathFor('marker-icon-ok.png'),
@@ -33,6 +32,5 @@ export const makeLeafletCompatibleMarkersFrom = (markers: Dictionary<MapMarker> 
   const mapMarkers = isMapMarker(markers) ? {markers} : markers;
   return Object.keys(mapMarkers)
     .map((key: string) => mapMarkers[key])
-    .filter(isGeoPositionWithinThreshold)
     .map(makeMarker);
 };

@@ -1,16 +1,17 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
@@ -21,19 +22,19 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class LogicalMeterDtoMapper {
 
-  public static MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
-    MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = logicalMeter.id;
-    mapMarkerDto.status = getCurrentStatus(getMeterStatusLogs(logicalMeter)).name;
-    if (logicalMeter.location.hasCoordinates()) {
-      GeoCoordinate coord = logicalMeter.location.getCoordinate();
-      if (coord != null) {
-        mapMarkerDto.confidence = coord.getConfidence();
-        mapMarkerDto.latitude = coord.getLatitude();
-        mapMarkerDto.longitude = coord.getLongitude();
-      }
+  @Nullable
+  public static MapMarkerWithStatusDto toMapMarkerDto(LogicalMeter logicalMeter) {
+    Location location = logicalMeter.location;
+    if (location.hasHighConfidence()) {
+      GeoCoordinate coord = location.getCoordinate();
+      return new MapMarkerWithStatusDto(
+        logicalMeter.id,
+        getCurrentStatus(getMeterStatusLogs(logicalMeter)).name,
+        coord.getLatitude(),
+        coord.getLongitude()
+      );
     }
-    return mapMarkerDto;
+    return null;
   }
 
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
@@ -94,8 +95,7 @@ public class LogicalMeterDtoMapper {
 
   private static List<StatusLogEntry<UUID>> getMeterStatusLogs(LogicalMeter logicalMeter) {
     return logicalMeter.physicalMeters.stream()
-      .map(physicalMeter -> physicalMeter.statuses)
-      .flatMap(Collection::stream)
+      .flatMap(physicalMeter -> physicalMeter.statuses.stream())
       .collect(toList());
   }
 }

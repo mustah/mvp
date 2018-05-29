@@ -109,13 +109,11 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .organisation(ELVACO)
               .readIntervalMinutes(counter.incrementAndGet() > 10 ? 1440 : 60)
               .build();
-            Gateway gateway = new Gateway(
-              randomUUID(),
-              ELVACO.id,
-              csvData.gatewayId,
-              csvData.gatewayProductModel
-
-            );
+            Gateway gateway = Gateway.builder()
+              .organisationId(ELVACO.id)
+              .serial(csvData.gatewayId)
+              .productModel(csvData.gatewayProductModel)
+              .build();
             return new Parameters(logicalMeter, physicalMeter, gateway);
           })
       )

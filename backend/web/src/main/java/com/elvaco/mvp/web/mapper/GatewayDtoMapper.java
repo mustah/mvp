@@ -12,7 +12,6 @@ import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
-import com.elvaco.mvp.web.dto.MapMarkerDto;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
@@ -49,24 +48,6 @@ public class GatewayDtoMapper {
       gatewayStatusLog.status.name,
       formatUtc(gatewayStatusLog.start)
     );
-  }
-
-  public static MapMarkerDto toMapMarkerDto(Gateway gateway) {
-    MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = gateway.id;
-    mapMarkerDto.status = gateway.currentStatus().status.name;
-    gateway.meters
-      .stream()
-      .findFirst()
-      .filter(lg -> lg.location.hasCoordinates())
-      .map(lg -> lg.location.getCoordinate())
-      .map(coordinate -> {
-        mapMarkerDto.confidence = coordinate.getConfidence();
-        mapMarkerDto.latitude = coordinate.getLatitude();
-        mapMarkerDto.longitude = coordinate.getLongitude();
-        return coordinate;
-      });
-    return mapMarkerDto;
   }
 
   private static List<UUID> connectedMeterIds(Gateway gateway) {

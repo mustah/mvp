@@ -3,7 +3,10 @@ import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {allQuantities, RenderableQuantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  allQuantities,
+  RenderableQuantity,
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';
 
@@ -44,7 +47,7 @@ describe('dialogHelper', () => {
       location: {
         address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33'},
         city: {id: 'Perstorp', name: 'Perstorp'},
-        position: {longitude: 14.205929, latitude: 59.666749, confidence: 0.6666666666666666},
+        position: {longitude: 14.205929, latitude: 59.666749},
       },
       flags: [],
       flagged: false,
@@ -137,7 +140,6 @@ describe('dialogHelper', () => {
           position: {
             latitude: 56.13955,
             longitude: 13.39741,
-            confidence: 0.8,
           },
         },
         flags: [],
@@ -224,7 +226,6 @@ describe('dialogHelper', () => {
           position: {
             latitude: 56.13955,
             longitude: 13.39741,
-            confidence: 0.8,
           },
         },
         flags: [],
@@ -289,7 +290,6 @@ describe('dialogHelper', () => {
           position: {
             latitude: 56.13955,
             longitude: 13.39741,
-            confidence: 0.8,
           },
         },
         flags: [],

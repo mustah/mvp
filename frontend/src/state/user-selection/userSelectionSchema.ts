@@ -1,3 +1,7 @@
-import {schema} from 'normalizr';
+import {normalize, schema} from 'normalizr';
+import {DataFormatter} from '../domain-models/domainModelsActions';
 
-export const userSelectionSchema = [new schema.Entity('userSelections')];
+const userSelectionSchema = [new schema.Entity('userSelections')];
+
+export const userSelectionsDataFormatter: DataFormatter =
+  (response) => normalize(response, userSelectionSchema);
