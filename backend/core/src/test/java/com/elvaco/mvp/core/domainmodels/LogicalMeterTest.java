@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class LogicalMeterTest {
 
   @Test
-  public void testMedium() {
+  public void medium() {
     LogicalMeter heatingMeter = newLogicalMeter(
       randomUUID(),
       randomUUID(),
@@ -32,7 +32,7 @@ public class LogicalMeterTest {
   }
 
   @Test
-  public void testQuantities() {
+  public void quantities() {
     LogicalMeter heatingMeter = newLogicalMeter(
       randomUUID(),
       randomUUID(),
@@ -166,7 +166,10 @@ public class LogicalMeterTest {
     LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
 
     assertThatThrownBy(() -> meter.withCollectionPercentage(-2.0))
-      .isInstanceOf(IllegalArgumentException.class);
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessage(
+        "Collection percentage must be >= 0 and <= 100, "
+        + "but was: -2.0 for logical meter '" + meter.id + "'");
   }
 
   @Test
@@ -174,7 +177,10 @@ public class LogicalMeterTest {
     LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
 
     assertThatThrownBy(() -> meter.withCollectionPercentage(100.1))
-      .isInstanceOf(IllegalArgumentException.class);
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessage(
+        "Collection percentage must be >= 0 and <= 100, "
+        + "but was: 100.1 for logical meter '" + meter.id + "'");
   }
 
   private PhysicalMeter newPhysicalMeter(

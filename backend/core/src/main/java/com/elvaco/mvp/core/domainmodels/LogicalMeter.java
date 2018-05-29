@@ -55,7 +55,11 @@ public class LogicalMeter implements Identifiable<UUID> {
 
     if (collectionPercentage != null
         && (collectionPercentage < 0.0 || collectionPercentage > 100.0)) {
-      throw new IllegalArgumentException("Collection percentage must be >= 0 and <= 100");
+      throw new IllegalArgumentException(String.format(
+        "Collection percentage must be >= 0 and <= 100, but was: %s for logical meter '%s'",
+        collectionPercentage,
+        id
+      ));
     }
 
     this.collectionPercentage = Optional.ofNullable(collectionPercentage)
