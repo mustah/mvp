@@ -20,14 +20,12 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
-
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -42,12 +40,11 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class LogicalMeterRepository implements LogicalMeters {
 
-  private static final QPhysicalMeterStatusLogEntity Q =
+  private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-  private final MeasurementJpaRepository measurementJpaRepository;
   private final LogicalMeterSortingEntityMapper sortingMapper;
 
   @Override
@@ -168,8 +165,8 @@ public class LogicalMeterRepository implements LogicalMeters {
       new PhysicalMeterStatusLogQueryFilters().toExpression(parameters),
       new Sort(
         Direction.DESC,
-        toSortString(Q.start),
-        toSortString(Q.stop)
+        toSortString(STATUS_LOG.start),
+        toSortString(STATUS_LOG.stop)
       )
     );
   }
@@ -226,11 +223,13 @@ public class LogicalMeterRepository implements LogicalMeters {
 
       if (!physicalMeterIds.isEmpty()) {
         // TODO handle multiple dates?
-
         return getCountForMetersWithinPeriod(
           parameters.setAll(
             "physicalMeterId",
-            physicalMeterIds.stream().map(id -> id.toString()).collect(toList())
+            physicalMeterIds
+              .stream()
+              .map(UUID::toString)
+              .collect(toList())
           )
         );
       }
@@ -241,14 +240,12 @@ public class LogicalMeterRepository implements LogicalMeters {
   private Map<UUID, Long> getCountForMetersWithinPeriod(
     RequestParameters parameters
   ) {
-    return logicalMeterJpaRepository
-      .findMeasurementCounts(
-        new MeasurementQueryFilters().toExpression(parameters)
-      );
+    return logicalMeterJpaRepository.findMeasurementCounts(
+      new MeasurementQueryFilters().toExpression(parameters)
+    );
   }
 
   private static String toSortString(Object sortProperty) {
     return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
   }
-
 }
