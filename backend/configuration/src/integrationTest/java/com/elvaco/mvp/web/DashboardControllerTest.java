@@ -39,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DashboardControllerTest extends IntegrationTest {
 
+  public static final int NUM_QUANTITIES = 7;
   private final Random random = new Random();
   private final ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
   private final ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
@@ -182,7 +183,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
     for (int x = 0; x < values; x++) {
       if (random.nextInt(10) >= 8) {
-        measurementFailedCount += 7;
+        measurementFailedCount += NUM_QUANTITIES;
         continue;
       }
 
@@ -192,7 +193,7 @@ public class DashboardControllerTest extends IntegrationTest {
         DemoDataHelper.heatMeasurement(created, physicalMeterEntity)
       );
 
-      measurementCount += 7;
+      measurementCount += NUM_QUANTITIES;
     }
 
     return measurementEntities;

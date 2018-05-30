@@ -134,12 +134,10 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
   {
     id,
     facility: '1',
-    flags: [],
-    flagged: false,
     medium: 'asdf',
     manufacturer: 'asdf',
     status: okStatus,
-    gateway: {id: 'a', productModel: 'a', serial: '123', status: okStatus},
+    gatewaySerial: '123',
     location: {
       address,
       city,
@@ -148,10 +146,7 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
         longitude: 1,
       },
     },
-    statusChangelog: [],
-    created: '',
     readIntervalMinutes: 60,
-    measurements: [],
     organisationId: '',
   }
 );

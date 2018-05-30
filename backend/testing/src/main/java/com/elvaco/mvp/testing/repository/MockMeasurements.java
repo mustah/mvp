@@ -71,7 +71,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
 
   @Override
   public Optional<Measurement> findLatestReadout(
-    UUID meterId, Quantity quantity
+    UUID meterId, ZonedDateTime before, Quantity quantity
   ) {
     throw new UnsupportedOperationException("findLatestReadout not implemented!");
   }

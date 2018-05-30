@@ -405,13 +405,13 @@ public class GatewayControllerTest extends IntegrationTest {
       meterId,
       externalId,
       dailyPlanet.id,
-      location,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
       emptyList(),
-      MeterDefinition.UNKNOWN_METER,
       gateway,
-      null,
       emptyList(),
+      location,
+      null,
       null
     );
   }

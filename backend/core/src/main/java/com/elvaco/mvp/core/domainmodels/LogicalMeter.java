@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,8 +30,7 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final MeterDefinition meterDefinition;
   public final List<Gateway> gateways;
   public final Double collectionPercentage;
-  public final Long readIntervalMinutes;
-  public final List<Measurement> measurements;
+  public final List<Measurement> latestReadouts;
   @Nullable
   public final StatusLogEntry<UUID> currentStatus;
 
@@ -38,13 +38,11 @@ public class LogicalMeter implements Identifiable<UUID> {
     UUID id,
     String externalId,
     UUID organisationId,
-    Location location,
+    MeterDefinition meterDefinition,
     ZonedDateTime created,
     List<PhysicalMeter> physicalMeters,
-    MeterDefinition meterDefinition,
-    List<Gateway> gateways,
+    List<Gateway> gateways, List<Measurement> latestReadouts, Location location,
     @Nullable Double collectionPercentage,
-    List<Measurement> measurements,
     @Nullable StatusLogEntry<UUID> status
   ) {
     this.id = id;
@@ -68,10 +66,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.collectionPercentage = Optional.ofNullable(collectionPercentage)
       .filter(percentage -> !percentage.isNaN())
       .orElse(null);
-    this.readIntervalMinutes = activePhysicalMeter()
-      .map(pm -> pm.readIntervalMinutes)
-      .orElse(null);
-    this.measurements = measurements;
+    this.latestReadouts = latestReadouts;
     this.currentStatus = status;
   }
 
@@ -89,13 +84,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, created, physicalMeters, gateways, emptyList(), location,
       null,
-      emptyList(),
       null
     );
   }
@@ -122,13 +112,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      ZonedDateTime.now(),
-      physicalMeters,
-      meterDefinition,
-      emptyList(),
+      meterDefinition, ZonedDateTime.now(), physicalMeters, emptyList(), emptyList(), location,
       null,
-      emptyList(),
       null
     );
   }
@@ -144,13 +129,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      emptyList(),
-      MeterDefinition.UNKNOWN_METER,
-      emptyList(),
+      MeterDefinition.UNKNOWN_METER, created, emptyList(), emptyList(), emptyList(), location,
       null,
-      emptyList(),
       null
     );
   }
@@ -161,9 +141,14 @@ public class LogicalMeter implements Identifiable<UUID> {
   }
 
   public StatusType currentStatus() {
+    if (currentStatus != null) {
+      return currentStatus.status;
+    }
+
     return physicalMeters.stream()
       .flatMap(physicalMeter -> physicalMeter.statuses.stream())
-      .findFirst()
+      .filter(StatusLogEntry::isActive)
+      .max(Comparator.comparing(o -> o.start))
       .map(statusLogEntry -> statusLogEntry.status)
       .orElse(StatusType.UNKNOWN);
   }
@@ -173,13 +158,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      creationTime,
-      physicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, creationTime, physicalMeters, gateways, latestReadouts, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }
@@ -189,13 +169,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, created, physicalMeters, gateways, latestReadouts, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }
@@ -209,13 +184,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      newPhysicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, created, newPhysicalMeters, gateways, latestReadouts, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }
@@ -225,13 +195,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      singletonList(gateway),
+      meterDefinition, created, physicalMeters, singletonList(gateway), latestReadouts, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }
@@ -243,13 +208,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, created, physicalMeters, gateways, latestReadouts, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }
@@ -261,13 +221,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, created, physicalMeters, gateways, measurements, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }
@@ -277,13 +232,8 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      gateways,
+      meterDefinition, created, physicalMeters, gateways, latestReadouts, location,
       collectionPercentage,
-      measurements,
       currentStatus
     );
   }

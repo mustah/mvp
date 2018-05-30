@@ -10,7 +10,6 @@ import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisation} from '../../state/domain-models/organisation/organisationsApiActions';
@@ -18,9 +17,10 @@ import {User} from '../../state/domain-models/user/userModels';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
 import {Info, SuperAdminInfo} from './Info';
+import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 
 interface OwnProps {
-  meter: Meter;
+  meter: MeterDetails;
 }
 
 interface DispatchToProps {

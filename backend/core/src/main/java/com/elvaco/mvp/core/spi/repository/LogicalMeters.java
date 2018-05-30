@@ -29,4 +29,6 @@ public interface LogicalMeters {
   MeterSummary summary(RequestParameters parameters);
 
   void delete(LogicalMeter logicalMeter);
+
+  Optional<LogicalMeter> findOneBy(RequestParameters parameters);
 }

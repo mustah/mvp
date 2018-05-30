@@ -9,10 +9,10 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
+import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
@@ -30,12 +30,47 @@ public class LogicalMeterDtoMapper {
       GeoCoordinate coord = location.getCoordinate();
       return new MapMarkerWithStatusDto(
         logicalMeter.id,
-        getCurrentStatus(getMeterStatusLogs(logicalMeter)).name,
+        logicalMeter.currentStatus().name,
         coord.getLatitude(),
         coord.getLongitude()
       );
     }
     return null;
+  }
+
+  public PagedLogicalMeterDto toPagedDto(LogicalMeter logicalMeter) {
+    PagedLogicalMeterDto meterDto = new PagedLogicalMeterDto();
+    meterDto.medium = logicalMeter.getMedium();
+    meterDto.id = logicalMeter.id;
+    meterDto.status = logicalMeter.currentStatus();
+    meterDto.manufacturer = logicalMeter.getManufacturer();
+    meterDto.statusChanged = Optional.ofNullable(logicalMeter.currentStatus)
+      .map(logEntry -> Dates.formatUtc(logEntry.start))
+      .orElse(null);
+    meterDto.facility = logicalMeter.externalId;
+    meterDto.address = logicalMeter.activePhysicalMeter()
+      .map(m -> m.address)
+      .orElse(null);
+
+    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage()
+      .orElse(null);
+
+    meterDto.gatewaySerial =
+      logicalMeter.gateways
+        .stream()
+        .findFirst()
+        .map(gateway -> gateway.serial)
+        .orElse(null);
+
+    meterDto.location = toLocationDto(logicalMeter.location);
+
+    meterDto.readIntervalMinutes = logicalMeter.activePhysicalMeter()
+      .map(m -> m.readIntervalMinutes)
+      .orElse(null);
+
+    meterDto.organisationId = logicalMeter.organisationId;
+
+    return meterDto;
   }
 
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
@@ -44,9 +79,7 @@ public class LogicalMeterDtoMapper {
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
     meterDto.id = logicalMeter.id;
-    meterDto.status = Optional.ofNullable(logicalMeter.currentStatus)
-      .map(uuidStatusLogEntry -> uuidStatusLogEntry.status)
-      .orElse(StatusType.UNKNOWN);
+    meterDto.status = logicalMeter.currentStatus();
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = Dates.formatUtc(Optional.ofNullable(logicalMeter.currentStatus)
@@ -60,17 +93,20 @@ public class LogicalMeterDtoMapper {
     meterDto.collectionPercentage = logicalMeter.getCollectionPercentage()
       .orElse(null);
 
-    meterDto.gateway = logicalMeter.gateways
-      .stream()
-      .findFirst()
-      .map(GatewayDtoMapper::toGatewayMandatory)
-      .orElse(null);
+    meterDto.gateway =
+      logicalMeter.gateways
+        .stream()
+        .findFirst()
+        .map(GatewayDtoMapper::toGatewayMandatory)
+        .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
-    meterDto.readIntervalMinutes = logicalMeter.readIntervalMinutes;
+    meterDto.readIntervalMinutes = logicalMeter.activePhysicalMeter()
+      .map(m -> m.readIntervalMinutes)
+      .orElse(null);
 
-    meterDto.measurements = logicalMeter.measurements
+    meterDto.measurements = logicalMeter.latestReadouts
       .stream()
       .map(MeasurementDtoMapper::toDto)
       .collect(toList());
@@ -83,13 +119,6 @@ public class LogicalMeterDtoMapper {
     meterDto.organisationId = logicalMeter.organisationId;
 
     return meterDto;
-  }
-
-  private static StatusType getCurrentStatus(List<StatusLogEntry<UUID>> statusLogs) {
-    return statusLogs.stream()
-      .findFirst()
-      .map(meterStatusLog -> meterStatusLog.status)
-      .orElse(StatusType.UNKNOWN);
   }
 
   private static List<StatusLogEntry<UUID>> getMeterStatusLogs(LogicalMeter logicalMeter) {

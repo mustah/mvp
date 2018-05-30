@@ -4,9 +4,6 @@ import {bindActionCreators} from 'redux';
 import {withLargeLoader} from '../../helpers/hoc';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
-import {fetchMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {CallbackWithId, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
@@ -16,6 +13,8 @@ import {syncWithMetering} from '../../usecases/validation/validationActions';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfo';
 import {MeterDetailsTabs} from './MeterDetailsTabs';
+import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
+import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 
 interface OwnProps {
   meterId: uuid;
@@ -23,7 +22,7 @@ interface OwnProps {
 
 interface StateToProps {
   isFetching: boolean;
-  meter: Maybe<Meter>;
+  meter: Maybe<MeterDetails>;
   meterMapMarker: Maybe<MapMarker>;
 }
 
@@ -57,7 +56,7 @@ const fetchMeterAndMapMarker =
     fetchMeterMapMarker(meterId);
   };
 
-class MeterDetails extends React.Component<Props> {
+class MeterDetailsComponent extends React.Component<Props> {
 
   componentDidMount() {
     fetchMeterAndMapMarker(this.props);
@@ -74,19 +73,18 @@ class MeterDetails extends React.Component<Props> {
 
 const mapStateToProps = (
   {
-    domainModels: {meterMapMarkers},
-    paginatedDomainModels: {meters},
+    domainModels: {meterMapMarkers, meters},
   }: RootState,
   {meterId}: OwnProps,
 ): StateToProps =>
   ({
-    isFetching: meterMapMarkers.isFetching || meters.isFetchingSingle,
-    meter: getPaginatedDomainModelById<Meter>(meterId)(meters),
+    isFetching: meterMapMarkers.isFetching,
+    meter: getDomainModelById<MeterDetails>(meterId)(meters),
     meterMapMarker: getDomainModelById<MapMarker>(meterId)(meterMapMarkers),
   });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  fetchMeter,
+  fetchMeter: fetchMeterDetails,
   fetchMeterMapMarker,
   selectEntryAdd,
   syncWithMetering,
@@ -95,4 +93,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, OwnProps>(
   () => mapStateToProps,
   mapDispatchToProps,
-)(MeterDetails);
+)(MeterDetailsComponent);

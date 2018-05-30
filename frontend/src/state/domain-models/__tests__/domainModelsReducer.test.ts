@@ -370,13 +370,14 @@ describe('domainModelsReducer', () => {
         gatewayMapMarkers: initialDomain(),
         gatewayStatuses: initialDomain(),
         media: initialDomain(),
+        meters: initialDomain(),
         meterMapMarkers: initialDomain(),
         meterStatuses: initialDomain(),
         organisations: initialDomain(),
         userSelections: initialDomain(),
         users: initialDomain(),
       };
-      const nonInitialState: DomainModelsState = {
+      const isFetchingState: DomainModelsState = {
         addresses: {...initialState.addresses, isFetching: true},
         alarms: {...initialState.alarms, isFetching: true},
         cities: {...initialState.cities, isFetching: true},
@@ -384,6 +385,7 @@ describe('domainModelsReducer', () => {
         gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
         gatewayStatuses: {...initialState.gatewayStatuses, isFetching: true},
         media: {...initialState.media, isFetching: true},
+        meters: {...initialState.meters, isFetching: true},
         meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
         meterStatuses: {...initialState.meterStatuses, isFetching: true},
         organisations: {...initialState.organisations, isFetching: true},
@@ -391,16 +393,17 @@ describe('domainModelsReducer', () => {
         users: {...initialState.users, isFetching: true},
       };
 
-      expect(domainModels(nonInitialState, mockSelectionAction)).toEqual({
+      const expected: DomainModelsState = {
         ...initialState,
-        countries: {...nonInitialState.countries},
-        cities: {...nonInitialState.cities},
-        addresses: {...nonInitialState.addresses},
-        alarms: {...nonInitialState.alarms},
-        gatewayStatuses: {...nonInitialState.gatewayStatuses},
-        media: {...nonInitialState.media},
-        meterStatuses: {...nonInitialState.meterStatuses},
-      });
+        countries: {...isFetchingState.countries},
+        cities: {...isFetchingState.cities},
+        addresses: {...isFetchingState.addresses},
+        alarms: {...isFetchingState.alarms},
+        gatewayStatuses: {...isFetchingState.gatewayStatuses},
+        media: {...isFetchingState.media},
+        meterStatuses: {...isFetchingState.meterStatuses},
+      };
+      expect(domainModels(isFetchingState, mockSelectionAction)).toEqual(expected);
     });
   });
 

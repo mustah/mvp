@@ -20,10 +20,9 @@ import {addUser, deleteUser, fetchUser, modifyProfile, modifyUser} from '../user
 import {Role, User} from '../userModels';
 import MockAdapter = require('axios-mock-adapter');
 
-const configureMockStore = configureStore([thunk]);
-
 describe('userApiActions', () => {
 
+  const configureMockStore = configureStore([thunk]);
   const translationsEN = {
     code: 'en',
     translation: {

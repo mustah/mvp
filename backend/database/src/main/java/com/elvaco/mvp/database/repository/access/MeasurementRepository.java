@@ -95,9 +95,14 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Optional<Measurement> findLatestReadout(UUID meterId, Quantity quantity) {
+  public Optional<Measurement> findLatestReadout(
+    UUID meterId,
+    ZonedDateTime before,
+    Quantity quantity
+  ) {
     return measurementJpaRepository.findLatestReadout(
       meterId,
+      before.toOffsetDateTime(),
       quantity.name,
       quantity.presentationUnit()
     ).map(MeasurementEntityMapper::toDomainModel);

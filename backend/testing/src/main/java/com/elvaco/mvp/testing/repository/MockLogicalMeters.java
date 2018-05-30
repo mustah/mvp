@@ -85,18 +85,23 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
+    return Optional.empty();
+  }
+
+  @Override
   protected LogicalMeter copyWithId(UUID id, LogicalMeter entity) {
     return new LogicalMeter(
       id,
       entity.externalId,
       entity.organisationId,
-      entity.location,
+      entity.meterDefinition,
       entity.created,
       entity.physicalMeters,
-      entity.meterDefinition,
       emptyList(),
+      entity.latestReadouts,
+      entity.location,
       entity.getCollectionPercentage().orElse(null),
-      entity.measurements,
       entity.currentStatus
     );
   }

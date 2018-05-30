@@ -51,14 +51,16 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
-    return logicalMeterJpaRepository.findById(id)
-      .flatMap(this::filterParametersOn);
+    return findOneBy(new RequestParametersAdapter().replace("id", id.toString()));
   }
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return logicalMeterJpaRepository.findBy(organisationId, id)
-      .flatMap(this::filterParametersOn);
+    return findOneBy(
+      new RequestParametersAdapter()
+        .replace("id", id.toString())
+        .replace("organisation", organisationId.toString())
+    );
   }
 
   @Override
@@ -107,7 +109,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     UUID organisationId,
     String externalId
   ) {
-    return logicalMeterJpaRepository.findBy(organisationId, externalId)
+    return logicalMeterJpaRepository.findOneBy(organisationId, externalId)
       .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
@@ -133,6 +135,12 @@ public class LogicalMeterRepository implements LogicalMeters {
     );
   }
 
+  @Override
+  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findOneBy(parameters)
+      .map(LogicalMeterEntityMapper::toDomainModel);
+  }
+
   private Predicate toPredicate(RequestParameters parameters) {
     return new LogicalMeterQueryFilters().toExpression(parameters);
   }
@@ -148,12 +156,6 @@ public class LogicalMeterRepository implements LogicalMeters {
         toSortString(STATUS_LOG.stop)
       )
     );
-  }
-
-  private Optional<LogicalMeter> filterParametersOn(LogicalMeterEntity meter) {
-    return mapAndCollectWithStatuses(singletonList(meter), new RequestParametersAdapter())
-      .stream()
-      .findFirst();
   }
 
   private List<LogicalMeter> mapAndCollectWithStatuses(

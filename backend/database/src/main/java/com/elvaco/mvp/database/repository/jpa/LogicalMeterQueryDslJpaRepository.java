@@ -17,6 +17,7 @@ import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.group.GroupBy;
@@ -113,7 +114,8 @@ public class LogicalMeterQueryDslJpaRepository
         LOCATION.country,
         LOCATION.city,
         LOCATION.streetAddress,
-        PHYSICAL_METER.readIntervalMinutes
+        PHYSICAL_METER,
+        GATEWAY
       )).where(predicate)
         .distinct()
         .leftJoin(LOGICAL_METER.location, LOCATION)
@@ -163,22 +165,17 @@ public class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Optional<LogicalMeterEntity> findBy(
+  public Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters) {
+    return Optional.ofNullable(fetchOne(new LogicalMeterQueryFilters().toExpression(parameters)));
+  }
+
+  @Override
+  public Optional<LogicalMeterEntity> findOneBy(
     UUID organisationId,
     String externalId
   ) {
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.externalId.eq(externalId));
-    return Optional.ofNullable(fetchOne(predicate));
-  }
-
-  @Override
-  public Optional<LogicalMeterEntity> findBy(
-    UUID organisationId,
-    UUID id
-  ) {
-    Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
-      .and(LOGICAL_METER.id.eq(id));
     return Optional.ofNullable(fetchOne(predicate));
   }
 
@@ -335,6 +332,8 @@ public class LogicalMeterQueryDslJpaRepository
       .distinct()
       .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
       .fetchJoin()
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .fetchOne();
   }
 

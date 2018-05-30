@@ -104,10 +104,12 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     + " from measurement"
     + " where physical_meter_id = :meter_id"
     + " and quantity = :quantity"
+    + " and created <= :before"
     + " order by created desc"
     + " limit 1")
   Optional<MeasurementEntity> findLatestReadout(
     @Param("meter_id") UUID meterId,
+    @Param("before") OffsetDateTime before,
     @Param("quantity") String quantity,
     @Param("unit") String unit
   );

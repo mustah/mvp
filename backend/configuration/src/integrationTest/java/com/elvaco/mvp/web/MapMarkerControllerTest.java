@@ -329,9 +329,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       "external-1234",
       context().getOrganisationId2(),
       lowConfidenceLocation(),
-      singletonList(gateway),
       NOW
-    ));
+    ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
@@ -361,15 +360,14 @@ public class MapMarkerControllerTest extends IntegrationTest {
     return physicalMeter;
   }
 
-  private LogicalMeter saveLogicalMeterWith(Location location, Gateway g) {
+  private LogicalMeter saveLogicalMeterWith(Location location, Gateway gateway) {
     return logicalMeters.save(new LogicalMeter(
       randomUUID(),
       randomUUID().toString(),
       context().getOrganisationId(),
       location,
-      singletonList(g),
       NOW
-    ));
+    ).withGateway(gateway));
   }
 
   private LogicalMeter saveLogicalMeterWith(Location location, User user) {

@@ -329,7 +329,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     newMeasurement(meter, START_TIME.plusHours(2), 3.0, "kWh", "Energy");
 
     MeasurementEntity latestEnergy = measurementJpaRepository
-      .findLatestReadout(meter.id, "Energy", "kWh").get();
+      .findLatestReadout(meter.id, OffsetDateTime.now(), "Energy", "kWh").get();
 
     assertThat(latestEnergy.created.toInstant()).isEqualTo(START_TIME.plusHours(2).toInstant());
     assertThat(latestEnergy.value.getValue()).isEqualTo(3.0);
@@ -343,7 +343,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
 
     MeasurementEntity latestEnergy = measurementJpaRepository
-      .findLatestReadout(meter.id, "Energy", "MWh").get();
+      .findLatestReadout(meter.id, OffsetDateTime.now(), "Energy", "MWh").get();
     assertThat(latestEnergy.created.toInstant()).isEqualTo(START_TIME.toInstant());
     assertThat(latestEnergy.value.getValue()).isEqualTo(0.001);
     assertThat(latestEnergy.value.getUnit()).isEqualTo("MWh");
@@ -354,7 +354,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
 
     Optional<MeasurementEntity> latestEnergy = measurementJpaRepository
-      .findLatestReadout(meter.id, "Energy", "MWh");
+      .findLatestReadout(meter.id, OffsetDateTime.now(), "Energy", "MWh");
 
     assertThat(latestEnergy.isPresent()).isFalse();
   }
@@ -369,7 +369,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     newMeasurement(meter, START_TIME.plusHours(1), 20.0, "m³", "Volume");
 
     MeasurementEntity latestEnergy = measurementJpaRepository
-      .findLatestReadout(meter.id, "Energy", "kWh").get();
+      .findLatestReadout(meter.id, OffsetDateTime.now(), "Energy", "kWh").get();
 
     assertThat(latestEnergy.created.toInstant()).isEqualTo(START_TIME.plusHours(1).toInstant());
     assertThat(latestEnergy.value.getValue()).isEqualTo(2.0);

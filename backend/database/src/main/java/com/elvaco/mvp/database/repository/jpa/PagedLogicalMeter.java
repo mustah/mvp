@@ -3,9 +3,13 @@ package com.elvaco.mvp.database.repository.jpa;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
+import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
 public class PagedLogicalMeter {
@@ -15,9 +19,10 @@ public class PagedLogicalMeter {
   public final String externalId;
   public final ZonedDateTime created;
   public final MeterDefinitionEntity meterDefinition;
+  public final GatewayEntity gateway;
   public final PhysicalMeterStatusLogEntity currentStatus;
   public final LocationEntity location;
-  public final Long readIntervalMinutes;
+  public final PhysicalMeterEntity activePhysicalMeter;
   public final Long measurementCount;
 
   public PagedLogicalMeter(
@@ -29,29 +34,35 @@ public class PagedLogicalMeter {
     String country,
     String city,
     String streetAddress,
-    Long readIntervalMinutes
+    PhysicalMeterEntity activePhysicalMeter,
+    GatewayEntity gateway
   ) {
-    this.id = id;
-    this.organisationId = organisationId;
-    this.externalId = externalId;
-    this.created = created;
-    this.meterDefinition = meterDefinition;
-    this.location = new LocationEntity(id, country, city, streetAddress);
-    this.readIntervalMinutes = readIntervalMinutes;
-    currentStatus = null;
-    measurementCount = 0L;
+
+    this(
+      id,
+      organisationId,
+      externalId,
+      created,
+      meterDefinition,
+      new LocationEntity(id, country, city, streetAddress),
+      activePhysicalMeter,
+      gateway,
+      null,
+      0L
+    );
   }
 
-  public PagedLogicalMeter(
+  private PagedLogicalMeter(
     UUID id,
     UUID organisationId,
     String externalId,
     ZonedDateTime created,
     MeterDefinitionEntity meterDefinition,
     LocationEntity location,
-    Long readIntervalMinutes,
-    PhysicalMeterStatusLogEntity currentStatus,
-    Long measurementCount
+    @Nullable PhysicalMeterEntity activePhysicalMeter,
+    @Nullable GatewayEntity gateway,
+    @Nullable PhysicalMeterStatusLogEntity currentStatus,
+    @Nullable Long measurementCount
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -59,20 +70,25 @@ public class PagedLogicalMeter {
     this.created = created;
     this.meterDefinition = meterDefinition;
     this.location = location;
-    this.readIntervalMinutes = readIntervalMinutes;
+    this.activePhysicalMeter = activePhysicalMeter;
+    this.gateway = gateway;
     this.currentStatus = currentStatus;
     this.measurementCount = measurementCount;
   }
 
   public long expectedMeasurementCount(ZonedDateTime after, ZonedDateTime before) {
+    if (activePhysicalMeter == null) {
+      return 0;
+    }
+
     return (long) LogicalMeterHelper.calculateExpectedReadOuts(
-      readIntervalMinutes,
+      activePhysicalMeter.readIntervalMinutes,
       after,
       before
     ) * meterDefinition.quantities.size();
   }
 
-  PagedLogicalMeter withMeasurementCount(Long measurementCount) {
+  PagedLogicalMeter withMeasurementCount(@Nullable Long measurementCount) {
     return new PagedLogicalMeter(
       id,
       organisationId,
@@ -80,7 +96,8 @@ public class PagedLogicalMeter {
       created,
       meterDefinition,
       location,
-      readIntervalMinutes,
+      activePhysicalMeter,
+      gateway,
       currentStatus,
       measurementCount
     );
@@ -94,7 +111,8 @@ public class PagedLogicalMeter {
       created,
       meterDefinition,
       location,
-      readIntervalMinutes,
+      activePhysicalMeter,
+      gateway,
       currentStatus,
       measurementCount
     );

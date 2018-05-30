@@ -1,7 +1,6 @@
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {
   allQuantities,
@@ -9,6 +8,7 @@ import {
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';
+import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
 
 describe('dialogHelper', () => {
 
@@ -125,7 +125,7 @@ describe('dialogHelper', () => {
   describe('meterMeasurementsForTable', () => {
 
     it('adds missing quantities to meter\'s measurements', () => {
-      const meter: Meter = {
+      const meter: MeterDetails = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         facility: '426',
         location: {
@@ -211,7 +211,7 @@ describe('dialogHelper', () => {
     });
 
     it('handles meters without any measurements', () => {
-      const meter: Meter = {
+      const meter: MeterDetails = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         facility: '426',
         location: {
@@ -275,7 +275,7 @@ describe('dialogHelper', () => {
     });
 
     it('orders measurements by quantity, in a custom order', () => {
-      const meterWithMeasurementsInDifferentOrder: Meter = {
+      const meterWithMeasurementsInDifferentOrder: MeterDetails = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         facility: '426',
         location: {
