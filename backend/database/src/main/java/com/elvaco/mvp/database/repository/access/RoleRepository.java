@@ -17,9 +17,12 @@ public class RoleRepository implements Roles {
 
   @Override
   public List<Role> save(List<Role> roles) {
-    return this.roleJpaRepository
-      .save(roles.stream().map(this::toEntity).collect(toList()))
-      .stream().map(this::toDomainModel).collect(toList());
+    return roles
+      .stream()
+      .map(this::toEntity)
+      .map(roleJpaRepository::save)
+      .map(this::toDomainModel)
+      .collect(toList());
   }
 
   private Role toDomainModel(RoleEntity roleEntity) {

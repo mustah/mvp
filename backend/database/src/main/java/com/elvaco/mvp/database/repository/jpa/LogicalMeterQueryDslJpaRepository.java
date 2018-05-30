@@ -106,6 +106,7 @@ public class LogicalMeterQueryDslJpaRepository
     return getPage(all, pageable, countQuery::fetchCount);
   }
 
+  @Override
   public Map<UUID, Long> findMeasurementCounts(Predicate predicate) {
     return createQuery(predicate)
       .select(MEASUREMENT)
