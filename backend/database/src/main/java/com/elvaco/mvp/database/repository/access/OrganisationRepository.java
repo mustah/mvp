@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
@@ -20,7 +21,7 @@ public class OrganisationRepository implements Organisations {
 
   @Override
   public List<Organisation> findAll() {
-    return organisationJpaRepository.findAll()
+    return organisationJpaRepository.findAllByOrderByNameAsc()
       .stream()
       .map(OrganisationEntityMapper::toDomainModel)
       .collect(toList());

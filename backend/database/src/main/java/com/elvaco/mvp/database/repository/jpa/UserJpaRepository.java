@@ -17,4 +17,6 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, UUID> {
   List<UserEntity> findByRoles_Role(String role);
 
   List<UserEntity> findByOrganisationId(UUID organisationId);
+
+  List<UserEntity> findAllByOrderByOrganisationNameAscNameAsc();
 }
