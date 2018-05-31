@@ -14,8 +14,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
-import com.elvaco.mvp.database.entity.EntityType;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
@@ -24,7 +24,7 @@ import org.hibernate.envers.Audited;
 @Table(name = "meter_definition")
 @NoArgsConstructor
 @Audited
-public class MeterDefinitionEntity extends EntityType<MeterDefinitionType> {
+public class MeterDefinitionEntity extends IdentifiableType<MeterDefinitionType> {
 
   private static final long serialVersionUID = -8819531921424251045L;
 

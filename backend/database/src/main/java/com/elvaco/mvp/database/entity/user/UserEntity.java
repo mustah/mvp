@@ -16,8 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.Language;
-import com.elvaco.mvp.database.entity.EntityType;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -28,7 +28,7 @@ import org.hibernate.validator.constraints.Email;
 @Access(AccessType.FIELD)
 @Table(name = "mvp_user")
 @Audited
-public class UserEntity extends EntityType<UUID> {
+public class UserEntity extends IdentifiableType<UUID> {
 
   @Id
   public UUID id;

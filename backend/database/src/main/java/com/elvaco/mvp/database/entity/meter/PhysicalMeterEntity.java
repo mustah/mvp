@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -33,7 +33,7 @@ import static java.util.Collections.unmodifiableSet;
 @Table(name = "physical_meter")
 @ToString(exclude = {"measurements", "statusLogs"})
 @Audited
-public class PhysicalMeterEntity extends EntityType<UUID> {
+public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = 1100904291210178685L;
 
@@ -71,8 +71,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
     String address,
     String externalId,
     String medium,
-    @Nullable
-    String manufacturer,
+    @Nullable String manufacturer,
     @Nullable UUID logicalMeterId,
     long readIntervalMinutes,
     Set<PhysicalMeterStatusLogEntity> statusLogs

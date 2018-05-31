@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import org.hibernate.envers.Audited;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
@@ -20,7 +20,7 @@ import static com.elvaco.mvp.core.domainmodels.Role.USER;
 @Access(AccessType.FIELD)
 @Table(name = "role")
 @Audited
-public class RoleEntity extends EntityType<String> {
+public class RoleEntity extends IdentifiableType<String> {
 
   @Id
   public String role;
@@ -54,9 +54,9 @@ public class RoleEntity extends EntityType<String> {
   @Override
   public String toString() {
     return "RoleEntity{"
-           + "role='"
-           + role
-           + '\''
-           + '}';
+      + "role='"
+      + role
+      + '\''
+      + '}';
   }
 }

@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.ToString;
@@ -27,7 +27,7 @@ import org.hibernate.annotations.Type;
   uniqueConstraints = @UniqueConstraint(columnNames = {"created", "quantity", "physical_meter_id"})
 )
 @ToString(exclude = "physicalMeter")
-public class MeasurementEntity extends EntityType<Long> {
+public class MeasurementEntity extends IdentifiableType<Long> {
 
   private static final long serialVersionUID = -3650501037709018061L;
   @Id

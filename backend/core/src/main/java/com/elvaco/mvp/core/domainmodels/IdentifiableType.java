@@ -1,10 +1,8 @@
-package com.elvaco.mvp.database.entity;
+package com.elvaco.mvp.core.domainmodels;
 
 import java.io.Serializable;
 
-public abstract class EntityType<T> implements Serializable {
-
-  public abstract T getId();
+public abstract class IdentifiableType<T> implements Identifiable<T>, Serializable {
 
   @Override
   public boolean equals(Object o) {
@@ -14,7 +12,7 @@ public abstract class EntityType<T> implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    EntityType<?> that = (EntityType<?>) o;
+    IdentifiableType<?> that = (IdentifiableType<?>) o;
     return !(getId() != null ? !getId().equals(that.getId()) : that.getId() != null);
   }
 

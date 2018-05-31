@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -33,7 +33,7 @@ import static java.util.Collections.unmodifiableSet;
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
 @Audited
-public class GatewayEntity extends EntityType<UUID> {
+public class GatewayEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = -2132372383987246715L;
 

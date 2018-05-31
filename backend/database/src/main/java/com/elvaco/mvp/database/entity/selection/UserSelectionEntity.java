@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ import org.hibernate.envers.Audited;
 @Table(name = "user_selection")
 @Access(AccessType.FIELD)
 @Audited
-public class UserSelectionEntity extends EntityType<UUID> {
+public class UserSelectionEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = -64835523791321552L;
 

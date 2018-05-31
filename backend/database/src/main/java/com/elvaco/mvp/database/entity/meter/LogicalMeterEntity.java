@@ -19,7 +19,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -40,7 +40,7 @@ import static javax.persistence.CascadeType.ALL;
   uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
 )
 @Audited
-public class LogicalMeterEntity extends EntityType<UUID> {
+public class LogicalMeterEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = 5528298891965340483L;
 

@@ -8,14 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import org.hibernate.envers.Audited;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "mvp_setting")
 @Audited
-public class SettingEntity extends EntityType<UUID> {
+public class SettingEntity extends IdentifiableType<UUID> {
 
   @Id
   public UUID id;
