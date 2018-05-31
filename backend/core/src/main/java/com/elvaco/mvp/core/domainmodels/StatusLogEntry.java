@@ -5,9 +5,11 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.Dates;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+@Builder
 @EqualsAndHashCode
 @AllArgsConstructor
 @ToString
