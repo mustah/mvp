@@ -4,15 +4,23 @@ import {
   fetchEntityIfNeeded,
   fetchIfNeeded,
 } from '../../state/domain-models/domainModelsActions';
+import {gatewayMapMarkersDataFormatter, meterMapMarkersDataFormatter} from './mapMarkerSchema';
 import {MapMarker} from './mapModels';
-import {mapMarkerSchema} from './meterMapMarkerSchema';
+
+export const clearErrorGatewayMapMarkers = clearError(EndPoints.gatewayMapMarkers);
 
 export const clearErrorMeterMapMarkers = clearError(EndPoints.meterMapMarkers);
 
+export const fetchGatewayMapMarkers = fetchIfNeeded<MapMarker>(
+  EndPoints.gatewayMapMarkers,
+  'gatewayMapMarkers',
+  gatewayMapMarkersDataFormatter,
+);
+
 export const fetchMeterMapMarkers = fetchIfNeeded<MapMarker>(
   EndPoints.meterMapMarkers,
-  mapMarkerSchema,
   'meterMapMarkers',
+  meterMapMarkersDataFormatter,
 );
 
 export const fetchMeterMapMarker = fetchEntityIfNeeded<MapMarker>(

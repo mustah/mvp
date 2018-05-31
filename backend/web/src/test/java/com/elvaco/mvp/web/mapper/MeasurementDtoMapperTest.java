@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -21,16 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementDtoMapperTest {
 
-  private MeasurementDtoMapper mapper;
-
-  @Before
-  public void setUp() {
-    mapper = new MeasurementDtoMapper();
-  }
-
   @Test
   public void emtpySeries() {
-    assertThat(mapper.toSeries(emptyList())).isEqualTo(emptyList());
+    assertThat(MeasurementDtoMapper.toSeries(emptyList())).isEqualTo(emptyList());
   }
 
   @Test
@@ -49,7 +41,7 @@ public class MeasurementDtoMapperTest {
       )
     );
 
-    assertThat(mapper.toSeries(singletonList(
+    assertThat(MeasurementDtoMapper.toSeries(singletonList(
       LabeledMeasurementValue.from(measurement)
     ))).isEqualTo(expected);
   }
@@ -72,7 +64,7 @@ public class MeasurementDtoMapperTest {
       )
     );
 
-    assertThat(mapper.toSeries(asList(
+    assertThat(MeasurementDtoMapper.toSeries(asList(
       LabeledMeasurementValue.from(firstMeasurement),
       LabeledMeasurementValue.from(secondMeasurement)
     ))).isEqualTo(expected);
@@ -84,7 +76,7 @@ public class MeasurementDtoMapperTest {
     Measurement firstMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondMeasurement = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
-    assertThat(mapper.toSeries(asList(
+    assertThat(MeasurementDtoMapper.toSeries(asList(
       LabeledMeasurementValue.from(firstMeasurement),
       LabeledMeasurementValue.from(secondMeasurement)
     ))).isEqualTo(
@@ -122,7 +114,7 @@ public class MeasurementDtoMapperTest {
       new Quantity("Cheese", "pcs")
     );
 
-    assertThat(mapper.toSeries(asList(
+    assertThat(MeasurementDtoMapper.toSeries(asList(
       LabeledMeasurementValue.from(firstMeasurement),
       LabeledMeasurementValue.from(secondMeasurement)
     ))).isEqualTo(
@@ -153,7 +145,7 @@ public class MeasurementDtoMapperTest {
     Measurement secondCheese = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement firstMilk = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
-    assertThat(mapper.toSeries(asList(
+    assertThat(MeasurementDtoMapper.toSeries(asList(
       LabeledMeasurementValue.from(firstCheese),
       LabeledMeasurementValue.from(secondCheese),
       LabeledMeasurementValue.from(firstMilk)

@@ -19,7 +19,6 @@ import {ObjectsById} from '../../state/domain-models/domainModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {MapMarker} from '../../usecases/map/mapModels';
 
 interface Props {
@@ -51,7 +50,6 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const {selectedTab} = this.state;
     const {gateway, meters, gatewayMapMarker} = this.props;
 
-    const mapMarker: Maybe<MapMarker> = gatewayMapMarker.filter(isGeoPositionWithinThreshold);
     const noReliablePosition = firstUpperTranslated('no reliable position');
 
     return (
@@ -89,11 +87,11 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <HasContent
-              hasContent={mapMarker.isJust()}
+              hasContent={gatewayMapMarker.isJust()}
               fallbackContent={<MissingDataTitle title={noReliablePosition}/>}
             >
               <Map height={400} viewCenter={gateway.location.position}>
-                {mapMarker.isJust() && <ClusterContainer markers={mapMarker.get()}/>}
+                {gatewayMapMarker.isJust() && <ClusterContainer markers={gatewayMapMarker.get()}/>}
               </Map>
             </HasContent>
           </TabContent>

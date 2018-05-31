@@ -15,12 +15,10 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class SelectionsDtoMapperTest {
 
-  private SelectionsDtoMapper mapper;
   private SelectionsDto selections;
 
   @Before
   public void setUp() {
-    mapper = new SelectionsDtoMapper();
     selections = new SelectionsDto();
   }
 
@@ -47,7 +45,7 @@ public class SelectionsDtoMapperTest {
         .city("vasa")
         .address("street 1")
         .build()
-    ).forEach(location -> mapper.addToDto(location, selections));
+    ).forEach(location -> SelectionsDtoMapper.addToDto(location, selections));
 
     LocationsDto locations = selections.locations;
 
@@ -71,11 +69,11 @@ public class SelectionsDtoMapperTest {
 
   @Test
   public void missingLocationDataShouldBeSetToUnknown() {
-    mapper.addToDto(UNKNOWN_LOCATION, selections);
+    SelectionsDtoMapper.addToDto(UNKNOWN_LOCATION, selections);
     LocationsDto locationsDto = selections.locations;
 
     assertThat(locationsDto.getCountry("unknown")
-                 .getCity("unknown")
-                 .getAddresses()).containsExactly(new Address("unknown"));
+      .getCity("unknown")
+      .getAddresses()).containsExactly(new Address("unknown"));
   }
 }

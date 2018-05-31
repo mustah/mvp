@@ -26,8 +26,10 @@ public class StatusLogEntry<T> implements Identifiable<Long> {
   }
 
   static <T> StatusLogEntry<T> unknownFor(Identifiable<T> entity) {
-    return new StatusLogEntry<T>(
-      entity.getId(), StatusType.UNKNOWN, Dates.epoch()
+    return new StatusLogEntry<>(
+      entity.getId(),
+      StatusType.UNKNOWN,
+      Dates.epoch()
     );
   }
 
@@ -36,7 +38,7 @@ public class StatusLogEntry<T> implements Identifiable<Long> {
   }
 
   public StatusLogEntry<T> withStop(ZonedDateTime stopTime) {
-    return new StatusLogEntry<T>(
+    return new StatusLogEntry<>(
       id,
       entityId,
       status,

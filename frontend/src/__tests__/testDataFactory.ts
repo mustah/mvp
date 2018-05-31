@@ -146,7 +146,6 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
       position: {
         latitude: 1,
         longitude: 1,
-        confidence: 1,
       },
     },
     statusChangelog: [],

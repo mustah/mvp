@@ -1,11 +1,17 @@
 import {Icon, LatLngTuple, MarkerOptions} from 'leaflet';
-import {Identifiable, Status, uuid} from '../../types/Types';
+import {GeoPosition} from '../../state/domain-models/location/locationModels';
+import {Dictionary, Identifiable, Status, uuid} from '../../types/Types';
+
+export type IdentifiablePosition = Identifiable & GeoPosition;
+
+export interface MapMarkerApiResponse {
+  markers: Dictionary<IdentifiablePosition[]>;
+}
 
 export interface MapMarker extends Identifiable {
   status: Status;
   latitude: number;
   longitude: number;
-  confidence: number;
 }
 
 export interface Marker {

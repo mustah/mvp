@@ -1,4 +1,5 @@
-import {schema, Schema} from 'normalizr';
+import {normalize, schema, Schema} from 'normalizr';
+import {DataFormatter} from '../domainModelsActions';
 
 const createId: schema.SchemaFunction = (
   {name: entityName},
@@ -32,10 +33,13 @@ const country = new schema.Entity('countries', {cities: [city]}, {
   processStrategy: processStrategyCountry,
 });
 
-export const selectionsSchema: Schema = {
+const selectionsSchema: Schema = {
   alarms: [alarm],
   gatewayStatuses: [gatewayStatus],
   locations: {countries: [country]},
   media: [media],
   meterStatuses: [meterStatus],
 };
+
+export const selectionsDataFormatter: DataFormatter =
+  (response) => normalize(response, selectionsSchema);

@@ -67,12 +67,14 @@ const MapWidget = ({bounds, lowConfidenceText, markers, map, closeClusterDialog}
   );
 };
 
-const mapStateToProps = ({map, domainModels: {meterMapMarkers}}: RootState): StateToProps =>
-  ({
+const mapStateToProps = (rootState: RootState): StateToProps => {
+  const {map, domainModels: {meterMapMarkers}}: RootState = rootState;
+  return ({
     map,
     bounds: getBounds(meterMapMarkers),
-    lowConfidenceText: getMeterLowConfidenceTextInfo(meterMapMarkers),
+    lowConfidenceText: getMeterLowConfidenceTextInfo(rootState),
   });
+};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeClusterDialog,

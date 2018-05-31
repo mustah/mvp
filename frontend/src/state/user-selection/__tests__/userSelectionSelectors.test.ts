@@ -1,4 +1,3 @@
-import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {Period} from '../../../components/dates/dateModels';
 import {momentWithTimeZone} from '../../../helpers/dateHelpers';
@@ -16,7 +15,7 @@ import {
   meterStatuses,
   users,
 } from '../../domain-models/domainModelsReducer';
-import {selectionsSchema} from '../../domain-models/selections/selectionsSchemas';
+import {selectionsDataFormatter} from '../../domain-models/selections/selectionsSchemas';
 import {User} from '../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
@@ -40,7 +39,7 @@ import {
 
 describe('userSelectionSelectors', () => {
 
-  const normalizedSelections = normalize(testData.selections, selectionsSchema);
+  const normalizedSelections = selectionsDataFormatter(testData.selections);
   const {cities: cityEntities} = normalizedSelections.entities;
   const stockholm: IdNamed = cityEntities['sweden,stockholm'];
   const gothenburg: IdNamed = cityEntities['sweden,göteborg'];
@@ -109,7 +108,7 @@ describe('userSelectionSelectors', () => {
   });
 
   it('get entities for undefined entity type', () => {
-    const domainModelPayload = normalize(testData.selections, selectionsSchema);
+    const domainModelPayload = selectionsDataFormatter(testData.selections);
 
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
     const notCity: Partial<DomainModelsState> = domainModels(domainModelPayload);

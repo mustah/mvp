@@ -9,7 +9,6 @@ export interface Location {
 export interface GeoPosition {
   latitude: number;
   longitude: number;
-  confidence: number;
 }
 
 export interface Address extends IdNamed {

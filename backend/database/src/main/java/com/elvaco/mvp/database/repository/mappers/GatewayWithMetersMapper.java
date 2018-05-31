@@ -22,28 +22,31 @@ public class GatewayWithMetersMapper {
     GatewayEntity entity,
     Map<UUID, List<GatewayStatusLogEntity>> statusLogEntityMap
   ) {
-    return new Gateway(
-      entity.id,
-      entity.organisationId,
-      entity.serial,
-      entity.productModel,
-      toLogicalMeters(entity.meters),
-      statusLogEntityMap.getOrDefault(entity.id, emptyList())
+    return Gateway.builder()
+      .id(entity.id)
+      .organisationId(entity.organisationId)
+      .serial(entity.serial)
+      .productModel(entity.productModel)
+      .meters(toLogicalMeters(entity.meters))
+      .statusLogs(statusLogEntityMap.getOrDefault(entity.id, emptyList())
         .stream()
         .map(GatewayStatusLogEntityMapper::toDomainModel)
-        .collect(toList())
-    );
+        .collect(toList()))
+      .build();
   }
 
   public static Gateway toDomainModel(GatewayEntity entity) {
-    return new Gateway(
-      entity.id,
-      entity.organisationId,
-      entity.serial,
-      entity.productModel,
-      toLogicalMeters(entity.meters),
-      entity.statusLogs.stream().map(GatewayStatusLogEntityMapper::toDomainModel).collect(toList())
-    );
+    return Gateway.builder()
+      .id(entity.id)
+      .organisationId(entity.organisationId)
+      .serial(entity.serial)
+      .productModel(entity.productModel)
+      .meters(toLogicalMeters(entity.meters))
+      .statusLogs(entity.statusLogs
+        .stream()
+        .map(GatewayStatusLogEntityMapper::toDomainModel)
+        .collect(toList()))
+      .build();
   }
 
   private static List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {

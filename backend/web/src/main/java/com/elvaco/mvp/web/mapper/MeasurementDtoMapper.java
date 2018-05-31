@@ -11,12 +11,14 @@ import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;
 
+@UtilityClass
 public class MeasurementDtoMapper {
 
-  public MeasurementDto toDto(Measurement measurement) {
+  public static MeasurementDto toDto(Measurement measurement) {
     return new MeasurementDto(
       measurement.id,
       measurement.quantity,
@@ -26,7 +28,9 @@ public class MeasurementDtoMapper {
     );
   }
 
-  public List<MeasurementSeriesDto> toSeries(List<LabeledMeasurementValue> foundMeasurements) {
+  public static List<MeasurementSeriesDto> toSeries(
+    List<LabeledMeasurementValue> foundMeasurements
+  ) {
     Map<LabeledQuantity, List<LabeledMeasurementValue>> quantityMeasurements =
       new LinkedHashMap<>();
     for (LabeledMeasurementValue measurement : foundMeasurements) {

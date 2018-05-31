@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 public class SelectionTree {
+
   private final Map<String, City> cities = new HashMap<>();
 
   public void addToSelectionTree(LogicalMeter logicalMeter) {

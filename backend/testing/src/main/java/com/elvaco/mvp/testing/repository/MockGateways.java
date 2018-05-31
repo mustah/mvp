@@ -65,14 +65,14 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
 
   @Override
   protected Gateway copyWithId(UUID id, Gateway entity) {
-    return new Gateway(
-      id,
-      entity.organisationId,
-      entity.serial,
-      entity.productModel,
-      entity.meters,
-      entity.statusLogs
-    );
+    return Gateway.builder()
+      .id(id)
+      .organisationId(entity.organisationId)
+      .serial(entity.serial)
+      .productModel(entity.productModel)
+      .meters(entity.meters)
+      .statusLogs(entity.statusLogs)
+      .build();
   }
 
   @Override

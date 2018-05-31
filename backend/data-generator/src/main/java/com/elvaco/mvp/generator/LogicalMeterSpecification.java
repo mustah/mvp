@@ -96,12 +96,11 @@ class LogicalMeterSpecification {
       ));
     }
 
-    Gateway gateway = new Gateway(
-      UUID.randomUUID(),
-      organisation.id,
-      generateSerial(),
-      pickProductModel()
-    );
+    Gateway gateway = Gateway.builder()
+      .organisationId(organisation.id)
+      .serial(generateSerial())
+      .productModel(pickProductModel())
+      .build();
 
     return new GeneratedData(new LogicalMeter(
       logicalMeterId,

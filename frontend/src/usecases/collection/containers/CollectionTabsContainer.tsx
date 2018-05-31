@@ -37,11 +37,8 @@ import {
 } from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {
-  clearErrorGatewayMapMarkers,
-  fetchGatewayMapMarkers,
-} from '../../map/gatewayMapMarkerApiActions';
 import {closeClusterDialog} from '../../map/mapActions';
+import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
 import {
   getBounds,
@@ -134,15 +131,16 @@ class CollectionTabs extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({
-    ui: {pagination, tabs},
-    map,
-    domainModels: {gatewayMapMarkers},
-    userSelection: {userSelection},
-  }: RootState): StateToProps =>
-    ({
+  (rootState: RootState): StateToProps => {
+    const {
+      ui: {tabs},
+      map,
+      domainModels: {gatewayMapMarkers},
+      userSelection: {userSelection},
+    }: RootState = rootState;
+    return ({
       bounds: getBounds(gatewayMapMarkers),
-      lowConfidenceText: getGatewayLowConfidenceTextInfo(gatewayMapMarkers),
+      lowConfidenceText: getGatewayLowConfidenceTextInfo(rootState),
       selectedTab: getSelectedTab(tabs.collection),
       gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
       parameters: getGatewayParameters({userSelection, now: now()}),
@@ -150,6 +148,7 @@ const mapStateToProps =
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),
     });
+  };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,

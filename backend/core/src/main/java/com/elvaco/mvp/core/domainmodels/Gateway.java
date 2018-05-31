@@ -5,22 +5,30 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
+import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
+import lombok.Singular;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.UUID.randomUUID;
 
+@Builder
 @ToString
 @EqualsAndHashCode
 public class Gateway implements Identifiable<UUID> {
 
-  public final UUID id;
+  @Default
+  public UUID id = randomUUID();
   public final UUID organisationId;
   public final String serial;
   public final String productModel;
-  public final List<StatusLogEntry<UUID>> statusLogs;
-  public final List<LogicalMeter> meters;
+  @Singular
+  public List<LogicalMeter> meters = emptyList();
+  @Singular
+  public List<StatusLogEntry<UUID>> statusLogs = emptyList();
 
   public Gateway(
     UUID id,
@@ -31,7 +39,7 @@ public class Gateway implements Identifiable<UUID> {
     this(id, organisationId, serial, productModel, emptyList(), emptyList());
   }
 
-  public Gateway(
+  private Gateway(
     UUID id,
     UUID organisationId,
     String serial,
@@ -66,7 +74,7 @@ public class Gateway implements Identifiable<UUID> {
   public StatusLogEntry<UUID> currentStatus() {
     return statusLogs.stream()
       .findFirst()
-      .orElse(StatusLogEntry.unknownFor(this));
+      .orElseGet(() -> StatusLogEntry.unknownFor(this));
   }
 
   public Gateway replaceActiveStatus(StatusType status) {

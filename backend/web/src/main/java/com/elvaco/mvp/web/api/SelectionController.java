@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SelectionController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
-  private final SelectionsDtoMapper selectionsDtoMapper;
 
   @GetMapping
   public SelectionsDto selections() {
     SelectionsDto selectionsDto = new SelectionsDto();
     logicalMeterUseCases.findAll(new RequestParametersAdapter())
-      .forEach(meter -> selectionsDtoMapper.addToDto(meter.location, selectionsDto));
+      .forEach(meter -> SelectionsDtoMapper.addToDto(meter.location, selectionsDto));
     return selectionsDto;
   }
 }

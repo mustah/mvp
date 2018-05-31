@@ -2,11 +2,14 @@ package com.elvaco.mvp.web.mapper;
 
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.web.dto.UserSelectionDto;
+import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;
 
+@UtilityClass
 public class UserSelectionDtoMapper {
-  public UserSelectionDto toDto(UserSelection userSelection) {
+
+  public static UserSelectionDto toDto(UserSelection userSelection) {
     return new UserSelectionDto(
       userSelection.id,
       userSelection.ownerUserId,
@@ -16,7 +19,7 @@ public class UserSelectionDtoMapper {
     );
   }
 
-  public UserSelection toDomainModel(UserSelectionDto dto) {
+  public static UserSelection toDomainModel(UserSelectionDto dto) {
     return new UserSelection(
       dto.id != null ? dto.id : randomUUID(),
       dto.ownerUserId,

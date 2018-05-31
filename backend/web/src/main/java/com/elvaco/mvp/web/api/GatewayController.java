@@ -26,12 +26,11 @@ import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestPar
 public class GatewayController {
 
   private final GatewayUseCases gatewayUseCases;
-  private final GatewayDtoMapper gatewayDtoMapper;
 
   @GetMapping("{id}")
   public GatewayDto gateway(@PathVariable UUID id) {
     return gatewayUseCases.findById(id)
-      .map(gatewayDtoMapper::toDto)
+      .map(GatewayDtoMapper::toDto)
       .orElseThrow(() -> new GatewayNotFound(id));
   }
 
@@ -45,6 +44,6 @@ public class GatewayController {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(gatewayDtoMapper::toDto);
+      .map(GatewayDtoMapper::toDto);
   }
 }

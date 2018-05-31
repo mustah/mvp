@@ -77,4 +77,8 @@ public class Location {
   public boolean isKnown() {
     return country != null && city != null && address != null;
   }
+
+  public boolean hasHighConfidence() {
+    return getCoordinate() != null && getCoordinate().isHighConfidence();
+  }
 }

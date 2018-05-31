@@ -25,39 +25,29 @@ import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
+import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
+@RequiredArgsConstructor
 @RestApi("/api/v1/measurements")
 public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
-  private final MeasurementDtoMapper measurementDtoMapper;
-
-  @Autowired
-  MeasurementController(
-    MeasurementUseCases measurementUseCases,
-    LogicalMeterUseCases logicalMeterUseCases,
-    MeasurementDtoMapper measurementDtoMapper
-  ) {
-    this.measurementUseCases = measurementUseCases;
-    this.logicalMeterUseCases = logicalMeterUseCases;
-    this.measurementDtoMapper = measurementDtoMapper;
-  }
 
   @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
     return measurementUseCases.findById(id)
-      .map(measurementDtoMapper::toDto)
+      .map(MeasurementDtoMapper::toDto)
       .orElseThrow(() -> new MeasurementNotFound(id));
   }
 
@@ -107,7 +97,7 @@ public class MeasurementController {
       )).collect(toList()));
     }
 
-    return measurementDtoMapper.toSeries(foundMeasurements);
+    return toSeries(foundMeasurements);
   }
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -157,15 +147,15 @@ public class MeasurementController {
           resolution
         );
         foundMeasurements.addAll(series.stream()
-                                   .map(measurementValue -> new LabeledMeasurementValue(
-                                     meter.externalId,
-                                     measurementValue.when,
-                                     measurementValue.value,
-                                     entry.getKey()
-                                   )).collect(toList()));
+          .map(measurementValue -> new LabeledMeasurementValue(
+            meter.externalId,
+            measurementValue.when,
+            measurementValue.value,
+            entry.getKey()
+          )).collect(toList()));
       }
     }
-    return measurementDtoMapper.toSeries(foundMeasurements);
+    return toSeries(foundMeasurements);
   }
 
   private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {

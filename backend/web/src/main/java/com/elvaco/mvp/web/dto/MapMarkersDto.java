@@ -1,17 +1,18 @@
 package com.elvaco.mvp.web.dto;
 
+import java.util.List;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationDto {
+@EqualsAndHashCode
+@ToString
+public class MapMarkersDto {
 
-  public IdNamedDto city;
-  public IdNamedDto address;
-  public GeoPositionDto position;
+  public Map<String, List<MapMarkerDto>> markers;
 }

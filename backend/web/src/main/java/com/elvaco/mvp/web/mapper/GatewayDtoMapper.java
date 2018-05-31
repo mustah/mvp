@@ -12,16 +12,17 @@ import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
-import com.elvaco.mvp.web.dto.MapMarkerDto;
+import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.UNKNOWN_LOCATION;
 import static java.util.stream.Collectors.toList;
 
+@UtilityClass
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class GatewayDtoMapper {
 
-  public GatewayDto toDto(Gateway gateway) {
+  public static GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
 
     StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
@@ -38,7 +39,7 @@ public class GatewayDtoMapper {
     );
   }
 
-  public GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
+  public static GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
     StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
     return new GatewayMandatoryDto(
       gateway.id,
@@ -49,44 +50,26 @@ public class GatewayDtoMapper {
     );
   }
 
-  public static MapMarkerDto toMapMarkerDto(Gateway gateway) {
-    MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = gateway.id;
-    mapMarkerDto.status = gateway.currentStatus().status.name;
-    gateway.meters
-      .stream()
-      .findFirst()
-      .filter(lg -> lg.location.hasCoordinates())
-      .map(lg -> lg.location.getCoordinate())
-      .map(coordinate -> {
-        mapMarkerDto.confidence = coordinate.getConfidence();
-        mapMarkerDto.latitude = coordinate.getLatitude();
-        mapMarkerDto.longitude = coordinate.getLongitude();
-        return coordinate;
-      });
-    return mapMarkerDto;
-  }
-
-  private List<UUID> connectedMeterIds(Gateway gateway) {
+  private static List<UUID> connectedMeterIds(Gateway gateway) {
     return gateway.meters
       .stream()
       .map(meter -> meter.id)
       .collect(toList());
   }
 
-  private IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
+  private static IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
       .map(LocationDtoMapper::toCity)
       .orElse(UNKNOWN_LOCATION);
   }
 
-  private IdNamedDto toAddress(Optional<LogicalMeter> logicalMeter) {
+  private static IdNamedDto toAddress(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
       .map(LocationDtoMapper::toAddress)
       .orElse(UNKNOWN_LOCATION);
   }
 
-  private GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {
+  private static GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
       .flatMap(LocationDtoMapper::toGeoPosition)
       .orElseGet(GeoPositionDto::new);

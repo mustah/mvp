@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -11,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
+import lombok.Singular;
 import lombok.ToString;
 
 import static java.util.Collections.unmodifiableList;
@@ -34,8 +34,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final UUID logicalMeterId;
   public final long readIntervalMinutes;
   public final Long measurementCount;
-  @Default
-  public List<StatusLogEntry<UUID>> statuses = new ArrayList<>();
+  @Singular
+  public List<StatusLogEntry<UUID>> statuses;
 
   @Override
   public UUID getId() {

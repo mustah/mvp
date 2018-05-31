@@ -36,7 +36,7 @@ describe('paginatedDomainModelsReducer', () => {
             location: {
               address: {id: 1, name: 'Kungsgatan'},
               city: {id: 'got', name: 'Göteborg'},
-              position: {latitude: 10, longitude: 10, confidence: 1},
+              position: {latitude: 10, longitude: 10},
             },
             facility: 'torp',
             flags: [],
@@ -56,7 +56,7 @@ describe('paginatedDomainModelsReducer', () => {
             location: {
               address: {id: 1, name: 'Kungsgatan'},
               city: {id: 'got', name: 'Göteborg'},
-              position: {latitude: 10, longitude: 10, confidence: 1},
+              position: {latitude: 10, longitude: 10},
             },
             facility: 'torp',
             flags: [],

@@ -6,23 +6,25 @@ import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.AddressDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.CityDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
+import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.domainmodels.SelectionTree.Address;
 import static com.elvaco.mvp.core.domainmodels.SelectionTree.City;
 import static com.elvaco.mvp.core.domainmodels.SelectionTree.Meter;
 import static java.util.stream.Collectors.toList;
 
+@UtilityClass
 public class SelectionTreeDtoMapper {
 
-  public void addToDto(LogicalMeter logicalMeter, SelectionTree selectionTree) {
+  public static void addToDto(LogicalMeter logicalMeter, SelectionTree selectionTree) {
     selectionTree.addToSelectionTree(logicalMeter);
   }
 
-  public SelectionTreeDto toDto(SelectionTree selectionTree) {
+  public static SelectionTreeDto toDto(SelectionTree selectionTree) {
     return new SelectionTreeDto(selectionTree.getCities()
-                                  .stream()
-                                  .map(SelectionTreeDtoMapper::toCityDto)
-                                  .collect(toList()));
+      .stream()
+      .map(SelectionTreeDtoMapper::toCityDto)
+      .collect(toList()));
   }
 
   private static CityDto toCityDto(City city) {

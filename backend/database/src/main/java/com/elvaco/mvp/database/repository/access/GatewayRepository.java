@@ -106,10 +106,10 @@ public class GatewayRepository implements Gateways {
   }
 
   private List<Gateway> toGateways(
-    List<GatewayEntity> gatewayEntities,
+    List<GatewayEntity> entities,
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap
   ) {
-    return gatewayEntities
+    return entities
       .stream()
       .map(gateway -> GatewayWithMetersMapper.toDomainModel(gateway, statusLogMap))
       .collect(toList());

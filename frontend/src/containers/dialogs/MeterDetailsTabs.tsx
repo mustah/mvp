@@ -27,7 +27,6 @@ import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Children, Identifiable, OnClickWithId} from '../../types/Types';
 import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
 
@@ -83,9 +82,6 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
 
     const statusChangelog = normalizedStatusChangelogFor(meter);
     const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
-    const mapMarker = meterMapMarker.filter(isGeoPositionWithinThreshold);
-    const hasConfidentPosition: boolean = mapMarker.isJust();
-    const hasMapContent = hasConfidentPosition && mapMarker.isJust();
 
     const noReliablePosition =
       <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
@@ -137,9 +133,9 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <HasContent hasContent={hasMapContent} fallbackContent={noReliablePosition}>
+            <HasContent hasContent={meterMapMarker.isJust()} fallbackContent={noReliablePosition}>
               <Map height={400} viewCenter={meter.location.position}>
-                {mapMarker.isJust() && <ClusterContainer markers={mapMarker.get()}/>}
+                {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
               </Map>
             </HasContent>
           </TabContent>

@@ -1,4 +1,3 @@
-import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
 import {createEmptyAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
@@ -34,6 +33,8 @@ export interface RequestCallbacks<T> {
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
+export type DataFormatter = (data: any) => any;
+
 interface RequestHandler<T> {
   request: () => EmptyAction<string>;
   success: (payload: T) => PayloadAction<string, T>;
@@ -42,7 +43,7 @@ interface RequestHandler<T> {
 
 interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, RequestCallbacks<DATA> {
   requestFunc: (requestData?: REQUEST_MODEL) => any;
-  formatData?: (data: any) => DATA;
+  formatData?: DataFormatter;
   requestData?: REQUEST_MODEL;
   dispatch: Dispatch<RootState>;
 }
@@ -97,8 +98,8 @@ const shouldFetchEntity = (
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
-  schema: Schema,
   entityType: keyof DomainModelsState,
+  formatData: DataFormatter,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
   (requestData?: string) =>
@@ -108,7 +109,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, Normalized<T>>({
           ...getRequestOf<Normalized<T>>(endPoint),
-          formatData: (data) => normalize(data, schema),
+          formatData,
           requestFunc,
           requestData,
           ...requestCallbacks,

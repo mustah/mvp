@@ -26,8 +26,8 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserSelectionControllerTest extends IntegrationTest {
+
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-  private static final UserSelectionDtoMapper DTO_MAPPER = new UserSelectionDtoMapper();
 
   @Autowired
   private UserSelectionJpaRepository repository;
@@ -184,8 +184,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
   @Test
   public void userCanNotOverwriteOtherUsersSelection() throws IOException {
-    final ObjectNode originalData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
-    final ObjectNode changedData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Rolfstorp\"}");
+    ObjectNode originalData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
+    ObjectNode changedData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Rolfstorp\"}");
 
     UserSelectionDto userSelectionDto = createSelection(
       context().user,
@@ -298,6 +298,6 @@ public class UserSelectionControllerTest extends IntegrationTest {
       user.organisation.id
     ));
 
-    return DTO_MAPPER.toDto(UserSelectionEntityMapper.toDomainModel(entity));
+    return UserSelectionDtoMapper.toDto(UserSelectionEntityMapper.toDomainModel(entity));
   }
 }

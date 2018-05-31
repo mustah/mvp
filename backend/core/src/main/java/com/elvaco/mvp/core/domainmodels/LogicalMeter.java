@@ -175,6 +175,14 @@ public class LogicalMeter implements Identifiable<UUID> {
     return id;
   }
 
+  public StatusType currentStatus() {
+    return physicalMeters.stream()
+      .flatMap(physicalMeter -> physicalMeter.statuses.stream())
+      .findFirst()
+      .map(statusLogEntry -> statusLogEntry.status)
+      .orElse(StatusType.UNKNOWN);
+  }
+
   LogicalMeter createdAt(ZonedDateTime creationTime) {
     return new LogicalMeter(
       id,

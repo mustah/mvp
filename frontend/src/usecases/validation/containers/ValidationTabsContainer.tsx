@@ -37,13 +37,13 @@ import {
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {closeClusterDialog} from '../../map/mapActions';
+import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
 import {
   getBounds,
   getMeterLowConfidenceTextInfo,
   getSelectedMapMarker,
 } from '../../map/mapSelectors';
-import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 
 interface StateToProps extends TabsContainerStateToProps {
   isFetching: boolean;
@@ -132,15 +132,16 @@ class ValidationTabs extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({
-    ui,
-    userSelection: {userSelection},
-    map,
-    domainModels: {meterMapMarkers},
-  }: RootState): StateToProps =>
-    ({
+  (rootState: RootState): StateToProps => {
+    const {
+      ui,
+      userSelection: {userSelection},
+      map,
+      domainModels: {meterMapMarkers},
+    }: RootState = rootState;
+    return ({
       bounds: getBounds(meterMapMarkers),
-      lowConfidenceText: getMeterLowConfidenceTextInfo(meterMapMarkers),
+      lowConfidenceText: getMeterLowConfidenceTextInfo(rootState),
       selectedTab: getSelectedTab(ui.tabs.validation),
       meterMapMarkers: getDomainModel(meterMapMarkers),
       selectedMarker: getSelectedMapMarker(map),
@@ -148,6 +149,7 @@ const mapStateToProps =
       error: getError(meterMapMarkers),
       isFetching: meterMapMarkers.isFetching,
     });
+  };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,

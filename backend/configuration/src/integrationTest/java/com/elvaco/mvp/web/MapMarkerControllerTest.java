@@ -1,13 +1,13 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
@@ -15,6 +15,9 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
+import com.elvaco.mvp.web.dto.MapMarkersDto;
+import com.google.common.collect.ImmutableMultimap;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,36 +62,29 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findMapMarkerWithNoLocation() {
+  public void cannotFindMapMarkerWithNoLocation_HasEmptyBody() {
     UUID logicalMeterId = saveLogicalMeterWith(UNKNOWN_LOCATION).id;
 
-    ResponseEntity<MapMarkerDto> response = asSuperAdmin()
-      .get("/map-markers/meters/" + logicalMeterId, MapMarkerDto.class);
+    ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
+      .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEqualTo(new MapMarkerDto(
-      logicalMeterId,
-      "unknown",
-      null,
-      null,
-      null
-    ));
+    assertThat(response.getBody()).isNull();
   }
 
   @Test
   public void findLogicalMeterWithLocation() {
     UUID logicalMeterId = saveLogicalMeterWith(newLocation()).id;
 
-    ResponseEntity<MapMarkerDto> response = asSuperAdmin()
-      .get("/map-markers/meters/" + logicalMeterId, MapMarkerDto.class);
+    ResponseEntity<MapMarkerWithStatusDto> response = asSuperAdmin()
+      .get("/map-markers/meters/" + logicalMeterId, MapMarkerWithStatusDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEqualTo(new MapMarkerDto(
+    assertThat(response.getBody()).isEqualTo(new MapMarkerWithStatusDto(
       logicalMeterId,
       "unknown",
       2.1222,
-      1.2212,
-      1.0
+      1.2212
     ));
   }
 
@@ -106,38 +102,67 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMapMarkersForLogicalMeters() {
-    saveLogicalMeterWith(newLocation());
+    LogicalMeter logicalMeter = saveLogicalMeterWith(newLocation());
 
-    ResponseEntity<List<MapMarkerDto>> response = asTestUser()
-      .getList("/map-markers/meters", MapMarkerDto.class);
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().size()).isEqualTo(1);
+    assertThat(response.getBody().markers).isEqualTo(ImmutableMultimap.builder()
+      .put(StatusType.UNKNOWN.name, new MapMarkerDto(logicalMeter.id, 2.1222, 1.2212))
+      .build()
+      .asMap());
   }
 
   @Test
   public void findAllMapMarkersForLogicalMetersWithParameters() {
     saveLogicalMeterWith(UNKNOWN_LOCATION);
-    saveLogicalMeterWith(newLocation());
-    saveLogicalMeterWith(newLocation());
+    LogicalMeter meter2 = saveLogicalMeterWith(newLocation());
+    LogicalMeter meter3 = saveLogicalMeterWith(newLocation());
 
-    ResponseEntity<List<MapMarkerDto>> response = asTestUser()
-      .getList("/map-markers/meters?city=sweden,kungsbacka", MapMarkerDto.class);
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get("/map-markers/meters?city=sweden,kungsbacka", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().size()).isEqualTo(2);
+    assertThat(response.getBody().markers).hasSize(1);
+    assertThat(response.getBody().markers.get(StatusType.UNKNOWN.name))
+      .containsExactlyInAnyOrder(
+        new MapMarkerDto(meter2.id, 2.1222, 1.2212),
+        new MapMarkerDto(meter3.id, 2.1222, 1.2212)
+      );
   }
 
   @Test
-  public void mapDataIncludesGatewaysWithoutLocation() {
-    UUID gatewayId = saveGateway(context().getOrganisationId2()).id;
+  public void doNotIncludeMeterMapMarkerWithLowConfidence() {
+    saveLogicalMeterWith(lowConfidenceLocation());
 
-    ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
-      .getList("/map-markers/gateways", MapMarkerDto.class);
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSize(1);
-    assertThat(response.getBody().get(0).id).isEqualTo(gatewayId);
+    assertThat(response.getBody().markers).isEmpty();
+  }
+
+  @Test
+  public void returnsOk_EmptyBody_WhenMeterLocationHas_LowConfidence() {
+    LogicalMeter logicalMeter = saveLogicalMeterWith(lowConfidenceLocation());
+
+    ResponseEntity<MapMarkerWithStatusDto> response = asTestUser()
+      .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNull();
+  }
+
+  @Test
+  public void mapDataDoesNotIncludeGatewaysWithoutLocation() {
+    saveGateway(context().getOrganisationId2());
+
+    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+      .get("/map-markers/gateways", MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).isEmpty();
   }
 
   @Test
@@ -160,26 +185,29 @@ public class MapMarkerControllerTest extends IntegrationTest {
       ZonedDateTime.now()
     ));
 
-    MapMarkerDto mapMarker = new MapMarkerDto(
-      gateway.id,
-      "unknown",
-      1.234,
-      2.3323,
-      1.0
-    );
+    ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
+      .get("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkersDto.class);
 
-    ResponseEntity<List<MapMarkerDto>> cityAddressResponse = asTestSuperAdmin()
-      .getList("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
+    ResponseEntity<MapMarkersDto> cityResponse = asTestSuperAdmin()
+      .get("/map-markers/gateways?city=sweden,kungsbacka", MapMarkersDto.class);
 
-    ResponseEntity<List<MapMarkerDto>> cityResponse = asTestSuperAdmin()
-      .getList("/map-markers/gateways?city=sweden,kungsbacka", MapMarkerDto.class);
+    assertThat(cityResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(cityAddressResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertSameMapMarker(cityAddressResponse, mapMarker);
-    assertSameMapMarker(cityResponse, mapMarker);
+    StatusType status = StatusType.UNKNOWN;
+
+    assertThat(cityResponse.getBody().markers).isEqualTo(ImmutableMultimap.builder()
+      .put(status.name, new MapMarkerDto(gateway.id, 1.234, 2.3323))
+      .build()
+      .asMap());
+    assertThat(cityAddressResponse.getBody().markers).isEqualTo(ImmutableMultimap.builder()
+      .put(status.name, new MapMarkerDto(gateway.id, 1.234, 2.3323))
+      .build()
+      .asMap());
   }
 
   @Test
-  public void findGatewayMapMarkers_WithUnknownCity() {
+  public void cannotFindGatewayMapMarkers_WithUnknownCity() {
     Gateway gateway = saveGateway(context().getOrganisationId2());
 
     logicalMeters.save(new LogicalMeter(
@@ -191,24 +219,31 @@ public class MapMarkerControllerTest extends IntegrationTest {
       ZonedDateTime.now()
     ));
 
-    MapMarkerDto mapMarker = new MapMarkerDto();
-    mapMarker.id = gateway.id;
-    mapMarker.status = "unknown";
-
-    ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
-      .getList("/map-markers/gateways?city=unknown,unknown", MapMarkerDto.class);
+    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+      .get("/map-markers/gateways?city=unknown,unknown", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).containsExactly(mapMarker);
+    assertThat(response.getBody().markers).isEmpty();
   }
 
-  private void assertSameMapMarker(
-    ResponseEntity<List<MapMarkerDto>> response,
-    MapMarkerDto mapMarker
-  ) {
+  @Test
+  public void doNotIncludeGatewayMapMarkerWithLowConfidence() {
+    Gateway gateway = saveGateway(context().getOrganisationId2());
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "external-1234",
+      context().getOrganisationId2(),
+      lowConfidenceLocation(),
+      singletonList(gateway),
+      ZonedDateTime.now()
+    ));
+
+    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+      .get("/map-markers/gateways", MapMarkersDto.class);
+
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSize(1);
-    assertThat(response.getBody().get(0)).isEqualTo(mapMarker);
+    assertThat(response.getBody().markers).isEmpty();
   }
 
   private LogicalMeter saveLogicalMeterWith(Location location) {
@@ -226,21 +261,34 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   private Gateway saveGateway(UUID organisationId) {
-    return gateways.save(new Gateway(
-      randomUUID(),
-      organisationId,
-      randomUUID().toString(),
-      randomUUID().toString()
-    ));
+    return gateways.save(Gateway.builder()
+      .organisationId(organisationId)
+      .productModel(randomUUID().toString())
+      .serial(randomUUID().toString())
+      .build()
+    );
+  }
+
+  private static Location lowConfidenceLocation() {
+    return withGeoPosition()
+      .confidence(0.5)
+      .build();
   }
 
   private static Location newLocation() {
+    return withGeoPosition().build();
+  }
+
+  private static LocationBuilder withGeoPosition() {
+    return kungsbacka()
+      .longitude(1.2212)
+      .latitude(2.1222);
+  }
+
+  private static LocationBuilder kungsbacka() {
     return new LocationBuilder()
       .country("sweden")
       .city("kungsbacka")
-      .address("kabelgatan 2t")
-      .longitude(1.2212)
-      .latitude(2.1222)
-      .build();
+      .address("kabelgatan 2t");
   }
 }

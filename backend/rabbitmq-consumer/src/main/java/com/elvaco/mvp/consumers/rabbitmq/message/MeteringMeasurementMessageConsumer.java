@@ -29,7 +29,6 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.ma
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -105,23 +104,23 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     Optional<Gateway> optionalGateway = Optional.empty();
     if (measurementMessage.gateway().isPresent()) {
       GatewayIdDto gatewayId = measurementMessage.gateway().get();
-      optionalGateway = Optional.of(gatewayUseCases.findBy(
-        organisation.id,
-        gatewayId.id
-      ).orElseGet(() -> new Gateway(
-        randomUUID(),
-        organisation.id,
-        gatewayId.id,
-        "",
-        singletonList(logicalMeter),
-        emptyList() // TODO Save gateway status
-      )));
+      optionalGateway =
+        Optional.of(gatewayUseCases.findBy(
+          organisation.id,
+          gatewayId.id
+        ).orElseGet(() ->
+          Gateway.builder()
+            .organisationId(organisation.id)
+            .serial(gatewayId.id)
+            .productModel("")
+            .meters(singletonList(logicalMeter))
+            .build()
+        ));
 
       if (CompletenessValidators.gateway().isIncomplete(optionalGateway.get())) {
         responseBuilder.setFacilityId(facilityId);
         responseBuilder.setGatewayExternalId(gatewayId.id);
       }
-
     }
 
     List<Measurement> measurements = removeSimultaneousQuantityValues(measurementMessage.values)

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
@@ -11,7 +10,7 @@ import {DomainModelsState, Normalized} from '../../domainModels';
 import {getRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {fetchSelections} from '../selectionsApiActions';
-import {selectionsSchema} from '../selectionsSchemas';
+import {selectionsDataFormatter} from '../selectionsSchemas';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
@@ -57,7 +56,7 @@ describe('selectionApiActions', () => {
 
       expect(store.getActions()).toEqual([
         selectionsRequest.request(),
-        selectionsRequest.success(normalize(testData.selections, selectionsSchema)),
+        selectionsRequest.success(selectionsDataFormatter(testData.selections)),
       ]);
     });
 

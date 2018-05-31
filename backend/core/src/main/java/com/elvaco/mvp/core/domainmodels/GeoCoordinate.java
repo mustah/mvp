@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class GeoCoordinate {
 
+  private static final double HIGH_CONFIDENCE = 0.75;
+
   private final Double longitude;
   private final Double latitude;
   private final Double confidence;
@@ -41,5 +43,9 @@ public class GeoCoordinate {
   @Nullable
   public Double getConfidence() {
     return confidence;
+  }
+
+  public boolean isHighConfidence() {
+    return confidence != null && confidence >= HIGH_CONFIDENCE;
   }
 }

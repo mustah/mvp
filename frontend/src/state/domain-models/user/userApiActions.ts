@@ -15,9 +15,13 @@ import {
   putRequest,
 } from '../domainModelsActions';
 import {User} from './userModels';
-import {userSchema} from './userSchema';
+import {usersDataFormatter} from './userSchema';
 
-export const fetchUsers = fetchIfNeeded<User>(EndPoints.users, userSchema, 'users');
+export const fetchUsers = fetchIfNeeded<User>(
+  EndPoints.users,
+  'users',
+  usersDataFormatter,
+);
 
 export const fetchUser = fetchEntityIfNeeded<User>(EndPoints.users, 'users');
 
