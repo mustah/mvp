@@ -32,7 +32,7 @@ public class LogicalMeterTest {
   }
 
   @Test
-  public void quantities() {
+  public void quantitiesDistrictHeatingMeter() {
     LogicalMeter heatingMeter = newLogicalMeter(
       randomUUID(),
       randomUUID(),
@@ -48,10 +48,66 @@ public class LogicalMeterTest {
       Quantity.RETURN_TEMPERATURE,
       Quantity.DIFFERENCE_TEMPERATURE
     );
+  }
 
-    LogicalMeter hotWaterMeter = heatingMeter.withMeterDefinition(MeterDefinition.HOT_WATER_METER);
+  @Test
+  public void quantitiesWaterMeters() {
+    LogicalMeter waterMeter = newLogicalMeter(
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.WATER_METER
+    );
+
+    assertThat(waterMeter.getQuantities()).containsOnly(
+      Quantity.VOLUME
+    );
+
+    LogicalMeter hotWaterMeter = newLogicalMeter(
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.HOT_WATER_METER
+    );
     assertThat(hotWaterMeter.getQuantities()).containsOnly(
       Quantity.VOLUME
+    );
+
+    LogicalMeter coldWaterMeter = newLogicalMeter(
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.COLD_WATER_METER
+    );
+    assertThat(coldWaterMeter.getQuantities()).containsOnly(
+      Quantity.VOLUME
+    );
+  }
+
+  @Test
+  public void quantitiesElectricityMeter() {
+    LogicalMeter meter = newLogicalMeter(
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.ELECTRICITY_METER
+    );
+
+    assertThat(meter.getQuantities()).containsOnly(
+      Quantity.ENERGY,
+      Quantity.ENERGY_RETURN,
+      Quantity.REACTIVE_ENERGY,
+      Quantity.POWER
+    );
+  }
+
+  @Test
+  public void quantitiesRoomTempMeter() {
+    LogicalMeter meter = newLogicalMeter(
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.ROOM_TEMP_METER
+    );
+
+    assertThat(meter.getQuantities()).containsOnly(
+      Quantity.TEMPERATURE,
+      Quantity.HUMIDITY
     );
   }
 

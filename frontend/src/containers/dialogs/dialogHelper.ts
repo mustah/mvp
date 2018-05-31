@@ -37,6 +37,7 @@ const orderedQuantities = (medium: string): string[] => {
     'Water': Medium.water,
     'Cold water': Medium.coldWater,
     'Hot water': Medium.hotWater,
+    'Temperature inside': Medium.temperatureInside,
   };
   return medium in translationTable && translationTable[medium] in allQuantities
     ? allQuantities[translationTable[medium]]

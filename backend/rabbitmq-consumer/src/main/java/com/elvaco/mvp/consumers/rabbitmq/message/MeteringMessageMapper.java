@@ -60,6 +60,11 @@ class MeteringMessageMapper {
     map.put("Power", Quantity.POWER);
     map.put("Volume", Quantity.VOLUME);
     map.put("Energy", Quantity.ENERGY);
+    map.put("External temp", Quantity.TEMPERATURE);
+    map.put("Relative-humidity", Quantity.TEMPERATURE);
+    map.put("Energy return", Quantity.ENERGY_RETURN);
+    map.put("Reactive energy", Quantity.REACTIVE_ENERGY);
+
     return unmodifiableMap(map);
   }
 

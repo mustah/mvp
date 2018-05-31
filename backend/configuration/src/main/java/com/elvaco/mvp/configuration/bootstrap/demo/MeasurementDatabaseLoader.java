@@ -22,8 +22,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.electricityMeasurement;
 import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.gasMeasurement;
 import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.heatMeasurement;
+import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.roomSensorMeasurement;
 import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.waterMeasurement;
 
 @Slf4j
@@ -108,6 +110,10 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
       } else if (meter.medium.equals(Medium.HOT_WATER.medium)) {
         measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
+      } else if (meter.medium.equals(Medium.ELECTRICITY.medium)) {
+        measurements = electricityMeasurement(created, meter, consumingMediumMeterReading);
+      } else if (meter.medium.equals(Medium.ROOM_TEMP.medium)) {
+        measurements = roomSensorMeasurement(created, meter);
       } else {
         throw new RuntimeException("You need to add support for mocking the medium " + meter
           .medium + " in DemoDataHelper");

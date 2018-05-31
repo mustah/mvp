@@ -56,6 +56,10 @@ export const enum RenderableQuantity {
   forwardTemperature = 'Forward temperature',
   returnTemperature = 'Return temperature',
   differenceTemperature = 'Difference temperature',
+  temperature = 'Temperature',
+  relativeHumidity = 'Relative humidity',
+  energyReturn = 'Energy return',
+  energyReactive = 'Reactive energy',
 }
 
 export const allQuantities = {
@@ -79,5 +83,15 @@ export const allQuantities = {
   ],
   [Medium.hotWater]: [
     RenderableQuantity.volume,
+  ],
+  [Medium.temperatureInside]: [
+    RenderableQuantity.temperature,
+    RenderableQuantity.relativeHumidity,
+  ],
+  [Medium.electricity]: [
+    RenderableQuantity.energy,
+    RenderableQuantity.energyReactive,
+    RenderableQuantity.energyReturn,
+    RenderableQuantity.power,
   ],
 };

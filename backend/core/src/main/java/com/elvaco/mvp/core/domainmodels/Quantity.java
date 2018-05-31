@@ -24,6 +24,11 @@ public class Quantity {
       "°C",
       SeriesDisplayMode.READOUT
     );
+  public static final Quantity HUMIDITY = new Quantity("Relative humidity")
+    .withDefaultPresentation(
+      "%",
+      SeriesDisplayMode.READOUT
+    );
   public static final Quantity ENERGY = new Quantity("Energy")
     .withDefaultPresentation(
       "kWh",
@@ -44,11 +49,21 @@ public class Quantity {
       "°C",
       SeriesDisplayMode.READOUT
     );
-  public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity(
-    "Difference temperature").withDefaultPresentation(
-    "K",
-    SeriesDisplayMode.READOUT
-  );
+  public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity("Difference temperature")
+    .withDefaultPresentation(
+      "K",
+      SeriesDisplayMode.READOUT
+    );
+  public static final Quantity ENERGY_RETURN = new Quantity("Energy return")
+    .withDefaultPresentation(
+      "kWh",
+      SeriesDisplayMode.CONSUMPTION
+    );
+  public static final Quantity REACTIVE_ENERGY = new Quantity("Reactive energy")
+    .withDefaultPresentation(
+      "kWh",
+      SeriesDisplayMode.CONSUMPTION
+    );
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
   public final String name;
