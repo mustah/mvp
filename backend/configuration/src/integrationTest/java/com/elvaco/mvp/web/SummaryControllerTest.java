@@ -70,11 +70,26 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void filteredByStatus() {
+    logicalMeters.save(newMeter());
+    logicalMeters.save(newMeterWith(sweden().city("kungsbacka").address("gatan med G")));
+
+    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+      .get(
+        "/summary/meters?status=ok&before=2019-01-01T00:00:00Z&after=2018-01-01T00:00:00Z",
+        MeterSummaryDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(0, 0, 0));
+  }
+
+  @Test
   public void metersWithDifferentAddresses() {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 1")));
+      .city("kungsbacka")
+      .address("drottninggatan 1")));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
@@ -87,11 +102,11 @@ public class SummaryControllerTest extends IntegrationTest {
   public void metersWithSameCityDifferentStreetAddress() {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 1")));
+      .city("kungsbacka")
+      .address("drottninggatan 1")));
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 2")));
+      .city("kungsbacka")
+      .address("drottninggatan 2")));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
@@ -105,8 +120,8 @@ public class SummaryControllerTest extends IntegrationTest {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeterWithLocation(null));
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 2")));
+      .city("kungsbacka")
+      .address("drottninggatan 2")));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
@@ -119,11 +134,11 @@ public class SummaryControllerTest extends IntegrationTest {
   public void userCanOnlyGetSummaryForMetersWithinTheOrganisation() {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 1")));
+      .city("kungsbacka")
+      .address("drottninggatan 1")));
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 2")));
+      .city("kungsbacka")
+      .address("drottninggatan 2")));
 
     ResponseEntity<MeterSummaryDto> response = asOtherUser()
       .get("/summary/meters", MeterSummaryDto.class);
@@ -135,14 +150,14 @@ public class SummaryControllerTest extends IntegrationTest {
   @Test
   public void fetchOnlyMetersInKungsbacka() {
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("stockholm")
-                                      .address("kungsgatan 1")));
+      .city("stockholm")
+      .address("kungsgatan 1")));
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 1")));
+      .city("kungsbacka")
+      .address("drottninggatan 1")));
     logicalMeters.save(newMeterWith(sweden()
-                                      .city("kungsbacka")
-                                      .address("drottninggatan 2")));
+      .city("kungsbacka")
+      .address("drottninggatan 2")));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters?city=sweden,kungsbacka", MeterSummaryDto.class);
@@ -168,8 +183,8 @@ public class SummaryControllerTest extends IntegrationTest {
 
   private LogicalMeter newMeter() {
     return newMeterWith(sweden()
-                          .city("stockholm")
-                          .address("kungsgatan 1"));
+      .city("stockholm")
+      .address("kungsgatan 1"));
   }
 
   private static LocationBuilder sweden() {

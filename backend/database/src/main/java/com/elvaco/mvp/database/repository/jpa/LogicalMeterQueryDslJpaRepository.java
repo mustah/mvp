@@ -154,6 +154,8 @@ public class LogicalMeterQueryDslJpaRepository
   public MeterSummary summary(RequestParameters parameters, Predicate predicate) {
     long meters = createCountQuery(predicate)
       .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .distinct()
       .fetchCount();
 
@@ -171,6 +173,8 @@ public class LogicalMeterQueryDslJpaRepository
         )
       )
       .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .distinct()
       .fetch()
       .size();
@@ -183,6 +187,8 @@ public class LogicalMeterQueryDslJpaRepository
         )
       )
       .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .distinct()
       .fetch()
       .size();
