@@ -1,6 +1,6 @@
 import * as Leaflet from 'leaflet';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {Dictionary, Status} from '../../../types/Types';
+import {Dictionary, Status, statusFor} from '../../../types/Types';
 import {Bounds, IdentifiablePosition, MapMarker, MapMarkerApiResponse} from '../mapModels';
 
 export const flattenMapMarkers = (markers: Dictionary<MapMarker>): MapMarker[] =>
@@ -11,8 +11,10 @@ export const flattenMapMarkers = (markers: Dictionary<MapMarker>): MapMarker[] =
 export const flatMapMarkers = (response: MapMarkerApiResponse): MapMarker[] => {
   const mapMarkers: MapMarker[] = [];
   Object.keys(response.markers)
-    .forEach((status: Status) => response.markers[status]
-      .forEach((position: IdentifiablePosition) => mapMarkers.push(({...position, status}))));
+    .forEach((status: Status) =>
+      response.markers[status].forEach((position: IdentifiablePosition) =>
+        mapMarkers.push(({...position, status: statusFor(status.toLowerCase())}))),
+    );
   return mapMarkers;
 };
 
