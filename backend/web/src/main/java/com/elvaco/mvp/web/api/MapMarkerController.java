@@ -13,6 +13,7 @@ import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
 import com.elvaco.mvp.web.mapper.MapMarkerDtoMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,11 +44,16 @@ public class MapMarkerController {
   }
 
   @GetMapping("/meters/{logicalMeterId}")
-  public MapMarkerWithStatusDto findMeterMapMarker(@PathVariable UUID logicalMeterId) {
+  public ResponseEntity<MapMarkerWithStatusDto> findMeterMapMarker(
+    @PathVariable UUID logicalMeterId
+  ) {
     LogicalMeter logicalMeter = logicalMeterUseCases.findById(logicalMeterId)
       .orElseThrow(() -> new MeterNotFound(logicalMeterId));
 
-    return LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter);
+    MapMarkerWithStatusDto mapMarker = LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter);
+    return mapMarker == null
+      ? ResponseEntity.noContent().build()
+      : ResponseEntity.ok(mapMarker);
   }
 
   private static MapMarkersDto toMapMarkersDto(List<MapMarker> mapMarkers) {
