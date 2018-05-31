@@ -86,6 +86,10 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const noReliablePosition =
       <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
 
+    const mapHasContent = meterMapMarker
+      .filter(({status}: MapMarker) => status !== undefined)
+      .isJust();
+
     return (
       <Row>
         <Tabs className="full-width first-letter">
@@ -133,7 +137,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <HasContent hasContent={meterMapMarker.isJust()} fallbackContent={noReliablePosition}>
+            <HasContent hasContent={mapHasContent} fallbackContent={noReliablePosition}>
               <Map height={400} viewCenter={meter.location.position}>
                 {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
               </Map>
