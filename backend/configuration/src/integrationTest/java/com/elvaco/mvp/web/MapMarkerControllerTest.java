@@ -97,7 +97,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     assertThat(response.getBody()).isNull();
   }
 
@@ -207,7 +207,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     ResponseEntity<MapMarkerWithStatusDto> response = asTestUser()
       .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     assertThat(response.getBody()).isNull();
   }
 

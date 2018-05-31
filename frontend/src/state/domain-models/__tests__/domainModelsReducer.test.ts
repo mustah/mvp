@@ -11,6 +11,7 @@ import {ParameterName} from '../../user-selection/userSelectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {
   deleteRequestOf,
+  domainModelsGetEntitySuccess,
   domainModelsGetSuccess,
   getEntityRequestOf,
   getRequestOf,
@@ -23,6 +24,7 @@ import {
   domainModels,
   gatewayMapMarkers,
   initialDomain,
+  meterMapMarkers,
   users,
 } from '../domainModelsReducer';
 import {selectionsDataFormatter} from '../selections/selectionsSchemas';
@@ -282,7 +284,49 @@ describe('domainModelsReducer', () => {
         isSuccessfullyFetched: true,
       });
     });
+  });
 
+  describe('meterMapMarkers', () => {
+
+    it('stores empty result as object, not undefined', () => {
+      const emptyState: NormalizedState<MapMarker> = {
+        ...initialDomain<MapMarker>(),
+      };
+
+      const meterAction: Action<Normalized<MapMarker>> = {
+        type: domainModelsGetSuccess(EndPoints.meterMapMarkers),
+        payload: {
+          result: [],
+          entities: {},
+        },
+      };
+
+      expect(meterMapMarkers(emptyState, meterAction)).toEqual({
+        ...initialDomain<Gateway>(),
+        isSuccessfullyFetched: true,
+      });
+    });
+
+    it('handles null payload', () => {
+      const emptyState: NormalizedState<MapMarker> = {
+        ...initialDomain<MapMarker>(),
+      };
+
+      const meterMapMarkerAction: Action<Partial<MapMarker>> = {
+        type: domainModelsGetEntitySuccess(EndPoints.meterMapMarkers),
+        payload: {
+          id: 1,
+        },
+      };
+
+      expect(meterMapMarkers(emptyState, meterMapMarkerAction)).toEqual({
+        result: [1],
+        entities: {1: {id: 1}},
+        isFetching: false,
+        isSuccessfullyFetched: false,
+        total: 1,
+      });
+    });
   });
 
   describe('clear domainModels', () => {

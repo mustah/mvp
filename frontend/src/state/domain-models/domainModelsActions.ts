@@ -33,7 +33,7 @@ export interface RequestCallbacks<T> {
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
-export type DataFormatter = (data: any) => any;
+export type DataFormatter = (data?: any) => any;
 
 interface RequestHandler<T> {
   request: () => EmptyAction<string>;
@@ -120,7 +120,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
       }
     };
 
-export const fetchEntityIfNeeded = <T>(
+export const fetchEntityIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
   entityType: keyof DomainModelsState,
 ) =>
@@ -132,6 +132,7 @@ export const fetchEntityIfNeeded = <T>(
           restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
         return asyncRequest<uuid, T>({
           ...getEntityRequestOf<T>(endPoint),
+          formatData: (data?: any) => data || ({id}),
           requestFunc,
           requestData: id,
           dispatch,
