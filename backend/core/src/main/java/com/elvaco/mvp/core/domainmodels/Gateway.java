@@ -26,9 +26,9 @@ public class Gateway implements Identifiable<UUID> {
   public final String serial;
   public final String productModel;
   @Singular
-  public List<LogicalMeter> meters = emptyList();
+  public List<LogicalMeter> meters;
   @Singular
-  public List<StatusLogEntry<UUID>> statusLogs = emptyList();
+  public List<StatusLogEntry<UUID>> statusLogs;
 
   public Gateway(
     UUID id,

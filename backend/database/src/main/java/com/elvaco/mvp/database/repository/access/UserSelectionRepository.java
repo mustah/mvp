@@ -45,6 +45,7 @@ public class UserSelectionRepository implements UserSelections {
       .collect(toList());
   }
 
+  @Override
   public UserSelection save(UserSelection userSelection) {
     return UserSelectionEntityMapper.toDomainModel(userSelectionJpaRepository.save(
       UserSelectionEntityMapper.toEntity(userSelection)));

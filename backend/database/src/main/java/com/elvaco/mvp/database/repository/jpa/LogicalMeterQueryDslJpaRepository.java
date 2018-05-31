@@ -15,7 +15,6 @@ import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
-
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -107,6 +106,7 @@ public class LogicalMeterQueryDslJpaRepository
     return getPage(all, pageable, countQuery::fetchCount);
   }
 
+  @Override
   public Map<UUID, Long> findMeasurementCounts(Predicate predicate) {
     return createQuery(predicate)
       .select(MEASUREMENT)

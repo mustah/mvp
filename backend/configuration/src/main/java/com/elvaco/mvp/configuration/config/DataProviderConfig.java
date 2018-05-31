@@ -32,6 +32,7 @@ import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -68,6 +69,8 @@ class DataProviderConfig {
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
+  private final MapMarkerJpaRepository meterMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
 
   @Bean
   Users users() {
@@ -89,14 +92,17 @@ class DataProviderConfig {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       physicalMeterStatusLogJpaRepository,
-      measurementJpaRepository,
       new LogicalMeterSortingEntityMapper()
     );
   }
 
   @Bean
   Locations locations() {
-    return new LocationRepository(locationJpaRepository);
+    return new LocationRepository(
+      locationJpaRepository,
+      meterMapQueryDslJpaRepository,
+      gatewayMapQueryDslJpaRepository
+    );
   }
 
   @Bean

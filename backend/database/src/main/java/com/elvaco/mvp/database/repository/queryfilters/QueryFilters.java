@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static java.util.stream.Collectors.toList;
 
@@ -48,19 +47,6 @@ public abstract class QueryFilters {
 
   final <T> List<T> mapValues(Function<String, T> function, List<String> values) {
     return values.stream().map(function).collect(toList());
-  }
-
-  final Predicate applyOrPredicates(
-    Function<String, Predicate> predicateFunction,
-    List<String> propertyValues
-  ) {
-    // Multiple filters for the same property are OR'ed together
-    BooleanExpression predicate =
-      (BooleanExpression) predicateFunction.apply(propertyValues.get(0));
-    for (String value : propertyValues.subList(1, propertyValues.size())) {
-      predicate = predicate.or(predicateFunction.apply(value));
-    }
-    return predicate;
   }
 
   private Predicate applyAndPredicates(List<Predicate> predicates) {

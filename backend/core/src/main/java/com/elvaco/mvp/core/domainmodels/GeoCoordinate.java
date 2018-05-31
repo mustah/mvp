@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class GeoCoordinate {
 
-  private static final double HIGH_CONFIDENCE = 0.75;
+  public static final double HIGH_CONFIDENCE = 0.75;
 
   private final Double longitude;
   private final Double latitude;
