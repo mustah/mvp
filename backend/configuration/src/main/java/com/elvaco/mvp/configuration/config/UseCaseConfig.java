@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -14,6 +15,7 @@ import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
@@ -38,6 +40,7 @@ class UseCaseConfig {
   private final PhysicalMeters physicalMeters;
   private final TokenService tokenService;
   private final UserSelections userSelections;
+  private final Locations locations;
 
   @Bean
   SettingUseCases settingUseCases() {
@@ -85,5 +88,10 @@ class UseCaseConfig {
   @Bean
   UserSelectionUseCases selectionUseCases(AuthenticatedUser currentUser) {
     return new UserSelectionUseCases(currentUser, userSelections);
+  }
+
+  @Bean
+  MapUseCases mapUseCases(AuthenticatedUser currentUser) {
+    return new MapUseCases(currentUser, locations);
   }
 }
