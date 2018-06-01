@@ -1,11 +1,11 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.util.List;
+import java.util.Set;
 
 import com.elvaco.mvp.core.domainmodels.MapMarker;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface MapMarkerJpaRepository {
 
-  List<MapMarker> findAllMapMarkers(RequestParameters parameters);
+  Set<MapMarker> findAllMapMarkers(RequestParameters parameters);
 }

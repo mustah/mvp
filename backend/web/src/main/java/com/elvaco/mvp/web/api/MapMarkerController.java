@@ -1,6 +1,6 @@
 package com.elvaco.mvp.web.api;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -56,7 +56,7 @@ public class MapMarkerController {
       : ResponseEntity.ok(mapMarker);
   }
 
-  private static MapMarkersDto toMapMarkersDto(List<MapMarker> mapMarkers) {
+  private static MapMarkersDto toMapMarkersDto(Set<MapMarker> mapMarkers) {
     return new MapMarkersDto(
       mapMarkers
         .stream()

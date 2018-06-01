@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
@@ -17,7 +17,7 @@ import org.hibernate.envers.Audited;
 @Table(name = "location")
 @Access(AccessType.FIELD)
 @Audited
-public class LocationEntity extends EntityType<UUID> {
+public class LocationEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = -6244183552379157552L;
 

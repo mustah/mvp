@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
@@ -46,20 +47,23 @@ class MeterMapQueryDslJpaRepository
   }
 
   @Override
-  public List<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    return createQuery(toPredicate(parameters))
-      .select(Projections.constructor(
-        MapMarker.class,
-        LOCATION.logicalMeterId,
-        STATUS_LOG.status,
-        LOCATION.latitude,
-        LOCATION.longitude
-      ))
-      .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .innerJoin(LOGICAL_METER.location, LOCATION)
-      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-      .fetch();
+  public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
+    return new HashSet<>(
+      createQuery(toPredicate(parameters))
+        .select(Projections.constructor(
+          MapMarker.class,
+          LOCATION.logicalMeterId,
+          STATUS_LOG.status,
+          LOCATION.latitude,
+          LOCATION.longitude
+        ))
+        .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+        .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+        .innerJoin(LOGICAL_METER.location, LOCATION)
+        .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
+        .distinct()
+        .fetch()
+    );
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {

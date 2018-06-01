@@ -10,8 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
-import com.elvaco.mvp.database.entity.EntityType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
@@ -22,7 +22,7 @@ import org.hibernate.envers.Audited;
 @Access(AccessType.FIELD)
 @Table(name = "quantity")
 @Audited
-public class QuantityEntity extends EntityType<Long> {
+public class QuantityEntity extends IdentifiableType<Long> {
 
   private static final long serialVersionUID = -8628799320716504900L;
 

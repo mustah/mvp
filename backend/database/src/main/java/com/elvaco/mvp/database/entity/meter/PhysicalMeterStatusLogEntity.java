@@ -15,8 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.database.entity.EntityType;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -27,7 +27,7 @@ import lombok.ToString;
 @Table(name = "physical_meter_status_log",
   uniqueConstraints = @UniqueConstraint(columnNames = {"physicalMeterId", "start", "status"})
 )
-public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
+public class PhysicalMeterStatusLogEntity extends IdentifiableType<Long> {
 
   private static final long serialVersionUID = -365050103321687201L;
 

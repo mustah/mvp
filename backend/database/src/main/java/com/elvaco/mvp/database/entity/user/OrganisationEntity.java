@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
 
@@ -21,7 +21,7 @@ import static java.util.Collections.emptySet;
 @Access(AccessType.FIELD)
 @Table(name = "organisation")
 @Audited
-public class OrganisationEntity extends EntityType<UUID> {
+public class OrganisationEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = -2369738291498443749L;
 

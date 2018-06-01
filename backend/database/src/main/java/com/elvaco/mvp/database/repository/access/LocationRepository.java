@@ -1,7 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
@@ -37,12 +37,12 @@ public class LocationRepository implements Locations {
   }
 
   @Override
-  public List<MapMarker> findAllMeterMapMarkers(RequestParameters parameters) {
+  public Set<MapMarker> findAllMeterMapMarkers(RequestParameters parameters) {
     return meterMapQueryDslJpaRepository.findAllMapMarkers(parameters);
   }
 
   @Override
-  public List<MapMarker> findAllGatewayMapMarkers(RequestParameters parameters) {
+  public Set<MapMarker> findAllGatewayMapMarkers(RequestParameters parameters) {
     return gatewayMapQueryDslJpaRepository.findAllMapMarkers(parameters);
   }
 }
