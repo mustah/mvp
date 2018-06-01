@@ -30,9 +30,9 @@ import {
   domainModelsPutSuccess,
   domainModelsRequest,
 } from './domainModelsActions';
+import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {User} from './user/userModels';
-import {MeterDetails} from './meter-details/meterDetailsModels';
 
 export const initialDomain = <T extends Identifiable>(): NormalizedState<T> => ({
   result: [],

@@ -11,7 +11,6 @@ import {ParameterName} from '../../user-selection/userSelectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {
   deleteRequestOf,
-  domainModelsGetEntitySuccess,
   domainModelsGetSuccess,
   getEntityRequestOf,
   getRequestOf,
@@ -307,26 +306,6 @@ describe('domainModelsReducer', () => {
       });
     });
 
-    it('handles null payload', () => {
-      const emptyState: NormalizedState<MapMarker> = {
-        ...initialDomain<MapMarker>(),
-      };
-
-      const meterMapMarkerAction: Action<Partial<MapMarker>> = {
-        type: domainModelsGetEntitySuccess(EndPoints.meterMapMarkers),
-        payload: {
-          id: 1,
-        },
-      };
-
-      expect(meterMapMarkers(emptyState, meterMapMarkerAction)).toEqual({
-        result: [1],
-        entities: {1: {id: 1}},
-        isFetching: false,
-        isSuccessfullyFetched: false,
-        total: 1,
-      });
-    });
   });
 
   describe('clear domainModels', () => {

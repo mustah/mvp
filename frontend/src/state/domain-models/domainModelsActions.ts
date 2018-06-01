@@ -5,7 +5,14 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../services/restClient';
-import {emptyActionOf, ErrorResponse, Identifiable, payloadActionOf, uuid} from '../../types/Types';
+import {
+  emptyActionOf,
+  EncodedUriParameters,
+  ErrorResponse,
+  Identifiable,
+  payloadActionOf,
+  uuid,
+} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, responseMessageOrFallback} from '../api/apiActions';
 import {DomainModelsState, Normalized, NormalizedState, RequestType} from './domainModels';
@@ -50,7 +57,7 @@ interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, Reques
 
 // TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same
 // try-catch?
-const asyncRequest = async <REQUEST_MODEL, DATA>(
+export const asyncRequest = async <REQUEST_MODEL, DATA>(
   {
     request,
     success,
@@ -124,12 +131,12 @@ export const fetchEntityIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
   entityType: keyof DomainModelsState,
 ) =>
-  (id: uuid) =>
+  (id: uuid, parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
       const {domainModels} = getState();
       if (shouldFetchEntity(id, domainModels[entityType])) {
-        const requestFunc = (requestData: uuid) =>
-          restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
+        const requestFunc = (id: uuid) =>
+          restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(id.toString())}`, parameters));
         return asyncRequest<uuid, T>({
           ...getEntityRequestOf<T>(endPoint),
           formatData: (data?: any) => data || ({id}),

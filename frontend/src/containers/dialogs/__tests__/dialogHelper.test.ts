@@ -142,8 +142,6 @@ describe('dialogHelper', () => {
             longitude: 13.39741,
           },
         },
-        flags: [],
-        flagged: false,
         medium: 'District heating',
         manufacturer: 'ELV',
         statusChanged: '2018-04-04 12:05:23',
@@ -159,7 +157,6 @@ describe('dialogHelper', () => {
             start: '2018-04-04 12:05:23',
           },
         ],
-        created: '2018-03-27 12:05:19',
         status: {
           id: 'active',
           name: 'active',
@@ -198,6 +195,7 @@ describe('dialogHelper', () => {
             name: 'unknown',
           },
         },
+        gatewaySerial: '29836b65-4682-4526-90b2-9d9b7a31f45c',
         organisationId: '',
       };
 
@@ -228,8 +226,6 @@ describe('dialogHelper', () => {
             longitude: 13.39741,
           },
         },
-        flags: [],
-        flagged: false,
         medium: 'District heating',
         manufacturer: 'ELV',
         statusChanged: '2018-04-04 12:05:23',
@@ -245,7 +241,6 @@ describe('dialogHelper', () => {
             start: '2018-04-04 12:05:23',
           },
         ],
-        created: '2018-03-27 12:05:19',
         status: {
           id: 'active',
           name: 'active',
@@ -262,6 +257,7 @@ describe('dialogHelper', () => {
             name: 'unknown',
           },
         },
+        gatewaySerial: '29836b65-4682-4526-90b2-9d9b7a31f45c',
         organisationId: '',
       };
 
@@ -292,8 +288,6 @@ describe('dialogHelper', () => {
             longitude: 13.39741,
           },
         },
-        flags: [],
-        flagged: false,
         medium: 'District heating',
         manufacturer: 'ELV',
         statusChanged: '2018-04-04 12:05:23',
@@ -309,7 +303,6 @@ describe('dialogHelper', () => {
             start: '2018-04-04 12:05:23',
           },
         ],
-        created: '2018-03-27 12:05:19',
         status: {
           id: 'active',
           name: 'active',
@@ -376,6 +369,7 @@ describe('dialogHelper', () => {
             name: 'unknown',
           },
         },
+        gatewaySerial: '29836b65-4682-4526-90b2-9d9b7a31f45c',
         organisationId: '',
       };
 

@@ -1,18 +1,14 @@
 import {Identifiable, IdNamed, uuid} from '../../../types/Types';
-import {LocationHolder} from '../location/locationModels';
-import {Flag} from '../flag/flagModels';
-import {Measurement} from '../../ui/graph/measurement/measurementModels';
-import {MeterStatusChangelog} from '../../domain-models-paginated/meter/meterModels';
 import {GatewayMandatory} from '../../domain-models-paginated/gateway/gatewayModels';
+import {MeterStatusChangelog} from '../../domain-models-paginated/meter/meterModels';
+import {Measurement} from '../../ui/graph/measurement/measurementModels';
+import {LocationHolder} from '../location/locationModels';
 
 export interface MeterDetails extends Identifiable, LocationHolder {
   address?: string;
-  created: string;
   collectionPercentage?: number;
   readIntervalMinutes?: number;
   facility: uuid;
-  flags: Flag[];
-  flagged: boolean;
   medium: string;
   manufacturer: string;
   measurements: Measurement[];
@@ -21,5 +17,6 @@ export interface MeterDetails extends Identifiable, LocationHolder {
   date?: string;
   status: IdNamed;
   gateway: GatewayMandatory;
+  gatewaySerial: string;
   organisationId: uuid;
 }
