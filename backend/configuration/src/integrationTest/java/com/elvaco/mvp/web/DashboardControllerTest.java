@@ -24,15 +24,14 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetType;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.ACTIVE;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,16 +56,22 @@ public class DashboardControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
-  @Before
-  public void setUp() {
+  @After
+  public void tearDown() {
+    measurementJpaRepository.deleteAll();
+    physicalMeterStatusLogJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
+  }
+
+  @Test
+  public void findAllWithCollectionStatusNoPeriods() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
       startDate
     );
 
-    List<PhysicalMeterEntity> physicalMeters = asList(
-      newPhysicalMeterEntity(logicalMeter.id, 1440),
-      newPhysicalMeterEntity(logicalMeter.id, 1440),
+    List<PhysicalMeterEntity> physicalMeters = singletonList(
       newPhysicalMeterEntity(logicalMeter.id, 1440)
     );
 
@@ -81,22 +86,11 @@ public class DashboardControllerTest extends IntegrationTest {
       startDate,
       Duration.between(startDate, beforeDate).toDays()
     );
-  }
 
-  @After
-  public void tearDown() {
-    measurementJpaRepository.deleteAll();
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
-  }
-
-  @Test
-  public void findAllWithCollectionStatusNoPeriods() {
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
         "/dashboards/current"
-          + "?status=active",
+        + "?status=active",
         DashboardDto.class
       );
 
@@ -111,12 +105,33 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatus() {
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
+      MeterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      startDate
+    );
+
+    List<PhysicalMeterEntity> physicalMeters = singletonList(
+      newPhysicalMeterEntity(logicalMeter.id, 1440)
+    );
+
+    newStatusLogs(
+      physicalMeters,
+      startDate,
+      ACTIVE
+    );
+
+    createMeasurementMockData(
+      physicalMeters,
+      startDate,
+      Duration.between(startDate, beforeDate).toDays()
+    );
+
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
         "/dashboards/current"
-          + "?after=" + startDate
-          + "&before=" + beforeDate
-          + "&status=active",
+        + "?after=" + startDate
+        + "&before=" + beforeDate
+        + "&status=active",
         DashboardDto.class
       );
 
@@ -182,7 +197,7 @@ public class DashboardControllerTest extends IntegrationTest {
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
 
     for (int x = 0; x < values; x++) {
-      if (random.nextInt(10) >= 8) {
+      if (x % 2 == 0) {
         measurementFailedCount += NUM_QUANTITIES;
         continue;
       }

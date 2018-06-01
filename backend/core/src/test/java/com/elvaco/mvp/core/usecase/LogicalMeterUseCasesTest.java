@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -253,9 +254,15 @@ public class LogicalMeterUseCasesTest {
       meterId,
       "meter-" + meterId,
       organisationId,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    );
+          null,
+      0L, null
+        );
   }
 
   private AuthenticatedUser newAuthenticatedUser(List<Role> roles) {

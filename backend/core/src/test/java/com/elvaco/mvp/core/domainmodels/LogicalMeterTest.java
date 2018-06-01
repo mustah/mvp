@@ -13,7 +13,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterTest {
 
@@ -195,52 +194,6 @@ public class LogicalMeterTest {
   }
 
   @Test
-  public void collectionPercentageNaNisNull() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
-      .withCollectionPercentage(Double.NaN);
-
-    assertThat(meter.collectionPercentage).isNull();
-  }
-
-  @Test
-  public void collectionPercentageNullisNull() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
-      .withCollectionPercentage(null);
-
-    assertThat(meter.collectionPercentage).isNull();
-  }
-
-  @Test
-  public void collectionPercentageIsSet() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
-      .withCollectionPercentage(0.5);
-
-    assertThat(meter.collectionPercentage).isEqualTo(0.5);
-  }
-
-  @Test
-  public void collectionPercentageCannotBeLessThanZero() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
-
-    assertThatThrownBy(() -> meter.withCollectionPercentage(-2.0))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage(
-        "Collection percentage must be >= 0 and <= 100, "
-        + "but was: -2.0 for logical meter '" + meter.id + "'");
-  }
-
-  @Test
-  public void collectionPercentageCannotBeGreaterThanOneHundred() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
-
-    assertThatThrownBy(() -> meter.withCollectionPercentage(100.1))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage(
-        "Collection percentage must be >= 0 and <= 100, "
-        + "but was: 100.1 for logical meter '" + meter.id + "'");
-  }
-
-  @Test
   public void currentStatus_explicitlySetStatusIsPreferred() {
     LogicalMeter meter = newLogicalMeterWithStatuses(new StatusLogEntry<>(
       randomUUID(),
@@ -305,6 +258,80 @@ public class LogicalMeterTest {
     assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
   }
 
+  @Test
+  public void getCollectionStats_noneExpected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      null, null
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.actual).isEqualTo(0L);
+    assertThat(collectionStats.expected).isEqualTo(0L);
+  }
+
+  @Test
+  public void getCollectionStats_oneExpected_zeroCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      1L,
+      0L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.0);
+    assertThat(collectionStats.actual).isEqualTo(0.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionStats_oneExpected_allCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      1L,
+      1L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionStats_SevenExpected_allCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      7L,
+      7L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
+    assertThat(collectionStats.actual).isEqualTo(7.0);
+    assertThat(collectionStats.expected).isEqualTo(7.0);
+  }
+
+  @Test
+  public void getCollectionStats_sevenExpected_threeCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      7L,
+      3L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.expected).isEqualTo(7.0);
+    assertThat(collectionStats.actual).isEqualTo(3.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(42.857142857142854);
+  }
+
+  @Test
+  public void getCollectionStats_noneExpectedOneReceived() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(0L, 1L);
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.expected).isEqualTo(0.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
   private StatusLogEntry<UUID> newStatusLog(
     StatusType statusType,
     ZonedDateTime startTime,
@@ -334,7 +361,6 @@ public class LogicalMeterTest {
       .externalId("an-external-id")
       .medium("Hot water")
       .manufacturer(manufacturer)
-      .measurementCount(0L)
       .statuses(emptyList())
       .build();
   }
@@ -349,8 +375,14 @@ public class LogicalMeterTest {
       "an-external-id",
       organisationId,
       MeterDefinition.HOT_WATER_METER,
+      ZonedDateTime.now(),
+      physicalMeterList,
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-      physicalMeterList
+      null,
+      null,
+      null
     );
   }
 
@@ -365,6 +397,26 @@ public class LogicalMeterTest {
       organisationId,
       meterDefinition,
       UNKNOWN_LOCATION
+    );
+  }
+
+  private LogicalMeter newLogicalMeterWithExpectedAndActual(
+    Long expectedMeasurementCount,
+    Long actualMeasurementCount
+  ) {
+    return new LogicalMeter(
+      randomUUID(),
+      "an-external-id",
+      randomUUID(),
+      MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
+      UNKNOWN_LOCATION,
+      expectedMeasurementCount,
+      actualMeasurementCount,
+      null
     );
   }
 
@@ -388,7 +440,6 @@ public class LogicalMeterTest {
       "ELV",
       logicalMeterId,
       60L,
-      0L,
       physicalMeterStatuses
     );
 
@@ -402,6 +453,7 @@ public class LogicalMeterTest {
       emptyList(),
       emptyList(),
       UNKNOWN_LOCATION,
+      null,
       null,
       explicitStatus
     );

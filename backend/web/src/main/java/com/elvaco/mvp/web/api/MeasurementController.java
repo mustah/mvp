@@ -105,7 +105,8 @@ public class MeasurementController {
   public List<MeasurementSeriesDto> measurements(
     @RequestParam List<UUID> meters,
     @RequestParam(name = "quantities") Optional<List<String>> quantityUnits,
-    @RequestParam(defaultValue = "1970-01-01T00:00:00Z") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(defaultValue = "1970-01-01T00:00:00Z") @DateTimeFormat(iso = DATE_TIME)
+      ZonedDateTime after,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution
   ) {

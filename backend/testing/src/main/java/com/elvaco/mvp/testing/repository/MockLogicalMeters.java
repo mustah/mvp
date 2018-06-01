@@ -101,7 +101,8 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       emptyList(),
       entity.latestReadouts,
       entity.location,
-      entity.getCollectionPercentage().orElse(null),
+      entity.expectedMeasurementCount,
+      entity.actualMeasurementCount,
       entity.currentStatus
     );
   }
@@ -122,7 +123,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   private Predicate<LogicalMeter> isWithinOrganisation(RequestParameters parameters) {
     return logicalMeter ->
       !parameters.hasName("organisation")
-        || Objects.equals(
+      || Objects.equals(
         parameters.getFirst("organisation"),
         logicalMeter.organisationId.toString()
       );

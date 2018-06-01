@@ -412,7 +412,7 @@ public class GatewayControllerTest extends IntegrationTest {
       emptyList(),
       location,
       null,
-      null
+      0L, null
     );
   }
 

@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,9 +52,15 @@ public class GeocodeControllerTest extends IntegrationTest {
       logicalMeterId,
       "test-123",
       context().getOrganisationId(),
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     GeoResponseDto geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -78,9 +86,15 @@ public class GeocodeControllerTest extends IntegrationTest {
       logicalMeterId,
       "test-123",
       context().getOrganisationId(),
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     GeoResponseDto geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -113,9 +127,15 @@ public class GeocodeControllerTest extends IntegrationTest {
       logicalMeterId,
       "test-123",
       context().getOrganisationId(),
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     GeoResponseDto geoResponse = new GeoResponseDto(
       new AddressDto(

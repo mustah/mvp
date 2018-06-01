@@ -33,17 +33,12 @@ public class PhysicalMeter implements Identifiable<UUID> {
   @Nullable
   public final UUID logicalMeterId;
   public final long readIntervalMinutes;
-  public final Long measurementCount;
   @Singular
   public List<StatusLogEntry<UUID>> statuses;
 
   @Override
   public UUID getId() {
     return id;
-  }
-
-  public long getMeasurementCountOrZero() {
-    return measurementCount != null ? measurementCount : 0;
   }
 
   public PhysicalMeter withMedium(String medium) {
@@ -56,7 +51,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount,
       statuses
     );
   }
@@ -71,7 +65,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount,
       statuses
     );
   }
@@ -86,7 +79,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount,
       statuses
     );
   }
@@ -101,7 +93,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes != null ? readIntervalMinutes : this.readIntervalMinutes,
-      measurementCount,
       statuses
     );
   }
@@ -129,7 +120,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount,
       unmodifiableList(newStatuses)
     );
   }

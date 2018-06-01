@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
@@ -35,7 +36,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -166,14 +166,34 @@ public class LogicalMeterRepository implements LogicalMeters {
       getStatusesGroupedByPhysicalMeterId(getStatusesForMeters(parameters));
 
     Map<UUID, Long> meterCounts = getCountForMetersWithinPeriod(parameters);
+    if (!parameters.hasName("after") || !parameters.hasName("before")) {
+      return meters.stream().map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
+        logicalMeterEntity,
+        mappedStatuses,
+        null,
+        null
+      )).collect(toList());
+    }
 
     return meters
       .stream()
-      .map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
-        logicalMeterEntity,
-        mappedStatuses,
-        meterCounts
-      ))
+      .map(logicalMeterEntity -> {
+        Long expectedMeasurementCount = (long) LogicalMeterHelper
+          .calculateExpectedReadOuts(
+            logicalMeterEntity.physicalMeters.stream()
+              .findFirst()
+              .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
+              .orElse(0L),
+            ZonedDateTime.parse(parameters.getFirst("after")),
+            ZonedDateTime.parse(parameters.getFirst("before"))
+          ) * logicalMeterEntity.meterDefinition.quantities.size();
+        return LogicalMeterEntityMapper.toDomainModel(
+          logicalMeterEntity,
+          mappedStatuses,
+          expectedMeasurementCount,
+          meterCounts.getOrDefault(logicalMeterEntity.id, 0L)
+        );
+      })
       .collect(toList());
   }
 

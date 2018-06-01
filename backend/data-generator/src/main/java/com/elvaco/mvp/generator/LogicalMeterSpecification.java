@@ -106,11 +106,11 @@ class LogicalMeterSpecification {
       logicalMeterId,
       externalId,
       organisation.id,
-      Location.UNKNOWN_LOCATION,
+      meterDefinition,
       measurements.get(0).created,
       singletonList(physicalMeter),
-      meterDefinition,
-      singletonList(gateway)
+      singletonList(gateway),
+      Location.UNKNOWN_LOCATION
     ), measurements, physicalMeter, gateway);
   }
 

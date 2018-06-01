@@ -17,11 +17,9 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class LogicalMeterUseCases {
@@ -31,10 +29,7 @@ public class LogicalMeterUseCases {
   private final Measurements measurements;
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
-      .stream()
-      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
-      .collect(toList());
+    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
   }
 
   public Page<LogicalMeter> findAll(
@@ -120,24 +115,6 @@ public class LogicalMeterUseCases {
     }
 
     return logicalMeter.withMeasurements(latestMeasurements);
-  }
-
-  private LogicalMeter withCollectionPercentage(
-    LogicalMeter logicalMeter,
-    RequestParameters parameters
-  ) {
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
-      return logicalMeter;
-    }
-
-    return logicalMeter.withCollectionPercentage(
-      LogicalMeterHelper.getCollectionPercent(
-        logicalMeter.physicalMeters,
-        ZonedDateTime.parse(parameters.getFirst("after")),
-        ZonedDateTime.parse(parameters.getFirst("before")),
-        logicalMeter.meterDefinition.quantities.size()
-      ).getCollectionPercentage()
-    );
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

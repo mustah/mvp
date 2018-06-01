@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.SelectionTree;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.AddressDto;
@@ -15,6 +16,7 @@ import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -205,9 +207,15 @@ public class SelectionTreeDtoMapperTest {
       id,
       extId,
       randomUUID(),
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       location,
-      ZonedDateTime.now()
-    );
+          null,
+      0L, null
+        );
   }
 
   private static LogicalMeter newLogicalMeter(

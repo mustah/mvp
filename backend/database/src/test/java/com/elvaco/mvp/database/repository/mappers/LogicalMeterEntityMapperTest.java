@@ -36,7 +36,7 @@ public class LogicalMeterEntityMapperTest {
       "an-external-id",
       randomUUID(),
       MeterDefinition.DISTRICT_HEATING_METER,
-      UNKNOWN_LOCATION,
+      ZonedDateTime.now(),
       singletonList(PhysicalMeter.builder()
         .organisation(ELVACO)
         .address("1234")
@@ -44,7 +44,13 @@ public class LogicalMeterEntityMapperTest {
         .medium("My medium")
         .manufacturer("ELV")
         .readIntervalMinutes(15)
-        .build())
+        .build()),
+      emptyList(),
+      emptyList(),
+      UNKNOWN_LOCATION,
+      null,
+      null,
+      null
     );
 
     LogicalMeterEntity logicalMeterEntity = LogicalMeterEntityMapper.toEntity(logicalMeter);
@@ -84,9 +90,6 @@ public class LogicalMeterEntityMapperTest {
         meterId,
         "an-external-id",
         organisationId,
-        expectedLocation,
-        created,
-        emptyList(),
         new MeterDefinition(
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "speed-o-meter",
@@ -96,8 +99,7 @@ public class LogicalMeterEntityMapperTest {
             new QuantityPresentationInformation("mps", SeriesDisplayMode.READOUT)
           )),
           false
-        ),
-        emptyList()
+        ), created, emptyList(), emptyList(), expectedLocation
       )
     );
   }
@@ -125,9 +127,6 @@ public class LogicalMeterEntityMapperTest {
         meterId,
         "an-external-id",
         organisationId,
-        UNKNOWN_LOCATION,
-        created,
-        emptyList(),
         new MeterDefinition(
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "My energy meter",
@@ -137,8 +136,7 @@ public class LogicalMeterEntityMapperTest {
             new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
           )),
           false
-        ),
-        emptyList()
+        ), created, emptyList(), emptyList(), UNKNOWN_LOCATION
       )
     );
   }
@@ -162,13 +160,6 @@ public class LogicalMeterEntityMapperTest {
         meterId,
         "an-external-id",
         randomUUID(),
-        new LocationBuilder()
-          .latitude(3.1)
-          .longitude(2.1)
-          .confidence(1.0)
-          .build(),
-        created,
-        emptyList(),
         new MeterDefinition(
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "Energy meter",
@@ -178,8 +169,11 @@ public class LogicalMeterEntityMapperTest {
             new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
           )),
           false
-        ),
-        emptyList()
+        ), created, emptyList(), emptyList(), new LocationBuilder()
+        .latitude(3.1)
+        .longitude(2.1)
+        .confidence(1.0)
+        .build()
       ));
 
     LocationEntity location = logicalMeterEntity.location;

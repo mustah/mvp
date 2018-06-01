@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -35,6 +36,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -278,9 +280,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       "external-1234",
       context().getOrganisationId2(),
+          MeterDefinition.UNKNOWN_METER,
+      NOW,
+          emptyList(),
+          emptyList(),
+          emptyList(),
       location.build(),
-      NOW
-    ).withGateway(gateway));
+          null,
+      0L, null
+        ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
       .get("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkersDto.class);
@@ -309,9 +317,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       "external-1234",
       context().getOrganisationId2(),
+          MeterDefinition.UNKNOWN_METER,
+      NOW,
+          emptyList(),
+          emptyList(),
+          emptyList(),
       new LocationBuilder().build(),
-      NOW
-    ).withGateway(gateway));
+          null,
+      0L, null
+        ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways?city=unknown,unknown", MapMarkersDto.class);
@@ -328,9 +342,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       "external-1234",
       context().getOrganisationId2(),
+          MeterDefinition.UNKNOWN_METER,
+      NOW,
+          emptyList(),
+          emptyList(),
+          emptyList(),
       lowConfidenceLocation(),
-      NOW
-    ).withGateway(gateway));
+          null,
+      0L, null
+        ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
@@ -365,9 +385,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       randomUUID().toString(),
       context().getOrganisationId(),
+          MeterDefinition.UNKNOWN_METER,
+      NOW,
+          emptyList(),
+          emptyList(),
+          emptyList(),
       location,
-      NOW
-    ).withGateway(gateway));
+          null,
+      0L, null
+        ).withGateway(gateway));
   }
 
   private LogicalMeter saveLogicalMeterWith(Location location, User user) {
@@ -375,9 +401,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       randomUUID().toString(),
       user.organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      NOW,
+          emptyList(),
+          emptyList(),
+          emptyList(),
       location,
-      NOW
-    );
+          null,
+      0L, null
+        );
     return logicalMeters.save(logicalMeter);
   }
 
@@ -387,9 +419,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       randomUUID().toString(),
       user.organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      NOW,
+          emptyList(),
+          emptyList(),
+          emptyList(),
       location,
-      NOW
-    );
+          null,
+      0L, null
+        );
 
     logicalMeter = logicalMeters.save(logicalMeter);
     savePhysicalMeterWith(logicalMeter, status);

@@ -169,7 +169,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         context().getOrganisationId(),
         MeterDefinition.GAS_METER, now, emptyList(), emptyList(), emptyList(), UNKNOWN_LOCATION,
         null,
-        null
+        0L, null
       )
     );
 
@@ -386,7 +386,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         emptyList(),
         UNKNOWN_LOCATION,
         null,
-        null
+        0L, null
       )
     );
 
@@ -592,7 +592,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "manufacturer",
         logicalMeter.id,
         0,
-        0L,
         emptyList()
       )
     );
@@ -623,7 +622,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "manufacturer",
         logicalMeter.id,
         0,
-        0L,
         emptyList()
       )
     );
@@ -792,7 +790,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void pagedMeterStatusIsUnknownWhenNoActiveStatus() {
-    LogicalMeter meter = createLogicalMeter();
+    createLogicalMeter();
 
     PagedLogicalMeterDto pagedMeter = asTestUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
@@ -1347,7 +1345,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      new HashSet<>(asList(Quantity.VOLUME)),
+      new HashSet<>(singletonList(Quantity.VOLUME)),
       date,
       Duration.ofHours(1),
       60L,
@@ -1387,7 +1385,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      new HashSet<>(asList(Quantity.VOLUME)),
+      new HashSet<>(singletonList(Quantity.VOLUME)),
       date,
       Duration.ofHours(1),
       60L,
@@ -1417,7 +1415,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      new HashSet<>(asList(Quantity.VOLUME)),
+      new HashSet<>(singletonList(Quantity.VOLUME)),
       date,
       Duration.ofDays(1),
       60L,
@@ -1460,7 +1458,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       emptyList(),
       UNKNOWN_LOCATION,
       null,
-      null
+      0L, null
     ));
 
     JsonNode logicalMeterJson = asTestUser()

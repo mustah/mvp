@@ -29,10 +29,13 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final UUID organisationId;
   public final MeterDefinition meterDefinition;
   public final List<Gateway> gateways;
-  public final Double collectionPercentage;
   public final List<Measurement> latestReadouts;
   @Nullable
   public final StatusLogEntry<UUID> currentStatus;
+  @Nullable
+  public final Long expectedMeasurementCount;
+  @Nullable
+  public final Long actualMeasurementCount;
 
   public LogicalMeter(
     UUID id,
@@ -41,8 +44,11 @@ public class LogicalMeter implements Identifiable<UUID> {
     MeterDefinition meterDefinition,
     ZonedDateTime created,
     List<PhysicalMeter> physicalMeters,
-    List<Gateway> gateways, List<Measurement> latestReadouts, Location location,
-    @Nullable Double collectionPercentage,
+    List<Gateway> gateways,
+    List<Measurement> latestReadouts,
+    Location location,
+    @Nullable Long expectedMeasurementCount,
+    @Nullable Long actualMeasurementCount,
     @Nullable StatusLogEntry<UUID> status
   ) {
     this.id = id;
@@ -53,20 +59,9 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.physicalMeters = unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
     this.gateways = unmodifiableList(gateways);
-
-    if (collectionPercentage != null
-        && (collectionPercentage < 0.0 || collectionPercentage > 100.0)) {
-      throw new IllegalArgumentException(String.format(
-        "Collection percentage must be >= 0 and <= 100, but was: %s for logical meter '%s'",
-        collectionPercentage,
-        id
-      ));
-    }
-
-    this.collectionPercentage = Optional.ofNullable(collectionPercentage)
-      .filter(percentage -> !percentage.isNaN())
-      .orElse(null);
     this.latestReadouts = latestReadouts;
+    this.expectedMeasurementCount = expectedMeasurementCount;
+    this.actualMeasurementCount = actualMeasurementCount;
     this.currentStatus = status;
   }
 
@@ -74,17 +69,23 @@ public class LogicalMeter implements Identifiable<UUID> {
     UUID id,
     String externalId,
     UUID organisationId,
-    Location location,
+    MeterDefinition meterDefinition,
     ZonedDateTime created,
     List<PhysicalMeter> physicalMeters,
-    MeterDefinition meterDefinition,
-    List<Gateway> gateways
+    List<Gateway> gateways,
+    Location location
   ) {
     this(
       id,
       externalId,
       organisationId,
-      meterDefinition, created, physicalMeters, gateways, emptyList(), location,
+      meterDefinition,
+      created,
+      physicalMeters,
+      gateways,
+      emptyList(),
+      location,
+      null,
       null,
       null
     );
@@ -97,39 +98,17 @@ public class LogicalMeter implements Identifiable<UUID> {
     MeterDefinition meterDefinition,
     Location location
   ) {
-    this(id, externalId, organisationId, meterDefinition, location, emptyList());
-  }
-
-  public LogicalMeter(
-    UUID id,
-    String externalId,
-    UUID organisationId,
-    MeterDefinition meterDefinition,
-    Location location,
-    List<PhysicalMeter> physicalMeters
-  ) {
     this(
       id,
       externalId,
       organisationId,
-      meterDefinition, ZonedDateTime.now(), physicalMeters, emptyList(), emptyList(), location,
+      meterDefinition,
+      ZonedDateTime.now(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
+      location,
       null,
-      null
-    );
-  }
-
-  public LogicalMeter(
-    UUID id,
-    String externalId,
-    UUID organisationId,
-    Location location,
-    ZonedDateTime created
-  ) {
-    this(
-      id,
-      externalId,
-      organisationId,
-      MeterDefinition.UNKNOWN_METER, created, emptyList(), emptyList(), emptyList(), location,
       null,
       null
     );
@@ -158,8 +137,14 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      meterDefinition, creationTime, physicalMeters, gateways, latestReadouts, location,
-      collectionPercentage,
+      meterDefinition,
+      creationTime,
+      physicalMeters,
+      gateways,
+      latestReadouts,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
       currentStatus
     );
   }
@@ -169,8 +154,14 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      meterDefinition, created, physicalMeters, gateways, latestReadouts, location,
-      collectionPercentage,
+      meterDefinition,
+      created,
+      physicalMeters,
+      gateways,
+      latestReadouts,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
       currentStatus
     );
   }
@@ -184,8 +175,14 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      meterDefinition, created, newPhysicalMeters, gateways, latestReadouts, location,
-      collectionPercentage,
+      meterDefinition,
+      created,
+      newPhysicalMeters,
+      gateways,
+      latestReadouts,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
       currentStatus
     );
   }
@@ -195,21 +192,14 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      meterDefinition, created, physicalMeters, singletonList(gateway), latestReadouts, location,
-      collectionPercentage,
-      currentStatus
-    );
-  }
-
-  public LogicalMeter withCollectionPercentage(
-    @Nullable Double collectionPercentage
-  ) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition, created, physicalMeters, gateways, latestReadouts, location,
-      collectionPercentage,
+      meterDefinition,
+      created,
+      physicalMeters,
+      singletonList(gateway),
+      latestReadouts,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
       currentStatus
     );
   }
@@ -221,8 +211,14 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      meterDefinition, created, physicalMeters, gateways, measurements, location,
-      collectionPercentage,
+      meterDefinition,
+      created,
+      physicalMeters,
+      gateways,
+      measurements,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
       currentStatus
     );
   }
@@ -232,14 +228,34 @@ public class LogicalMeter implements Identifiable<UUID> {
       id,
       externalId,
       organisationId,
-      meterDefinition, created, physicalMeters, gateways, latestReadouts, location,
-      collectionPercentage,
+      meterDefinition,
+      created,
+      physicalMeters,
+      gateways,
+      latestReadouts,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
       currentStatus
     );
   }
 
   public Optional<Double> getCollectionPercentage() {
-    return Optional.ofNullable(collectionPercentage);
+    Double collectionPercentage = getCollectionStats().getCollectionPercentage();
+
+    if (collectionPercentage.isNaN()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(collectionPercentage);
+  }
+
+  public CollectionStats getCollectionStats() {
+
+    return new CollectionStats(
+      actualMeasurementCount == null ? 0L : actualMeasurementCount,
+      expectedMeasurementCount == null ? 0L : expectedMeasurementCount
+    );
   }
 
   public String getMedium() {

@@ -35,13 +35,13 @@ public interface LogicalMeterJpaRepository {
 
   Optional<LogicalMeterEntity> findOneBy(UUID organisationId, String externalId);
 
+  Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters);
+
   MeterSummary summary(RequestParameters parameters, Predicate predicate);
 
   void deleteAll();
 
   void delete(UUID id, UUID organisationId);
 
-  Map<UUID,Long> findMeasurementCounts(Predicate predicate);
-
-  Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters);
+  Map<UUID, Long> findMeasurementCounts(Predicate predicate);
 }

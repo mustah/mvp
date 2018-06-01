@@ -170,9 +170,15 @@ public class MeteringMeasurementMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     messageConsumer.accept(newMeasurementMessage("Wattage", "W", 1.0));
     messageConsumer.accept(newMeasurementMessage("Wattage", "W", 2.0));
@@ -189,9 +195,15 @@ public class MeteringMeasurementMessageConsumerTest {
       randomUUID(),
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
@@ -231,9 +243,15 @@ public class MeteringMeasurementMessageConsumerTest {
       randomUUID(),
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     messageConsumer.accept(newMeasurementMessage("Wattage", "W", 1.0));
     messageConsumer.accept(newMeasurementMessage("Flow", "m³/s", 2.0));

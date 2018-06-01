@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.dto;
 
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -11,6 +10,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class PagedLogicalMeterDto {
+
   public UUID id;
   public String facility;
   @Nullable

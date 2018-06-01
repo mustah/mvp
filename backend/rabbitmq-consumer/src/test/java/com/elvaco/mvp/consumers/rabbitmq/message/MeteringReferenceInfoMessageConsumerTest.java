@@ -145,15 +145,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
       logicalMeter.id,
       EXTERNAL_ID,
       organisation.id,
-      new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build(),
+      MeterDefinition.HOT_WATER_METER,
       logicalMeter.created,
       singletonList(savedPhysicalMeter),
-      MeterDefinition.HOT_WATER_METER,
       singletonList(gateways.findBy(
         organisation.id,
         PRODUCT_MODEL,
         GATEWAY_EXTERNAL_ID
-      ).get())
+      ).get()),
+      new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build()
     );
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
@@ -166,7 +166,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       logicalMeter.id,
       READ_INTERVAL_IN_MINUTES,
-      null,
       savedPhysicalMeter.statuses
     ));
   }
@@ -197,10 +196,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       Location.UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-
-    ));
+          null,
+      0L, null
+        ));
 
     Location newLocation = new LocationBuilder()
       .country("")
@@ -358,11 +362,11 @@ public class MeteringReferenceInfoMessageConsumerTest {
       logicalMeterId,
       EXTERNAL_ID,
       organisation.id,
-      UNKNOWN_LOCATION,
+      MeterDefinition.HOT_WATER_METER,
       now,
       singletonList(existingPhysicalMeter),
-      MeterDefinition.HOT_WATER_METER,
-      emptyList()
+      emptyList(),
+      UNKNOWN_LOCATION
     ));
 
     MeteringReferenceInfoMessageDto message =
@@ -628,9 +632,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       Location.UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     messageHandler.accept(
       newMessageWithLocation(new LocationBuilder().city("Borås").build())

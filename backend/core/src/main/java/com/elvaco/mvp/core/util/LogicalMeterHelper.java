@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -86,25 +85,5 @@ public final class LogicalMeterHelper {
     }
 
     throw new RuntimeException("Unhandled meter interval");
-  }
-
-  public static CollectionStats getCollectionPercent(
-    List<PhysicalMeter> physicalMeters,
-    ZonedDateTime after,
-    ZonedDateTime before,
-    int expectedQuantityCount
-  ) {
-    double expectedReadouts = 0.0;
-    double actualReadouts = 0.0;
-
-    for (PhysicalMeter physicalMeter : physicalMeters) {
-      expectedReadouts += calculateExpectedReadOuts(
-        physicalMeter.readIntervalMinutes,
-        after,
-        before
-      );
-      actualReadouts += physicalMeter.getMeasurementCountOrZero();
-    }
-    return new CollectionStats(actualReadouts, expectedReadouts * expectedQuantityCount);
   }
 }
