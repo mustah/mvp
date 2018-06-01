@@ -133,7 +133,7 @@ public class DashboardControllerTest extends IntegrationTest {
       .isEqualTo(measurementCount + measurementFailedCount);
 
     assertThat(dashboardDtos.widgets.get(0).pending)
-      .as("Unexpected number of remaining measurements")
+      .as("Unexpected number of missing measurements")
       .isEqualTo(measurementFailedCount);
   }
 
