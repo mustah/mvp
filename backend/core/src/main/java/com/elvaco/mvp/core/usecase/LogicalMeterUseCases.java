@@ -29,14 +29,20 @@ public class LogicalMeterUseCases {
   private final Measurements measurements;
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(currentUser, parameters));
+    return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(
+      currentUser,
+      parameters
+    ));
   }
 
   public Page<LogicalMeter> findAll(
     RequestParameters parameters,
     Pageable pageable
   ) {
-    return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
+    return logicalMeters.findAllWithStatuses(
+      setCurrentUsersOrganisationId(currentUser, parameters),
+      pageable
+    );
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

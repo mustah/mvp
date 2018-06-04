@@ -232,8 +232,12 @@ public class LogicalMeterQueryDslJpaRepository
       .execute();
   }
 
-  public Map<UUID, List<PhysicalMeterStatusLogEntity>>
-  findStatusesGroupedByPhysicalMeterId(Predicate predicate) {
+  @SuppressWarnings(
+    {"SpringDataRepositoryMethodReturnTypeInspection", "SpringDataMethodInconsistencyInspection"}
+  )
+  public Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
+    Predicate predicate
+  ) {
     return createQuery(predicate)
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
