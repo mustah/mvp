@@ -199,6 +199,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
     SelectionPeriod selectionPeriod
   ) {
+    Map<UUID, Long> countForMetersWithinPeriod = getCountForMetersWithinPeriod(parameters);
     return meters
       .stream()
       .map(logicalMeterEntity -> {
@@ -214,7 +215,7 @@ public class LogicalMeterRepository implements LogicalMeters {
           logicalMeterEntity,
           mappedStatuses,
           expectedMeasurementCount,
-          getCountForMetersWithinPeriod(parameters)
+          countForMetersWithinPeriod
             .getOrDefault(logicalMeterEntity.id, 0L)
         );
       })
