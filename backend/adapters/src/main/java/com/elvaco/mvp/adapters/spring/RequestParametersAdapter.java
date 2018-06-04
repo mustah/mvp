@@ -1,11 +1,8 @@
 package com.elvaco.mvp.adapters.spring;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -95,15 +92,6 @@ public class RequestParametersAdapter implements RequestParameters {
     return new RequestParametersAdapter(
       new LinkedMultiValueMap<>(delegate)
     );
-  }
-
-  @Override
-  public Optional<ZonedDateTime> getAsZonedDateTime(String name) {
-    try {
-      return Optional.ofNullable(getFirst(name)).map(ZonedDateTime::parse);
-    } catch (DateTimeParseException ex) {
-      return Optional.empty();
-    }
   }
 
   public MultiValueMap<String, String> multiValueMap() {
