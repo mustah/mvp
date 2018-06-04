@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
@@ -76,15 +77,14 @@ public class PagedLogicalMeter {
     this.measurementCount = measurementCount;
   }
 
-  public long expectedMeasurementCount(ZonedDateTime after, ZonedDateTime before) {
+  public long expectedMeasurementCount(SelectionPeriod selectionPeriod) {
     if (activePhysicalMeter == null) {
       return 0;
     }
 
     return (long) LogicalMeterHelper.calculateExpectedReadOuts(
       activePhysicalMeter.readIntervalMinutes,
-      after,
-      before
+      selectionPeriod
     ) * meterDefinition.quantities.size();
   }
 

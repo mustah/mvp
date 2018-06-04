@@ -1,17 +1,18 @@
 package com.elvaco.mvp.database.repository.access;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -76,17 +77,20 @@ public class LogicalMeterRepository implements LogicalMeters {
         )
       );
 
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
-      return new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel));
-    }
-    ZonedDateTime after = ZonedDateTime.parse(parameters.getFirst("after"));
-    ZonedDateTime before = ZonedDateTime.parse(parameters.getFirst("before"));
-    return new PageAdapter<>(
-      pagedLogicalMeters.map(source ->
-        LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage(
-          source, source.expectedMeasurementCount(after, before)
+    return parameters.getAsSelectionPeriod("after", "before")
+      .map(selectionPeriod ->
+        new PageAdapter<>(
+          pagedLogicalMeters.map(source ->
+            LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage(
+              source, source.expectedMeasurementCount(selectionPeriod)
+            )
+          )
         )
-      ));
+      )
+      .orElse(
+        new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel))
+      );
+
   }
 
   @Override
@@ -165,16 +169,34 @@ public class LogicalMeterRepository implements LogicalMeters {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
       getStatusesGroupedByPhysicalMeterId(getStatusesForMeters(parameters));
 
-    Map<UUID, Long> meterCounts = getCountForMetersWithinPeriod(parameters);
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
-      return meters.stream().map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
-        logicalMeterEntity,
-        mappedStatuses,
-        null,
-        null
-      )).collect(toList());
-    }
+    return parameters.getAsSelectionPeriod("after", "before")
+      .map(selectionPeriod ->
+        withStatusesAndCollectionStats(meters, parameters, mappedStatuses, selectionPeriod)
+      )
+      .orElse(
+        withStatusesOnly(meters, mappedStatuses).collect(toList())
+      );
 
+  }
+
+  private Stream<LogicalMeter> withStatusesOnly(
+    List<LogicalMeterEntity> meters,
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
+  ) {
+    return meters.stream().map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
+      logicalMeterEntity,
+      mappedStatuses,
+      null,
+      null
+    ));
+  }
+
+  private List<LogicalMeter> withStatusesAndCollectionStats(
+    List<LogicalMeterEntity> meters,
+    RequestParameters parameters,
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
+    SelectionPeriod selectionPeriod
+  ) {
     return meters
       .stream()
       .map(logicalMeterEntity -> {
@@ -184,14 +206,14 @@ public class LogicalMeterRepository implements LogicalMeters {
               .findFirst()
               .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
               .orElse(0L),
-            ZonedDateTime.parse(parameters.getFirst("after")),
-            ZonedDateTime.parse(parameters.getFirst("before"))
+            selectionPeriod
           ) * logicalMeterEntity.meterDefinition.quantities.size();
         return LogicalMeterEntityMapper.toDomainModel(
           logicalMeterEntity,
           mappedStatuses,
           expectedMeasurementCount,
-          meterCounts.getOrDefault(logicalMeterEntity.id, 0L)
+          getCountForMetersWithinPeriod(parameters)
+            .getOrDefault(logicalMeterEntity.id, 0L)
         );
       })
       .collect(toList());

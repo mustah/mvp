@@ -54,11 +54,9 @@ public class LogicalMeterUseCases {
       parameters
     ));
 
-    if (parameters.hasName("before")) {
-      ZonedDateTime before = ZonedDateTime.parse(parameters.getFirst("before"));
-      return meter.map(m -> withLatestReadouts(m, before));
-    }
-    return meter;
+    return parameters.getAsZonedDateTime("before")
+      .map(beforeTime -> meter.map(m -> withLatestReadouts(m, beforeTime)))
+      .orElse(meter);
   }
 
   public Optional<LogicalMeter> findById(UUID id) {

@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import org.junit.Test;
@@ -38,8 +39,10 @@ public class LogicalMeterHelperTest {
   public void calculateExpectedReadoutsHourly() {
     assertThat(calculateExpectedReadOuts(
       60,
-      ZonedDateTime.parse("2018-01-01T00:00:00Z"),
-      ZonedDateTime.parse("2018-01-02T00:00:00Z")
+      new SelectionPeriod(
+        ZonedDateTime.parse("2018-01-01T00:00:00Z"),
+        ZonedDateTime.parse("2018-01-02T00:00:00Z")
+      )
     )).isEqualTo(24);
   }
 
@@ -47,8 +50,10 @@ public class LogicalMeterHelperTest {
   public void calculateExpectedReadoutsFifteenMinutes() {
     assertThat(calculateExpectedReadOuts(
       15,
-      ZonedDateTime.parse("2018-01-01T00:00:00Z"),
-      ZonedDateTime.parse("2018-01-02T00:00:00Z")
+      new SelectionPeriod(
+        ZonedDateTime.parse("2018-01-01T00:00:00Z"),
+        ZonedDateTime.parse("2018-01-02T00:00:00Z")
+      )
     )).isEqualTo(96);
   }
 
@@ -56,8 +61,10 @@ public class LogicalMeterHelperTest {
   public void calculateExpectedReadoutsForZeroInterval() {
     assertThat(calculateExpectedReadOuts(
       0,
-      ZonedDateTime.parse("2018-01-01T00:00:00Z"),
-      ZonedDateTime.parse("2018-01-02T00:00:00Z")
+      new SelectionPeriod(
+        ZonedDateTime.parse("2018-01-01T00:00:00Z"),
+        ZonedDateTime.parse("2018-01-02T00:00:00Z")
+      )
     )).isEqualTo(0);
   }
 

@@ -20,7 +20,7 @@ public class MockRequestParameters implements RequestParameters {
     this(new HashMap<>());
   }
 
-  public MockRequestParameters(Map<String, List<String>> map) {
+  private MockRequestParameters(Map<String, List<String>> map) {
     this.map = map;
   }
 
@@ -87,4 +87,5 @@ public class MockRequestParameters implements RequestParameters {
   public RequestParameters shallowCopy() {
     return new MockRequestParameters(new HashMap<>(map));
   }
+
 }
