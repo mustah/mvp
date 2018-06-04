@@ -1,15 +1,14 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {HasContent} from '../../../components/content/HasContent';
 import {Dialog} from '../../../components/dialog/Dialog';
+import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {MissingDataTitle} from '../../../components/texts/Titles';
 import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
@@ -47,14 +46,17 @@ import {
 } from '../../map/mapSelectors';
 import {GatewayListContainer} from './GatewayListContainer';
 
-interface StateToProps extends TabsContainerStateToProps {
+interface MapProps {
+  bounds?: Bounds;
+  lowConfidenceText?: string;
   gatewayMapMarkers: DomainModel<MapMarker>;
+}
+
+interface StateToProps extends MapProps, TabsContainerStateToProps {
   parameters?: EncodedUriParameters;
   selectedMarker: Maybe<uuid>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
-  bounds?: Bounds;
-  lowConfidenceText?: string;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -65,6 +67,14 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
 }
 
 type Props = StateToProps & DispatchToProps;
+
+const MapContent = ({bounds, gatewayMapMarkers, lowConfidenceText}: MapProps) => (
+  <Map bounds={bounds} lowConfidenceText={lowConfidenceText}>
+    <ClusterContainer markers={gatewayMapMarkers.entities}/>
+  </Map>
+);
+
+const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
 const fetchMapMarkers = ({fetchGatewayMapMarkers, parameters}: Props) =>
   fetchGatewayMapMarkers(parameters);
@@ -99,6 +109,14 @@ class CollectionTabs extends React.Component<Props> {
       </Dialog>
     );
 
+    const wrappedProps: MapProps & WithEmptyContentProps = {
+      bounds,
+      gatewayMapMarkers,
+      lowConfidenceText,
+      noContentText: firstUpperTranslated('no gateways'),
+      hasContent: gatewayMapMarkers.result.length < 0,
+    };
+
     return (
       <Tabs>
         <TabTopBar>
@@ -113,14 +131,7 @@ class CollectionTabs extends React.Component<Props> {
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
-              <HasContent
-                hasContent={gatewayMapMarkers.result.length > 0}
-                fallbackContent={<MissingDataTitle title={firstUpperTranslated('no gateways')}/>}
-              >
-                <Map bounds={bounds} lowConfidenceText={lowConfidenceText}>
-                  <ClusterContainer markers={gatewayMapMarkers.entities}/>
-                </Map>
-              </HasContent>
+              <MapContentWrapper {...wrappedProps}/>
               {dialog}
             </div>
           </Loader>

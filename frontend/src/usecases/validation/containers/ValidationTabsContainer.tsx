@@ -1,15 +1,14 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {HasContent} from '../../../components/content/HasContent';
 import {Dialog} from '../../../components/dialog/Dialog';
+import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {MissingDataTitle} from '../../../components/texts/Titles';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import {now} from '../../../helpers/dateHelpers';
@@ -45,14 +44,17 @@ import {
   getSelectedMapMarker,
 } from '../../map/mapSelectors';
 
-interface StateToProps extends TabsContainerStateToProps {
-  isFetching: boolean;
+interface MapProps {
+  bounds?: Bounds;
+  lowConfidenceText?: string;
   meterMapMarkers: DomainModel<MapMarker>;
+}
+
+interface StateToProps extends MapProps, TabsContainerStateToProps {
+  isFetching: boolean;
   selectedMarker: Maybe<uuid>;
   parameters: EncodedUriParameters;
   error: Maybe<ErrorResponse>;
-  bounds?: Bounds;
-  lowConfidenceText?: string;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -62,6 +64,14 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
 }
 
 type Props = StateToProps & DispatchToProps;
+
+const MapContent = ({bounds, lowConfidenceText, meterMapMarkers}: MapProps) => (
+  <Map bounds={bounds} lowConfidenceText={lowConfidenceText}>
+    <ClusterContainer markers={meterMapMarkers.entities}/>
+  </Map>
+);
+
+const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
 const fetchMarkersWhenMapTabIsSelected =
   ({fetchMeterMapMarkers, selectedTab, parameters}: Props) => {
@@ -94,6 +104,14 @@ class ValidationTabs extends React.Component<Props> {
       closeClusterDialog,
     } = this.props;
 
+    const wrapperProps: MapProps & WithEmptyContentProps = {
+      bounds,
+      lowConfidenceText,
+      meterMapMarkers,
+      noContentText: firstUpperTranslated('no meters'),
+      hasContent: meterMapMarkers.result.length > 0,
+    };
+
     const dialog = selectedMarker.isJust() && (
       <Dialog isOpen={true} close={closeClusterDialog} autoScrollBodyContent={true}>
         <MeterDetailsContainer meterId={selectedMarker.get()}/>
@@ -114,14 +132,7 @@ class ValidationTabs extends React.Component<Props> {
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} clearError={clearError} error={error}>
             <div>
-              <HasContent
-                hasContent={meterMapMarkers.result.length > 0}
-                fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
-              >
-                <Map bounds={bounds} lowConfidenceText={lowConfidenceText}>
-                  <ClusterContainer markers={meterMapMarkers.entities}/>
-                </Map>
-              </HasContent>
+              <MapContentWrapper {...wrapperProps} />
               {dialog}
             </div>
           </Loader>

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import {HasContent as HasContentType} from '../../types/Types';
 
-interface Props {
-  hasContent: boolean;
+interface Props extends HasContentType {
   fallbackContent: React.ReactElement<any>;
   children: React.ReactElement<any>;
 }

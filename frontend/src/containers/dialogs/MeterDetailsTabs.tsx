@@ -1,8 +1,8 @@
 import 'MeterDetailsTabs.scss';
 import * as React from 'react';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
-import {HasContent} from '../../components/content/HasContent';
 import {DateTime} from '../../components/dates/DateTime';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
 import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
@@ -22,6 +22,7 @@ import {firstUpperTranslated, translate} from '../../services/translationService
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
+import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Children, Identifiable, OnClickWithId} from '../../types/Types';
@@ -29,15 +30,17 @@ import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
-import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 
 interface State {
   selectedTab: TabName;
 }
 
-interface Props {
+interface MapProps {
   meter: MeterDetails;
   meterMapMarker: Maybe<MapMarker>;
+}
+
+interface Props extends MapProps {
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
 }
@@ -66,6 +69,14 @@ const renderDate = ({start}: MeterStatusChangelog): Children =>
 
 const renderSerial = ({serial}: Gateway): string => serial;
 
+const MapContent = ({meter, meterMapMarker}: MapProps) => (
+  <Map height={400} viewCenter={meter.location.position}>
+    {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
+  </Map>
+);
+
+const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
+
 export class MeterDetailsTabs extends React.Component<Props, State> {
 
   state: State = {selectedTab: TabName.values};
@@ -84,12 +95,16 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const statusChangelog = normalizedStatusChangelogFor(meter);
     const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
 
-    const noReliablePosition =
-      <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
-
-    const mapHasContent = meterMapMarker
+    const hasContent = meterMapMarker
       .filter(({status}: MapMarker) => status !== undefined)
       .isJust();
+
+    const wrapperProps: MapProps & WithEmptyContentProps = {
+      meter,
+      meterMapMarker,
+      noContentText: firstUpperTranslated('no reliable position'),
+      hasContent,
+    };
 
     return (
       <Row>
@@ -138,11 +153,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <HasContent hasContent={mapHasContent} fallbackContent={noReliablePosition}>
-              <Map height={400} viewCenter={meter.location.position}>
-                {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
-              </Map>
-            </HasContent>
+            <MapContentWrapper {...wrapperProps}/>
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>

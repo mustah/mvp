@@ -3,6 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {
   CartesianGrid,
+  ContentRenderer,
   Legend,
   Line,
   LineChart,
@@ -13,12 +14,11 @@ import {
   YAxis,
 } from 'recharts';
 import {bindActionCreators} from 'redux';
-import {HasContent} from '../../../components/content/HasContent';
 import {DateRange, Period} from '../../../components/dates/dateModels';
+import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
-import {MissingDataTitle} from '../../../components/texts/Titles';
 import {toggle} from '../../../helpers/collections';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
@@ -30,14 +30,14 @@ import {
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {initialState, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
-import {Children, Dictionary, ErrorResponse, uuid} from '../../../types/Types';
+import {Children, Dictionary, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
 import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
 import {QuantityDropdown} from '../components/QuantityDropdown';
-import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
+import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
@@ -67,9 +67,20 @@ interface MouseOverProps {
   activePayload: ActiveDataPoint[];
 }
 
+interface GraphContentProps {
+  content?: React.ReactElement<any> | React.StatelessComponent<any> | ContentRenderer<TooltipProps>;
+  data?: object[];
+  lines: Children[];
+  legend: ProprietaryLegendProps[];
+  legendClick: OnClick;
+  setTooltipPayload: OnClick;
+}
+
 export type OnUpdateGraph = (state: GraphContainerState) => void;
 
 type Props = StateToProps & DispatchToProps;
+
+type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
@@ -108,6 +119,37 @@ const renderGraphContents = (
 
   return components;
 };
+
+const GraphContent =
+  ({data, setTooltipPayload, legendClick, content, lines, legend}: GraphContentProps) => (
+    <Row className="GraphContainer">
+      <Row className="Graph">
+        <ResponsiveContainer aspect={2.5}>
+          <LineChart
+            width={10}
+            height={50}
+            data={data}
+            margin={margin}
+            onMouseMove={setTooltipPayload}
+          >
+            <XAxis
+              dataKey="name"
+              domain={['dataMin', 'dataMax']}
+              scale="time"
+              tickFormatter={timestamp}
+              type="number"
+            />
+            <CartesianGrid strokeDasharray="3 3"/>
+            <Tooltip content={content}/>
+            <Legend onClick={legendClick} payload={legend}/>
+            {lines}
+          </LineChart>
+        </ResponsiveContainer>
+      </Row>
+    </Row>
+  );
+
+const GraphContentWrapper = withEmptyContent<GraphContentWrapperProps>(GraphContent);
 
 class GraphComponent extends React.Component<Props, GraphContainerState> {
 
@@ -155,8 +197,8 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
   render() {
     const {selectedListItems, selectedQuantities, selectQuantities, selectedIndicators} = this.props;
-    const {graphContents, hiddenKeys} = this.state;
-    const lines = renderGraphContents(
+    const {graphContents, hiddenKeys, isFetching, error} = this.state;
+    const lines: Children[] = renderGraphContents(
       graphContents,
       hiddenKeys,
       this.renderAndStoreDot,
@@ -164,14 +206,22 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     );
     const {data, legend} = graphContents;
 
-    const missingData = (
-      <MissingDataTitle
-        title={firstUpperTranslated('select meters to include in graph')}
-      />
-    );
+    const legendClick = ({value}: any) => this.setState({
+      hiddenKeys: toggle(
+        value,
+        this.state.hiddenKeys,
+      ),
+    });
 
-    const legendClick = ({value}: any) => {
-      this.setState({hiddenKeys: toggle(value, this.state.hiddenKeys)});
+    const wrapperProps: GraphContentWrapperProps = {
+      lines,
+      data,
+      legend,
+      content: this.renderToolTip,
+      legendClick,
+      setTooltipPayload: this.setTooltipPayload,
+      hasContent: selectedListItems.length > 0,
+      noContentText: firstUpperTranslated('select meters to include in graph'),
     };
 
     return (
@@ -181,37 +231,8 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
           selectedQuantities={selectedQuantities}
           selectQuantities={selectQuantities}
         />
-        <Loader isFetching={this.state.isFetching} error={this.state.error} clearError={this.clearError}>
-          <HasContent
-            hasContent={selectedListItems.length > 0}
-            fallbackContent={missingData}
-          >
-            <Row className="GraphContainer">
-              <Row className="Graph">
-                <ResponsiveContainer aspect={2.5}>
-                  <LineChart
-                    width={10}
-                    height={50}
-                    data={data}
-                    margin={margin}
-                    onMouseMove={this.setTooltipPayload}
-                  >
-                    <XAxis
-                      dataKey="name"
-                      domain={['dataMin', 'dataMax']}
-                      scale="time"
-                      tickFormatter={timestamp}
-                      type="number"
-                    />
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <Tooltip content={this.renderToolTip}/>
-                    <Legend onClick={legendClick} payload={legend}/>
-                    {lines}
-                  </LineChart>
-                </ResponsiveContainer>
-              </Row>
-            </Row>
-          </HasContent>
+        <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
+          <GraphContentWrapper {...wrapperProps}/>
         </Loader>
       </div>
     );

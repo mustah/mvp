@@ -1,21 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
-import {HasContent} from '../../../components/content/HasContent';
-import {DateTime} from '../../../components/dates/DateTime';
+import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Loader} from '../../../components/loading/Loader';
-import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
-import {Separator} from '../../../components/separators/Separator';
-import {Status} from '../../../components/status/Status';
-import {Table, TableColumn} from '../../../components/table/Table';
-import {TableHead} from '../../../components/table/TableHead';
-import {MissingDataTitle} from '../../../components/texts/Titles';
 import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {orUnknown} from '../../../helpers/translations';
 import {RootState} from '../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {
   clearErrorGateways,
   fetchGateways,
@@ -40,16 +31,19 @@ import {
   uuid,
 } from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
-import {GatewayListItem} from '../components/GatewayListItem';
+import {GatewayList} from '../components/GatewayList';
 
-interface StateToProps {
-  result: uuid[];
+interface ListProps {
   entities: ObjectsById<Gateway>;
-  isFetching: boolean;
-  encodedUriParametersForGateways: string;
-  pagination: Pagination;
-  error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
+  pagination: Pagination;
+  result: uuid[];
+}
+
+interface StateToProps extends ListProps {
+  encodedUriParametersForGateways: string;
+  error: Maybe<ErrorResponse>;
+  isFetching: boolean;
 }
 
 interface DispatchToProps {
@@ -63,9 +57,13 @@ interface OwnProps {
   componentId: string;
 }
 
+export type GatewayListProps = ListProps & DispatchToProps & OwnProps;
+
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-class GatewayList extends React.Component<Props> {
+const GatewayListWrapper = withEmptyContent<GatewayListProps & WithEmptyContentProps>(GatewayList);
+
+class GatewayListComponent extends React.Component<Props> {
 
   componentDidMount() {
     const {fetchGateways, encodedUriParametersForGateways, pagination: {page}} = this.props;
@@ -76,82 +74,32 @@ class GatewayList extends React.Component<Props> {
     fetchGateways(page, encodedUriParametersForGateways);
   }
 
-  clearError = () => this.props.clearError({page: this.props.pagination.page});
-
   render() {
     const {
-      result,
-      entities,
-      selectEntryAdd,
+      children,
+      encodedUriParametersForGateways,
       isFetching,
-      pagination,
-      changePaginationPage,
-      componentId,
       error,
-      entityType,
+      result,
+      ...otherProps,
     } = this.props;
 
-    const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
-    const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
-    const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
-    const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
-    const renderActionDropdown = ({id, productModel}: Gateway) =>
-      <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
-    const renderStatusChanged = ({statusChanged}: Gateway) =>
-      <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
-    const renderProductModel = ({productModel}: Gateway) => productModel;
-
-    const changePage = (page: number) => changePaginationPage({
-      entityType,
-      componentId,
-      page,
-    });
+    const wrapperProps: GatewayListProps & WithEmptyContentProps = {
+      ...otherProps,
+      result,
+      noContentText: firstUpperTranslated('no gateways'),
+      hasContent: result.length > 0,
+    };
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
-        <HasContent
-          hasContent={result.length > 0}
-          fallbackContent={<MissingDataTitle title={firstUpperTranslated('no gateways')}/>}
-        >
-          <div>
-            <Table result={result} entities={entities}>
-              <TableColumn
-                header={<TableHead className="first">{translate('gateway')}</TableHead>}
-                renderCell={renderGatewayListItem}
-              />
-              <TableColumn
-                header={<TableHead>{translate('city')}</TableHead>}
-                cellClassName={'first-uppercase'}
-                renderCell={renderCity}
-              />
-              <TableColumn
-                header={<TableHead>{translate('address')}</TableHead>}
-                cellClassName={'first-uppercase'}
-                renderCell={renderAddress}
-              />
-              <TableColumn
-                header={<TableHead>{translate('product model')}</TableHead>}
-                renderCell={renderProductModel}
-              />
-              <TableColumn
-                header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-                renderCell={renderStatusCell}
-              />
-              <TableColumn
-                header={<TableHead>{translate('status change')}</TableHead>}
-                renderCell={renderStatusChanged}
-              />
-              <TableColumn
-                header={<TableHead className="actionDropdown">{' '}</TableHead>}
-                renderCell={renderActionDropdown}
-              />
-            </Table>
-            <PaginationControl pagination={pagination} changePage={changePage}/>
-          </div>
-        </HasContent>
+        <GatewayListWrapper {...wrapperProps}/>
       </Loader>
     );
   }
+
+  clearError = () => this.props.clearError({page: this.props.pagination.page});
+
 }
 
 const mapStateToProps = (
@@ -188,4 +136,4 @@ export const GatewayListContainer =
   connect<StateToProps, DispatchToProps, OwnProps>(
     mapStateToProps,
     mapDispatchToProps,
-  )(GatewayList);
+  )(GatewayListComponent);

@@ -1,6 +1,6 @@
 import 'GatewayDetailsTabs.scss';
 import * as React from 'react';
-import {HasContent} from '../../components/content/HasContent';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
@@ -10,7 +10,6 @@ import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {MissingDataTitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -42,6 +41,14 @@ const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
 
 const renderMedium = ({medium}: Meter) => medium;
 
+const MapContent = ({gateway, gatewayMapMarker}: Props) => (
+  <Map height={400} viewCenter={gateway.location.position}>
+    {gatewayMapMarker.isJust() && <ClusterContainer markers={gatewayMapMarker.get()}/>}
+  </Map>
+);
+
+const MapContentWrapper = withEmptyContent<Props & WithEmptyContentProps>(MapContent);
+
 export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
   state: TabsState = {selectedTab: TabName.values};
@@ -50,7 +57,13 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const {selectedTab} = this.state;
     const {gateway, meters, gatewayMapMarker} = this.props;
 
-    const noReliablePosition = firstUpperTranslated('no reliable position');
+    const wrapperProps: Props & WithEmptyContentProps = {
+      gateway,
+      meters,
+      gatewayMapMarker,
+      hasContent: gatewayMapMarker.isJust(),
+      noContentText: firstUpperTranslated('no reliable position'),
+    };
 
     return (
       <Row>
@@ -86,14 +99,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <HasContent
-              hasContent={gatewayMapMarker.isJust()}
-              fallbackContent={<MissingDataTitle title={noReliablePosition}/>}
-            >
-              <Map height={400} viewCenter={gateway.location.position}>
-                {gatewayMapMarker.isJust() && <ClusterContainer markers={gatewayMapMarker.get()}/>}
-              </Map>
-            </HasContent>
+            <MapContentWrapper {...wrapperProps}/>
           </TabContent>
         </Tabs>
       </Row>
