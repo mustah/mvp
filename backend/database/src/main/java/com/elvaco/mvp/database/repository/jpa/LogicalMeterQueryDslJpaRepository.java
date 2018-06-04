@@ -232,6 +232,28 @@ public class LogicalMeterQueryDslJpaRepository
       .execute();
   }
 
+  public Map<UUID, List<PhysicalMeterStatusLogEntity>>
+  findStatusesGroupedByPhysicalMeterId(Predicate predicate) {
+    return createQuery(predicate)
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
+      .transform(
+        GroupBy.groupBy(STATUS_LOG.physicalMeterId).as(GroupBy.list(STATUS_LOG))
+      );
+  }
+
+  private Map<UUID, PhysicalMeterStatusLogEntity> findCurrentStatuses(Predicate predicate) {
+    return createQuery(predicate)
+      .select(STATUS_LOG.start.max())
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
+      .transform(
+        GroupBy.groupBy(LOGICAL_METER.id).as(STATUS_LOG)
+      );
+  }
+
   private List<PagedLogicalMeter> fetchAdditionalPagedMeterData(
     RequestParameters parameters,
     List<PagedLogicalMeter> all
@@ -256,17 +278,6 @@ public class LogicalMeterQueryDslJpaRepository
         ))
     ).collect(toList());
     return all;
-  }
-
-  private Map<UUID, PhysicalMeterStatusLogEntity> findCurrentStatuses(Predicate predicate) {
-    return createQuery(predicate)
-      .select(STATUS_LOG.start.max())
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .orderBy(STATUS_LOG.start.desc())
-      .transform(
-        GroupBy.groupBy(LOGICAL_METER.id).as(STATUS_LOG)
-      );
   }
 
   private boolean isStatusQuery(RequestParameters parameters) {

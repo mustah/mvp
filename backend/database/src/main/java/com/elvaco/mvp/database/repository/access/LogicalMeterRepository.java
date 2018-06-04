@@ -167,7 +167,9 @@ public class LogicalMeterRepository implements LogicalMeters {
     RequestParameters parameters
   ) {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
-      getStatusesGroupedByPhysicalMeterId(getStatusesForMeters(parameters));
+      logicalMeterJpaRepository.findStatusesGroupedByPhysicalMeterId(
+        new PhysicalMeterStatusLogQueryFilters().toExpression(parameters)
+      );
 
     return parameters.getAsSelectionPeriod("after", "before")
       .map(selectionPeriod ->
