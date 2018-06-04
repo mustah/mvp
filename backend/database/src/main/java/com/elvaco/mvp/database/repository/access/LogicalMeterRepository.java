@@ -65,7 +65,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
     org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
       logicalMeterJpaRepository.findAll(
         parameters,
@@ -94,7 +94,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findAll(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
     List<LogicalMeterEntity> meters = sortingMapper.getAsSpringSort(parameters)
       .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
       .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));

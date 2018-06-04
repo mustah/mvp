@@ -36,7 +36,7 @@ public class DashboardUseCases {
       return Optional.empty();
     }
 
-    List<CollectionStats> meterStats = logicalMeters.findAll(
+    List<CollectionStats> meterStats = logicalMeters.findAllWithStatuses(
       setCurrentUsersOrganisationId(currentUser, parameters)
     ).stream().map(LogicalMeter::getCollectionStats).collect(toList());
 

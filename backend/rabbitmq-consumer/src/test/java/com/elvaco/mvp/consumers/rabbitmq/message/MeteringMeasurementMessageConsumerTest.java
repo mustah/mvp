@@ -140,7 +140,7 @@ public class MeteringMeasurementMessageConsumerTest {
     assertThat(gateways.findAll(null)).isEmpty();
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).hasSize(1);
   }
 
   @Test
@@ -159,7 +159,7 @@ public class MeteringMeasurementMessageConsumerTest {
     assertThat(gateways.findAll(null)).isEmpty();
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).hasSize(1);
   }
 
   @Test

@@ -43,12 +43,12 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
     return null;
   }
 
   @Override
-  public List<LogicalMeter> findAll(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
     return filter(isWithinOrganisation(parameters))
       .collect(toList());
   }
