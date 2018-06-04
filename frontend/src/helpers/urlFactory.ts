@@ -16,6 +16,9 @@ const baseParameterNames: ParameterNames = {
   manufacturers: 'manufacturer',
   media: 'medium',
   productModels: 'productModel',
+  gatewaySerials: 'gatewaySerial',
+  secondaryAddresses: 'secondaryAddress',
+  facilities: 'facility',
 };
 
 const gatewayParameterNames: ParameterNames = {

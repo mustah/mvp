@@ -3,8 +3,11 @@ package com.elvaco.mvp.web.mapper;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.SelectionsDto;
@@ -56,11 +59,27 @@ public class SelectionsDtoMapper {
       .collect(toList())
   );
 
-  public static void addToDto(Location location, SelectionsDto selectionsDto) {
+  public static void addToDto(LogicalMeter logicalMeter, SelectionsDto selectionsDto) {
+    logicalMeter.physicalMeters.forEach(physicalMeter -> addToDto(physicalMeter, selectionsDto));
+    logicalMeter.gateways.forEach(gateway -> addToDto(gateway, selectionsDto));
+
+    addToDto(logicalMeter.location, selectionsDto);
+  }
+
+  static void addToDto(Location location, SelectionsDto selectionsDto) {
     selectionsDto.addLocation(
       location.getCountryOrUnknown(),
       location.getCityOrUnknown(),
       location.getAddressOrUnknown()
     );
+  }
+
+  private static void addToDto(Gateway gateway, SelectionsDto selectionsDto) {
+    selectionsDto.addGateway(new IdNamedDto(gateway.serial));
+  }
+
+  private static void addToDto(PhysicalMeter physicalMeter, SelectionsDto selectionsDto) {
+    selectionsDto.addFacility(new IdNamedDto(physicalMeter.externalId));
+    selectionsDto.addSecondaryAddress(new IdNamedDto(physicalMeter.address));
   }
 }

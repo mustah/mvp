@@ -9,10 +9,10 @@ import {getRequestOf} from '../../domain-models/domainModelsActions';
 import {
   addresses,
   alarms,
-  cities,
+  cities, facilities, gatewaySerials,
   gatewayStatuses,
   initialDomain,
-  meterStatuses,
+  meterStatuses, secondaryAddresses,
   users,
 } from '../../domain-models/domainModelsReducer';
 import {selectionsDataFormatter} from '../../domain-models/selections/selectionsSchemas';
@@ -30,7 +30,7 @@ import {
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 import {
-  getCities,
+  getCities, getFacilities,
   getPaginatedMeterParameters,
   getSelectedPeriod,
   getSelection,
@@ -68,6 +68,18 @@ describe('userSelectionSelectors', () => {
     cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    facilities: facilities(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
+    secondaryAddresses: secondaryAddresses(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
+    gatewaySerials: gatewaySerials(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
     gatewayStatuses: gatewayStatuses(
       initialDomainModelState,
       selectionsRequest.success(domainModelPayload),
@@ -105,6 +117,26 @@ describe('userSelectionSelectors', () => {
 
     const actual: SelectionListItem[] = getCities(state);
     expect(actual).toEqual(stockholmSelected);
+  });
+
+  it('gets entities for type facility', () => {
+
+    const facility: IdNamed = {id: 'a', name: '1'};
+    const payload: SelectionParameter = {...facility, parameter: ParameterName.facilities};
+
+    const state: LookupState = {
+      userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+      domainModels: domainModels(normalizedSelections) as DomainModelsState,
+    };
+
+    const expected: SelectionListItem[] = [
+      {selected: true, id: 'a', name: '1'},
+      {selected: false, id: 'b', name: '2'},
+      {selected: false, id: 'c', name: '3'},
+    ];
+
+    const actual: SelectionListItem[] = getFacilities(state);
+    expect(actual).toEqual(expected);
   });
 
   it('get entities for undefined entity type', () => {

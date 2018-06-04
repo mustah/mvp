@@ -32,6 +32,9 @@ export const initialState: UserSelectionState = {
       media: [],
       meterStatuses: [],
       productModels: [],
+      facilities: [],
+      secondaryAddresses: [],
+      gatewaySerials: [],
     },
   },
 };

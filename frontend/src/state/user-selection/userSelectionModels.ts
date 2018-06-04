@@ -13,6 +13,9 @@ export const enum ParameterName {
   meterStatuses = 'meterStatuses',
   period = 'period',
   productModels = 'productModels',
+  secondaryAddresses = 'secondaryAddresses',
+  facilities = 'facilities',
+  gatewaySerials = 'gatewaySerials',
 }
 
 export type FilterParam = uuid | boolean;
@@ -42,6 +45,9 @@ export interface SelectedParameters {
   meterIds?: uuid[];
   meterStatuses?: uuid[];
   productModels?: uuid[];
+  facilities?: uuid[];
+  secondaryAddresses?: uuid[];
+  gatewaySerials?: uuid[];
 }
 
 export interface SelectionInterval {

@@ -27,7 +27,9 @@ const getSelectedIds = (state: LookupState): SelectedParameters =>
   state.userSelection.userSelection.selectionParameters;
 
 const getSelectionGroup = (entityType: string) =>
-  (state: LookupState): DomainModel<SelectionEntity> => state.domainModels[entityType];
+  (state: LookupState): DomainModel<SelectionEntity> => {
+  return state.domainModels[entityType];
+};
 
 const getSelectedEntityIdsSelector = (entityType: string) =>
   createSelector<LookupState, SelectedParameters, uuid[]>(
@@ -68,7 +70,7 @@ const getCombiner = (ids: uuid[] = [], {entities}: DomainModel<SelectionEntity>)
     .filter((item) => item);
 };
 
-const getSelectedEntities = (entityType: string) =>
+const getSelectedEntities = (entityType: ParameterName) =>
   createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
@@ -113,6 +115,9 @@ export const getCities = getList(ParameterName.cities);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 export const getMedia = getList(ParameterName.media);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
+export const getSecondaryAddresses = getList(ParameterName.secondaryAddresses);
+export const getFacilities = getList(ParameterName.facilities);
+export const getGatewaySerials = getList(ParameterName.gatewaySerials);
 
 export interface UriLookupState extends UserSelectionState {
   now: Date;

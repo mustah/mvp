@@ -17,7 +17,7 @@ public class SelectionController {
   public SelectionsDto selections() {
     SelectionsDto selectionsDto = new SelectionsDto();
     logicalMeterUseCases.findAll(new RequestParametersAdapter())
-      .forEach(meter -> SelectionsDtoMapper.addToDto(meter.location, selectionsDto));
+      .forEach(meter -> SelectionsDtoMapper.addToDto(meter, selectionsDto));
     return selectionsDto;
   }
 }
