@@ -96,8 +96,8 @@ const mapStateToProps =
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  fetchDashboard,
   clearError: clearErrorMeterMapMarkers,
+  fetchDashboard,
   fetchMeterMapMarkers,
 }, dispatch);
 
