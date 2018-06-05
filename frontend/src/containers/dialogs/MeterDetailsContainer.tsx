@@ -31,7 +31,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchMeter: CallbackWithId;
+  fetchMeterDetails: CallbackWithId;
   fetchMeterMapMarker: CallbackWithId;
   selectEntryAdd: CallbackWithId;
   syncWithMetering: CallbackWithId;
@@ -55,8 +55,8 @@ const MeterDetailsContent = (props: Props) => {
 const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 
 const fetchMeterAndMapMarker =
-  ({dateRange, fetchMeter, fetchMeterMapMarker, meterId}: Props) => {
-    fetchMeter(meterId, makeApiParametersOf(now(), dateRange));
+  ({dateRange, fetchMeterDetails, fetchMeterMapMarker, meterId}: Props) => {
+    fetchMeterDetails(meterId, makeApiParametersOf(now(), dateRange));
     fetchMeterMapMarker(meterId);
   };
 
@@ -81,17 +81,15 @@ const mapStateToProps = (
     userSelection: {userSelection: {selectionParameters: {dateRange}}},
   }: RootState,
   {meterId}: OwnProps,
-): StateToProps => {
-  return ({
-    dateRange,
-    isFetching: [meterMapMarkers, meters].some((models) => models.isFetching),
-    meter: getDomainModelById<MeterDetails>(meterId)(meters),
-    meterMapMarker: getDomainModelById<MapMarker>(meterId)(meterMapMarkers),
-  });
-};
+): StateToProps => ({
+  dateRange,
+  isFetching: [meterMapMarkers, meters].some((models) => models.isFetching),
+  meter: getDomainModelById<MeterDetails>(meterId)(meters),
+  meterMapMarker: getDomainModelById<MapMarker>(meterId)(meterMapMarkers),
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  fetchMeter: fetchMeterDetails,
+  fetchMeterDetails,
   fetchMeterMapMarker,
   selectEntryAdd,
   syncWithMetering,

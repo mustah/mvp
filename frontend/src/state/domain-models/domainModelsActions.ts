@@ -57,7 +57,7 @@ interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, Reques
 
 // TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same
 // try-catch?
-export const asyncRequest = async <REQUEST_MODEL, DATA>(
+const asyncRequest = async <REQUEST_MODEL, DATA>(
   {
     request,
     success,
