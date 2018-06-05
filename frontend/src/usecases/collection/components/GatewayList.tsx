@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
-import {DateTime} from '../../../components/dates/DateTime';
+import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
-import {Separator} from '../../../components/separators/Separator';
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
@@ -28,7 +27,7 @@ export const GatewayList = ({
   const renderActionDropdown = ({id, productModel}: Gateway) =>
     <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
   const renderStatusChanged = ({statusChanged}: Gateway) =>
-    <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
+    <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
   const changePage = (page: number) => changePaginationPage({

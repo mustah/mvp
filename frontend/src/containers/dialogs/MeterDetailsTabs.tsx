@@ -1,10 +1,9 @@
 import 'MeterDetailsTabs.scss';
 import * as React from 'react';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
-import {DateTime} from '../../components/dates/DateTime';
+import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
-import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
@@ -65,7 +64,7 @@ const renderCreated = ({created}: RenderableMeasurement): Children =>
 const renderStatusCell = ({name}: MeterStatusChangelog): Children => <Status name={name}/>;
 
 const renderDate = ({start}: MeterStatusChangelog): Children =>
-  <DateTime date={start} fallbackContent={<Separator/>}/>;
+  <WrappedDateTime date={start} hasContent={!!start}/>;
 
 const renderSerial = ({serial}: Gateway): string => serial;
 

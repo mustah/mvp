@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
-import {DateTime} from '../../components/dates/DateTime';
+import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {MeterListItem} from '../../components/meters/MeterListItem';
 import {PaginationControl} from '../../components/pagination-control/PaginationControl';
-import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
@@ -39,7 +38,7 @@ export const MeterList = (
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
   const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
   const renderStatusChanged = ({statusChanged}: Meter) =>
-    <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
+    <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
   const renderMedium = ({medium}: Meter) => medium;
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes);
