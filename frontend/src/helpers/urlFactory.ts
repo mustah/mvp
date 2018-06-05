@@ -1,7 +1,9 @@
 import {Omit} from 'react-redux-typescript';
 import {Pagination} from '../state/ui/pagination/paginationModels';
-import {SelectedParameters} from '../state/user-selection/userSelectionModels';
+import {SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, uuid} from '../types/Types';
+import {toPeriodApiParameters} from './dateHelpers';
+import {Maybe} from './Maybe';
 
 interface ParameterNames {
   [key: string]: string;
@@ -45,7 +47,8 @@ export const toEntityApiParametersGateways = (selectionParameters: Omit<Selected
   toEntityApiParameters(selectionParameters, gatewayParameterNames);
 
 const toEntityApiParameters =
-  // TODO: perhaps make sure it could handle if dateRange is included, as it is now the function would most likely fail.
+  // TODO: perhaps make sure it could handle if dateRange is included, as it is now the function
+  // would most likely fail.
   (
     selectionParameters: Omit<SelectedParameters, 'dateRange'>,
     parameterNames: ParameterNames,
@@ -53,9 +56,20 @@ const toEntityApiParameters =
     Object.keys(selectionParameters)
       .reduce((prev: EncodedUriParameters[], parameter: string) =>
         [...prev,
-          ...selectionParameters[parameter]
-            .map((value: uuid) => `${parameterNames[parameter]}=${encodeURIComponent(value.toString())}`),
+         ...selectionParameters[parameter]
+           .map((value: uuid) => `${parameterNames[parameter]}=${encodeURIComponent(value.toString())}`),
         ], []);
+
+export const makeApiParametersOf = (
+  start: Date,
+  selectionInterval: SelectionInterval,
+): EncodedUriParameters => {
+  return toPeriodApiParameters({
+    now: start,
+    period: selectionInterval.period,
+    customDateRange: Maybe.maybe(selectionInterval.customDateRange),
+  }).join('&');
+};
 
 export const makeUrl =
   (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>

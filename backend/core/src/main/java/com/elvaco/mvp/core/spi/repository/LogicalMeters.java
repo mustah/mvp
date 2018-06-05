@@ -16,9 +16,9 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
-  Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
+  Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable);
 
-  List<LogicalMeter> findAll(RequestParameters parameters);
+  List<LogicalMeter> findAllWithStatuses(RequestParameters parameters);
 
   LogicalMeter save(LogicalMeter logicalMeter);
 
@@ -29,4 +29,6 @@ public interface LogicalMeters {
   MeterSummary summary(RequestParameters parameters);
 
   void delete(LogicalMeter logicalMeter);
+
+  Optional<LogicalMeter> findOneBy(RequestParameters parameters);
 }

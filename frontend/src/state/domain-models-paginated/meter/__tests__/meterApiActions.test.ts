@@ -17,7 +17,7 @@ import {
 } from '../../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
 import {makeInitialState} from '../../paginatedDomainModelsReducer';
-import {clearErrorMeters, fetchMeter, fetchMeterEntities, fetchMeters} from '../meterApiActions';
+import {clearErrorMeters, fetchMeterEntities, fetchMeters} from '../meterApiActions';
 import {Meter, MetersState} from '../meterModels';
 import {meterSchema} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
@@ -226,58 +226,6 @@ describe('meterApiActions', () => {
       });
     });
 
-  });
-
-  describe('fetchMeter', () => {
-    const getMeterRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
-    const meter: Partial<Meter> = {
-      id: 1,
-      flags: [],
-    };
-
-    const fetchMeterWithResponseOk = async (id: uuid) => {
-      mockRestClient.onGet(`${EndPoints.meters}/${id.toString()}`).reply(201, meter);
-      return store.dispatch(fetchMeter(id));
-    };
-
-    it('does not normalize response', async () => {
-      await fetchMeterWithResponseOk(meter.id as uuid);
-
-      expect(store.getActions()).toEqual([
-        getMeterRequest.request(),
-        getMeterRequest.success(meter as Meter[]),
-      ]);
-    });
-
-    it('does not fetch if already fetching entity', async () => {
-      const initialState: MetersState = {...makeInitialState(), isFetchingSingle: true};
-      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
-
-      await fetchMeterWithResponseOk(meter.id as uuid);
-
-      expect(store.getActions()).toEqual([]);
-    });
-
-    it('does not fetch is entity already exist in state', async () => {
-      const initialState: MetersState = {...makeInitialState(), entities: {1: meter as Meter}};
-      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
-
-      await fetchMeterWithResponseOk(meter.id as uuid);
-
-      expect(store.getActions()).toEqual([]);
-    });
-
-    it('does not fetch if entity have been attempted to be fetched but failed', async () => {
-      const initialState: MetersState = {
-        ...makeInitialState(),
-        nonExistingSingles: {1: {id: 1, message: 'meter does not exist'}},
-      };
-      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
-
-      await fetchMeterWithResponseOk(meter.id as uuid);
-
-      expect(store.getActions()).toEqual([]);
-    });
   });
 
   describe('fetchMeterEntities', () => {

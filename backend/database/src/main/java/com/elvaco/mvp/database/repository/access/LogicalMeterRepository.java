@@ -6,20 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PagedLogicalMeter;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
@@ -28,16 +31,16 @@ import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
+@Slf4j
 public class LogicalMeterRepository implements LogicalMeters {
 
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
@@ -49,19 +52,21 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
-    return logicalMeterJpaRepository.findById(id)
-      .flatMap(this::filterParametersOn);
+    return findOneBy(new RequestParametersAdapter().replace("id", id.toString()));
   }
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return logicalMeterJpaRepository.findBy(organisationId, id)
-      .flatMap(this::filterParametersOn);
+    return findOneBy(
+      new RequestParametersAdapter()
+        .replace("id", id.toString())
+        .replace("organisation", organisationId.toString())
+    );
   }
 
   @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    org.springframework.data.domain.Page<LogicalMeterEntity> logicalMeterEntities =
+  public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
+    org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
       logicalMeterJpaRepository.findAll(
         parameters,
         toPredicate(parameters),
@@ -72,29 +77,24 @@ public class LogicalMeterRepository implements LogicalMeters {
         )
       );
 
-    Iterable<PhysicalMeterStatusLogEntity> statusLogEntities = getStatusesForMeters(
-      parameters,
-      logicalMeterEntities.getContent()
-    );
-
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> statusesGroupedByPhysicalMeterId =
-      getStatusesGroupedByPhysicalMeterId(statusLogEntities);
-
-    Map<UUID, Long> mapMeasurementCount = getCountForMetersWithinPeriod(
-      parameters,
-      logicalMeterEntities.getContent()
-    );
-
-    return new PageAdapter<>(
-      logicalMeterEntities.map(
-        logicalMeter -> LogicalMeterEntityMapper.toDomainModel(
-          logicalMeter, statusesGroupedByPhysicalMeterId, mapMeasurementCount
+    return parameters.getAsSelectionPeriod("after", "before")
+      .map(selectionPeriod ->
+        new PageAdapter<>(
+          pagedLogicalMeters.map(source ->
+            LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage(
+              source, source.expectedMeasurementCount(selectionPeriod)
+            )
+          )
         )
-      ));
+      )
+      .orElse(
+        new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel))
+      );
+
   }
 
   @Override
-  public List<LogicalMeter> findAll(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
     List<LogicalMeterEntity> meters = sortingMapper.getAsSpringSort(parameters)
       .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
       .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));
@@ -113,7 +113,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     UUID organisationId,
     String externalId
   ) {
-    return logicalMeterJpaRepository.findBy(organisationId, externalId)
+    return logicalMeterJpaRepository.findOneBy(organisationId, externalId)
       .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
@@ -139,23 +139,14 @@ public class LogicalMeterRepository implements LogicalMeters {
     );
   }
 
-  private Predicate toPredicate(RequestParameters parameters) {
-    return new LogicalMeterQueryFilters().toExpression(parameters);
+  @Override
+  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findOneBy(parameters)
+      .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
-  private Iterable<PhysicalMeterStatusLogEntity> getStatusesForMeters(
-    RequestParameters parameters,
-    List<LogicalMeterEntity> logicalMeterEntities
-  ) {
-    List<String> physicalMeterIds = logicalMeterEntities
-      .stream()
-      .flatMap(logicalMeterEntity -> logicalMeterEntity.physicalMeters.stream())
-      .map(entity -> entity.getId().toString())
-      .collect(toList());
-
-    return getStatusesForMeters(
-      parameters.setAll("physicalMeterId", physicalMeterIds)
-    );
+  private Predicate toPredicate(RequestParameters parameters) {
+    return new LogicalMeterQueryFilters().toExpression(parameters);
   }
 
   private Iterable<PhysicalMeterStatusLogEntity> getStatusesForMeters(
@@ -171,28 +162,63 @@ public class LogicalMeterRepository implements LogicalMeters {
     );
   }
 
-  private Optional<LogicalMeter> filterParametersOn(LogicalMeterEntity meter) {
-    return mapAndCollectWithStatuses(singletonList(meter), new RequestParametersAdapter())
-      .stream()
-      .findFirst();
-  }
-
   private List<LogicalMeter> mapAndCollectWithStatuses(
     List<LogicalMeterEntity> meters,
     RequestParameters parameters
   ) {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
-      getStatusesGroupedByPhysicalMeterId(getStatusesForMeters(parameters));
+      logicalMeterJpaRepository.findStatusesGroupedByPhysicalMeterId(
+        new PhysicalMeterStatusLogQueryFilters().toExpression(parameters)
+      );
 
-    Map<UUID, Long> meterCounts = getCountForMetersWithinPeriod(parameters);
+    return parameters.getAsSelectionPeriod("after", "before")
+      .map(selectionPeriod ->
+        withStatusesAndCollectionStats(meters, parameters, mappedStatuses, selectionPeriod)
+      )
+      .orElse(
+        withStatusesOnly(meters, mappedStatuses).collect(toList())
+      );
 
+  }
+
+  private Stream<LogicalMeter> withStatusesOnly(
+    List<LogicalMeterEntity> meters,
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
+  ) {
+    return meters.stream().map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
+      logicalMeterEntity,
+      mappedStatuses,
+      null,
+      null
+    ));
+  }
+
+  private List<LogicalMeter> withStatusesAndCollectionStats(
+    List<LogicalMeterEntity> meters,
+    RequestParameters parameters,
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
+    SelectionPeriod selectionPeriod
+  ) {
+    Map<UUID, Long> countForMetersWithinPeriod = getCountForMetersWithinPeriod(parameters);
     return meters
       .stream()
-      .map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
-        logicalMeterEntity,
-        mappedStatuses,
-        meterCounts
-      ))
+      .map(logicalMeterEntity -> {
+        Long expectedMeasurementCount = (long) LogicalMeterHelper
+          .calculateExpectedReadOuts(
+            logicalMeterEntity.physicalMeters.stream()
+              .findFirst()
+              .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
+              .orElse(0L),
+            selectionPeriod
+          ) * logicalMeterEntity.meterDefinition.quantities.size();
+        return LogicalMeterEntityMapper.toDomainModel(
+          logicalMeterEntity,
+          mappedStatuses,
+          expectedMeasurementCount,
+          countForMetersWithinPeriod
+            .getOrDefault(logicalMeterEntity.id, 0L)
+        );
+      })
       .collect(toList());
   }
 
@@ -208,33 +234,6 @@ public class LogicalMeterRepository implements LogicalMeters {
       mappedStatuses.get(status.physicalMeterId).add(status);
     });
     return mappedStatuses;
-  }
-
-  private Map<UUID, Long> getCountForMetersWithinPeriod(
-    RequestParameters parameters,
-    List<LogicalMeterEntity> logicalMeterEntities
-  ) {
-    if (parameters.hasName("after") && parameters.hasName("before")) {
-      List<UUID> physicalMeterIds = logicalMeterEntities
-        .stream()
-        .flatMap(logicalMeterEntity -> logicalMeterEntity.physicalMeters.stream())
-        .map(PhysicalMeterEntity::getId)
-        .collect(toList());
-
-      if (!physicalMeterIds.isEmpty()) {
-        // TODO handle multiple dates?
-        return getCountForMetersWithinPeriod(
-          parameters.setAll(
-            "physicalMeterId",
-            physicalMeterIds
-              .stream()
-              .map(UUID::toString)
-              .collect(toList())
-          )
-        );
-      }
-    }
-    return emptyMap();
   }
 
   private Map<UUID, Long> getCountForMetersWithinPeriod(

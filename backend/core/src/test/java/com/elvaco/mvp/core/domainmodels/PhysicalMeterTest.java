@@ -74,7 +74,6 @@ public class PhysicalMeterTest {
       "ELV",
       randomUUID(),
       0L,
-      0L,
       statusLogs
     );
   }

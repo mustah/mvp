@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
 import lombok.AccessLevel;
@@ -60,13 +60,13 @@ public final class LogicalMeterHelper {
 
   public static double calculateExpectedReadOuts(
     long readIntervalMinutes,
-    ZonedDateTime after,
-    ZonedDateTime before
+    SelectionPeriod selectionPeriod
   ) {
     if (readIntervalMinutes == 0) {
       return 0;
     }
-    return Math.floor((double) Duration.between(after, before).toMinutes() / readIntervalMinutes);
+    return Math.floor((double) Duration.between(selectionPeriod.start, selectionPeriod.end)
+      .toMinutes() / readIntervalMinutes);
   }
 
   public static ZonedDateTime getNextReadoutDate(ZonedDateTime date, Long interval) {
@@ -86,25 +86,5 @@ public final class LogicalMeterHelper {
     }
 
     throw new RuntimeException("Unhandled meter interval");
-  }
-
-  public static CollectionStats getCollectionPercent(
-    List<PhysicalMeter> physicalMeters,
-    ZonedDateTime after,
-    ZonedDateTime before,
-    int expectedQuantityCount
-  ) {
-    double expectedReadouts = 0.0;
-    double actualReadouts = 0.0;
-
-    for (PhysicalMeter physicalMeter : physicalMeters) {
-      expectedReadouts += calculateExpectedReadOuts(
-        physicalMeter.readIntervalMinutes,
-        after,
-        before
-      );
-      actualReadouts += physicalMeter.getMeasurementCountOrZero();
-    }
-    return new CollectionStats(actualReadouts, expectedReadouts * expectedQuantityCount);
   }
 }

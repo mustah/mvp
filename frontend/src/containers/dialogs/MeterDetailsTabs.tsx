@@ -20,7 +20,7 @@ import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
+import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
@@ -29,13 +29,14 @@ import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
+import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 
 interface State {
   selectedTab: TabName;
 }
 
 interface Props {
-  meter: Meter;
+  meter: MeterDetails;
   meterMapMarker: Maybe<MapMarker>;
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;

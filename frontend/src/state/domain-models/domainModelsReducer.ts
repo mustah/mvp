@@ -30,6 +30,7 @@ import {
   domainModelsPutSuccess,
   domainModelsRequest,
 } from './domainModelsActions';
+import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {User} from './user/userModels';
 
@@ -193,6 +194,7 @@ export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', En
 export const media = reducerFor<SelectionEntity>('media', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 
+export const meters = reducerFor<MeterDetails>('meters', EndPoints.meters, resetStateReducer);
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
 
 export const meterMapMarkers = reducerFor<MapMarker>(
@@ -223,6 +225,7 @@ export const domainModels = combineReducers<DomainModelsState>({
   gatewayMapMarkers,
   gatewayStatuses,
   media,
+  meters,
   meterMapMarkers,
   meterStatuses,
   organisations,

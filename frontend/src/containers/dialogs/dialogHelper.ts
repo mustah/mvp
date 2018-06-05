@@ -1,15 +1,19 @@
 import {normalize} from 'normalizr';
 import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {translate} from '../../services/translationService';
-import {Gateway, GatewayStatusChangelog} from '../../state/domain-models-paginated/gateway/gatewayModels';
+import {
+  Gateway,
+  GatewayStatusChangelog,
+} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogSchema} from '../../state/domain-models-paginated/gateway/gatewaySchema';
-import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
+import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {measurement} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
 import {allQuantities, Measurement} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
+import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 
 export const titleOf = (flags: Flag[]): string => {
   if (flags.length) {
@@ -21,7 +25,7 @@ export const titleOf = (flags: Flag[]): string => {
 
 type Changelogs = GatewayStatusChangelog | MeterStatusChangelog;
 
-export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Normalized<Changelogs> => {
+export const normalizedStatusChangelogFor = (domainModel: Gateway | MeterDetails): Normalized<Changelogs> => {
   const {entities, result} = normalize(domainModel, statusChangelogSchema);
 
   return {
@@ -31,7 +35,7 @@ export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Norm
 };
 
 const orderedQuantities = (medium: string): string[] => {
-  const translationTable: {[key: string]: Medium} = {
+  const translationTable: { [key: string]: Medium } = {
     'District heating': Medium.districtHeating,
     'Gas': Medium.gas,
     'Water': Medium.water,
@@ -44,7 +48,7 @@ const orderedQuantities = (medium: string): string[] => {
     : [];
 };
 
-export const meterMeasurementsForTable = (meter: Meter): DomainModel<RenderableMeasurement> => {
+export const meterMeasurementsForTable = (meter: MeterDetails): DomainModel<RenderableMeasurement> => {
   const normalized: Normalized<Measurement> = normalize(meter.measurements, measurement);
   const entities: ObjectsById<RenderableMeasurement> =
     normalized.entities.measurements ? {...normalized.entities.measurements} : {};

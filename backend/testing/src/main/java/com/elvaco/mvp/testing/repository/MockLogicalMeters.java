@@ -43,12 +43,12 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
     return null;
   }
 
   @Override
-  public List<LogicalMeter> findAll(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
     return filter(isWithinOrganisation(parameters))
       .collect(toList());
   }
@@ -85,18 +85,25 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
+    return Optional.empty();
+  }
+
+  @Override
   protected LogicalMeter copyWithId(UUID id, LogicalMeter entity) {
     return new LogicalMeter(
       id,
       entity.externalId,
       entity.organisationId,
-      entity.location,
+      entity.meterDefinition,
       entity.created,
       entity.physicalMeters,
-      entity.meterDefinition,
       emptyList(),
-      entity.getCollectionPercentage().orElse(null),
-      entity.measurements
+      entity.latestReadouts,
+      entity.location,
+      entity.expectedMeasurementCount,
+      entity.actualMeasurementCount,
+      entity.currentStatus
     );
   }
 
@@ -116,7 +123,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   private Predicate<LogicalMeter> isWithinOrganisation(RequestParameters parameters) {
     return logicalMeter ->
       !parameters.hasName("organisation")
-        || Objects.equals(
+      || Objects.equals(
         parameters.getFirst("organisation"),
         logicalMeter.organisationId.toString()
       );

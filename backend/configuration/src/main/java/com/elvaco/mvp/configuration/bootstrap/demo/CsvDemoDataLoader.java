@@ -95,11 +95,11 @@ class CsvDemoDataLoader implements CommandLineRunner {
               randomUUID(),
               csvData.facilityId,
               ELVACO.id,
-              locationMap.get(csvData.address.toLowerCase()),
+              MeterDefinition.fromMedium(Medium.from(csvData.medium)),
               addDays(),
               emptyList(),
-              MeterDefinition.fromMedium(Medium.from(csvData.medium)),
-              emptyList()
+              emptyList(),
+              locationMap.get(csvData.address.toLowerCase())
             );
             PhysicalMeter physicalMeter = PhysicalMeter.builder()
               .address(csvData.meterId)

@@ -1,18 +1,18 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterTest {
 
@@ -161,7 +161,7 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = newLogicalMeter(
       logicalMeterId,
       organisationId,
-      Collections.singletonList(newPhysicalMeter(organisationId, logicalMeterId, null))
+      singletonList(newPhysicalMeter(organisationId, logicalMeterId, null))
     );
     assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
   }
@@ -173,7 +173,7 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = newLogicalMeter(
       logicalMeterId,
       organisationId,
-      Collections.singletonList(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
+      singletonList(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
     );
     assertThat(logicalMeter.getManufacturer()).isEqualTo("KAM");
   }
@@ -194,49 +194,154 @@ public class LogicalMeterTest {
   }
 
   @Test
-  public void collectionPercentageNaNisNull() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
-      .withCollectionPercentage(Double.NaN);
-
-    assertThat(meter.collectionPercentage).isNull();
+  public void currentStatus_explicitlySetStatusIsPreferred() {
+    LogicalMeter meter = newLogicalMeterWithStatuses(new StatusLogEntry<>(
+      randomUUID(),
+      StatusType.ERROR,
+      ZonedDateTime.now().minusDays(1)
+    ), singletonList(
+      new StatusLogEntry<>(
+        randomUUID(),
+        StatusType.OK,
+        ZonedDateTime.now()
+      )
+    ));
+    assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
   }
 
   @Test
-  public void collectionPercentageNullisNull() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
-      .withCollectionPercentage(null);
+  public void currentStatus_unknownIfNoStatusAvailable() {
+    LogicalMeter meter = newLogicalMeterWithStatuses(
+      null,
+      emptyList()
+    );
 
-    assertThat(meter.collectionPercentage).isNull();
+    assertThat(meter.currentStatus()).isEqualTo(StatusType.UNKNOWN);
   }
 
   @Test
-  public void collectionPercentageIsSet() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER)
-      .withCollectionPercentage(0.5);
+  public void currentStatus_statusLogStatusIsUsedIfAvailable() {
+    LogicalMeter meter = newLogicalMeterWithStatuses(
+      null,
+      singletonList(newStatusLog(StatusType.ERROR, ZonedDateTime.now()))
+    );
 
-    assertThat(meter.collectionPercentage).isEqualTo(0.5);
+    assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
   }
 
   @Test
-  public void collectionPercentageCannotBeLessThanZero() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
+  public void currentStatus_latestStartedStatusLogUsedIfMultipleConcurrent() {
+    LogicalMeter meter = newLogicalMeterWithStatuses(
+      null,
+      asList(
+        newStatusLog(StatusType.ERROR, ZonedDateTime.now()),
+        newStatusLog(StatusType.OK, ZonedDateTime.now().plusHours(2)),
+        newStatusLog(StatusType.WARNING, ZonedDateTime.now().minusDays(1))
+      )
+    );
 
-    assertThatThrownBy(() -> meter.withCollectionPercentage(-2.0))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage(
-        "Collection percentage must be >= 0 and <= 100, "
-        + "but was: -2.0 for logical meter '" + meter.id + "'");
+    assertThat(meter.currentStatus()).isEqualTo(StatusType.OK);
   }
 
   @Test
-  public void collectionPercentageCannotBeGreaterThanOneHundred() {
-    LogicalMeter meter = newLogicalMeter(randomUUID(), randomUUID(), MeterDefinition.UNKNOWN_METER);
+  public void currentStatus_stoppedStatusesAreNotConsidered() {
+    ZonedDateTime now = ZonedDateTime.now();
+    LogicalMeter meter = newLogicalMeterWithStatuses(
+      null,
+      asList(
+        newStatusLog(StatusType.ERROR, now),
+        newStatusLog(StatusType.OK, now.plusHours(2), now.plusHours(3)),
+        newStatusLog(StatusType.WARNING, now.minusDays(1))
+      )
+    );
 
-    assertThatThrownBy(() -> meter.withCollectionPercentage(100.1))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage(
-        "Collection percentage must be >= 0 and <= 100, "
-        + "but was: 100.1 for logical meter '" + meter.id + "'");
+    assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
+  }
+
+  @Test
+  public void getCollectionStats_noneExpected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      null, null
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.actual).isEqualTo(0L);
+    assertThat(collectionStats.expected).isEqualTo(0L);
+  }
+
+  @Test
+  public void getCollectionStats_oneExpected_zeroCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      1L,
+      0L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.0);
+    assertThat(collectionStats.actual).isEqualTo(0.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionStats_oneExpected_allCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      1L,
+      1L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
+  }
+
+  @Test
+  public void getCollectionStats_SevenExpected_allCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      7L,
+      7L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
+    assertThat(collectionStats.actual).isEqualTo(7.0);
+    assertThat(collectionStats.expected).isEqualTo(7.0);
+  }
+
+  @Test
+  public void getCollectionStats_sevenExpected_threeCollected() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
+      7L,
+      3L
+    );
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.expected).isEqualTo(7.0);
+    assertThat(collectionStats.actual).isEqualTo(3.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(42.857142857142854);
+  }
+
+  @Test
+  public void getCollectionStats_noneExpectedOneReceived() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(0L, 1L);
+
+    CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.expected).isEqualTo(0.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+  }
+
+  private StatusLogEntry<UUID> newStatusLog(
+    StatusType statusType,
+    ZonedDateTime startTime,
+    ZonedDateTime stopTime
+  ) {
+    return new StatusLogEntry<>(0L, randomUUID(), statusType, startTime, stopTime);
+  }
+
+  private StatusLogEntry<UUID> newStatusLog(StatusType statusType, ZonedDateTime startTime) {
+    return new StatusLogEntry<>(randomUUID(), statusType, startTime);
   }
 
   private PhysicalMeter newPhysicalMeter(
@@ -256,7 +361,6 @@ public class LogicalMeterTest {
       .externalId("an-external-id")
       .medium("Hot water")
       .manufacturer(manufacturer)
-      .measurementCount(0L)
       .statuses(emptyList())
       .build();
   }
@@ -271,8 +375,14 @@ public class LogicalMeterTest {
       "an-external-id",
       organisationId,
       MeterDefinition.HOT_WATER_METER,
+      ZonedDateTime.now(),
+      physicalMeterList,
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-      physicalMeterList
+      null,
+      null,
+      null
     );
   }
 
@@ -287,6 +397,65 @@ public class LogicalMeterTest {
       organisationId,
       meterDefinition,
       UNKNOWN_LOCATION
+    );
+  }
+
+  private LogicalMeter newLogicalMeterWithExpectedAndActual(
+    Long expectedMeasurementCount,
+    Long actualMeasurementCount
+  ) {
+    return new LogicalMeter(
+      randomUUID(),
+      "an-external-id",
+      randomUUID(),
+      MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
+      UNKNOWN_LOCATION,
+      expectedMeasurementCount,
+      actualMeasurementCount,
+      null
+    );
+  }
+
+  private LogicalMeter newLogicalMeterWithStatuses(
+    @Nullable StatusLogEntry<UUID> explicitStatus,
+    List<StatusLogEntry<UUID>> physicalMeterStatuses
+  ) {
+    UUID organisationId = randomUUID();
+    UUID logicalMeterId = randomUUID();
+    PhysicalMeter physicalMeter = new PhysicalMeter(
+      randomUUID(),
+      new Organisation(
+        organisationId,
+        "Organisation, Inc.",
+        "organisation-inc",
+        "Organisation, Inc."
+      ),
+      "250",
+      "an-external-id",
+      "Heat, Return temp.",
+      "ELV",
+      logicalMeterId,
+      60L,
+      physicalMeterStatuses
+    );
+
+    return new LogicalMeter(
+      logicalMeterId,
+      "an-external-id",
+      randomUUID(),
+      MeterDefinition.DISTRICT_HEATING_METER,
+      ZonedDateTime.now(),
+      singletonList(physicalMeter),
+      emptyList(),
+      emptyList(),
+      UNKNOWN_LOCATION,
+      null,
+      null,
+      explicitStatus
     );
   }
 }

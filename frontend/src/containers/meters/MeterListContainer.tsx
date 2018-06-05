@@ -104,7 +104,7 @@ class MeterList extends React.Component<Props> {
         selectEntryAdd={selectEntryAdd}
         syncWithMetering={syncWithMetering}
       />);
-    const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;
+    const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) =>
       <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;

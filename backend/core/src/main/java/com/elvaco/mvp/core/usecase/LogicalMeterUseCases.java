@@ -17,12 +17,9 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
-
 import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class LogicalMeterUseCases {
@@ -32,19 +29,20 @@ public class LogicalMeterUseCases {
   private final Measurements measurements;
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
-      .stream()
-      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
-      .collect(toList());
+    return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(
+      currentUser,
+      parameters
+    ));
   }
 
-  public Page<LogicalMeter> findAllWithMeasurements(
+  public Page<LogicalMeter> findAll(
     RequestParameters parameters,
     Pageable pageable
   ) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
-      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
-      .map(this::withLatestReadouts);
+    return logicalMeters.findAllWithStatuses(
+      setCurrentUsersOrganisationId(currentUser, parameters),
+      pageable
+    );
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -56,16 +54,23 @@ public class LogicalMeterUseCases {
     );
   }
 
+  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
+    Optional<LogicalMeter> meter = logicalMeters.findOneBy(setCurrentUsersOrganisationId(
+      currentUser,
+      parameters
+    ));
+
+    return parameters.getAsZonedDateTime("before")
+      .map(beforeTime -> meter.map(m -> withLatestReadouts(m, beforeTime)))
+      .orElse(meter);
+  }
+
   public Optional<LogicalMeter> findById(UUID id) {
     if (currentUser.isSuperAdmin()) {
       return logicalMeters.findById(id);
     } else {
       return logicalMeters.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
     }
-  }
-
-  public Optional<LogicalMeter> findByIdWithMeasurements(UUID id) {
-    return findById(id).map(this::withLatestReadouts);
   }
 
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
@@ -100,7 +105,7 @@ public class LogicalMeterUseCases {
     ));
   }
 
-  private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter) {
+  private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter, ZonedDateTime before) {
     if (!logicalMeter.activePhysicalMeter().isPresent()) {
       return logicalMeter;
     }
@@ -109,28 +114,11 @@ public class LogicalMeterUseCases {
     UUID physicalMeterId = logicalMeter.activePhysicalMeter().get().id;
 
     for (Quantity quantity : logicalMeter.getQuantities()) {
-      measurements.findLatestReadout(physicalMeterId, quantity).ifPresent(latestMeasurements::add);
+      measurements.findLatestReadout(physicalMeterId, before, quantity)
+        .ifPresent(latestMeasurements::add);
     }
 
     return logicalMeter.withMeasurements(latestMeasurements);
-  }
-
-  private LogicalMeter withCollectionPercentage(
-    LogicalMeter logicalMeter,
-    RequestParameters parameters
-  ) {
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
-      return logicalMeter;
-    }
-
-    return logicalMeter.withCollectionPercentage(
-      LogicalMeterHelper.getCollectionPercent(
-        logicalMeter.physicalMeters,
-        ZonedDateTime.parse(parameters.getFirst("after")),
-        ZonedDateTime.parse(parameters.getFirst("before")),
-        logicalMeter.meterDefinition.quantities.size()
-      ).getCollectionPercentage()
-    );
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

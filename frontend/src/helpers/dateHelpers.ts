@@ -64,10 +64,10 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
 export const now = (): Date => moment().tz(timezoneUtc).toDate();
 
 const currentDateRange = (
-  now: Date,
+  start: Date,
   period: Period,
   customDateRange: Maybe<DateRange>,
-): DateRange => dateRange(now, period, customDateRange);
+): DateRange => dateRange(start, period, customDateRange);
 
 const toApiParameters = ({start, end}: DateRange): EncodedUriParameters[] => {
   return [

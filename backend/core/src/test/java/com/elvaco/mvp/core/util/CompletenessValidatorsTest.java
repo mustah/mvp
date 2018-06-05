@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import org.junit.Test;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompletenessValidatorsTest {
@@ -116,9 +117,15 @@ public class CompletenessValidatorsTest {
       UUID.randomUUID(),
       "external-id",
       UUID.randomUUID(),
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       Location.UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    )
+          null,
+      0L, null
+        )
       .withLocation(location)
       .withMeterDefinition(meterDefinition);
   }

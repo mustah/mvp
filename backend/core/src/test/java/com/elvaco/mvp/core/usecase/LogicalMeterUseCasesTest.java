@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
@@ -118,7 +120,7 @@ public class LogicalMeterUseCasesTest {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T13:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2001-01-01T14:00:00Z");
 
-    assertThat(calculateExpectedReadOuts(15, after, before))
+    assertThat(calculateExpectedReadOuts(15, new SelectionPeriod(after, before)))
       .as("Unexpected nr of read outs")
       .isEqualTo(4);
   }
@@ -128,7 +130,7 @@ public class LogicalMeterUseCasesTest {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T00:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2001-01-02T00:00:00Z");
 
-    assertThat(calculateExpectedReadOuts(60, after, before))
+    assertThat(calculateExpectedReadOuts(60, new SelectionPeriod(after, before)))
       .as("Unexpected nr of read outs")
       .isEqualTo(24);
   }
@@ -253,8 +255,14 @@ public class LogicalMeterUseCasesTest {
       meterId,
       "meter-" + meterId,
       organisationId,
+      MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.now()
+      null,
+      0L, null
     );
   }
 

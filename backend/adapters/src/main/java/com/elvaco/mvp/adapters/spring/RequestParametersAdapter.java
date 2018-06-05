@@ -33,8 +33,8 @@ public class RequestParametersAdapter implements RequestParameters {
 
   public static RequestParameters requestParametersOf(Map<String, List<String>> multiValueMap) {
     return requestParametersOf(multiValueMap != null
-                                 ? new LinkedMultiValueMap<>(multiValueMap)
-                                 : new LinkedMultiValueMap<>());
+      ? new LinkedMultiValueMap<>(multiValueMap)
+      : new LinkedMultiValueMap<>());
   }
 
   @Override

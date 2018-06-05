@@ -4,6 +4,7 @@ import {UserSelection} from '../user-selection/userSelectionModels';
 import {Address} from './location/locationModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
+import {MeterDetails} from './meter-details/meterDetailsModels';
 
 export interface ObjectsById<T extends Identifiable> {
   [id: string]: T;
@@ -41,6 +42,7 @@ export interface DomainModelsState {
   gatewayStatuses: SelectionEntityState;
   media: NormalizedState<IdNamed>;
   meterMapMarkers: NormalizedState<MapMarker>;
+  meters: NormalizedState<MeterDetails>;
   meterStatuses: SelectionEntityState;
   organisations: NormalizedState<Organisation>;
   userSelections: NormalizedState<UserSelection>;

@@ -27,13 +27,15 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
       logicalMeter.id,
       logicalMeter.externalId,
       logicalMeter.organisationId,
-      logicalMeter.location,
+      logicalMeter.meterDefinition,
       logicalMeter.created,
       savedPhysicalMeters,
-      logicalMeter.meterDefinition,
       logicalMeter.gateways,
-      logicalMeter.collectionPercentage,
-      logicalMeter.measurements
+      logicalMeter.latestReadouts,
+      logicalMeter.location,
+      logicalMeter.expectedMeasurementCount,
+      logicalMeter.actualMeasurementCount,
+      logicalMeter.currentStatus
     ));
   }
 }

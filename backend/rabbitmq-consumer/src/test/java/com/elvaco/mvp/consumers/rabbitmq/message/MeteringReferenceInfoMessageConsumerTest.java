@@ -145,15 +145,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
       logicalMeter.id,
       EXTERNAL_ID,
       organisation.id,
-      new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build(),
+      MeterDefinition.HOT_WATER_METER,
       logicalMeter.created,
       singletonList(savedPhysicalMeter),
-      MeterDefinition.HOT_WATER_METER,
       singletonList(gateways.findBy(
         organisation.id,
         PRODUCT_MODEL,
         GATEWAY_EXTERNAL_ID
-      ).get())
+      ).get()),
+      new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build()
     );
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
@@ -166,7 +166,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       logicalMeter.id,
       READ_INTERVAL_IN_MINUTES,
-      null,
       savedPhysicalMeter.statuses
     ));
   }
@@ -197,10 +196,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       Location.UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-
-    ));
+          null,
+      0L, null
+        ));
 
     Location newLocation = new LocationBuilder()
       .country("")
@@ -229,7 +233,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).hasSize(1);
     assertThat(organisations.findAll()).hasSize(1);
     PhysicalMeter meter = allPhysicalMeters.get(0);
     assertThat(meter.organisation).isEqualTo(organisation);
@@ -281,7 +285,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void setsNoMeterDefinitionForUnmappableMedium() {
     messageHandler.accept(newMessageWithMedium("Unmappable medium"));
 
-    List<LogicalMeter> meters = logicalMeters.findAll(new MockRequestParameters());
+    List<LogicalMeter> meters = logicalMeters.findAllWithStatuses(new MockRequestParameters());
     assertThat(meters).hasSize(1);
     assertThat(meters.get(0).getMedium()).isEqualTo("Unknown medium");
   }
@@ -290,12 +294,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void updatesMeterDefinitionForExistingLogicalMeter() {
     messageHandler.accept(newMessageWithMedium("Unknown medium"));
 
-    LogicalMeter meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
     assertThat(meter.getMedium()).isEqualTo("Unknown medium");
 
     messageHandler.accept(newMessageWithMedium("Heat, Return temp"));
 
-    meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
   }
 
@@ -303,12 +307,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void doesNotUpdateMeterDefinitionWithUnmappableMedium() {
     messageHandler.accept(newMessageWithMedium("Unknown medium"));
 
-    LogicalMeter meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
     assertThat(meter.getMedium()).isEqualTo("Unknown medium");
 
     messageHandler.accept(newMessageWithMedium("I don't even know what this is?"));
 
-    meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.UNKNOWN_METER.type);
   }
 
@@ -316,12 +320,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void updatesManufacturerForExistingMeter() {
     messageHandler.accept(newMessageWithManufacturer("ELV"));
 
-    LogicalMeter meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    LogicalMeter meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
     assertThat(meter.getManufacturer()).isEqualTo("ELV");
 
     messageHandler.accept(newMessageWithManufacturer("KAM"));
 
-    meter = logicalMeters.findAll(new MockRequestParameters()).get(0);
+    meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
     assertThat(meter.getManufacturer()).isEqualTo("KAM");
   }
 
@@ -358,11 +362,11 @@ public class MeteringReferenceInfoMessageConsumerTest {
       logicalMeterId,
       EXTERNAL_ID,
       organisation.id,
-      UNKNOWN_LOCATION,
+      MeterDefinition.HOT_WATER_METER,
       now,
       singletonList(existingPhysicalMeter),
-      MeterDefinition.HOT_WATER_METER,
-      emptyList()
+      emptyList(),
+      UNKNOWN_LOCATION
     ));
 
     MeteringReferenceInfoMessageDto message =
@@ -420,7 +424,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -435,7 +439,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -450,7 +454,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).hasSize(1);
     assertThat(physicalMeters.findAll()).isEmpty();
   }
 
@@ -520,7 +524,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAll(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -628,9 +632,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
+          MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.now(),
+          emptyList(),
+          emptyList(),
+          emptyList(),
       Location.UNKNOWN_LOCATION,
-      ZonedDateTime.now()
-    ));
+          null,
+      0L, null
+        ));
 
     messageHandler.accept(
       newMessageWithLocation(new LocationBuilder().city("Borås").build())

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort.Direction;
 import static java.util.stream.Collectors.toList;
 
 public abstract class SortingEntityMapper {
+
   abstract Map<String, String> getSortingMap();
 
   public org.springframework.data.domain.Sort getAsSpringSort(

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -42,13 +43,10 @@ public class LogicalMeterDtoMapperTest {
       "",
       meterId,
       0,
-      null,
       singletonList(
         new StatusLogEntry<>(
-          null,
           randomUUID(),
           StatusType.OK,
-          ZonedDateTime.now(),
           ZonedDateTime.now()
         )
       )
@@ -58,14 +56,10 @@ public class LogicalMeterDtoMapperTest {
       meterId,
       "some-external-id",
       ELVACO.id,
-      new LocationBuilder()
-        .latitude(3.1)
-        .longitude(2.1)
-        .build(),
-      ZonedDateTime.now(),
-      singletonList(physicalMeter),
-      null,
-      emptyList()
+      null, ZonedDateTime.now(), singletonList(physicalMeter), emptyList(), new LocationBuilder()
+      .latitude(3.1)
+      .longitude(2.1)
+      .build()
     );
 
     assertThat(LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter))
@@ -97,10 +91,10 @@ public class LogicalMeterDtoMapperTest {
     expected.address = "123123";
     expected.statusChangelog = singletonList(
       new MeterStatusLogDto(
-        1L,
+        null,
         StatusType.OK.name,
         "2018-02-12T14:14:25Z",
-        "2018-02-13T14:14:25Z"
+        ""
       )
     );
     ZonedDateTime statusChanged = ZonedDateTime.parse("2018-02-12T14:14:25Z");
@@ -119,12 +113,49 @@ public class LogicalMeterDtoMapperTest {
 
     UUID organisationId = ELVACO.id;
 
+    List<Gateway> gateways = singletonList(Gateway.builder()
+      .id(expected.gateway.id)
+      .organisationId(organisationId)
+      .serial(expected.gateway.serial)
+      .productModel(expected.gateway.productModel)
+      .statusLogs(singletonList(
+        new StatusLogEntry<>(
+          1L,
+          randomUUID(),
+          StatusType.OK,
+          statusChanged,
+          statusChanged.plusDays(1)
+        )))
+      .build());
+    List<PhysicalMeter> physicalMeters = singletonList(
+      new PhysicalMeter(
+        randomUUID(),
+        ELVACO,
+        "123123",
+        "an-external-id",
+        "Some device specific medium",
+        "ELV",
+        meterId,
+        15,
+        singletonList(
+          new StatusLogEntry<>(
+            randomUUID(),
+            StatusType.OK,
+            statusChanged
+          )
+        )
+      ));
     assertThat(
       LogicalMeterDtoMapper.toDto(
         new LogicalMeter(
           meterId,
           "an-external-id",
           organisationId,
+          MeterDefinition.HOT_WATER_METER,
+          statusChanged,
+          physicalMeters,
+          gateways,
+          emptyList(),
           new LocationBuilder()
             .city("kungsbacka")
             .address("kabelgatan 2t")
@@ -132,44 +163,10 @@ public class LogicalMeterDtoMapperTest {
             .longitude(56.123)
             .confidence(1.0)
             .build(),
-          statusChanged,
-          singletonList(
-            new PhysicalMeter(
-              randomUUID(),
-              ELVACO,
-              "123123",
-              "an-external-id",
-              "Some device specific medium",
-              "ELV",
-              meterId,
-              15,
-              null,
-              singletonList(
-                new StatusLogEntry<>(
-                  1L,
-                  randomUUID(),
-                  StatusType.OK,
-                  statusChanged,
-                  statusChanged.plusDays(1)
-                )
-              )
-            )),
-          MeterDefinition.HOT_WATER_METER,
-          singletonList(Gateway.builder()
-            .id(expected.gateway.id)
-            .organisationId(organisationId)
-            .serial(expected.gateway.serial)
-            .productModel(expected.gateway.productModel)
-            .statusLogs(singletonList(
-              new StatusLogEntry<>(
-                1L,
-                randomUUID(),
-                StatusType.OK,
-                statusChanged,
-                statusChanged.plusDays(1)
-              )))
-            .build())
-        ).withCollectionPercentage(75.0)))
+          100L,
+          75L,
+          null
+        )))
       .isEqualTo(expected);
   }
 
@@ -179,9 +176,16 @@ public class LogicalMeterDtoMapperTest {
       randomUUID(),
       "external-id",
       ELVACO.id,
+      MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.parse("2018-02-12T14:14:25Z"),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.parse("2018-02-12T14:14:25Z")
-    ).withCollectionPercentage(null));
+      null,
+      null,
+      null
+    ));
 
     assertThat(logicalMeterDto.collectionPercentage).isNull();
   }
@@ -192,8 +196,15 @@ public class LogicalMeterDtoMapperTest {
       randomUUID(),
       "external-id",
       ELVACO.id,
+      MeterDefinition.UNKNOWN_METER,
+      ZonedDateTime.parse("2018-02-12T14:14:25Z"),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-      ZonedDateTime.parse("2018-02-12T14:14:25Z")
+      null,
+      null,
+      null
     ));
 
     assertThat(logicalMeterDto.created).isEqualTo("2018-02-12T14:14:25Z");

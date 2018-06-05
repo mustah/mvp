@@ -233,11 +233,11 @@ public class MeteringRequestPublisherTest {
       logicalMeterId,
       logicalMeterId.toString(),
       organisationId,
-      Location.UNKNOWN_LOCATION,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
       physicalMeters,
-      MeterDefinition.UNKNOWN_METER,
-      gateways
+      gateways,
+      Location.UNKNOWN_LOCATION
     );
   }
 }
