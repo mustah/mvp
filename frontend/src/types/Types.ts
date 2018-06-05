@@ -55,6 +55,10 @@ export interface Selectable {
   isSelected?: boolean;
 }
 
+export interface HasContent {
+  hasContent: boolean;
+}
+
 export interface Clickable {
   onClick: OnClick;
 }

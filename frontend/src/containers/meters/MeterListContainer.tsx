@@ -1,23 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
-import {HasContent} from '../../components/content/HasContent';
-import {DateTime} from '../../components/dates/DateTime';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Loader} from '../../components/loading/Loader';
-import {MeterListItem} from '../../components/meters/MeterListItem';
-import {PaginationControl} from '../../components/pagination-control/PaginationControl';
-import {Separator} from '../../components/separators/Separator';
-import {Status} from '../../components/status/Status';
-import {Table, TableColumn} from '../../components/table/Table';
-import {TableHead} from '../../components/table/TableHead';
-import {MissingDataTitle} from '../../components/texts/Titles';
 import {now} from '../../helpers/dateHelpers';
-import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
-import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../services/translationService';
+import {firstUpperTranslated} from '../../services/translationService';
 import {
   clearErrorMeters,
   fetchMeters,
@@ -44,6 +33,7 @@ import {
 } from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
+import {MeterList} from './MeterList';
 
 interface StateToProps {
   result: uuid[];
@@ -67,118 +57,33 @@ interface OwnProps {
   componentId: string;
 }
 
-type Props = StateToProps & DispatchToProps & OwnProps;
+export type MeterListProps = StateToProps & DispatchToProps & OwnProps;
 
-class MeterList extends React.Component<Props> {
+const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
+
+class MeterListComponent extends React.Component<MeterListProps> {
 
   componentDidMount() {
     const {fetchMeters, parameters, pagination: {page}} = this.props;
     fetchMeters(page, parameters);
   }
 
-  componentWillReceiveProps({fetchMeters, parameters, pagination: {page}}: Props) {
+  componentWillReceiveProps({fetchMeters, parameters, pagination: {page}}: MeterListProps) {
     fetchMeters(page, parameters);
   }
 
   render() {
-    const {
-      result,
-      entities,
-      selectEntryAdd,
-      syncWithMetering,
-      isFetching,
-      pagination,
-      changePaginationPage,
-      componentId,
-      error,
-      entityType,
-    } = this.props;
-
-    const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-    const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
-    const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
-    const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
-    const renderActionDropdown = ({id, manufacturer}: Meter) => (
-      <ListActionsDropdown
-        item={{id, name: manufacturer}}
-        selectEntryAdd={selectEntryAdd}
-        syncWithMetering={syncWithMetering}
-      />);
-    const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
-    const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-    const renderStatusChanged = ({statusChanged}: Meter) =>
-      <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
-    const renderMedium = ({medium}: Meter) => medium;
-    const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
-      formatCollectionPercentage(collectionPercentage, readIntervalMinutes);
-
-    const collectionPercentageHeader = (
-      <TableHead className="number">
-        {translate('collection percentage')}
-      </TableHead>
-    );
-
-    const changePage = (page: number) => changePaginationPage({
-      entityType,
-      componentId,
-      page,
-    });
+    const {result, isFetching, error} = this.props;
+    const {children, ...otherProps} = this.props;
+    const wrapperProps: MeterListProps & WithEmptyContentProps = {
+      ...otherProps,
+      noContentText: firstUpperTranslated('no meters'),
+      hasContent: result.length > 0,
+    };
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
-        <HasContent
-          hasContent={result.length > 0}
-          fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
-        >
-          <div>
-            <Table result={result} entities={entities}>
-              <TableColumn
-                header={<TableHead className="first">{translate('facility')}</TableHead>}
-                renderCell={renderMeterListItem}
-              />
-              <TableColumn
-                header={<TableHead>{translate('city')}</TableHead>}
-                cellClassName={'first-uppercase'}
-                renderCell={renderCityName}
-              />
-              <TableColumn
-                header={<TableHead>{translate('address')}</TableHead>}
-                cellClassName={'first-uppercase'}
-                renderCell={renderAddressName}
-              />
-              <TableColumn
-                header={<TableHead>{translate('manufacturer')}</TableHead>}
-                renderCell={renderManufacturer}
-              />
-              <TableColumn
-                header={<TableHead>{translate('medium')}</TableHead>}
-                renderCell={renderMedium}
-              />
-              <TableColumn
-                header={<TableHead>{translate('gateway')}</TableHead>}
-                renderCell={renderGatewaySerial}
-              />
-              <TableColumn
-                cellClassName="number"
-                header={collectionPercentageHeader}
-                renderCell={renderCollectionStatus}
-              />
-              <TableColumn
-                header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-                renderCell={renderStatusCell}
-              />
-              <TableColumn
-                header={<TableHead>{translate('status change')}</TableHead>}
-                renderCell={renderStatusChanged}
-              />
-              <TableColumn
-                header={<TableHead className="actionDropdown">{' '}</TableHead>}
-                renderCell={renderActionDropdown}
-              />
-            </Table>
-            <PaginationControl pagination={pagination} changePage={changePage}/>
-          </div>
-        </HasContent>
+        <MeterListWrapper {...wrapperProps}/>
       </Loader>
     );
   }
@@ -223,4 +128,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const MeterListContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterList);
+  connect<StateToProps, DispatchToProps, OwnProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(MeterListComponent);
