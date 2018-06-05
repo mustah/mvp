@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
@@ -38,7 +37,6 @@ public class PagedLogicalMeter {
     PhysicalMeterEntity activePhysicalMeter,
     GatewayEntity gateway
   ) {
-
     this(
       id,
       organisationId,

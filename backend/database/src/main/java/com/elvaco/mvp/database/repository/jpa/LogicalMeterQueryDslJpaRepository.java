@@ -270,7 +270,7 @@ public class LogicalMeterQueryDslJpaRepository
       findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters()
         .toExpression(parameters));
 
-    all = all.stream().map(pagedLogicalMeter ->
+    return all.stream().map(pagedLogicalMeter ->
       pagedLogicalMeter
         .withMeasurementCount(logicalMeterIdToMeasurementCount.getOrDefault(
           pagedLogicalMeter.id,
@@ -281,7 +281,6 @@ public class LogicalMeterQueryDslJpaRepository
           null
         ))
     ).collect(toList());
-    return all;
   }
 
   private boolean isStatusQuery(RequestParameters parameters) {
@@ -347,7 +346,6 @@ public class LogicalMeterQueryDslJpaRepository
       .distinct()
       .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
       .fetchJoin()
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .fetchOne();
   }
