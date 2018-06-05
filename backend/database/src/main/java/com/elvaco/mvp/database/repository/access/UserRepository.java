@@ -29,7 +29,7 @@ public class UserRepository implements Users {
 
   @Override
   public List<User> findAll() {
-    return userJpaRepository.findAll()
+    return userJpaRepository.findAllByOrderByOrganisationNameAscNameAsc()
       .stream()
       .map(UserEntityMapper::toDomainModel)
       .collect(toList());
