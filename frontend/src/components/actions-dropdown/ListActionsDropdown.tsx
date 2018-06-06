@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {routes} from '../../app/routes';
-import {superAdminComponent} from '../../helpers/hoc';
 import {history} from '../../index';
 import {translate} from '../../services/translationService';
 import {IdNamed, OnClick, OnClickWithId, RenderFunction} from '../../types/Types';
+import {superAdminOnly} from '../hoc/withRoles';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
@@ -13,7 +13,7 @@ interface Props {
   syncWithMetering?: OnClickWithId;
 }
 
-const SyncWithMeteringMenuItem = superAdminComponent<ActionMenuItemProps>(ActionMenuItem);
+const SyncWithMeteringMenuItem = superAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 
 export const ListActionsDropdown = (props: Props) => {
   const {item: {id}, selectEntryAdd, syncWithMetering} = props;

@@ -5,19 +5,19 @@ import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
-import {isSuperAdmin} from '../../helpers/hoc';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
+import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisation} from '../../state/domain-models/organisation/organisationsApiActions';
 import {User} from '../../state/domain-models/user/userModels';
+import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
 import {Info, SuperAdminInfo} from './Info';
-import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 
 interface OwnProps {
   meter: MeterDetails;
