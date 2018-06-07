@@ -8,7 +8,7 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse, uuid} from '../../../../types/Types';
-import {noInternetConnection} from '../../../api/apiActions';
+import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
 import {
@@ -222,6 +222,23 @@ describe('meterApiActions', () => {
         expect(store.getActions()).toEqual([
           requestMeters.request(1),
           requestMeters.failure({...noInternetConnection(), page: 1}),
+        ]);
+      });
+    });
+
+    describe('request timeout', () => {
+
+      it('display error message when the request times out', async () => {
+        const fetchMetersAndTimeout = async (page: number) => {
+          mockRestClient.onGet(EndPoints.meters).timeout();
+          return store.dispatch(fetchMeters(page));
+        };
+
+        await fetchMetersAndTimeout(1);
+
+        expect(store.getActions()).toEqual([
+          requestMeters.request(1),
+          requestMeters.failure({...requestTimeout(), page: 1}),
         ]);
       });
     });

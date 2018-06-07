@@ -16,7 +16,8 @@ const requestCanceled = 'REQUEST_CANCELED';
 class RestClientDelegate implements AxiosInstance {
 
   private static getRequestId(url: string) {
-    const endPoint = /[^?]*/; // regExp matching all characters before '?' or whole string when no '?' present
+    const endPoint = /[^?]*/; // regExp matching all characters before '?' or whole string when no
+                              // '?' present
     return endPoint.test(url) ? url.match(endPoint)![0] : '';
   }
 
@@ -110,3 +111,6 @@ export const authenticate = (token: string): AxiosInstance =>
 
 export const wasRequestCanceled = (error: ErrorResponse): boolean =>
   (error.message === requestCanceled);
+
+export const isTimeoutError = (error: ErrorResponse): boolean =>
+  error.message.startsWith('timeout of');

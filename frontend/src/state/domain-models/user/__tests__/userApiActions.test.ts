@@ -5,7 +5,7 @@ import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {authSetUser} from '../../../../usecases/auth/authActions';
-import {noInternetConnection} from '../../../api/apiActions';
+import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
 import {CHANGE_LANGUAGE} from '../../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
@@ -301,6 +301,23 @@ describe('userApiActions', () => {
       expect(store.getActions()).toEqual([
         fetchUserEntity.request(),
         fetchUserEntity.failure(noInternetConnection()),
+      ]);
+    });
+  });
+
+  describe('request timeout', () => {
+
+    it('display error message when the request times out', async () => {
+      const fetchUserAndTimeout = async () => {
+        mockRestClient.onGet(`${EndPoints.users}/1`).timeout();
+        return store.dispatch(fetchUser(1));
+      };
+
+      await fetchUserAndTimeout();
+
+      expect(store.getActions()).toEqual([
+        fetchUserEntity.request(),
+        fetchUserEntity.failure(requestTimeout()),
       ]);
     });
   });

@@ -7,6 +7,7 @@ import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {uuid} from '../../../../types/Types';
+import {requestTimeout} from '../../../api/apiActions';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PaginatedDomainModelsState} from '../../paginatedDomainModels';
 import {
@@ -80,7 +81,7 @@ describe('gatewayApiActions', () => {
   });
 
   describe('fetchGateway', () => {
-    const gatewayEntityRequest = makeEntityRequestActionsOf<Gateway>(EndPoints.gateways);
+    const requests = makeEntityRequestActionsOf<Gateway>(EndPoints.gateways);
     const gateway: Partial<Gateway> = {
       id: 1,
       meterIds: [1, 2, 3],
@@ -95,8 +96,8 @@ describe('gatewayApiActions', () => {
       await fetchGatewayWithResponseOk(gateway.id as uuid);
 
       expect(store.getActions()).toEqual([
-        gatewayEntityRequest.request(),
-        gatewayEntityRequest.success(gateway as Gateway),
+        requests.request(),
+        requests.success(gateway as Gateway),
       ]);
     });
 
@@ -133,6 +134,24 @@ describe('gatewayApiActions', () => {
         expect(store.getActions()).toEqual([]);
       },
     );
+
+    describe('request timeout', () => {
+
+      it('display error message when the request times out', async () => {
+        const fetchMetersAndTimeout = async () => {
+          mockRestClient.onGet(`${EndPoints.gateways}/1`).timeout();
+          return store.dispatch(fetchGateway(1));
+        };
+
+        await fetchMetersAndTimeout();
+
+        expect(store.getActions()).toEqual([
+          requests.request(),
+          requests.failure({id: 1, ...requestTimeout()}),
+        ]);
+      });
+    });
+
   });
 
   describe('clear error', () => {

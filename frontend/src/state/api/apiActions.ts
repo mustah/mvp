@@ -4,7 +4,7 @@ import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {restClient, wasRequestCanceled} from '../../services/restClient';
+import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   Action,
@@ -37,6 +37,11 @@ export const noInternetConnection = (): ErrorResponse => ({
   message: firstUpperTranslated('the internet connection appears to be offline'),
 });
 
+export const requestTimeout = (): ErrorResponse => ({
+  message: firstUpperTranslated(
+    'looks like the server is taking to long to respond, please try again in soon'),
+});
+
 const makeAsyncRequest = async <P>(
   {
     request,
@@ -53,6 +58,8 @@ const makeAsyncRequest = async <P>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (isTimeoutError(error)) {
+      dispatch(failure(requestTimeout()));
     } else if (!error.response) {
       dispatch(failure(noInternetConnection()));
     } else if (wasRequestCanceled(error)) {

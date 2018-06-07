@@ -4,7 +4,7 @@ import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {restClient, wasRequestCanceled} from '../../services/restClient';
+import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {
   Action,
   emptyActionOf,
@@ -14,7 +14,7 @@ import {
   uuid,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {noInternetConnection, responseMessageOrFallback} from '../api/apiActions';
+import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
   NormalizedPaginatedState,
@@ -71,6 +71,8 @@ const asyncRequestEntities = async <DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (isTimeoutError(error)) {
+      dispatch(failure({id, ...requestTimeout()}));
     } else if (!error.response) {
       dispatch(failure({id, ...noInternetConnection()}));
     } else if (wasRequestCanceled(error)) {

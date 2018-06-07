@@ -10,7 +10,7 @@ import {restClient, restClientWith} from '../../../services/restClient';
 import {EncodedUriParameters, ErrorResponse} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
-import {failureAction, requestAction, successAction} from '../../api/apiActions';
+import {makeActionsOf, requestTimeout} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
 import {fetchSummary} from '../summaryApiActions';
 import {SelectionSummary} from '../summaryModels';
@@ -29,6 +29,8 @@ describe('summaryApiActions', () => {
   let store;
   let mockRestClient;
   const configureMockStore = configureStore([thunk]);
+
+  const actions = makeActionsOf<SelectionSummary>(EndPoints.summaryMeters);
 
   beforeEach(() => {
     restClientWith('someToken');
@@ -65,9 +67,7 @@ describe('summaryApiActions', () => {
       await onFetchMeterSummaryWithInvalidToken();
 
       expect(store.getActions()).toEqual([
-        {
-          type: requestAction(EndPoints.summaryMeters),
-        },
+        actions.request(),
         logoutUser(error as Unauthorized),
         routerActions.push(`${routes.login}/${initialRootState.auth.user.organisation.slug}`),
       ]);
@@ -88,13 +88,8 @@ describe('summaryApiActions', () => {
       await onFetchMeterSummaryFail();
 
       expect(store.getActions()).toEqual([
-        {
-          type: requestAction(EndPoints.summaryMeters),
-        },
-        {
-          type: failureAction(EndPoints.summaryMeters),
-          payload: {message: 'request failed'},
-        },
+        actions.request(),
+        actions.failure({message: 'request failed'}),
       ]);
     });
 
@@ -104,13 +99,9 @@ describe('summaryApiActions', () => {
       await onFetchMeterSummary();
 
       expect(store.getActions()).toEqual([
-        {
-          type: requestAction(EndPoints.summaryMeters),
-        },
-        {
-          type: successAction(EndPoints.summaryMeters),
-          payload: {numMeters: 2, numCities: 1, numAddresses: 2},
-        }]);
+        actions.request(),
+        actions.success({numMeters: 2, numCities: 1, numAddresses: 2}),
+      ]);
     });
   });
 
@@ -156,6 +147,26 @@ describe('summaryApiActions', () => {
       await onFetchMeterSummary('id=2');
 
       expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('request timeout', () => {
+
+    it('display error message when the request times out', async () => {
+      store = configureMockStore({summary: {...initialState}});
+
+      const fetchSummaryAndTimeout = async () => {
+        const parameters: EncodedUriParameters = 'test';
+        mockRestClient.onGet(makeUrl(EndPoints.summaryMeters, parameters)).timeout();
+        return store.dispatch(fetchSummary(parameters));
+      };
+
+      await fetchSummaryAndTimeout();
+
+      expect(store.getActions()).toEqual([
+        actions.request(),
+        actions.failure(requestTimeout()),
+      ]);
     });
   });
 

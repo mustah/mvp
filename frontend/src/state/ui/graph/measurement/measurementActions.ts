@@ -6,12 +6,21 @@ import {now, toPeriodApiParameters} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
-import {restClient, wasRequestCanceled} from '../../../../services/restClient';
+import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {Dictionary, EncodedUriParameters, payloadActionOf, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
-import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
-import {noInternetConnection, responseMessageOrFallback} from '../../../api/apiActions';
+import {
+  Axes,
+  GraphContents,
+  LineProps,
+  ProprietaryLegendProps,
+} from '../../../../usecases/report/reportModels';
+import {
+  noInternetConnection,
+  requestTimeout,
+  responseMessageOrFallback,
+} from '../../../api/apiActions';
 import {
   initialState,
   MeasurementApiResponse,
@@ -242,6 +251,8 @@ export const fetchMeasurements =
     } catch (error) {
       if (error instanceof InvalidToken) {
         await logout(error);
+      } else if (isTimeoutError(error)) {
+        updateState({...initialState, error: Maybe.maybe(requestTimeout())});
       } else if (!error.response) {
         updateState({...initialState, error: Maybe.maybe(noInternetConnection())});
       } else if (wasRequestCanceled(error)) {

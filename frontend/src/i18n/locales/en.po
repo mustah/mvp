@@ -445,6 +445,9 @@ msgstr "logout"
 msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 
+msgid "looks like the server is taking to long to respond, please try again in soon"
+msgstr "looks like the server is taking to long to respond, please try again in soon"
+
 msgctxt "°plural"
 msgid "of {{count}} measurement°"
 msgstr "of {{count}} measurements"
