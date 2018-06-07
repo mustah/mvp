@@ -19,6 +19,7 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -27,6 +28,7 @@ import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -144,6 +146,13 @@ class RabbitMqConfig {
   @Bean
   Binding meteringBinding(Queue incomingQueue, FanoutExchange meteringPublishFanoutExchange) {
     return BindingBuilder.bind(incomingQueue).to(meteringPublishFanoutExchange);
+  }
+
+  @Bean
+  AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
+    RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
+    rabbitAdmin.setIgnoreDeclarationExceptions(true);
+    return rabbitAdmin;
   }
 
   @Bean
