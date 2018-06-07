@@ -9,9 +9,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 public class RabbitConsumerProperties {
 
+  private String meteringFanoutExchange = "mvp.fanout";
   private String queueName = "MVP";
   private String responseExchange = "";
   private String responseRoutingKey = "mvp.to.metering";
+  private String deadLetterExchange = "mvp.dead.letter";
   private Boolean requeueRejected = false;
 
 }

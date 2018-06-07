@@ -55,6 +55,8 @@ mvp:
       responseExchange: ""
       responseRoutingKey: "mvp.to.metering"
       requeueRejected: false
+      deadLetterExchange: "mvp.dead.letter"
+      meteringFanoutExchange: "mvp.fanout"
   superadmin:
     email: "mvpadmin@elvaco.se"
     password: "changeme"

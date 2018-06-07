@@ -19,8 +19,16 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.ExchangeBuilder;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -41,11 +49,6 @@ class RabbitMqConfig {
   private final MeasurementUseCases measurementUseCases;
   private final GatewayUseCases gatewayUseCases;
   private final GeocodeService geocodeService;
-
-  @Bean
-  Queue queue() {
-    return new Queue(consumerProperties.getQueueName(), false);
-  }
 
   @Bean
   MeasurementMessageConsumer measurementMessageConsumer() {
@@ -113,16 +116,67 @@ class RabbitMqConfig {
   }
 
   @Bean
+  DirectExchange deadLetterExchange() {
+    return (DirectExchange) ExchangeBuilder
+      .directExchange(consumerProperties.getDeadLetterExchange())
+      .build();
+  }
+
+  @Bean
+  Queue deadLetterQueue() {
+    return QueueBuilder
+      .nonDurable("dead-letter-" + consumerProperties.getQueueName())
+      .build();
+  }
+
+  @Bean
+  Binding deadLetterBinding(Queue deadLetterQueue, DirectExchange deadLetterExchange) {
+    return BindingBuilder.bind(deadLetterQueue)
+      .to(deadLetterExchange).with(consumerProperties.getQueueName());
+  }
+
+  @Bean
+  FanoutExchange meteringPublishFanoutExchange() {
+    return (FanoutExchange) ExchangeBuilder
+      .fanoutExchange(consumerProperties.getMeteringFanoutExchange())
+      .durable(true)
+      .build();
+  }
+
+  @Bean
+  Binding meteringBinding(Queue incomingQueue, FanoutExchange meteringPublishFanoutExchange) {
+    return BindingBuilder.bind(incomingQueue).to(meteringPublishFanoutExchange);
+  }
+
+  @Bean
+  AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
+    RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
+    rabbitAdmin.setIgnoreDeclarationExceptions(true);
+    return rabbitAdmin;
+  }
+
+  @Bean
+  Queue incomingQueue() {
+    return QueueBuilder
+      .nonDurable(consumerProperties.getQueueName())
+      .withArgument("x-dead-letter-exchange", consumerProperties.getDeadLetterExchange())
+      .withArgument("x-dead-letter-routing-key", consumerProperties.getQueueName())
+      .build();
+  }
+
+  @Bean
   SimpleMessageListenerContainer container(
     ConnectionFactory connectionFactory,
     MessageListenerAdapter listenerAdapter,
-    PlatformTransactionManager transactionManager
+    PlatformTransactionManager transactionManager,
+    Queue incomingQueue
   ) {
     SimpleMessageListenerContainer container =
       new SimpleMessageListenerContainer(connectionFactory);
+
     listenerAdapter.setResponseExchange(consumerProperties.getResponseExchange());
     listenerAdapter.setResponseRoutingKey(consumerProperties.getResponseRoutingKey());
-    container.setQueueNames(consumerProperties.getQueueName());
+    container.setQueues(incomingQueue);
     container.setDefaultRequeueRejected(consumerProperties.getRequeueRejected());
     container.setMessageListener(listenerAdapter);
     container.setTransactionManager(transactionManager);
