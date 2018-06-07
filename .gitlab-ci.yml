@@ -150,7 +150,7 @@ build:compile:
   dependencies:
     - prepare:version
   script:
-    - gradle compileJava checkstyle findbugsMain test
+    - gradle compileJava checkstyle spotbugsMain test
 
 assemble:
   <<: *cache_gradle
