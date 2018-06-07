@@ -27,7 +27,7 @@ import {
 import {
   getAddresses,
   getCities,
-  getCitiesSelection, getFacilities, getGatewaySerials,
+  getCitiesSelection, getFacilities,
   getGatewayStatuses,
   getMedia,
   getMeterStatuses, getSecondaryAddresses,
@@ -46,7 +46,6 @@ interface StateToProps {
   meterStatuses: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
   facilities: SelectionListItem[];
-  gatewaySerials: SelectionListItem[];
 }
 
 interface DispatchToProps {
@@ -81,7 +80,6 @@ class SelectionContent extends React.Component<Props> {
       toggleSelection,
       secondaryAddresses,
       facilities,
-      gatewaySerials,
     } = this.props;
 
     const selectCity = (selection: IdNamed) =>
@@ -98,8 +96,6 @@ class SelectionContent extends React.Component<Props> {
       toggleSelection({...selection, parameter: ParameterName.secondaryAddresses});
     const selectFacilities = (selection: IdNamed) =>
       toggleSelection({...selection, parameter: ParameterName.facilities});
-    const selectGatewaySerials = (selection: IdNamed) =>
-      toggleSelection({...selection, parameter: ParameterName.gatewaySerials});
 
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
@@ -108,7 +104,6 @@ class SelectionContent extends React.Component<Props> {
     const mediumStatusSelectionText = translate('medium') + ': ';
     const facilitySelectionText = translate('facility') + ': ';
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
-    const gatewaySerialSelectionText = translate('gateway serial') + ': ';
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
@@ -153,11 +148,6 @@ class SelectionContent extends React.Component<Props> {
               selectionText={secondaryAddressSelectionText}
               select={selectSecondaryAddresses}
             />
-            <SimpleDropdownSelector
-              list={gatewaySerials}
-              selectionText={gatewaySerialSelectionText}
-              select={selectGatewaySerials}
-            />
           </Row>
           <SearchResultList/>
         </Column>
@@ -185,7 +175,6 @@ const mapStateToProps = ({userSelection, domainModels}: RootState): StateToProps
     meterStatuses: getMeterStatuses(lookupState),
     secondaryAddresses: getSecondaryAddresses(lookupState),
     facilities: getFacilities(lookupState),
-    gatewaySerials: getGatewaySerials(lookupState),
   };
 };
 

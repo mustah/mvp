@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
@@ -21,8 +20,8 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
-  private static final QGatewayEntity GATEWAY_ENTITY = QGatewayEntity.gatewayEntity;
-  private static final QPhysicalMeterEntity PHYSICAL_METER_ENTITY = QPhysicalMeterEntity.physicalMeterEntity;
+  private static final QPhysicalMeterEntity PHYSICAL_METER_ENTITY =
+    QPhysicalMeterEntity.physicalMeterEntity;
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
@@ -64,8 +63,6 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return Q.externalId.in(values);
       case "secondaryAddress":
         return PHYSICAL_METER_ENTITY.address.in(values);
-      case "gatewaySerial":
-        return GATEWAY_ENTITY.serial.in(values);
       default:
         return null;
     }
