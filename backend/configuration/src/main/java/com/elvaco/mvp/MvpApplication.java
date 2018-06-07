@@ -30,7 +30,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 import static java.util.Collections.singletonList;
 
 @EnableWebSecurity
-@ComponentScan(basePackages = "com.elvaco.mvp", lazyInit = true)
+@ComponentScan(basePackages = "com.elvaco.mvp")
 @SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
 public class MvpApplication extends WebMvcConfigurerAdapter {
 
