@@ -35,6 +35,8 @@ public class GeoRequest {
   @NotBlank(message = "Country must be provided.")
   private String country;
 
+  private boolean force = false;
+
   public void setCallbackUrl(String encodedCallbackUrl) throws URISyntaxException {
     this.callbackUrl = asDecodedUri(encodedCallbackUrl);
   }
@@ -53,5 +55,9 @@ public class GeoRequest {
 
   public void setCountry(String country) {
     this.country = decode(country);
+  }
+
+  public void setForce(boolean force) {
+    this.force = force;
   }
 }

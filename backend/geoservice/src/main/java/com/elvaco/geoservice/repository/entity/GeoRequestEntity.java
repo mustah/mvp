@@ -22,6 +22,8 @@ public class GeoRequestEntity extends TimeStampedPersistableObject {
   @Column(length = 1024)
   private URI errorCallbackUrl;
 
+  private boolean force = false;
+
   public URI getCallbackUrl() {
     return callbackUrl;
   }
@@ -44,5 +46,13 @@ public class GeoRequestEntity extends TimeStampedPersistableObject {
 
   public void setAddress(Address address) {
     this.address = address;
+  }
+
+  public boolean isForce() {
+    return force;
+  }
+
+  public void setForce(boolean force) {
+    this.force = force;
   }
 }

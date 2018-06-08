@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MockedGeoService {
+  private int requestCount = 0;
 
   @RequestMapping("/v3/json/forward/")
-  public String getAddr(String addr) throws IOException {
+  public String getAddr(String addr, String country) throws IOException {
+    requestCount++;
     String resource = "/notfound.json";
     if (addr.startsWith("Kabelgatan")) {
       resource = "/kabelgatan.json";
@@ -25,5 +27,13 @@ public class MockedGeoService {
     }
     InputStream is = MockedGeoService.class.getResourceAsStream(resource);
     return IOUtils.toString(is, Charset.forName("UTF-8"));
+  }
+
+  public int getRequestCount() {
+    return requestCount;
+  }
+
+  public void clearCount() {
+    requestCount = 0;
   }
 }
