@@ -1,5 +1,9 @@
 package com.elvaco.geoservice.service.geocodefarm;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
 import com.elvaco.geoservice.service.AddressToGeoService;
@@ -24,17 +28,32 @@ public class GeocodeFarmService implements AddressToGeoService {
   @Value("${geocodeFarm.maxrate:4}")
   private Integer maxRate;
 
+  private static final Map<String,String> COUNTRY_TO_CODE_MAP = new HashMap<>();
+  static {
+    //Add all contries to the map, ie sweden->se, sverige->se, tyskland->de, germany->de
+    //TODO: some countries like US and GB can be named in more ways, like U.S.A. USA, United Kingdom etc.
+    // we will prabably need to address this one way or another in future.
+    String[] locales = Locale.getISOCountries();
+    for (String countryCode : locales) {
+      Locale locale = new Locale("", countryCode);
+      COUNTRY_TO_CODE_MAP.put(locale.getDisplayCountry(Locale.ENGLISH).toLowerCase(),locale.getCountry().toLowerCase());
+      COUNTRY_TO_CODE_MAP.put(locale.getDisplayCountry(new Locale("sv","SE")).toLowerCase(),locale.getCountry().toLowerCase());
+    }
+  }
+
   public void setUrl(String url) {
     this.url = url;
   }
 
   @Override
   public GeoLocation getGeoByAddress(Address address) {
+    String countryCode = COUNTRY_TO_CODE_MAP.get(address.getCountry().toLowerCase());
     GeocodingFarmResult result = new RestTemplate()
       .getForObject(
         url,
         GeocodingFarmResult.class,
-        address.street + " " + address.city + " " + address.country
+        address.street + " " + address.city + " " + address.country,address,
+        countryCode
       );
 
     return convert(result);

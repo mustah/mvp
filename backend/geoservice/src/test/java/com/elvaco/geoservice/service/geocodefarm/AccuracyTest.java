@@ -10,6 +10,7 @@ public class AccuracyTest {
   public void defaultsToZeroAccuracyCannotBeMatched() {
     assertThat(Accuracy.from("nothing").value).isEqualTo(0.0);
     assertThat(Accuracy.from("NO_MATCH").value).isEqualTo(0.0);
+    assertThat(Accuracy.from("UNKNOWN_ACCURACY").value).isEqualTo(0.0);
   }
 
   @Test

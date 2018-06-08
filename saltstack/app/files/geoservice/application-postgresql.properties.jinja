@@ -3,7 +3,7 @@ spring.datasource.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server
 spring.datasource.username=geoservicedb-app
 spring.datasource.password=ftypTI52S66jcbLwQ072AlrCndsgC4Qe
 
-geocodeFarm.url=https://www.geocode.farm/v3/json/forward/?lang=en&count=1&addr={address}&key=8f0d8f02-958e4856af31-71e86ce84f27
+geocodeFarm.url=https://www.geocode.farm/v3/json/forward/?lang=en&count=1&addr={address}&country={country}&key=8f0d8f02-958e4856af31-71e86ce84f27
 geocodeFarm.maxrate=7
 
 liquibase.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/geoservicedb

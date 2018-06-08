@@ -117,7 +117,7 @@ public class CallbackService {
   }
 
   @Scheduled(fixedRate = 1000)
-  public void popFromQueue() {
+  synchronized public void popFromQueue() {
     callbackRepository.findByNextRetryBeforeNowOrderByNextRetryAsc().forEach(this::popFromQueue);
   }
 }

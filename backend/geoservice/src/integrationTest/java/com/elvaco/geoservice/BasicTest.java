@@ -47,10 +47,13 @@ public class BasicTest {
   @Autowired
   private CallbackTestController callbackController;
 
+  @Autowired MockedGeoService mockedGeoService;
+
   @Before
   public void before() {
-    geocodeFarmService.setUrl(urlOf("/v3/json/forward/?addr={address}"));
+    geocodeFarmService.setUrl(urlOf("/v3/json/forward/?addr={address}&country={country}"));
     callbackController.setLastResponse(null);
+    mockedGeoService.clearCount();
   }
 
   @Test
@@ -84,6 +87,57 @@ public class BasicTest {
     ));
 
     assertThat(response.address).isEqualTo(new AddressDto("Kabelgatan 2T", "Kungsbacka", "Sweden"));
+  }
+
+  @Test
+  public void fetchTwoWithForce() throws URISyntaxException {
+    GeoRequest request = new GeoRequest();
+    request.setStreet("Kabelgatan 2T");
+    request.setCity("Kungsbacka");
+    request.setCountry("Sweden");
+    request.setCallbackUrl(callbackUrl());
+    request.setErrorCallbackUrl(callbackUrl());
+
+    geoController.requestByAddress(request);
+
+    sleep();
+
+    GeoResponse response = (GeoResponse) callbackController.getLastResponse();
+
+    assertThat(response.geoData).isEqualTo(new GeoDataDto(
+      Double.valueOf("12.0694219774545"),
+      Double.valueOf("57.5052694216628"),
+      1.0
+    ));
+    request.setForce(true);
+    geoController.requestByAddress(request);
+    sleep();
+    assertThat(mockedGeoService.getRequestCount()).isEqualTo(1);
+  }
+  @Test
+  public void fetchTwoWithoutForce() throws URISyntaxException {
+    GeoRequest request = new GeoRequest();
+    request.setStreet("Kabelgatan 2T");
+    request.setCity("Kungsbacka");
+    request.setCountry("Sweden");
+    request.setCallbackUrl(callbackUrl());
+    request.setErrorCallbackUrl(callbackUrl());
+
+    geoController.requestByAddress(request);
+
+    sleep();
+
+    GeoResponse response = (GeoResponse) callbackController.getLastResponse();
+
+    assertThat(response.geoData).isEqualTo(new GeoDataDto(
+      Double.valueOf("12.0694219774545"),
+      Double.valueOf("57.5052694216628"),
+      1.0
+    ));
+    request.setForce(false);
+    geoController.requestByAddress(request);
+    sleep();
+    assertThat(mockedGeoService.getRequestCount()).isEqualTo(1);
   }
 
   @Test

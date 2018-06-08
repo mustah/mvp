@@ -47,7 +47,7 @@ public class RequestQueue {
       request.getCountry()
     );
     AddressGeoEntity result = addressGeoEntityRepository.findByAddress(address);
-    if (result != null) {
+    if (!request.isForce() && result != null) {
       CallbackEntity callback = callbackService.enqueueCallback(
         request.getCallbackUrl(),
         result.getAddress(),
@@ -62,13 +62,14 @@ public class RequestQueue {
       entity.setCallbackUrl(request.getCallbackUrl());
       entity.setErrorCallbackUrl(request.getErrorCallbackUrl());
       entity.setAddress(address);
+      entity.setForce(request.isForce());
       entity = requestRepo.save(entity);
       log.info("Request was enqueued with callback id = {}", entity.getId());
     }
   }
 
   @Scheduled(fixedRate = 1000)
-  public void popFromQueue() {
+  synchronized public void popFromQueue() {
     Integer numberOfItems = numberOfItems();
     if (numberOfItems <= 0) {
       return;
@@ -77,7 +78,7 @@ public class RequestQueue {
     requestRepo.findByOrderByCreatedAsc(new PageRequest(0, numberOfItems))
       .forEach(e -> {
         AddressGeoEntity found = addressGeoEntityRepository.findByAddress(e.getAddress());
-        if (found != null) {
+        if (!e.isForce() && found != null) {
           CallbackEntity callback = callbackService.enqueueCallback(
             e.getCallbackUrl(),
             e.getAddress(),
@@ -87,7 +88,13 @@ public class RequestQueue {
         } else {
           GeoLocation geoLocation = addressToGeoService.getGeoByAddress(e.getAddress());
           if (geoLocation != null) {
-            addressGeoEntityRepository.save(new AddressGeoEntity(e.getAddress(), geoLocation));
+            AddressGeoEntity entity = addressGeoEntityRepository.findByAddress(e.getAddress());
+            if(entity !=null){
+              entity.setGeoLocation(geoLocation);
+            } else {
+              entity = new AddressGeoEntity(e.getAddress(), geoLocation);
+            }
+            addressGeoEntityRepository.save(entity);
             CallbackEntity callback = callbackService.enqueueCallback(
               e.getCallbackUrl(),
               e.getAddress(),
