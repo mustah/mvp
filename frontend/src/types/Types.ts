@@ -13,6 +13,7 @@ export type uuid = string | number;
 export type EncodedUriParameters = string;
 
 export type OnClick = (...args) => void;
+export type OnChange = OnClick;
 export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type RenderFunction<T> = (props: T) => Children;

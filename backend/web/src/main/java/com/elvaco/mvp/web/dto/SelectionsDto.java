@@ -32,21 +32,15 @@ public class SelectionsDto {
   }
 
   public void addGateway(IdNamedDto gateway) {
-    if (!gatewaySerials.contains(gateway)) {
-      gatewaySerials.add(gateway);
-    }
+    gatewaySerials.add(gateway);
   }
 
   public void addFacility(IdNamedDto facility) {
-    if (!facilities.contains(facility)) {
-      facilities.add(facility);
-    }
+    facilities.add(facility);
   }
 
   public void addSecondaryAddress(IdNamedDto secondaryAddress) {
-    if (!secondaryAddresses.contains(secondaryAddress)) {
-      secondaryAddresses.add(secondaryAddress);
-    }
+    secondaryAddresses.add(secondaryAddress);
   }
 
   public void addLocation(String country, String city, String address) {
