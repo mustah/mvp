@@ -472,3 +472,6 @@ msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
+
+msgid "secondary address"
+msgstr "secondary address"

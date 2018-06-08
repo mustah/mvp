@@ -191,6 +191,9 @@ export const cities = reducerFor<SelectionEntity>('cities', EndPoints.selections
 export const addresses = reducerFor<SelectionEntity>('addresses', EndPoints.selections);
 export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections);
 export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
+export const facilities = reducerFor<SelectionEntity>('facilities', EndPoints.selections);
+export const secondaryAddresses = reducerFor<SelectionEntity>('secondaryAddresses', EndPoints.selections);
+export const gatewaySerials = reducerFor<SelectionEntity>('gatewaySerials', EndPoints.selections);
 export const media = reducerFor<SelectionEntity>('media', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 
@@ -231,4 +234,7 @@ export const domainModels = combineReducers<DomainModelsState>({
   organisations,
   userSelections,
   users,
+  facilities,
+  secondaryAddresses,
+  gatewaySerials,
 });

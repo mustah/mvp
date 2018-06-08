@@ -43,6 +43,20 @@ const selections = {
   meterStatuses: [],
   gatewayStatuses: [],
   users: [],
+  facilities: [
+    {id: 'a', name: '1'},
+    {id: 'b', name: '2'},
+    {id: 'c', name: '3'},
+  ],
+  secondaryAddresses: [
+    {id: 'aa', name: '11'},
+    {id: 'ab', name: '12'},
+    {id: 'ac', name: '13'},
+  ],
+  gatewaySerials: [
+    {id: 'ba', name: '21'},
+    {id: 'bb', name: '22'},
+    {id: 'bc', name: '23'}],
 };
 
 const meters = [
@@ -120,12 +134,33 @@ const meterStatuses = [
   },
 ];
 
+const facilities = [
+  {id: 'a', name: '1'},
+  {id: 'b', name: '2'},
+  {id: 'c', name: '3'},
+];
+
+const secondaryAddresses = [
+  {id: 'aa', name: '11'},
+  {id: 'ab', name: '12'},
+  {id: 'ac', name: '13'},
+];
+
+const gatewaySerials = [
+  {id: 'ba', name: '21'},
+  {id: 'bb', name: '22'},
+  {id: 'bc', name: '23'},
+];
+
 export const testData = {
   selections,
   meterStatuses,
   gatewayStatues: meterStatuses,
   meters,
   gateways,
+  facilities,
+  secondaryAddresses,
+  gatewaySerials,
 };
 
 const okStatus: IdNamed = {id: Status.ok, name: Status.ok};

@@ -20,6 +20,9 @@ const alarm = new schema.Entity('alarms');
 const gatewayStatus = new schema.Entity('gatewayStatuses');
 const media = new schema.Entity('media');
 const meterStatus = new schema.Entity('meterStatuses');
+const facility = new schema.Entity('facilities');
+const secondaryAddress = new schema.Entity('secondaryAddresses');
+const gatewaySerials = new schema.Entity('gatewaySerials');
 
 const options: schema.EntityOptions = {
   idAttribute: createId,
@@ -39,6 +42,9 @@ const selectionsSchema: Schema = {
   locations: {countries: [country]},
   media: [media],
   meterStatuses: [meterStatus],
+  facilities: [facility],
+  secondaryAddresses: [secondaryAddress],
+  gatewaySerials: [gatewaySerials],
 };
 
 export const selectionsDataFormatter: DataFormatter =

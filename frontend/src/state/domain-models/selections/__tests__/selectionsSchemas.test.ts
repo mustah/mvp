@@ -55,6 +55,21 @@ describe('normalize state', () => {
             parentId: 'finland,vasa',
           },
         },
+        facilities: {
+          a: {id: 'a', name: '1'},
+          b: {id: 'b', name: '2'},
+          c: {id: 'c', name: '3'},
+        },
+        secondaryAddresses: {
+          aa: {id: 'aa', name: '11'},
+          ab: {id: 'ab', name: '12'},
+          ac: {id: 'ac', name: '13'},
+        },
+        gatewaySerials: {
+          ba: {id: 'ba', name: '21'},
+          bb: {id: 'bb', name: '22'},
+          bc: {id: 'bc', name: '23'},
+        },
       },
       result: {
         locations: {
@@ -66,6 +81,9 @@ describe('normalize state', () => {
         productModels: [],
         meterStatuses: [],
         gatewayStatuses: [],
+        facilities: ['a', 'b', 'c'],
+        secondaryAddresses: ['aa', 'ab', 'ac'],
+        gatewaySerials: ['ba', 'bb', 'bc'],
       },
     });
   });

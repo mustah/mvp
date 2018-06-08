@@ -355,6 +355,9 @@ describe('domainModelsReducer', () => {
         organisations: initialDomain(),
         userSelections: initialDomain(),
         users: initialDomain(),
+        facilities: initialDomain(),
+        secondaryAddresses: initialDomain(),
+        gatewaySerials: initialDomain(),
       };
       const isFetchingState: DomainModelsState = {
         addresses: {...initialState.addresses, isFetching: true},
@@ -370,6 +373,9 @@ describe('domainModelsReducer', () => {
         organisations: {...initialState.organisations, isFetching: true},
         userSelections: initialDomain(),
         users: {...initialState.users, isFetching: true},
+        facilities: {...initialState.facilities, isFetching: true},
+        secondaryAddresses: {...initialState.secondaryAddresses, isFetching: true},
+        gatewaySerials: {...initialState.gatewaySerials, isFetching: true},
       };
 
       const expected: DomainModelsState = {
@@ -381,6 +387,9 @@ describe('domainModelsReducer', () => {
         gatewayStatuses: {...isFetchingState.gatewayStatuses},
         media: {...isFetchingState.media},
         meterStatuses: {...isFetchingState.meterStatuses},
+        facilities: {...isFetchingState.facilities},
+        secondaryAddresses: {...isFetchingState.secondaryAddresses},
+        gatewaySerials: {...isFetchingState.gatewaySerials},
       };
       expect(domainModels(isFetchingState, mockSelectionAction)).toEqual(expected);
     });

@@ -476,3 +476,6 @@ msgstr ""
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+msgid "secondary address"
+msgstr "sekundäradress"

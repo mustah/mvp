@@ -47,6 +47,9 @@ export interface DomainModelsState {
   organisations: NormalizedState<Organisation>;
   userSelections: NormalizedState<UserSelection>;
   users: UserState;
+  secondaryAddresses: SelectionEntityState;
+  facilities: SelectionEntityState;
+  gatewaySerials: SelectionEntityState;
 }
 
 export const enum RequestType {

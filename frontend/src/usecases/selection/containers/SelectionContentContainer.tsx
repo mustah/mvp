@@ -27,10 +27,10 @@ import {
 import {
   getAddresses,
   getCities,
-  getCitiesSelection,
+  getCitiesSelection, getFacilities,
   getGatewayStatuses,
   getMedia,
-  getMeterStatuses,
+  getMeterStatuses, getSecondaryAddresses,
 } from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';
@@ -44,6 +44,8 @@ interface StateToProps {
   isFetching: boolean;
   media: SelectionListItem[];
   meterStatuses: SelectionListItem[];
+  secondaryAddresses: SelectionListItem[];
+  facilities: SelectionListItem[];
 }
 
 interface DispatchToProps {
@@ -76,6 +78,8 @@ class SelectionContent extends React.Component<Props> {
       media,
       meterStatuses,
       toggleSelection,
+      secondaryAddresses,
+      facilities,
     } = this.props;
 
     const selectCity = (selection: IdNamed) =>
@@ -88,12 +92,18 @@ class SelectionContent extends React.Component<Props> {
       toggleSelection({...selection, parameter: ParameterName.gatewayStatuses});
     const selectMedia = (selection: IdNamed) =>
       toggleSelection({...selection, parameter: ParameterName.media});
+    const selectSecondaryAddresses = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.secondaryAddresses});
+    const selectFacilities = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.facilities});
 
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
     const gatewayStatusSelectionText = translate('gateway status') + ': ';
     const mediumStatusSelectionText = translate('medium') + ': ';
+    const facilitySelectionText = translate('facility') + ': ';
+    const secondaryAddressSelectionText = translate('secondary address') + ': ';
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
@@ -128,6 +138,16 @@ class SelectionContent extends React.Component<Props> {
               selectionText={mediumStatusSelectionText}
               select={selectMedia}
             />
+            <SimpleDropdownSelector
+              list={facilities}
+              selectionText={facilitySelectionText}
+              select={selectFacilities}
+            />
+            <SimpleDropdownSelector
+              list={secondaryAddresses}
+              selectionText={secondaryAddressSelectionText}
+              select={selectSecondaryAddresses}
+            />
           </Row>
           <SearchResultList/>
         </Column>
@@ -141,7 +161,7 @@ const mapStateToProps = ({userSelection, domainModels}: RootState): StateToProps
     domainModels,
     userSelection,
   };
-  const {cities, addresses, alarms} = domainModels;
+  const {cities, addresses, alarms, secondaryAddresses, facilities} = domainModels;
 
   return {
     addresses: getAddresses(lookupState),
@@ -149,9 +169,12 @@ const mapStateToProps = ({userSelection, domainModels}: RootState): StateToProps
     citiesSelection: getCitiesSelection(lookupState).entities,
     error: getError(cities),
     gatewayStatuses: getGatewayStatuses(lookupState),
-    isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,
+    isFetching: [cities, addresses, alarms, secondaryAddresses, facilities]
+      .some((criteria) => criteria.isFetching),
     media: getMedia(lookupState),
     meterStatuses: getMeterStatuses(lookupState),
+    secondaryAddresses: getSecondaryAddresses(lookupState),
+    facilities: getFacilities(lookupState),
   };
 };
 

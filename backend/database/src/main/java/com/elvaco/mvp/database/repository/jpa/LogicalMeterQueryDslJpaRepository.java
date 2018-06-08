@@ -143,18 +143,6 @@ public class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Map<UUID, Long> findMeasurementCounts(Predicate predicate) {
-    return createQuery(predicate)
-      .select(MEASUREMENT)
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.measurements, MEASUREMENT)
-      .groupBy(LOGICAL_METER.id)
-      .transform(
-        GroupBy.groupBy(LOGICAL_METER.id).as(MEASUREMENT.count())
-      );
-  }
-
-  @Override
   public List<LogicalMeterEntity> findByOrganisationId(UUID organisationId) {
     return findAll(LOGICAL_METER.organisationId.eq(organisationId));
   }
@@ -165,11 +153,6 @@ public class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters) {
-    return Optional.ofNullable(fetchOne(new LogicalMeterQueryFilters().toExpression(parameters)));
-  }
-
-  @Override
   public Optional<LogicalMeterEntity> findOneBy(
     UUID organisationId,
     String externalId
@@ -177,6 +160,11 @@ public class LogicalMeterQueryDslJpaRepository
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.externalId.eq(externalId));
     return Optional.ofNullable(fetchOne(predicate));
+  }
+
+  @Override
+  public Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters) {
+    return Optional.ofNullable(fetchOne(new LogicalMeterQueryFilters().toExpression(parameters)));
   }
 
   @Override
@@ -230,6 +218,18 @@ public class LogicalMeterQueryDslJpaRepository
     JPADeleteClause query = new JPADeleteClause(entityManager, LOGICAL_METER);
     query.where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
       .execute();
+  }
+
+  @Override
+  public Map<UUID, Long> findMeasurementCounts(Predicate predicate) {
+    return createQuery(predicate)
+      .select(MEASUREMENT)
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.measurements, MEASUREMENT)
+      .groupBy(LOGICAL_METER.id)
+      .transform(
+        GroupBy.groupBy(LOGICAL_METER.id).as(MEASUREMENT.count())
+      );
   }
 
   @SuppressWarnings(
@@ -356,11 +356,11 @@ public class LogicalMeterQueryDslJpaRepository
   ) {
     JPQLQuery<T> joinQuery = query.distinct()
       .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .fetchJoin();
 
     if (isStatusQuery(parameters)) {
-      joinQuery = joinQuery.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-        .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+      joinQuery = joinQuery.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
     }
 
     return joinQuery;
