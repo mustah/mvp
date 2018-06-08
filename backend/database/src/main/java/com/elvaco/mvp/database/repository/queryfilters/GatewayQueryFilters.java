@@ -33,6 +33,8 @@ public class GatewayQueryFilters extends QueryFilters {
         return whereCity(toCityParameters(values));
       case "address":
         return whereAddress(toAddressParameters(values));
+      case "gatewaySerial":
+        return Q.serial.in(values);
       default:
         return null;
     }
