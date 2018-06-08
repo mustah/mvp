@@ -2,10 +2,13 @@ package com.elvaco.mvp.configuration.config;
 
 import javax.annotation.PreDestroy;
 
+import com.elvaco.mvp.adapters.ehcache.CacheAdapter;
 import com.elvaco.mvp.cache.EhTokenServiceCache;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.core.util.MessageThrottler;
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import static java.util.UUID.randomUUID;
 @Configuration
 class CacheConfig {
 
+  public static final String METERING_MESSAGE_CACHE_NAME = "meteringMessageThrottleCache";
   private final CacheManager cacheManager;
 
   @Autowired
@@ -36,6 +40,21 @@ class CacheConfig {
   }
 
   @Bean
+  MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler() {
+    CacheAdapter<String, GetReferenceInfoDto> cacheAdapter = new CacheAdapter<>(
+      cacheManager.getCache(
+        METERING_MESSAGE_CACHE_NAME,
+        String.class,
+        GetReferenceInfoDto.class
+      ));
+
+    return new MessageThrottler<>(
+      cacheAdapter,
+      String::valueOf
+    );
+  }
+
+  @Bean
   TokenFactory tokenFactory() {
     return () -> randomUUID().toString();
   }
@@ -44,4 +63,5 @@ class CacheConfig {
   void removeCache() {
     cacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
   }
+
 }

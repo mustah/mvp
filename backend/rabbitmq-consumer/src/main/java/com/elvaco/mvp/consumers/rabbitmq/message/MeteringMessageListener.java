@@ -5,7 +5,9 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.MessageSerializer;
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,23 +19,25 @@ public class MeteringMessageListener implements MessageListener {
   private final MessageParser messageParser;
   private final MeasurementMessageConsumer measurementMessageConsumer;
   private final ReferenceInfoMessageConsumer referenceInfoMessageConsumer;
+  private final MessageThrottler<String, GetReferenceInfoDto> referenceInfoThrottler;
 
   @Nullable
   @Override
   public String onMessage(String message) {
-    MeteringMessageDto meteringMessage = messageParser.parse(message);
-
     try {
-      return handleMessage(meteringMessage);
+      return handleMessage(messageParser.parse(message));
     } catch (RuntimeException exception) {
       log.warn("Message handling raised exception. Offending message is: {}", message);
       throw exception;
     }
   }
 
+  @Nullable
   private String handleMessage(MeteringMessageDto meteringMessage) {
     if (meteringMessage instanceof MeteringMeasurementMessageDto) {
-      return measurementMessageConsumer.accept((MeteringMeasurementMessageDto) meteringMessage)
+      return measurementMessageConsumer
+        .accept((MeteringMeasurementMessageDto) meteringMessage)
+        .filter(this::throttleAndLog)
         .map(MessageSerializer::toJson)
         .orElse(null);
     } else if (meteringMessage instanceof MeteringReferenceInfoMessageDto) {
@@ -44,5 +48,13 @@ public class MeteringMessageListener implements MessageListener {
     } else {
       throw new RuntimeException("Unknown message type: " + meteringMessage.getClass().getName());
     }
+  }
+
+  private boolean throttleAndLog(GetReferenceInfoDto getReferenceInfoDto) {
+    boolean throttle = referenceInfoThrottler.throttle(getReferenceInfoDto);
+    if (throttle) {
+      log.info("Throttling Get-Reference message {}", getReferenceInfoDto);
+    }
+    return !throttle;
   }
 }
