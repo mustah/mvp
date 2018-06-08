@@ -69,7 +69,7 @@ public class RequestQueue {
   }
 
   @Scheduled(fixedRate = 1000)
-  synchronized public void popFromQueue() {
+  public synchronized void popFromQueue() {
     Integer numberOfItems = numberOfItems();
     if (numberOfItems <= 0) {
       return;
@@ -89,7 +89,7 @@ public class RequestQueue {
           GeoLocation geoLocation = addressToGeoService.getGeoByAddress(e.getAddress());
           if (geoLocation != null) {
             AddressGeoEntity entity = addressGeoEntityRepository.findByAddress(e.getAddress());
-            if(entity !=null){
+            if (entity != null) {
               entity.setGeoLocation(geoLocation);
             } else {
               entity = new AddressGeoEntity(e.getAddress(), geoLocation);

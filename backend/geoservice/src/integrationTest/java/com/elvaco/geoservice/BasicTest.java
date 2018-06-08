@@ -114,6 +114,7 @@ public class BasicTest {
     sleep();
     assertThat(mockedGeoService.getRequestCount()).isEqualTo(1);
   }
+  
   @Test
   public void fetchTwoWithoutForce() throws URISyntaxException {
     GeoRequest request = new GeoRequest();

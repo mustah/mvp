@@ -28,16 +28,19 @@ public class GeocodeFarmService implements AddressToGeoService {
   @Value("${geocodeFarm.maxrate:4}")
   private Integer maxRate;
 
-  private static final Map<String,String> COUNTRY_TO_CODE_MAP = new HashMap<>();
+  private static final Map<String, String> COUNTRY_TO_CODE_MAP = new HashMap<>();
+
   static {
     //Add all contries to the map, ie sweden->se, sverige->se, tyskland->de, germany->de
-    //TODO: some countries like US and GB can be named in more ways, like U.S.A. USA, United Kingdom etc.
-    // we will prabably need to address this one way or another in future.
+    //TODO: some countries like US and GB can be named in more ways, like U.S.A. USA, United
+    // Kingdom etc. We will prabably need to address this one way or another in future.
     String[] locales = Locale.getISOCountries();
     for (String countryCode : locales) {
       Locale locale = new Locale("", countryCode);
-      COUNTRY_TO_CODE_MAP.put(locale.getDisplayCountry(Locale.ENGLISH).toLowerCase(),locale.getCountry().toLowerCase());
-      COUNTRY_TO_CODE_MAP.put(locale.getDisplayCountry(new Locale("sv","SE")).toLowerCase(),locale.getCountry().toLowerCase());
+      COUNTRY_TO_CODE_MAP.put(locale.getDisplayCountry(Locale.ENGLISH).toLowerCase(),
+        locale.getCountry().toLowerCase());
+      COUNTRY_TO_CODE_MAP.put(locale.getDisplayCountry(new Locale("sv", "SE")).toLowerCase(),
+        locale.getCountry().toLowerCase());
     }
   }
 
@@ -52,7 +55,7 @@ public class GeocodeFarmService implements AddressToGeoService {
       .getForObject(
         url,
         GeocodingFarmResult.class,
-        address.street + " " + address.city + " " + address.country,address,
+        address.street + " " + address.city + " " + address.country, address,
         countryCode
       );
 
@@ -86,7 +89,7 @@ public class GeocodeFarmService implements AddressToGeoService {
   private GeoLocation convert(GeocodingFarmResult source) {
     GeoLocation target = null;
     if (source.getGeocodingResults().getResults() != null
-        && source.getGeocodingResults().getStatus().getResultCount() >= 1) {
+      && source.getGeocodingResults().getStatus().getResultCount() >= 1) {
       target = new GeoLocation();
       Result result = source.getGeocodingResults().getResults().get(0);
       target.setLatitude(result.getCoordinates().getLatitude());
@@ -95,7 +98,7 @@ public class GeocodeFarmService implements AddressToGeoService {
       target.setSource(getId());
     }
     this.quota = Integer.parseInt(source.getGeocodingResults().getAccount().getUsageLimit())
-                 - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
+      - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
     return target;
   }
 }

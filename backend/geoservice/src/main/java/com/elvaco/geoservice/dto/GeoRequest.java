@@ -57,5 +57,7 @@ public class GeoRequest {
     this.country = decode(country);
   }
 
-  public void setForce(boolean force) { this.force=force; }
- }
+  public void setForce(boolean force) {
+    this.force = force;
+  }
+}
