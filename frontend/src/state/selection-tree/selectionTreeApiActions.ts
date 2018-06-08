@@ -5,12 +5,13 @@ import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {restClient, wasRequestCanceled} from '../../services/restClient';
+import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {logout} from '../../usecases/auth/authActions';
 import {
   makeActionsOf,
   noInternetConnection,
   RequestHandler,
+  requestTimeout,
   responseMessageOrFallback,
 } from '../api/apiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
@@ -40,6 +41,8 @@ const makeAsyncRequest = async <P>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (isTimeoutError(error)) {
+      dispatch(failure(requestTimeout()));
     } else if (!error.response) {
       dispatch(failure(noInternetConnection()));
     } else if (wasRequestCanceled(error)) {
@@ -52,6 +55,8 @@ const makeAsyncRequest = async <P>(
 
 const shouldFetch = (selectionTree: SelectionTreeState): boolean =>
   !selectionTree.isSuccessfullyFetched && !selectionTree.error && !selectionTree.isFetching;
+
+// TODO[!must!] remove all fetchIfNeeded code and use composition instead!
 
 const fetchIfNeeded = <P>(endPoint: EndPoints, schema: Schema) => {
   const onRequest = (parameters?: string) =>

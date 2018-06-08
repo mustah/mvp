@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {withLargeLoader} from '../../components/hoc/withLargeLoader';
 import {now} from '../../helpers/dateHelpers';
-import {withLargeLoader} from '../../helpers/hoc';
 import {Maybe} from '../../helpers/Maybe';
 import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';

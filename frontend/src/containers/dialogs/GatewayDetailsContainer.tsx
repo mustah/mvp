@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {withLargeLoader} from '../../helpers/hoc';
+import {withLargeLoader} from '../../components/hoc/withLargeLoader';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {fetchGateway} from '../../state/domain-models-paginated/gateway/gatewayApiActions';

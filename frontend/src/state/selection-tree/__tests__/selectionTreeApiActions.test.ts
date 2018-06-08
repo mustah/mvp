@@ -11,7 +11,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {restClientWith} from '../../../services/restClient';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
-import {makeActionsOf, noInternetConnection} from '../../api/apiActions';
+import {makeActionsOf, noInternetConnection, requestTimeout} from '../../api/apiActions';
 import {User} from '../../domain-models/user/userModels';
 import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';
@@ -261,6 +261,23 @@ describe('selectionTreeApiActions', () => {
       expect(store.getActions()).toEqual([
         actions.request(),
         actions.failure(noInternetConnection()),
+      ]);
+    });
+  });
+
+  describe('request timeout', () => {
+
+    it('display error message when the request times out', async () => {
+      const fetchSelectionTreeAndTimeout = async (page: number) => {
+        mockRestClient.onGet(EndPoints.selectionTree).timeout();
+        return store.dispatch(fetchSelectionTree());
+      };
+
+      await fetchSelectionTreeAndTimeout(1);
+
+      expect(store.getActions()).toEqual([
+        actions.request(),
+        actions.failure(requestTimeout()),
       ]);
     });
   });
