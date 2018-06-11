@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyList;
 
@@ -73,7 +74,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   public Optional<Measurement> findLatestReadout(
     UUID meterId, ZonedDateTime before, Quantity quantity
   ) {
-    throw new UnsupportedOperationException("findLatestReadout not implemented!");
+    throw new NotImplementedYet();
   }
 
   @Override

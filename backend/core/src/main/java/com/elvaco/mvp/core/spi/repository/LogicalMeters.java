@@ -20,11 +20,13 @@ public interface LogicalMeters {
 
   List<LogicalMeter> findAllWithStatuses(RequestParameters parameters);
 
+  List<LogicalMeter> findAllBy(RequestParameters parameters);
+
+  List<LogicalMeter> findAllByOrganisationId(UUID organisationId);
+
   LogicalMeter save(LogicalMeter logicalMeter);
 
   Optional<LogicalMeter> findByOrganisationIdAndExternalId(UUID organisationId, String externalId);
-
-  List<LogicalMeter> findByOrganisationId(UUID organisationId);
 
   MeterSummary summary(RequestParameters parameters);
 

@@ -9,6 +9,7 @@ import lombok.ToString;
 
 @NoArgsConstructor
 public class SelectionTreeDto {
+
   public List<CityDto> cities;
 
   public SelectionTreeDto(List<CityDto> cities) {

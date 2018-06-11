@@ -1,7 +1,6 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +15,7 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -27,16 +27,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeteringRequestPublisherTest {
 
+  private SpyMessagePublisher spy;
+
+  @Before
+  public void setUp() {
+    spy = new SpyMessagePublisher();
+  }
+
   @Test
   public void regularUserCanNotIssueRequest() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role.USER));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
+    MockAuthenticatedUser user = user();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
     assertThatThrownBy(() -> meteringRequestPublisher.request(null))
       .isInstanceOf(Unauthorized.class)
       .hasMessageContaining("not allowed to publish synchronization requests");
@@ -46,13 +48,9 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void adminCanNotIssueRequest() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role.ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
+    MockAuthenticatedUser user = admin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
+
     assertThatThrownBy(() -> meteringRequestPublisher.request(null))
       .isInstanceOf(Unauthorized.class)
       .hasMessageContaining("not allowed to publish synchronization requests");
@@ -62,14 +60,8 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void superAdminCanIssueRequest() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
+    MockAuthenticatedUser user = superAdmin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
@@ -78,20 +70,13 @@ public class MeteringRequestPublisherTest {
 
     meteringRequestPublisher.request(logicalMeter);
 
-    List<byte[]> publishedMessages = spy.getPublishedMessages();
-    assertThat(publishedMessages).hasSize(1);
+    assertThat(spy.getPublishedMessages()).hasSize(1);
   }
 
   @Test
   public void meterOrganisationIsUsedInRequest() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
+    MockAuthenticatedUser user = superAdmin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
@@ -105,9 +90,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void meterOrganisationIsUsedInRequest_DifferentFromUserNativeOrganisation() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
+    MockAuthenticatedUser user = superAdmin();
     Organisation otherOrganisation = new Organisation(
       UUID.randomUUID(),
       "other-organisation",
@@ -132,14 +115,8 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void meterExternalIdIsUsedAsFacilityIdInRequest() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
+    MockAuthenticatedUser user = superAdmin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
@@ -153,14 +130,8 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void physicalMeterAddressIsUsedAsMeterIdInRequest() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
+    MockAuthenticatedUser user = superAdmin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -175,14 +146,8 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void gatewayIdIsNotSet() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
-    SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
-      user,
-      new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
-    );
+    MockAuthenticatedUser user = superAdmin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
     Gateway gateway = new Gateway(
       randomUUID(),
@@ -204,8 +169,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void exceptionFromMessagePublisherTriggersUpstreamServiceUnavailable() {
-    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
-      .SUPER_ADMIN));
+    MockAuthenticatedUser user = superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
       new MockOrganisations(singletonList(user.getOrganisation())),
@@ -221,6 +185,14 @@ public class MeteringRequestPublisherTest {
 
     assertThatThrownBy(() -> meteringRequestPublisher.request(logicalMeter)).isInstanceOf(
       UpstreamServiceUnavailable.class);
+  }
+
+  private MeteringRequestPublisher makeMeteringRequestPublisher(MockAuthenticatedUser user) {
+    return new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
   }
 
   private LogicalMeter newLogicalMeter(
@@ -239,5 +211,17 @@ public class MeteringRequestPublisherTest {
       gateways,
       Location.UNKNOWN_LOCATION
     );
+  }
+
+  private static MockAuthenticatedUser admin() {
+    return new MockAuthenticatedUser(singletonList(Role.ADMIN));
+  }
+
+  private static MockAuthenticatedUser superAdmin() {
+    return new MockAuthenticatedUser(singletonList(Role.SUPER_ADMIN));
+  }
+
+  private static MockAuthenticatedUser user() {
+    return new MockAuthenticatedUser(singletonList(Role.USER));
   }
 }

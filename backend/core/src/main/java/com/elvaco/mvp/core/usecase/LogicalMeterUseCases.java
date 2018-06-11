@@ -28,6 +28,13 @@ public class LogicalMeterUseCases {
   private final LogicalMeters logicalMeters;
   private final Measurements measurements;
 
+  public List<LogicalMeter> findAllBy(RequestParameters parameters) {
+    return logicalMeters.findAllBy(setCurrentUsersOrganisationId(
+      currentUser,
+      parameters
+    ));
+  }
+
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(
       currentUser,

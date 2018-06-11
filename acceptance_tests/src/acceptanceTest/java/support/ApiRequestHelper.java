@@ -8,25 +8,27 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class ApiRequestHelper {
-  private String apiUsername;
-  private String apiPassword;
-  private String apiServer;
-  private String apiVersion = "v1";
+
+  private final String apiUsername;
+  private final String apiPassword;
+  private final String apiServer;
+  private final String apiVersion;
 
   public ApiRequestHelper(String server, String username, String password) {
-    apiServer = server;
-    apiUsername = username;
-    apiPassword = password;
+    this.apiServer = server;
+    this.apiUsername = username;
+    this.apiPassword = password;
+    this.apiVersion = "v1";
   }
 
   public JsonNode createOrganisation(String organisationName, String organisationSlug)
     throws UnirestException {
-    String urlEndpoint = "/api/" + apiVersion + "/organisations";
     JsonNode data = new JsonNode(null);
     data.getObject()
       .put("name", organisationName)
       .put("slug", organisationSlug);
 
+    String urlEndpoint = "/api/" + apiVersion + "/organisations";
     HttpResponse<JsonNode> jsonResponse = Unirest.post(apiServer + urlEndpoint)
       .header("Content-Type", "application/json")
       .basicAuth(apiUsername, apiPassword)
@@ -39,7 +41,6 @@ public class ApiRequestHelper {
 
   public JsonNode createUser(String userName, String email, String password, JsonNode organisation)
     throws UnirestException {
-    String urlEndpoint = "/api/" + apiVersion + "/users";
     JsonNode data = new JsonNode(null);
     data.getObject().put("name", userName)
       .put("email", email)
@@ -48,6 +49,7 @@ public class ApiRequestHelper {
       .put("language", "en")
       .put("password", password);
 
+    String urlEndpoint = "/api/" + apiVersion + "/users";
     HttpResponse<JsonNode> jsonResponse = Unirest.post(apiServer + urlEndpoint)
       .header("Content-Type", "application/json")
       .basicAuth(apiUsername, apiPassword)
@@ -66,7 +68,7 @@ public class ApiRequestHelper {
   }
 
   public void deleteOrganisations(List<JsonNode> organisations) {
-    organisations.stream().forEach(org -> {
+    organisations.forEach(org -> {
       try {
         deleteOrganisation(org.getObject().get("id").toString());
       } catch (UnirestException e) {
@@ -75,7 +77,7 @@ public class ApiRequestHelper {
     });
   }
 
-  public void deleteOrganisation(String id) throws UnirestException {
+  private void deleteOrganisation(String id) throws UnirestException {
     String urlEndpoint = "/api/" + apiVersion + "/organisations";
     Unirest.delete(apiServer + urlEndpoint + "/" + id)
       .basicAuth(apiUsername, apiPassword)

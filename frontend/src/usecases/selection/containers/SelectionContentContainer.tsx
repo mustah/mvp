@@ -27,10 +27,13 @@ import {
 import {
   getAddresses,
   getCities,
-  getCitiesSelection, getFacilities, getGatewaySerials,
+  getCitiesSelection,
+  getFacilities,
+  getGatewaySerials,
   getGatewayStatuses,
   getMedia,
-  getMeterStatuses, getSecondaryAddresses,
+  getMeterStatuses,
+  getSecondaryAddresses,
 } from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';

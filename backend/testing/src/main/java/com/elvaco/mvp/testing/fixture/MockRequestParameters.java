@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public class MockRequestParameters implements RequestParameters {
 
@@ -45,6 +47,13 @@ public class MockRequestParameters implements RequestParameters {
 
   @Override
   public RequestParameters setAll(String name, List<String> values) {
+    return this;
+  }
+
+  @Override
+  public RequestParameters setAllIds(String name, List<UUID> ids) {
+    List<String> values = ids.stream().map(UUID::toString).collect(toList());
+    map.put(name, values);
     return this;
   }
 
@@ -87,5 +96,4 @@ public class MockRequestParameters implements RequestParameters {
   public RequestParameters shallowCopy() {
     return new MockRequestParameters(new HashMap<>(map));
   }
-
 }

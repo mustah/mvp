@@ -91,7 +91,6 @@ class DataProviderConfig {
   LogicalMeters logicalMeters() {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
-      physicalMeterStatusLogJpaRepository,
       new LogicalMeterSortingEntityMapper()
     );
   }

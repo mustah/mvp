@@ -196,15 +196,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       Location.UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+      null,
+      0L,
+      null
+    ));
 
     Location newLocation = new LocationBuilder()
       .country("")
@@ -374,7 +375,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(message);
 
-    List<LogicalMeter> organisationMeters = logicalMeters.findByOrganisationId(organisation.id);
+    List<LogicalMeter> organisationMeters = logicalMeters.findAllByOrganisationId(organisation.id);
     assertThat(organisationMeters).hasSize(1);
     LogicalMeter meter = organisationMeters.get(0);
     assertThat(meter.physicalMeters).hasSize(2);
@@ -632,15 +633,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       Location.UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+      null,
+      0L,
+      null
+    ));
 
     messageHandler.accept(
       newMessageWithLocation(new LocationBuilder().city("Borås").build())

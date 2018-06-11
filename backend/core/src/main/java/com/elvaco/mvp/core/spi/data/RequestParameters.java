@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
@@ -18,6 +19,8 @@ public interface RequestParameters {
   RequestParameters setAll(Map<String, String> values);
 
   RequestParameters setAll(String name, List<String> values);
+
+  RequestParameters setAllIds(String name, List<UUID> ids);
 
   RequestParameters replace(String name, String value);
 

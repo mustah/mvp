@@ -54,6 +54,17 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public List<LogicalMeter> findAllBy(RequestParameters parameters) {
+    return emptyList();
+  }
+
+  @Override
+  public List<LogicalMeter> findAllByOrganisationId(UUID organisationId) {
+    return filter(isSameOrganisationId(organisationId))
+      .collect(toList());
+  }
+
+  @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
     return saveMock(logicalMeter);
   }
@@ -69,14 +80,8 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
-    return filter(isSameOrganisationId(organisationId))
-      .collect(toList());
-  }
-
-  @Override
   public MeterSummary summary(RequestParameters parameters) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    throw new NotImplementedYet();
   }
 
   @Override
@@ -123,7 +128,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   private Predicate<LogicalMeter> isWithinOrganisation(RequestParameters parameters) {
     return logicalMeter ->
       !parameters.hasName("organisation")
-      || Objects.equals(
+        || Objects.equals(
         parameters.getFirst("organisation"),
         logicalMeter.organisationId.toString()
       );
