@@ -10,12 +10,12 @@ import {formatCollectionPercentage} from '../../helpers/formatters';
 import {orUnknown} from '../../helpers/translations';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {MeterListProps} from './MeterListContainer';
 
 export const MeterList = (
   {
     componentId,
+    changePaginationPage,
     result,
     entities,
     entityType,
@@ -50,11 +50,7 @@ export const MeterList = (
     </TableHead>
   );
 
-  const changePage = (page: number) => changePaginationPage({
-    entityType,
-    componentId,
-    page,
-  });
+  const changePage = (page: number) => changePaginationPage({entityType, componentId, page});
 
   return (
     <div>
