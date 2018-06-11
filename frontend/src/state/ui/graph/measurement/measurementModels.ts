@@ -31,7 +31,7 @@ export interface MeasurementApiResponsePart {
   label: string;
   values: Array<{
     when: number;
-    value: number;
+    value?: number;
   }>;
 }
 
