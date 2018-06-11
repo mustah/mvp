@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 class InMemoryConfig {
 
   @Bean
-  PasswordEncoder passwordEncoder() {
+  PasswordEncoder inMemoryPasswordEncoder() {
     return new StandardPasswordEncoder();
   }
 }
