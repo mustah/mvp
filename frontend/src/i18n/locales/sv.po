@@ -116,8 +116,8 @@ msgstr "nytt lösenord"
 msgid "password"
 msgstr "lösenord"
 
-msgid "of {{count}} measurement"
-msgstr "av {{count}} mätvärde"
+msgid "{{pending}} of {{count}} measurement"
+msgstr "{{pending}} av {{count}} mätvärde"
 
 msgid "other"
 msgstr "övriga"
@@ -454,8 +454,8 @@ msgid "looks like the server is taking to long to respond, please try again in s
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
 
 msgctxt "°plural"
-msgid "of {{count}} measurement°"
-msgstr "av {{count}} mätvärden"
+msgid "{{pending}} of {{count}} measurement°"
+msgstr "{{pending}} av {{count}} mätvärden"
 
 msgctxt "°plural"
 msgid "city°"

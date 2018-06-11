@@ -20,7 +20,6 @@ interface Props {
 export const IndicatorWidget =
   ({className, title, widget: {total, status, pending, type}}: Props) => {
     const value = total ? ((1 - (pending / total)) * 100).toFixed(1) : 0;
-    const pendingPercentage = total ? ((pending / total) * 100).toFixed(1) : 0;
 
     const IndicatorIcon = iconComponentFor(type);
 
@@ -37,8 +36,7 @@ export const IndicatorWidget =
           <Row className="Indicator-subtitle Row-center">
             <IndicatorIcon className="Indicator-icon" color={colors.white}/>
             <Column>
-              <Normal>{pending} / {pendingPercentage}%</Normal>
-              <Normal>{translate('of {{count}} measurement', {count: total})}</Normal>
+              <Normal>{translate('{{pending}} of {{count}} measurement', {count: total, pending: pending})}</Normal>
             </Column>
           </Row>
         </ColumnCenter>
