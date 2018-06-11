@@ -32,6 +32,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.util.Dates;
+import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -42,6 +43,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -64,6 +66,7 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -1041,6 +1044,87 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findAllMeters_WithGatewaySerial() {
+    String serial = "666";
+    createMeterWithGateway("my-mapped-meter", serial);
+    createMeterWithGateway("my-mapped-meter2", "777");
+
+    Page<PagedLogicalMeterDto> result = asTestUser()
+      .getPage("/meters?gatewaySerial=" + serial, PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().get(0).gatewaySerial).isEqualTo(serial);
+  }
+
+  @Test
+  public void findAllMeters_WithFacility() {
+    String facility = "my-mapped-meter";
+
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      facility,
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "another-mapped-meter",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    Page<PagedLogicalMeterDto> result = asTestUser()
+      .getPage("/meters?facility=" + facility, PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent().get(0).facility).isEqualTo(facility);
+  }
+
+  @Test
+  public void findAllMeters_WithSecondaryAddress() {
+    String secondaryAddress = "1";
+    LogicalMeter logicalMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+
+    physicalMeters.save(
+      PhysicalMeter.builder()
+        .organisation(context().organisation())
+        .medium("Heat")
+        .manufacturer("ELV1")
+        .logicalMeterId(logicalMeter.id)
+        .externalId(randomUUID().toString())
+        .readIntervalMinutes(0)
+        .address(secondaryAddress)
+        .build()
+    );
+
+    String anotherSecondaryAddress = "2";
+    LogicalMeter anotherLogicalMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+
+    physicalMeters.save(
+      PhysicalMeter.builder()
+        .organisation(context().organisation())
+        .medium("Heat")
+        .manufacturer("ELV1")
+        .logicalMeterId(anotherLogicalMeter.id)
+        .externalId(randomUUID().toString())
+        .readIntervalMinutes(0)
+        .address(anotherSecondaryAddress)
+        .build()
+    );
+
+    Page<PagedLogicalMeterDto> result = asTestUser()
+      .getPage("/meters?secondaryAddress=" + secondaryAddress, PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent())
+      .as("There should be one meter with secondary address: \"" + secondaryAddress + "\"")
+      .hasSize(1);
+    assertThat(result.getContent().get(0).address).isEqualTo(secondaryAddress);
+  }
+
+  @Test
   public void findAllMeters_WithUnknownCity() {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
@@ -1467,6 +1551,37 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       );
 
     assertThat(logicalMeterJson.has("collectionPercentage")).isFalse();
+  }
+
+  private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
+    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
+      randomUUID(),
+      meterExternalId,
+      context().getOrganisationId(),
+      ZonedDateTime.now(),
+      MeterDefinitionEntityMapper.toEntity(MeterDefinition.UNKNOWN_METER)
+    );
+
+    logicalMeterJpaRepository.save(logicalMeterEntity);
+
+    GatewayEntity gatewayEntity = newGatewayEntity(context().organisationEntity.id, gatewaySerial);
+    gatewayEntity.meters = new HashSet<>();
+    gatewayEntity.meters.add(logicalMeterEntity);
+    gatewayJpaRepository.save(gatewayEntity);
+
+    logicalMeterEntity.gateways = new HashSet<>();
+    logicalMeterEntity.gateways.add(gatewayEntity);
+    logicalMeterJpaRepository.save(logicalMeterEntity);
+  }
+
+  private GatewayEntity newGatewayEntity(UUID organisationId, String serial) {
+    return new GatewayEntity(
+      randomUUID(),
+      organisationId,
+      serial,
+      "",
+      emptySet()
+    );
   }
 
   private void assertNothingIsRemoved(

@@ -16,6 +16,7 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
@@ -48,21 +49,25 @@ class MeterMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
+    JPQLQuery<MapMarker> query = createQuery(toPredicate(
+      parameters))
+      .select(Projections.constructor(
+        MapMarker.class,
+        LOCATION.logicalMeterId,
+        STATUS_LOG.status,
+        LOCATION.latitude,
+        LOCATION.longitude
+      ))
+      .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .innerJoin(LOGICAL_METER.location, LOCATION)
+      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
+      .distinct();
+
+    JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
+
     return new HashSet<>(
-      createQuery(toPredicate(parameters))
-        .select(Projections.constructor(
-          MapMarker.class,
-          LOCATION.logicalMeterId,
-          STATUS_LOG.status,
-          LOCATION.latitude,
-          LOCATION.longitude
-        ))
-        .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-        .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-        .innerJoin(LOGICAL_METER.location, LOCATION)
-        .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-        .distinct()
-        .fetch()
+      query.fetch()
     );
   }
 

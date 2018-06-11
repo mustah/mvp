@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
@@ -159,12 +160,15 @@ public class LogicalMeterQueryDslJpaRepository
   ) {
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.externalId.eq(externalId));
-    return Optional.ofNullable(fetchOne(predicate));
+    return Optional.ofNullable(fetchOne(predicate, new RequestParametersAdapter()));
   }
 
   @Override
   public Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters) {
-    return Optional.ofNullable(fetchOne(new LogicalMeterQueryFilters().toExpression(parameters)));
+    return Optional.ofNullable(fetchOne(
+      new LogicalMeterQueryFilters().toExpression(parameters),
+      parameters
+    ));
   }
 
   @Override
@@ -232,6 +236,7 @@ public class LogicalMeterQueryDslJpaRepository
       );
   }
 
+  @Override
   @SuppressWarnings(
     {"SpringDataRepositoryMethodReturnTypeInspection", "SpringDataMethodInconsistencyInspection"}
   )
@@ -281,12 +286,6 @@ public class LogicalMeterQueryDslJpaRepository
           null
         ))
     ).collect(toList());
-  }
-
-  private boolean isStatusQuery(RequestParameters parameters) {
-    return parameters.hasName("before")
-           && parameters.hasName("after")
-           && parameters.hasName("status");
   }
 
   private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
@@ -340,29 +339,22 @@ public class LogicalMeterQueryDslJpaRepository
     return predicate;
   }
 
-  private LogicalMeterEntity fetchOne(Predicate predicate) {
-    return createQuery(predicate)
-      .select(path)
-      .distinct()
-      .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
-      .fetchJoin()
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .fetchOne();
+  private LogicalMeterEntity fetchOne(Predicate predicate, RequestParameters parameters) {
+    return applyJoins(createQuery(predicate).select(path), parameters).fetchOne();
   }
 
   private <T> JPQLQuery<T> applyJoins(
     JPQLQuery<T> query,
     RequestParameters parameters
   ) {
-    JPQLQuery<T> joinQuery = query.distinct()
+    query = query.distinct()
       .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .fetchJoin();
 
-    if (isStatusQuery(parameters)) {
-      joinQuery = joinQuery.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
-    }
+    JoinIfNeededUtil.joinPhysicalMeterFromLogicalMeter(query, parameters);
+    JoinIfNeededUtil.joinStatusLogsFromPhysicalMeter(query, parameters);
+    JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
 
-    return joinQuery;
+    return query;
   }
 }

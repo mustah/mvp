@@ -234,6 +234,25 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findGateways_WithSerial() {
+    gateways.save(Gateway.builder()
+      .organisationId(dailyPlanet.id)
+      .serial("1")
+      .productModel("elv").build());
+
+    gateways.save(Gateway.builder()
+      .organisationId(dailyPlanet.id)
+      .serial("2")
+      .productModel("elv").build());
+
+    Page<GatewayDto> content = asTestSuperAdmin()
+      .getPage("/gateways?gatewaySerial=1", GatewayDto.class);
+
+    assertThat(content.getContent()).hasSize(1);
+    assertThat(content.getContent().get(0).serial).isEqualTo("1");
+  }
+
+  @Test
   public void findGateways_WithUnknownCity() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
