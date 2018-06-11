@@ -12,14 +12,15 @@ import {GatewayListProps} from '../containers/GatewayListContainer';
 import {GatewayListItem} from './GatewayListItem';
 
 export const GatewayList = ({
+  changePaginationPage,
+  componentId,
   result,
   entities,
   selectEntryAdd,
   pagination,
-  changePaginationPage,
-  componentId,
   entityType,
 }: GatewayListProps) => {
+
   const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
   const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
@@ -30,11 +31,7 @@ export const GatewayList = ({
     <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
-  const changePage = (page: number) => changePaginationPage({
-    entityType,
-    componentId,
-    page,
-  });
+  const changePage = (page: number) => changePaginationPage({entityType, componentId, page});
 
   return (
     <div>
