@@ -13,7 +13,7 @@ class ProdConfig {
 
   @Bean
   @Primary
-  PasswordEncoder passwordEncoder() {
+  PasswordEncoder prodPasswordEncoder() {
     return new BCryptPasswordEncoder(13);
   }
 }
