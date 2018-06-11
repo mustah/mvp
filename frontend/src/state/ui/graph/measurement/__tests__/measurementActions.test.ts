@@ -420,5 +420,152 @@ describe('measurementActions', () => {
       expect(state.graphContents.data).toHaveLength(2);
       expect(state.graphContents.lines).toHaveLength(3);
     });
+
+    it('filters out average readouts without values', async () => {
+      const mockRestClient = new MockAdapter(axios);
+      authenticate('test');
+
+      const requestedUrls: string[] = [];
+
+      mockRestClient.onGet().reply(async (config) => {
+        requestedUrls.push(config.url);
+
+        const measurement: MeasurementApiResponse = [
+          {
+            quantity: Quantity.power,
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: '1',
+            unit: 'mW',
+          },
+          {
+            quantity: Quantity.power,
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: '2',
+            unit: 'mW',
+          },
+        ];
+
+        const average: MeasurementApiResponse = [
+          {
+            quantity: Quantity.power,
+            unit: 'mW',
+            label: 'average',
+            values: [
+              {
+                when: 1516521585107,
+              },
+              {
+                when: 1516521585109,
+                value: 0.55,
+              },
+            ],
+          },
+        ];
+
+        if (config.url.match(/^\/measurements\/average/)) {
+          return [200, average];
+        } else {
+          return [200, measurement];
+        }
+      });
+
+      await fetchMeasurements(
+        [Medium.districtHeating],
+        [Quantity.power],
+        ['123abc', '345def', '456ghi'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout,
+      );
+
+      const timestampsWithAverageValues = state.graphContents.data
+        .filter((pointInTime) => Object.keys(pointInTime).includes('Average Power'));
+      expect(timestampsWithAverageValues).toHaveLength(1);
+    });
+
+    it('keeps average readouts with a value of 0', async () => {
+      const mockRestClient = new MockAdapter(axios);
+      authenticate('test');
+
+      const requestedUrls: string[] = [];
+
+      mockRestClient.onGet().reply(async (config) => {
+        requestedUrls.push(config.url);
+
+        const measurement: MeasurementApiResponse = [
+          {
+            quantity: Quantity.power,
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: '1',
+            unit: 'mW',
+          },
+          {
+            quantity: Quantity.power,
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: '2',
+            unit: 'mW',
+          },
+        ];
+
+        const average: MeasurementApiResponse = [
+          {
+            quantity: Quantity.power,
+            unit: 'mW',
+            label: 'average',
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.0,
+              },
+              {
+                when: 1516521585109,
+                value: 0.55,
+              },
+            ],
+          },
+        ];
+
+        if (config.url.match(/^\/measurements\/average/)) {
+          return [200, average];
+        } else {
+          return [200, measurement];
+        }
+      });
+
+      await fetchMeasurements(
+        [Medium.districtHeating],
+        [Quantity.power],
+        ['123abc', '345def', '456ghi'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout,
+      );
+
+      const timestampsWithAverageValues = state.graphContents.data
+        .filter((pointInTime) => Object.keys(pointInTime).includes('Average Power'));
+      expect(timestampsWithAverageValues).toHaveLength(2);
+    });
   });
 });

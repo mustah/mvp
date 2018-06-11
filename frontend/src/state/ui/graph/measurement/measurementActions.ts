@@ -103,6 +103,8 @@ export const mapApiResponseToGraphData =
 
     const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
 
+    const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
+
     measurement.forEach(({quantity, label, values, unit}: MeasurementApiResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
@@ -114,7 +116,8 @@ export const mapApiResponseToGraphData =
         if (!byDate[created]) {
           byDate[created] = {};
         }
-        byDate[created][dataKey] = value;
+        // we should already have filtered out missing values
+        byDate[created][dataKey] = value!;
       });
 
       if (!graphContents.axes.left) {
@@ -132,7 +135,7 @@ export const mapApiResponseToGraphData =
           key: `line-${dataKey}`,
           name: dataKey,
           stroke: colorizeMeters(quantity as Quantity),
-          strokeWidth: average.length > 0 ? 1 : thickStroke,
+          strokeWidth: meterStrokeWidth,
           yAxisId,
         };
         graphContents.lines.push(props);
@@ -163,7 +166,8 @@ export const mapApiResponseToGraphData =
         if (!byDate[created]) {
           byDate[created] = {};
         }
-        byDate[created][dataKey] = value;
+        // we should already have filtered out missing values
+        byDate[created][dataKey] = value!;
       });
     });
 
@@ -234,7 +238,7 @@ export const fetchMeasurements =
         measurement: response[0].data,
         average: response[1].data.map((averageEntity) => ({
           ...averageEntity,
-          values: averageEntity.values.filter(({value}) => value),
+          values: averageEntity.values.filter(({value}) => value !== undefined),
         })),
       };
       updateState({...initialState, graphContents: mapApiResponseToGraphData(graphData)});
