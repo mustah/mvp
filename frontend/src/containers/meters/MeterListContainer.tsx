@@ -19,6 +19,7 @@ import {
   getPaginatedEntities,
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
+import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
@@ -43,6 +44,7 @@ interface StateToProps {
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
+  isSuperAdmin: boolean;
 }
 
 interface DispatchToProps {
@@ -93,6 +95,7 @@ class MeterListComponent extends React.Component<MeterListProps> {
 
 const mapStateToProps = (
   {
+    auth: {user},
     userSelection: {userSelection},
     paginatedDomainModels: {meters},
     ui: {pagination},
@@ -113,6 +116,7 @@ const mapStateToProps = (
       now: now(),
     }),
     isFetching: getPageIsFetching(meters, page),
+    isSuperAdmin: isSuperAdmin(user!),
     pagination: paginationData,
     error: getPageError<Meter>(meters, page),
     entityType,

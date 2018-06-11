@@ -134,9 +134,6 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     );
   }
 
-  organisationById = (orgId: uuid): Organisation =>
-    this.props.organisations.filter(({id}) => id === orgId)[0]
-
   changeOrganisation = (event, index, value) =>
     this.setState({organisation: this.organisationById(value)})
 
@@ -145,6 +142,9 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   changeLanguage = (event, index, value) => this.setState({language: value});
 
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
+
+  organisationById = (orgId: uuid): Organisation =>
+    this.props.organisations.find(({id}) => id === orgId)!
 
   wrappedSubmit = (event) => {
     event.preventDefault();

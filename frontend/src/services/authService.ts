@@ -10,13 +10,13 @@ const isNotAuthenticatedSelector = (state: RootState): boolean => !state.auth.is
 const isAdminSelector = (state: RootState): boolean =>
   state.auth.user!.roles.includes(Role.ADMIN) || isSuperAdminSelector(state);
 
-const isSuperAdminSelector = ({auth: {user}}: RootState) =>
+const isSuperAdminSelector = ({auth: {user}}: RootState): boolean =>
   user!.roles.includes(Role.SUPER_ADMIN);
 
-const isAdminAuthenticatedSelector = (state: RootState) =>
+const isAdminAuthenticatedSelector = (state: RootState): boolean =>
   isAuthenticatedSelector(state) && isAdminSelector(state);
 
-const isSuperAdminAuthenticatedSelector = (state: RootState) =>
+const isSuperAdminAuthenticatedSelector = (state: RootState): boolean =>
   isAuthenticatedSelector(state) && isSuperAdminSelector(state);
 
 export const userIsAuthenticated = connectedRouterRedirect({
