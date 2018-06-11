@@ -4,7 +4,7 @@ import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayMod
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {
   allQuantities,
-  RenderableQuantity,
+  Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';
@@ -165,21 +165,21 @@ describe('dialogHelper', () => {
         measurements: [
           {
             id: 1,
-            quantity: 'Forward temperature',
+            quantity: Quantity.forwardTemperature,
             value: 309.14353148037117,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 2,
-            quantity: 'Return temperature',
+            quantity: Quantity.returnTemperature,
             value: 306.59347679223913,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 3,
-            quantity: 'Difference temperature',
+            quantity: Quantity.differenceTemperature,
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
@@ -311,49 +311,49 @@ describe('dialogHelper', () => {
         measurements: [
           {
             id: 1,
-            quantity: 'Return temperature',
+            quantity: Quantity.returnTemperature,
             value: 309.14353148037117,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 2,
-            quantity: 'Difference temperature',
+            quantity: Quantity.differenceTemperature,
             value: 306.59347679223913,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 3,
-            quantity: 'Forward temperature',
+            quantity: Quantity.forwardTemperature,
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 4,
-            quantity: 'Volume',
+            quantity: Quantity.volume,
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 5,
-            quantity: 'Flow',
+            quantity: Quantity.flow,
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 6,
-            quantity: 'Power',
+            quantity: Quantity.power,
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
           },
           {
             id: 7,
-            quantity: 'Energy',
+            quantity: Quantity.energy,
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
@@ -376,13 +376,13 @@ describe('dialogHelper', () => {
       const {result} = meterMeasurementsForTable(meterWithMeasurementsInDifferentOrder);
 
       expect(result).toEqual([
-        RenderableQuantity.energy,
-        RenderableQuantity.volume,
-        RenderableQuantity.power,
-        RenderableQuantity.flow,
-        RenderableQuantity.forwardTemperature,
-        RenderableQuantity.returnTemperature,
-        RenderableQuantity.differenceTemperature,
+        Quantity.energy,
+        Quantity.volume,
+        Quantity.power,
+        Quantity.flow,
+        Quantity.forwardTemperature,
+        Quantity.returnTemperature,
+        Quantity.differenceTemperature,
       ]);
     });
 

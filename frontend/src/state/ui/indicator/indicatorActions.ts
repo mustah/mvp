@@ -1,13 +1,44 @@
 import {createPayloadAction} from 'react-redux-typescript';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {SelectedIndicators} from './indicatorReducer';
+import {toggle} from '../../../helpers/collections';
+import {GetState} from '../../../reducers/rootReducer';
+import {payloadActionOf} from '../../../types/Types';
+import {defaultQuantityForMedium, Quantity, quantityUnits} from '../graph/measurement/measurementModels';
+import {IndicatorState} from './indicatorReducer';
 
-export const TOGGLE_INDICATOR_WIDGET = 'TOGGLE_INDICATOR_WIDGET';
+export const SET_REPORT_INDICATOR_WIDGETS = 'SET_REPORT_INDICATOR_WIDGETS';
+export const SET_SELECTED_QUANTITIES = 'SET_SELECTED_QUANTITIES';
 
-export type IndicatorWithinUseCase = [keyof SelectedIndicators, Medium];
-
-export const toggleIndicatorWidget = createPayloadAction<string, IndicatorWithinUseCase>(TOGGLE_INDICATOR_WIDGET);
+const setSelectedQuantities = payloadActionOf<Quantity[]>(SET_SELECTED_QUANTITIES);
+export const selectQuantities = (quantities: Quantity[]) => setSelectedQuantities(quantities);
+export const setReportIndicatorWidgets = createPayloadAction<string, Medium[]>(SET_REPORT_INDICATOR_WIDGETS);
 
 export const toggleReportIndicatorWidget =
-  (type: Medium) =>
-    (dispatch) => dispatch(toggleIndicatorWidget(['report', type]));
+  (medium: Medium) =>
+    (dispatch, getState: GetState) => {
+      const indicatorState: IndicatorState = getState().ui.indicator;
+      const newTypes: Medium[] = toggle(medium, indicatorState.selectedIndicators.report);
+      const wasActivated: boolean = newTypes.length > indicatorState.selectedIndicators.report.length;
+      const quantities: Quantity[] = indicatorState.selectedQuantities;
+
+      dispatch(setReportIndicatorWidgets(newTypes));
+
+      const quantityForMedium: Quantity = defaultQuantityForMedium(medium);
+      if (wasActivated &&
+        !quantities.includes(quantityForMedium) &&
+        canToggleMedia(quantities, quantityForMedium)
+      ) {
+        dispatch(setSelectedQuantities([...quantities, quantityForMedium]));
+      }
+    };
+
+export const canToggleMedia =
+  (previouslySelected: Quantity[], addToSelection: Quantity): boolean => {
+    const units = new Set(
+      previouslySelected
+        .map((quantity) => quantityUnits[quantity] || null)
+        .filter((unit) => unit !== null),
+    );
+    units.add(quantityUnits[addToSelection]);
+    return units.size <= 2;
+  };

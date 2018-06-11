@@ -26,9 +26,9 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {
   fetchMeasurements,
-  selectQuantities,
-} from '../../../state/ui/graph/measurement/measurementActions';
+  } from '../../../state/ui/graph/measurement/measurementActions';
 import {initialState, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {selectQuantities} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
@@ -301,7 +301,7 @@ const mapStateToProps =
   ({
     report: {selectedListItems},
     userSelection: {userSelection},
-    ui: {measurements: {selectedQuantities}, indicator: {selectedIndicators: {report}}},
+    ui: {indicator: {selectedIndicators: {report}, selectedQuantities}},
   }: RootState): StateToProps =>
     ({
       ...getSelectedPeriod(userSelection),

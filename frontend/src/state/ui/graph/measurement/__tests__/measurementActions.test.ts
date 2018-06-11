@@ -8,7 +8,7 @@ import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {GraphContainerState} from '../../../../../usecases/report/containers/GraphContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
-import {initialState, MeasurementApiResponse} from '../measurementModels';
+import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
@@ -37,7 +37,7 @@ describe('measurementActions', () => {
       it('extracts a single axis if all measurements are of the same unit', () => {
         const sameUnit: MeasurementApiResponse = [
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             values: [
               {
                 when: 1516521585107,
@@ -48,7 +48,7 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             values: [
               {
                 when: 1516521585107,
@@ -71,7 +71,7 @@ describe('measurementActions', () => {
       it('extracts two axes if measurements are of exactly two different units', () => {
         const twoDifferentUnits: MeasurementApiResponse = [
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             values: [
               {
                 when: 1516521585107,
@@ -82,7 +82,7 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
-            quantity: 'Current',
+            quantity: Quantity.forwardTemperature,
             values: [
               {
                 when: 1516521585107,
@@ -90,7 +90,7 @@ describe('measurementActions', () => {
               },
             ],
             label: '1',
-            unit: 'mA',
+            unit: '°C',
           },
         ];
 
@@ -100,13 +100,13 @@ describe('measurementActions', () => {
         });
 
         expect(graphContents.axes.left).toEqual('mW');
-        expect(graphContents.axes.right).toEqual('mA');
+        expect(graphContents.axes.right).toEqual('°C');
       });
 
       it('ignores all measurements of a third unit, if there already are two', () => {
         const threeDifferentUnits: MeasurementApiResponse = [
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             values: [
               {
                 when: 1516521585107,
@@ -117,7 +117,7 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
-            quantity: 'Current',
+            quantity: Quantity.energy,
             values: [
               {
                 when: 1516521585107,
@@ -125,10 +125,10 @@ describe('measurementActions', () => {
               },
             ],
             label: '1',
-            unit: 'mA',
+            unit: 'kWh',
           },
           {
-            quantity: 'Temperature inside',
+            quantity: Quantity.differenceTemperature,
             values: [
               {
                 when: 1516521585107,
@@ -136,7 +136,7 @@ describe('measurementActions', () => {
               },
             ],
             label: '1',
-            unit: 'C',
+            unit: 'K',
           },
         ];
 
@@ -146,7 +146,7 @@ describe('measurementActions', () => {
         });
 
         expect(graphContents.axes.left).toEqual('mW');
-        expect(graphContents.axes.right).toEqual('mA');
+        expect(graphContents.axes.right).toEqual('kWh');
       });
 
       it(
@@ -155,7 +155,7 @@ describe('measurementActions', () => {
           const firstMeasurement: number = 1516521585107;
           const slightlyLaterThanFirstAverage: MeasurementApiResponse = [
             {
-              quantity: 'Power',
+              quantity: Quantity.power,
               values: [
                 {
                   when: firstMeasurement,
@@ -169,7 +169,7 @@ describe('measurementActions', () => {
 
           const average: MeasurementApiResponse = [
             {
-              quantity: 'Power',
+              quantity: Quantity.power,
               values: [
                 {
                   when: firstMeasurement - 10,
@@ -180,7 +180,7 @@ describe('measurementActions', () => {
               unit: 'mW',
             },
             {
-              quantity: 'Power',
+              quantity: Quantity.power,
               values: [
                 {
                   when: firstMeasurement + 10,
@@ -260,7 +260,7 @@ describe('measurementActions', () => {
 
       await fetchMeasurements(
         [Medium.districtHeating],
-        ['Power'],
+        [Quantity.power],
         ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
         Period.currentMonth,
         Maybe.nothing(),
@@ -279,7 +279,7 @@ describe('measurementActions', () => {
 
       await fetchMeasurements(
         [Medium.districtHeating],
-        ['Power'],
+        [Quantity.power],
         [],
         Period.currentMonth,
         Maybe.nothing(),
@@ -304,7 +304,7 @@ describe('measurementActions', () => {
 
         await fetchMeasurements(
           [Medium.districtHeating],
-          ['Power'],
+          [Quantity.power],
           ['123abc'],
           Period.currentMonth,
           Maybe.nothing(),
@@ -329,7 +329,7 @@ describe('measurementActions', () => {
 
       await fetchMeasurements(
         [Medium.districtHeating],
-        ['Power'],
+        [Quantity.power],
         ['123abc', '345def', '456ghi'],
         Period.currentMonth,
         Maybe.nothing(),
@@ -357,7 +357,7 @@ describe('measurementActions', () => {
 
         const measurement: MeasurementApiResponse = [
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             values: [
               {
                 when: 1516521585107,
@@ -368,7 +368,7 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             values: [
               {
                 when: 1516521585107,
@@ -382,7 +382,7 @@ describe('measurementActions', () => {
 
         const average: MeasurementApiResponse = [
           {
-            quantity: 'Power',
+            quantity: Quantity.power,
             unit: 'mW',
             label: 'average',
             values: [
@@ -407,7 +407,7 @@ describe('measurementActions', () => {
 
       await fetchMeasurements(
         [Medium.districtHeating],
-        ['Power'],
+        [Quantity.power],
         ['123abc', '345def', '456ghi'],
         Period.currentMonth,
         Maybe.nothing(),
