@@ -47,7 +47,9 @@ class EditProfile extends React.Component<Props> {
 
   render() {
     const {user, organisations, roles, modifyProfile, languages} = this.props;
-    // TODO: Add validation for fields.
+    const userOrganisations: Organisation[] = organisations.length > 0
+      ? organisations
+      : [user.organisation];
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -59,7 +61,7 @@ class EditProfile extends React.Component<Props> {
           <Column className="EditProfileContainer">
             <UserEditForm
               onSubmit={modifyProfile}
-              organisations={organisations}
+              organisations={userOrganisations}
               possibleRoles={roles}
               isEditSelf={true}
               user={user}

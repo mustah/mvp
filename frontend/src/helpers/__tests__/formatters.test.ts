@@ -1,5 +1,5 @@
 import {momentWithTimeZone} from '../dateHelpers';
-import {FORMAT_DATE_FULL_MINUTE, formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
+import {formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
 
 describe('formatters', () => {
 
@@ -58,13 +58,14 @@ describe('formatters', () => {
     test('UNIX timestamp in millisecond precision, to formatted date string', () => {
       const date = momentWithTimeZone('2017-03-21T11:00:00Z').toDate();
 
-      expect(formatDate(date, FORMAT_DATE_FULL_MINUTE)).toEqual('17-03-21 11:00');
+      expect(formatDate(date, 'YY-MM-DD HH:mm')).toEqual('17-03-21 11:00');
     });
   });
 
   describe('formatCollectionPercentage', () => {
+
     it('formats undefined as dash', () => {
-     expect(formatCollectionPercentage(undefined, 0)).toBe('-');
+      expect(formatCollectionPercentage(undefined, 0)).toBe('-');
     });
 
     it('formats undefined as dash when interval is non-zero', () => {
@@ -89,6 +90,18 @@ describe('formatters', () => {
 
     it('formats 99.7% collection percentage as 99.7% when interval is non-zero', () => {
       expect(formatCollectionPercentage(99.7, 15)).toBe('99.7%');
+    });
+
+    it('user should not see an indicator when percentage > 100', () => {
+      expect(formatCollectionPercentage(104.2, 15, false)).toBe('100.0%');
+    });
+
+    it('super admin should see an indicator when percentage > 100', () => {
+      expect(formatCollectionPercentage(104.2, 15, true)).toBe('100.0% *');
+    });
+
+    it('super admin should not see an indicator when percentage <= 100', () => {
+      expect(formatCollectionPercentage(84.2, 15, true)).toBe('84.2%');
     });
   });
 

@@ -22,6 +22,7 @@ export const MeterList = (
     selectEntryAdd,
     syncWithMetering,
     isFetching,
+    isSuperAdmin,
     pagination,
   }: MeterListProps) => {
 
@@ -41,7 +42,7 @@ export const MeterList = (
     <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
   const renderMedium = ({medium}: Meter) => medium;
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
-    formatCollectionPercentage(collectionPercentage, readIntervalMinutes);
+    formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
   const collectionPercentageHeader = (
     <TableHead className="number">

@@ -40,23 +40,16 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     }
   }
 
-  organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
-  changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
-  changeRoles = (event, index, value) => this.setState({roles: value});
-  changeLanguage = (event, index, value) => this.setState({language: value});
-  onChange = (event) => this.setState({[event.target.id]: event.target.value});
-  wrappedSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit(this.state);
-  }
-
   componentWillReceiveProps({user}: UserFormProps) {
     if (user && user !== this.props.user) {
       this.setState({...user, password: ''});
     }
   }
 
-  shouldComponentUpdate({user: nextUser, organisations: nextOrganisations}: UserFormProps, nextState: State) {
+  shouldComponentUpdate(
+    {user: nextUser, organisations: nextOrganisations}: UserFormProps,
+    nextState: State,
+  ) {
     const {user, organisations} = this.props;
     return user !== nextUser || organisations !== nextOrganisations || nextState !== this.state;
   }
@@ -73,12 +66,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const newPasswordLabel = isEditSelf ?
       firstUpperTranslated('new password') : firstUpperTranslated('password');
 
-    const organisationOptions: IdNamed[] = organisations.map(({id, name}: Organisation) => ({id, name}));
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
-    const languageOptions: IdNamed[] = languages.map(({code, name}) => ({
-      id: code,
-      name,
-    }));
+    const languageOptions: IdNamed[] = languages.map(({code, name}) => ({id: code, name}));
 
     const passwordElement = user ? null : (
       <TextFieldInput
@@ -109,7 +98,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             onChange={this.onChange}
           />
           <SelectFieldInput
-            options={organisationOptions}
+            options={organisations}
             floatingLabelText={organisationLabel}
             hintText={organisationLabel}
             id="organisation"
@@ -143,5 +132,22 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         </Column>
       </form>
     );
+  }
+
+  changeOrganisation = (event, index, value) =>
+    this.setState({organisation: this.organisationById(value)})
+
+  changeRoles = (event, index, value) => this.setState({roles: value});
+
+  changeLanguage = (event, index, value) => this.setState({language: value});
+
+  onChange = (event) => this.setState({[event.target.id]: event.target.value});
+
+  organisationById = (orgId: uuid): Organisation =>
+    this.props.organisations.find(({id}) => id === orgId)!
+
+  wrappedSubmit = (event) => {
+    event.preventDefault();
+    this.props.onSubmit(this.state);
   }
 }
