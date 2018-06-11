@@ -9,9 +9,10 @@ import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {authenticate} from '../../../services/restClient';
 import {firstUpperTranslated} from '../../../services/translationService';
+import {noInternetConnection, requestTimeout} from '../../../state/api/apiActions';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {showFailMessage, showSuccessMessage} from '../../../state/ui/message/messageActions';
-import {ErrorResponse, uuid} from '../../../types/Types';
+import {Callback, ErrorResponse, uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
 import {syncWithMetering} from '../validationActions';
 import MockAdapter = require('axios-mock-adapter');
@@ -30,6 +31,8 @@ describe('syncWithMetering', () => {
   };
 
   const logicalMeterId: uuid = 123;
+
+  const url = `${EndPoints.meters}/${logicalMeterId}/synchronize`;
 
   initTranslations({
     code: 'en',
@@ -54,15 +57,10 @@ describe('syncWithMetering', () => {
     it('dispatches a logout action if token is invalid', async () => {
       const error = new InvalidToken('Token missing or invalid');
 
-      const onSyncWithMeteringError = async () => {
-        mockRestClient
-          .onPost(`${EndPoints.meters}/${logicalMeterId}/synchronize`)
-          .reply(401, error);
+      await makeRequest(() => {
+        mockRestClient.onPost(url).reply(401, error);
         mockRestClient.onGet(EndPoints.logout).reply(204);
-        return store.dispatch(syncWithMetering(logicalMeterId));
-      };
-
-      await onSyncWithMeteringError();
+      });
 
       expect(store.getActions()).toEqual([
         logoutUser(error),
@@ -77,14 +75,7 @@ describe('syncWithMetering', () => {
       const message = 'some unknown error';
       const error: Partial<ErrorResponse> = {message};
 
-      const onSyncWithMeteringUnknownErrorMessage = async () => {
-        mockRestClient
-          .onPost(`${EndPoints.meters}/${logicalMeterId}/synchronize`)
-          .reply(401, error);
-        return store.dispatch(syncWithMetering(logicalMeterId));
-      };
-
-      await onSyncWithMeteringUnknownErrorMessage();
+      await makeRequest(() => mockRestClient.onPost(url).reply(401, error));
 
       expect(store.getActions()).toEqual([
         showFailMessage(message),
@@ -92,18 +83,40 @@ describe('syncWithMetering', () => {
     });
 
     it('displays success toast message', async () => {
-      const onSyncWithMetering = async () => {
-        mockRestClient
-          .onPost(`${EndPoints.meters}/${logicalMeterId}/synchronize`)
-          .reply(202);
-        return store.dispatch(syncWithMetering(logicalMeterId));
-      };
-
-      await onSyncWithMetering();
+      await makeRequest(() => mockRestClient.onPost(url).reply(202));
 
       expect(store.getActions()).toEqual([
         showSuccessMessage(firstUpperTranslated('meter will soon be synchronized')),
       ]);
     });
+
   });
+
+  describe('network error', () => {
+
+    it('display error message when there is not internet connection', async () => {
+      await makeRequest(() => mockRestClient.onPost(url).networkError());
+
+      expect(store.getActions()).toEqual([
+        showFailMessage(noInternetConnection().message),
+      ]);
+    });
+  });
+
+  describe('request timeout', () => {
+
+    it('display error message when the request times out', async () => {
+      await makeRequest(() => mockRestClient.onPost(url).timeout());
+
+      expect(store.getActions()).toEqual([
+        showFailMessage(requestTimeout().message),
+      ]);
+    });
+  });
+
+  const makeRequest = async (mockRequestCallbacks: Callback) => {
+    mockRequestCallbacks();
+    return store.dispatch(syncWithMetering(logicalMeterId));
+  };
+
 });
