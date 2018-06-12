@@ -5,7 +5,12 @@ import java.util.Optional;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+import com.elvaco.mvp.core.util.MessageThrottler;
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.testing.cache.MockCache;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +30,8 @@ public class MeteringMessageListenerTest {
     messageListener = new MeteringMessageListener(
       new MeteringMessageParser(),
       messageConsumerSpy,
-      referenceInfoMessageConsumerSpy
+      referenceInfoMessageConsumerSpy,
+      new MessageThrottler<>(new MockCache<>(), String::valueOf)
     );
   }
 
@@ -154,6 +160,36 @@ public class MeteringMessageListenerTest {
     assertThat(referenceInfoMessageConsumerSpy.messageReceived).isFalse();
   }
 
+  @Test
+  public void repeatedMessagesAreThrottled() {
+    String measurementMessage =
+      ("{\n"
+       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+       + "  \"gateway\": {\n"
+       + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
+       + "  },\n"
+       + "  \"meter\": {\n"
+       + "    \"id\": \"123456789\"\n"
+       + "  },\n"
+       + "  \"facility\": {\n"
+       + "    \"id\": \"42402519\"\n"
+       + "  },\n"
+       + "  \"organisation_id\": \"Elvaco AB\",\n"
+       + "  \"source_system_id\": \"Elvaco Metering\",\n"
+       + "  \"values\": [\n"
+       + "    {\n"
+       + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
+       + "      \"value\": 0.659,\n"
+       + "      \"unit\": \"wH\",\n"
+       + "      \"quantity\": \"power\"\n"
+       + "    }\n"
+       + "  ]\n"
+       + "}");
+
+    assertThat(messageListener.onMessage(measurementMessage)).isNotNull();
+    assertThat(messageListener.onMessage(measurementMessage)).isNull();
+  }
+
   private static class MessageConsumerSpy implements MeasurementMessageConsumer {
 
     private boolean messageReceived;
@@ -161,7 +197,15 @@ public class MeteringMessageListenerTest {
     @Override
     public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto message) {
       messageReceived = true;
-      return Optional.empty();
+      return Optional.of(
+        new GetReferenceInfoDto(
+          message.organisationId,
+          "job-1234",
+          new MeterIdDto(message.meter.id),
+          message.gateway().map(gatewayIdDto -> new GatewayIdDto(gatewayIdDto.id)).orElse(null),
+          new FacilityIdDto(message.facility.id)
+        )
+      );
     }
   }
 

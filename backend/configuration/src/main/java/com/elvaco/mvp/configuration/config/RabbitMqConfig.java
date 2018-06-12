@@ -17,7 +17,9 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
@@ -75,12 +77,14 @@ class RabbitMqConfig {
   @Bean
   MessageListener messageListener(
     MeasurementMessageConsumer measurementMessageConsumer,
-    ReferenceInfoMessageConsumer referenceInfoMessageConsumer
+    ReferenceInfoMessageConsumer referenceInfoMessageConsumer,
+    MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler
   ) {
     return new MeteringMessageListener(
       new MeteringMessageParser(),
       measurementMessageConsumer,
-      referenceInfoMessageConsumer
+      referenceInfoMessageConsumer,
+      meteringMessageThrottler
     );
   }
 
