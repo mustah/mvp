@@ -4,7 +4,7 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {imagePathFor} from '../../../app/routes';
-import {getCollectionStatusCss} from '../../../helpers/thresholds';
+import {statusClassName} from '../../../helpers/thresholds';
 import {Dictionary} from '../../../types/Types';
 import {makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
 import {maxZoom} from '../helper/mapHelper';
@@ -62,7 +62,7 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   let percent = (cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100;
   percent = Math.floor(percent);
 
-  return 'marker-cluster ' + getCollectionStatusCss(percent);
+  return 'marker-cluster ' + statusClassName(percent);
 };
 
 interface DispatchToProps {

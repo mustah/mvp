@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;

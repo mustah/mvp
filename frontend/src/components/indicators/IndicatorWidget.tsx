@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
-import {getCollectionStatusCss} from '../../helpers/thresholds';
+import {statusClassName} from '../../helpers/thresholds';
 import {translate} from '../../services/translationService';
 import {Children} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
@@ -23,7 +23,7 @@ export const IndicatorWidget =
   const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
   const value = collectionPercent.toFixed(1);
   const IndicatorIcon = iconComponentFor(type);
-  const statusCss = getCollectionStatusCss(collectionPercent);
+  const statusCss = statusClassName(collectionPercent);
 
   return (
       <Column className={classNames('Indicator-wrapper', className)}>
