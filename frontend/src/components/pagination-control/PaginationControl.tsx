@@ -4,10 +4,10 @@ import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-rig
 import * as React from 'react';
 import {idGenerator} from '../../helpers/idGenerator';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
-import {uuid} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PageNumberButton} from './PageNumberButton';
 import './PaginationControl.scss';
+import {PageLink, pageLinks} from './paginationHelper';
 
 type PageElements = Array<React.ReactElement<FlatButton | HTMLSpanElement>>;
 
@@ -17,31 +17,25 @@ interface PageNumberProps {
   changePage: (page: number) => void;
 }
 
-const visibilityProximity: number = 5;
+const visibilityProximity: number = 2;
 
 const renderPageNumberButtons = ({total, current, changePage}: PageNumberProps): PageElements => {
-  const pages: PageElements = [];
-  const paginationUuid: uuid = idGenerator.uuid();
-
-  let lastPrintedAreDots = false;
-
-  for (let page = 1; page <= total; page++) {
-    const key = `pagination-${page}-${paginationUuid}`;
-    if (page === current + 1) {
-      pages.push(<PageNumberButton disabled={true} key={key} page={page}/>);
-      lastPrintedAreDots = false;
-    } else if (Math.abs(page - current + 1) <= visibilityProximity
-      || page <= visibilityProximity
-      || page > (total - visibilityProximity)) {
-      const onClick = () => changePage(page - 1);
-      pages.push(<PageNumberButton onClick={onClick} key={key} page={page}/>);
-      lastPrintedAreDots = false;
-    } else if (!lastPrintedAreDots) {
-      pages.push(<span key={key}>...</span>);
-      lastPrintedAreDots = true;
+  const links: PageLink[] = pageLinks(current, total, visibilityProximity);
+  return links.map((link: PageLink) => {
+    if (link === 'dot') {
+      const key: string = `pagination-${idGenerator.uuid()}`;
+      return <span key={key}>...</span>;
     }
-  }
-  return pages;
+
+    const pageOneIndexed: number = link[0] + 1;
+    const key: string = `pagination-${pageOneIndexed}`;
+    if (link[1] === 'current') {
+      return <PageNumberButton disabled={true} key={key} page={pageOneIndexed}/>;
+    }
+
+    const onClick = () => changePage(pageOneIndexed - 1);
+    return <PageNumberButton onClick={onClick} key={key} page={pageOneIndexed}/>;
+  });
 };
 
 const iconArrowStyle = {marginTop: 8};
@@ -52,7 +46,7 @@ interface Props {
 }
 
 export const PaginationControl =
-  ({pagination: {page, size, totalPages}, changePage}: Props) => {
+  ({pagination: {page, totalPages}, changePage}: Props) => {
 
     if (totalPages <= 1) {
       return null;
