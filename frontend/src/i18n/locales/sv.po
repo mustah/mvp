@@ -451,6 +451,16 @@ msgstr "logga ut"
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
+msgid "sync all meters on this page"
+msgstr "synka alla mätare på denna sida"
+
+msgid "{{count}} meter will soon be synchronized"
+msgstr "{{count}} mätare kommer snart att uppdateras"
+
+msgctxt "°plural"
+msgid "{{count}} meter will soon be synchronized°"
+msgstr "{{count}} mätare kommer snart att uppgraderas"
+
 msgid "looks like the server is taking to long to respond, please try again in soon"
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
 

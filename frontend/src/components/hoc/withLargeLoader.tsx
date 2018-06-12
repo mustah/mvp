@@ -9,5 +9,5 @@ interface Fetching {
 export const withLargeLoader =
   <P extends Fetching>(Component: React.ComponentType<P>): React.SFC<P> =>
     (props: P) => props.isFetching
-      ? (<RowCenter><LoadingLarge/></RowCenter>)
-      : (<Component {...props}/>);
+      ? <RowCenter><LoadingLarge/></RowCenter>
+      : <Component {...props}/>;

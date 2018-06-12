@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Dispatch} from 'react-redux';
 import {
   createEmptyAction,
   createPayloadAction,
@@ -40,6 +41,7 @@ export type PickValue<T, P extends keyof T> = T[P];
 export type Action<P> = PayloadAction<string, P>;
 export type OnPayloadAction<P> = (payload: P) => Action<P>;
 export type OnEmptyAction = () => EmptyAction<string>;
+export type Dispatcher = Dispatch<any>;
 
 export const payloadActionOf = <P>(type: string): OnPayloadAction<P> => createPayloadAction(type);
 export const emptyActionOf = (type: string): OnEmptyAction => createEmptyAction(type);

@@ -12,6 +12,7 @@ import {texts} from '../helpers/texts';
 import {Dictionary, ErrorResponse} from '../types/Types';
 
 const requestCanceled = 'REQUEST_CANCELED';
+const timeoutOf = 'timeout of';
 
 class RestClientDelegate implements AxiosInstance {
 
@@ -110,7 +111,7 @@ export const authenticate = (token: string): AxiosInstance =>
   makeRestClient({Authorization: `Basic ${token}`});
 
 export const wasRequestCanceled = (error: ErrorResponse): boolean =>
-  (error.message === requestCanceled);
+  error.message === requestCanceled;
 
 export const isTimeoutError = (error: ErrorResponse): boolean =>
-  error.message.startsWith('timeout of');
+  error.message.startsWith(timeoutOf);

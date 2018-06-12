@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
-import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
-import {MeterListItem} from '../../components/meters/MeterListItem';
-import {PaginationControl} from '../../components/pagination-control/PaginationControl';
-import {Status} from '../../components/status/Status';
-import {Table, TableColumn} from '../../components/table/Table';
-import {TableHead} from '../../components/table/TableHead';
-import {formatCollectionPercentage} from '../../helpers/formatters';
-import {orUnknown} from '../../helpers/translations';
-import {translate} from '../../services/translationService';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {MeterListProps} from './MeterListContainer';
+import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
+import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
+import {MeterListItem} from '../../../components/meters/MeterListItem';
+import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
+import {Status} from '../../../components/status/Status';
+import {Table, TableColumn} from '../../../components/table/Table';
+import {TableHead} from '../../../components/table/TableHead';
+import {MeterListProps} from '../../../containers/meters/MeterListContainer';
+import {formatCollectionPercentage} from '../../../helpers/formatters';
+import {orUnknown} from '../../../helpers/translations';
+import {translate} from '../../../services/translationService';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 
 export const MeterList = (
   {

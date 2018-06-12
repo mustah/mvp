@@ -1,7 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
+import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/SelectionResultActionsDropdown';
+import {withContent} from '../../components/hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
+import {superAdminOnly} from '../../components/hoc/withRoles';
+import {Column} from '../../components/layouts/column/Column';
 import {Loader} from '../../components/loading/Loader';
 import {now} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
@@ -26,15 +31,17 @@ import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {
   ClearErrorPaginated,
+  Clickable,
   EncodedUriParameters,
   ErrorResponse,
   FetchPaginated,
+  HasContent,
   OnClickWithId,
   uuid,
 } from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
-import {syncWithMetering} from '../../usecases/validation/validationActions';
-import {MeterList} from './MeterList';
+import {MeterList} from '../../usecases/validation/components/MeterList';
+import {syncAllMeters, syncWithMetering} from '../../usecases/validation/validationActions';
 
 interface StateToProps {
   result: uuid[];
@@ -50,6 +57,7 @@ interface StateToProps {
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
+  syncAllMeters: (ids: uuid[]) => void;
   fetchMeters: FetchPaginated;
   changePaginationPage: OnChangePage;
   clearError: ClearErrorPaginated;
@@ -62,6 +70,10 @@ interface OwnProps {
 export type MeterListProps = StateToProps & DispatchToProps & OwnProps;
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
+
+const enhance = compose<{}, Clickable & HasContent>(superAdminOnly, withContent);
+
+const SuperAdminSelectionResultActionsDropdown = enhance(SelectionResultActionsDropdown);
 
 class MeterListComponent extends React.Component<MeterListProps> {
 
@@ -77,20 +89,29 @@ class MeterListComponent extends React.Component<MeterListProps> {
   render() {
     const {result, isFetching, error} = this.props;
     const {children, ...otherProps} = this.props;
+    const hasContent = result.length > 0;
     const wrapperProps: MeterListProps & WithEmptyContentProps = {
       ...otherProps,
       noContentText: firstUpperTranslated('no meters'),
-      hasContent: result.length > 0,
+      hasContent,
     };
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
-        <MeterListWrapper {...wrapperProps}/>
+        <Column>
+          <SuperAdminSelectionResultActionsDropdown
+            onClick={this.syncAllMeters}
+            hasContent={hasContent}
+          />
+          <MeterListWrapper {...wrapperProps}/>
+        </Column>
       </Loader>
     );
   }
 
   clearError = () => this.props.clearError({page: this.props.pagination.page});
+
+  syncAllMeters = () => this.props.syncAllMeters(this.props.result);
 }
 
 const mapStateToProps = (
@@ -126,6 +147,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   syncWithMetering,
+  syncAllMeters,
   fetchMeters,
   changePaginationPage,
   clearError: clearErrorMeters,
