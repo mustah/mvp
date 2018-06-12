@@ -459,7 +459,7 @@ msgstr "{{count}} mätare kommer snart att uppdateras"
 
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
-msgstr "{{count}} mätare kommer snart att uppgraderas"
+msgstr "{{count}} mätare kommer snart att uppdateras"
 
 msgid "looks like the server is taking to long to respond, please try again in soon"
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"

@@ -5,13 +5,14 @@ import {EmptyContent, EmptyContentProps} from '../error-message/EmptyContent';
 export type WithEmptyContentProps = HasContent & EmptyContentProps;
 
 export const withEmptyContentComponent =
-  <P extends HasContent>(
+  <P extends {}>(
     Component: React.ComponentType<P>,
     EmptyContentComponent: React.ComponentType<P>,
-  ): React.SFC<P> =>
-    (props: P) => props.hasContent
-      ? <Component {...props}/>
-      : <EmptyContentComponent {...props}/>;
+  ): React.SFC<P & HasContent> =>
+    ({hasContent, ...props}: HasContent) =>
+      hasContent
+        ? <Component {...props}/>
+        : <EmptyContentComponent {...props}/>;
 
 export const withEmptyContent =
   <P extends WithEmptyContentProps>(Component: React.ComponentType<P>): React.SFC<P> =>
