@@ -1,7 +1,6 @@
 import {Medium, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {EndPoints} from '../../../services/endPoints';
 import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
-import {Status} from '../../../types/Types';
 import {LOGOUT_USER} from '../../auth/authActions';
 import {DashboardModel} from '../dashboardModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
@@ -15,19 +14,16 @@ describe('dashboardReducer', () => {
     const widgets: WidgetModel[] = [
       {
         type: Medium.coldWater,
-        status: Status.warning,
         total: 1000,
         pending: 20,
       },
       {
         type: Medium.electricity,
-        status: Status.ok,
         total: 3000,
         pending: 17,
       },
       {
         type: Medium.districtHeating,
-        status: Status.critical,
         total: 1000,
         pending: 122,
       },

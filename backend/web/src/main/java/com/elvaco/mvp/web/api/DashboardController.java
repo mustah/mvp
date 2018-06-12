@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
@@ -47,7 +46,6 @@ public class DashboardController {
       .map(collectionStats ->
         new WidgetDto(
           WidgetType.COLLECTION.name,
-          StatusType.OK.name,
           collectionStats.expected,
           collectionStats.expected - collectionStats.actual
         )

@@ -1,5 +1,3 @@
-import {Status} from '../../types/Types';
-
 export const enum Medium {
   coldWater = 'coldWater',
   collection = 'collection',
@@ -16,7 +14,6 @@ export const enum Medium {
 export interface WidgetModel {
   type: Medium;
   total: number;
-  status: Status;
   pending: number;
 }
 

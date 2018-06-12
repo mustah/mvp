@@ -5,7 +5,6 @@ import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget
 import {Medium, WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
 import {Column} from '../../../../components/layouts/column/Column';
 import {translate} from '../../../../services/translationService';
-import {Status} from '../../../../types/Types';
 import './OverviewWidgets.scss';
 import {Widget} from './Widget';
 
@@ -20,7 +19,6 @@ export const OverviewWidgets = (props: Props) => {
     ? widgets[0]
     : {
       type: Medium.collection,
-      status: Status.ok,
       total: 0,
       pending: 0,
     };

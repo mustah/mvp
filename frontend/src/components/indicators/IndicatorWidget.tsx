@@ -19,7 +19,7 @@ interface Props {
 }
 
 export const IndicatorWidget =
-  ({className, title, widget: {total, status, pending, type}}: Props) => {
+  ({className, title, widget: {total, pending, type}}: Props) => {
   const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
   const value = collectionPercent.toFixed(1);
   const IndicatorIcon = iconComponentFor(type);

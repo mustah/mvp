@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 public class WidgetDto {
 
   public String type;
-  public String status;
   public double total;
   public double pending;
 }
