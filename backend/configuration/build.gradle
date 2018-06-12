@@ -58,7 +58,7 @@ task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
 }
 
 task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
-  systemProperty "liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
+  systemProperty "spring.liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.profiles.active", "postgresql"
   systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.datasource.username", "appuser"

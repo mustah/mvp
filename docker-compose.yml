@@ -3,7 +3,7 @@ services:
   application:
     image: "gitlab.elvaco.se:4567/elvaco/mvp/mvp:${MVP_TAG:-production}"
     environment:
-      MVP_OPTS: -Dspring.profiles.active=postgresql -Dliquibase.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.datasource.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.rabbitmq.host=rabbitmq -Dspring.rabbitmq.username=guest -Dspring.rabbitmq.password=guest
+      MVP_OPTS: -Dspring.profiles.active=postgresql -Dspring.liquibase.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.datasource.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.rabbitmq.host=rabbitmq -Dspring.rabbitmq.username=guest -Dspring.rabbitmq.password=guest
     ports:
       - "8080:80"
     links:
@@ -11,7 +11,7 @@ services:
   geoservice:
     image: "gitlab.elvaco.se:4567/elvaco/mvp/geoservice:${MVP_TAG:-production}"
     environment:
-      GEOSERVICE_OPTS: -Dspring.profiles.active=postgresql -Dliquibase.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.datasource.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dliquibase.user=geoservice -Dliquibase.password=geoservice
+      GEOSERVICE_OPTS: -Dspring.profiles.active=postgresql -Dspring.liquibase.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.datasource.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.liquibase.user=geoservice -Dspring.liquibase.password=geoservice
     ports:
       - "8081:8081"
     links:

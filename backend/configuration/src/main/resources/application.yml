@@ -17,7 +17,7 @@ spring:
     driverClassName: org.h2.Driver
     username: 'sa'
     password: ''
-    initialize: false
+    initialization-mode: never
   jpa:
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpH2Dialect
@@ -35,26 +35,30 @@ spring:
     host: localhost
     username: guest
     password: guest
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog.xml
+    # super user credentials
+    parameters:
+      application_database: mvp
+      application_user: appuser
+      application_password: 'RWZ8tKUzDdbncg2J'
+  jackson:
+    serialization:
+      # Backwards compat.
+      # See: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide#jackson--json-support
+      write-dates-as-timestamps: true
 
 ehcache:
   token:
     heap-entries: 1000
     idle-time: 60
   metering:
-    heap-entries: 20000
-    idle-time: 60
+    heap-entries: 1000
+    idle-time: 10
   job-id:
     heap-entries: 20000
     idle-time: 10
-
-liquibase:
-  enabled: true
-  change-log: classpath:/db/changelog/db.changelog.xml
-  # super user credentials
-  parameters:
-    application_database: mvp
-    application_user: appuser
-    application_password: 'RWZ8tKUzDdbncg2J'
 
 mvp:
   url: http://localhost:8080

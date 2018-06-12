@@ -11,10 +11,9 @@ spring:
     hibernate.ddl-auto: validate
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpPostgreSqlDialect
-
-liquibase:
-  user: mvp
-  password: mvp
-  # Not specifying this causes liquibase's autoconfiguration to use the Spring datasource, which
-  # prevents us from overriding the user/password
-  url: jdbc:postgresql://localhost:5432/mvp
+  liquibase:
+    user: mvp
+    password: mvp
+    # Not specifying this causes liquibase's autoconfiguration to use the Spring datasource, which
+    # prevents us from overriding the user/password
+    url: jdbc:postgresql://localhost:5432/mvp
