@@ -21,8 +21,10 @@ public class MeteringRequestPublisher {
 
   public void request(LogicalMeter logicalMeter) {
     if (!authenticatedUser.isSuperAdmin()) {
-      throw new Unauthorized("User '" + authenticatedUser.getUsername() + "' is not allowed to "
-                             + "publish synchronization requests");
+      throw new Unauthorized(String.format(
+        "User '%s' is not allowed to publish synchronization requests",
+        authenticatedUser.getUsername()
+      ));
     }
 
     Organisation meterOrganisation = organisations.findById(logicalMeter.organisationId)
@@ -48,5 +50,4 @@ public class MeteringRequestPublisher {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
   }
-
 }

@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -13,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static java.util.Arrays.asList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -42,11 +44,12 @@ public class RequestParametersTest {
       .add("a", "b")
       .add("c", "d");
 
-    assertThat(requestParameters.multiValueMap()).isEqualTo(ImmutableMultimap.builder()
-                                                              .put("a", "b")
-                                                              .put("c", "d")
-                                                              .build()
-                                                              .asMap());
+    assertThat(requestParameters.multiValueMap())
+      .isEqualTo(ImmutableMultimap.builder()
+        .put("a", "b")
+        .put("c", "d")
+        .build()
+        .asMap());
   }
 
   @Test
@@ -57,10 +60,11 @@ public class RequestParametersTest {
     RequestParametersAdapter requestParameters =
       (RequestParametersAdapter) requestParametersOf(multiValueMap);
 
-    assertThat(requestParameters.multiValueMap()).isEqualTo(ImmutableMultimap.builder()
-                                                              .put("a", "b")
-                                                              .build()
-                                                              .asMap());
+    assertThat(requestParameters.multiValueMap())
+      .isEqualTo(ImmutableMultimap.builder()
+        .put("a", "b")
+        .build()
+        .asMap());
   }
 
   @Test
@@ -72,11 +76,12 @@ public class RequestParametersTest {
     RequestParametersAdapter adapter = new RequestParametersAdapter();
     adapter.setAll(pathVariable);
 
-    assertThat(adapter.multiValueMap()).isEqualTo(ImmutableMultimap.builder()
-                                                    .put("a", "b")
-                                                    .put("c", "d")
-                                                    .build()
-                                                    .asMap());
+    assertThat(adapter.multiValueMap())
+      .isEqualTo(ImmutableMultimap.builder()
+        .put("a", "b")
+        .put("c", "d")
+        .build()
+        .asMap());
   }
 
   @Test
@@ -104,13 +109,14 @@ public class RequestParametersTest {
       (RequestParametersAdapter) requestParametersOf(requestParams)
         .setAll(pathVariables);
 
-    assertThat(adapter.multiValueMap()).isEqualTo(ImmutableMultimap.builder()
-                                                    .put("a", "b")
-                                                    .put("c", "d")
-                                                    .putAll("n", "x", "y", "z")
-                                                    .putAll("x", "testing", "to")
-                                                    .build()
-                                                    .asMap());
+    assertThat(adapter.multiValueMap())
+      .isEqualTo(ImmutableMultimap.builder()
+        .put("a", "b")
+        .put("c", "d")
+        .putAll("n", "x", "y", "z")
+        .putAll("x", "testing", "to")
+        .build()
+        .asMap());
   }
 
   @Test
@@ -126,11 +132,12 @@ public class RequestParametersTest {
       (RequestParametersAdapter) requestParametersOf(requestParams)
         .setAll(pathVariables);
 
-    assertThat(adapter.multiValueMap()).isEqualTo(ImmutableMultimap.builder()
-                                                    .put("a", "b")
-                                                    .put("c", "d")
-                                                    .build()
-                                                    .asMap());
+    assertThat(adapter.multiValueMap())
+      .isEqualTo(ImmutableMultimap.builder()
+        .put("a", "b")
+        .put("c", "d")
+        .build()
+        .asMap());
   }
 
   @Test
@@ -163,5 +170,16 @@ public class RequestParametersTest {
 
     Map<String, List<String>> multiValueMap = null;
     assertThat(requestParametersOf(multiValueMap).entrySet()).isEmpty();
+  }
+
+  @Test
+  public void setAllIds() {
+    UUID id1 = randomUUID();
+    UUID id2 = randomUUID();
+
+    RequestParameters parameters = new RequestParametersAdapter()
+      .setAllIds("id", asList(id1, id2));
+
+    assertThat(parameters.getValues("id")).containsExactly(id1.toString(), id2.toString());
   }
 }

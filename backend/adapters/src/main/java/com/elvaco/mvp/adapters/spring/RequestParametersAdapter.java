@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -12,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 public class RequestParametersAdapter implements RequestParameters {
 
@@ -56,6 +58,13 @@ public class RequestParametersAdapter implements RequestParameters {
   }
 
   @Override
+  public RequestParameters setAllIds(String name, List<UUID> ids) {
+    List<String> values = ids.stream().map(UUID::toString).collect(toList());
+    delegate.put(name, values);
+    return this;
+  }
+
+  @Override
   public RequestParameters replace(String name, String value) {
     setAll(name, singletonList(value));
     return this;
@@ -88,6 +97,7 @@ public class RequestParametersAdapter implements RequestParameters {
     return delegate.isEmpty();
   }
 
+  @Override
   public RequestParameters shallowCopy() {
     return new RequestParametersAdapter(
       new LinkedMultiValueMap<>(delegate)

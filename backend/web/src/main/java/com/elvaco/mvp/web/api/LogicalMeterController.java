@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.api;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
@@ -49,13 +51,10 @@ public class LogicalMeterController {
       defaultValue = "1970-01-01T00:00:00Z"
     ) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after
   ) {
-    if (before == null) {
-      before = ZonedDateTime.now();
-    }
-    RequestParameters parameters = new RequestParametersAdapter();
-    parameters.replace("id", id.toString());
-    parameters.replace("before", before.toString());
-    parameters.replace("after", after.toString());
+    RequestParameters parameters = new RequestParametersAdapter()
+      .replace("id", id.toString())
+      .replace("before", before != null ? before.toString() : ZonedDateTime.now().toString())
+      .replace("after", after.toString());
 
     return logicalMeterUseCases.findOneBy(parameters)
       .map(LogicalMeterDtoMapper::toDto)
@@ -68,6 +67,16 @@ public class LogicalMeterController {
       .orElseThrow(() -> new MeterNotFound(id));
 
     meteringRequestPublisher.request(logicalMeter);
+    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+  }
+
+  @PostMapping("/synchronize")
+  public ResponseEntity<Void> synchronizeMetersByIds(
+    @RequestBody List<UUID> logicalMetersIds
+  ) {
+    logicalMeterUseCases.findAllBy(new RequestParametersAdapter().setAllIds("id", logicalMetersIds))
+      .forEach(meteringRequestPublisher::request);
+
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 

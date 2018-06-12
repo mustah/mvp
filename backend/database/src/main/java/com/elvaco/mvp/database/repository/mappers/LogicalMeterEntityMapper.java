@@ -45,16 +45,16 @@ public class LogicalMeterEntityMapper {
   public static LogicalMeter toDomainModel(
     LogicalMeterEntity logicalMeterEntity,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap,
-    Long expectedMeasurementCount,
-    Long actualMeasurementCount
+    @Nullable Long expectedMeasurementCount,
+    @Nullable Long actualMeasurementCount
   ) {
 
-    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
-      .stream()
-      .map(physicalMeterEntity -> PhysicalMeterEntityMapper.toDomainModel(
-        physicalMeterEntity,
-        meterStatusMap.getOrDefault(physicalMeterEntity.getId(), emptyList())
-      ))
+    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
+      .map(physicalMeterEntity ->
+        PhysicalMeterEntityMapper.toDomainModel(
+          physicalMeterEntity,
+          meterStatusMap.getOrDefault(physicalMeterEntity.getId(), emptyList())
+        ))
       .collect(toList());
 
     return toLogicalMeter(
@@ -63,6 +63,13 @@ public class LogicalMeterEntityMapper {
       expectedMeasurementCount,
       actualMeasurementCount
     );
+  }
+
+  public static LogicalMeter toDomainModel(
+    LogicalMeterEntity logicalMeterEntity,
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
+  ) {
+    return toDomainModel(logicalMeterEntity, mappedStatuses, null, null);
   }
 
   public static LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {

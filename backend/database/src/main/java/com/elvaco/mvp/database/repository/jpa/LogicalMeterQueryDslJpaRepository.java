@@ -37,6 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.ExpressionUtils.allOf;
 import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 import static java.util.stream.Collectors.toList;
@@ -171,6 +172,11 @@ public class LogicalMeterQueryDslJpaRepository
     ));
   }
 
+  /**
+   * NOTE: we calculate .size() in Java land which causes extra memory usage.
+   * JQL does not support multiple distinct values ("select count(distinct a, b)..."),
+   * which forces us to count outside of the database.
+   */
   @Override
   public MeterSummary summary(RequestParameters parameters, Predicate predicate) {
     long meters = createCountQuery(predicate)
@@ -180,12 +186,6 @@ public class LogicalMeterQueryDslJpaRepository
       .distinct()
       .fetchCount();
 
-    /*
-    NOTE: we calculate .size() in Java land which causes extra memory usage.
-
-    JQL does not support multiple distinct values ("select count(distinct a, b)..."),
-    which forces us to count outside of the database.
-     */
     long cities = createQuery(predicate)
       .select(Expressions.list(LOCATION.country, LOCATION.city))
       .where(
@@ -231,15 +231,13 @@ public class LogicalMeterQueryDslJpaRepository
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .join(PHYSICAL_METER.measurements, MEASUREMENT)
       .groupBy(LOGICAL_METER.id)
-      .transform(
-        GroupBy.groupBy(LOGICAL_METER.id).as(MEASUREMENT.count())
-      );
+      .transform(groupBy(LOGICAL_METER.id).as(MEASUREMENT.count()));
   }
 
-  @Override
   @SuppressWarnings(
     {"SpringDataRepositoryMethodReturnTypeInspection", "SpringDataMethodInconsistencyInspection"}
   )
+  @Override
   public Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
     Predicate predicate
   ) {
@@ -247,9 +245,7 @@ public class LogicalMeterQueryDslJpaRepository
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
-      .transform(
-        GroupBy.groupBy(STATUS_LOG.physicalMeterId).as(GroupBy.list(STATUS_LOG))
-      );
+      .transform(groupBy(STATUS_LOG.physicalMeterId).as(GroupBy.list(STATUS_LOG)));
   }
 
   private Map<UUID, PhysicalMeterStatusLogEntity> findCurrentStatuses(Predicate predicate) {
@@ -258,9 +254,7 @@ public class LogicalMeterQueryDslJpaRepository
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
-      .transform(
-        GroupBy.groupBy(LOGICAL_METER.id).as(STATUS_LOG)
-      );
+      .transform(groupBy(LOGICAL_METER.id).as(STATUS_LOG));
   }
 
   private List<PagedLogicalMeter> fetchAdditionalPagedMeterData(
@@ -290,7 +284,7 @@ public class LogicalMeterQueryDslJpaRepository
 
   private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
     if ((parameters.hasName("minValue") || parameters.hasName("maxValue"))
-        && parameters.hasName("quantity")) {
+      && parameters.hasName("quantity")) {
 
       String quantity = parameters.getFirst("quantity");
 

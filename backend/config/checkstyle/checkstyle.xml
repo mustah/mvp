@@ -79,6 +79,7 @@
     <module name="MultipleVariableDeclarations"/>
     <module name="ArrayTypeStyle"/>
     <module name="MissingSwitchDefault"/>
+    <module name="MissingOverride"/>
     <module name="FallThrough"/>
     <module name="UpperEll"/>
     <module name="ModifierOrder"/>

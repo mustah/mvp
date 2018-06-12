@@ -2,13 +2,14 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusLogEntityMapper;
 import lombok.RequiredArgsConstructor;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class MeterStatusLogsRepository implements MeterStatusLogs {
@@ -26,7 +27,7 @@ public class MeterStatusLogsRepository implements MeterStatusLogs {
     physicalMeterStatusLogJpaRepository.save(
       meterStatusLogs.stream()
         .map(MeterStatusLogEntityMapper::toEntity)
-        .collect(Collectors.toList())
+        .collect(toList())
     );
   }
 }
