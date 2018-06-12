@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
+import {getCollectionStatusCss} from '../../helpers/thresholds';
 import {translate} from '../../services/translationService';
 import {Children} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
@@ -19,12 +20,14 @@ interface Props {
 
 export const IndicatorWidget =
   ({className, title, widget: {total, status, pending, type}}: Props) => {
-    const value = total ? ((1 - (pending / total)) * 100).toFixed(1) : 0;
-    const IndicatorIcon = iconComponentFor(type);
+  const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
+  const value = collectionPercent.toFixed(1);
+  const IndicatorIcon = iconComponentFor(type);
+  const statusCss = getCollectionStatusCss(collectionPercent);
 
-    return (
+  return (
       <Column className={classNames('Indicator-wrapper', className)}>
-        <ColumnCenter className={classNames('Indicator', status)}>
+        <ColumnCenter className={classNames('Indicator', statusCss)}>
           <Row className="Indicator-name Row-center">
             <Normal>{title}</Normal>
           </Row>

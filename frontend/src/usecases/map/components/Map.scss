@@ -15,18 +15,18 @@
   justify-content: center;
 }
 
-.marker-cluster-warning {
+.marker-cluster.warning {
   @extend .marker-cluster;
   background: $green;
   border-color: $red;
 }
 
-.marker-cluster-ok {
+.marker-cluster.ok {
   @extend .marker-cluster;
   background: $green;
 }
 
-.marker-cluster-error {
+.marker-cluster.error {
   @extend .marker-cluster;
   background: $red;
   border-color: $red;
