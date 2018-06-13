@@ -350,7 +350,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .build());
 
     ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
-      .get("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkersDto.class);
+      .get("/map-markers/gateways?address=sweden,kungsbacka,super+1", MapMarkersDto.class);
 
     ResponseEntity<MapMarkersDto> cityResponse = asTestSuperAdmin()
       .get("/map-markers/gateways?city=sweden,kungsbacka", MapMarkersDto.class);

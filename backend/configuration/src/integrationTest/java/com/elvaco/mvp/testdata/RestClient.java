@@ -105,12 +105,16 @@ public final class RestClient {
     template.delete(apiUrlOf(url));
   }
 
-  public <T> Page<T> getPage(String url, Class<T> pagedClass) {
-    RestResponsePage<T> body = getPageResponse(url, pagedClass).getBody();
+  public <T> Page<T> getPage(String url, Class<T> pagedClass, Object... variables) {
+    RestResponsePage<T> body = getPageResponse(url, pagedClass, variables).getBody();
     return body != null ? body.newPage() : new RestResponsePage<>();
   }
 
-  public <T> ResponseEntity<List<T>> getList(String url, Class<T> listedClass) {
+  public <T> ResponseEntity<List<T>> getList(
+    String url,
+    Class<T> listedClass,
+    Object... urlVariables
+  ) {
     ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
       @Override
       public Type getType() {
@@ -120,7 +124,7 @@ public final class RestClient {
         );
       }
     };
-    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType, urlVariables);
   }
 
   public RestClient loginWith(String username, String password) {
@@ -152,7 +156,11 @@ public final class RestClient {
     return addHeader(AUTHORIZATION, BEARER + token);
   }
 
-  private <T> ResponseEntity<RestResponsePage<T>> getPageResponse(String url, Class<T> pagedClass) {
+  private <T> ResponseEntity<RestResponsePage<T>> getPageResponse(
+    String url,
+    Class<T> pagedClass,
+    Object... variables
+  ) {
     ParameterizedTypeReference<RestResponsePage<T>> responseType =
       new ParameterizedTypeReference<RestResponsePage<T>>() {
         @Override
@@ -163,7 +171,7 @@ public final class RestClient {
           );
         }
       };
-    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType, variables);
   }
 
   private RestClient basicAuthorization(String token) {

@@ -814,7 +814,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveLogicalMeter(HOT_WATER_METER);
 
     Page<PagedLogicalMeterDto> response = asTestUser()
-      .getPage("/meters?medium=Hot water", PagedLogicalMeterDto.class);
+      .getPage("/meters?medium=Hot+water", PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getNumberOfElements()).isEqualTo(1);
@@ -866,7 +866,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<PagedLogicalMeterDto> response = restClient()
       .loginWith("me@myorg.com", "secr3t")
       .tokenAuthorization()
-      .getPage("/meters?medium=Hot water", PagedLogicalMeterDto.class);
+      .getPage("/meters?medium=Hot+water", PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1L);
     assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);
@@ -1104,7 +1104,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     Page<PagedLogicalMeterDto> page = asTestUser()
-      .getPage("/meters?quantity=Power&maxValue=4.0 W", PagedLogicalMeterDto.class);
+      .getPage("/meters?quantity=Power&maxValue=4.0+W", PagedLogicalMeterDto.class);
 
     assertThat(page.getTotalElements()).isEqualTo(1);
     assertThat(page.getContent().get(0).id).isEqualTo(secondLogicalMeter.id);
@@ -1149,7 +1149,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     Page<PagedLogicalMeterDto> page = asTestUser()
-      .getPage("/meters?quantity=Power&minValue=3.0 W", PagedLogicalMeterDto.class);
+      .getPage("/meters?quantity=Power&minValue=3.0+W", PagedLogicalMeterDto.class);
 
     assertThat(page.getTotalElements()).isEqualTo(1);
     assertThat(page.getContent().get(0).id).isEqualTo(firstLogicalMeter.id);
