@@ -116,8 +116,11 @@ msgstr "new password"
 msgid "password"
 msgstr "password"
 
-msgid "of {{count}} measurement"
-msgstr "of {{count}} measurement"
+msgid "{{pending}} of {{count}}"
+msgstr "{{pending}} of {{count}}"
+
+msgid "measurement"
+msgstr "measurement missing"
 
 msgid "other"
 msgstr "other"
@@ -452,8 +455,12 @@ msgid "looks like the server is taking to long to respond, please try again in s
 msgstr "looks like the server is taking to long to respond, please try again in soon"
 
 msgctxt "°plural"
-msgid "of {{count}} measurement°"
-msgstr "of {{count}} measurements"
+msgid "{{pending}} of {{count}}°"
+msgstr "{{pending}} of {{count}}"
+
+msgctxt "°plural"
+msgid "measurement°"
+msgstr "measurements missing"
 
 msgctxt "°plural"
 msgid "city°"

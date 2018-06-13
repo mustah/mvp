@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
@@ -39,7 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DashboardControllerTest extends IntegrationTest {
 
   public static final int NUM_QUANTITIES = 7;
-  private final Random random = new Random();
   private final ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
   private final ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
   private double measurementCount = 0.0;
