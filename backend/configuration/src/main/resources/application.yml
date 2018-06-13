@@ -5,6 +5,7 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
 
 spring:
+
   application:
     name: MVP
   profiles:
@@ -26,6 +27,10 @@ spring:
       hibernate.format_sql: false
       hibernate.type: trace
       hibernate.jdbc.batch_size: 300
+      #mute wall-of-text feature test exceptions,
+      # see https://github.com/spring-projects/spring-boot/issues/12007
+      # and https://hibernate.atlassian.net/browse/HHH-12368
+      hibernate.jdbc.lob.non_contextual_creation: true
       hibernate.integration.envers.enabled: true
       org.hibernate.envers.audit_strategy: org.hibernate.envers.strategy.ValidityAuditStrategy
       org.hibernate.envers.audit_strategy_validity_store_revend_timestamp: true
