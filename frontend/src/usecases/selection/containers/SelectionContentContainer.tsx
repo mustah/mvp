@@ -108,7 +108,7 @@ class SelectionContent extends React.Component<Props> {
     const addressSelectionText = translate('address') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
     const gatewayStatusSelectionText = translate('gateway status') + ': ';
-    const mediumStatusSelectionText = translate('medium') + ': ';
+    const mediumSelectionText = translate('medium') + ': ';
     const facilitySelectionText = translate('facility') + ': ';
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
     const gatewaySerialSelectionText = translate('gateway serial') + ': ';
@@ -119,6 +119,11 @@ class SelectionContent extends React.Component<Props> {
           <Subtitle>{translate('filter')}</Subtitle>
 
           <Row className="SelectionDropdownOptions">
+            <SimpleDropdownSelector
+              list={facilities}
+              selectionText={facilitySelectionText}
+              select={selectFacilities}
+            />
             <SimpleDropdownSelector
               list={cities}
               selectionText={citySelectionText}
@@ -132,6 +137,11 @@ class SelectionContent extends React.Component<Props> {
               parentIdentifier="parentId"
             />
             <SimpleDropdownSelector
+              list={media}
+              selectionText={mediumSelectionText}
+              select={selectMedia}
+            />
+            <SimpleDropdownSelector
               list={meterStatuses}
               selectionText={meterStatusSelectionText}
               select={selectMeterStatus}
@@ -140,16 +150,6 @@ class SelectionContent extends React.Component<Props> {
               list={gatewayStatuses}
               selectionText={gatewayStatusSelectionText}
               select={selectGatewayStatus}
-            />
-            <SimpleDropdownSelector
-              list={media}
-              selectionText={mediumStatusSelectionText}
-              select={selectMedia}
-            />
-            <SimpleDropdownSelector
-              list={facilities}
-              selectionText={facilitySelectionText}
-              select={selectFacilities}
             />
             <SimpleDropdownSelector
               list={secondaryAddresses}

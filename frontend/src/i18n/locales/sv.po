@@ -135,7 +135,7 @@ msgid "gateway details"
 msgstr "gateway"
 
 msgid "gateway serial"
-msgstr "serienummer"
+msgstr "gateway serienummer"
 
 msgid "product model"
 msgstr "modell"
@@ -256,8 +256,8 @@ msgstr "ej flaggad"
 
 msgid "token missing or invalid"
 msgstr ""
-"du är utloggad, för att du har varit inaktiv för länge. Logga in igen för "
-"att fortsätta"
+"du är utloggad, för att du har varit inaktiv för länge. Logga in igen för att "
+"fortsätta"
 
 msgid "bad credentials"
 msgstr "felaktigt användarnamn eller lösenord"
@@ -362,12 +362,10 @@ msgid "report"
 msgstr "rapport"
 
 msgid "{{count}} meter are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgid "select medium"
 msgstr "välj mätartyp"
@@ -478,13 +476,11 @@ msgstr "mätare"
 
 msgctxt "°plural"
 msgid "{{count}} meter are not displayed in the map due to low accuracy°"
-msgstr ""
-"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
-msgstr ""
-"{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "alarm°"
