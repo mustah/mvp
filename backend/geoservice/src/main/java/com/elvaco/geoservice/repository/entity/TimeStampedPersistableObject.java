@@ -1,7 +1,6 @@
 package com.elvaco.geoservice.repository.entity;
 
-import java.time.ZonedDateTime;
-
+import java.time.Instant;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
@@ -14,26 +13,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class TimeStampedPersistableObject extends PersistableObject {
 
   @CreatedDate
-  private ZonedDateTime created;
+  private Instant created;
 
   @LastModifiedDate
-  private ZonedDateTime updated;
+  private Instant updated;
 
-  public ZonedDateTime getCreated() {
+  public Instant getCreated() {
     return this.created;
 
   }
 
-  public void setCreated(ZonedDateTime created) {
+  public void setCreated(Instant created) {
     this.created = created;
 
   }
 
-  public ZonedDateTime getUpdated() {
+  public Instant getUpdated() {
     return this.updated;
   }
 
-  public void setUpdated(ZonedDateTime updated) {
+  public void setUpdated(Instant updated) {
     this.updated = updated;
 
   }
