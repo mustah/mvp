@@ -24,6 +24,6 @@ public abstract class PersistableObject {
 
   @Override
   public String toString() {
-    return "Presistable Object: id=" + this.id + " Object: " + this.getClass().getName();
+    return "Persistable Object: id=" + this.id + " Object: " + this.getClass().getName();
   }
 }
