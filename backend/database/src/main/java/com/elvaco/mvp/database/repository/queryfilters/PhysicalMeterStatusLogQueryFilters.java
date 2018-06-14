@@ -22,10 +22,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(
-    String filter,
-    List<String> values
-  ) {
+  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
     switch (filter) {
       case "physicalMeterId":
         return Optional.of(PHYSICAL_METER.physicalMeterId.in(mapValues(UUID::fromString, values)));
