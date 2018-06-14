@@ -64,6 +64,7 @@
     "@types/react-router-redux": "^5.0.13",
     "@types/react-virtualized": "^9.7.6",
     "@types/recharts": "^1.0.18",
+    "@types/recompose": "^0.26.1",
     "@types/redux": "^3.6.0",
     "@types/redux-auth-wrapper": "^2.0.7",
     "@types/redux-mock-store": "^0.0.13",
@@ -88,8 +89,8 @@
     "seedrandom": "^2.4.3",
     "ts-jest": "^22.0.1",
     "tslint": "^5.8.0",
-    "tslint-react": "^3.0.0",
-    "typescript": "^2.6.2",
+    "tslint-react": "^3.6.0",
+    "typescript": "2.8.3",
     "uglify-js": "^3.3.22"
   },
   "dependencies": {
@@ -119,6 +120,7 @@
     "react-router-redux": "^5.0.0-alpha.8",
     "react-virtualized": "^9.13.0",
     "recharts": "^0.22.4",
+    "recompose": "^0.27.1",
     "redux": "^3.7.2",
     "redux-auth-wrapper": "^2.0.2",
     "redux-persist": "5.9.1",

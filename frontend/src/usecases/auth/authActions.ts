@@ -48,8 +48,8 @@ export const login = (username: string, password: string) => {
   };
 };
 
-export const logout = (error?: Unauthorized) => {
-  return async (dispatch, getState: GetState) => {
+export const logout = (error?: Unauthorized) =>
+  async (dispatch, getState: GetState) => {
     const {auth} = getState();
     if (isAuthenticated(auth)) {
       try {
@@ -61,4 +61,3 @@ export const logout = (error?: Unauthorized) => {
       }
     }
   };
-};

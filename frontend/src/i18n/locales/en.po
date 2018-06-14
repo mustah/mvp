@@ -451,6 +451,16 @@ msgstr "logout"
 msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 
+msgid "sync all meters on this page"
+msgstr "sync all meters on this page"
+
+msgid "{{count}} meter will soon be synchronized"
+msgstr "{{count}} meter will soon be synchronized"
+
+msgctxt "°plural"
+msgid "{{count}} meter will soon be synchronized°"
+msgstr "{{count}} meters will soon be synchronized"
+
 msgid "looks like the server is taking to long to respond, please try again in soon"
 msgstr "looks like the server is taking to long to respond, please try again in soon"
 

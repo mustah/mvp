@@ -1,7 +1,6 @@
-import {Omit} from 'react-redux-typescript';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
-import {EncodedUriParameters, uuid} from '../types/Types';
+import {EncodedUriParameters, Omit, uuid} from '../types/Types';
 import {toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
 
@@ -43,11 +42,13 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
   `page=${encodeURIComponent(page.toString())}`,
 ];
 
-export const toEntityApiParametersMeters = (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
-  toEntityApiParameters(selectionParameters, meterParameterNames);
+export const toEntityApiParametersMeters =
+  (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
+    toEntityApiParameters(selectionParameters, meterParameterNames);
 
-export const toEntityApiParametersGateways = (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
-  toEntityApiParameters(selectionParameters, gatewayParameterNames);
+export const toEntityApiParametersGateways =
+  (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
+    toEntityApiParameters(selectionParameters, gatewayParameterNames);
 
 const toEntityApiParameters =
   // TODO: perhaps make sure it could handle if dateRange is included, as it is now the function
