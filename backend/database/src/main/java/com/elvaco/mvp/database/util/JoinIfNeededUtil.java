@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.jpa;
+package com.elvaco.mvp.database.util;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;

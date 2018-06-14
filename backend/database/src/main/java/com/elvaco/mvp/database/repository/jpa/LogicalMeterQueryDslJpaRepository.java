@@ -22,6 +22,7 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
+import com.elvaco.mvp.database.util.JoinIfNeededUtil;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
