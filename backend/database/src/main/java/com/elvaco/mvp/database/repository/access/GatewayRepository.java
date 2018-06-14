@@ -18,7 +18,8 @@ import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
-import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -30,8 +31,6 @@ import static java.util.stream.Collectors.toList;
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository repository;
-  private final QueryFilters gatewayQueryFilters;
-  private final QueryFilters gatewayStatusLogQueryFilters;
   private final GatewayStatusLogJpaRepository statusLogJpaRepository;
 
   @Override
@@ -102,7 +101,7 @@ public class GatewayRepository implements Gateways {
       .map(GatewayWithMetersMapper::toDomainModel);
   }
 
-  private List<Gateway> toGateways(
+  private static List<Gateway> toGateways(
     List<GatewayEntity> entities,
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap
   ) {
@@ -112,25 +111,25 @@ public class GatewayRepository implements Gateways {
       .collect(toList());
   }
 
-  private Predicate toStatusPredicate(List<GatewayEntity> content) {
-    return toStatusPredicate(content, new RequestParametersAdapter());
+  private static Predicate toStatusPredicate(List<GatewayEntity> gatewayEntities) {
+    return toStatusPredicate(gatewayEntities, new RequestParametersAdapter());
   }
 
-  private Predicate toStatusPredicate(
-    List<GatewayEntity> content,
+  private static Predicate toStatusPredicate(
+    List<GatewayEntity> gatewayEntities,
     RequestParameters parameters
   ) {
     RequestParameters newParameters = parameters.shallowCopy();
-    newParameters.setAll("gatewayId", getGatewayIds(content));
+    newParameters.setAll("gatewayId", getGatewayIds(gatewayEntities));
 
-    return gatewayStatusLogQueryFilters.toExpression(newParameters);
+    return new GatewayStatusLogQueryFilters().toExpression(newParameters);
   }
 
-  private Predicate toPredicate(RequestParameters parameters) {
-    return gatewayQueryFilters.toExpression(parameters);
+  private static Predicate toPredicate(RequestParameters parameters) {
+    return new GatewayQueryFilters().toExpression(parameters);
   }
 
-  private List<String> getGatewayIds(List<GatewayEntity> gatewayEntities) {
+  private static List<String> getGatewayIds(List<GatewayEntity> gatewayEntities) {
     return gatewayEntities.stream()
       .map(gatewayEntity -> gatewayEntity.id.toString())
       .collect(toList());
