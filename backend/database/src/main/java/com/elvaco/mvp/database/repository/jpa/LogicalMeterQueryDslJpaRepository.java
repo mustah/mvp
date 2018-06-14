@@ -221,8 +221,8 @@ public class LogicalMeterQueryDslJpaRepository
 
   @Override
   public void delete(UUID id, UUID organisationId) {
-    JPADeleteClause query = new JPADeleteClause(entityManager, LOGICAL_METER);
-    query.where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
+    new JPADeleteClause(entityManager, LOGICAL_METER)
+      .where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
       .execute();
   }
 
