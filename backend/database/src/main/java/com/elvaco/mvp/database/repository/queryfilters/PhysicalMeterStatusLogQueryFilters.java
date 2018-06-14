@@ -10,9 +10,6 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
-
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
   private static final QPhysicalMeterStatusLogEntity PHYSICAL_METER =
@@ -34,10 +31,10 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
         return Optional.of(PHYSICAL_METER.physicalMeterId.in(mapValues(UUID::fromString, values)));
       case "id":
         return Optional.of(LOGICAL_METER.id.in(mapValues(UUID::fromString, values)));
-      case BEFORE:
+      case "before":
         stop = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(periodQueryFilter(start, stop));
-      case AFTER:
+      case "after":
         start = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(periodQueryFilter(start, stop));
       default:

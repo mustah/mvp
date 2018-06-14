@@ -9,9 +9,6 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
-
 public class GatewayStatusLogQueryFilters extends QueryFilters {
 
   private static final QGatewayStatusLogEntity STATUS_LOG =
@@ -27,12 +24,12 @@ public class GatewayStatusLogQueryFilters extends QueryFilters {
     switch (filter) {
       case "gatewayId":
         return Optional.of(STATUS_LOG.gatewayId.in(mapValues(UUID::fromString, values)));
-      case BEFORE:
+      case "before":
         stop = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(
           periodQueryFilter(start, stop)
         );
-      case AFTER:
+      case "after":
         start = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(
           periodQueryFilter(start, stop)
