@@ -40,6 +40,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
@@ -67,8 +68,9 @@ class DataProviderConfig {
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
-  private final MapMarkerJpaRepository meterMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository logicalMeterMapQueryDslJpaRepository;
   private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
+  private final SummaryJpaRepository summaryJpaRepository;
 
   @Bean
   Users users() {
@@ -89,6 +91,7 @@ class DataProviderConfig {
   LogicalMeters logicalMeters() {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
+      summaryJpaRepository,
       new LogicalMeterSortingEntityMapper()
     );
   }
@@ -97,7 +100,7 @@ class DataProviderConfig {
   Locations locations() {
     return new LocationRepository(
       locationJpaRepository,
-      meterMapQueryDslJpaRepository,
+      logicalMeterMapQueryDslJpaRepository,
       gatewayMapQueryDslJpaRepository
     );
   }

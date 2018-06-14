@@ -28,7 +28,7 @@ import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physical
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
 @Repository
-class MeterMapQueryDslJpaRepository
+class LogicalMeterMapQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements MapMarkerJpaRepository {
 
@@ -41,7 +41,7 @@ class MeterMapQueryDslJpaRepository
   private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   @Autowired
-  MeterMapQueryDslJpaRepository(EntityManager entityManager) {
+  LogicalMeterMapQueryDslJpaRepository(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
       entityManager

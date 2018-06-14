@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
@@ -40,13 +39,11 @@ import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInforma
 import org.springframework.stereotype.Repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.types.ExpressionUtils.allOf;
-import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
-public class LogicalMeterQueryDslJpaRepository
+class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
@@ -65,10 +62,11 @@ public class LogicalMeterQueryDslJpaRepository
   private static final QGatewayEntity GATEWAY =
     QGatewayEntity.gatewayEntity;
 
-  private static final QMeasurementEntity MEASUREMENT = QMeasurementEntity.measurementEntity;
+  private static final QMeasurementEntity MEASUREMENT =
+    QMeasurementEntity.measurementEntity;
 
   @Autowired
-  public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
+  LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
       entityManager
@@ -174,51 +172,6 @@ public class LogicalMeterQueryDslJpaRepository
       new LogicalMeterQueryFilters().toExpression(parameters),
       parameters
     ));
-  }
-
-  /**
-   * NOTE: we calculate .size() in Java land which causes extra memory usage.
-   * JQL does not support multiple distinct values ("select count(distinct a, b)..."),
-   * which forces us to count outside of the database.
-   */
-  @Override
-  public MeterSummary summary(RequestParameters parameters, Predicate predicate) {
-    long meters = createCountQuery(predicate)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetchCount();
-
-    long cities = createQuery(predicate)
-      .select(Expressions.list(LOCATION.country, LOCATION.city))
-      .where(
-        allOf(
-          isNotNull(LOCATION.country), isNotNull(LOCATION.city)
-        )
-      )
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetch()
-      .size();
-
-    long addresses = createQuery(predicate)
-      .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress))
-      .where(
-        allOf(
-          isNotNull(LOCATION.country), isNotNull(LOCATION.city), isNotNull(LOCATION.streetAddress)
-        )
-      )
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetch()
-      .size();
-
-    return new MeterSummary(meters, cities, addresses);
   }
 
   @Override

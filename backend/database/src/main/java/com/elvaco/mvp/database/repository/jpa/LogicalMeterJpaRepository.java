@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
@@ -38,8 +37,6 @@ public interface LogicalMeterJpaRepository {
   Optional<LogicalMeterEntity> findOneBy(UUID organisationId, String externalId);
 
   Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters);
-
-  MeterSummary summary(RequestParameters parameters, Predicate predicate);
 
   void deleteAll();
 
