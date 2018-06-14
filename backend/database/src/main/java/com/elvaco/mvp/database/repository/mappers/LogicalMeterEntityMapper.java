@@ -12,8 +12,8 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jpa.PagedLogicalMeter;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyList;
@@ -25,7 +25,8 @@ import static java.util.stream.Collectors.toSet;
 public class LogicalMeterEntityMapper {
 
   public static LogicalMeter toDomainModelWithCollectionPercentage(
-    PagedLogicalMeter pagedLogicalMeter, long expectedMeasurementCount
+    PagedLogicalMeter pagedLogicalMeter,
+    long expectedMeasurementCount
   ) {
     return newLogicalMeter(pagedLogicalMeter, expectedMeasurementCount);
   }

@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.jpa;
+package com.elvaco.mvp.database.entity.meter;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -7,10 +7,6 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.entity.meter.LocationEntity;
-import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
 public class PagedLogicalMeter {
 
@@ -86,7 +82,7 @@ public class PagedLogicalMeter {
     ) * meterDefinition.quantities.size();
   }
 
-  PagedLogicalMeter withMeasurementCount(@Nullable Long measurementCount) {
+  public PagedLogicalMeter withMeasurementCount(@Nullable Long measurementCount) {
     return new PagedLogicalMeter(
       id,
       organisationId,
@@ -101,7 +97,7 @@ public class PagedLogicalMeter {
     );
   }
 
-  PagedLogicalMeter withCurrentStatus(PhysicalMeterStatusLogEntity currentStatus) {
+  public PagedLogicalMeter withCurrentStatus(PhysicalMeterStatusLogEntity currentStatus) {
     return new PagedLogicalMeter(
       id,
       organisationId,
@@ -115,5 +111,4 @@ public class PagedLogicalMeter {
       measurementCount
     );
   }
-
 }
