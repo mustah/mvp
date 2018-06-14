@@ -71,7 +71,7 @@ export type MeterListProps = StateToProps & DispatchToProps & OwnProps;
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const enhance = compose<{}, Clickable & HasContent>(superAdminOnly, withContent);
+const enhance = compose<Clickable, Clickable & HasContent>(superAdminOnly, withContent);
 
 const SuperAdminSelectionResultActionsDropdown = enhance(SelectionResultActionsDropdown);
 
