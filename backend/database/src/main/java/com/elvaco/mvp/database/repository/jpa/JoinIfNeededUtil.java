@@ -12,15 +12,20 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class JoinIfNeededUtil {
 
-  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
-  private static final QGatewayEntity GATEWAY = QGatewayEntity.gatewayEntity;
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    QLogicalMeterEntity.logicalMeterEntity;
+
+  private static final QGatewayEntity GATEWAY
+    = QGatewayEntity.gatewayEntity;
+
   private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
+
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  public static void joinPhysicalMeterFromLogicalMeter(
-    JPQLQuery query,
+  public static <T> void joinPhysicalMeterFromLogicalMeter(
+    JPQLQuery<T> query,
     RequestParameters parameters
   ) {
     if (FilterUtils.isPhysicalQuery(parameters)) {
@@ -28,8 +33,8 @@ public final class JoinIfNeededUtil {
     }
   }
 
-  public static void joinStatusLogsFromPhysicalMeter(
-    JPQLQuery query,
+  public static <T> void joinStatusLogsFromPhysicalMeter(
+    JPQLQuery<T> query,
     RequestParameters parameters
   ) {
     if (FilterUtils.isStatusQuery(parameters)) {
@@ -38,7 +43,10 @@ public final class JoinIfNeededUtil {
     }
   }
 
-  public static void joinGatewayFromLogicalMeter(JPQLQuery query, RequestParameters parameters) {
+  public static <T> void joinGatewayFromLogicalMeter(
+    JPQLQuery<T> query,
+    RequestParameters parameters
+  ) {
     if (FilterUtils.isGatewayQuery(parameters)) {
       query.innerJoin(LOGICAL_METER.gateways, GATEWAY);
     }
