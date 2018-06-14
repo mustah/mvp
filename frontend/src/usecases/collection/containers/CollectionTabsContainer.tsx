@@ -114,7 +114,7 @@ class CollectionTabs extends React.Component<Props> {
       gatewayMapMarkers,
       lowConfidenceText,
       noContentText: firstUpperTranslated('no gateways'),
-      hasContent: gatewayMapMarkers.result.length < 0,
+      hasContent: gatewayMapMarkers.result.length > 0,
     };
 
     return (
