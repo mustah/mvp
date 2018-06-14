@@ -21,17 +21,21 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
-  private static final QGatewayEntity GATEWAY_ENTITY = QGatewayEntity.gatewayEntity;
+  private static final QGatewayEntity GATEWAY =
+    QGatewayEntity.gatewayEntity;
 
-  private static final QPhysicalMeterEntity PHYSICAL_METER_ENTITY =
+  private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
-  private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
+
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    QLogicalMeterEntity.logicalMeterEntity;
+
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  ZonedDateTime before;
-  ZonedDateTime after;
-  List<StatusType> statuses;
+  private ZonedDateTime before;
+  private ZonedDateTime after;
+  private List<StatusType> statuses;
 
   @Override
   public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
@@ -42,13 +46,13 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   private Predicate buildNullablePredicateFor(String filter, List<String> values) {
     switch (filter) {
       case "id":
-        return Q.id.in(mapValues(UUID::fromString, values));
+        return LOGICAL_METER.id.in(mapValues(UUID::fromString, values));
       case "medium":
-        return Q.meterDefinition.medium.in(values);
+        return LOGICAL_METER.meterDefinition.medium.in(values);
       case "manufacturer":
-        return Q.physicalMeters.any().manufacturer.in(values);
+        return LOGICAL_METER.physicalMeters.any().manufacturer.in(values);
       case "organisation":
-        return Q.organisationId.in(mapValues(UUID::fromString, values));
+        return LOGICAL_METER.organisationId.in(mapValues(UUID::fromString, values));
       case "city":
         return whereCity(toCityParameters(values));
       case "address":
@@ -63,11 +67,11 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         statuses = values.stream().map(StatusType::from).collect(toList());
         return statusQueryFilter(after, before, statuses);
       case "facility":
-        return Q.externalId.in(values);
+        return LOGICAL_METER.externalId.in(values);
       case "secondaryAddress":
-        return PHYSICAL_METER_ENTITY.address.in(values);
+        return PHYSICAL_METER.address.in(values);
       case "gatewaySerial":
-        return GATEWAY_ENTITY.serial.in(values);
+        return GATEWAY.serial.in(values);
       default:
         return null;
     }
@@ -110,6 +114,6 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   private static LocationExpressions newLocationExpressions() {
-    return new LocationExpressions(Q.location);
+    return new LocationExpressions(LOGICAL_METER.location);
   }
 }

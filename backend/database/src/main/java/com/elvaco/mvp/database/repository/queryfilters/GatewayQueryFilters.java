@@ -15,7 +15,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 
 public class GatewayQueryFilters extends QueryFilters {
 
-  private static final QGatewayEntity Q = QGatewayEntity.gatewayEntity;
+  private static final QGatewayEntity GATEWAY = QGatewayEntity.gatewayEntity;
 
   @Override
   public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
@@ -26,15 +26,15 @@ public class GatewayQueryFilters extends QueryFilters {
   private Predicate buildNullablePredicateFor(String filter, List<String> values) {
     switch (filter) {
       case "id":
-        return Q.id.in(mapValues(UUID::fromString, values));
+        return GATEWAY.id.in(mapValues(UUID::fromString, values));
       case "organisation":
-        return Q.organisationId.in(mapValues(UUID::fromString, values));
+        return GATEWAY.organisationId.in(mapValues(UUID::fromString, values));
       case "city":
         return whereCity(toCityParameters(values));
       case "address":
         return whereAddress(toAddressParameters(values));
       case "gatewaySerial":
-        return Q.serial.in(values);
+        return GATEWAY.serial.in(values);
       default:
         return null;
     }
@@ -61,6 +61,6 @@ public class GatewayQueryFilters extends QueryFilters {
   }
 
   private static LocationExpressions newLocationExpressions() {
-    return new LocationExpressions(Q.meters.any().location);
+    return new LocationExpressions(GATEWAY.meters.any().location);
   }
 }

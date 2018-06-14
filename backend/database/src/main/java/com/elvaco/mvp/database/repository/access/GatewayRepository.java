@@ -46,10 +46,7 @@ public class GatewayRepository implements Gateways {
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
     org.springframework.data.domain.Page<GatewayEntity> all = repository.findAll(
       toPredicate(parameters),
-      new PageRequest(
-        pageable.getPageNumber(),
-        pageable.getPageSize()
-      )
+      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
     );
 
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository

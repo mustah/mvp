@@ -15,43 +15,42 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
-  private static final QPhysicalMeterStatusLogEntity Q =
+  private static final QPhysicalMeterStatusLogEntity PHYSICAL_METER =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    QLogicalMeterEntity.logicalMeterEntity;
+
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
   @Override
   public Optional<Predicate> buildPredicateFor(
-    String filter, List<String> values
+    String filter,
+    List<String> values
   ) {
     switch (filter) {
       case "physicalMeterId":
-        return Optional.of(Q.physicalMeterId.in(mapValues(UUID::fromString, values)));
+        return Optional.of(PHYSICAL_METER.physicalMeterId.in(mapValues(UUID::fromString, values)));
       case "id":
-        return Optional.of(QLogicalMeterEntity.logicalMeterEntity.id.in(mapValues(
-          UUID::fromString,
-          values
-        )));
+        return Optional.of(LOGICAL_METER.id.in(mapValues(UUID::fromString, values)));
       case BEFORE:
         stop = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(
-          periodQueryFilter(start, stop)
-        );
+        return Optional.ofNullable(periodQueryFilter(start, stop));
       case AFTER:
         start = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(
-          periodQueryFilter(start, stop)
-        );
+        return Optional.ofNullable(periodQueryFilter(start, stop));
       default:
         return Optional.empty();
     }
   }
 
   @Nullable
-  private Predicate periodQueryFilter(ZonedDateTime periodStart, ZonedDateTime periodStop) {
+  private static Predicate periodQueryFilter(ZonedDateTime periodStart, ZonedDateTime periodStop) {
     if (periodStart == null || periodStop == null) {
       return null;
     }
-    return Q.start.before(periodStop).and(Q.stop.after(periodStart).or(Q.stop.isNull()));
+    return PHYSICAL_METER.start.before(periodStop)
+      .and(PHYSICAL_METER.stop.after(periodStart).or(PHYSICAL_METER.stop.isNull()));
   }
 }

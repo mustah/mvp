@@ -133,11 +133,10 @@ public class LogicalMeterQueryDslJpaRepository
     if (!all.isEmpty()) {
       parameters.setAll(
         "id",
-        all.stream().map(
-          pagedLogicalMeter -> pagedLogicalMeter.id.toString()
-        ).collect(toList())
+        all.stream()
+          .map(pagedLogicalMeter -> pagedLogicalMeter.id.toString())
+          .collect(toList())
       );
-
       all = fetchAdditionalPagedMeterData(parameters, all);
     }
 

@@ -14,7 +14,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE
 
 public class GatewayStatusLogQueryFilters extends QueryFilters {
 
-  private static final QGatewayStatusLogEntity Q =
+  private static final QGatewayStatusLogEntity STATUS_LOG =
     QGatewayStatusLogEntity.gatewayStatusLogEntity;
 
   private ZonedDateTime start;
@@ -26,7 +26,7 @@ public class GatewayStatusLogQueryFilters extends QueryFilters {
   ) {
     switch (filter) {
       case "gatewayId":
-        return Optional.of(Q.gatewayId.in(mapValues(UUID::fromString, values)));
+        return Optional.of(STATUS_LOG.gatewayId.in(mapValues(UUID::fromString, values)));
       case BEFORE:
         stop = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(
@@ -47,6 +47,7 @@ public class GatewayStatusLogQueryFilters extends QueryFilters {
     if (start == null || stop == null) {
       return null;
     }
-    return Q.start.before(stop).and(Q.stop.after(start).or(Q.stop.isNull()));
+    return STATUS_LOG.start.before(stop)
+      .and(STATUS_LOG.stop.after(start).or(STATUS_LOG.stop.isNull()));
   }
 }
