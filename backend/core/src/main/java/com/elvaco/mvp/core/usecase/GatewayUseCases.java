@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.usecase;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,10 +21,6 @@ public class GatewayUseCases {
   public GatewayUseCases(Gateways gateways, AuthenticatedUser currentUser) {
     this.gateways = gateways;
     this.currentUser = currentUser;
-  }
-
-  public List<Gateway> findAll(RequestParameters parameters) {
-    return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
   }
 
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
