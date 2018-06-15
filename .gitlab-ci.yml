@@ -3,6 +3,7 @@ image:
   name: gradle:jdk8
 
 stages:
+  - docker
   - prepare
   - build
   - assemble
@@ -70,7 +71,37 @@ before_script:
     - gradle cucumber '-Pno-docker'
 
 # === Jobs ===
-gradle:clean:
+docker:postgresql:
+  <<: *no_cache
+  stage: docker
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f docker/Dockerfile-postgresql .
+    - docker push $DOCKER_REGISTRY_URL/postgresql:latest
+
+docker:test-upgrade:
+  <<: *no_cache
+  stage: docker
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f docker/Dockerfile-test-upgrade .
+    - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
+
+docker:ci-utils:
+  <<: *no_cache
+  stage: docker
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f docker/Dockerfile-ci-utils .
+    - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
+
+prepare:gradle-clean:
   <<: *cache_gradle
   stage: prepare
   script:
@@ -81,36 +112,6 @@ gradle:clean:
     - develop
     - tags
     - /^release-.*$/
-
-docker:postgresql:
-  <<: *no_cache
-  stage: prepare
-  tags:
-    - shell
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f docker/Dockerfile-postgresql .
-    - docker push $DOCKER_REGISTRY_URL/postgresql:latest
-
-docker:test-upgrade:
-  <<: *no_cache
-  stage: prepare
-  tags:
-    - shell
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f docker/Dockerfile-test-upgrade .
-    - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
-
-docker:ci-utils:
-  <<: *no_cache
-  stage: prepare
-  tags:
-    - shell
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f docker/Dockerfile-ci-utils .
-    - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
 
 prepare:version:
   <<: *no_cache
@@ -125,6 +126,18 @@ prepare:version:
     paths:
       - .version
     expire_in: 7 days
+
+prepare:update-salt:
+  <<: *no_cache
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
+  stage: prepare
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  script:
+    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
+    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 build:frontend:
   <<: *cache_gradle
@@ -279,18 +292,6 @@ publish:geoservice_artifactory:
     - export GEOSERVICE_SHA1SUM=$(sha1sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
     - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
-
-publish:update_salt:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: publish
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  script:
-    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
-    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 deploy:staging:
   <<: *auto_deploy
