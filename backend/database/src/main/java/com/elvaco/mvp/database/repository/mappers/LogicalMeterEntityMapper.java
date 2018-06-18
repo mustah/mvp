@@ -32,10 +32,7 @@ public class LogicalMeterEntityMapper {
   }
 
   public static LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
-    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
-      .stream()
-      .map(PhysicalMeterEntityMapper::toDomainModel)
-      .collect(toList());
+    List<PhysicalMeter> physicalMeters = toPhysicalMeters(logicalMeterEntity);
     return toLogicalMeter(logicalMeterEntity, physicalMeters, null, null);
   }
 
@@ -87,17 +84,21 @@ public class LogicalMeterEntityMapper {
       logicalMeter.location
     );
 
-    logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters
-      .stream()
+    logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
       .map(PhysicalMeterEntityMapper::toEntity)
       .collect(toSet());
 
-    logicalMeterEntity.gateways = logicalMeter.gateways
-      .stream()
+    logicalMeterEntity.gateways = logicalMeter.gateways.stream()
       .map(GatewayEntityMapper::toEntity)
       .collect(toSet());
 
     return logicalMeterEntity;
+  }
+
+  private static List<PhysicalMeter> toPhysicalMeters(LogicalMeterEntity logicalMeterEntity) {
+    return logicalMeterEntity.physicalMeters.stream()
+      .map(PhysicalMeterEntityMapper::toDomainModel)
+      .collect(toList());
   }
 
   private static LogicalMeter newLogicalMeter(

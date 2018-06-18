@@ -36,7 +36,14 @@ public class Gateway implements Identifiable<UUID> {
     String serial,
     String productModel
   ) {
-    this(id, organisationId, serial, productModel, emptyList(), emptyList());
+    this(
+      id,
+      organisationId,
+      serial,
+      productModel,
+      emptyList(),
+      emptyList()
+    );
   }
 
   private Gateway(
@@ -84,11 +91,7 @@ public class Gateway implements Identifiable<UUID> {
   private Gateway replaceActiveStatus(StatusType status, ZonedDateTime when) {
     List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statusLogs,
-      new StatusLogEntry<>(
-        id,
-        status,
-        when
-      )
+      new StatusLogEntry<>(id, status, when)
     );
 
     return new Gateway(
@@ -97,7 +100,7 @@ public class Gateway implements Identifiable<UUID> {
       serial,
       productModel,
       meters,
-      unmodifiableList(newStatuses)
+      newStatuses
     );
   }
 }

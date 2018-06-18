@@ -2,6 +2,7 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -88,40 +89,41 @@ public class GatewayControllerTest extends IntegrationTest {
     ZonedDateTime date = ZonedDateTime.parse("2001-04-01T00:00:00.00Z");
 
     saveGatewayStatus(
-      gateway1,
+      gateway1.id,
       OK,
       date.minusDays(90),
       date.minusDays(30)
     );
 
     saveGatewayStatus(
-      gateway1,
+      gateway1.id,
       WARNING,
       date.minusDays(30),
       null
     );
 
     saveGatewayStatus(
-      gateway2,
+      gateway2.id,
       OK,
       date.minusDays(90),
       null
     );
 
     Page<GatewayDto> response = asTestSuperAdmin()
-      .getPage(
-        "/gateways"
-        + "?after=" + date.minusDays(30)
-        + "&before=" + date,
-        GatewayDto.class
-      );
+      .getPage("/gateways" + "?after=" + date.minusDays(30) + "&before=" + date, GatewayDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(2);
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    assertGatewayStatus(response.getContent().get(0), gateway1, WARNING);
-    assertGatewayStatus(response.getContent().get(1), gateway2, OK);
+    List<IdStatus> gatewayIds = response.getContent().stream()
+      .map(gw -> new IdStatus(gw.id, gw.status))
+      .collect(toList());
+
+    assertThat(gatewayIds).containsExactlyInAnyOrder(
+      new IdStatus(gateway1.id, WARNING.name),
+      new IdStatus(gateway2.id, OK.name)
+    );
   }
 
   @Test
@@ -132,21 +134,21 @@ public class GatewayControllerTest extends IntegrationTest {
     ZonedDateTime date = ZonedDateTime.parse("2001-04-01T00:00:00.00Z");
 
     saveGatewayStatus(
-      gateway1,
+      gateway1.id,
       OK,
       date.minusDays(90),
       date.minusDays(30)
     );
 
     saveGatewayStatus(
-      gateway1,
+      gateway1.id,
       WARNING,
       date.minusDays(30),
       null
     );
 
     saveGatewayStatus(
-      gateway2,
+      gateway2.id,
       OK,
       date.minusDays(90),
       null
@@ -155,8 +157,8 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
-        + "?after=" + date.minusDays(60)
-        + "&before=" + date.minusDays(30),
+          + "?after=" + date.minusDays(60)
+          + "&before=" + date.minusDays(30),
         GatewayDto.class
       );
 
@@ -164,8 +166,64 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    assertGatewayStatus(response.getContent().get(0), gateway1, OK);
-    assertGatewayStatus(response.getContent().get(1), gateway2, OK);
+    List<IdStatus> gatewayIds = response.getContent().stream()
+      .map(gw -> new IdStatus(gw.id, gw.status))
+      .collect(toList());
+
+    assertThat(gatewayIds).containsExactlyInAnyOrder(
+      new IdStatus(gateway1.id, OK.name),
+      new IdStatus(gateway2.id, OK.name)
+    );
+  }
+
+  @Test
+  public void fetchGateways_ByStatus() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+
+    ZonedDateTime date = ZonedDateTime.parse("2001-04-01T00:00:00.00Z");
+
+    saveGatewayStatus(
+      gateway1.id,
+      OK,
+      date.minusDays(90),
+      date.minusDays(30)
+    );
+
+    saveGatewayStatus(
+      gateway1.id,
+      WARNING,
+      date.minusDays(30),
+      null
+    );
+
+    saveGatewayStatus(
+      gateway2.id,
+      OK,
+      date.minusDays(90),
+      null
+    );
+
+    String url = String.format(
+      "/gateways?after=%s&before=%s&gatewayStatus=%s",
+      date.minusDays(30),
+      date,
+      WARNING.name
+    );
+
+    Page<GatewayDto> response = asTestSuperAdmin().getPage(url, GatewayDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getNumberOfElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    List<IdStatus> gatewayIds = response.getContent().stream()
+      .map(gw -> new IdStatus(gw.id, gw.status))
+      .collect(toList());
+
+    assertThat(gatewayIds).containsExactlyInAnyOrder(
+      new IdStatus(gateway1.id, WARNING.name)
+    );
   }
 
   @Test
@@ -185,10 +243,7 @@ public class GatewayControllerTest extends IntegrationTest {
     saveGateway(context().getOrganisationId());
 
     Page<GatewayDto> response = asTestSuperAdmin()
-      .getPage(
-        "/gateways",
-        GatewayDto.class
-      );
+      .getPage("/gateways", GatewayDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
     assertThat(response.getNumberOfElements()).isEqualTo(3);
@@ -199,10 +254,12 @@ public class GatewayControllerTest extends IntegrationTest {
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
     saveGateway(context().getOrganisationId());
 
-    Page<GatewayDto> gatewayResponse = restAsUser(dailyPlanetUser(dailyPlanet))
+    Page<GatewayDto> response = restAsUser(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
 
-    assertThat(gatewayResponse.getTotalElements()).isEqualTo(0L);
+    assertThat(response.getTotalElements()).isEqualTo(0L);
+    assertThat(response.getNumberOfElements()).isEqualTo(0);
+    assertThat(response.getTotalPages()).isEqualTo(0);
   }
 
   @Test
@@ -219,7 +276,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .map(g -> g.id)
       .collect(toList());
 
-    assertThat(gatewayIds).containsOnly(g1.id, g2.id);
+    assertThat(gatewayIds).containsExactlyInAnyOrder(g1.id, g2.id);
   }
 
   @Test
@@ -435,31 +492,16 @@ public class GatewayControllerTest extends IntegrationTest {
     );
   }
 
-  private void assertGatewayStatus(
-    GatewayDto actualGateway,
-    Gateway expectedGateway,
-    StatusType expectedStatus
-  ) {
-    assertThat(actualGateway.id)
-      .as("Unexpected gateway id")
-      .isEqualTo(expectedGateway.id);
-
-    assertThat(actualGateway.status)
-      .as("Unexpected status")
-      .isEqualTo(expectedStatus.name);
-  }
-
   private Gateway saveGateway(UUID organisationId) {
-    return gateways.save(new Gateway(
-      randomUUID(),
-      organisationId,
-      randomUUID().toString(),
-      randomUUID().toString()
-    ));
+    return gateways.save(Gateway.builder()
+      .organisationId(organisationId)
+      .serial(randomUUID().toString())
+      .productModel(randomUUID().toString())
+      .build());
   }
 
   private void saveGatewayStatus(
-    Gateway gateway,
+    UUID gatewayId,
     StatusType status,
     ZonedDateTime start,
     @Nullable ZonedDateTime stop
@@ -467,7 +509,7 @@ public class GatewayControllerTest extends IntegrationTest {
     statusLogJpaRepository.save(
       new GatewayStatusLogEntity(
         null,
-        gateway.id,
+        gatewayId,
         status,
         start,
         stop
@@ -479,5 +521,42 @@ public class GatewayControllerTest extends IntegrationTest {
     return new LocationBuilder()
       .latitude(1.234)
       .longitude(2.3323);
+  }
+
+  private static class IdStatus {
+
+    private final UUID id;
+    private final String status;
+
+    private IdStatus(UUID id, String status) {
+      this.id = id;
+      this.status = status;
+    }
+
+    @Override
+    public int hashCode() {
+
+      return Objects.hash(id, status);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof IdStatus)) {
+        return false;
+      }
+      IdStatus idStatus = (IdStatus) o;
+      return Objects.equals(id, idStatus.id)
+        && Objects.equals(status, idStatus.status);
+    }
+
+    @Override
+    public String toString() {
+      return "IdStatus{"
+        + "id=" + id
+        + ", status=" + status + '}';
+    }
   }
 }

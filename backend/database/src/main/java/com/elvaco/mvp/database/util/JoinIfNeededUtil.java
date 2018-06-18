@@ -29,7 +29,7 @@ public final class JoinIfNeededUtil {
     RequestParameters parameters
   ) {
     if (FilterUtils.isPhysicalQuery(parameters)) {
-      query.innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER);
+      query.join(LOGICAL_METER.physicalMeters, PHYSICAL_METER);
     }
   }
 
@@ -48,7 +48,7 @@ public final class JoinIfNeededUtil {
     RequestParameters parameters
   ) {
     if (FilterUtils.isGatewayQuery(parameters)) {
-      query.innerJoin(LOGICAL_METER.gateways, GATEWAY);
+      query.join(LOGICAL_METER.gateways, GATEWAY);
     }
   }
 }

@@ -51,7 +51,9 @@ class SummeryQueryDslJpaRepository
    * which forces us to count outside of the database.
    */
   @Override
-  public MeterSummary summary(RequestParameters parameters, Predicate predicate) {
+  public MeterSummary summary(RequestParameters parameters) {
+    Predicate predicate = toPredicate(parameters);
+
     long meters = createCountQuery(predicate)
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)

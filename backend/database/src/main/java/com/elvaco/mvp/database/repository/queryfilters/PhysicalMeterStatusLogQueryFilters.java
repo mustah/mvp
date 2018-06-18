@@ -3,12 +3,13 @@ package com.elvaco.mvp.database.repository.queryfilters;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
+
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
@@ -25,9 +26,9 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
     switch (filter) {
       case "physicalMeterId":
-        return Optional.of(PHYSICAL_METER.physicalMeterId.in(mapValues(UUID::fromString, values)));
+        return Optional.of(PHYSICAL_METER.physicalMeterId.in(toUuids(values)));
       case "id":
-        return Optional.of(LOGICAL_METER.id.in(mapValues(UUID::fromString, values)));
+        return Optional.of(LOGICAL_METER.id.in(toUuids(values)));
       case "before":
         stop = ZonedDateTime.parse(values.get(0));
         return Optional.ofNullable(periodQueryFilter(start, stop));
@@ -40,11 +41,11 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   }
 
   @Nullable
-  private static Predicate periodQueryFilter(ZonedDateTime periodStart, ZonedDateTime periodStop) {
-    if (periodStart == null || periodStop == null) {
+  private static Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
+    if (start == null || stop == null) {
       return null;
     }
-    return PHYSICAL_METER.start.before(periodStop)
-      .and(PHYSICAL_METER.stop.after(periodStart).or(PHYSICAL_METER.stop.isNull()));
+    return PHYSICAL_METER.start.before(stop)
+      .and(PHYSICAL_METER.stop.after(start).or(PHYSICAL_METER.stop.isNull()));
   }
 }

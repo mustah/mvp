@@ -128,10 +128,7 @@ class LogicalMeterQueryDslJpaRepository
         .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
         .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
-    List<PagedLogicalMeter> all = querydsl.applyPagination(
-      pageable,
-      query
-    ).fetch();
+    List<PagedLogicalMeter> all = querydsl.applyPagination(pageable, query).fetch();
 
     if (!all.isEmpty()) {
       parameters.setAll(
@@ -224,17 +221,18 @@ class LogicalMeterQueryDslJpaRepository
     Map<UUID, PhysicalMeterStatusLogEntity> logicalMeterIdToCurrentStatus =
       findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
 
-    return all.stream().map(pagedLogicalMeter ->
-      pagedLogicalMeter
-        .withMeasurementCount(logicalMeterIdToMeasurementCount.getOrDefault(
-          pagedLogicalMeter.id,
-          0L
-        ))
-        .withCurrentStatus(logicalMeterIdToCurrentStatus.getOrDefault(
-          pagedLogicalMeter.id,
-          null
-        ))
-    ).collect(toList());
+    return all.stream()
+      .map(pagedLogicalMeter ->
+        pagedLogicalMeter
+          .withMeasurementCount(logicalMeterIdToMeasurementCount.getOrDefault(
+            pagedLogicalMeter.id,
+            0L
+          ))
+          .withCurrentStatus(logicalMeterIdToCurrentStatus.getOrDefault(
+            pagedLogicalMeter.id,
+            null
+          ))
+      ).collect(toList());
   }
 
   private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
@@ -245,8 +243,8 @@ class LogicalMeterQueryDslJpaRepository
 
       JPAQuery<UUID> queryIds = new JPAQueryFactory(entityManager)
         .select(LOGICAL_METER.id).from(path)
-        .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-        .innerJoin(PHYSICAL_METER.measurements, MEASUREMENT)
+        .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+        .join(PHYSICAL_METER.measurements, MEASUREMENT)
         .where(
           withMeasurementAboveMax(
             parameters,

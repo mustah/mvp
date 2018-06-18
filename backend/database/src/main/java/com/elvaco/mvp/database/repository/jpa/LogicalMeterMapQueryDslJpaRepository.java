@@ -50,8 +50,7 @@ class LogicalMeterMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    JPQLQuery<MapMarker> query = createQuery(toPredicate(
-      parameters))
+    JPQLQuery<MapMarker> query = createQuery(toPredicate(parameters))
       .select(Projections.constructor(
         MapMarker.class,
         LOCATION.logicalMeterId,
@@ -59,17 +58,15 @@ class LogicalMeterMapQueryDslJpaRepository
         LOCATION.latitude,
         LOCATION.longitude
       ))
-      .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .innerJoin(LOGICAL_METER.location, LOCATION)
+      .join(LOGICAL_METER.location, LOCATION)
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
       .distinct();
 
     JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
 
-    return new HashSet<>(
-      query.fetch()
-    );
+    return new HashSet<>(query.fetch());
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {

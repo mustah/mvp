@@ -10,7 +10,6 @@ import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 
@@ -20,7 +19,7 @@ public class GatewayStatusLogJpaRepositoryImpl
   extends BaseQueryDslRepository<GatewayStatusLogEntity, Long>
   implements GatewayStatusLogJpaRepositoryCustom {
 
-  private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG =
+  private static final QGatewayStatusLogEntity STATUS_LOG =
     QGatewayStatusLogEntity.gatewayStatusLogEntity;
 
   @Autowired
@@ -38,10 +37,8 @@ public class GatewayStatusLogJpaRepositoryImpl
   public Map<UUID, List<GatewayStatusLogEntity>> findAllGroupedByGatewayId(
     @Nullable Predicate predicate
   ) {
-    return new JPAQuery<>(entityManager)
-      .from(GATEWAY_STATUS_LOG)
-      .where(predicate)
-      .orderBy(GATEWAY_STATUS_LOG.start.desc(), GATEWAY_STATUS_LOG.stop.desc())
-      .transform(groupBy(GATEWAY_STATUS_LOG.gatewayId).as(GroupBy.list(GATEWAY_STATUS_LOG)));
+    return createQuery(predicate)
+      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
+      .transform(groupBy(STATUS_LOG.gatewayId).as(GroupBy.list(STATUS_LOG)));
   }
 }

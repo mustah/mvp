@@ -22,6 +22,7 @@ public enum StatusType {
   public static StatusType from(String status) {
     return Stream.of(values())
       .filter(s -> s.name.equalsIgnoreCase(status))
-      .findFirst().orElse(UNKNOWN);
+      .findFirst()
+      .orElse(UNKNOWN);
   }
 }

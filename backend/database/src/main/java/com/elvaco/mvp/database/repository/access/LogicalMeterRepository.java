@@ -124,7 +124,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public MeterSummary summary(RequestParameters parameters) {
-    return summaryJpaRepository.summary(parameters, toPredicate(parameters));
+    return summaryJpaRepository.summary(parameters);
   }
 
   @Transactional

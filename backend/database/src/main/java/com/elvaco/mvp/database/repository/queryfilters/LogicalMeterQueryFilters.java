@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.queryfilters;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -15,9 +14,10 @@ import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
-import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
@@ -46,26 +46,26 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   private Predicate buildNullablePredicateFor(String filter, List<String> values) {
     switch (filter) {
       case "id":
-        return LOGICAL_METER.id.in(mapValues(UUID::fromString, values));
+        return LOGICAL_METER.id.in(toUuids(values));
       case "medium":
         return LOGICAL_METER.meterDefinition.medium.in(values);
       case "manufacturer":
         return LOGICAL_METER.physicalMeters.any().manufacturer.in(values);
       case "organisation":
-        return LOGICAL_METER.organisationId.in(mapValues(UUID::fromString, values));
+        return LOGICAL_METER.organisationId.in(toUuids(values));
       case "city":
         return whereCity(toCityParameters(values));
       case "address":
         return whereAddress(toAddressParameters(values));
       case "before":
         before = ZonedDateTime.parse(values.get(0));
-        return statusQueryFilter(after, before, statuses);
+        return meterStatusQueryFilter(after, before, statuses);
       case "after":
         after = ZonedDateTime.parse(values.get(0));
-        return statusQueryFilter(after, before, statuses);
+        return meterStatusQueryFilter(after, before, statuses);
       case "status":
-        statuses = values.stream().map(StatusType::from).collect(toList());
-        return statusQueryFilter(after, before, statuses);
+        statuses = toStatusTypes(values);
+        return meterStatusQueryFilter(after, before, statuses);
       case "facility":
         return LOGICAL_METER.externalId.in(values);
       case "secondaryAddress":
@@ -78,23 +78,7 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   @Nullable
-  private Predicate statusQueryFilter(
-    ZonedDateTime periodStart,
-    ZonedDateTime periodStop,
-    List<StatusType> statuses
-  ) {
-    if (periodStart == null || periodStop == null || statuses == null || statuses.isEmpty()) {
-      return null;
-    }
-
-    return (STATUS_LOG.stop.isNull().or(STATUS_LOG.stop.after(periodStart)))
-      .and(
-        STATUS_LOG.start.before(periodStop)
-      ).and(STATUS_LOG.status.in(statuses));
-  }
-
-  @Nullable
-  private Predicate whereCity(Parameters parameters) {
+  private static Predicate whereCity(Parameters parameters) {
     LocationExpressions locationExpressions = newLocationExpressions();
     return new BooleanBuilder()
       .and(locationExpressions.countriesAndCities(parameters))
@@ -104,13 +88,27 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   @Nullable
-  private Predicate whereAddress(Parameters parameters) {
+  private static Predicate whereAddress(Parameters parameters) {
     LocationExpressions locationExpressions = newLocationExpressions();
     return new BooleanBuilder()
       .and(locationExpressions.address(parameters))
       .or(locationExpressions.unknownAddress(parameters))
       .or(locationExpressions.hasLowConfidence(parameters))
       .getValue();
+  }
+
+  @Nullable
+  private static Predicate meterStatusQueryFilter(
+    ZonedDateTime start,
+    ZonedDateTime stop,
+    List<StatusType> statuses
+  ) {
+    if (start == null || stop == null || statuses == null || statuses.isEmpty()) {
+      return null;
+    }
+    return (STATUS_LOG.stop.isNull().or(STATUS_LOG.stop.after(start)))
+      .and(STATUS_LOG.start.before(stop))
+      .and(STATUS_LOG.status.in(statuses));
   }
 
   private static LocationExpressions newLocationExpressions() {
