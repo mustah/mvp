@@ -32,13 +32,17 @@ class LogicalMeterMapQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements MapMarkerJpaRepository {
 
-  private static final QLocationEntity LOCATION = locationEntity;
+  private static final QLocationEntity LOCATION =
+    locationEntity;
 
-  private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    logicalMeterEntity;
 
-  private static final QPhysicalMeterStatusLogEntity STATUS_LOG = physicalMeterStatusLogEntity;
+  private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
+    physicalMeterStatusLogEntity;
 
-  private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
+  private static final QPhysicalMeterEntity PHYSICAL_METER =
+    physicalMeterEntity;
 
   @Autowired
   LogicalMeterMapQueryDslJpaRepository(EntityManager entityManager) {
@@ -54,12 +58,12 @@ class LogicalMeterMapQueryDslJpaRepository
       .select(Projections.constructor(
         MapMarker.class,
         LOCATION.logicalMeterId,
-        STATUS_LOG.status,
+        METER_STATUS_LOG.status,
         LOCATION.latitude,
         LOCATION.longitude
       ))
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .join(LOGICAL_METER.location, LOCATION)
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
       .distinct();

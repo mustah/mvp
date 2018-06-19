@@ -25,7 +25,7 @@ import static com.querydsl.core.types.ExpressionUtils.allOf;
 import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 
 @Repository
-class SummeryQueryDslJpaRepository
+class SummaryQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements SummaryJpaRepository {
 
@@ -38,7 +38,7 @@ class SummeryQueryDslJpaRepository
   private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   @Autowired
-  SummeryQueryDslJpaRepository(EntityManager entityManager) {
+  SummaryQueryDslJpaRepository(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
       entityManager

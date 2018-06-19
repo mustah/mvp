@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -15,8 +16,9 @@ import com.querydsl.core.types.Predicate;
  */
 public abstract class QueryFilters {
 
-  public abstract Optional<Predicate> buildPredicateFor(String filter, List<String> values);
+  public abstract Optional<Predicate> buildPredicateFor(String parameterName, List<String> values);
 
+  @Nullable
   public final Predicate toExpression(RequestParameters parameters) {
     if (parameters.isEmpty()) {
       return null;
@@ -26,11 +28,11 @@ public abstract class QueryFilters {
     for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> values = propertyFilter.getValue();
       if (!values.isEmpty()) {
-        String name = propertyFilter.getKey();
+        String parameterName = propertyFilter.getKey();
         try {
-          buildPredicateFor(name, values).ifPresent(predicates::add);
+          buildPredicateFor(parameterName, values).ifPresent(predicates::add);
         } catch (Exception exception) {
-          throw new PredicateConstructionFailure(name, values, exception);
+          throw new PredicateConstructionFailure(parameterName, values, exception);
         }
       }
     }

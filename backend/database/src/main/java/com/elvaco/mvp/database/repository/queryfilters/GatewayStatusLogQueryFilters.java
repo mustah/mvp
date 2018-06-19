@@ -9,34 +9,41 @@ import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
+import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class GatewayStatusLogQueryFilters extends QueryFilters {
 
-  private static final QGatewayStatusLogEntity STATUS_LOG =
-    QGatewayStatusLogEntity.gatewayStatusLogEntity;
+  private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG =
+    gatewayStatusLogEntity;
 
   private static final QGatewayEntity GATEWAY =
-    QGatewayEntity.gatewayEntity;
+    gatewayEntity;
 
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
-    switch (filter) {
+  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+    return Optional.ofNullable(nullablePredicate(parameterName, values));
+  }
+
+  @Nullable
+  private Predicate nullablePredicate(String parameterName, List<String> values) {
+    switch (parameterName) {
       case "gatewayId":
-        return Optional.of(STATUS_LOG.gatewayId.in(toUuids(values)));
+        return GATEWAY_STATUS_LOG.gatewayId.in(toUuids(values));
       case "id":
-        return Optional.of(GATEWAY.id.in(toUuids(values)));
+        return GATEWAY.id.in(toUuids(values));
       case "before":
         stop = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(periodQueryFilter(start, stop));
+        return periodQueryFilter(start, stop);
       case "after":
         start = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(periodQueryFilter(start, stop));
+        return periodQueryFilter(start, stop);
       default:
-        return Optional.empty();
+        return null;
     }
   }
 
@@ -45,7 +52,7 @@ public class GatewayStatusLogQueryFilters extends QueryFilters {
     if (start == null || stop == null) {
       return null;
     }
-    return STATUS_LOG.start.before(stop)
-      .and(STATUS_LOG.stop.after(start).or(STATUS_LOG.stop.isNull()));
+    return GATEWAY_STATUS_LOG.start.before(stop)
+      .and(GATEWAY_STATUS_LOG.stop.isNull().or(GATEWAY_STATUS_LOG.stop.after(start)));
   }
 }

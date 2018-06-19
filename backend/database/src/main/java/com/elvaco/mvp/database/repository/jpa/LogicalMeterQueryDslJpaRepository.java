@@ -21,7 +21,6 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
-import com.elvaco.mvp.database.util.JoinIfNeededUtil;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -38,6 +37,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayFromLogicalMeter;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinStatusLogsFromPhysicalMeter;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
@@ -291,13 +292,13 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private <T> JPQLQuery<T> applyJoins(JPQLQuery<T> query, RequestParameters parameters) {
-    query = query.distinct()
+    query = query
+      .distinct()
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .fetchJoin();
 
-    JoinIfNeededUtil.joinPhysicalMeterFromLogicalMeter(query, parameters);
-    JoinIfNeededUtil.joinStatusLogsFromPhysicalMeter(query, parameters);
-    JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
+    joinStatusLogsFromPhysicalMeter(query, parameters);
+    joinGatewayFromLogicalMeter(query, parameters);
 
     return query;
   }

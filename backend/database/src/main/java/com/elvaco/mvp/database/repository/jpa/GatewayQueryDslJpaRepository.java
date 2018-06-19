@@ -70,11 +70,10 @@ class GatewayQueryDslJpaRepository
 
     JPQLQuery<?> countQuery = createCountQuery(predicate)
       .select(path)
-      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
-      .distinct();
+      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
 
-    JPQLQuery<PagedGateway> selectQuery = createQuery()
+    JPQLQuery<PagedGateway> selectQuery = createQuery(predicate)
       .select(Projections.constructor(
         PagedGateway.class,
         GATEWAY.id,
@@ -82,10 +81,8 @@ class GatewayQueryDslJpaRepository
         GATEWAY.serial,
         GATEWAY.productModel
       ))
-      .where(predicate)
-      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
-      .distinct();
+      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
 
     List<PagedGateway> pagedGateways = querydsl.applyPagination(pageable, selectQuery)
       .fetch();
@@ -99,9 +96,7 @@ class GatewayQueryDslJpaRepository
   @Override
   public List<GatewayEntity> findAllByOrganisationId(UUID organisationId) {
     Predicate predicate = GATEWAY.organisationId.eq(organisationId);
-    return createQuery(predicate).select(path)
-      .distinct()
-      .fetch();
+    return createQuery(predicate).select(path).fetch();
   }
 
   @Override
@@ -163,7 +158,6 @@ class GatewayQueryDslJpaRepository
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
       .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
       .join(LOGICAL_METER.location, LOCATION)
-      .distinct()
       .transform(groupBy(GATEWAY.id).as(GroupBy.set(LOGICAL_METER)));
   }
 

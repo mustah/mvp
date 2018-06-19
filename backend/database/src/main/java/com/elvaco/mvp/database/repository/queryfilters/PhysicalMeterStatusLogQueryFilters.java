@@ -9,34 +9,41 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
-  private static final QPhysicalMeterStatusLogEntity PHYSICAL_METER =
-    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+  private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
+    physicalMeterStatusLogEntity;
 
   private static final QLogicalMeterEntity LOGICAL_METER =
-    QLogicalMeterEntity.logicalMeterEntity;
+    logicalMeterEntity;
 
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
-    switch (filter) {
+  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+    return Optional.ofNullable(nullablePredicate(parameterName, values));
+  }
+
+  @Nullable
+  private Predicate nullablePredicate(String parameterName, List<String> values) {
+    switch (parameterName) {
       case "physicalMeterId":
-        return Optional.of(PHYSICAL_METER.physicalMeterId.in(toUuids(values)));
+        return METER_STATUS_LOG.physicalMeterId.in(toUuids(values));
       case "id":
-        return Optional.of(LOGICAL_METER.id.in(toUuids(values)));
+        return LOGICAL_METER.id.in(toUuids(values));
       case "before":
         stop = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(periodQueryFilter(start, stop));
+        return periodQueryFilter(start, stop);
       case "after":
         start = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(periodQueryFilter(start, stop));
+        return periodQueryFilter(start, stop);
       default:
-        return Optional.empty();
+        return null;
     }
   }
 
@@ -45,7 +52,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
     if (start == null || stop == null) {
       return null;
     }
-    return PHYSICAL_METER.start.before(stop)
-      .and(PHYSICAL_METER.stop.after(start).or(PHYSICAL_METER.stop.isNull()));
+    return METER_STATUS_LOG.start.before(stop)
+      .and(METER_STATUS_LOG.stop.isNull().or(METER_STATUS_LOG.stop.after(start)));
   }
 }

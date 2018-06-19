@@ -2,7 +2,6 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -21,6 +20,7 @@ import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -271,8 +271,7 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = as(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
 
-    List<UUID> gatewayIds = response.getContent()
-      .stream()
+    List<UUID> gatewayIds = response.getContent().stream()
       .map(g -> g.id)
       .collect(toList());
 
@@ -521,42 +520,5 @@ public class GatewayControllerTest extends IntegrationTest {
     return new LocationBuilder()
       .latitude(1.234)
       .longitude(2.3323);
-  }
-
-  private static class IdStatus {
-
-    private final UUID id;
-    private final String status;
-
-    private IdStatus(UUID id, String status) {
-      this.id = id;
-      this.status = status;
-    }
-
-    @Override
-    public int hashCode() {
-
-      return Objects.hash(id, status);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof IdStatus)) {
-        return false;
-      }
-      IdStatus idStatus = (IdStatus) o;
-      return Objects.equals(id, idStatus.id)
-        && Objects.equals(status, idStatus.status);
-    }
-
-    @Override
-    public String toString() {
-      return "IdStatus{"
-        + "id=" + id
-        + ", status=" + status + '}';
-    }
   }
 }

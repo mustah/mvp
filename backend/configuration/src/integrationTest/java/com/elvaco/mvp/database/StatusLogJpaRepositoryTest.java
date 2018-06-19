@@ -62,6 +62,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
     );
 
     ZonedDateTime start = ZonedDateTime.now();
+
     physicalMeterStatusLogJpaRepository.save(
       new PhysicalMeterStatusLogEntity(null, meterId, StatusType.OK, start, null)
     );
@@ -102,5 +103,4 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
       ))
     ).hasMessageContaining("constraint");
   }
-
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
@@ -113,6 +114,7 @@ public class GatewayRepository implements Gateways {
       .collect(toList());
   }
 
+  @Nullable
   private static Predicate toStatusPredicate(
     List<? extends Identifiable<UUID>> identifiables,
     RequestParameters parameters

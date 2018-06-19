@@ -25,7 +25,7 @@ public class QueryFiltersTest {
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        String filter, List<String> values
+        String parameterName, List<String> values
       ) {
         return Optional.empty();
       }
@@ -41,7 +41,7 @@ public class QueryFiltersTest {
 
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
+      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
         return Optional.empty();
       }
     };
@@ -53,7 +53,7 @@ public class QueryFiltersTest {
   public void mapEmptyProperties() {
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
+      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
         return Optional.empty();
       }
     };
@@ -68,7 +68,7 @@ public class QueryFiltersTest {
 
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
+      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
         return Optional.of(
           Expressions.predicate(
             Ops.EQ,
@@ -95,8 +95,8 @@ public class QueryFiltersTest {
 
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
-        if (filter.equals("foo")) {
+      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+        if (parameterName.equals("foo")) {
           return Optional.of(
             Expressions.predicate(
               Ops.EQ,
@@ -104,7 +104,7 @@ public class QueryFiltersTest {
               Expressions.constant(Integer.parseInt(values.get(0)))
             )
           );
-        } else if (filter.equals("bar")) {
+        } else if (parameterName.equals("bar")) {
           return Optional.of(
             Expressions.predicate(
               Ops.EQ,
@@ -128,5 +128,4 @@ public class QueryFiltersTest {
 
     assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
-
 }
