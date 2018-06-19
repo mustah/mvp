@@ -4,15 +4,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import com.elvaco.mvp.adapters.spring.PageAdapter;
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
+import com.elvaco.mvp.database.repository.queryfilters.LocationQueryFilters;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 
 import static com.elvaco.mvp.database.repository.mappers.LocationEntityMapper.toEntity;
 import static com.elvaco.mvp.database.repository.mappers.LocationEntityMapper.toLocationWithId;
@@ -32,7 +38,7 @@ public class LocationRepository implements Locations {
 
   @Override
   public Optional<LocationWithId> findById(UUID logicalMeterId) {
-    return Optional.ofNullable(locationJpaRepository.findOne(logicalMeterId))
+    return Optional.ofNullable(locationJpaRepository.findByLogicalMeterId(logicalMeterId))
       .map(LocationEntityMapper::toLocationWithId);
   }
 
@@ -44,5 +50,19 @@ public class LocationRepository implements Locations {
   @Override
   public Set<MapMarker> findAllGatewayMapMarkers(RequestParameters parameters) {
     return gatewayMapQueryDslJpaRepository.findAllMapMarkers(parameters);
+  }
+
+  @Override
+  public Page<Location> findAll(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    return new PageAdapter<>(locationJpaRepository.findAll(
+      parameters,
+      new LocationQueryFilters().toExpression(parameters),
+      new PageRequest(
+        pageable.getPageNumber(),
+        pageable.getPageSize()
+      )
+    ).map(LocationEntityMapper::toDomainModel));
   }
 }

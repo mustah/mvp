@@ -24,4 +24,8 @@ public final class FilterUtils {
            || parameters.hasName("secondaryAddress")
            || isStatusQuery(parameters);
   }
+
+  public static boolean isOrganisationQuery(RequestParameters parameters) {
+    return parameters.hasName("organisation");
+  }
 }

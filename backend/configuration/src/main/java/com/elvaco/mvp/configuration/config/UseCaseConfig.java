@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
+import com.elvaco.mvp.core.usecase.LocationUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -22,7 +23,6 @@ import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -93,5 +93,10 @@ class UseCaseConfig {
   @Bean
   MapUseCases mapUseCases(AuthenticatedUser currentUser) {
     return new MapUseCases(currentUser, locations);
+  }
+
+  @Bean
+  LocationUseCases locationUseCases(AuthenticatedUser currentUser) {
+    return new LocationUseCases(currentUser, locations);
   }
 }
