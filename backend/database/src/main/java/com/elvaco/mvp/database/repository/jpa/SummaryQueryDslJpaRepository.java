@@ -1,12 +1,9 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
-import com.elvaco.mvp.core.domainmodels.MapMarker;
+import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
@@ -15,8 +12,7 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
@@ -25,11 +21,13 @@ import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntit
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.querydsl.core.types.ExpressionUtils.allOf;
+import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 
 @Repository
-class MeterMapQueryDslJpaRepository
+class SummaryQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
-  implements MapMarkerJpaRepository {
+  implements SummaryJpaRepository {
 
   private static final QLocationEntity LOCATION = locationEntity;
 
@@ -40,35 +38,58 @@ class MeterMapQueryDslJpaRepository
   private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   @Autowired
-  MeterMapQueryDslJpaRepository(EntityManager entityManager) {
+  SummaryQueryDslJpaRepository(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
       entityManager
     );
   }
 
+  /**
+   * NOTE: we calculate .size() in Java land which causes extra memory usage.
+   * JQL does not support multiple distinct values ("select count(distinct a, b)..."),
+   * which forces us to count outside of the database.
+   */
   @Override
-  public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    JPQLQuery<MapMarker> query = createQuery(toPredicate(
-      parameters))
-      .select(Projections.constructor(
-        MapMarker.class,
-        LOCATION.logicalMeterId,
-        STATUS_LOG.status,
-        LOCATION.latitude,
-        LOCATION.longitude
-      ))
-      .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+  public MeterSummary summary(RequestParameters parameters) {
+    Predicate predicate = toPredicate(parameters);
+
+    long meters = createCountQuery(predicate)
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .innerJoin(LOGICAL_METER.location, LOCATION)
-      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-      .distinct();
+      .distinct()
+      .fetchCount();
 
-    JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
+    long cities = createQuery(predicate)
+      .select(Expressions.list(LOCATION.country, LOCATION.city))
+      .where(
+        allOf(
+          isNotNull(LOCATION.country), isNotNull(LOCATION.city)
+        )
+      )
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .distinct()
+      .fetch()
+      .size();
 
-    return new HashSet<>(
-      query.fetch()
-    );
+    long addresses = createQuery(predicate)
+      .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress))
+      .where(
+        allOf(
+          isNotNull(LOCATION.country), isNotNull(LOCATION.city), isNotNull(LOCATION.streetAddress)
+        )
+      )
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .distinct()
+      .fetch()
+      .size();
+
+    return new MeterSummary(meters, cities, addresses);
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {

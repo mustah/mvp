@@ -7,12 +7,12 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
@@ -37,19 +37,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayFromLogicalMeter;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinStatusLogsFromPhysicalMeter;
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.types.ExpressionUtils.allOf;
-import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
-public class LogicalMeterQueryDslJpaRepository
+class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
-  private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
-  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
+  private static final QLocationEntity LOCATION =
+    QLocationEntity.locationEntity;
+
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    QLogicalMeterEntity.logicalMeterEntity;
 
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
@@ -60,10 +63,11 @@ public class LogicalMeterQueryDslJpaRepository
   private static final QGatewayEntity GATEWAY =
     QGatewayEntity.gatewayEntity;
 
-  private static final QMeasurementEntity MEASUREMENT = QMeasurementEntity.measurementEntity;
+  private static final QMeasurementEntity MEASUREMENT =
+    QMeasurementEntity.measurementEntity;
 
   @Autowired
-  public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
+  LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
       entityManager
@@ -125,19 +129,15 @@ public class LogicalMeterQueryDslJpaRepository
         .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
         .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
-    List<PagedLogicalMeter> all = querydsl.applyPagination(
-      pageable,
-      query
-    ).fetch();
+    List<PagedLogicalMeter> all = querydsl.applyPagination(pageable, query).fetch();
 
     if (!all.isEmpty()) {
       parameters.setAll(
         "id",
-        all.stream().map(
-          pagedLogicalMeter -> pagedLogicalMeter.id.toString()
-        ).collect(toList())
+        all.stream()
+          .map(pagedLogicalMeter -> pagedLogicalMeter.id.toString())
+          .collect(toList())
       );
-
       all = fetchAdditionalPagedMeterData(parameters, all);
     }
 
@@ -172,55 +172,10 @@ public class LogicalMeterQueryDslJpaRepository
     ));
   }
 
-  /**
-   * NOTE: we calculate .size() in Java land which causes extra memory usage.
-   * JQL does not support multiple distinct values ("select count(distinct a, b)..."),
-   * which forces us to count outside of the database.
-   */
-  @Override
-  public MeterSummary summary(RequestParameters parameters, Predicate predicate) {
-    long meters = createCountQuery(predicate)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetchCount();
-
-    long cities = createQuery(predicate)
-      .select(Expressions.list(LOCATION.country, LOCATION.city))
-      .where(
-        allOf(
-          isNotNull(LOCATION.country), isNotNull(LOCATION.city)
-        )
-      )
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetch()
-      .size();
-
-    long addresses = createQuery(predicate)
-      .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress))
-      .where(
-        allOf(
-          isNotNull(LOCATION.country), isNotNull(LOCATION.city), isNotNull(LOCATION.streetAddress)
-        )
-      )
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetch()
-      .size();
-
-    return new MeterSummary(meters, cities, addresses);
-  }
-
   @Override
   public void delete(UUID id, UUID organisationId) {
-    JPADeleteClause query = new JPADeleteClause(entityManager, LOGICAL_METER);
-    query.where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
+    new JPADeleteClause(entityManager, LOGICAL_METER)
+      .where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
       .execute();
   }
 
@@ -262,24 +217,23 @@ public class LogicalMeterQueryDslJpaRepository
     List<PagedLogicalMeter> all
   ) {
     Map<UUID, Long> logicalMeterIdToMeasurementCount =
-      findMeasurementCounts(new MeasurementQueryFilters()
-        .toExpression(parameters));
+      findMeasurementCounts(new MeasurementQueryFilters().toExpression(parameters));
 
     Map<UUID, PhysicalMeterStatusLogEntity> logicalMeterIdToCurrentStatus =
-      findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters()
-        .toExpression(parameters));
+      findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
 
-    return all.stream().map(pagedLogicalMeter ->
-      pagedLogicalMeter
-        .withMeasurementCount(logicalMeterIdToMeasurementCount.getOrDefault(
-          pagedLogicalMeter.id,
-          0L
-        ))
-        .withCurrentStatus(logicalMeterIdToCurrentStatus.getOrDefault(
-          pagedLogicalMeter.id,
-          null
-        ))
-    ).collect(toList());
+    return all.stream()
+      .map(pagedLogicalMeter ->
+        pagedLogicalMeter
+          .withMeasurementCount(logicalMeterIdToMeasurementCount.getOrDefault(
+            pagedLogicalMeter.id,
+            0L
+          ))
+          .withCurrentStatus(logicalMeterIdToCurrentStatus.getOrDefault(
+            pagedLogicalMeter.id,
+            null
+          ))
+      ).collect(toList());
   }
 
   private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
@@ -290,8 +244,8 @@ public class LogicalMeterQueryDslJpaRepository
 
       JPAQuery<UUID> queryIds = new JPAQueryFactory(entityManager)
         .select(LOGICAL_METER.id).from(path)
-        .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-        .innerJoin(PHYSICAL_METER.measurements, MEASUREMENT)
+        .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+        .join(PHYSICAL_METER.measurements, MEASUREMENT)
         .where(
           withMeasurementAboveMax(
             parameters,
@@ -337,17 +291,14 @@ public class LogicalMeterQueryDslJpaRepository
     return applyJoins(createQuery(predicate).select(path), parameters).fetchOne();
   }
 
-  private <T> JPQLQuery<T> applyJoins(
-    JPQLQuery<T> query,
-    RequestParameters parameters
-  ) {
-    query = query.distinct()
-      .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
+  private <T> JPQLQuery<T> applyJoins(JPQLQuery<T> query, RequestParameters parameters) {
+    query = query
+      .distinct()
+      .leftJoin(LOGICAL_METER.location, LOCATION)
       .fetchJoin();
 
-    JoinIfNeededUtil.joinPhysicalMeterFromLogicalMeter(query, parameters);
-    JoinIfNeededUtil.joinStatusLogsFromPhysicalMeter(query, parameters);
-    JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
+    joinStatusLogsFromPhysicalMeter(query, parameters);
+    joinGatewayFromLogicalMeter(query, parameters);
 
     return query;
   }

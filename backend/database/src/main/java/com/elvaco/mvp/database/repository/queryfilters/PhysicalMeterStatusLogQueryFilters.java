@@ -3,55 +3,56 @@ package com.elvaco.mvp.database.repository.queryfilters;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
+import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
-  private static final QPhysicalMeterStatusLogEntity Q =
-    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+  private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
+    physicalMeterStatusLogEntity;
+
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    logicalMeterEntity;
+
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(
-    String filter, List<String> values
-  ) {
-    switch (filter) {
+  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+    return Optional.ofNullable(nullablePredicate(parameterName, values));
+  }
+
+  @Nullable
+  private Predicate nullablePredicate(String parameterName, List<String> values) {
+    switch (parameterName) {
       case "physicalMeterId":
-        return Optional.of(Q.physicalMeterId.in(mapValues(UUID::fromString, values)));
+        return METER_STATUS_LOG.physicalMeterId.in(toUuids(values));
       case "id":
-        return Optional.of(QLogicalMeterEntity.logicalMeterEntity.id.in(mapValues(
-          UUID::fromString,
-          values
-        )));
-      case BEFORE:
+        return LOGICAL_METER.id.in(toUuids(values));
+      case "before":
         stop = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(
-          periodQueryFilter(start, stop)
-        );
-      case AFTER:
+        return periodQueryFilter(start, stop);
+      case "after":
         start = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(
-          periodQueryFilter(start, stop)
-        );
+        return periodQueryFilter(start, stop);
       default:
-        return Optional.empty();
+        return null;
     }
   }
 
   @Nullable
-  private Predicate periodQueryFilter(ZonedDateTime periodStart, ZonedDateTime periodStop) {
-    if (periodStart == null || periodStop == null) {
+  private static Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
+    if (start == null || stop == null) {
       return null;
     }
-    return Q.start.before(periodStop).and(Q.stop.after(periodStart).or(Q.stop.isNull()));
+    return METER_STATUS_LOG.start.before(stop)
+      .and(METER_STATUS_LOG.stop.isNull().or(METER_STATUS_LOG.stop.after(start)));
   }
 }

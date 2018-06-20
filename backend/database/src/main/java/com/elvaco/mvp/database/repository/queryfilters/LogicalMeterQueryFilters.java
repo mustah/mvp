@@ -3,94 +3,84 @@ package com.elvaco.mvp.database.repository.queryfilters;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.gatewayStatusQueryFilter;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
-import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
-  private static final QGatewayEntity GATEWAY_ENTITY = QGatewayEntity.gatewayEntity;
+  private static final QGatewayEntity GATEWAY =
+    QGatewayEntity.gatewayEntity;
 
-  private static final QPhysicalMeterEntity PHYSICAL_METER_ENTITY =
+  private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
-  private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
-  private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
-    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  ZonedDateTime before;
-  ZonedDateTime after;
-  List<StatusType> statuses;
+  private static final QLogicalMeterEntity LOGICAL_METER =
+    QLogicalMeterEntity.logicalMeterEntity;
+
+  private ZonedDateTime before;
+  private ZonedDateTime after;
+  private List<StatusType> statuses;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
-    return Optional.ofNullable(buildNullablePredicateFor(filter, values));
+  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+    return Optional.ofNullable(buildNullablePredicateFor(parameterName, values));
   }
 
   @Nullable
-  private Predicate buildNullablePredicateFor(String filter, List<String> values) {
-    switch (filter) {
+  private Predicate buildNullablePredicateFor(String parameterName, List<String> values) {
+    switch (parameterName) {
       case "id":
-        return Q.id.in(mapValues(UUID::fromString, values));
-      case "medium":
-        return Q.meterDefinition.medium.in(values);
-      case "manufacturer":
-        return Q.physicalMeters.any().manufacturer.in(values);
+        return LOGICAL_METER.id.in(toUuids(values));
       case "organisation":
-        return Q.organisationId.in(mapValues(UUID::fromString, values));
+        return LOGICAL_METER.organisationId.in(toUuids(values));
+      case "medium":
+        return LOGICAL_METER.meterDefinition.medium.in(values);
+      case "manufacturer":
+        return LOGICAL_METER.physicalMeters.any().manufacturer.in(values);
+      case "facility":
+        return LOGICAL_METER.externalId.in(values);
       case "city":
         return whereCity(toCityParameters(values));
       case "address":
         return whereAddress(toAddressParameters(values));
       case "before":
         before = ZonedDateTime.parse(values.get(0));
-        return statusQueryFilter(after, before, statuses);
+        return meterStatusQueryFilter(after, before, statuses);
       case "after":
         after = ZonedDateTime.parse(values.get(0));
-        return statusQueryFilter(after, before, statuses);
+        return meterStatusQueryFilter(after, before, statuses);
       case "status":
-        statuses = values.stream().map(StatusType::from).collect(toList());
-        return statusQueryFilter(after, before, statuses);
-      case "facility":
-        return Q.externalId.in(values);
-      case "secondaryAddress":
-        return PHYSICAL_METER_ENTITY.address.in(values);
+      case "meterStatus":
+        statuses = toStatusTypes(values);
+        return meterStatusQueryFilter(after, before, statuses);
+      case "gatewayStatus":
+        statuses = toStatusTypes(values);
+        return gatewayStatusQueryFilter(after, before, statuses);
       case "gatewaySerial":
-        return GATEWAY_ENTITY.serial.in(values);
+        return GATEWAY.serial.in(values);
+      case "secondaryAddress":
+        return PHYSICAL_METER.address.in(values);
       default:
         return null;
     }
   }
 
   @Nullable
-  private Predicate statusQueryFilter(
-    ZonedDateTime periodStart,
-    ZonedDateTime periodStop,
-    List<StatusType> statuses
-  ) {
-    if (periodStart == null || periodStop == null || statuses == null || statuses.isEmpty()) {
-      return null;
-    }
-
-    return (STATUS_LOG.stop.isNull().or(STATUS_LOG.stop.after(periodStart)))
-      .and(
-        STATUS_LOG.start.before(periodStop)
-      ).and(STATUS_LOG.status.in(statuses));
-  }
-
-  @Nullable
-  private Predicate whereCity(Parameters parameters) {
+  private static Predicate whereCity(Parameters parameters) {
     LocationExpressions locationExpressions = newLocationExpressions();
     return new BooleanBuilder()
       .and(locationExpressions.countriesAndCities(parameters))
@@ -100,7 +90,7 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   @Nullable
-  private Predicate whereAddress(Parameters parameters) {
+  private static Predicate whereAddress(Parameters parameters) {
     LocationExpressions locationExpressions = newLocationExpressions();
     return new BooleanBuilder()
       .and(locationExpressions.address(parameters))
@@ -110,6 +100,6 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   private static LocationExpressions newLocationExpressions() {
-    return new LocationExpressions(Q.location);
+    return new LocationExpressions(LOGICAL_METER.location);
   }
 }

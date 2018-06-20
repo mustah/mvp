@@ -3,50 +3,56 @@ package com.elvaco.mvp.database.repository.queryfilters;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
+import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
+import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class GatewayStatusLogQueryFilters extends QueryFilters {
 
-  private static final QGatewayStatusLogEntity Q =
-    QGatewayStatusLogEntity.gatewayStatusLogEntity;
+  private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG =
+    gatewayStatusLogEntity;
+
+  private static final QGatewayEntity GATEWAY =
+    gatewayEntity;
 
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(
-    String filter, List<String> values
-  ) {
-    switch (filter) {
+  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+    return Optional.ofNullable(nullablePredicate(parameterName, values));
+  }
+
+  @Nullable
+  private Predicate nullablePredicate(String parameterName, List<String> values) {
+    switch (parameterName) {
       case "gatewayId":
-        return Optional.of(Q.gatewayId.in(mapValues(UUID::fromString, values)));
-      case BEFORE:
+        return GATEWAY_STATUS_LOG.gatewayId.in(toUuids(values));
+      case "id":
+        return GATEWAY.id.in(toUuids(values));
+      case "before":
         stop = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(
-          periodQueryFilter(start, stop)
-        );
-      case AFTER:
+        return periodQueryFilter(start, stop);
+      case "after":
         start = ZonedDateTime.parse(values.get(0));
-        return Optional.ofNullable(
-          periodQueryFilter(start, stop)
-        );
+        return periodQueryFilter(start, stop);
       default:
-        return Optional.empty();
+        return null;
     }
   }
 
   @Nullable
-  private Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
+  private static Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
     if (start == null || stop == null) {
       return null;
     }
-    return Q.start.before(stop).and(Q.stop.after(start).or(Q.stop.isNull()));
+    return GATEWAY_STATUS_LOG.start.before(stop)
+      .and(GATEWAY_STATUS_LOG.stop.isNull().or(GATEWAY_STATUS_LOG.stop.after(start)));
   }
 }

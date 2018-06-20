@@ -16,9 +16,10 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PagedLogicalMeter;
+import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
@@ -37,6 +38,7 @@ import static java.util.stream.Collectors.toList;
 public class LogicalMeterRepository implements LogicalMeters {
 
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
+  private final SummaryJpaRepository summaryJpaRepository;
   private final LogicalMeterSortingEntityMapper sortingMapper;
 
   @Override
@@ -122,7 +124,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public MeterSummary summary(RequestParameters parameters) {
-    return logicalMeterJpaRepository.summary(parameters, toPredicate(parameters));
+    return summaryJpaRepository.summary(parameters);
   }
 
   @Transactional

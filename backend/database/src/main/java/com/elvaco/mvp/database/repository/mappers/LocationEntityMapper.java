@@ -8,7 +8,6 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
-
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -16,13 +15,13 @@ import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 @UtilityClass
 public class LocationEntityMapper {
 
-  public static Location toDomainModel(LocationEntity entity) {
-    return entity != null
+  public static Location toDomainModel(LocationEntity location) {
+    return location != null
       ? new LocationBuilder()
-      .country(entity.country)
-      .city(entity.city)
-      .address(entity.streetAddress)
-      .coordinate(toGeoCoordinate(entity))
+      .country(location.country)
+      .city(location.city)
+      .address(location.streetAddress)
+      .coordinate(toGeoCoordinate(location))
       .build()
       : UNKNOWN_LOCATION;
   }

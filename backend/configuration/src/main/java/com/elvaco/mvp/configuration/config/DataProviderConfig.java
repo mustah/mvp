@@ -40,11 +40,10 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
-import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -69,8 +68,9 @@ class DataProviderConfig {
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
-  private final MapMarkerJpaRepository meterMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository logicalMeterMapQueryDslJpaRepository;
   private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
+  private final SummaryJpaRepository summaryJpaRepository;
 
   @Bean
   Users users() {
@@ -91,6 +91,7 @@ class DataProviderConfig {
   LogicalMeters logicalMeters() {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
+      summaryJpaRepository,
       new LogicalMeterSortingEntityMapper()
     );
   }
@@ -99,7 +100,7 @@ class DataProviderConfig {
   Locations locations() {
     return new LocationRepository(
       locationJpaRepository,
-      meterMapQueryDslJpaRepository,
+      logicalMeterMapQueryDslJpaRepository,
       gatewayMapQueryDslJpaRepository
     );
   }
@@ -145,12 +146,7 @@ class DataProviderConfig {
 
   @Bean
   Gateways gateways() {
-    return new GatewayRepository(
-      gatewayJpaRepository,
-      new GatewayQueryFilters(),
-      new GatewayStatusLogQueryFilters(),
-      gatewayStatusLogJpaRepository
-    );
+    return new GatewayRepository(gatewayJpaRepository, gatewayStatusLogJpaRepository);
   }
 
   @Bean

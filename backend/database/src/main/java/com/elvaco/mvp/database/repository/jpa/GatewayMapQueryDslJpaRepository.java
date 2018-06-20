@@ -57,9 +57,9 @@ class GatewayMapQueryDslJpaRepository
           LOCATION.latitude,
           LOCATION.longitude
         ))
-        .innerJoin(GATEWAY.meters, LOGICAL_METER)
+        .join(GATEWAY.meters, LOGICAL_METER)
         .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
-        .innerJoin(LOGICAL_METER.location, LOCATION)
+        .join(LOGICAL_METER.location, LOCATION)
         .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
         .distinct()
         .fetch()

@@ -99,9 +99,7 @@ public class RequestParametersAdapter implements RequestParameters {
 
   @Override
   public RequestParameters shallowCopy() {
-    return new RequestParametersAdapter(
-      new LinkedMultiValueMap<>(delegate)
-    );
+    return new RequestParametersAdapter(new LinkedMultiValueMap<>(delegate));
   }
 
   public MultiValueMap<String, String> multiValueMap() {

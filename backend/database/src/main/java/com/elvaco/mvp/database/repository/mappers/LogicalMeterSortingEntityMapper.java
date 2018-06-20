@@ -9,16 +9,19 @@ public class LogicalMeterSortingEntityMapper extends SortingEntityMapper {
 
   private static final Map<String, String> SORTABLE_PROPERTIES = new HashMap<>();
 
-  private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
+  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   static {
-    SORTABLE_PROPERTIES.put("id", toSortString(Q.id));
+    SORTABLE_PROPERTIES.put("id", toSortString(LOGICAL_METER.id));
 
-    SORTABLE_PROPERTIES.put("address", toSortString(Q.location.streetAddress));
+    SORTABLE_PROPERTIES.put("address", toSortString(LOGICAL_METER.location.streetAddress));
 
-    SORTABLE_PROPERTIES.put("city", toSortString(Q.location.city));
+    SORTABLE_PROPERTIES.put("city", toSortString(LOGICAL_METER.location.city));
 
-    SORTABLE_PROPERTIES.put("manufacturer", toSortString(Q.physicalMeters.any().manufacturer));
+    SORTABLE_PROPERTIES.put(
+      "manufacturer",
+      toSortString(LOGICAL_METER.physicalMeters.any().manufacturer)
+    );
   }
 
   @Override

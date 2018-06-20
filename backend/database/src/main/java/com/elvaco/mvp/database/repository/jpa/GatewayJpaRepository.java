@@ -4,16 +4,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.gateway.PagedGateway;
 import com.querydsl.core.types.Predicate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-public interface GatewayJpaRepository
-  extends JpaRepository<GatewayEntity, Long>, QueryDslPredicateExecutor<GatewayEntity> {
+public interface GatewayJpaRepository {
 
-  @Override
+  <S extends GatewayEntity> S save(S entity);
+
+  void deleteAll();
+
   List<GatewayEntity> findAll(Predicate predicate);
+
+  List<GatewayEntity> findAll(RequestParameters parameters);
+
+  Page<PagedGateway> findAll(RequestParameters parameters, Pageable pageable);
 
   List<GatewayEntity> findAllByOrganisationId(UUID organisationId);
 
@@ -28,5 +36,4 @@ public interface GatewayJpaRepository
   Optional<GatewayEntity> findById(UUID id);
 
   Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
-
 }

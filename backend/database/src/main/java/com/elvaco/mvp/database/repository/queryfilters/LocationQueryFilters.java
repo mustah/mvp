@@ -2,12 +2,13 @@ package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
+
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class LocationQueryFilters extends QueryFilters {
 
@@ -29,7 +30,7 @@ public class LocationQueryFilters extends QueryFilters {
       case "address":
         return LOCATION.streetAddress.contains(values.get(0).toLowerCase());
       case "organisation":
-        return LOGICAL_METER.organisationId.in(mapValues(UUID::fromString, values));
+        return LOGICAL_METER.organisationId.in(toUuids(values));
       default:
         return null;
     }

@@ -12,8 +12,8 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jpa.PagedLogicalMeter;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyList;
@@ -25,16 +25,14 @@ import static java.util.stream.Collectors.toSet;
 public class LogicalMeterEntityMapper {
 
   public static LogicalMeter toDomainModelWithCollectionPercentage(
-    PagedLogicalMeter pagedLogicalMeter, long expectedMeasurementCount
+    PagedLogicalMeter pagedLogicalMeter,
+    long expectedMeasurementCount
   ) {
     return newLogicalMeter(pagedLogicalMeter, expectedMeasurementCount);
   }
 
   public static LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
-    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
-      .stream()
-      .map(PhysicalMeterEntityMapper::toDomainModel)
-      .collect(toList());
+    List<PhysicalMeter> physicalMeters = toPhysicalMeters(logicalMeterEntity);
     return toLogicalMeter(logicalMeterEntity, physicalMeters, null, null);
   }
 
@@ -86,17 +84,21 @@ public class LogicalMeterEntityMapper {
       logicalMeter.location
     );
 
-    logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters
-      .stream()
+    logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
       .map(PhysicalMeterEntityMapper::toEntity)
       .collect(toSet());
 
-    logicalMeterEntity.gateways = logicalMeter.gateways
-      .stream()
+    logicalMeterEntity.gateways = logicalMeter.gateways.stream()
       .map(GatewayEntityMapper::toEntity)
       .collect(toSet());
 
     return logicalMeterEntity;
+  }
+
+  private static List<PhysicalMeter> toPhysicalMeters(LogicalMeterEntity logicalMeterEntity) {
+    return logicalMeterEntity.physicalMeters.stream()
+      .map(PhysicalMeterEntityMapper::toDomainModel)
+      .collect(toList());
   }
 
   private static LogicalMeter newLogicalMeter(
