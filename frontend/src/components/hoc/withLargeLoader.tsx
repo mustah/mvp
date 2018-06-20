@@ -1,14 +1,28 @@
 import * as React from 'react';
 import {RowCenter} from '../layouts/row/Row';
-import {LoadingLarge} from '../loading/Loading';
+import {LoadingLarge, LoadingSmall} from '../loading/Loading';
 
 interface Fetching {
   isFetching: boolean;
 }
 
-export const withLargeLoader =
-  <P extends {}>(Component: React.ComponentType<P>): React.SFC<P & Fetching> =>
+const LargeLoader = () => <RowCenter><LoadingLarge/></RowCenter>;
+const SmallLoader = () => <RowCenter><LoadingSmall/></RowCenter>;
+
+const withLoader =
+  <P extends {}>(
+    LoadingComponent: React.ComponentType<{}>,
+    Component: React.ComponentType<P>,
+  ): React.SFC<P & Fetching> =>
     ({isFetching, ...props}: Fetching) =>
       isFetching
-        ? <RowCenter><LoadingLarge/></RowCenter>
+        ? <LoadingComponent/>
         : <Component {...props}/>;
+
+export const withLargeLoader =
+  <P extends {}>(Component: React.ComponentType<P>): React.SFC<P & Fetching> =>
+    withLoader(LargeLoader, Component);
+
+export const withSmallLoader =
+  <P extends {}>(Component: React.ComponentType<P>): React.SFC<P & Fetching> =>
+    withLoader(SmallLoader, Component);

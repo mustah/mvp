@@ -8,10 +8,11 @@ import './Widget.scss';
 
 interface Props extends ClassNamed {
   children: Children;
+  containerStyle?: React.CSSProperties;
 }
 
-export const Widget = ({children, className}: Props) => (
-  <Card className={classNames('Widget', className)}>
+export const Widget = ({children, className, containerStyle}: Props) => (
+  <Card className={classNames('Widget', className)} containerStyle={containerStyle}>
     {children}
   </Card>
 );

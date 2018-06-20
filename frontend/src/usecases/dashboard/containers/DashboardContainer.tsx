@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
+import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
@@ -23,6 +24,7 @@ import {MapWidgetContainer} from './MapWidgetContainer';
 
 interface StateToProps {
   dashboard?: DashboardModel;
+  isFetching: boolean;
   meterMapMarkers: DomainModel<MapMarker>;
   parameters: EncodedUriParameters;
 }
@@ -48,10 +50,8 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 
   render() {
-    const {
-      dashboard,
-      meterMapMarkers,
-    } = this.props;
+    const {dashboard, isFetching, meterMapMarkers} = this.props;
+    const widgets: WidgetModel[] = isFetching || !dashboard ? [] : dashboard.widgets;
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -64,7 +64,7 @@ class DashboardContainerComponent extends React.Component<Props> {
 
         <Row className="Row-wrap-reverse">
           <MapWidgetContainer markers={meterMapMarkers}/>
-          {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
+          <OverviewWidgets widgets={widgets} isFetching={isFetching}/>
         </Row>
       </MvpPageContainer>
     );
@@ -79,6 +79,7 @@ const mapStateToProps =
   }: RootState): StateToProps =>
     ({
       dashboard: record,
+      isFetching,
       parameters: getMeterParameters({userSelection, now: now()}),
       meterMapMarkers: getDomainModel(meterMapMarkers),
     });
