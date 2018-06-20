@@ -8,6 +8,8 @@ interface Styles {
 
 export const fontSizeNormal = 14;
 
+const evoBorderRadius: React.CSSProperties = {borderRadius: 4};
+
 export const colors = {
   darkBlue: '#006da3',
   darkGreen: '#4caf50',
@@ -121,18 +123,11 @@ export const paperStyle: React.CSSProperties = {
   paddingTop: 24,
   paddingBottom: 24,
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.16)',
+  ...evoBorderRadius,
 };
 
-export const checkbox: React.CSSProperties = {
-  padding: 0,
-  margin: 4,
-  marginLeft: 0,
-};
-
-export const checkboxLabel: React.CSSProperties = {
-  padding: 0,
-  margin: 4,
-  marginTop: 8,
+export const cardStyle: React.CSSProperties = {
+  ...evoBorderRadius,
 };
 
 export const buttonStyle: React.CSSProperties = {

@@ -97,7 +97,7 @@
 
   .DateRangePickerInput__withBorder {
     border: 1px solid #cacccd !important;
-    border-radius: 3px !important;
+    border-radius: $border-radius !important;
 
     .DateInput {
       margin: 0;
@@ -106,7 +106,7 @@
       position: relative;
       display: inline-block;
       width: 130px;
-      border-radius: 3px;
+      border-radius: $border-radius;
       vertical-align: middle;
 
       .DateInput_input {
@@ -119,7 +119,7 @@
         border-right: 0 !important;
         border-bottom: 2px solid transparent !important;
         border-left: 0 !important;
-        border-radius: 3px;
+        border-radius: $border-radius;
       }
 
       .DateInput_fang {
