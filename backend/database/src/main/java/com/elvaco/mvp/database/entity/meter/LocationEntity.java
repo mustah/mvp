@@ -5,12 +5,16 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @NoArgsConstructor
 @Entity
@@ -24,6 +28,11 @@ public class LocationEntity extends IdentifiableType<UUID> {
   @Id
   @Column(name = "logical_meter_id")
   public UUID logicalMeterId;
+
+  @NotAudited
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "logical_meter_id", insertable = false, updatable = false)
+  public LogicalMeterEntity logicalMeter;
 
   public String country;
   public String city;
