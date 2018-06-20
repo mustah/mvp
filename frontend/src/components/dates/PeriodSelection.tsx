@@ -23,7 +23,7 @@ const style: React.CSSProperties = {
   width: 210,
   fontSize: fontSizeNormal,
   border: `2px solid ${colors.borderColor}`,
-  borderRadius: 3,
+  borderRadius: 4,
   marginLeft: 24,
   marginBottom: 16,
   borderWidth: 2,

@@ -1,6 +1,7 @@
 import * as classNames from 'classnames';
 import Card from 'material-ui/Card/Card';
 import * as React from 'react';
+import {cardStyle} from '../../../../app/themes';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {Subtitle} from '../../../../components/texts/Titles';
 import {Children, ClassNamed} from '../../../../types/Types';
@@ -8,10 +9,15 @@ import './Widget.scss';
 
 interface Props extends ClassNamed {
   children: Children;
+  containerStyle?: React.CSSProperties;
 }
 
-export const Widget = ({children, className}: Props) => (
-  <Card className={classNames('Widget', className)}>
+export const Widget = ({children, className, containerStyle}: Props) => (
+  <Card
+    className={classNames('Widget', className)}
+    style={cardStyle}
+    containerStyle={containerStyle}
+  >
     {children}
   </Card>
 );

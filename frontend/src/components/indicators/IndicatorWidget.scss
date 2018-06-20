@@ -18,6 +18,7 @@
     color: $white;
   }
 
+  .error,
   .critical {
     background-color: $red;
     color: $white;
@@ -76,6 +77,10 @@
 
       &.critical {
         @extend .critical;
+      }
+
+      &.error {
+        @extend .error;
       }
     }
   }
