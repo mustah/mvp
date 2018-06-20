@@ -63,10 +63,10 @@ public class LogicalMeterController {
 
   @PostMapping("{id}/synchronize")
   public ResponseEntity<Void> synchronizeMeter(@PathVariable UUID id) {
-    LogicalMeter logicalMeter = logicalMeterUseCases.findById(id)
+    logicalMeterUseCases.findById(id)
+      .map(this::publishToQueue)
       .orElseThrow(() -> new MeterNotFound(id));
 
-    meteringRequestPublisher.request(logicalMeter);
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 
@@ -75,7 +75,7 @@ public class LogicalMeterController {
     @RequestBody List<UUID> logicalMetersIds
   ) {
     logicalMeterUseCases.findAllBy(new RequestParametersAdapter().setAllIds("id", logicalMetersIds))
-      .forEach(meteringRequestPublisher::request);
+      .forEach(this::publishToQueue);
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
@@ -100,5 +100,10 @@ public class LogicalMeterController {
       logicalMeterUseCases.deleteById(id)
         .orElseThrow(() -> new MeterNotFound(id))
     );
+  }
+
+  private LogicalMeter publishToQueue(LogicalMeter logicalMeter) {
+    meteringRequestPublisher.request(logicalMeter);
+    return logicalMeter;
   }
 }
