@@ -13,4 +13,14 @@
   svg:hover {
     color: $secondary-fg-hover !important;
   }
+
+  &.IconSelection {
+    background-color: $white !important;
+    border-radius: 20px !important;
+    box-shadow: $box-shadow;
+  }
+
+  &.IconSelection:hover {
+    background-color: $secondary-bg-hover !important;
+  }
 }

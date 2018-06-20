@@ -31,7 +31,7 @@ export const SelectionMenuSummary = (props: Props) => {
   return (
     <RowCenter className="SelectionMenuSummary">
       <Link to={routes.selection} className="link SelectionIcon-margin">
-        <IconSelection />
+        <IconSelection/>
       </Link>
       <Normal>{firstUpperTranslated('selection')}: </Normal>
       <Row>
