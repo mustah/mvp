@@ -5,12 +5,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
+import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
+import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterQueryFilters;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,6 +38,17 @@ public class PhysicalMetersRepository implements PhysicalMeters {
     return StreamSupport.stream(jpaRepository.findAll().spliterator(), false)
       .map(PhysicalMeterEntityMapper::toDomainModel)
       .collect(toList());
+  }
+
+  @Override
+  public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(jpaRepository.findAll(
+      new PhysicalMeterQueryFilters().toExpression(parameters),
+      new PageRequest(
+        pageable.getPageNumber(),
+        pageable.getPageSize()
+      )
+    ).map(PhysicalMeterEntityMapper::toDomainModel));
   }
 
   @Override

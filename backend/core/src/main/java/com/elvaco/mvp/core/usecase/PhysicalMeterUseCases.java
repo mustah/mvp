@@ -6,8 +6,13 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import lombok.RequiredArgsConstructor;
+
+import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 
 @RequiredArgsConstructor
 public class PhysicalMeterUseCases {
@@ -41,6 +46,16 @@ public class PhysicalMeterUseCases {
       );
     }
     return Optional.empty();
+  }
+
+  public Page<PhysicalMeter> findAll(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return physicalMeters.findAll(
+      setCurrentUsersOrganisationId(authenticatedUser, parameters),
+      pageable
+    );
   }
 
   private boolean hasTenantAccess(PhysicalMeter physicalMeter) {
