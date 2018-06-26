@@ -37,8 +37,8 @@ public interface Measurements {
 
   Optional<Measurement> findBy(
     UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
+    ZonedDateTime created,
+    String quantity
   );
 
   Optional<Measurement> findLatestReadout(

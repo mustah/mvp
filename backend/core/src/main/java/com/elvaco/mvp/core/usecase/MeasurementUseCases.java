@@ -31,7 +31,7 @@ public class MeasurementUseCases {
     String quantity,
     ZonedDateTime created
   ) {
-    return measurements.findBy(physicalMeterId, quantity, created);
+    return measurements.findBy(physicalMeterId, created, quantity);
   }
 
   public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {

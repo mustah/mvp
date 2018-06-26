@@ -82,8 +82,8 @@ public class MeasurementRepository implements Measurements {
   @Override
   public Optional<Measurement> findBy(
     UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
+    ZonedDateTime created,
+    String quantity
   ) {
     return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
       physicalMeterId,

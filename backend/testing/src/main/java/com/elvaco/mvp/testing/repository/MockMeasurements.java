@@ -61,8 +61,8 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   @Override
   public Optional<Measurement> findBy(
     UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
+    ZonedDateTime created,
+    String quantity
   ) {
     return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
       .filter(measurement -> measurement.quantity.equals(quantity))
@@ -72,7 +72,9 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
 
   @Override
   public Optional<Measurement> findLatestReadout(
-    UUID meterId, ZonedDateTime before, Quantity quantity
+    UUID meterId,
+    ZonedDateTime before,
+    Quantity quantity
   ) {
     throw new NotImplementedYet();
   }
