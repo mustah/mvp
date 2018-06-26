@@ -10,6 +10,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.helpers.CronHelper;
+import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -25,6 +26,7 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +41,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private final OrganisationUseCases organisationUseCases;
   private final GatewayUseCases gatewayUseCases;
   private final GeocodeService geocodeService;
+  private final PropertiesUseCases propertiesUseCases;
 
   @Override
   public void accept(MeteringReferenceInfoMessageDto referenceInfoMessage) {
@@ -87,9 +90,27 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .map(meter -> physicalMeter.map(meter::withPhysicalMeter).orElse(meter))
       .map(meter -> gateway.map(meter::withGateway).orElse(meter))
       .map(logicalMeterUseCases::save)
-      .ifPresent(meter -> geocodeService.fetchCoordinates(
-        LocationWithId.of(meter.location, meter.id))
-      );
+      .ifPresent(this::onFetchCoordinates);
+  }
+
+  private void removePropertyAfterForceUpdate(LocationWithId location, UUID organisationId) {
+    if (location.shouldForceUpdate) {
+      propertiesUseCases.deleteBy(FeatureType.UPDATE_GEOLOCATION, location.getId(), organisationId);
+    }
+  }
+
+  private void onFetchCoordinates(LogicalMeter meter) {
+    LocationWithId location = LocationBuilder.from(meter.location)
+      .id(meter.id)
+      .shouldForceUpdate(propertiesUseCases.shouldUpdateGeolocation(
+        meter.id,
+        meter.organisationId
+      ))
+      .buildLocationWithId();
+
+    geocodeService.fetchCoordinates(location);
+
+    removePropertyAfterForceUpdate(location, meter.organisationId);
   }
 
   @Nullable

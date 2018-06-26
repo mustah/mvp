@@ -9,6 +9,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -19,6 +20,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
+import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -32,6 +34,7 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
@@ -40,6 +43,7 @@ import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
+import com.elvaco.mvp.testing.repository.MockProperties;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
@@ -78,6 +82,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private Gateways gateways;
   private ReferenceInfoMessageConsumer messageHandler;
   private MockGeocodeService geocodeService;
+  private PropertiesUseCases propertiesUseCases;
 
   @Before
   public void setUp() {
@@ -110,6 +115,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     logicalMeters = new MockLogicalMetersWithCascading(physicalMeters);
     gateways = new MockGateways();
     geocodeService = new MockGeocodeService();
+    propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
 
     messageHandler = new MeteringReferenceInfoMessageConsumer(
       new LogicalMeterUseCases(
@@ -124,7 +130,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
         new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
       ),
       new GatewayUseCases(gateways, authenticatedUser),
-      geocodeService
+      geocodeService,
+      propertiesUseCases
     );
   }
 
@@ -343,6 +350,34 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     assertThat(geocodeService.requestId).isNotNull();
     assertThat(geocodeService.location).isEqualTo(expectedLocationWithId);
+  }
+
+  @Test
+  public void forceUpdateGeolocation_WhenFlagIsEnabledAndClearFlag() {
+    UUID organisationId = saveDefaultOrganisation().getId();
+
+    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+
+    LocationBuilder builder = new LocationBuilder()
+      .country("Sweden")
+      .city("Kungsbacka")
+      .address("Kabelgatan 2T")
+      .id(geocodeService.requestId);
+
+    assertThat(geocodeService.location).isEqualTo(builder.buildLocationWithId());
+
+    propertiesUseCases.forceUpdateGeolocation(geocodeService.requestId, organisationId);
+
+    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+
+    Property.Id id = Property.idOf(
+      geocodeService.requestId,
+      organisationId,
+      FeatureType.UPDATE_GEOLOCATION.key
+    );
+
+    assertThat(geocodeService.location).isEqualTo(builder.forceUpdate().buildLocationWithId());
+    assertThat(propertiesUseCases.findById(id).isPresent()).isFalse();
   }
 
   @Test

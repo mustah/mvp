@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.Properties;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
@@ -24,6 +25,7 @@ import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
+import com.elvaco.mvp.database.repository.access.PropertiesRepository;
 import com.elvaco.mvp.database.repository.access.RoleRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
@@ -38,6 +40,7 @@ import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
@@ -71,6 +74,7 @@ class DataProviderConfig {
   private final MapMarkerJpaRepository logicalMeterMapQueryDslJpaRepository;
   private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
   private final SummaryJpaRepository summaryJpaRepository;
+  private final PropertiesJpaRepository propertiesJpaRepository;
 
   @Bean
   Users users() {
@@ -151,22 +155,21 @@ class DataProviderConfig {
 
   @Bean
   UserSelections selections() {
-    return new UserSelectionRepository(
-      userSelectionJpaRepository
-    );
+    return new UserSelectionRepository(userSelectionJpaRepository);
   }
 
   @Bean
   MeterStatusLogs meterStatusLog() {
-    return new MeterStatusLogsRepository(
-      physicalMeterStatusLogJpaRepository
-    );
+    return new MeterStatusLogsRepository(physicalMeterStatusLogJpaRepository);
   }
 
   @Bean
   GatewayStatusLogs gatewayStatusLogs() {
-    return new GatewayStatusLogsRepository(
-      gatewayStatusLogJpaRepository
-    );
+    return new GatewayStatusLogsRepository(gatewayStatusLogJpaRepository);
+  }
+
+  @Bean
+  Properties properties() {
+    return new PropertiesRepository(propertiesJpaRepository);
   }
 }

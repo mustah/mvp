@@ -13,6 +13,15 @@ public class LocationBuilder {
   private Double latitude;
   private Double longitude;
   private Double confidence;
+  private boolean shouldForceUpdate;
+
+  public static LocationBuilder from(Location location) {
+    return new LocationBuilder()
+      .coordinate(location.getCoordinate())
+      .country(location.getCountry())
+      .city(location.getCity())
+      .address(location.getAddress());
+  }
 
   public LocationBuilder country(String country) {
     this.country = toLowerCaseOrNull(country);
@@ -54,6 +63,15 @@ public class LocationBuilder {
     return this;
   }
 
+  public LocationBuilder forceUpdate() {
+    return shouldForceUpdate(true);
+  }
+
+  public LocationBuilder shouldForceUpdate(boolean shouldForceUpdate) {
+    this.shouldForceUpdate = shouldForceUpdate;
+    return this;
+  }
+
   public Location build() {
     buildCoordinates();
     return new Location(coordinate, country, city, address);
@@ -61,7 +79,7 @@ public class LocationBuilder {
 
   public LocationWithId buildLocationWithId() {
     buildCoordinates();
-    return new LocationWithId(id, coordinate, country, city, address);
+    return new LocationWithId(id, coordinate, country, city, address, shouldForceUpdate);
   }
 
   private void buildCoordinates() {

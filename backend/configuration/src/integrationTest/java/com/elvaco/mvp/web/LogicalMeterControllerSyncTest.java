@@ -6,14 +6,19 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Property;
+import com.elvaco.mvp.core.exception.PropertyNotFound;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
@@ -50,6 +55,12 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
+  private PropertiesJpaRepository propertiesJpaRepository;
+
+  @Autowired
+  private PropertiesUseCases propertiesUseCases;
+
+  @Autowired
   private RabbitTemplate rabbitTemplate;
 
   private Organisation otherOrganisation;
@@ -68,6 +79,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
   public void tearDown() {
     logicalMeterJpaRepository.deleteAll();
     organisations.deleteById(otherOrganisation.id);
+    propertiesJpaRepository.deleteAll();
   }
 
   @Test
@@ -137,7 +149,12 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
       Void.class
     );
 
+    List<Property> properties = meterIds.stream()
+      .map(this::getUpdateGeolocationWithEntityId)
+      .collect(toList());
+
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    assertThat(properties).hasSize(3);
   }
 
   @Test
@@ -177,6 +194,10 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
 
       assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
       assertThat(responseEntity.getBody().message).contains("Ouch");
+      assertThat(propertiesUseCases.shouldUpdateGeolocation(
+        logicalMeter.id,
+        logicalMeter.organisationId
+      )).isFalse();
     } finally {
       rabbitTemplate.setConnectionFactory(oldConnectionFactory);
     }
@@ -195,6 +216,10 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     );
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    assertThat(propertiesUseCases.shouldUpdateGeolocation(
+      logicalMeter.id,
+      logicalMeter.organisationId
+    )).isTrue();
   }
 
   @Test
@@ -216,6 +241,10 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     assertThat(enqueuedMessage.gateway).isNull();
     assertThat(enqueuedMessage.meter).isNull();
     assertThat(enqueuedMessage.facility).isEqualTo(new FacilityIdDto(logicalMeter.externalId));
+    assertThat(propertiesUseCases.shouldUpdateGeolocation(
+      logicalMeter.id,
+      logicalMeter.organisationId
+    )).isTrue();
   }
 
   private static LogicalMeter newLogicalMeter(UUID organisationId) {
@@ -238,6 +267,14 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
       gateways,
       UNKNOWN_LOCATION
     );
+  }
+
+  private Property getUpdateGeolocationWithEntityId(UUID id) {
+    return propertiesUseCases.findBy(
+      FeatureType.UPDATE_GEOLOCATION,
+      id,
+      context().getOrganisationId()
+    ).orElseThrow(() -> new PropertyNotFound(FeatureType.UPDATE_GEOLOCATION, id));
   }
 
   private static String synchronizeUrl(UUID id) {

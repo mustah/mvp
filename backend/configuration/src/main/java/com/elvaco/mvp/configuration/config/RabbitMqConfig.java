@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
@@ -51,6 +52,7 @@ class RabbitMqConfig {
   private final MeasurementUseCases measurementUseCases;
   private final GatewayUseCases gatewayUseCases;
   private final GeocodeService geocodeService;
+  private final PropertiesUseCases propertiesUseCases;
 
   @Bean
   MeasurementMessageConsumer measurementMessageConsumer() {
@@ -70,7 +72,8 @@ class RabbitMqConfig {
       physicalMeterUseCases,
       organisationUseCases,
       gatewayUseCases,
-      geocodeService
+      geocodeService,
+      propertiesUseCases
     );
   }
 

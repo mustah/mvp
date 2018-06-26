@@ -1,0 +1,113 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create property table" author="Must Tahir">
+    <validCheckSum>7:41bad6289f226013d97393fbb1aafe53</validCheckSum>
+
+    <createTable tableName="property">
+      <column name="entity_id" type="uuid">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="property_key" type="${text_type}">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="property_value" type="${text_type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseColumnNames="organisation_id"
+      baseTableName="property"
+      constraintName="property_organisation_id_fkey"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="NO ACTION"
+      onUpdate="NO ACTION"
+      referencedColumnNames="id"
+      referencedTableName="organisation"
+    />
+  </changeSet>
+
+  <changeSet author="Must Tahir" id="1529571367925-1">
+    <validCheckSum>7:93caea1ec7720fca15202aca31ee14ca</validCheckSum>
+    <createTable tableName="property_aud" schemaName="evoaudit">
+      <column name="entity_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="organisation_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="property_key" type="${text_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rev" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="revtype" type="tinyint(3)"/>
+      <column name="revend" type="bigint"/>
+      <column name="revend_tstmp" type="timestamp"/>
+      <column name="property_value" type="${text_type}"/>
+      <column name="value_mod" type="boolean"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Must Tahir" id="1529571367925-3">
+    <createIndex
+      indexName="property_aud_revend_index"
+      tableName="property_aud"
+      schemaName="evoaudit">
+      <column name="revend"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Must Tahir" id="1529571367925-4">
+    <createIndex
+      indexName="property_aud_rev_index"
+      tableName="property_aud"
+      schemaName="evoaudit">
+      <column name="rev"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Must Tahir" id="1529571367925-5">
+    <addForeignKeyConstraint
+      baseColumnNames="revend"
+      baseTableName="property_aud"
+      constraintName="property_aud_revend_fkey"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="RESTRICT"
+      onUpdate="RESTRICT"
+      referencedColumnNames="id"
+      referencedTableName="revision_entity"
+      baseTableSchemaName="evoaudit"
+      referencedTableSchemaName="evoaudit"/>
+  </changeSet>
+
+  <changeSet author="Must Tahir" id="1529571367925-6">
+    <addForeignKeyConstraint
+      baseColumnNames="rev"
+      baseTableName="property_aud"
+      constraintName="property_aud_rev_fkey"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="RESTRICT"
+      onUpdate="RESTRICT"
+      referencedColumnNames="id"
+      referencedTableName="revision_entity"
+      baseTableSchemaName="evoaudit"
+      referencedTableSchemaName="evoaudit"/>
+  </changeSet>
+
+  <changeSet author="Must Tahir" id="1529571367925-7">
+    <validCheckSum>7:f36652606a7bf648c972dbd4d493125d</validCheckSum>
+    <sqlFile path="../sql/postgresql/initial_property_audit.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+
+</databaseChangeLog>

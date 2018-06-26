@@ -32,6 +32,4 @@ public class RevisionEntity {
   public long timestamp;
 
   public UUID userEntityId;
-
-
 }

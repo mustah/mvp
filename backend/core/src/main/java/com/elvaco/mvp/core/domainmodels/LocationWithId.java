@@ -10,6 +10,8 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class LocationWithId extends Location implements Identifiable<UUID> {
 
+  public final boolean shouldForceUpdate;
+
   private final UUID logicalMeterId;
 
   protected LocationWithId(
@@ -17,20 +19,12 @@ public class LocationWithId extends Location implements Identifiable<UUID> {
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,
     @Nullable String city,
-    @Nullable String address
+    @Nullable String address,
+    boolean shouldForceUpdate
   ) {
     super(coordinate, country, city, address);
     this.logicalMeterId = logicalMeterId;
-  }
-
-  public static LocationWithId of(Location location, UUID logicalMeterId) {
-    return new LocationWithId(
-      logicalMeterId,
-      location.getCoordinate(),
-      location.getCountry(),
-      location.getCity(),
-      location.getAddress()
-    );
+    this.shouldForceUpdate = shouldForceUpdate;
   }
 
   @Override

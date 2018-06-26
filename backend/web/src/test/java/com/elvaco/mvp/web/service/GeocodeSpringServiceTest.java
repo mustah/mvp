@@ -5,7 +5,6 @@ import java.net.URLDecoder;
 import java.util.UUID;
 import java.util.function.Function;
 
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
@@ -34,52 +33,63 @@ public class GeocodeSpringServiceTest {
 
   @Test
   public void shouldNotFetchWhenLocationIsUnknown() {
-    geocodeService.fetchCoordinates(LocationWithId.of(UNKNOWN_LOCATION, randomUUID()));
+    LocationWithId location = LocationBuilder.from(UNKNOWN_LOCATION)
+      .id(randomUUID())
+      .buildLocationWithId();
+
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isNull();
   }
 
   @Test
   public void shouldNotFetchWhenLocationIsMissingAddress() {
-    Location location = new LocationBuilder().country("sweden").city("stockholm").build();
+    LocationWithId location = new LocationBuilder()
+      .country("sweden")
+      .city("stockholm")
+      .id(randomUUID())
+      .buildLocationWithId();
 
-    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isNull();
   }
 
   @Test
   public void shouldNotFetchWhenLocationIsMissingCity() {
-    Location location = new LocationBuilder().country("sweden").address("main 1").build();
+    LocationWithId location = new LocationBuilder()
+      .country("sweden")
+      .address("main 1")
+      .id(randomUUID())
+      .buildLocationWithId();
 
-    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isNull();
   }
 
   @Test
   public void shouldNotFetchWhenLocationHasCoordinatesAndKnownLocationInfo() {
-    Location location = new LocationBuilder()
-      .country("sweden")
-      .city("stockholm")
-      .address("drottninggatan 1")
+    LocationWithId location = locationBuilder()
+      .id(randomUUID())
       .latitude(1.2)
       .longitude(2.1)
-      .build();
+      .buildLocationWithId();
 
-    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isNull();
   }
 
   @Test
   public void shouldNotFetchWhenLocationHasCoordinatesAndNoLocationInfo() {
-    Location location = new LocationBuilder()
+    LocationWithId location = new LocationBuilder()
+      .id(randomUUID())
       .latitude(1.2)
       .longitude(2.1)
-      .build();
+      .buildLocationWithId();
 
-    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isNull();
   }
@@ -92,46 +102,69 @@ public class GeocodeSpringServiceTest {
       httpClientMock
     );
 
-    Location location = new LocationBuilder()
+    UUID logicalMeterId = randomUUID();
+
+    LocationWithId location = new LocationBuilder()
+      .id(logicalMeterId)
       .country("sweden")
       .city("stockholm")
       .address("drottninggatan 1")
-      .build();
+      .buildLocationWithId();
 
-    UUID logicalMeterId = randomUUID();
-
-    geocodeService.fetchCoordinates(LocationWithId.of(location, logicalMeterId));
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address?"
-      + "country=sweden&city=stockholm&street=drottninggatan 1"
-      + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
-      + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId);
+        + "country=sweden&city=stockholm&street=drottninggatan 1"
+        + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
+        + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId
+        + "&force=false");
   }
 
   @Test
   public void encodedLocationInformation() {
-    GeocodeService geocodeService = new GeocodeSpringService(
-      "http://mvp.com",
-      "http://geoservice.com:8080",
-      httpClientMock
-    );
-
-    Location location = new LocationBuilder()
-      .country("sweden")
-      .city("växjö")
-      .address("drottingvägen 1")
-      .build();
-
     UUID logicalMeterId = randomUUID();
 
-    geocodeService.fetchCoordinates(LocationWithId.of(location, logicalMeterId));
+    LocationWithId location = locationBuilder()
+      .id(logicalMeterId)
+      .buildLocationWithId();
+
+    geocodeService.fetchCoordinates(location);
+
+    assertThat(httpClientMock.url).isEqualTo(
+      "http://geoservice.com:8080/address"
+        + "?country=sweden"
+        + "&city=växjö"
+        + "&street=drottingvägen 1"
+        + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
+        + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId
+        + "&force=false");
+  }
+
+  @Test
+  public void encodedLocationInformationShouldHaveForceParameter() {
+    UUID logicalMeterId = randomUUID();
+
+    LocationWithId location = locationBuilder()
+      .id(logicalMeterId)
+      .forceUpdate()
+      .buildLocationWithId();
+
+    geocodeService.fetchCoordinates(location);
 
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address?"
-      + "country=sweden&city=växjö&street=drottingvägen 1"
-      + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
-      + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId);
+        + "country=sweden&city=växjö&street=drottingvägen 1"
+        + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
+        + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId
+        + "&force=true");
+  }
+
+  private static LocationBuilder locationBuilder() {
+    return new LocationBuilder()
+      .country("sweden")
+      .city("växjö")
+      .address("drottingvägen 1");
   }
 
   private static class HttpClientMock implements Function<String, String> {

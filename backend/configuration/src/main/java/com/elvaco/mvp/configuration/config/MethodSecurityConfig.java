@@ -19,6 +19,9 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Configuration
 class MethodSecurityConfig {
 
+  private static final InsufficientAuthenticationException INSUFFICIENT_AUTHENTICATION_EXCEPTION =
+    new InsufficientAuthenticationException("No authentication information available!");
+
   private final TokenService tokenService;
 
   @Bean
@@ -28,14 +31,10 @@ class MethodSecurityConfig {
     if (authentication instanceof AuthenticationToken) {
       return tokenService
         .getToken(((AuthenticationToken) authentication).getToken())
-        .orElseThrow(this::insufficientAuthenticationException);
+        .orElseThrow(() -> INSUFFICIENT_AUTHENTICATION_EXCEPTION);
     } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
       return (AuthenticatedUser) authentication.getPrincipal();
     }
-    throw insufficientAuthenticationException();
-  }
-
-  private InsufficientAuthenticationException insufficientAuthenticationException() {
-    return new InsufficientAuthenticationException("No authentication information available!");
+    throw INSUFFICIENT_AUTHENTICATION_EXCEPTION;
   }
 }

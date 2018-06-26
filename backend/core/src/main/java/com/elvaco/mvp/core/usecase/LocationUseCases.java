@@ -14,7 +14,6 @@ import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrg
 public class LocationUseCases {
 
   private final AuthenticatedUser currentUser;
-
   private final Locations locations;
 
   public Page<Location> findAll(RequestParameters parameters, Pageable pageable) {
