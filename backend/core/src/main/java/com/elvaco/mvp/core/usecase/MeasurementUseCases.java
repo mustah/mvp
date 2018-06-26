@@ -29,9 +29,9 @@ public class MeasurementUseCases {
   public Optional<Measurement> findBy(
     UUID physicalMeterId,
     String quantity,
-    ZonedDateTime when
+    ZonedDateTime created
   ) {
-    return measurements.findBy(physicalMeterId, quantity, when);
+    return measurements.findBy(physicalMeterId, quantity, created);
   }
 
   public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {
