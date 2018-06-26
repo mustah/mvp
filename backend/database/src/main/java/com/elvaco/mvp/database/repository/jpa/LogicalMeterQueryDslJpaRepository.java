@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayFromLogicalMeter;
@@ -68,10 +67,7 @@ class LogicalMeterQueryDslJpaRepository
 
   @Autowired
   LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
-    super(
-      new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
-      entityManager
-    );
+    super(entityManager, LogicalMeterEntity.class);
   }
 
   @Override

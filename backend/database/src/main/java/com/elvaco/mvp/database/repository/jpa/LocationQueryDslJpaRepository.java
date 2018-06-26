@@ -14,24 +14,21 @@ import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
-public class LocationQueryDslJpaRepository extends BaseQueryDslRepository<LocationEntity, UUID>
+class LocationQueryDslJpaRepository
+  extends BaseQueryDslRepository<LocationEntity, UUID>
   implements LocationJpaRepository {
 
   private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
   private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   @Autowired
-  public LocationQueryDslJpaRepository(EntityManager entityManager) {
-    super(
-      new JpaMetamodelEntityInformation<>(LocationEntity.class, entityManager.getMetamodel()),
-      entityManager
-    );
+  LocationQueryDslJpaRepository(EntityManager entityManager) {
+    super(entityManager, LocationEntity.class);
   }
 
   @Override

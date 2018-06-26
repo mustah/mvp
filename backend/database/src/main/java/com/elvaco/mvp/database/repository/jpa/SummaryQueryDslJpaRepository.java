@@ -14,7 +14,6 @@ import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
@@ -39,10 +38,7 @@ class SummaryQueryDslJpaRepository
 
   @Autowired
   SummaryQueryDslJpaRepository(EntityManager entityManager) {
-    super(
-      new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
-      entityManager
-    );
+    super(entityManager, LogicalMeterEntity.class);
   }
 
   /**

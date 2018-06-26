@@ -17,7 +17,6 @@ import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
@@ -31,19 +30,13 @@ class GatewayMapQueryDslJpaRepository
   implements MapMarkerJpaRepository {
 
   private static final QLocationEntity LOCATION = locationEntity;
-
   private static final QGatewayEntity GATEWAY = gatewayEntity;
-
   private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
-
   private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
 
   @Autowired
   GatewayMapQueryDslJpaRepository(EntityManager entityManager) {
-    super(
-      new JpaMetamodelEntityInformation<>(GatewayEntity.class, entityManager.getMetamodel()),
-      entityManager
-    );
+    super(entityManager, GatewayEntity.class);
   }
 
   @Override

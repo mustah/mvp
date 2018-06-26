@@ -11,26 +11,19 @@ import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 
+import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.querydsl.core.group.GroupBy.groupBy;
 
 public class GatewayStatusLogJpaRepositoryImpl
   extends BaseQueryDslRepository<GatewayStatusLogEntity, Long>
   implements GatewayStatusLogJpaRepositoryCustom {
 
-  private static final QGatewayStatusLogEntity STATUS_LOG =
-    QGatewayStatusLogEntity.gatewayStatusLogEntity;
+  private static final QGatewayStatusLogEntity STATUS_LOG = gatewayStatusLogEntity;
 
   @Autowired
   public GatewayStatusLogJpaRepositoryImpl(EntityManager entityManager) {
-    super(
-      new JpaMetamodelEntityInformation<>(
-        GatewayStatusLogEntity.class,
-        entityManager.getMetamodel()
-      ),
-      entityManager
-    );
+    super(entityManager, GatewayStatusLogEntity.class);
   }
 
   @Override
