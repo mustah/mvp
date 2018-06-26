@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -39,6 +40,7 @@ public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final MeteringRequestPublisher meteringRequestPublisher;
+  private final PropertiesUseCases propertiesUseCases;
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(
@@ -64,7 +66,7 @@ public class LogicalMeterController {
   @PostMapping("{id}/synchronize")
   public ResponseEntity<Void> synchronizeMeter(@PathVariable UUID id) {
     logicalMeterUseCases.findById(id)
-      .map(this::publishToQueue)
+      .map(this::sync)
       .orElseThrow(() -> new MeterNotFound(id));
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -75,7 +77,7 @@ public class LogicalMeterController {
     @RequestBody List<UUID> logicalMetersIds
   ) {
     logicalMeterUseCases.findAllBy(new RequestParametersAdapter().setAllIds("id", logicalMetersIds))
-      .forEach(this::publishToQueue);
+      .forEach(this::sync);
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
@@ -102,8 +104,9 @@ public class LogicalMeterController {
     );
   }
 
-  private LogicalMeter publishToQueue(LogicalMeter logicalMeter) {
+  private LogicalMeter sync(LogicalMeter logicalMeter) {
     meteringRequestPublisher.request(logicalMeter);
+    propertiesUseCases.forceUpdateGeolocation(logicalMeter.id, logicalMeter.organisationId);
     return logicalMeter;
   }
 }

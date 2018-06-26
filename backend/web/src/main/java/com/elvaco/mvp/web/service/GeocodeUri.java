@@ -19,6 +19,7 @@ class GeocodeUri {
   private String address;
   private String callbackUrl;
   private String errorCallbackUrl;
+  private boolean forceUpdate;
 
   private GeocodeUri(UriComponentsBuilder delegate) {
     this.delegate = delegate;
@@ -53,6 +54,11 @@ class GeocodeUri {
     return this;
   }
 
+  GeocodeUri forceUpdateParam(boolean forceUpdate) {
+    this.forceUpdate = forceUpdate;
+    return this;
+  }
+
   Optional<String> toUriString() {
     try {
       return Optional.of(
@@ -62,6 +68,7 @@ class GeocodeUri {
           .queryParam("street", encode(address))
           .queryParam("callbackUrl", encode(callbackUrl))
           .queryParam("errorCallbackUrl", encode(errorCallbackUrl))
+          .queryParam("force", forceUpdate)
           .build()
           .toUriString()
       );

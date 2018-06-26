@@ -17,15 +17,15 @@ import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrg
 @RequiredArgsConstructor
 public class PhysicalMeterUseCases {
 
-  private final AuthenticatedUser authenticatedUser;
+  private final AuthenticatedUser currentUser;
   private final PhysicalMeters physicalMeters;
 
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     if (!hasTenantAccess(physicalMeter)) {
       throw new Unauthorized(String.format(
         "User '%s' is not allowed to "
-        + "update physical meter with ID %s",
-        authenticatedUser.getUsername(),
+          + "update physical meter with ID %s",
+        currentUser.getUsername(),
         physicalMeter.id
       ));
     }
@@ -37,8 +37,8 @@ public class PhysicalMeterUseCases {
     String externalId,
     String address
   ) {
-    if (authenticatedUser.isSuperAdmin()
-        || authenticatedUser.isWithinOrganisation(organisationId)) {
+    if (currentUser.isSuperAdmin()
+      || currentUser.isWithinOrganisation(organisationId)) {
       return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
         organisationId,
         externalId,
@@ -48,18 +48,15 @@ public class PhysicalMeterUseCases {
     return Optional.empty();
   }
 
-  public Page<PhysicalMeter> findAll(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return physicalMeters.findAll(
-      setCurrentUsersOrganisationId(authenticatedUser, parameters),
+      setCurrentUsersOrganisationId(currentUser, parameters),
       pageable
     );
   }
 
   private boolean hasTenantAccess(PhysicalMeter physicalMeter) {
-    return authenticatedUser.isSuperAdmin()
-           || authenticatedUser.isWithinOrganisation(physicalMeter.organisation.id);
+    return currentUser.isSuperAdmin()
+      || currentUser.isWithinOrganisation(physicalMeter.organisation.id);
   }
 }

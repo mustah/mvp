@@ -1,8 +1,10 @@
 package com.elvaco.mvp.web.service;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +23,22 @@ public class GeocodeSpringService implements GeocodeService {
   @Async
   @Override
   public void fetchCoordinates(LocationWithId location) {
-    if (location.hasNoCoordinates() && location.isKnown()) {
-      GeocodeUri.of(geoServiceUrl.trim() + "/address")
-        .countryParam(location.getCountry())
-        .cityParam(location.getCity())
-        .addressParam(location.getAddress())
-        .callbackUrl(callbackUrl(location.getId(), CALLBACK_URL))
-        .errorCallbackUrl(callbackUrl(location.getId(), ERROR_CALLBACK_URL))
-        .toUriString()
-        .map(httpClient);
-    }
+    Optional.of(location)
+      .filter(Location::isKnown)
+      .filter(Location::hasNoCoordinates)
+      .flatMap(this::makeGeoServiceUrl)
+      .map(httpClient);
+  }
+
+  private Optional<String> makeGeoServiceUrl(LocationWithId meterLocation) {
+    return GeocodeUri.of(geoServiceUrl.trim() + "/address")
+      .countryParam(meterLocation.getCountry())
+      .cityParam(meterLocation.getCity())
+      .addressParam(meterLocation.getAddress())
+      .forceUpdateParam(meterLocation.shouldForceUpdate)
+      .callbackUrl(callbackUrl(meterLocation.getId(), CALLBACK_URL))
+      .errorCallbackUrl(callbackUrl(meterLocation.getId(), ERROR_CALLBACK_URL))
+      .toUriString();
   }
 
   private String callbackUrl(UUID requestId, String callback) {

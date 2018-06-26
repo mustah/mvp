@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.Properties;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
@@ -20,6 +21,7 @@ import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -41,6 +43,7 @@ class UseCaseConfig {
   private final TokenService tokenService;
   private final UserSelections userSelections;
   private final Locations locations;
+  private final Properties properties;
 
   @Bean
   SettingUseCases settingUseCases() {
@@ -98,5 +101,10 @@ class UseCaseConfig {
   @Bean
   LocationUseCases locationUseCases(AuthenticatedUser currentUser) {
     return new LocationUseCases(currentUser, locations);
+  }
+
+  @Bean
+  PropertiesUseCases propertiesUseCases(AuthenticatedUser currentUser) {
+    return new PropertiesUseCases(currentUser, properties);
   }
 }
