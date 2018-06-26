@@ -24,10 +24,12 @@ import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
+import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
+import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
@@ -38,23 +40,14 @@ class GatewayQueryDslJpaRepository
   extends BaseQueryDslRepository<GatewayEntity, UUID>
   implements GatewayJpaRepository {
 
-  private static final QGatewayEntity GATEWAY =
-    QGatewayEntity.gatewayEntity;
-
-  private static final QLogicalMeterEntity LOGICAL_METER =
-    QLogicalMeterEntity.logicalMeterEntity;
-
-  private static final QLocationEntity LOCATION =
-    QLocationEntity.locationEntity;
-
+  private static final QGatewayEntity GATEWAY = gatewayEntity;
+  private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
+  private static final QLocationEntity LOCATION = locationEntity;
   private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
 
   @Autowired
   GatewayQueryDslJpaRepository(EntityManager entityManager) {
-    super(
-      new JpaMetamodelEntityInformation<>(GatewayEntity.class, entityManager.getMetamodel()),
-      entityManager
-    );
+    super(entityManager, GatewayEntity.class);
   }
 
   @Override
