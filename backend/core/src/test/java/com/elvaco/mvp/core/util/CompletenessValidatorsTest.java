@@ -12,6 +12,9 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
+import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
+import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +32,7 @@ public class CompletenessValidatorsTest {
       Location.UNKNOWN_LOCATION,
       MeterDefinition.UNKNOWN_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isFalse();
+    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -38,7 +41,7 @@ public class CompletenessValidatorsTest {
       KNOWN_LOCATION,
       MeterDefinition.UNKNOWN_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isFalse();
+    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -47,7 +50,7 @@ public class CompletenessValidatorsTest {
       KNOWN_LOCATION,
       MeterDefinition.DISTRICT_HEATING_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isTrue();
+    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isTrue();
   }
 
   @Test
@@ -56,7 +59,7 @@ public class CompletenessValidatorsTest {
       Location.UNKNOWN_LOCATION,
       MeterDefinition.DISTRICT_HEATING_METER
     );
-    assertThat(CompletenessValidators.logicalMeter().isComplete(logicalMeter)).isFalse();
+    assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
@@ -66,7 +69,7 @@ public class CompletenessValidatorsTest {
       .manufacturer("ELV")
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(physicalMeter)).isFalse();
+    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -76,7 +79,7 @@ public class CompletenessValidatorsTest {
       .manufacturer("ELV")
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(
+    assertThat(physicalMeterValidator().isComplete(
       physicalMeter)).isTrue();
   }
 
@@ -87,7 +90,7 @@ public class CompletenessValidatorsTest {
       .manufacturer(null)
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(physicalMeter)).isFalse();
+    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
   }
 
   @Test
@@ -97,19 +100,19 @@ public class CompletenessValidatorsTest {
       .manufacturer("UNKNOWN")
       .readIntervalMinutes(15)
       .build();
-    assertThat(CompletenessValidators.physicalMeter().isComplete(physicalMeter)).isFalse();
+    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
   }
 
   @Test
   public void gatewayValidatorComplete() {
     Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "CMi2110");
-    assertThat(CompletenessValidators.gateway().isComplete(gateway)).isTrue();
+    assertThat(gatewayValidator().isComplete(gateway)).isTrue();
   }
 
   @Test
   public void gatewayValidatorUnknownProductModel() {
     Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "");
-    assertThat(CompletenessValidators.gateway().isComplete(gateway)).isFalse();
+    assertThat(gatewayValidator().isComplete(gateway)).isFalse();
   }
 
   private LogicalMeter newLogicalMeter(Location location, MeterDefinition meterDefinition) {
@@ -117,15 +120,15 @@ public class CompletenessValidatorsTest {
       UUID.randomUUID(),
       "external-id",
       UUID.randomUUID(),
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       Location.UNKNOWN_LOCATION,
-          null,
+      null,
       0L, null
-        )
+    )
       .withLocation(location)
       .withMeterDefinition(meterDefinition);
   }

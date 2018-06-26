@@ -85,10 +85,7 @@ public class LogicalMeterUseCases {
     String externalId
   ) {
     if (currentUser.isWithinOrganisation(organisationId) || currentUser.isSuperAdmin()) {
-      return logicalMeters.findByOrganisationIdAndExternalId(
-        organisationId,
-        externalId
-      );
+      return logicalMeters.findByOrganisationIdAndExternalId(organisationId, externalId);
     }
     return Optional.empty();
   }

@@ -13,34 +13,25 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class MeasurementUseCases {
 
   private final AuthenticatedUser currentUser;
   private final Measurements measurements;
 
-  public MeasurementUseCases(AuthenticatedUser currentUser, Measurements measurements) {
-    this.currentUser = currentUser;
-    this.measurements = measurements;
-  }
-
   public Optional<Measurement> findById(Long id) {
     return measurements.findById(id)
-      .flatMap(m -> {
-        if (currentUser.isSuperAdmin() || isWithinOrganisation(m.physicalMeter)) {
-          return Optional.of(m);
-        } else {
-          return Optional.empty();
-        }
-      });
+      .filter(m -> currentUser.isSuperAdmin() || isWithinOrganisation(m.physicalMeter));
   }
 
-  public Optional<Measurement> findForMeterCreatedAt(
+  public Optional<Measurement> findBy(
     UUID physicalMeterId,
     String quantity,
     ZonedDateTime when
   ) {
-    return measurements.findByPhysicalMeterIdAndQuantityAndCreated(physicalMeterId, quantity, when);
+    return measurements.findBy(physicalMeterId, quantity, when);
   }
 
   public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {

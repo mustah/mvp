@@ -7,13 +7,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, Long>,
-  MeasurementJpaRepositoryCustom {
+public interface MeasurementJpaRepository
+  extends JpaRepository<MeasurementEntity, Long>,
+          MeasurementJpaRepositoryCustom {
 
   @Query(nativeQuery = true, value = "SELECT "
     + "cast(unit_at(avg(value), :unit) AS TEXT) AS value,"
@@ -113,6 +113,4 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("quantity") String quantity,
     @Param("unit") String unit
   );
-
-  List<MeasurementEntity> findAll(Predicate predicate);
 }

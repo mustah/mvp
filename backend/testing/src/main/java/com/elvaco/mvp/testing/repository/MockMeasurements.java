@@ -59,7 +59,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
-  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
+  public Optional<Measurement> findBy(
     UUID physicalMeterId,
     String quantity,
     ZonedDateTime created

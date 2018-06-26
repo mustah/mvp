@@ -35,10 +35,10 @@ public interface Measurements {
     TemporalResolution resolution
   );
 
-  Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
+  Optional<Measurement> findBy(
     UUID physicalMeterId,
     String quantity,
-    ZonedDateTime when
+    ZonedDateTime created
   );
 
   Optional<Measurement> findLatestReadout(
