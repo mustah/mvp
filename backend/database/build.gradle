@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {
-  imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+  imports {mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")}
 }
 
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
   compileOnly 'org.projectlombok:lombok:1.16.20'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'org.assertj:assertj-core:3.8.0'
+  testCompile 'org.assertj:assertj-core:3.10.0'
   testCompile project(':backend:testing')
 }
 

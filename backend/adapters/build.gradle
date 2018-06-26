@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {
-  imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+  imports {mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")}
 }
 
 dependencies {
@@ -12,5 +12,5 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-amqp'
   compile 'org.ehcache:ehcache:3.4.0'
 
-  testCompile 'org.assertj:assertj-core:3.8.0'
+  testCompile 'org.assertj:assertj-core:3.10.0'
 }

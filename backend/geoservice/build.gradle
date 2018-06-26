@@ -30,7 +30,7 @@ dependencies {
   compileOnly 'org.projectlombok:lombok:1.16.20'
 
   testCompile 'junit:junit'
-  testCompile 'org.assertj:assertj-core:3.9.0'
+  testCompile 'org.assertj:assertj-core:3.10.0'
   testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 idea {
