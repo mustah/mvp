@@ -18,17 +18,23 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.Language;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Email;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "mvp_user")
 @Audited
 public class UserEntity extends IdentifiableType<UUID> {
+
+  private static final long serialVersionUID = -3697251067617203364L;
 
   @Id
   public UUID id;
@@ -59,26 +65,6 @@ public class UserEntity extends IdentifiableType<UUID> {
     inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role")
   )
   public Collection<RoleEntity> roles;
-
-  UserEntity() {}
-
-  public UserEntity(
-    UUID id,
-    String name,
-    String email,
-    String password,
-    Language language,
-    OrganisationEntity organisation,
-    Collection<RoleEntity> roles
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.language = language;
-    this.organisation = organisation;
-    this.roles = roles;
-  }
 
   @Override
   public UUID getId() {

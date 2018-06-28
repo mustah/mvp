@@ -10,25 +10,27 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 
+@NoArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "role")
 @Audited
 public class RoleEntity extends IdentifiableType<String> {
 
+  private static final long serialVersionUID = -4988854057995751873L;
+
   @Id
   public String role;
 
   @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
   public Collection<UserEntity> users;
-
-  RoleEntity() {}
 
   public RoleEntity(String role) {
     this.role = role;

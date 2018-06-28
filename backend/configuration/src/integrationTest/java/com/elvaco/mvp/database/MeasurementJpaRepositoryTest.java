@@ -586,10 +586,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     String quantity
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
+      null,
       when.toZonedDateTime(),
       quantity,
-      value,
-      unit,
+      new MeasurementUnit(unit, value),
       meter
     ));
   }

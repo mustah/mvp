@@ -6,10 +6,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 @UtilityClass
 public class DemoDataHelper {
@@ -22,12 +24,12 @@ public class DemoDataHelper {
   ) {
     double value = RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2);
 
-    return asList(
+    return singletonList(
       new MeasurementEntity(
+        null,
         created,
         Quantity.VOLUME.name,
-        value,
-        Quantity.VOLUME.presentationUnit(),
+        new MeasurementUnit(Quantity.VOLUME.presentationUnit(), value),
         meter
       )
     );
@@ -42,52 +44,52 @@ public class DemoDataHelper {
 
     return asList(
       new MeasurementEntity(
+        null,
         created,
         Quantity.FORWARD_TEMPERATURE.name,
-        tempIn,
-        Quantity.FORWARD_TEMPERATURE.presentationUnit(),
+        new MeasurementUnit(Quantity.FORWARD_TEMPERATURE.presentationUnit(), tempIn),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.RETURN_TEMPERATURE.name,
-        tempOut,
-        Quantity.RETURN_TEMPERATURE.presentationUnit(),
+        new MeasurementUnit(Quantity.RETURN_TEMPERATURE.presentationUnit(), tempOut),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.DIFFERENCE_TEMPERATURE.name,
-        tempIn - tempOut,
-        Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
+        new MeasurementUnit(Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(), tempIn - tempOut),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.VOLUME_FLOW.name,
-        RANDOM.nextDouble(0.0, 3.0),
-        Quantity.VOLUME_FLOW.presentationUnit(),
+        new MeasurementUnit(Quantity.VOLUME_FLOW.presentationUnit(), RANDOM.nextDouble(0.0, 3.0)),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.POWER.name,
-        RANDOM.nextDouble(100.0, 200.0),
-        Quantity.POWER.presentationUnit(),
+        new MeasurementUnit(Quantity.POWER.presentationUnit(), RANDOM.nextDouble(100.0, 200.0)),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.ENERGY.name,
-        RANDOM.nextDouble(1000.0, 3000.0),
-        Quantity.ENERGY.presentationUnit(),
+        new MeasurementUnit(Quantity.ENERGY.presentationUnit(), RANDOM.nextDouble(1000.0, 3000.0)),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.VOLUME.name,
-        RANDOM.nextDouble(1.0, 3.0),
-        Quantity.VOLUME.presentationUnit(),
+        new MeasurementUnit(Quantity.VOLUME.presentationUnit(), RANDOM.nextDouble(1.0, 3.0)),
         meter
       )
     );
@@ -100,12 +102,12 @@ public class DemoDataHelper {
   ) {
     double value = RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2);
 
-    return asList(
+    return singletonList(
       new MeasurementEntity(
+        null,
         created,
         Quantity.VOLUME.name,
-        value,
-        Quantity.VOLUME.presentationUnit(),
+        new MeasurementUnit(Quantity.VOLUME.presentationUnit(), value),
         meter
       )
     );
@@ -123,31 +125,30 @@ public class DemoDataHelper {
 
     return asList(
       new MeasurementEntity(
+        null,
         created,
-        Quantity.ENERGY.name,
-        energy,
-        Quantity.ENERGY.presentationUnit(),
+        Quantity.ENERGY.name, new MeasurementUnit(Quantity.ENERGY.presentationUnit(), energy),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.ENERGY_RETURN.name,
-        energyReturn,
-        Quantity.ENERGY_RETURN.presentationUnit(),
+        new MeasurementUnit(Quantity.ENERGY_RETURN.presentationUnit(), energyReturn),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.REACTIVE_ENERGY.name,
-        energyReactive,
-        Quantity.REACTIVE_ENERGY.presentationUnit(),
+        new MeasurementUnit(Quantity.REACTIVE_ENERGY.presentationUnit(), energyReactive),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.POWER.name,
-        power,
-        Quantity.POWER.presentationUnit(),
+        new MeasurementUnit(Quantity.POWER.presentationUnit(), power),
         meter
       )
     );
@@ -157,22 +158,19 @@ public class DemoDataHelper {
     ZonedDateTime created,
     PhysicalMeterEntity meter
   ) {
-    double temp = RANDOM.nextDouble(15, 40);
-    double humidity = RANDOM.nextDouble(40, 90);
-
     return asList(
       new MeasurementEntity(
+        null,
         created,
         Quantity.TEMPERATURE.name,
-        temp,
-        Quantity.TEMPERATURE.presentationUnit(),
+        new MeasurementUnit(Quantity.TEMPERATURE.presentationUnit(), RANDOM.nextDouble(15, 40)),
         meter
       ),
       new MeasurementEntity(
+        null,
         created,
         Quantity.HUMIDITY.name,
-        humidity,
-        Quantity.HUMIDITY.presentationUnit(),
+        new MeasurementUnit(Quantity.HUMIDITY.presentationUnit(), RANDOM.nextDouble(40, 90)),
         meter
       )
     );

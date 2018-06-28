@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
@@ -30,9 +29,6 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private Organisations organisations;
 
   @After
   public void tearDown() {
@@ -178,15 +174,15 @@ public class SummaryControllerTest extends IntegrationTest {
       meterId,
       "externalId-" + meterId,
       context().getOrganisationId(),
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       location,
-          null,
+      null,
       0L, null
-        );
+    );
   }
 
   private LogicalMeter newMeter() {

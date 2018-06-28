@@ -124,7 +124,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .map(dto -> MeterDefinition.fromMedium(Medium.from(dto.medium)))
       .orElse(MeterDefinition.UNKNOWN_METER);
 
-    return logicalMeterUseCases.findByOrganisationIdAndExternalId(organisationId, facilityId)
+    return logicalMeterUseCases.findBy(organisationId, facilityId)
       .map(logicalMeter -> logicalMeter.withLocation(location).withMeterDefinition(meterDefinition))
       .orElseGet(() ->
         Optional.ofNullable(meterDto)
@@ -149,7 +149,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     }
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
-      .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address)
+      .findBy(organisation.id, facility.id, address)
       .orElseGet(() ->
         PhysicalMeter.builder()
           .organisation(organisation)

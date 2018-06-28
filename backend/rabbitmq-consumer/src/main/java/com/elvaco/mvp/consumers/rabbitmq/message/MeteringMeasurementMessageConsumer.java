@@ -19,7 +19,6 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +53,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   @Override
   public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto measurementMessage) {
     String facilityId = measurementMessage.facility.id;
+
     if (facilityId.trim().isEmpty()) {
       log.warn(
         "Discarding measurement message with invalid facility/external ID: {}",
@@ -68,11 +68,8 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     MeasurementMessageResponseBuilder responseBuilder =
       new MeasurementMessageResponseBuilder(measurementMessage.organisationId);
 
-    LogicalMeter logicalMeter =
-      logicalMeterUseCases.findByOrganisationIdAndExternalId(
-        organisation.id,
-        facilityId
-      ).orElseGet(() -> {
+    LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
+      .orElseGet(() -> {
         Medium medium = Medium.from(resolveMeterDefinition(measurementMessage.values).medium);
         return new LogicalMeter(
           randomUUID(),
@@ -83,64 +80,53 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         );
       });
 
-    PhysicalMeter physicalMeter = physicalMeterUseCases
-      .findByOrganisationIdAndExternalIdAndAddress(
-        organisation.id,
-        facilityId,
-        measurementMessage.meter.id
-      ).orElseGet(() -> PhysicalMeter.builder()
-        .organisation(organisation)
-        .address(measurementMessage.meter.id)
-        .externalId(facilityId)
-        .medium(UNKNOWN_MEDIUM.medium)
-        .logicalMeterId(logicalMeter.id)
-        .readIntervalMinutes(0)
-        .build());
+    String address = measurementMessage.meter.id;
 
-    if (physicalMeterValidator().isIncomplete(physicalMeter)
-      || logicalMeterValidator().isIncomplete(logicalMeter)) {
-      responseBuilder.setFacilityId(facilityId);
-      responseBuilder.setMeterExternalId(measurementMessage.meter.id);
-    }
-
-    Gateway gateway = null;
-    if (measurementMessage.gateway().isPresent()) {
-      GatewayIdDto gatewayId = measurementMessage.gateway().get();
-      gateway = gatewayUseCases.findBy(
-        organisation.id,
-        gatewayId.id
-      ).orElseGet(() ->
-        Gateway.builder()
-          .organisationId(organisation.id)
-          .serial(gatewayId.id)
-          .productModel("")
-          .meter(logicalMeter)
-          .build()
-      );
-
-      if (gatewayValidator().isIncomplete(gateway)) {
-        responseBuilder.setFacilityId(facilityId);
-        responseBuilder.setGatewayExternalId(gatewayId.id);
-      }
-    }
+    PhysicalMeter physicalMeter =
+      physicalMeterUseCases.findBy(organisation.id, facilityId, address)
+        .orElseGet(() ->
+          PhysicalMeter.builder()
+            .organisation(organisation)
+            .address(address)
+            .externalId(facilityId)
+            .medium(UNKNOWN_MEDIUM.medium)
+            .logicalMeterId(logicalMeter.id)
+            .readIntervalMinutes(0)
+            .build());
+    LogicalMeter connectedLogicalMeter = measurementMessage.gateway()
+      .map(gatewayIdDto -> gatewayIdDto.id)
+      .map(serial -> gatewayUseCases.findBy(organisation.id, serial)
+        .orElseGet(() -> gatewayUseCases.save(
+          Gateway.builder()
+            .organisationId(organisation.id)
+            .serial(serial)
+            .productModel("")
+            .meter(logicalMeter)
+            .build()
+        )))
+      .map(gateway -> {
+        if (gatewayValidator().isIncomplete(gateway)) {
+          responseBuilder.setGatewayExternalId(gateway.serial);
+          responseBuilder.setFacilityId(facilityId);
+        }
+        return logicalMeter.withGateway(gateway).withPhysicalMeter(physicalMeter);
+      })
+      .orElseGet(() -> logicalMeter.withPhysicalMeter(physicalMeter));
 
     List<Measurement> measurements =
       removeSimultaneousQuantityValues(measurementMessage.values).stream()
         .map(value -> findOrCreateMeasurement(value, physicalMeter))
         .collect(toList());
 
-    if (gateway != null) {
-      gatewayUseCases.save(gateway);
-      logicalMeterUseCases.save(
-        logicalMeter
-          .withGateway(gateway)
-          .withPhysicalMeter(physicalMeter));
-    } else {
-      logicalMeterUseCases.save(logicalMeter.withPhysicalMeter(physicalMeter));
-    }
-
+    logicalMeterUseCases.save(connectedLogicalMeter);
     physicalMeterUseCases.save(physicalMeter);
     measurementUseCases.save(measurements);
+
+    if (physicalMeterValidator().isIncomplete(physicalMeter)
+      || logicalMeterValidator().isIncomplete(logicalMeter)) {
+      responseBuilder.setFacilityId(facilityId);
+      responseBuilder.setMeterExternalId(address);
+    }
 
     return responseBuilder.build();
   }
@@ -155,8 +141,6 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         .physicalMeter(physicalMeter)
         .created(value.timestamp.atZone(METERING_TIMEZONE))
         .quantity(mappedQuantityName(value.quantity))
-        .value(value.value)
-        .unit(value.unit)
         .build()
     ).withValue(value.value)
       .withUnit(value.unit)

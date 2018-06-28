@@ -58,7 +58,7 @@ public class LogicalMeterController {
       .replace("before", before != null ? before.toString() : ZonedDateTime.now().toString())
       .replace("after", after.toString());
 
-    return logicalMeterUseCases.findOneBy(parameters)
+    return logicalMeterUseCases.findBy(parameters)
       .map(LogicalMeterDtoMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }

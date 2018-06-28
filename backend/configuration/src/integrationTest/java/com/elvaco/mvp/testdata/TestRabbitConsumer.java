@@ -1,6 +1,7 @@
 package com.elvaco.mvp.testdata;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +35,7 @@ public class TestRabbitConsumer extends DefaultConsumer {
   }
 
   public <T> T fromJson(Class<T> classOfT) throws InterruptedException {
-    return MessageSerializer.fromJson(new String(receiveOne()), classOfT);
+    return MessageSerializer.fromJson(new String(receiveOne(), Charset.forName("UTF-8")), classOfT);
   }
 
   private byte[] receiveOne() throws InterruptedException {
