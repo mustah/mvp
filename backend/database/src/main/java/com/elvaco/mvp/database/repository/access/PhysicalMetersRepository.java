@@ -23,11 +23,11 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class PhysicalMetersRepository implements PhysicalMeters {
 
-  private final PhysicalMeterJpaRepository jpaRepository;
+  private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Override
   public List<PhysicalMeter> findByMedium(String medium) {
-    return jpaRepository.findByMedium(medium)
+    return physicalMeterJpaRepository.findByMedium(medium)
       .stream()
       .map(PhysicalMeterEntityMapper::toDomainModel)
       .collect(toList());
@@ -35,14 +35,14 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   public List<PhysicalMeter> findAll() {
-    return StreamSupport.stream(jpaRepository.findAll().spliterator(), false)
+    return StreamSupport.stream(physicalMeterJpaRepository.findAll().spliterator(), false)
       .map(PhysicalMeterEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return new PageAdapter<>(jpaRepository.findAll(
+    return new PageAdapter<>(physicalMeterJpaRepository.findAll(
       new PhysicalMeterQueryFilters().toExpression(parameters),
       new PageRequest(
         pageable.getPageNumber(),
@@ -53,7 +53,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    PhysicalMeterEntity entity = jpaRepository.save(
+    PhysicalMeterEntity entity = physicalMeterJpaRepository.save(
       PhysicalMeterEntityMapper.toEntity(physicalMeter)
     );
     return PhysicalMeterEntityMapper.toDomainModel(entity);
@@ -65,7 +65,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
     String externalId,
     String address
   ) {
-    return jpaRepository.findByOrganisationIdAndExternalIdAndAddress(
+    return physicalMeterJpaRepository.findByOrganisationIdAndExternalIdAndAddress(
       organisationId,
       externalId,
       address

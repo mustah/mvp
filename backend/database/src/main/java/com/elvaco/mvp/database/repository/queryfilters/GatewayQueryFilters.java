@@ -8,12 +8,14 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.gatewayStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
@@ -25,6 +27,7 @@ public class GatewayQueryFilters extends QueryFilters {
 
   private static final QGatewayEntity GATEWAY = gatewayEntity;
   private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
+  private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   private ZonedDateTime before;
   private ZonedDateTime after;
@@ -68,9 +71,9 @@ public class GatewayQueryFilters extends QueryFilters {
       case "medium":
         return LOGICAL_METER.meterDefinition.medium.in(values);
       case "manufacturer":
-        return LOGICAL_METER.physicalMeters.any().manufacturer.in(values);
+        return PHYSICAL_METER.manufacturer.in(values);
       case "secondaryAddress":
-        return LOGICAL_METER.physicalMeters.any().address.in(values);
+        return PHYSICAL_METER.address.in(values);
       default:
         return null;
     }
@@ -97,6 +100,6 @@ public class GatewayQueryFilters extends QueryFilters {
   }
 
   private static LocationExpressions newLocationExpressions() {
-    return new LocationExpressions(GATEWAY.meters.any().location);
+    return new LocationExpressions(LOGICAL_METER.location);
   }
 }
