@@ -18,7 +18,6 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.generator.GeneratedData;
 import com.elvaco.mvp.generator.MeterPopulationSpecification;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -102,7 +101,6 @@ class GeneratedDataLoader implements CommandLineRunner {
       Duration.ofNanos(System.nanoTime() - start).getSeconds()
     );
     saveMeasurements(allMeasurements);
-
   }
 
   @Transactional
@@ -122,10 +120,7 @@ class GeneratedDataLoader implements CommandLineRunner {
     for (int i = 0; i < allMeasurements.size(); i += batchSz) {
       long start = System.nanoTime();
       int sz = Math.min(batchSz, allMeasurements.size() - i);
-      measurements.save(allMeasurements.subList(
-        i,
-        i + sz
-      ));
+      measurements.save(allMeasurements.subList(i, i + sz));
       log.info(
         "Saved {} measurements ({}/{} total) in {} seconds ({}s total)",
         sz,

@@ -78,17 +78,12 @@ class DataProviderConfig {
 
   @Bean
   Users users() {
-    return new UserRepository(
-      userJpaRepository,
-      passwordEncoder::encode
-    );
+    return new UserRepository(userJpaRepository, passwordEncoder::encode);
   }
 
   @Bean
   Settings settings() {
-    return new SettingRepository(
-      settingJpaRepository
-    );
+    return new SettingRepository(settingJpaRepository);
   }
 
   @Bean
@@ -111,23 +106,17 @@ class DataProviderConfig {
 
   @Bean
   Measurements measurements() {
-    return new MeasurementRepository(
-      measurementJpaRepository
-    );
+    return new MeasurementRepository(measurementJpaRepository);
   }
 
   @Bean
   PhysicalMeters physicalMeters() {
-    return new PhysicalMetersRepository(
-      physicalMeterJpaRepository
-    );
+    return new PhysicalMetersRepository(physicalMeterJpaRepository);
   }
 
   @Bean
   Organisations organisations() {
-    return new OrganisationRepository(
-      organisationJpaRepository
-    );
+    return new OrganisationRepository(organisationJpaRepository);
   }
 
   @Bean

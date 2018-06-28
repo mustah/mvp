@@ -37,9 +37,7 @@ public class MeasurementRepository implements Measurements {
   public Measurement save(Measurement measurement) {
     try {
       return MeasurementEntityMapper.toDomainModel(
-        measurementJpaRepository.save(
-          MeasurementEntityMapper.toEntity(measurement)
-        )
+        measurementJpaRepository.save(MeasurementEntityMapper.toEntity(measurement))
       );
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex);
@@ -52,8 +50,7 @@ public class MeasurementRepository implements Measurements {
       .map(MeasurementEntityMapper::toEntity)
       .collect(toList());
     try {
-      return measurementJpaRepository.save(measurementEntities)
-        .stream()
+      return measurementJpaRepository.save(measurementEntities).stream()
         .map(MeasurementEntityMapper::toDomainModel)
         .collect(toList());
     } catch (DataIntegrityViolationException ex) {
@@ -69,7 +66,6 @@ public class MeasurementRepository implements Measurements {
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-
     return measurementJpaRepository.getAverageForPeriod(
       meterIds,
       resolution.toString(),
@@ -84,13 +80,15 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
+  public Optional<Measurement> findBy(
     UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
+    ZonedDateTime created,
+    String quantity
   ) {
     return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
-      physicalMeterId, quantity, created
+      physicalMeterId,
+      quantity,
+      created
     ).map(MeasurementEntityMapper::toDomainModel);
   }
 
@@ -136,5 +134,4 @@ public class MeasurementRepository implements Measurements {
   private MeasurementValue projectionToMeasurementValue(MeasurementValueProjection projection) {
     return new MeasurementValue(projection.getDoubleValue(), projection.getInstant());
   }
-
 }

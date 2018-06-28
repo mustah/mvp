@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 
@@ -19,8 +20,8 @@ public class MeasurementUnit implements Serializable {
 
   public MeasurementUnit() {}
 
-  public MeasurementUnit(String unit, double value) {
-    if (unit.trim().isEmpty()) {
+  public MeasurementUnit(@Nullable String unit, double value) {
+    if (unit == null || unit.trim().isEmpty()) {
       throw new IllegalArgumentException(String.format("Empty unit for value '%f'", value));
     }
     this.unit = superscriptExponent(unit);

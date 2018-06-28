@@ -49,8 +49,6 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return LOGICAL_METER.organisationId.in(toUuids(values));
       case "medium":
         return LOGICAL_METER.meterDefinition.medium.in(values);
-      case "manufacturer":
-        return LOGICAL_METER.physicalMeters.any().manufacturer.in(values);
       case "facility":
         return LOGICAL_METER.externalId.in(values);
       case "city":
@@ -72,6 +70,8 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return gatewayStatusQueryFilter(after, before, statuses);
       case "gatewaySerial":
         return GATEWAY.serial.in(values);
+      case "manufacturer":
+        return PHYSICAL_METER.manufacturer.in(values);
       case "secondaryAddress":
         return PHYSICAL_METER.address.in(values);
       default:

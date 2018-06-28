@@ -9,8 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "mvp_setting")
@@ -25,14 +29,6 @@ public class SettingEntity extends IdentifiableType<UUID> {
 
   @Column(nullable = false)
   public String value;
-
-  SettingEntity() {}
-
-  public SettingEntity(UUID id, String name, String value) {
-    this.id = id;
-    this.name = name;
-    this.value = value;
-  }
 
   @Override
   public UUID getId() {

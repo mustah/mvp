@@ -11,11 +11,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
 
 import static java.util.Collections.emptySet;
 
+@NoArgsConstructor
 @ToString(exclude = "users")
 @Entity
 @Access(AccessType.FIELD)
@@ -33,8 +35,6 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
 
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
   public Set<UserEntity> users;
-
-  OrganisationEntity() {}
 
   public OrganisationEntity(UUID id, String name, String slug, String externalId) {
     this.id = id;

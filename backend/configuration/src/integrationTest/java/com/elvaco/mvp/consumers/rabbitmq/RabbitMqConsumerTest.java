@@ -231,8 +231,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     )
       .filter(meter ->
         meter.location.country.equalsIgnoreCase(country)
-        && meter.location.city.equalsIgnoreCase(city)
-        && meter.location.streetAddress.equalsIgnoreCase(address))
+          && meter.location.city.equalsIgnoreCase(city)
+          && meter.location.streetAddress.equalsIgnoreCase(address))
       .isPresent();
   }
 

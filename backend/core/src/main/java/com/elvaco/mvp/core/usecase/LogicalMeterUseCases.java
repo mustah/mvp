@@ -61,7 +61,7 @@ public class LogicalMeterUseCases {
     );
   }
 
-  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
+  public Optional<LogicalMeter> findBy(RequestParameters parameters) {
     Optional<LogicalMeter> meter = logicalMeters.findOneBy(setCurrentUsersOrganisationId(
       currentUser,
       parameters
@@ -72,25 +72,19 @@ public class LogicalMeterUseCases {
       .orElse(meter);
   }
 
+  public Optional<LogicalMeter> findBy(UUID organisationId, String externalId) {
+    if (currentUser.isWithinOrganisation(organisationId) || currentUser.isSuperAdmin()) {
+      return logicalMeters.findByOrganisationIdAndExternalId(organisationId, externalId);
+    }
+    return Optional.empty();
+  }
+
   public Optional<LogicalMeter> findById(UUID id) {
     if (currentUser.isSuperAdmin()) {
       return logicalMeters.findById(id);
     } else {
       return logicalMeters.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
     }
-  }
-
-  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    UUID organisationId,
-    String externalId
-  ) {
-    if (currentUser.isWithinOrganisation(organisationId) || currentUser.isSuperAdmin()) {
-      return logicalMeters.findByOrganisationIdAndExternalId(
-        organisationId,
-        externalId
-      );
-    }
-    return Optional.empty();
   }
 
   public Optional<LogicalMeter> deleteById(UUID id) {

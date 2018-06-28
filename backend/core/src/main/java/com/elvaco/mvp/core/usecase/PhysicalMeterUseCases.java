@@ -32,13 +32,12 @@ public class PhysicalMeterUseCases {
     return physicalMeters.save(physicalMeter);
   }
 
-  public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
+  public Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,
     String address
   ) {
-    if (currentUser.isSuperAdmin()
-      || currentUser.isWithinOrganisation(organisationId)) {
+    if (currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(organisationId)) {
       return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
         organisationId,
         externalId,

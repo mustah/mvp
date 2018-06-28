@@ -4,12 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
+
+import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 
 public class LogicalMeterSortingEntityMapper extends SortingEntityMapper {
 
   private static final Map<String, String> SORTABLE_PROPERTIES = new HashMap<>();
 
-  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
+  private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
+
+  private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   static {
     SORTABLE_PROPERTIES.put("id", toSortString(LOGICAL_METER.id));
@@ -20,7 +26,7 @@ public class LogicalMeterSortingEntityMapper extends SortingEntityMapper {
 
     SORTABLE_PROPERTIES.put(
       "manufacturer",
-      toSortString(LOGICAL_METER.physicalMeters.any().manufacturer)
+      toSortString(PHYSICAL_METER.manufacturer)
     );
   }
 

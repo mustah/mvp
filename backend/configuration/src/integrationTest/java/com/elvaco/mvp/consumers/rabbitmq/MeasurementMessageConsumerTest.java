@@ -86,8 +86,8 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       singletonList(new ValueDto(LocalDateTime.now(), 1.0, "", "Volume"))
     );
 
-    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage)).isInstanceOf(
-      IllegalArgumentException.class);
+    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage))
+      .isInstanceOf(IllegalArgumentException.class);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
