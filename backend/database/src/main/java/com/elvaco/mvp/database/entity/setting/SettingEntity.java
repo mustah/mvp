@@ -21,6 +21,8 @@ import org.hibernate.envers.Audited;
 @Audited
 public class SettingEntity extends IdentifiableType<UUID> {
 
+  private static final long serialVersionUID = 6019225305167087656L;
+
   @Id
   public UUID id;
 
