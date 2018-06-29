@@ -1,15 +1,18 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action, uuid} from '../../../types/Types';
 import {SELECTION_TREE_TOGGLE_ENTRY} from './selectionTreeActions';
-import {SelectionTreeState} from './selectionTreeModels';
+import {SelectionTreeUiState} from './selectionTreeModels';
 
-const initialState: SelectionTreeState = {
+const initialState: SelectionTreeUiState = {
   openListItems: [],
 };
 
 type ActionTypes = Action<uuid[]> | EmptyAction<string>;
 
-export const selectionTree = (state: SelectionTreeState = initialState, action: ActionTypes): SelectionTreeState => {
+export const selectionTree = (
+  state: SelectionTreeUiState = initialState,
+  action: ActionTypes,
+): SelectionTreeUiState => {
   switch (action.type) {
     case SELECTION_TREE_TOGGLE_ENTRY:
       return {

@@ -1,10 +1,10 @@
-import {SelectionTreeState} from '../selectionTreeModels';
+import {SelectionTreeUiState} from '../selectionTreeModels';
 import {getOpenListItems} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
   it('can handle an empty selection', () => {
-    const selectionTree: SelectionTreeState = {
+    const selectionTree: SelectionTreeUiState = {
       openListItems: [],
     };
 
@@ -12,7 +12,7 @@ describe('selectionTreeSelectors', () => {
   });
 
   it('can keep track of opened items', () => {
-    const selectionTree: SelectionTreeState = {
+    const selectionTree: SelectionTreeUiState = {
       openListItems: [1, 2, 3, 4],
     };
 
@@ -20,7 +20,7 @@ describe('selectionTreeSelectors', () => {
   });
 
   it('can handle duplicated selected items', () => {
-    const selectionTree: SelectionTreeState = {
+    const selectionTree: SelectionTreeUiState = {
       openListItems: [1, 2, 4, 4, 4, 4],
     };
 

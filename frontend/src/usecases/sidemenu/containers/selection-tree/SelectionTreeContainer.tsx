@@ -3,7 +3,12 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
+import {
+  listStyle,
+  nestedListItemStyle,
+  sideBarHeaderStyle,
+  sideBarStyles,
+} from '../../../../app/themes';
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
@@ -14,10 +19,7 @@ import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selecti
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
-import {
-  toggleIncludingChildren,
-  toggleSingleEntry,
-} from '../../../report/reportActions';
+import {toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
@@ -61,9 +63,6 @@ class SelectionTreeComponent extends React.Component<Props> {
       toggleIncludingChildren,
       toggleSingleEntry,
     } = this.props;
-    if (selectionTree.result.cities.length === 0) {
-      return null;
-    }
 
     const renderSelectionOverview = (id: uuid) =>
       renderSelectionTreeCities({
@@ -77,16 +76,15 @@ class SelectionTreeComponent extends React.Component<Props> {
       });
 
     const cityIds = selectionTree.result.cities;
-
     const nestedItems = cityIds.length
       ? [...cityIds].sort().map(renderSelectionOverview)
       : [(
-        <LoadingListItem
-          isFetching={isFetching}
-          text={translate('no meters')}
-          key="loading-list-item"
-        />
-      )];
+           <LoadingListItem
+             isFetching={isFetching}
+             text={translate('no meters')}
+             key="loading-list-item"
+           />
+         )];
 
     return (
       <List style={listStyle}>

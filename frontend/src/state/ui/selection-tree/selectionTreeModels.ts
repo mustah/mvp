@@ -1,6 +1,5 @@
 import {uuid} from '../../../types/Types';
 
-// TODO THERE ARE 2 x "SelectionTreeState" defined!!
-export interface SelectionTreeState {
+export interface SelectionTreeUiState {
   openListItems: uuid[];
 }
