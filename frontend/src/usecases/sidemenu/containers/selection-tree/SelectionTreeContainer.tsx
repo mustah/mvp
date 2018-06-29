@@ -63,9 +63,6 @@ class SelectionTreeComponent extends React.Component<Props> {
       toggleIncludingChildren,
       toggleSingleEntry,
     } = this.props;
-    if (selectionTree.result.cities.length === 0) {
-      return null;
-    }
 
     const renderSelectionOverview = (id: uuid) =>
       renderSelectionTreeCities({
@@ -79,7 +76,6 @@ class SelectionTreeComponent extends React.Component<Props> {
       });
 
     const cityIds = selectionTree.result.cities;
-
     const nestedItems = cityIds.length
       ? [...cityIds].sort().map(renderSelectionOverview)
       : [(
