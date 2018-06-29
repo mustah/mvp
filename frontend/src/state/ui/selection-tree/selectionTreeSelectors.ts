@@ -1,10 +1,10 @@
 import {createSelector} from 'reselect';
 import {uuid} from '../../../types/Types';
-import {SelectionTreeState} from './selectionTreeModels';
+import {SelectionTreeUiState} from './selectionTreeModels';
 
-const getOpenItems = (state: SelectionTreeState): uuid[] => state.openListItems;
+const getOpenItems = (state: SelectionTreeUiState): uuid[] => state.openListItems;
 
-export const getOpenListItems = createSelector<SelectionTreeState, uuid[], Set<uuid>>(
+export const getOpenListItems = createSelector<SelectionTreeUiState, uuid[], Set<uuid>>(
   getOpenItems,
   (openItems: uuid[]) => new Set<uuid>(openItems),
 );
