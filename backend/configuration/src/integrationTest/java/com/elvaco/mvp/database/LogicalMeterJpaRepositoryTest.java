@@ -3,17 +3,18 @@ package com.elvaco.mvp.database;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -45,10 +46,12 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   public void setUp() {
     logicalMeterId = randomUUID();
 
+    Quantity power = QuantityAccess.singleton().getByName(Quantity.POWER.name);
+
     MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
       new MeterDefinitionEntity(
         MeterDefinitionType.UNKNOWN_METER_TYPE,
-        singleton(new QuantityEntity(null, "Speed", "m/s", SeriesDisplayMode.READOUT)),
+        singleton(QuantityEntityMapper.toEntity(power)),
         "My meter definition",
         false
       ));

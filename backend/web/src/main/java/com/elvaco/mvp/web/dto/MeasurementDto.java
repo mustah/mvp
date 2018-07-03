@@ -2,10 +2,12 @@ package com.elvaco.mvp.web.dto;
 
 import java.time.ZonedDateTime;
 
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class MeasurementDto {
 
@@ -14,18 +16,4 @@ public class MeasurementDto {
   public double value;
   public String unit;
   public ZonedDateTime created;
-
-  public MeasurementDto(
-    Long id,
-    String quantity,
-    double value,
-    String unit,
-    ZonedDateTime created
-  ) {
-    this.id = id;
-    this.quantity = quantity;
-    this.value = value;
-    this.unit = unit;
-    this.created = created;
-  }
 }

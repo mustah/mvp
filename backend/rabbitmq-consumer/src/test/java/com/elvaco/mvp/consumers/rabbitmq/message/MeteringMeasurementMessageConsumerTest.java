@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -18,6 +19,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
@@ -53,6 +55,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("ConstantConditions")
 public class MeteringMeasurementMessageConsumerTest {
@@ -73,7 +76,7 @@ public class MeteringMeasurementMessageConsumerTest {
   private LogicalMeters logicalMeters;
   private Gateways gateways;
   private MockMeasurements measurements;
-  private MeteringMeasurementMessageConsumer messageConsumer;
+  private MeasurementMessageConsumer messageConsumer;
 
   @Before
   public void setUp() {
@@ -106,6 +109,7 @@ public class MeteringMeasurementMessageConsumerTest {
     measurements = new MockMeasurements();
     logicalMeters = new MockLogicalMeters();
     gateways = new MockGateways();
+    QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
       new LogicalMeterUseCases(
@@ -170,18 +174,15 @@ public class MeteringMeasurementMessageConsumerTest {
       meterId,
       EXTERNAL_ID,
       organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
-      UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+      emptyList(),
+      emptyList(),
+      UNKNOWN_LOCATION
+    ));
 
-    messageConsumer.accept(newMeasurementMessage("Wattage", "W", 1.0));
-    messageConsumer.accept(newMeasurementMessage("Wattage", "W", 2.0));
+    messageConsumer.accept(newMeasurementMessage("Power", "W", 1.0));
+    messageConsumer.accept(newMeasurementMessage("Power", "W", 2.0));
 
     List<Measurement> actual = measurements.allMocks();
     assertThat(actual).hasSize(1);
@@ -195,15 +196,16 @@ public class MeteringMeasurementMessageConsumerTest {
       randomUUID(),
       EXTERNAL_ID,
       organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+      null,
+      0L,
+      null
+    ));
 
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
@@ -237,26 +239,49 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementForNewQuantityIsNotUpdated() {
+  public void measurementIsAcceptedForDifferentQuantitiesWithSameTimestamp() {
     Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(new LogicalMeter(
       randomUUID(),
       EXTERNAL_ID,
       organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+      null,
+      0L,
+      null
+    ));
 
-    messageConsumer.accept(newMeasurementMessage("Wattage", "W", 1.0));
-    messageConsumer.accept(newMeasurementMessage("Flow", "m³/s", 2.0));
+    messageConsumer.accept(newMeasurementMessage("Power", "W", 1.0));
+    messageConsumer.accept(newMeasurementMessage("Flow temp.", "m³/h", 2.0));
 
     assertThat(measurements.allMocks()).hasSize(2);
+  }
+
+  @Test
+  public void unknownQuantityThrowsException() {
+    Organisation organisation = saveDefaultOrganisation();
+    logicalMeters.save(
+      new LogicalMeter(
+        randomUUID(),
+        EXTERNAL_ID,
+        organisation.id,
+        MeterDefinition.UNKNOWN_METER,
+        ZonedDateTime.now(),
+        emptyList(),
+        emptyList(),
+        UNKNOWN_LOCATION
+      ));
+
+    assertThatThrownBy(() ->
+      messageConsumer.accept(newMeasurementMessage("Half Life 3", "W", 1.0))
+    )
+      .isInstanceOf(RuntimeException.class)
+      .hasMessageContaining("Unknown quantity: Half Life 3");
   }
 
   @Test
@@ -406,7 +431,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForMissingLogicalMeter_CreatesNewLogicalMeter() {
+  public void measurementValueFor_MissingLogicalMeter_CreatesNewLogicalMeter() {
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
 
     assertThat(response.facility.id).isEqualTo("ABC-123");
@@ -414,7 +439,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForMissingPhysicalMeter_CreatesNewPhysicalMeter() {
+  public void measurementValueFor_MissingPhysicalMeter_CreatesNewPhysicalMeter() {
     Organisation organisation = saveDefaultOrganisation();
 
     logicalMeters.save(new LogicalMeter(
@@ -433,7 +458,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForExistingGateway_DoesNotCreateNewGateway() {
+  public void measurementValueFor_ExistingGateway_DoesNotCreateNewGateway() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
 
@@ -445,7 +470,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForExistingGatewayDoesNotModifyGateway() {
+  public void measurementValueFor_ExistingGateway_DoesNotModifyGateway() {
     Organisation organisation = saveDefaultOrganisation();
     Gateway existingGateway = gateways.save(newGateway(organisation.id));
 
@@ -457,7 +482,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForExistingEntities_CreateNoNewEntities() {
+  public void measurementValueFor_ExistingEntities_CreateNoNewEntities() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
@@ -482,7 +507,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForExistingEntities_CreateNewPhysicalMeter() {
+  public void measurementValueFor_ExistingEntities_CreateNewPhysicalMeter() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter().organisation(organisation).build());
@@ -509,7 +534,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForExistingEntities_CreateNewLogicalMeter() {
+  public void measurementValueFor_ExistingEntities_CreateNewLogicalMeter() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
@@ -532,7 +557,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
-  public void measurementValueForExistingEntities_CreateNewGateway() {
+  public void measurementValueFor_ExistingEntities_CreateNewGateway() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(new Gateway(
       randomUUID(),

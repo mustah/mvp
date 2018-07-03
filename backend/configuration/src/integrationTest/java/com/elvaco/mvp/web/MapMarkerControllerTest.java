@@ -280,15 +280,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       "external-1234",
       context().getOrganisationId2(),
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       NOW,
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       location.build(),
-          null,
+      null,
       0L, null
-        ).withGateway(gateway));
+    ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
       .get("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkersDto.class);
@@ -317,15 +317,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       "external-1234",
       context().getOrganisationId2(),
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       NOW,
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       new LocationBuilder().build(),
-          null,
+      null,
       0L, null
-        ).withGateway(gateway));
+    ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways?city=unknown,unknown", MapMarkersDto.class);
@@ -342,15 +342,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       "external-1234",
       context().getOrganisationId2(),
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       NOW,
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       lowConfidenceLocation(),
-          null,
+      null,
       0L, null
-        ).withGateway(gateway));
+    ).withGateway(gateway));
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
@@ -385,15 +385,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       randomUUID().toString(),
       context().getOrganisationId(),
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       NOW,
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       location,
-          null,
+      null,
       0L, null
-        ).withGateway(gateway));
+    ).withGateway(gateway));
   }
 
   private LogicalMeter saveLogicalMeterWith(Location location, User user) {
@@ -401,15 +401,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       randomUUID().toString(),
       user.organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       NOW,
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       location,
-          null,
+      null,
       0L, null
-        );
+    );
     return logicalMeters.save(logicalMeter);
   }
 
@@ -419,15 +419,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
       randomUUID(),
       randomUUID().toString(),
       user.organisation.id,
-          MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.UNKNOWN_METER,
       NOW,
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       location,
-          null,
+      null,
       0L, null
-        );
+    );
 
     logicalMeter = logicalMeters.save(logicalMeter);
     savePhysicalMeterWith(logicalMeter, status);

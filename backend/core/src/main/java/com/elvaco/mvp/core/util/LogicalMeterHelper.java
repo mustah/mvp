@@ -15,12 +15,11 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyMap;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public final class LogicalMeterHelper {
 
   private static final int DAY_INTERVAL = 1440;

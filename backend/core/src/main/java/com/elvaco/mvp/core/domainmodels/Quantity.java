@@ -1,72 +1,69 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 @EqualsAndHashCode
 @ToString
-public class Quantity {
+public class Quantity implements Identifiable<Long> {
 
   public static final Quantity VOLUME = new Quantity("Volume")
-    .withDefaultPresentation(
-      "m³",
-      SeriesDisplayMode.CONSUMPTION
-    );
+    .withDefaultPresentation("m³", SeriesDisplayMode.CONSUMPTION);
+
   public static final Quantity VOLUME_FLOW = new Quantity("Flow")
-    .withDefaultPresentation(
-      "m³/h",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("m³/h", SeriesDisplayMode.READOUT);
+
   public static final Quantity TEMPERATURE = new Quantity("Temperature")
-    .withDefaultPresentation(
-      "°C",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+
   public static final Quantity HUMIDITY = new Quantity("Relative humidity")
-    .withDefaultPresentation(
-      "%",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("%", SeriesDisplayMode.READOUT);
+
   public static final Quantity ENERGY = new Quantity("Energy")
-    .withDefaultPresentation(
-      "kWh",
-      SeriesDisplayMode.CONSUMPTION
-    );
+    .withDefaultPresentation("kWh", SeriesDisplayMode.CONSUMPTION);
+
   public static final Quantity POWER = new Quantity("Power")
-    .withDefaultPresentation(
-      "W",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("W", SeriesDisplayMode.READOUT);
+
   public static final Quantity FORWARD_TEMPERATURE = new Quantity("Forward temperature")
-    .withDefaultPresentation(
-      "°C",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+
   public static final Quantity RETURN_TEMPERATURE = new Quantity("Return temperature")
-    .withDefaultPresentation(
-      "°C",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+
   public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity("Difference temperature")
-    .withDefaultPresentation(
-      "K",
-      SeriesDisplayMode.READOUT
-    );
+    .withDefaultPresentation("K", SeriesDisplayMode.READOUT);
+
   public static final Quantity ENERGY_RETURN = new Quantity("Energy return")
-    .withDefaultPresentation(
-      "kWh",
-      SeriesDisplayMode.CONSUMPTION
-    );
+    .withDefaultPresentation("kWh", SeriesDisplayMode.CONSUMPTION);
+
   public static final Quantity REACTIVE_ENERGY = new Quantity("Reactive energy")
-    .withDefaultPresentation(
-      "kWh",
-      SeriesDisplayMode.CONSUMPTION
-    );
+    .withDefaultPresentation("kWh", SeriesDisplayMode.CONSUMPTION);
+
+  public static final List<Quantity> QUANTITIES = unmodifiableList(asList(
+    VOLUME,
+    VOLUME_FLOW,
+    TEMPERATURE,
+    HUMIDITY,
+    ENERGY,
+    POWER,
+    FORWARD_TEMPERATURE,
+    RETURN_TEMPERATURE,
+    DIFFERENCE_TEMPERATURE,
+    ENERGY_RETURN,
+    REACTIVE_ENERGY
+  ));
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
+
   public final String name;
+
   @Nullable
   public final Long id;
   private final QuantityPresentationInformation presentationInformation;
@@ -85,7 +82,7 @@ public class Quantity {
     this(null, name, presentationInformation);
   }
 
-  public Quantity(String name, String unit) {
+  public Quantity(String name, @Nullable String unit) {
     this(null, name, new QuantityPresentationInformation(unit, SeriesDisplayMode.UNKNOWN));
   }
 
@@ -129,6 +126,12 @@ public class Quantity {
           : seriesDisplayMode()
       )
     );
+  }
+
+  @Nullable
+  @Override
+  public Long getId() {
+    return id;
   }
 
   private Quantity withDefaultPresentation(String unit, SeriesDisplayMode displayMode) {

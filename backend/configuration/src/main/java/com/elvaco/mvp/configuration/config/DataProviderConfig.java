@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
+import com.elvaco.mvp.core.spi.repository.Quantities;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
@@ -26,6 +27,7 @@ import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
+import com.elvaco.mvp.database.repository.access.QuantityRepository;
 import com.elvaco.mvp.database.repository.access.RoleRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
@@ -41,6 +43,7 @@ import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.QuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
@@ -75,6 +78,7 @@ class DataProviderConfig {
   private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
   private final SummaryJpaRepository summaryJpaRepository;
   private final PropertiesJpaRepository propertiesJpaRepository;
+  private final QuantityJpaRepository quantityJpaRepository;
 
   @Bean
   Users users() {
@@ -160,5 +164,10 @@ class DataProviderConfig {
   @Bean
   Properties properties() {
     return new PropertiesRepository(propertiesJpaRepository);
+  }
+
+  @Bean
+  Quantities quantities() {
+    return new QuantityRepository(quantityJpaRepository);
   }
 }

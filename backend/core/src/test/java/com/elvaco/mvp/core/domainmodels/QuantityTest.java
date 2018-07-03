@@ -9,11 +9,9 @@ public class QuantityTest {
 
   @Test
   public void quantityAndUnitAreParsedCorrectly() {
-    assertThat(Quantity.of("Energy:kWh"))
-      .isEqualTo(new Quantity("Energy", "kWh"));
+    assertThat(Quantity.of("Energy:kWh")).isEqualTo(new Quantity("Energy", "kWh"));
 
-    assertThat(Quantity.of("Power:MW"))
-      .isEqualTo(new Quantity("Power", "MW"));
+    assertThat(Quantity.of("Power:MW")).isEqualTo(new Quantity("Power", "MW"));
   }
 
   @Test
@@ -24,20 +22,17 @@ public class QuantityTest {
 
   @Test
   public void parsingEmptyUnitIsOkay() {
-    assertThat(Quantity.of("Energy:"))
-      .isEqualTo(new Quantity("Energy"));
+    assertThat(Quantity.of("Energy:")).isEqualTo(new Quantity("Energy"));
   }
 
   @Test
   public void parsingMissingQuantityThrowsException() {
-    assertThatThrownBy(() -> Quantity.of(":A"))
-      .hasMessageContaining("Invalid quantity/unit pair");
+    assertThatThrownBy(() -> Quantity.of(":A")).hasMessageContaining("Invalid quantity/unit pair");
   }
 
   @Test
   public void parsingEmptyInputThrowsException() {
-    assertThatThrownBy(() -> Quantity.of(""))
-      .hasMessageContaining("Invalid quantity/unit pair");
+    assertThatThrownBy(() -> Quantity.of("")).hasMessageContaining("Invalid quantity/unit pair");
   }
 
   @Test

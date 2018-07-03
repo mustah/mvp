@@ -15,6 +15,7 @@ import static java.util.Collections.singletonList;
 
 @UtilityClass
 public class DemoDataHelper {
+
   private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
   public static List<MeasurementEntity> gasMeasurement(

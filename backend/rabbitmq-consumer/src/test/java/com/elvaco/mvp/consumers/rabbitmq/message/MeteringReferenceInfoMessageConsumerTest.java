@@ -47,7 +47,6 @@ import com.elvaco.mvp.testing.repository.MockProperties;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -281,12 +280,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     List<Gateway> all = gateways.findAll(new MockRequestParameters());
     assertThat(all.stream().anyMatch(gateway -> gateway.meters.isEmpty())).isFalse();
-  }
-
-  @Ignore
-  @Test
-  public void newLogicalMeterIsConnectedToExistingGateway() {
-    // TODO[!must!]
   }
 
   @Test

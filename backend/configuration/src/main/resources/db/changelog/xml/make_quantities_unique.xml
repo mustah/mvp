@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Make quantities unique" author="erimel">
+    <validCheckSum>7:8991fdd2a8488db940117975fd92d88c</validCheckSum>
+    <sqlFile path="../sql/make_quantities_unique.sql" relativeToChangelogFile="true"/>
+    <addUniqueConstraint
+      tableName="quantity"
+      columnNames="name"
+      constraintName="quantity_name_key"
+    />
+  </changeSet>
+
+</databaseChangeLog>

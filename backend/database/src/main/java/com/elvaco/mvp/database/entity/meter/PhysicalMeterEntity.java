@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;
@@ -50,6 +51,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   public String manufacturer;
 
   @NotAudited
+  @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
 

@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
 
 @NoArgsConstructor
@@ -29,7 +30,10 @@ public class QuantityEntity extends IdentifiableType<Long> {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
+
+  @NaturalId
   public String name;
+
   public String unit;
 
   @Enumerated(EnumType.ORDINAL)

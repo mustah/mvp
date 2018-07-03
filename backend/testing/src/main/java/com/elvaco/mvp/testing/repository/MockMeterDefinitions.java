@@ -9,13 +9,11 @@ public class MockMeterDefinitions extends MockRepository<MeterDefinitionType, Me
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
-    return null;
+    return saveMock(meterDefinition);
   }
 
   @Override
-  protected MeterDefinition copyWithId(
-    MeterDefinitionType id, MeterDefinition entity
-  ) {
+  protected MeterDefinition copyWithId(MeterDefinitionType id, MeterDefinition entity) {
     return null;
   }
 
