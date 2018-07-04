@@ -28,13 +28,7 @@
   <include file="xml/lower_case_on_all_location_properties.xml" relativeToChangelogFile="true"/>
   <include file="xml/make_quantities_unique.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_property_table.xml" relativeToChangelogFile="true"/>
-  <changeSet id="Grant mvp db user privileges" author="Daniel Svensson" runAlways="true">
-    <validCheckSum>7:122fd1cfa95d7f3cc65e81a6e64263e2</validCheckSum>
-    <sqlFile path="sql/postgresql/db_privileges.sql"
-             dbms="postgresql"
-             relativeToChangelogFile="true"
-             splitStatements="false"
-             stripComments="true"/>
-  </changeSet>
+  <include file="xml/create_gateway_indexes.xml" relativeToChangelogFile="true"/>
+  <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
