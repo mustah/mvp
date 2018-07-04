@@ -22,7 +22,8 @@ import static java.util.UUID.randomUUID;
 @Configuration
 class CacheConfig {
 
-  public static final String METERING_MESSAGE_CACHE_NAME = "meteringMessageThrottleCache";
+  static final String METERING_MESSAGE_CACHE_NAME = "meteringMessageThrottleCache";
+
   private final CacheManager cacheManager;
 
   @Autowired
@@ -63,5 +64,4 @@ class CacheConfig {
   void removeCache() {
     cacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
   }
-
 }
