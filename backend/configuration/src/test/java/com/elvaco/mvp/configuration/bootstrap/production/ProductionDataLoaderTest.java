@@ -2,7 +2,6 @@ package com.elvaco.mvp.configuration.bootstrap.production;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -11,11 +10,13 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
+import com.elvaco.mvp.testing.repository.MockQuantities;
 import com.elvaco.mvp.testing.repository.MockRoles;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import org.junit.Test;
 
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductionDataLoaderTest {
@@ -23,13 +24,13 @@ public class ProductionDataLoaderTest {
   @Test
   public void organisationUniquenessIsEnforcedByCode() {
     Organisation initialOrganisation = new Organisation(
-      UUID.randomUUID(),
+      randomUUID(),
       "Organisation",
       "organisation",
       "Organisation"
     );
     Organisation secondOrganisation = new Organisation(
-      UUID.randomUUID(), //Different ID
+      randomUUID(),
       "Organisation",
       "organisation",
       "Organisation"
@@ -52,7 +53,7 @@ public class ProductionDataLoaderTest {
   ) {
     return new FakeProductionDataProvider(
       new User(
-        UUID.randomUUID(),
+        randomUUID(),
         "superadmin",
         "superadmin@elvaco.se",
         "password",
@@ -73,7 +74,8 @@ public class ProductionDataLoaderTest {
       new MockMeterDefinitions(),
       organisations,
       new MockUsers(Collections.emptyList()),
-      productionDataProvider
+      productionDataProvider,
+      new MockQuantities()
     );
   }
 }

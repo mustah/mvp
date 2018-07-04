@@ -14,19 +14,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProductionDataLoaderTest extends IntegrationTest {
 
   @Autowired
-  ProductionDataLoader productionDataLoader;
+  private ProductionDataLoader productionDataLoader;
 
   @Autowired
-  RoleJpaRepository roleRepository;
+  private RoleJpaRepository roleRepository;
 
   @Autowired
-  MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+  private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
   @Autowired
-  OrganisationJpaRepository organisationJpaRepository;
+  private OrganisationJpaRepository organisationJpaRepository;
 
   @Autowired
-  Users users;
+  private Users users;
 
   @Test
   public void productionDataLoaderIsIdempotent() {
@@ -38,18 +38,17 @@ public class ProductionDataLoaderTest extends IntegrationTest {
       Assertions.fail("Running production data loader failed", ex);
     }
 
-    assertThat(roleRepository.findAll()).hasSize(productionDataLoader.getProductionDataProvider()
-                                                   .users()
-                                                   .size());
-    assertThat(meterDefinitionJpaRepository.findAll()).hasSize(productionDataLoader
-                                                                 .getProductionDataProvider()
-                                                                 .meterDefinitions()
-                                                                 .size());
-    assertThat(organisationJpaRepository.findAll()).hasSize(productionDataLoader
-                                                              .getProductionDataProvider()
-                                                              .organisations()
-                                                              .size());
+    assertThat(roleRepository.findAll())
+      .hasSize(productionDataLoader.getProductionDataProvider().users().size());
 
-    assertThat(users.findAll()).filteredOn("name", "System Administrator").hasSize(1);
+    assertThat(meterDefinitionJpaRepository.findAll())
+      .hasSize(productionDataLoader.getProductionDataProvider().meterDefinitions().size());
+
+    assertThat(organisationJpaRepository.findAll())
+      .hasSize(productionDataLoader.getProductionDataProvider().organisations().size());
+
+    assertThat(users.findAll())
+      .filteredOn("name", "System Administrator")
+      .hasSize(1);
   }
 }

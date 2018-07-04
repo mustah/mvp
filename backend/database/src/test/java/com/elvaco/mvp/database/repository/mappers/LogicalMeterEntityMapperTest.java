@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -16,6 +17,7 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -28,6 +30,11 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterEntityMapperTest {
+
+  @Before
+  public void setUp() {
+    QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
+  }
 
   @Test
   public void mapsPhysicalMeters() {
@@ -46,11 +53,7 @@ public class LogicalMeterEntityMapperTest {
         .readIntervalMinutes(15)
         .build()),
       emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      null
+      UNKNOWN_LOCATION
     );
 
     LogicalMeterEntity logicalMeterEntity = LogicalMeterEntityMapper.toEntity(logicalMeter);
@@ -99,7 +102,11 @@ public class LogicalMeterEntityMapperTest {
             new QuantityPresentationInformation("mps", SeriesDisplayMode.READOUT)
           )),
           false
-        ), created, emptyList(), emptyList(), expectedLocation
+        ),
+        created,
+        emptyList(),
+        emptyList(),
+        expectedLocation
       )
     );
   }
@@ -136,7 +143,11 @@ public class LogicalMeterEntityMapperTest {
             new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
           )),
           false
-        ), created, emptyList(), emptyList(), UNKNOWN_LOCATION
+        ),
+        created,
+        emptyList(),
+        emptyList(),
+        UNKNOWN_LOCATION
       )
     );
   }
@@ -169,11 +180,15 @@ public class LogicalMeterEntityMapperTest {
             new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
           )),
           false
-        ), created, emptyList(), emptyList(), new LocationBuilder()
-        .latitude(3.1)
-        .longitude(2.1)
-        .confidence(1.0)
-        .build()
+        ),
+        created,
+        emptyList(),
+        emptyList(),
+        new LocationBuilder()
+          .latitude(3.1)
+          .longitude(2.1)
+          .confidence(1.0)
+          .build()
       ));
 
     LocationEntity location = logicalMeterEntity.location;

@@ -1,8 +1,10 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import java.util.Objects;
+import java.util.Set;
+
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import lombok.experimental.UtilityClass;
@@ -17,7 +19,7 @@ public class MeterDefinitionEntityMapper {
       entity.type,
       entity.medium,
       entity.quantities.stream()
-        .map(MeterDefinitionEntityMapper::toQuantity)
+        .map(QuantityEntityMapper::toDomainModel)
         .collect(toSet()),
       entity.systemOwned
     );
@@ -26,32 +28,17 @@ public class MeterDefinitionEntityMapper {
   public static MeterDefinitionEntity toEntity(MeterDefinition domainModel) {
     return new MeterDefinitionEntity(
       domainModel.type,
-      domainModel.quantities
-        .stream()
-        .map(MeterDefinitionEntityMapper::toQuantityEntity)
-        .collect(toSet()),
+      toQuantityEntities(domainModel),
       domainModel.medium,
       domainModel.systemOwned
     );
   }
 
-  private static Quantity toQuantity(QuantityEntity quantityEntity) {
-    return new Quantity(
-      quantityEntity.id,
-      quantityEntity.name,
-      new QuantityPresentationInformation(
-        quantityEntity.unit,
-        quantityEntity.seriesDisplayMode
-      )
-    );
-  }
-
-  private static QuantityEntity toQuantityEntity(Quantity quantity) {
-    return new QuantityEntity(
-      quantity.id,
-      quantity.name,
-      quantity.presentationUnit(),
-      quantity.seriesDisplayMode()
-    );
+  private static Set<QuantityEntity> toQuantityEntities(MeterDefinition domainModel) {
+    return domainModel.quantities.stream()
+      .map(quantity -> QuantityAccess.singleton().getByName(quantity.name))
+      .filter(Objects::nonNull)
+      .map(QuantityEntityMapper::toEntity)
+      .collect(toSet());
   }
 }

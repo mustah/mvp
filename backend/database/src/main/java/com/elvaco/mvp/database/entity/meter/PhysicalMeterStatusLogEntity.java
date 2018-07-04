@@ -17,10 +17,12 @@ import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 @Access(AccessType.FIELD)
@@ -45,21 +47,8 @@ public class PhysicalMeterStatusLogEntity extends IdentifiableType<Long> {
   @Column(nullable = false)
   public ZonedDateTime start;
 
+  @Nullable
   public ZonedDateTime stop;
-
-  public PhysicalMeterStatusLogEntity(
-    @Nullable Long id,
-    UUID physicalMeterId,
-    StatusType status,
-    ZonedDateTime start,
-    @Nullable ZonedDateTime stop
-  ) {
-    this.id = id;
-    this.physicalMeterId = physicalMeterId;
-    this.status = status;
-    this.start = start;
-    this.stop = stop;
-  }
 
   @Override
   public Long getId() {

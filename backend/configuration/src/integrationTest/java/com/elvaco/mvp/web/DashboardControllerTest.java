@@ -144,7 +144,7 @@ public class DashboardControllerTest extends IntegrationTest {
       .isEqualTo(measurementFailedCount);
   }
 
-  private List<PhysicalMeterStatusLogEntity> newActiveStatusLogs(
+  private void newActiveStatusLogs(
     List<PhysicalMeterEntity> physicalMeters,
     ZonedDateTime startDate
   ) {
@@ -160,7 +160,7 @@ public class DashboardControllerTest extends IntegrationTest {
         )).collect(
         toList());
 
-    return physicalMeterStatusLogJpaRepository.save(statuses);
+    physicalMeterStatusLogJpaRepository.save(statuses);
   }
 
   private void createMeasurementMockData(

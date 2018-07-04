@@ -13,7 +13,6 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
@@ -37,11 +36,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
 
   @Autowired
-  MeasurementJpaRepository measurementJpaRepository;
+  private MeasurementJpaRepository measurementJpaRepository;
+
   @Autowired
-  PhysicalMeterJpaRepository physicalMeterJpaRepository;
-  @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
+  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Before
   public void setUp() {

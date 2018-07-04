@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
@@ -23,6 +24,7 @@ import org.hibernate.envers.Audited;
 @Access(AccessType.FIELD)
 @Table(name = "meter_definition")
 @NoArgsConstructor
+@AllArgsConstructor
 @Audited
 public class MeterDefinitionEntity extends IdentifiableType<MeterDefinitionType> {
 
@@ -43,18 +45,6 @@ public class MeterDefinitionEntity extends IdentifiableType<MeterDefinitionType>
   public String medium;
 
   public boolean systemOwned;
-
-  public MeterDefinitionEntity(
-    MeterDefinitionType type,
-    Set<QuantityEntity> quantities,
-    String medium,
-    boolean systemOwned
-  ) {
-    this.type = type;
-    this.quantities = quantities;
-    this.medium = medium;
-    this.systemOwned = systemOwned;
-  }
 
   @Override
   public MeterDefinitionType getId() {

@@ -72,6 +72,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -1651,7 +1652,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      new HashSet<>(singletonList(Quantity.VOLUME)),
+      singleton(Quantity.VOLUME),
       date,
       Duration.ofHours(1),
       60L,
@@ -1681,7 +1682,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      new HashSet<>(singletonList(Quantity.VOLUME)),
+      singleton(Quantity.VOLUME),
       date,
       Duration.ofDays(1),
       60L,

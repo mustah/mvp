@@ -1,8 +1,13 @@
 package com.elvaco.mvp.configuration.bootstrap.production;
 
+import java.util.List;
+
+import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.spi.repository.Quantities;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Users;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +27,7 @@ class ProductionDataLoader implements CommandLineRunner {
   private final Organisations organisations;
   private final Users users;
   private final ProductionDataProvider productionDataProvider;
+  private final Quantities quantities;
 
   @Override
   public void run(String... args) {
@@ -33,7 +39,8 @@ class ProductionDataLoader implements CommandLineRunner {
   void seedDatabase() {
     createRoles();
     createOrganisations();
-    createSuperAdministratorIfNotPresent();
+    createSuperAdminIfNotPresent();
+    createQuantities();
     createMeterDefinitions();
   }
 
@@ -41,8 +48,8 @@ class ProductionDataLoader implements CommandLineRunner {
     return productionDataProvider;
   }
 
-  private void createMeterDefinitions() {
-    productionDataProvider.meterDefinitions().forEach(meterDefinitions::save);
+  private void createRoles() {
+    roles.save(productionDataProvider.users());
   }
 
   private void createOrganisations() {
@@ -52,14 +59,23 @@ class ProductionDataLoader implements CommandLineRunner {
       .forEach(organisations::save);
   }
 
-  private void createSuperAdministratorIfNotPresent() {
+  private void createSuperAdminIfNotPresent() {
     User user = productionDataProvider.superAdminUser();
     if (!users.findByEmail(user.email).isPresent()) {
       users.create(user);
     }
   }
 
-  private void createRoles() {
-    roles.save(productionDataProvider.users());
+  private void createMeterDefinitions() {
+    productionDataProvider.meterDefinitions().forEach(meterDefinitions::save);
+  }
+
+  private void createQuantities() {
+    Quantity.QUANTITIES.forEach(quantity ->
+      quantities.findByName(quantity.name).orElseGet(() -> quantities.save(quantity)));
+
+    List<Quantity> all = quantities.findAll();
+    QuantityAccess.singleton().loadAll(all);
+    log.info("Loaded {} quantities. {}", all.size(), all);
   }
 }

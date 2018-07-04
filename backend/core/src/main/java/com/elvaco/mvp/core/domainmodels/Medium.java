@@ -102,9 +102,9 @@ public enum Medium {
 
   private static final Set<Quantity> GAS_QUANTITIES = singleton(Quantity.VOLUME);
 
-  private static final Set<Quantity> WATER_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
+  private static final Set<Quantity> WATER_QUANTITIES = unmodifiableSet(singleton(
     Quantity.VOLUME
-  )));
+  ));
 
   private static final Set<Quantity> ELECTRICITY_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
     Quantity.ENERGY,

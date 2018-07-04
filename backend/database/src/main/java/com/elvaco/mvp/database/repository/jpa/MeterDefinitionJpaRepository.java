@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MeterDefinitionJpaRepository

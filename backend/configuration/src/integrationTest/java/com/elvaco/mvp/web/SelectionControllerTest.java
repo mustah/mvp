@@ -565,10 +565,7 @@ public class SelectionControllerTest extends IntegrationTest {
       ZonedDateTime.now(),
       emptyList(),
       emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L, null
+      location
     ));
   }
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.exception.UnknownQuantity;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
@@ -47,8 +48,13 @@ class MeteringMessageMapper {
     return MeterDefinition.UNKNOWN_METER;
   }
 
-  static String mappedQuantityName(String quantity) {
-    return METER_TO_MVP_QUANTITIES.getOrDefault(quantity, new Quantity(quantity)).name;
+  static String mappedQuantityName(String quantityName) {
+    Quantity quantity = METER_TO_MVP_QUANTITIES.get(quantityName);
+    if (quantity != null) {
+      return quantity.name;
+    } else {
+      throw new UnknownQuantity(quantityName);
+    }
   }
 
   private static Map<String, Quantity> mapMeterQuantities() {
@@ -64,7 +70,6 @@ class MeteringMessageMapper {
     map.put("Relative-humidity", Quantity.TEMPERATURE);
     map.put("Energy return", Quantity.ENERGY_RETURN);
     map.put("Reactive energy", Quantity.REACTIVE_ENERGY);
-
     return unmodifiableMap(map);
   }
 

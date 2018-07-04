@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -132,18 +133,16 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   }
 
   private Measurement findOrCreateMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
-    return measurementUseCases.findBy(
-      physicalMeter.id,
-      mappedQuantityName(value.quantity),
-      value.timestamp.atZone(METERING_TIMEZONE)
-    ).orElseGet(() ->
-      Measurement.builder()
-        .physicalMeter(physicalMeter)
-        .created(value.timestamp.atZone(METERING_TIMEZONE))
-        .quantity(mappedQuantityName(value.quantity))
-        .build()
-    ).withValue(value.value)
+    String quantity = mappedQuantityName(value.quantity);
+    ZonedDateTime created = value.timestamp.atZone(METERING_TIMEZONE);
+    return measurementUseCases.findBy(physicalMeter.id, quantity, created)
+      .orElseGet(() ->
+        Measurement.builder()
+          .physicalMeter(physicalMeter)
+          .created(created)
+          .build()
+      ).withValue(value.value)
       .withUnit(value.unit)
-      .withQuantity(mappedQuantityName(value.quantity));
+      .withQuantity(quantity);
   }
 }
