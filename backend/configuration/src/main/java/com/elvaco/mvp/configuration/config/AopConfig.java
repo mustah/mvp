@@ -24,10 +24,7 @@ class AopConfig {
   @Pointcut("execution(* com.elvaco.mvp.database.repository.jpa..*(..))")
   void jpa() {}
 
-  @Pointcut("execution(* com.elvaco.mvp.consumers.rabbitmq.message..*(..))")
-  void messages() {}
-
-  @Pointcut("access() || messages() || jpa()")
+  @Pointcut("access() ||  jpa()")
   public void allPoints() {}
 
   @Around("allPoints()")
