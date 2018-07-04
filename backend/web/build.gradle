@@ -14,10 +14,10 @@ dependencies {
   compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
   compile 'javax.servlet:javax.servlet-api:3.0.1'
 
-  compileOnly 'org.projectlombok:lombok:1.16.20'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile 'com.google.guava:guava:24.0-jre'
-  testCompile 'org.assertj:assertj-core:3.10.0'
-  testCompile 'junit:junit:4.12'
+  testCompile "org.assertj:assertj-core:${assertjVersion}"
+  testCompile "junit:junit:${junitVersion}"
   testCompile project(':backend:testing')
 }
