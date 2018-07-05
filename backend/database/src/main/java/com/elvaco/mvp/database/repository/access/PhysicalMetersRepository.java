@@ -11,15 +11,19 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterQueryFilters;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 
+import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModel;
+import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toEntity;
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @RequiredArgsConstructor
 public class PhysicalMetersRepository implements PhysicalMeters {
 
@@ -53,10 +57,12 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    PhysicalMeterEntity entity = physicalMeterJpaRepository.save(
-      PhysicalMeterEntityMapper.toEntity(physicalMeter)
-    );
-    return PhysicalMeterEntityMapper.toDomainModel(entity);
+    try {
+      return toDomainModel(physicalMeterJpaRepository.save(toEntity(physicalMeter)));
+    } catch (DataIntegrityViolationException ex) {
+      log.warn("Constraint violation: ", ex);
+      return physicalMeter;
+    }
   }
 
   @Override
@@ -69,6 +75,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       organisationId,
       externalId,
       address
-    ).map(PhysicalMeterEntityMapper::toDomainModel);
+    ).map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs);
   }
 }

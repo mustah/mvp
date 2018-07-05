@@ -9,7 +9,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -62,7 +61,7 @@ public class LogicalMeterUseCases {
   }
 
   public Optional<LogicalMeter> findBy(RequestParameters parameters) {
-    Optional<LogicalMeter> meter = logicalMeters.findOneBy(setCurrentUsersOrganisationId(
+    Optional<LogicalMeter> meter = logicalMeters.findBy(setCurrentUsersOrganisationId(
       currentUser,
       parameters
     ));
@@ -114,10 +113,9 @@ public class LogicalMeterUseCases {
     List<Measurement> latestMeasurements = new ArrayList<>();
     UUID physicalMeterId = logicalMeter.activePhysicalMeter().get().id;
 
-    for (Quantity quantity : logicalMeter.getQuantities()) {
-      measurements.findLatestReadout(physicalMeterId, before, quantity)
-        .ifPresent(latestMeasurements::add);
-    }
+    logicalMeter.getQuantities()
+      .forEach(quantity -> measurements.findLatestReadout(physicalMeterId, before, quantity)
+        .ifPresent(latestMeasurements::add));
 
     return logicalMeter.withMeasurements(latestMeasurements);
   }

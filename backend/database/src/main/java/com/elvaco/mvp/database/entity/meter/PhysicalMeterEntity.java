@@ -57,7 +57,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   @NotAudited
   @OrderBy("stop desc, start desc")
-  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY, orphanRemoval = true)
   @Cascade(value = CascadeType.MERGE)
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 

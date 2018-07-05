@@ -43,6 +43,21 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  ) {
+    return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
+      .filter(isSameOrganisationId(organisationId))
+      .findFirst();
+  }
+
+  @Override
+  public Optional<LogicalMeter> findBy(RequestParameters parameters) {
+    return Optional.empty();
+  }
+
+  @Override
   public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
     return null;
   }
@@ -70,16 +85,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    UUID organisationId,
-    String externalId
-  ) {
-    return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
-      .filter(isSameOrganisationId(organisationId))
-      .findFirst();
-  }
-
-  @Override
   public MeterSummary summary(RequestParameters parameters) {
     throw new NotImplementedYet();
   }
@@ -87,11 +92,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   @Override
   public void delete(LogicalMeter logicalMeter) {
     throw new NotImplementedYet();
-  }
-
-  @Override
-  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
-    return Optional.empty();
   }
 
   @Override

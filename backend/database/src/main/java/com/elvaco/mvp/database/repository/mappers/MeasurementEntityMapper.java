@@ -15,7 +15,7 @@ public class MeasurementEntityMapper {
       entity.quantity,
       entity.value.getValue(),
       entity.value.getUnit(),
-      PhysicalMeterEntityMapper.toDomainModel(entity.physicalMeter)
+      PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs(entity.physicalMeter)
     );
   }
 

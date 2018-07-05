@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -43,16 +44,31 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
-    return findOneBy(new RequestParametersAdapter().replace("id", id.toString()));
+    return findBy(new RequestParametersAdapter().replace("id", id.toString()));
   }
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return findOneBy(
+    return findBy(
       new RequestParametersAdapter()
         .replace("id", id.toString())
         .replace("organisation", organisationId.toString())
     );
+  }
+
+  @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  ) {
+    return logicalMeterJpaRepository.findBy(organisationId, externalId)
+      .map(LogicalMeterEntityMapper::toDomainModelWithoutStatuses);
+  }
+
+  @Override
+  public Optional<LogicalMeter> findBy(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findBy(parameters)
+      .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
   @Override
@@ -79,9 +95,7 @@ public class LogicalMeterRepository implements LogicalMeters {
           )
         )
       )
-      .orElse(
-        new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel))
-      );
+      .orElse(new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel)));
   }
 
   @Override
@@ -110,16 +124,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
     LogicalMeterEntity entity = LogicalMeterEntityMapper.toEntity(logicalMeter);
-    return LogicalMeterEntityMapper.toDomainModel(logicalMeterJpaRepository.save(entity));
-  }
-
-  @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    UUID organisationId,
-    String externalId
-  ) {
-    return logicalMeterJpaRepository.findOneBy(organisationId, externalId)
-      .map(LogicalMeterEntityMapper::toDomainModel);
+    return toDomainModelWithoutStatuses(logicalMeterJpaRepository.save(entity));
   }
 
   @Override
@@ -130,16 +135,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Transactional
   @Override
   public void delete(LogicalMeter logicalMeter) {
-    logicalMeterJpaRepository.delete(
-      logicalMeter.id,
-      logicalMeter.organisationId
-    );
-  }
-
-  @Override
-  public Optional<LogicalMeter> findOneBy(RequestParameters parameters) {
-    return logicalMeterJpaRepository.findOneBy(parameters)
-      .map(LogicalMeterEntityMapper::toDomainModel);
+    logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
   }
 
   private List<LogicalMeter> mapAndCollectWithStatuses(

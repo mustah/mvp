@@ -18,9 +18,7 @@ public class PhysicalMeterEntityMapper {
     return toDomainModel(entity, emptyList());
   }
 
-  public static PhysicalMeter toDomainModel(
-    PhysicalMeterEntity entity
-  ) {
+  public static PhysicalMeter toDomainModel(PhysicalMeterEntity entity) {
     return toDomainModel(entity, entity.statusLogs);
   }
 
