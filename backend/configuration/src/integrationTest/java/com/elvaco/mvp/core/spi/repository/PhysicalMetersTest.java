@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -15,11 +14,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
 public class PhysicalMetersTest extends IntegrationTest {
 
   @Autowired
@@ -65,6 +65,7 @@ public class PhysicalMetersTest extends IntegrationTest {
     assertThat(updated.medium).isEqualTo("Heat");
   }
 
+  @Transactional
   @Test
   public void findAll() {
     physicalMeters.save(physicalMeter()
@@ -102,6 +103,7 @@ public class PhysicalMetersTest extends IntegrationTest {
         .isPresent()).isTrue();
   }
 
+  @Transactional
   @Test
   public void findByMedium() {
     physicalMeters.save(physicalMeter()
@@ -124,6 +126,7 @@ public class PhysicalMetersTest extends IntegrationTest {
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);
   }
 
+  @Transactional
   @Test
   public void savingMeterSavesLogs() {
     UUID meterId = randomUUID();
@@ -134,7 +137,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       .statuses(
         singletonList(new StatusLogEntry<>(
           meterId,
-          StatusType.ERROR,
+          ERROR,
           start
         ))
       )
@@ -144,7 +147,77 @@ public class PhysicalMetersTest extends IntegrationTest {
 
     assertThat(found.statuses).hasSize(1);
     assertThat(found.statuses.get(0).start).isEqualTo(start);
-    assertThat(found.statuses.get(0).status).isEqualTo(StatusType.ERROR);
+    assertThat(found.statuses.get(0).status).isEqualTo(ERROR);
+  }
+
+  @Test
+  public void statusLogShouldBeRemovedWhenItsPhysicalMeterIsRemoved() {
+    UUID meterId = randomUUID();
+    ZonedDateTime start = ZonedDateTime.now();
+
+    physicalMeters.save(
+      physicalMeter()
+        .id(meterId)
+        .status(StatusLogEntry.<UUID>builder()
+          .entityId(meterId)
+          .status(ERROR)
+          .start(start)
+          .build())
+        .build());
+
+    physicalMeterJpaRepository.delete(meterId);
+
+    assertThat(physicalMeterStatusLogJpaRepository.findAll()).isEmpty();
+  }
+
+  @Test
+  public void meterShouldHaveTwoStatusLogs() {
+    UUID meterId = randomUUID();
+    ZonedDateTime start = ZonedDateTime.now();
+
+    physicalMeters.save(
+      physicalMeter()
+        .id(meterId)
+        .status(StatusLogEntry.<UUID>builder()
+          .entityId(meterId)
+          .status(ERROR)
+          .start(start)
+          .build())
+        .build());
+
+    physicalMeters.save(
+      physicalMeter()
+        .id(meterId)
+        .status(StatusLogEntry.<UUID>builder()
+          .entityId(meterId)
+          .status(OK)
+          .start(start.minusDays(2))
+          .build())
+        .build());
+
+    assertThat(physicalMeterStatusLogJpaRepository.findAll())
+      .filteredOn("physicalMeterId", meterId)
+      .hasSize(2);
+  }
+
+  @Test
+  public void cannotSaveMeterWithSameStatusLog() {
+    UUID meterId = randomUUID();
+    ZonedDateTime start = ZonedDateTime.now();
+
+    for (int i = 0; i < 2; i++) {
+      physicalMeters.save(
+        physicalMeter()
+          .id(meterId)
+          .status(StatusLogEntry.<UUID>builder()
+            .entityId(meterId)
+            .status(OK)
+            .start(start)
+            .build())
+          .build());
+    }
+
+    assertThat(physicalMeterStatusLogJpaRepository.findAll()).hasSize(1);
   }
 
   private PhysicalMeterBuilder physicalMeter() {

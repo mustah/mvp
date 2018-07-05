@@ -60,14 +60,13 @@ public class SqlErrorMapper {
     return new MixedDimensionForMeterQuantity(matchResult.group(1), matchResult.group(2));
   }
 
-  public static RuntimeException mapDataIntegrityViolation(
-    DataIntegrityViolationException ex
-  ) {
+  public static RuntimeException mapDataIntegrityViolation(DataIntegrityViolationException ex) {
     return mapDataIntegrityViolation(ex, null);
   }
 
   public static RuntimeException mapDataIntegrityViolation(
-    DataIntegrityViolationException ex, String extraInformation
+    DataIntegrityViolationException ex,
+    String extraInformation
   ) {
     Throwable cause = ex.getCause();
     if (cause instanceof JDBCException) {

@@ -31,6 +31,13 @@ public class LogicalMeterEntityMapper {
     return newLogicalMeter(pagedLogicalMeter, expectedMeasurementCount);
   }
 
+  public static LogicalMeter toDomainModelWithoutStatuses(LogicalMeterEntity logicalMeterEntity) {
+    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
+      .map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs)
+      .collect(toList());
+    return toLogicalMeter(logicalMeterEntity, physicalMeters, null, null);
+  }
+
   public static LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
     List<PhysicalMeter> physicalMeters = toPhysicalMeters(logicalMeterEntity);
     return toLogicalMeter(logicalMeterEntity, physicalMeters, null, null);
@@ -144,7 +151,7 @@ public class LogicalMeterEntityMapper {
       MeterDefinitionEntityMapper.toDomainModel(logicalMeterEntity.meterDefinition),
       logicalMeterEntity.created,
       physicalMeters,
-      toGateways(logicalMeterEntity.gateways),
+      toGatewaysWithoutStatusLogs(logicalMeterEntity.gateways),
       emptyList(),
       LocationEntityMapper.toDomainModel(logicalMeterEntity.location),
       expectedMeasurementCount,
@@ -153,7 +160,7 @@ public class LogicalMeterEntityMapper {
     );
   }
 
-  private static List<Gateway> toGateways(Set<GatewayEntity> gateways) {
+  private static List<Gateway> toGatewaysWithoutStatusLogs(Set<GatewayEntity> gateways) {
     return gateways
       .stream()
       .map(GatewayEntityMapper::toDomainModelWithoutStatusLogs)

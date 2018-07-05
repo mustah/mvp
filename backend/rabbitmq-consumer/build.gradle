@@ -8,9 +8,9 @@ dependencies {
   compile 'ch.qos.logback:logback-classic:1.1.11'
   compile 'com.cronutils:cron-utils:7.0.1'
 
-  compileOnly 'org.projectlombok:lombok:1.16.20'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
-  testCompile 'junit:junit:4.12'
-  testCompile 'org.assertj:assertj-core:3.10.0'
+  testCompile "junit:junit:${junitVersion}"
+  testCompile "org.assertj:assertj-core:${assertjVersion}"
   testCompile project(':backend:testing')
 }

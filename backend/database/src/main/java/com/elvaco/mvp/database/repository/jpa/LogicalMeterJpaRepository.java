@@ -34,9 +34,9 @@ public interface LogicalMeterJpaRepository {
 
   Optional<LogicalMeterEntity> findById(UUID id);
 
-  Optional<LogicalMeterEntity> findOneBy(UUID organisationId, String externalId);
+  Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
 
-  Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters);
+  Optional<LogicalMeterEntity> findBy(RequestParameters parameters);
 
   void deleteAll();
 

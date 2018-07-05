@@ -21,8 +21,8 @@ public class PropertiesUseCases {
     return properties.save(property);
   }
 
-  public Property forceUpdateGeolocation(UUID entityId, UUID organisationId) {
-    return create(new Property(
+  public void forceUpdateGeolocation(UUID entityId, UUID organisationId) {
+    create(new Property(
       entityId,
       organisationId,
       FeatureType.UPDATE_GEOLOCATION.key,
@@ -42,11 +42,11 @@ public class PropertiesUseCases {
     return properties.findById(id);
   }
 
-  public boolean isEnabled(FeatureType feature, UUID entityId) {
+  boolean isEnabled(FeatureType feature, UUID entityId) {
     return isEnabled(Property.idOf(entityId, currentUser.getOrganisationId(), feature.key));
   }
 
-  public boolean isEnabled(Property.Id id) {
+  boolean isEnabled(Property.Id id) {
     return findById(id)
       .map(p -> Boolean.parseBoolean(p.value))
       .orElse(false);

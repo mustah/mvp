@@ -104,11 +104,11 @@ public class PhysicalMeter implements Identifiable<UUID> {
   PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
     List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statuses,
-      new StatusLogEntry<>(
-        id,
-        status,
-        when
-      )
+      StatusLogEntry.<UUID>builder()
+        .entityId(id)
+        .status(status)
+        .start(when)
+        .build()
     );
 
     return new PhysicalMeter(

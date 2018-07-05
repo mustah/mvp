@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toSet;
 @UtilityClass
 public class GatewayEntityMapper {
 
-  static Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
+  public static Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
     return Gateway.builder()
       .id(entity.id)
       .organisationId(entity.organisationId)

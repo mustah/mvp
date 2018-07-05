@@ -151,7 +151,7 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Optional<LogicalMeterEntity> findOneBy(
+  public Optional<LogicalMeterEntity> findBy(
     UUID organisationId,
     String externalId
   ) {
@@ -161,7 +161,7 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Optional<LogicalMeterEntity> findOneBy(RequestParameters parameters) {
+  public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
     return Optional.ofNullable(fetchOne(
       new LogicalMeterQueryFilters().toExpression(parameters),
       parameters

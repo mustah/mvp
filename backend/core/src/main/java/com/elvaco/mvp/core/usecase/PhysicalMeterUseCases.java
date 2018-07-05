@@ -23,8 +23,7 @@ public class PhysicalMeterUseCases {
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     if (!hasTenantAccess(physicalMeter)) {
       throw new Unauthorized(String.format(
-        "User '%s' is not allowed to "
-          + "update physical meter with ID %s",
+        "User '%s' is not allowed to update physical meter with ID %s",
         currentUser.getUsername(),
         physicalMeter.id
       ));

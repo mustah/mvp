@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
@@ -35,13 +36,18 @@ public class MeteringMessageListener implements MessageListener {
   @Nullable
   private String handleMessage(MeteringMessageDto meteringMessage) {
     if (meteringMessage instanceof MeteringMeasurementMessageDto) {
-      return measurementMessageConsumer
+      long start = System.nanoTime();
+      String response = measurementMessageConsumer
         .accept((MeteringMeasurementMessageDto) meteringMessage)
         .filter(this::throttleAndLog)
         .map(MessageSerializer::toJson)
         .orElse(null);
+      stopAndLog("Measurement", start);
+      return response;
     } else if (meteringMessage instanceof MeteringReferenceInfoMessageDto) {
+      long start = System.nanoTime();
       referenceInfoMessageConsumer.accept((MeteringReferenceInfoMessageDto) meteringMessage);
+      stopAndLog("Reference Info", start);
       return null;
     } else if (meteringMessage instanceof MeteringAlarmMessageDto) {
       return null;
@@ -56,5 +62,10 @@ public class MeteringMessageListener implements MessageListener {
       log.info("Throttling Get-Reference message {}", getReferenceInfoDto);
     }
     return !throttle;
+  }
+
+  private void stopAndLog(String message, long start) {
+    long elapsedTime = System.nanoTime() - start;
+    log.info(message + ": {} ms", TimeUnit.NANOSECONDS.toMillis(elapsedTime));
   }
 }

@@ -24,13 +24,13 @@ import org.hibernate.annotations.Type;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "physicalMeter")
 @Entity
 @Access(AccessType.FIELD)
 @Table(
   name = "measurement",
   uniqueConstraints = @UniqueConstraint(columnNames = {"created", "quantity", "physical_meter_id"})
 )
-@ToString(exclude = "physicalMeter")
 public class MeasurementEntity extends IdentifiableType<Long> {
 
   private static final long serialVersionUID = -3650501037709018061L;
