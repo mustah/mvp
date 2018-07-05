@@ -27,7 +27,8 @@ import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,6 @@ import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMappe
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
-@Slf4j
 public class LogicalMeterRepository implements LogicalMeters {
 
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
@@ -57,6 +57,11 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
+  @Cacheable(
+    cacheNames = "logicalMeter.organisationIdExternalId",
+    key = "#organisationId + #externalId",
+    unless = "#result != null"
+  )
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
     UUID organisationId,
     String externalId
@@ -122,6 +127,10 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
+  @CacheEvict(
+    cacheNames = "logicalMeter.organisationIdExternalId",
+    key = "#logicalMeter.organisationId + #logicalMeter.externalId"
+  )
   public LogicalMeter save(LogicalMeter logicalMeter) {
     LogicalMeterEntity entity = LogicalMeterEntityMapper.toEntity(logicalMeter);
     return toDomainModelWithoutStatuses(logicalMeterJpaRepository.save(entity));

@@ -58,7 +58,9 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
     );
   }
 
-  public MeteringReferenceInfoMessageDto withGatewayStatus(GatewayStatusDto gatewayStatusDto) {
+  public MeteringReferenceInfoMessageDto withGatewayStatus(
+    @Nullable GatewayStatusDto gatewayStatusDto
+  ) {
     return new MeteringReferenceInfoMessageDto(
       meter,
       facility,

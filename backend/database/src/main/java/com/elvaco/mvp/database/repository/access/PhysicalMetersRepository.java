@@ -16,6 +16,8 @@ import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterQueryFilters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 
@@ -56,6 +58,10 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
+  @CacheEvict(
+    cacheNames = "physicalMeter.organisationIdExternalIdAddress",
+    key = "#physicalMeter.organisation.id + #physicalMeter.externalId + #physicalMeter.address"
+  )
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     try {
       return toDomainModel(physicalMeterJpaRepository.save(toEntity(physicalMeter)));
@@ -66,6 +72,11 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
+  @Cacheable(
+    cacheNames = "physicalMeter.organisationIdExternalIdAddress",
+    key = "#organisationId + #externalId + #address",
+    unless = "#result != null"
+  )
   public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
     UUID organisationId,
     String externalId,

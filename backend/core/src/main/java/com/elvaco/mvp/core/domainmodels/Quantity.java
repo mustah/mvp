@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -11,7 +12,7 @@ import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
 @ToString
-public class Quantity implements Identifiable<Long> {
+public class Quantity implements Identifiable<Long>, Serializable {
 
   public static final Quantity VOLUME = new Quantity("Volume")
     .withDefaultPresentation("m³", SeriesDisplayMode.CONSUMPTION);
@@ -59,6 +60,8 @@ public class Quantity implements Identifiable<Long> {
     ENERGY_RETURN,
     REACTIVE_ENERGY
   ));
+
+  private static final long serialVersionUID = -4279706519680318521L;
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
 
@@ -112,7 +115,7 @@ public class Quantity implements Identifiable<Long> {
   }
 
   public SeriesDisplayMode seriesDisplayMode() {
-    return presentationInformation.getSeriesDisplayMode();
+    return presentationInformation.displayMode;
   }
 
   public Quantity complementedBy(QuantityPresentationInformation presentationInformation) {
@@ -121,8 +124,8 @@ public class Quantity implements Identifiable<Long> {
       new QuantityPresentationInformation(
         this.presentationInformation.getUnit()
           .orElse(presentationInformation.getUnit().orElseThrow(IllegalArgumentException::new)),
-        seriesDisplayMode().equals(SeriesDisplayMode.UNKNOWN)
-          ? presentationInformation.getSeriesDisplayMode()
+        seriesDisplayMode() == SeriesDisplayMode.UNKNOWN
+          ? presentationInformation.displayMode
           : seriesDisplayMode()
       )
     );

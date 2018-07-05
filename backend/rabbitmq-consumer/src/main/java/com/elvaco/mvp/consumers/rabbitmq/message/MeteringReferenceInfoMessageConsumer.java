@@ -45,14 +45,15 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
   @Override
   public void accept(MeteringReferenceInfoMessageDto referenceInfoMessage) {
-    Organisation organisation = organisationUseCases
-      .findOrCreate(referenceInfoMessage.organisationId);
     FacilityDto facility = referenceInfoMessage.facility;
 
     if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
       log.warn("Discarding message with invalid facility id: '{}'", referenceInfoMessage);
       return;
     }
+
+    Organisation organisation =
+      organisationUseCases.findOrCreate(referenceInfoMessage.organisationId);
 
     MeterDto meterDto = referenceInfoMessage.meter;
 
@@ -87,7 +88,9 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     gateway.ifPresent(gatewayUseCases::save);
 
     Optional.ofNullable(logicalMeter)
-      .map(meter -> physicalMeter.map(meter::withPhysicalMeter).orElse(meter))
+      .map(meter -> physicalMeter
+        .map(meter::withPhysicalMeter)
+        .orElse(meter))
       .map(meter -> gateway.map(meter::withGateway).orElse(meter))
       .map(logicalMeterUseCases::save)
       .ifPresent(this::onFetchCoordinates);
