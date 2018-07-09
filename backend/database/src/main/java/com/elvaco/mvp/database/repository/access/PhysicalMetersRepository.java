@@ -74,8 +74,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   @Override
   @Cacheable(
     cacheNames = "physicalMeter.organisationIdExternalIdAddress",
-    key = "#organisationId + #externalId + #address",
-    unless = "#result != null"
+    key = "#organisationId + #externalId + #address"
   )
   public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
     UUID organisationId,

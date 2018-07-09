@@ -129,7 +129,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     measurementUseCases.save(measurements);
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
-      || logicalMeterValidator().isIncomplete(logicalMeter)) {
+      || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
       responseBuilder.setFacilityId(facilityId);
       responseBuilder.setMeterExternalId(address);
     }

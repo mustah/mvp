@@ -50,8 +50,8 @@ public class OrganisationRepository implements Organisations {
   @Override
   @Caching(
     evict = {
-      @CacheEvict(cacheNames = "organisation.slug"),
-      @CacheEvict(cacheNames = "organisation.externalId"),
+      @CacheEvict(cacheNames = "organisation.slug", allEntries = true),
+      @CacheEvict(cacheNames = "organisation.externalId", allEntries = true),
     }
   )
   public void deleteById(UUID id) {
@@ -59,14 +59,14 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  @Cacheable(cacheNames = "organisation.slug", unless = "#result != null")
+  @Cacheable(cacheNames = "organisation.slug")
   public Optional<Organisation> findBySlug(String slug) {
     return organisationJpaRepository.findBySlug(slug)
       .map(OrganisationEntityMapper::toDomainModel);
   }
 
   @Override
-  @Cacheable(cacheNames = "organisation.externalId", unless = "#result != null")
+  @Cacheable(cacheNames = "organisation.externalId")
   public Optional<Organisation> findByExternalId(String externalId) {
     return organisationJpaRepository.findByExternalId(externalId)
       .map(OrganisationEntityMapper::toDomainModel);
