@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,9 @@ import static java.util.UUID.randomUUID;
 @Builder
 @ToString
 @EqualsAndHashCode
-public class Gateway implements Identifiable<UUID> {
+public class Gateway implements Identifiable<UUID>, Serializable {
+
+  private static final long serialVersionUID = 7972281400092648431L;
 
   @Default
   public UUID id = randomUUID();

@@ -24,6 +24,8 @@ import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +73,10 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
+  @CacheEvict(
+    cacheNames = "gateway.organisationIdSerial",
+    key = "#gateway.organisationId + #gateway.serial"
+  )
   public Gateway save(Gateway gateway) {
     GatewayEntity entity = gatewayJpaRepository.save(GatewayEntityMapper.toEntity(gateway));
     return GatewayEntityMapper.toDomainModelWithoutStatusLogs(entity);
@@ -86,11 +92,14 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
+  @Cacheable(
+    cacheNames = "gateway.organisationIdSerial",
+    key = "#organisationId + #serial",
+    unless = "#result != null"
+  )
   public Optional<Gateway> findBy(UUID organisationId, String serial) {
-    return gatewayJpaRepository.findByOrganisationIdAndSerial(
-      organisationId,
-      serial
-    ).map(GatewayEntityMapper::toDomainModel);
+    return gatewayJpaRepository.findByOrganisationIdAndSerial(organisationId, serial)
+      .map(GatewayEntityMapper::toDomainModel);
   }
 
   @Override

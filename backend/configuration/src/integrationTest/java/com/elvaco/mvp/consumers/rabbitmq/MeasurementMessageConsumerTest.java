@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assume.assumeTrue;
 
-@Transactional
 public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   @Autowired
@@ -37,6 +36,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     authenticate(context().superAdmin);
   }
 
+  @Transactional
   @Test
   public void lastReceivedDuplicateMeasurementIsUsed() {
     LocalDateTime when = LocalDateTime.now();
@@ -50,6 +50,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     assertThat(found.value.getValue()).isEqualTo(2.0);
   }
 
+  @Transactional
   @Test
   public void duplicateMeasurementsInMessage_lastMeasurementInMessageIsUsed() {
     LocalDateTime when = LocalDateTime.now();
@@ -67,6 +68,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     assertThat(found.value.getValue()).isEqualTo(2.0);
   }
 
+  @Transactional
   @Test
   public void mixedDimensionsForMeterQuantity() {
     assumeTrue(isPostgresDialect());
@@ -80,6 +82,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       .hasMessageContaining("Mixing dimensions for meter quantity is not allowed");
   }
 
+  @Transactional
   @Test
   public void emptyUnitMeasurementIsDiscarded() {
     MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(
@@ -95,7 +98,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       new GatewayIdDto("gateway-id"),
       new MeterIdDto("meter-id"),
       new FacilityIdDto("facility-id"),
-      "organisation-id",
+      "org1",
       "integration test source system",
       values
     );

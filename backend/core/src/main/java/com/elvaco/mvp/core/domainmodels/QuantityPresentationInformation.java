@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.io.Serializable;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -10,15 +11,13 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-public class QuantityPresentationInformation {
+public class QuantityPresentationInformation implements Serializable {
+
+  private static final long serialVersionUID = -3928748851741551018L;
 
   @Nullable
   private final String unit;
-  private final SeriesDisplayMode displayMode;
-
-  public SeriesDisplayMode getSeriesDisplayMode() {
-    return displayMode;
-  }
+  public final SeriesDisplayMode displayMode;
 
   public Optional<String> getUnit() {
     return Optional.ofNullable(unit);

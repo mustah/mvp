@@ -1,5 +1,6 @@
 package com.elvaco.mvp.testdata;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import javax.persistence.EntityManagerFactory;
 
@@ -31,7 +32,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 @TestPropertySource(locations = "classpath:it.properties")
 public abstract class IntegrationTest {
 
-  private static final long MAX_WAIT_TIME = 15_000;
+  private static final long MAX_WAIT_TIME = TimeUnit.SECONDS.toNanos(15);
 
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
@@ -89,10 +90,11 @@ public abstract class IntegrationTest {
       tokenFactory.newToken()
     );
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken(),
-      authenticatedUser);
+    Authentication authentication = new AuthenticationToken(
+      authenticatedUser.getToken(),
+      authenticatedUser
+    );
     SecurityContextHolder.getContext().setAuthentication(authentication);
-
   }
 
   protected RestClient restClient() {
@@ -141,14 +143,14 @@ public abstract class IntegrationTest {
 
   /* Use with caution. Is there *any* way for you to check your assertion besides continuous
   polling? Then do that instead! */
-  protected boolean waitForCondition(BooleanSupplier cond) throws InterruptedException {
-    long startTime = System.currentTimeMillis();
+  protected boolean waitForCondition(BooleanSupplier condition) throws InterruptedException {
+    long start = System.nanoTime();
     do {
-      if (cond.getAsBoolean()) {
+      if (condition.getAsBoolean()) {
         return true;
       }
       Thread.sleep(100);
-    } while (System.currentTimeMillis() < startTime + MAX_WAIT_TIME);
+    } while (System.nanoTime() < (start + MAX_WAIT_TIME));
     return false;
   }
 

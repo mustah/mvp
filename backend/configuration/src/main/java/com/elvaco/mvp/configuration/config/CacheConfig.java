@@ -9,9 +9,9 @@ import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,21 +19,17 @@ import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
 import static java.util.UUID.randomUUID;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
 class CacheConfig {
 
   static final String METERING_MESSAGE_CACHE_NAME = "meteringMessageThrottleCache";
 
-  private final CacheManager cacheManager;
-
-  @Autowired
-  CacheConfig(CacheManager cacheManager) {
-    this.cacheManager = cacheManager;
-  }
+  private final CacheManager ehCacheManager;
 
   @Bean
   TokenService tokenService() {
-    return new EhTokenServiceCache(cacheManager.getCache(
+    return new EhTokenServiceCache(ehCacheManager.getCache(
       TOKEN_SERVICE_CACHE_NAME,
       String.class,
       AuthenticatedUser.class
@@ -43,16 +39,12 @@ class CacheConfig {
   @Bean
   MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler() {
     CacheAdapter<String, GetReferenceInfoDto> cacheAdapter = new CacheAdapter<>(
-      cacheManager.getCache(
+      ehCacheManager.getCache(
         METERING_MESSAGE_CACHE_NAME,
         String.class,
         GetReferenceInfoDto.class
       ));
-
-    return new MessageThrottler<>(
-      cacheAdapter,
-      String::valueOf
-    );
+    return new MessageThrottler<>(cacheAdapter, String::valueOf);
   }
 
   @Bean
@@ -62,6 +54,6 @@ class CacheConfig {
 
   @PreDestroy
   void removeCache() {
-    cacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
+    ehCacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
   }
 }

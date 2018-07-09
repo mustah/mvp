@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import javax.annotation.Nullable;
 
@@ -10,7 +11,9 @@ import lombok.ToString;
 @Builder
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString
-public class Measurement implements Identifiable<Long> {
+public class Measurement implements Identifiable<Long>, Serializable {
+
+  private static final long serialVersionUID = 7241986426136993573L;
 
   @Nullable
   public final Long id;

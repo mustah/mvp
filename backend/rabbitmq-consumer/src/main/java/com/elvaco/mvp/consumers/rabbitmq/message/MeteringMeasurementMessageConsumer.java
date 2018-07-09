@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeasurementMessageResponseBuilder;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -69,7 +70,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     MeasurementMessageResponseBuilder responseBuilder =
       new MeasurementMessageResponseBuilder(measurementMessage.organisationId);
 
+    AlreadyCreated existing = new AlreadyCreated();
+
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
+      .map(existing::logicalMeter)
       .orElseGet(() -> {
         Medium medium = Medium.from(resolveMeterDefinition(measurementMessage.values).medium);
         return new LogicalMeter(
@@ -85,15 +89,16 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     PhysicalMeter physicalMeter =
       physicalMeterUseCases.findBy(organisation.id, facilityId, address)
-        .orElseGet(() ->
-          PhysicalMeter.builder()
-            .organisation(organisation)
-            .address(address)
-            .externalId(facilityId)
-            .medium(UNKNOWN_MEDIUM.medium)
-            .logicalMeterId(logicalMeter.id)
-            .readIntervalMinutes(0)
-            .build());
+        .map(existing::physicalMeter)
+        .orElseGet(() -> PhysicalMeter.builder()
+          .organisation(organisation)
+          .address(address)
+          .externalId(facilityId)
+          .medium(UNKNOWN_MEDIUM.medium)
+          .logicalMeterId(logicalMeter.id)
+          .readIntervalMinutes(0)
+          .build());
+
     LogicalMeter connectedLogicalMeter = measurementMessage.gateway()
       .map(gatewayIdDto -> gatewayIdDto.id)
       .map(serial -> gatewayUseCases.findBy(organisation.id, serial)
@@ -119,8 +124,8 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         .map(value -> findOrCreateMeasurement(value, physicalMeter))
         .collect(toList());
 
-    logicalMeterUseCases.save(connectedLogicalMeter);
-    physicalMeterUseCases.save(physicalMeter);
+    existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
+    existing.shouldSavePhysicalMeter(() -> physicalMeterUseCases.save(physicalMeter));
     measurementUseCases.save(measurements);
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
@@ -144,5 +149,33 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       ).withValue(value.value)
       .withUnit(value.unit)
       .withQuantity(quantity);
+  }
+
+  private static final class AlreadyCreated {
+
+    private LogicalMeter logicalMeter;
+    private PhysicalMeter physicalMeter;
+
+    LogicalMeter logicalMeter(LogicalMeter logicalMeter) {
+      this.logicalMeter = logicalMeter;
+      return logicalMeter;
+    }
+
+    PhysicalMeter physicalMeter(PhysicalMeter physicalMeter) {
+      this.physicalMeter = physicalMeter;
+      return physicalMeter;
+    }
+
+    void shouldSaveLogicalMeter(Supplier<LogicalMeter> supplier) {
+      if (logicalMeter == null || logicalMeter.gateways.isEmpty()) {
+        supplier.get();
+      }
+    }
+
+    void shouldSavePhysicalMeter(Supplier<PhysicalMeter> supplier) {
+      if (physicalMeter == null) {
+        supplier.get();
+      }
+    }
   }
 }
