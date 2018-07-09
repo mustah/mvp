@@ -21,7 +21,7 @@ services:
     environment:
       POSTGRES_USER: mvp
       POSTGRES_PASSWORD: mvp
-    command: -c log_min_duration_statement=50
+    command: -c log_min_duration_statement=30
     ports:
       - "${DOCKER_POSTGRES_PORT:-5432:5432}"
   geoservice-db:

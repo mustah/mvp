@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 
 @NoArgsConstructor
@@ -52,6 +54,7 @@ public class MeasurementEntity extends IdentifiableType<Long> {
   @ManyToOne
   @JsonBackReference
   @Cascade(CascadeType.MERGE)
+  @Fetch(FetchMode.JOIN)
   public PhysicalMeterEntity physicalMeter;
 
   @Override

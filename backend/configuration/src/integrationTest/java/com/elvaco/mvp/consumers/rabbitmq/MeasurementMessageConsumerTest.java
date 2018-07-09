@@ -12,9 +12,12 @@ import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Arrays.asList;
@@ -31,9 +34,19 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
 
+  @Autowired
+  private CacheManager cacheManager;
+
   @Before
   public void setUp() {
     authenticate(context().superAdmin);
+  }
+
+  @After
+  public void tearDown() {
+    cacheManager.getCacheNames().stream()
+      .map(name -> cacheManager.getCache(name))
+      .forEach(Cache::clear);
   }
 
   @Transactional
