@@ -85,11 +85,8 @@ public class MeasurementRepository implements Measurements {
     ZonedDateTime created,
     String quantity
   ) {
-    return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
-      physicalMeterId,
-      quantity,
-      created
-    ).map(MeasurementEntityMapper::toDomainModel);
+    return measurementJpaRepository.findBy(physicalMeterId, quantity, created)
+      .map(MeasurementEntityMapper::toDomainModel);
   }
 
   @Override

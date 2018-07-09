@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,8 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MeasurementJpaRepository
-  extends JpaRepository<MeasurementEntity, Long>,
-          MeasurementJpaRepositoryCustom {
+  extends MeasurementJpaRepositoryCustom, JpaRepository<MeasurementEntity, Long> {
 
   @Query(nativeQuery = true, value = "SELECT "
     + "cast(unit_at(avg(value), :unit) AS TEXT) AS value,"
@@ -50,12 +48,6 @@ public interface MeasurementJpaRepository
     @Param("mode") String mode,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to
-  );
-
-  Optional<MeasurementEntity> findByPhysicalMeterIdAndQuantityAndCreated(
-    UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
   );
 
   @Query(nativeQuery = true, value = "select"
