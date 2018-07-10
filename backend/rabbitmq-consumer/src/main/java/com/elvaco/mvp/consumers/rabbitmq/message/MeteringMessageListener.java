@@ -66,6 +66,9 @@ public class MeteringMessageListener implements MessageListener {
 
   private void stopAndLog(String message, long start) {
     long elapsedTime = System.nanoTime() - start;
-    log.info(message + ": {} ms", TimeUnit.NANOSECONDS.toMillis(elapsedTime));
+    long millis = TimeUnit.NANOSECONDS.toMillis(elapsedTime);
+    if (millis >= 30) {
+      log.info(message + ": {} ms", millis);
+    }
   }
 }

@@ -70,6 +70,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
     organisationJpaRepository.findBySlug("organisation-123")
       .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
+    organisationJpaRepository.findBySlug("organisation-123-456")
+      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
     cacheManager.getCacheNames().stream()
       .map(name -> cacheManager.getCache(name))
       .forEach(Cache::clear);

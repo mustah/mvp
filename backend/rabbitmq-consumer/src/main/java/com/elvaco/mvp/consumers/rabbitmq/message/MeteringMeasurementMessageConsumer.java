@@ -40,7 +40,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
    * Metering stores and treats all values as CET.
    * At least it's consistent!
    */
-  static final ZoneId METERING_TIMEZONE = ZoneId.of("CET");
+  public static final ZoneId METERING_TIMEZONE = ZoneId.of("CET");
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;

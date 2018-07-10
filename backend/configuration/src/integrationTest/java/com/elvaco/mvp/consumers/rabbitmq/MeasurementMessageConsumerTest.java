@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -19,6 +20,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer.METERING_TIMEZONE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,21 +57,29 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
   @Transactional
   @Test
   public void lastReceivedDuplicateMeasurementIsUsed() {
-    LocalDateTime when = LocalDateTime.now();
+    ZonedDateTime created = ZonedDateTime.of(
+      LocalDateTime.parse("2018-03-07T16:13:09"),
+      METERING_TIMEZONE
+    );
+    LocalDateTime when = created.toLocalDateTime();
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 1.0))));
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.created.toLocalDateTime()).isEqualTo(when);
+    assertThat(found.created).isEqualTo(created);
     assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
   @Test
   public void duplicateMeasurementsInMessage_lastMeasurementInMessageIsUsed() {
-    LocalDateTime when = LocalDateTime.now();
+    ZonedDateTime created = ZonedDateTime.of(
+      LocalDateTime.parse("2018-03-07T16:13:09"),
+      METERING_TIMEZONE
+    );
+    LocalDateTime when = created.toLocalDateTime();
     MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
       newValueDto(when, 1.0),
       newValueDto(when, 2.0)
@@ -80,7 +90,7 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.created.toLocalDateTime()).isEqualTo(when);
+    assertThat(found.created).isEqualTo(created);
     assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
