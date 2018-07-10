@@ -15,10 +15,8 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
-import com.elvaco.mvp.testdata.TestRabbitConsumer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +56,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   @Before
   public void setUp() {
     assumeTrue(isRabbitConnected());
+    assumeTrue(isPostgresDialect());
   }
 
   @After
@@ -134,29 +133,19 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   }
 
   @Test
-  public void responseMessagesForMeasurementMessagesArePublished() throws Exception {
+  public void responseMessagesForMeasurementMessagesArePublishedAndOrgIsCreated() throws Exception {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      new GatewayIdDto("GATEWAY-123"),
-      new MeterIdDto("METER-123"),
-      new FacilityIdDto("FACILITY-123"),
-      "ORGANISATION-123",
+      new GatewayIdDto("gateway-123-456"),
+      new MeterIdDto("meter-123-456"),
+      new FacilityIdDto("facility-123-456"),
+      "organisation-123-456",
       "test",
       emptyList()
     );
-    TestRabbitConsumer consumer = newResponseConsumer();
 
     publishMessage(toJson(message).getBytes());
 
-    GetReferenceInfoDto response = consumer.fromJson(GetReferenceInfoDto.class);
-
-    assertThat(response)
-      .isEqualTo(
-        new GetReferenceInfoDto(
-          "ORGANISATION-123",
-          null, new MeterIdDto("METER-123"),
-          new GatewayIdDto("GATEWAY-123"),
-          new FacilityIdDto("FACILITY-123")
-        ));
+    assertOrganisationWithSlugWasCreated("organisation-123-456");
   }
 
   private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {

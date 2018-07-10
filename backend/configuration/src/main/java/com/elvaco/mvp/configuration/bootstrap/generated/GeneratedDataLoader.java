@@ -13,13 +13,13 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.generator.GeneratedData;
 import com.elvaco.mvp.generator.MeterPopulationSpecification;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
@@ -31,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Order(3)
+@RequiredArgsConstructor
 @Profile("generate")
 @Component
 class GeneratedDataLoader implements CommandLineRunner {
@@ -38,24 +39,8 @@ class GeneratedDataLoader implements CommandLineRunner {
   private final PhysicalMeters physicalMeters;
   private final LogicalMeters logicalMeters;
   private final Gateways gateways;
-  private final Measurements measurements;
   private final Organisations organisations;
-
-  @Autowired
-  public GeneratedDataLoader(
-    PhysicalMeters physicalMeters,
-    LogicalMeters logicalMeters,
-    Gateways gateways,
-    Measurements measurements,
-    Organisations organisations
-  ) {
-
-    this.physicalMeters = physicalMeters;
-    this.logicalMeters = logicalMeters;
-    this.gateways = gateways;
-    this.measurements = measurements;
-    this.organisations = organisations;
-  }
+  private final MeasurementUseCases measurementUseCases;
 
   @Override
   public void run(String... args) {
@@ -120,7 +105,7 @@ class GeneratedDataLoader implements CommandLineRunner {
     for (int i = 0; i < allMeasurements.size(); i += batchSz) {
       long start = System.nanoTime();
       int sz = Math.min(batchSz, allMeasurements.size() - i);
-      measurements.save(allMeasurements.subList(i, i + sz));
+      allMeasurements.subList(i, i + sz).forEach(measurementUseCases::save);
       log.info(
         "Saved {} measurements ({}/{} total) in {} seconds ({}s total)",
         sz,

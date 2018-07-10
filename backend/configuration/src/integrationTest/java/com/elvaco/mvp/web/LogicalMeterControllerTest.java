@@ -1831,15 +1831,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     double value
   ) {
     for (Quantity quantity : quantities) {
-      measurementUseCases.save(
-        singletonList(new Measurement(
-          null,
-          when,
-          quantity.name,
-          value,
-          quantity.presentationUnit(),
-          physicalMeter
-        ))
+      measurementUseCases.save(singletonList(Measurement.builder()
+        .created(when)
+        .quantity(quantity.name)
+        .value(value)
+        .unit(quantity.presentationUnit())
+        .physicalMeter(physicalMeter)
+        .build())
       );
     }
   }

@@ -1,8 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -25,7 +23,6 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHelper.removeSimultaneousQuantityValues;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantityName;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -34,7 +31,6 @@ import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -119,14 +115,12 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       })
       .orElseGet(() -> logicalMeter.withPhysicalMeter(physicalMeter));
 
-    List<Measurement> measurements =
-      removeSimultaneousQuantityValues(measurementMessage.values).stream()
-        .map(value -> findOrCreateMeasurement(value, physicalMeter))
-        .collect(toList());
-
     existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
     existing.shouldSavePhysicalMeter(() -> physicalMeterUseCases.save(physicalMeter));
-    measurementUseCases.save(measurements);
+
+    measurementMessage.values.stream()
+      .map(value -> createMeasurement(value, physicalMeter))
+      .forEach(measurementUseCases::save);
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
       || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
@@ -137,18 +131,14 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     return responseBuilder.build();
   }
 
-  private Measurement findOrCreateMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
-    String quantity = mappedQuantityName(value.quantity);
-    ZonedDateTime created = value.timestamp.atZone(METERING_TIMEZONE);
-    return measurementUseCases.findBy(physicalMeter.id, quantity, created)
-      .orElseGet(() ->
-        Measurement.builder()
-          .physicalMeter(physicalMeter)
-          .created(created)
-          .build()
-      ).withValue(value.value)
-      .withUnit(value.unit)
-      .withQuantity(quantity);
+  private Measurement createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
+    return Measurement.builder()
+      .physicalMeter(physicalMeter)
+      .created(value.timestamp.atZone(METERING_TIMEZONE))
+      .value(value.value)
+      .unit(value.unit)
+      .quantity(mappedQuantityName(value.quantity))
+      .build();
   }
 
   private static final class AlreadyCreated {

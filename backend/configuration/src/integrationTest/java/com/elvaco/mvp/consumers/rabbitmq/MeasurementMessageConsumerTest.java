@@ -11,7 +11,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
-import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,9 +23,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.offset;
 import static org.junit.Assume.assumeTrue;
 
-public class MeasurementMessageConsumerTest extends IntegrationTest {
+public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
 
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
@@ -39,6 +39,9 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    assumeTrue(isRabbitConnected());
+    assumeTrue(isPostgresDialect());
+
     authenticate(context().superAdmin);
   }
 
@@ -60,7 +63,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
     assertThat(found.created.toLocalDateTime()).isEqualTo(when);
-    assertThat(found.value.getValue()).isEqualTo(2.0);
+    assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
@@ -78,13 +81,12 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
     assertThat(found.created.toLocalDateTime()).isEqualTo(when);
-    assertThat(found.value.getValue()).isEqualTo(2.0);
+    assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
   @Test
   public void mixedDimensionsForMeterQuantity() {
-    assumeTrue(isPostgresDialect());
     LocalDateTime when = LocalDateTime.now();
     MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
       newValueDto(when, 2.0, "kWh"),

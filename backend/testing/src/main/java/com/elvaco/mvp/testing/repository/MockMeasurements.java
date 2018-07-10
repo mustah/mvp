@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -34,6 +35,28 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
     return measurements.stream()
       .map(this::saveMock)
       .collect(Collectors.toList());
+  }
+
+  @Override
+  public void save(
+    PhysicalMeter physicalMeter,
+    ZonedDateTime created,
+    String quantity,
+    String unit,
+    double value
+  ) {
+    Measurement.MeasurementBuilder builder = Measurement.builder()
+      .physicalMeter(physicalMeter)
+      .created(created)
+      .quantity(quantity)
+      .unit(unit)
+      .value(value);
+
+    Measurement measurement = findBy(physicalMeter.id, created, quantity)
+      .map(m -> builder.id(m.id).build())
+      .orElseGet(builder::build);
+
+    saveMock(measurement);
   }
 
   @Override
