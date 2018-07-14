@@ -26,7 +26,7 @@ public class Address {
   @JsonProperty("country")
   private String country;
   @JsonIgnore
-  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<>();
 
   @JsonProperty("street_number")
   public String getStreetNumber() {

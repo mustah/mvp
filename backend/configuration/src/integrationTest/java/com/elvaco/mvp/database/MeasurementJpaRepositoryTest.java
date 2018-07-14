@@ -442,9 +442,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 1.0, "m³", "Volume");
 
-    assertThatThrownBy(() -> {
-        newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "m³/s", "Volume");
-      }
+    assertThatThrownBy(() ->
+      newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "m³/s", "Volume")
     ).isInstanceOf(DataIntegrityViolationException.class);
   }
 

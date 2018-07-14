@@ -24,7 +24,7 @@ public class Status {
   @JsonProperty("result_count")
   private Integer resultCount;
   @JsonIgnore
-  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<>();
 
   @JsonProperty("access")
   public String getAccess() {

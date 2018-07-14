@@ -27,7 +27,7 @@ public class GeocodingResults {
   @JsonProperty("STATISTICS")
   private Statistics statistics;
   @JsonIgnore
-  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<>();
 
   @JsonProperty("LEGAL_COPYRIGHT")
   public LegalCopyright getLegalCopyright() {

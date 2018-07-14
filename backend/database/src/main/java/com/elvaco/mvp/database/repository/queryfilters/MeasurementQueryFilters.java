@@ -14,9 +14,6 @@ public class MeasurementQueryFilters extends QueryFilters {
 
   private static final QMeasurementEntity MEASUREMENT = QMeasurementEntity.measurementEntity;
 
-  private ZonedDateTime before;
-  private ZonedDateTime after;
-
   @Override
   public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
     return Optional.ofNullable(buildNullablePredicateFor(parameterName, values));
@@ -34,10 +31,10 @@ public class MeasurementQueryFilters extends QueryFilters {
       case "organisation":
         return MEASUREMENT.physicalMeter.organisation.id.in(toUuids(values));
       case "before":
-        before = ZonedDateTime.parse(values.get(0));
+        ZonedDateTime before = ZonedDateTime.parse(values.get(0));
         return MEASUREMENT.created.lt(before);
       case "after":
-        after = ZonedDateTime.parse(values.get(0));
+        ZonedDateTime after = ZonedDateTime.parse(values.get(0));
         return MEASUREMENT.created.goe(after);
       default:
         return null;
