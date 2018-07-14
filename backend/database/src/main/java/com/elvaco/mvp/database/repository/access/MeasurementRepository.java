@@ -9,10 +9,12 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
@@ -53,6 +55,28 @@ public class MeasurementRepository implements Measurements {
       return measurementJpaRepository.save(measurementEntities).stream()
         .map(MeasurementEntityMapper::toDomainModel)
         .collect(toList());
+    } catch (DataIntegrityViolationException ex) {
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex);
+    }
+  }
+
+  @Override
+  public void save(
+    PhysicalMeter physicalMeter,
+    ZonedDateTime created,
+    String quantity,
+    String unit,
+    double value
+  ) {
+    try {
+      MeasurementUnit measurementUnit = new MeasurementUnit(unit, value);
+      measurementJpaRepository.save(
+        physicalMeter.id,
+        created,
+        quantity,
+        measurementUnit.getUnit(),
+        measurementUnit.getValue()
+      );
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex);
     }

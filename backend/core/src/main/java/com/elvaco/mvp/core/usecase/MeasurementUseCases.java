@@ -38,6 +38,16 @@ public class MeasurementUseCases {
     return measurements.save(measurementsCollection);
   }
 
+  public void save(Measurement m) {
+    measurements.save(
+      m.physicalMeter,
+      m.created,
+      m.quantity,
+      m.unit,
+      m.value
+    );
+  }
+
   public List<MeasurementValue> averageForPeriod(
     List<UUID> meterIds,
     Quantity seriesQuantity,

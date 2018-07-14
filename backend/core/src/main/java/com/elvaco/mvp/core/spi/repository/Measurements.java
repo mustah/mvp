@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 
@@ -18,6 +19,14 @@ public interface Measurements {
   Measurement save(Measurement measurement);
 
   Collection<Measurement> save(Collection<Measurement> measurement);
+
+  void save(
+    PhysicalMeter physicalMeter,
+    ZonedDateTime created,
+    String quantity,
+    String unit,
+    double value
+  );
 
   List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,

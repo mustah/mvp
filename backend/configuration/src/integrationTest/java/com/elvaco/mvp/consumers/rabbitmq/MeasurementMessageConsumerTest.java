@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -11,7 +12,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
-import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +20,15 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer.METERING_TIMEZONE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.offset;
 import static org.junit.Assume.assumeTrue;
 
-public class MeasurementMessageConsumerTest extends IntegrationTest {
+public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
 
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
@@ -39,6 +41,9 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    assumeTrue(isRabbitConnected());
+    assumeTrue(isPostgresDialect());
+
     authenticate(context().superAdmin);
   }
 
@@ -52,21 +57,29 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
   @Transactional
   @Test
   public void lastReceivedDuplicateMeasurementIsUsed() {
-    LocalDateTime when = LocalDateTime.now();
+    ZonedDateTime created = ZonedDateTime.of(
+      LocalDateTime.parse("2018-03-07T16:13:09"),
+      METERING_TIMEZONE
+    );
+    LocalDateTime when = created.toLocalDateTime();
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 1.0))));
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.created.toLocalDateTime()).isEqualTo(when);
-    assertThat(found.value.getValue()).isEqualTo(2.0);
+    assertThat(found.created).isEqualTo(created);
+    assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
   @Test
   public void duplicateMeasurementsInMessage_lastMeasurementInMessageIsUsed() {
-    LocalDateTime when = LocalDateTime.now();
+    ZonedDateTime created = ZonedDateTime.of(
+      LocalDateTime.parse("2018-03-07T16:13:09"),
+      METERING_TIMEZONE
+    );
+    LocalDateTime when = created.toLocalDateTime();
     MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
       newValueDto(when, 1.0),
       newValueDto(when, 2.0)
@@ -77,14 +90,13 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.created.toLocalDateTime()).isEqualTo(when);
-    assertThat(found.value.getValue()).isEqualTo(2.0);
+    assertThat(found.created).isEqualTo(created);
+    assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
   @Test
   public void mixedDimensionsForMeterQuantity() {
-    assumeTrue(isPostgresDialect());
     LocalDateTime when = LocalDateTime.now();
     MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
       newValueDto(when, 2.0, "kWh"),

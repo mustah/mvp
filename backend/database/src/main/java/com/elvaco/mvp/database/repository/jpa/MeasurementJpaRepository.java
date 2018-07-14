@@ -1,12 +1,14 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -104,5 +106,25 @@ public interface MeasurementJpaRepository
     @Param("before") OffsetDateTime before,
     @Param("quantity") String quantity,
     @Param("unit") String unit
+  );
+
+  @Modifying
+  @Query(nativeQuery = true, value =
+    "INSERT INTO measurement (physical_meter_id, created, quantity, value)"
+      + " VALUES "
+      + "(:physical_meter_id, :created, :quantity, cast(concat(:value, ' ', :unit) as unit))"
+      + " ON CONFLICT (physical_meter_id, created, quantity)"
+      + "  DO UPDATE SET"
+      + "    physical_meter_id = :physical_meter_id,"
+      + "    created = :created,"
+      + "    quantity = :quantity,"
+      + "    value = cast(concat(:value, ' ', :unit) as unit)"
+  )
+  void save(
+    @Param("physical_meter_id") UUID physicalMeterId,
+    @Param("created") ZonedDateTime created,
+    @Param("quantity") String quantity,
+    @Param("unit") String unit,
+    @Param("value") double value
   );
 }
