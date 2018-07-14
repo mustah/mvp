@@ -18,7 +18,7 @@ public class GeocodingFarmResult {
   @JsonProperty("geocoding_results")
   private GeocodingResults geocodingResults;
   @JsonIgnore
-  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<>();
 
   @JsonProperty("geocoding_results")
   public GeocodingResults getGeocodingResults() {

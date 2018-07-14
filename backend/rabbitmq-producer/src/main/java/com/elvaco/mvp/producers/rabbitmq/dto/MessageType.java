@@ -13,5 +13,6 @@ public enum MessageType {
   METERING_REFERENCE_INFO_V_1_0,
 
   @SerializedName("Elvaco MVP MQ Get Reference Info Message 1.0")
-  METERING_GET_REFERENCE_INFO_V_1_0;
+  METERING_GET_REFERENCE_INFO_V_1_0,
+
 }

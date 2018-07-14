@@ -64,9 +64,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   private Authentication getAuthenticationTokenFrom(String requestHeader) {
     return bearerTokenFrom(requestHeader)
       .flatMap(tokenService::getToken)
-      .map(user -> {
-        return new AuthenticationToken(user.getToken(), user);
-      })
+      .map(user -> new AuthenticationToken(user.getToken(), user))
       .orElseThrow(InvalidToken::new);
   }
 }
