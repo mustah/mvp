@@ -30,5 +30,6 @@
   <include file="xml/create_property_table.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_gateway_indexes.xml" relativeToChangelogFile="true"/>
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>
+  <include file="xml/drop_table_property_aud.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
