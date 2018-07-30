@@ -76,28 +76,29 @@ public class RequestQueue {
     }
 
     requestRepo.findByOrderByCreatedAsc(new PageRequest(0, numberOfItems))
-      .forEach(e -> {
-        AddressGeoEntity found = addressGeoEntityRepository.findByAddress(e.getAddress());
-        if (!e.isForce() && found != null) {
+      .forEach(request -> {
+        AddressGeoEntity found = addressGeoEntityRepository.findByAddress(request.getAddress());
+        if (!request.isForce() && found != null) {
           CallbackEntity callback = callbackService.enqueueCallback(
-            e.getCallbackUrl(),
-            e.getAddress(),
+            request.getCallbackUrl(),
+            request.getAddress(),
             found.getGeoLocation()
           );
           log.info("Found in database. Enqueue result. Callback id = {}", callback.getId());
         } else {
-          GeoLocation geoLocation = addressToGeoService.getGeoByAddress(e.getAddress());
+          GeoLocation geoLocation = addressToGeoService.getGeoByAddress(request.getAddress());
           if (geoLocation != null) {
-            AddressGeoEntity entity = addressGeoEntityRepository.findByAddress(e.getAddress());
+            AddressGeoEntity entity =
+              addressGeoEntityRepository.findByAddress(request.getAddress());
             if (entity != null) {
               entity.setGeoLocation(geoLocation);
             } else {
-              entity = new AddressGeoEntity(e.getAddress(), geoLocation);
+              entity = new AddressGeoEntity(request.getAddress(), geoLocation);
             }
             addressGeoEntityRepository.save(entity);
             CallbackEntity callback = callbackService.enqueueCallback(
-              e.getCallbackUrl(),
-              e.getAddress(),
+              request.getCallbackUrl(),
+              request.getAddress(),
               geoLocation
             );
             log.info(
@@ -106,18 +107,18 @@ public class RequestQueue {
             );
           } else {
             CallbackEntity callback = callbackService.enqueueCallback(
-              e.getErrorCallbackUrl(),
-              e.getAddress(),
+              request.getErrorCallbackUrl(),
+              request.getAddress(),
               new ErrorDto(1, "No geolocation found", null)
             );
             log.warn(
               "No geo location found for '{}' with callback id = {}",
-              e.getAddress(),
+              request.getAddress(),
               callback.getId()
             );
           }
         }
-        requestRepo.delete(e);
+        requestRepo.delete(request);
       });
   }
 

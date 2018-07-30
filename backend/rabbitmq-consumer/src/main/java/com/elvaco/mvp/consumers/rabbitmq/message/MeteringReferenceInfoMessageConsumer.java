@@ -96,12 +96,6 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .ifPresent(this::onFetchCoordinates);
   }
 
-  private void removePropertyAfterForceUpdate(LocationWithId location, UUID organisationId) {
-    if (location.shouldForceUpdate) {
-      propertiesUseCases.deleteBy(FeatureType.UPDATE_GEOLOCATION, location.getId(), organisationId);
-    }
-  }
-
   private void onFetchCoordinates(LogicalMeter meter) {
     LocationWithId location = LocationBuilder.from(meter.location)
       .id(meter.id)
@@ -114,6 +108,12 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     geocodeService.fetchCoordinates(location);
 
     removePropertyAfterForceUpdate(location, meter.organisationId);
+  }
+
+  private void removePropertyAfterForceUpdate(LocationWithId location, UUID organisationId) {
+    if (location.shouldForceUpdate) {
+      propertiesUseCases.deleteBy(FeatureType.UPDATE_GEOLOCATION, location.getId(), organisationId);
+    }
   }
 
   @Nullable

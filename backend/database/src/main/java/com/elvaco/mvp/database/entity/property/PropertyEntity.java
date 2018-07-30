@@ -11,11 +11,9 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.envers.Audited;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Audited
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "property")
