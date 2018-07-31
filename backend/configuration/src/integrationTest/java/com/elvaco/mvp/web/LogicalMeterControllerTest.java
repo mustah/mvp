@@ -38,6 +38,7 @@ import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -115,6 +116,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private GatewayJpaRepository gatewayJpaRepository;
 
   @Autowired
+  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
+
+  @Autowired
   private MeterStatusLogs meterStatusLogs;
 
   @Autowired
@@ -146,6 +150,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
