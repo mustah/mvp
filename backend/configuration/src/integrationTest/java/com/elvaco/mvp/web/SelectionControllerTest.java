@@ -37,13 +37,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SelectionControllerTest extends IntegrationTest {
 
   @Autowired
-  GatewayJpaRepository gatewayJpaRepository;
+  private GatewayJpaRepository gatewayJpaRepository;
+
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
+
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
+
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
   @Autowired
   private LogicalMeters logicalMeters;
 
