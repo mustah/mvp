@@ -3,7 +3,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-  <changeSet id="Drop table property_aud" author="Must Tahir" runAlways="true">
+  <changeSet id="Drop table property_aud" author="Must Tahir">
     <sqlFile path="../sql/postgresql/drop_table_property_aud.sql"
              dbms="postgresql"
              relativeToChangelogFile="true"
