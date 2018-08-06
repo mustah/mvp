@@ -43,6 +43,9 @@ describe('routerSelectors', () => {
 
     it('is report page when matching exactly', () => {
       expect(isReportPage(stateWith('/report'))).toBe(true);
+      expect(isReportPage(stateWith('/report/'))).toBe(true);
+      expect(isReportPage(stateWith('/report/abc'))).toBe(true);
+      expect(isReportPage(stateWith('/report/abc'))).toBe(true);
     });
   });
 
