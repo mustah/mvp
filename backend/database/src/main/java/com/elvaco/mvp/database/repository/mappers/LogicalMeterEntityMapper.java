@@ -9,13 +9,16 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import lombok.experimental.UtilityClass;
 
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -26,9 +29,9 @@ public class LogicalMeterEntityMapper {
 
   public static LogicalMeter toDomainModelWithCollectionPercentage(
     PagedLogicalMeter pagedLogicalMeter,
-    long expectedMeasurementCount
+    long expectedReadingCount
   ) {
-    return newLogicalMeter(pagedLogicalMeter, expectedMeasurementCount);
+    return newLogicalMeter(pagedLogicalMeter, expectedReadingCount);
   }
 
   public static LogicalMeter toDomainModelWithoutStatuses(LogicalMeterEntity logicalMeterEntity) {
@@ -51,7 +54,7 @@ public class LogicalMeterEntityMapper {
     LogicalMeterEntity logicalMeterEntity,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap,
     @Nullable Long expectedMeasurementCount,
-    @Nullable Long actualMeasurementCount
+    @Nullable Long missingMeasurementCount
   ) {
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
       .map(physicalMeterEntity ->
@@ -65,7 +68,7 @@ public class LogicalMeterEntityMapper {
       logicalMeterEntity,
       physicalMeters,
       expectedMeasurementCount,
-      actualMeasurementCount
+      missingMeasurementCount
     );
   }
 
@@ -74,6 +77,17 @@ public class LogicalMeterEntityMapper {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
   ) {
     return toDomainModel(logicalMeterEntity, mappedStatuses, null, null);
+  }
+
+  public static LogicalMeterCollectionStats toDomainModel(
+    LogicalMeterCollectionStats logicalMeterCollectionStats,
+    SelectionPeriod selectionPeriod
+  ) {
+    return new LogicalMeterCollectionStats(
+      logicalMeterCollectionStats.id,
+      logicalMeterCollectionStats.missingReadingCount,
+      calculateExpectedReadOuts(logicalMeterCollectionStats.expectedReadingCount, selectionPeriod)
+    );
   }
 
   public static LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
@@ -109,7 +123,7 @@ public class LogicalMeterEntityMapper {
 
   private static LogicalMeter newLogicalMeter(
     PagedLogicalMeter pagedLogicalMeter,
-    @Nullable Long expectedMeasurementCount
+    @Nullable Long expectedReadingCount
   ) {
     List<Gateway> gateways = Optional.ofNullable(pagedLogicalMeter.gateway)
       .map(gateway -> singletonList(GatewayEntityMapper.toDomainModelWithoutStatusLogs(gateway)))
@@ -129,8 +143,8 @@ public class LogicalMeterEntityMapper {
       gateways,
       emptyList(),
       LocationEntityMapper.toDomainModel(pagedLogicalMeter.location),
-      expectedMeasurementCount,
-      pagedLogicalMeter.measurementCount,
+      expectedReadingCount,
+      pagedLogicalMeter.readingCount,
       Optional.ofNullable(pagedLogicalMeter.currentStatus)
         .map(MeterStatusLogEntityMapper::toDomainModel)
         .orElse(null)
@@ -141,7 +155,7 @@ public class LogicalMeterEntityMapper {
     LogicalMeterEntity logicalMeterEntity,
     List<PhysicalMeter> physicalMeters,
     @Nullable Long expectedMeasurementCount,
-    @Nullable Long actualMeasurementCount
+    @Nullable Long missingMeasurementCount
   ) {
     return new LogicalMeter(
       logicalMeterEntity.id,
@@ -154,7 +168,7 @@ public class LogicalMeterEntityMapper {
       emptyList(),
       LocationEntityMapper.toDomainModel(logicalMeterEntity.location),
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       null
     );
   }

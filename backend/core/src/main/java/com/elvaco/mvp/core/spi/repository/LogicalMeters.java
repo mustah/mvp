@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -31,6 +32,8 @@ public interface LogicalMeters {
   LogicalMeter save(LogicalMeter logicalMeter);
 
   MeterSummary summary(RequestParameters parameters);
+
+  List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters);
 
   void delete(LogicalMeter logicalMeter);
 }

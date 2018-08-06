@@ -164,7 +164,7 @@ public class LogicalMeterDtoMapperTest {
             .confidence(1.0)
             .build(),
           100L,
-          75L,
+          25L,
           null
         )))
       .isEqualTo(expected);

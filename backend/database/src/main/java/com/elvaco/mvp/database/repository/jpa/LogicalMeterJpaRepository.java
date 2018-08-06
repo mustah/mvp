@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
@@ -36,7 +37,7 @@ public interface LogicalMeterJpaRepository {
     Pageable pageable
   );
 
-  Map<UUID, Long> findMeasurementCounts(Predicate predicate);
+  List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
 
   Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
     Predicate predicate

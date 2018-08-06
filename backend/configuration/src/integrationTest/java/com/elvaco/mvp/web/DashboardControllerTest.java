@@ -3,8 +3,10 @@ package com.elvaco.mvp.web;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -21,8 +23,10 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.DashboardDto;
+import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,16 +37,15 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 public class DashboardControllerTest extends IntegrationTest {
 
-  private static final int NUM_QUANTITIES = 7;
+  private final ZonedDateTime startDate = ZonedDateTime.parse("2018-08-01T00:00:00.00Z");
+  private final ZonedDateTime beforeDate = ZonedDateTime.parse("2018-08-03T00:00:00.00Z");
 
-  private final ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-  private final ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
-
-  private double measurementCount = 0.0;
-  private double measurementFailedCount = 0.0;
+  private double readingCount = 0.0;
+  private double readingFailedCount = 0.0;
 
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
@@ -56,23 +59,37 @@ public class DashboardControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
+  @Before
+  public void setUp() {
+    assumeTrue(isPostgresDialect());
+  }
+
   @After
   public void tearDown() {
-    measurementJpaRepository.deleteAll();
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test
-  public void findAllWithCollectionStatusNoPeriods() {
+  public void collectionStatusNoPeriod_ReturnsEmptyCollectionStatus() {
+    ResponseEntity<DashboardDto> response = asTestUser()
+      .get("/dashboards/current", DashboardDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    WidgetDto widget = response.getBody().widgets.get(0);
+    assertThat(widget.total).isEqualTo(0);
+    assertThat(widget.pending).isEqualTo(0);
+    assertThat(widget.type).isEqualTo(WidgetType.COLLECTION.name);
+  }
+
+  @Test
+  public void findAllWithCollectionStatusForMediumGas() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate
     );
 
-    List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeterEntity(logicalMeter.id)
+    List<PhysicalMeterEntity> physicalMeters = Arrays.asList(
+      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER),
+      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER)
     );
 
     newActiveStatusLogs(physicalMeters, startDate);
@@ -85,29 +102,24 @@ public class DashboardControllerTest extends IntegrationTest {
 
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
-        "/dashboards/current"
-          + "?status=active",
+        "/dashboards/current?medium=Gas&after=" + startDate + "&before=" + beforeDate,
         DashboardDto.class
       );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    DashboardDto dashboardDtos = response.getBody();
-
-    assertThat(dashboardDtos.widgets.size())
-      .as("Unexpected number of widgets")
-      .isEqualTo(0);
+    assertThat(response.getBody().widgets.get(0))
+      .isEqualTo(new WidgetDto(WidgetType.COLLECTION.name, 12, 6));
   }
 
   @Test
-  public void findAllWithCollectionStatus() {
+  public void findAllWithCollectionStatusRoomSensor() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
       startDate
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeterEntity(logicalMeter.id)
+      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.DISTRICT_HEATING_METER)
     );
 
     newActiveStatusLogs(physicalMeters, startDate);
@@ -120,10 +132,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
-        "/dashboards/current"
-          + "?after=" + startDate
-          + "&before=" + beforeDate
-          + "&status=active",
+        "/dashboards/current?after=" + startDate + "&before=" + beforeDate,
         DashboardDto.class
       );
 
@@ -137,11 +146,11 @@ public class DashboardControllerTest extends IntegrationTest {
 
     assertThat(dashboardDtos.widgets.get(0).total)
       .as("Expected number of measurements diverged")
-      .isEqualTo(measurementCount + measurementFailedCount);
+      .isEqualTo(readingCount + readingFailedCount);
 
     assertThat(dashboardDtos.widgets.get(0).pending)
       .as("Unexpected number of missing measurements")
-      .isEqualTo(measurementFailedCount);
+      .isEqualTo(readingFailedCount);
   }
 
   private void newActiveStatusLogs(
@@ -164,17 +173,16 @@ public class DashboardControllerTest extends IntegrationTest {
   }
 
   private void createMeasurementMockData(
-    List<PhysicalMeterEntity> meters,
+    List<PhysicalMeterEntity> physicalMeters,
     ZonedDateTime startDate,
     long dayCount
   ) {
-
-    for (PhysicalMeterEntity meter : meters) {
+    for (PhysicalMeterEntity meter : physicalMeters) {
       measurementJpaRepository.save(createMeasurements(
         meter,
         startDate,
         meter.readIntervalMinutes,
-        dayCount * 1440 / meter.readIntervalMinutes
+        dayCount * TimeUnit.DAYS.toMinutes(1) / meter.readIntervalMinutes
       ));
     }
   }
@@ -187,19 +195,32 @@ public class DashboardControllerTest extends IntegrationTest {
   ) {
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
 
-    for (int x = 0; x < values; x++) {
-      if (x % 2 == 0) {
-        measurementFailedCount += NUM_QUANTITIES;
+    for (int i = 0; i < values; i++) {
+      if (i % 2 == 0) {
+        readingFailedCount++;
         continue;
       }
 
-      ZonedDateTime created = measurementDate.plusMinutes(x * interval);
+      ZonedDateTime created = measurementDate.plusMinutes(i * interval);
 
-      measurementEntities.addAll(
-        DemoDataHelper.heatMeasurement(created, physicalMeterEntity)
-      );
+      switch (physicalMeterEntity.medium) {
+        case "District heating":
+          measurementEntities.addAll(DemoDataHelper.heatMeasurement(created, physicalMeterEntity));
+          break;
+        case "Gas":
+          measurementEntities.addAll(DemoDataHelper.gasMeasurement(
+            created,
+            physicalMeterEntity,
+            40
+          ));
+          break;
+        default:
+          throw new RuntimeException(
+            "Medium '" + physicalMeterEntity.medium + "' is not implemented in createMeasurements"
+          );
+      }
 
-      measurementCount += NUM_QUANTITIES;
+      readingCount++;
     }
 
     return measurementEntities;
@@ -219,17 +240,20 @@ public class DashboardControllerTest extends IntegrationTest {
     ));
   }
 
-  private PhysicalMeterEntity newPhysicalMeterEntity(UUID logicalMeterId) {
+  private PhysicalMeterEntity newPhysicalMeterEntity(
+    UUID logicalMeterId,
+    MeterDefinition meterDefinition
+  ) {
     UUID uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
       context().organisationEntity,
       "",
       uuid.toString(),
-      "",
+      meterDefinition.medium,
       "",
       logicalMeterId,
-      1440,
+      TimeUnit.DAYS.toMinutes(1),
       emptySet()
     ));
   }

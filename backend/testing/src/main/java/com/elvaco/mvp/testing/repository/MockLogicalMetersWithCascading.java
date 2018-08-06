@@ -34,7 +34,7 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
       logicalMeter.latestReadouts,
       logicalMeter.location,
       logicalMeter.expectedMeasurementCount,
-      logicalMeter.actualMeasurementCount,
+      logicalMeter.missingMeasurementCount,
       logicalMeter.currentStatus
     ));
   }

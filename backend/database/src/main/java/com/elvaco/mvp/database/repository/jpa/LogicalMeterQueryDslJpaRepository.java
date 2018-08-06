@@ -7,10 +7,12 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
@@ -19,7 +21,7 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
@@ -36,10 +38,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayStatusLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMetersStatusLogs;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterStatusLogs;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -64,6 +70,9 @@ class LogicalMeterQueryDslJpaRepository
 
   private static final QMeasurementEntity MEASUREMENT =
     QMeasurementEntity.measurementEntity;
+
+  private static final QMissingMeasurementEntity MISSING_MEASUREMENT =
+    QMissingMeasurementEntity.missingMeasurementEntity;
 
   @Autowired
   LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
@@ -167,13 +176,26 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Map<UUID, Long> findMeasurementCounts(Predicate predicate) {
-    return createQuery(predicate)
-      .select(MEASUREMENT)
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.measurements, MEASUREMENT)
-      .groupBy(LOGICAL_METER.id)
-      .transform(groupBy(LOGICAL_METER.id).as(MEASUREMENT.count()));
+  public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
+    RequestParameters parameters
+  ) {
+    JPQLQuery<LogicalMeterCollectionStats> query = createQuery()
+      .select(Projections.constructor(
+        LogicalMeterCollectionStats.class,
+        LOGICAL_METER.id,
+        MISSING_MEASUREMENT.count(),
+        PHYSICAL_METER.readIntervalMinutes
+      )).where(new MissingMeasurementQueryFilters().toExpression(parameters))
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
+      .groupBy(LOGICAL_METER.id, PHYSICAL_METER.readIntervalMinutes);
+
+    joinLogicalMeterGateways(query, parameters);
+    joinLogicalMeterLocation(query, parameters);
+    joinGatewayStatusLogs(query, parameters);
+    joinMeterStatusLogs(query, parameters);
+
+    return query.fetch();
   }
 
   @Override
@@ -210,16 +232,17 @@ class LogicalMeterQueryDslJpaRepository
     RequestParameters parameters,
     List<PagedLogicalMeter> pagedLogicalMeters
   ) {
-    Map<UUID, Long> logicalMeterIdToMeasurementCount =
-      findMeasurementCounts(new MeasurementQueryFilters().toExpression(parameters));
+    Map<UUID, Long> logicalMeterIdToReadingCount =
+      findMissingMeterReadingsCounts(parameters).stream()
+        .collect(toMap(entry -> entry.id, entry -> entry.missingReadingCount));
 
     Map<UUID, PhysicalMeterStatusLogEntity> logicalMeterIdToCurrentStatus =
       findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
 
     return pagedLogicalMeters.stream()
-      .map(logicalMeter -> logicalMeter
-        .withMeasurementCount(logicalMeterIdToMeasurementCount.getOrDefault(logicalMeter.id, 0L))
-        .withCurrentStatus(logicalMeterIdToCurrentStatus.get(logicalMeter.id))
+      .map(pagedLogicalMeter -> pagedLogicalMeter
+        .withReadingCount(logicalMeterIdToReadingCount.getOrDefault(pagedLogicalMeter.id, 0L))
+        .withCurrentStatus(logicalMeterIdToCurrentStatus.get(pagedLogicalMeter.id))
       ).collect(toList());
   }
 

@@ -36,7 +36,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   @Nullable
   public final Long expectedMeasurementCount;
   @Nullable
-  public final Long actualMeasurementCount;
+  public final Long missingMeasurementCount;
   @Nullable
   public final StatusLogEntry<UUID> currentStatus;
 
@@ -51,7 +51,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     List<Measurement> latestReadouts,
     Location location,
     @Nullable Long expectedMeasurementCount,
-    @Nullable Long actualMeasurementCount,
+    @Nullable Long missingMeasurementCount,
     @Nullable StatusLogEntry<UUID> status
   ) {
     this.id = id;
@@ -64,7 +64,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     this.gateways = unmodifiableList(gateways);
     this.latestReadouts = unmodifiableList(latestReadouts);
     this.expectedMeasurementCount = expectedMeasurementCount;
-    this.actualMeasurementCount = actualMeasurementCount;
+    this.missingMeasurementCount = missingMeasurementCount;
     this.currentStatus = status;
   }
 
@@ -147,7 +147,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       latestReadouts,
       location,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       currentStatus
     );
   }
@@ -168,7 +168,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       latestReadouts,
       location,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       currentStatus
     );
   }
@@ -185,7 +185,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       latestReadouts,
       location,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       currentStatus
     );
   }
@@ -204,7 +204,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       measurements,
       location,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       currentStatus
     );
   }
@@ -221,20 +221,20 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       latestReadouts,
       location,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       currentStatus
     );
   }
 
   @Nullable
   public Double getCollectionPercentage() {
-    Double collectionPercentage = getCollectionStats().getCollectionPercentage();
+    Double collectionPercentage = getCollectionStats().collectionPercentage;
     return collectionPercentage.isNaN() ? null : collectionPercentage;
   }
 
   public CollectionStats getCollectionStats() {
     return new CollectionStats(
-      actualMeasurementCount == null ? 0L : actualMeasurementCount,
+      missingMeasurementCount == null ? 0L : missingMeasurementCount,
       expectedMeasurementCount == null ? 0L : expectedMeasurementCount
     );
   }
@@ -281,7 +281,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       latestReadouts,
       location,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       currentStatus
     );
   }

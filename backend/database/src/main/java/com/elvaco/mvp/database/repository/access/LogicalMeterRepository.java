@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -23,7 +24,6 @@ import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SortUtil;
 import com.querydsl.core.types.Predicate;
@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @RequiredArgsConstructor
 public class LogicalMeterRepository implements LogicalMeters {
@@ -96,7 +97,7 @@ public class LogicalMeterRepository implements LogicalMeters {
           pagedLogicalMeters.map(source ->
             toDomainModelWithCollectionPercentage(
               source,
-              source.expectedMeasurementCount(selectionPeriod)
+              source.expectedReadingCount(selectionPeriod)
             )
           )
         )
@@ -142,6 +143,16 @@ public class LogicalMeterRepository implements LogicalMeters {
     return summaryJpaRepository.summary(parameters);
   }
 
+  @Override
+  public List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters) {
+    Optional<SelectionPeriod> selectionPeriod =
+      parameters.getAsSelectionPeriod("after", "before");
+
+    return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
+      .map(entry -> LogicalMeterEntityMapper.toDomainModel(entry, selectionPeriod.get()))
+      .collect(toList());
+  }
+
   @Transactional
   @Override
   public void delete(LogicalMeter logicalMeter) {
@@ -180,7 +191,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     SelectionPeriod selectionPeriod
   ) {
     Map<UUID, Long> missingCountForMetersWithinPeriod =
-      getCountForMetersWithinPeriod(parameters);
+      getMissingCountForMetersWithinPeriod(parameters);
 
     return logicalMeters.stream()
       .map(logicalMeterEntity -> {
@@ -190,7 +201,7 @@ public class LogicalMeterRepository implements LogicalMeters {
             .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
             .orElse(0L),
           selectionPeriod
-        ) * logicalMeterEntity.meterDefinition.quantities.size();
+        );
         return LogicalMeterEntityMapper.toDomainModel(
           logicalMeterEntity,
           mappedStatuses,
@@ -201,12 +212,9 @@ public class LogicalMeterRepository implements LogicalMeters {
       .collect(toList());
   }
 
-  private Map<UUID, Long> getCountForMetersWithinPeriod(
-    RequestParameters parameters
-  ) {
-    return logicalMeterJpaRepository.findMeasurementCounts(
-      new MeasurementQueryFilters().toExpression(parameters)
-    );
+  private Map<UUID, Long> getMissingCountForMetersWithinPeriod(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
+      .collect(toMap(entry -> entry.id, entry -> entry.missingReadingCount));
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {
