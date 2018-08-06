@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -52,12 +51,12 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   @NotAudited
   @JsonManagedReference
-  @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "physicalMeter")
   public List<MeasurementEntity> measurements;
 
   @NotAudited
   @OrderBy("stop desc, start desc")
-  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY, orphanRemoval = true)
+  @OneToMany(mappedBy = "physicalMeterId", orphanRemoval = true)
   @Cascade(value = CascadeType.MERGE)
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 

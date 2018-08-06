@@ -25,20 +25,20 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   private static final long serialVersionUID = -7467562865583613538L;
 
   public final UUID id;
-  public final Location location;
-  public final List<PhysicalMeter> physicalMeters;
-  public final ZonedDateTime created;
   public final String externalId;
   public final UUID organisationId;
+  public final Location location;
   public final MeterDefinition meterDefinition;
+  public final ZonedDateTime created;
+  public final List<PhysicalMeter> physicalMeters;
   public final List<Gateway> gateways;
   public final List<Measurement> latestReadouts;
-  @Nullable
-  public final StatusLogEntry<UUID> currentStatus;
   @Nullable
   public final Long expectedMeasurementCount;
   @Nullable
   public final Long actualMeasurementCount;
+  @Nullable
+  public final StatusLogEntry<UUID> currentStatus;
 
   public LogicalMeter(
     UUID id,
@@ -58,11 +58,11 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     this.externalId = externalId;
     this.organisationId = organisationId;
     this.location = location;
+    this.meterDefinition = meterDefinition;
     this.created = created;
     this.physicalMeters = unmodifiableList(physicalMeters);
-    this.meterDefinition = meterDefinition;
     this.gateways = unmodifiableList(gateways);
-    this.latestReadouts = latestReadouts;
+    this.latestReadouts = unmodifiableList(latestReadouts);
     this.expectedMeasurementCount = expectedMeasurementCount;
     this.actualMeasurementCount = actualMeasurementCount;
     this.currentStatus = status;
@@ -133,23 +133,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       .max(Comparator.comparing(o -> o.start))
       .map(statusLogEntry -> statusLogEntry.status)
       .orElse(StatusType.UNKNOWN);
-  }
-
-  LogicalMeter createdAt(ZonedDateTime creationTime) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      creationTime,
-      physicalMeters,
-      gateways,
-      latestReadouts,
-      location,
-      expectedMeasurementCount,
-      actualMeasurementCount,
-      currentStatus
-    );
   }
 
   public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
@@ -243,18 +226,13 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     );
   }
 
-  public Optional<Double> getCollectionPercentage() {
+  @Nullable
+  public Double getCollectionPercentage() {
     Double collectionPercentage = getCollectionStats().getCollectionPercentage();
-
-    if (collectionPercentage.isNaN()) {
-      return Optional.empty();
-    }
-
-    return Optional.of(collectionPercentage);
+    return collectionPercentage.isNaN() ? null : collectionPercentage;
   }
 
   public CollectionStats getCollectionStats() {
-
     return new CollectionStats(
       actualMeasurementCount == null ? 0L : actualMeasurementCount,
       expectedMeasurementCount == null ? 0L : expectedMeasurementCount
@@ -289,5 +267,22 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     }
     //TODO: Implement actual active meter identification
     return Optional.of(physicalMeters.get(physicalMeters.size() - 1));
+  }
+
+  LogicalMeter createdAt(ZonedDateTime creationTime) {
+    return new LogicalMeter(
+      id,
+      externalId,
+      organisationId,
+      meterDefinition,
+      creationTime,
+      physicalMeters,
+      gateways,
+      latestReadouts,
+      location,
+      expectedMeasurementCount,
+      actualMeasurementCount,
+      currentStatus
+    );
   }
 }

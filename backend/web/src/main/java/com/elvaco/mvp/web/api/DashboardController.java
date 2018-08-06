@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
@@ -31,8 +31,7 @@ public class DashboardController {
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = RequestParametersAdapter.requestParametersOf(requestParams)
-      .setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
 
     List<WidgetDto> widgets = getCollectionWidget(parameters)
       .map(Collections::singletonList)

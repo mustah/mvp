@@ -55,7 +55,7 @@ public class UserEntity extends IdentifiableType<UUID> {
   public Language language;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "organisationId", nullable = false)
+  @JoinColumn(name = "organisation_id", nullable = false)
   public OrganisationEntity organisation;
 
   @ManyToMany(fetch = FetchType.EAGER)

@@ -31,11 +31,23 @@ public final class FilterUtils {
   }
 
   public static boolean isGatewayQuery(RequestParameters parameters) {
-    return parameters.hasName("gatewaySerial");
+    return parameters.hasName("gatewaySerial") || isGatewayStatusQuery(parameters);
+  }
+
+  public static boolean isGatewayStatusQuery(RequestParameters parameters) {
+    return parameters.hasName("gatewayStatus");
+  }
+
+  public static boolean isMeterStatusQuery(RequestParameters parameters) {
+    return parameters.hasName("status") || parameters.hasName("meterStatus");
   }
 
   public static boolean isOrganisationQuery(RequestParameters parameters) {
     return parameters.hasName("organisation");
+  }
+
+  public static boolean isLocationQuery(RequestParameters parameters) {
+    return parameters.hasName("city") || parameters.hasName("address");
   }
 
   static List<StatusType> toStatusTypes(List<String> values) {
@@ -80,5 +92,9 @@ public final class FilterUtils {
     return (statuses == null || statuses.isEmpty())
       ? dateRangeExpression
       : dateRangeExpression.and(METER_STATUS_LOG.status.in(statuses));
+  }
+
+  static ZonedDateTime getZonedDateTimeFrom(List<String> values) {
+    return ZonedDateTime.parse(values.get(0));
   }
 }

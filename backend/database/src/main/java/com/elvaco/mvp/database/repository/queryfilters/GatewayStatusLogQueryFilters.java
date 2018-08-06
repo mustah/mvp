@@ -11,6 +11,7 @@ import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class GatewayStatusLogQueryFilters extends QueryFilters {
@@ -37,10 +38,10 @@ public class GatewayStatusLogQueryFilters extends QueryFilters {
       case "id":
         return GATEWAY.id.in(toUuids(values));
       case "before":
-        stop = ZonedDateTime.parse(values.get(0));
+        stop = getZonedDateTimeFrom(values);
         return periodQueryFilter(start, stop);
       case "after":
-        start = ZonedDateTime.parse(values.get(0));
+        start = getZonedDateTimeFrom(values);
         return periodQueryFilter(start, stop);
       default:
         return null;

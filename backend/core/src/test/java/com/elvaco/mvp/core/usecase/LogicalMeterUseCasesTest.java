@@ -246,7 +246,7 @@ public class LogicalMeterUseCasesTest {
       .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
   }
 
-  private ZonedDateTime getFirstMatching(String date, long interval) {
+  private static ZonedDateTime getFirstMatching(String date, long interval) {
     return getNextReadoutDate(ZonedDateTime.parse(date), interval);
   }
 

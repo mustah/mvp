@@ -3,34 +3,60 @@ package com.elvaco.mvp.database.repository.queryfilters;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
+import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+
+import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 
 class LocationExpressions {
 
+  private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
+
   private final QLocationEntity location;
 
-  LocationExpressions(QLocationEntity location) {
+  private LocationExpressions(QLocationEntity location) {
     this.location = location;
   }
 
   @Nullable
-  Predicate unknownCities(Parameters parameters) {
+  static Predicate whereCity(Parameters parameters) {
+    LocationExpressions locationExpressions = newLocationExpressions();
+    return new BooleanBuilder()
+      .and(locationExpressions.countriesAndCities(parameters))
+      .or(locationExpressions.unknownCities(parameters))
+      .or(locationExpressions.hasLowConfidence(parameters))
+      .getValue();
+  }
+
+  @Nullable
+  static Predicate whereAddress(Parameters parameters) {
+    LocationExpressions locationExpressions = newLocationExpressions();
+    return new BooleanBuilder()
+      .and(locationExpressions.address(parameters))
+      .or(locationExpressions.unknownAddress(parameters))
+      .or(locationExpressions.hasLowConfidence(parameters))
+      .getValue();
+  }
+
+  @Nullable
+  private Predicate unknownCities(Parameters parameters) {
     return parameters.hasUnknownCities ? location.city.isNull() : null;
   }
 
   @Nullable
-  Predicate hasLowConfidence(Parameters parameters) {
+  private Predicate hasLowConfidence(Parameters parameters) {
     return parameters.hasUnknownCities ? location.confidence.lt(0.75) : null;
   }
 
   @Nullable
-  Predicate unknownAddress(Parameters parameters) {
+  private Predicate unknownAddress(Parameters parameters) {
     return parameters.hasUnknownAddresses ? location.streetAddress.isNull() : null;
   }
 
   @Nullable
-  Predicate countriesAndCities(Parameters parameters) {
+  private Predicate countriesAndCities(Parameters parameters) {
     if (parameters.hasCities()) {
       return location.country.toLowerCase().in(parameters.countries)
         .and(location.city.toLowerCase().in(parameters.cities));
@@ -39,12 +65,16 @@ class LocationExpressions {
   }
 
   @Nullable
-  Predicate address(Parameters parameters) {
+  private Predicate address(Parameters parameters) {
     if (parameters.hasAddresses()) {
       return location.country.toLowerCase().in(parameters.countries)
         .and(location.city.toLowerCase().in(parameters.cities))
         .and(location.streetAddress.toLowerCase().in(parameters.addresses));
     }
     return null;
+  }
+
+  private static LocationExpressions newLocationExpressions() {
+    return new LocationExpressions(LOGICAL_METER.location);
   }
 }

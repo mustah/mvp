@@ -260,61 +260,47 @@ public class LogicalMeterTest {
 
   @Test
   public void getCollectionStats_noneExpected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
-      null, null
-    );
+    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(null, null);
 
     CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
-    assertThat(collectionStats.actual).isEqualTo(0L);
     assertThat(collectionStats.expected).isEqualTo(0L);
+    assertThat(collectionStats.actual).isEqualTo(0L);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
   }
 
   @Test
-  public void getCollectionStats_oneExpected_zeroCollected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
-      1L,
-      0L
-    );
+  public void getCollectionStatsOneExpectedAndNoneMissing() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(1L, 0L);
 
     CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0.0);
+    assertThat(collectionStats.expected).isEqualTo(1.0);
     assertThat(collectionStats.actual).isEqualTo(0.0);
-    assertThat(collectionStats.expected).isEqualTo(1.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0);
   }
 
   @Test
-  public void getCollectionStats_oneExpected_allCollected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
-      1L,
-      1L
-    );
+  public void getCollectionStatsAllExpectedReadoutsAreMissing() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(1L, 1L);
 
     CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
-    assertThat(collectionStats.actual).isEqualTo(1.0);
     assertThat(collectionStats.expected).isEqualTo(1.0);
+    assertThat(collectionStats.actual).isEqualTo(1.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100);
   }
 
   @Test
   public void getCollectionStats_SevenExpected_allCollected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
-      7L,
-      7L
-    );
+    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(7L, 7L);
 
     CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100.0);
-    assertThat(collectionStats.actual).isEqualTo(7.0);
     assertThat(collectionStats.expected).isEqualTo(7.0);
+    assertThat(collectionStats.actual).isEqualTo(7.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100);
   }
 
   @Test
-  public void getCollectionStats_sevenExpected_threeCollected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(
-      7L,
-      3L
-    );
+  public void getCollectionStatsHaveSomeMissingReadouts() {
+    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(7L, 3L);
 
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(7.0);
@@ -324,12 +310,12 @@ public class LogicalMeterTest {
 
   @Test
   public void getCollectionStats_noneExpectedOneReceived() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndActual(0L, 1L);
+    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(0L, 1L);
 
     CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
     assertThat(collectionStats.expected).isEqualTo(0.0);
     assertThat(collectionStats.actual).isEqualTo(1.0);
+    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
   }
 
   private StatusLogEntry<UUID> newStatusLog(
@@ -400,9 +386,9 @@ public class LogicalMeterTest {
     );
   }
 
-  private LogicalMeter newLogicalMeterWithExpectedAndActual(
+  private LogicalMeter newLogicalMeterWithExpectedAndMissing(
     Long expectedMeasurementCount,
-    Long actualMeasurementCount
+    Long missingMeasurementCount
   ) {
     return new LogicalMeter(
       randomUUID(),
@@ -415,7 +401,7 @@ public class LogicalMeterTest {
       emptyList(),
       UNKNOWN_LOCATION,
       expectedMeasurementCount,
-      actualMeasurementCount,
+      missingMeasurementCount,
       null
     );
   }
