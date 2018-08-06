@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.Order;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -16,24 +17,27 @@ public abstract class SortingEntityMapper {
 
   abstract Map<String, String> getSortingMap();
 
+  @Nullable
   public org.springframework.data.domain.Sort getAsSpringSort(
     com.elvaco.mvp.core.spi.data.Sort sort
   ) {
-    if (sort.getOrders().size() > 0) {
-      return new org.springframework.data.domain.Sort(
-        sort.getOrders().stream().map(this::mapOrderToSprintOrder).collect(toList())
-      );
-    } else {
+    if (sort.getOrders().isEmpty()) {
       return null;
+    } else {
+      return new Sort(
+        sort.getOrders().stream()
+          .map(this::mapOrderToSprintOrder)
+          .collect(toList())
+      );
     }
   }
 
   public Optional<Sort> getAsSpringSort(RequestParameters parameters) {
     if (parameters.hasName("sort")) {
       List<Sort.Order> orders = new ArrayList<>();
-      List<String> sortParameters = parameters.getValues("sort");
 
-      sortParameters.forEach(s -> orders.add(new Sort.Order(getDirection(s), getProperty(s))));
+      parameters.getValues("sort")
+        .forEach(s -> orders.add(new Sort.Order(getDirection(s), getProperty(s))));
 
       return Optional.of(new org.springframework.data.domain.Sort(orders));
     }
@@ -56,7 +60,6 @@ public abstract class SortingEntityMapper {
   }
 
   private Sort.Order mapOrderToSprintOrder(Order order) {
-
     org.springframework.data.domain.Sort.Order springOrder =
       new org.springframework.data.domain.Sort.Order(
         Direction.fromString(order.getDirection().name()),

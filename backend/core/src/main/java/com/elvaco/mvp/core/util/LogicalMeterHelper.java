@@ -57,14 +57,14 @@ public final class LogicalMeterHelper {
     return physicalMeterQuantityMap;
   }
 
-  public static double calculateExpectedReadOuts(
+  public static long calculateExpectedReadOuts(
     long readIntervalMinutes,
     SelectionPeriod selectionPeriod
   ) {
     if (readIntervalMinutes == 0) {
       return 0;
     }
-    return Math.floor((double) Duration.between(selectionPeriod.start, selectionPeriod.end)
+    return (long) Math.floor((double) Duration.between(selectionPeriod.start, selectionPeriod.end)
       .toMinutes() / readIntervalMinutes);
   }
 

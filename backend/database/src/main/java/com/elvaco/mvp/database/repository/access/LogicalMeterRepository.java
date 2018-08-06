@@ -32,6 +32,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
 import static java.util.stream.Collectors.toList;
 
@@ -92,7 +93,7 @@ public class LogicalMeterRepository implements LogicalMeters {
       .map(selectionPeriod ->
         new PageAdapter<>(
           pagedLogicalMeters.map(source ->
-            LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage(
+            toDomainModelWithCollectionPercentage(
               source,
               source.expectedMeasurementCount(selectionPeriod)
             )
@@ -172,16 +173,17 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   private List<LogicalMeter> withStatusesAndCollectionStats(
-    List<LogicalMeterEntity> meters,
+    List<LogicalMeterEntity> logicalMeters,
     RequestParameters parameters,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
     SelectionPeriod selectionPeriod
   ) {
-    Map<UUID, Long> countForMetersWithinPeriod = getCountForMetersWithinPeriod(parameters);
-    return meters
-      .stream()
+    Map<UUID, Long> missingCountForMetersWithinPeriod =
+      getCountForMetersWithinPeriod(parameters);
+
+    return logicalMeters.stream()
       .map(logicalMeterEntity -> {
-        Long expectedMeasurementCount = (long) LogicalMeterHelper.calculateExpectedReadOuts(
+        Long expectedMeasurementCount = LogicalMeterHelper.calculateExpectedReadOuts(
           logicalMeterEntity.physicalMeters.stream()
             .findFirst()
             .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
@@ -192,7 +194,7 @@ public class LogicalMeterRepository implements LogicalMeters {
           logicalMeterEntity,
           mappedStatuses,
           expectedMeasurementCount,
-          countForMetersWithinPeriod.getOrDefault(logicalMeterEntity.id, 0L)
+          missingCountForMetersWithinPeriod.getOrDefault(logicalMeterEntity.id, 0L)
         );
       })
       .collect(toList());

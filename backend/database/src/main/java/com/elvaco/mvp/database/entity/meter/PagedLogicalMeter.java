@@ -76,7 +76,7 @@ public class PagedLogicalMeter {
       return 0;
     }
 
-    return (long) LogicalMeterHelper.calculateExpectedReadOuts(
+    return LogicalMeterHelper.calculateExpectedReadOuts(
       activePhysicalMeter.readIntervalMinutes,
       selectionPeriod
     ) * meterDefinition.quantities.size();

@@ -16,9 +16,7 @@ public class LocationQueryFilters extends QueryFilters {
   private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(
-    String filter, List<String> values
-  ) {
+  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
     return Optional.ofNullable(buildNullablePredicateFor(filter, values));
   }
 

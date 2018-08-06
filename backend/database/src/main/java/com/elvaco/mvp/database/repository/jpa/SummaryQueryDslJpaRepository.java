@@ -11,8 +11,10 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +22,7 @@ import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntit
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.querydsl.core.types.ExpressionUtils.allOf;
 import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 
@@ -50,14 +53,26 @@ class SummaryQueryDslJpaRepository
   public MeterSummary summary(RequestParameters parameters) {
     Predicate predicate = toPredicate(parameters);
 
-    long meters = createCountQuery(predicate)
+    long meters = countMeters(parameters, predicate);
+    long cities = countCities(parameters, predicate);
+    long addresses = countAddresses(parameters, predicate);
+
+    return new MeterSummary(meters, cities, addresses);
+  }
+
+  private long countMeters(RequestParameters parameters, Predicate predicate) {
+    JPQLQuery<?> query = createCountQuery(predicate)
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetchCount();
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
-    long cities = createQuery(predicate)
+    joinLogicalMeterGateways(query, parameters);
+
+    return query.distinct().fetchCount();
+  }
+
+  private long countCities(RequestParameters parameters, Predicate predicate) {
+    JPQLQuery<Tuple> query = createQuery(predicate)
       .select(Expressions.list(LOCATION.country, LOCATION.city))
       .where(
         allOf(
@@ -66,12 +81,15 @@ class SummaryQueryDslJpaRepository
       )
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetch()
-      .size();
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
-    long addresses = createQuery(predicate)
+    joinLogicalMeterGateways(query, parameters);
+
+    return (long) query.distinct().fetch().size();
+  }
+
+  private long countAddresses(RequestParameters parameters, Predicate predicate) {
+    JPQLQuery<Tuple> query = createQuery(predicate)
       .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress))
       .where(
         allOf(
@@ -80,12 +98,11 @@ class SummaryQueryDslJpaRepository
       )
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .distinct()
-      .fetch()
-      .size();
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
-    return new MeterSummary(meters, cities, addresses);
+    joinLogicalMeterGateways(query, parameters);
+
+    return (long) query.distinct().fetch().size();
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {

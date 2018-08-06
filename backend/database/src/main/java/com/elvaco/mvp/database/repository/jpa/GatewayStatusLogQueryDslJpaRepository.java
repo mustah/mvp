@@ -11,18 +11,20 @@ import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.querydsl.core.group.GroupBy.groupBy;
 
-public class GatewayStatusLogJpaRepositoryImpl
+@Repository
+class GatewayStatusLogQueryDslJpaRepository
   extends BaseQueryDslRepository<GatewayStatusLogEntity, Long>
-  implements GatewayStatusLogJpaRepositoryCustom {
+  implements GatewayStatusLogJpaRepository {
 
   private static final QGatewayStatusLogEntity STATUS_LOG = gatewayStatusLogEntity;
 
   @Autowired
-  public GatewayStatusLogJpaRepositoryImpl(EntityManager entityManager) {
+  GatewayStatusLogQueryDslJpaRepository(EntityManager entityManager) {
     super(entityManager, GatewayStatusLogEntity.class);
   }
 

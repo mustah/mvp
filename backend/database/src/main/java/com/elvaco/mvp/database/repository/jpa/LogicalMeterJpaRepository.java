@@ -18,7 +18,13 @@ public interface LogicalMeterJpaRepository {
 
   <S extends LogicalMeterEntity> S save(S entity);
 
-  List<LogicalMeterEntity> findAll();
+  Optional<LogicalMeterEntity> findById(UUID id);
+
+  Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
+
+  Optional<LogicalMeterEntity> findBy(RequestParameters parameters);
+
+  List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 
   List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate);
 
@@ -30,21 +36,13 @@ public interface LogicalMeterJpaRepository {
     Pageable pageable
   );
 
-  List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
-
-  Optional<LogicalMeterEntity> findById(UUID id);
-
-  Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
-
-  Optional<LogicalMeterEntity> findBy(RequestParameters parameters);
-
-  void deleteAll();
-
-  void delete(UUID id, UUID organisationId);
-
   Map<UUID, Long> findMeasurementCounts(Predicate predicate);
 
   Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
     Predicate predicate
   );
+
+  void delete(UUID id, UUID organisationId);
+
+  void deleteAll();
 }

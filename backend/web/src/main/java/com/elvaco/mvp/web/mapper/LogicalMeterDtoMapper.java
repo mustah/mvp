@@ -52,8 +52,7 @@ public class LogicalMeterDtoMapper {
       .map(m -> m.address)
       .orElse(null);
 
-    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage()
-      .orElse(null);
+    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
 
     meterDto.gatewaySerial =
       logicalMeter.gateways
@@ -90,8 +89,7 @@ public class LogicalMeterDtoMapper {
       .map(m -> m.address)
       .orElse(null);
 
-    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage()
-      .orElse(null);
+    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
 
     meterDto.gateway =
       logicalMeter.gateways

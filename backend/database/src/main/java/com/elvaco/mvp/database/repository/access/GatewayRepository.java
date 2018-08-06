@@ -40,8 +40,7 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public List<Gateway> findAll(RequestParameters parameters) {
-    return gatewayJpaRepository.findAll(parameters)
-      .stream()
+    return gatewayJpaRepository.findAll(parameters).stream()
       .map(GatewayWithMetersMapper::toDomainModel)
       .collect(toList());
   }
@@ -116,8 +115,7 @@ public class GatewayRepository implements Gateways {
     List<GatewayEntity> entities,
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap
   ) {
-    return entities
-      .stream()
+    return entities.stream()
       .map(gateway -> GatewayWithMetersMapper.toDomainModel(gateway, statusLogMap))
       .collect(toList());
   }

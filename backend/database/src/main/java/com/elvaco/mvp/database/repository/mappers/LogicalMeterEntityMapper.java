@@ -53,7 +53,6 @@ public class LogicalMeterEntityMapper {
     @Nullable Long expectedMeasurementCount,
     @Nullable Long actualMeasurementCount
   ) {
-
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
       .map(physicalMeterEntity ->
         PhysicalMeterEntityMapper.toDomainModel(

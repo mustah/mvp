@@ -14,7 +14,6 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
-import com.elvaco.mvp.database.util.JoinIfNeededUtil;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -25,6 +24,7 @@ import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntit
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 
 @Repository
 class LogicalMeterMapQueryDslJpaRepository
@@ -64,7 +64,7 @@ class LogicalMeterMapQueryDslJpaRepository
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
       .distinct();
 
-    JoinIfNeededUtil.joinGatewayFromLogicalMeter(query, parameters);
+    joinLogicalMeterGateways(query, parameters);
 
     return new HashSet<>(query.fetch());
   }

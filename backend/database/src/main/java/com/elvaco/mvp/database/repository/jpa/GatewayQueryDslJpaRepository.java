@@ -30,6 +30,7 @@ import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntit
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayStatusLogs;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
@@ -52,9 +53,9 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public List<GatewayEntity> findAll(RequestParameters parameters) {
-    return createQuery(toPredicate(parameters)).select(path)
-      .distinct()
-      .fetch();
+    JPQLQuery<GatewayEntity> query = createQuery(toPredicate(parameters)).select(path);
+    joinGatewayStatusLogs(query, parameters);
+    return query.distinct().fetch();
   }
 
   @Override
