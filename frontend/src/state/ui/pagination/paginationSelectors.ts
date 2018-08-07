@@ -42,8 +42,6 @@ export const getPagination =
   createSelector<GetPagination, PaginationModel, PageNumbered, Pagination>(
     getMetadata,
     getPage,
-    (
-      {useCases, ...metadata}: PaginationModel,
-      hasPage: PageNumbered,
-    ) => ({...metadata, ...hasPage}),
+    ({useCases, ...metadata}: PaginationModel, hasPage: PageNumbered) =>
+      ({...metadata, ...hasPage}),
   );
