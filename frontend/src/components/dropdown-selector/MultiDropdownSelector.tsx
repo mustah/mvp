@@ -13,16 +13,16 @@ interface MultiDropdownSelectorProps extends DropdownProps {
   parentIdentifier: string;
 }
 
-const unknown = 'unknown';
+const unknown: string = 'unknown';
 
 export const MultiDropdownSelector = (props: MultiDropdownSelectorProps) => {
   const {parentIdentifier, parentSelectionLookup, ...DropdownProps} = props;
 
   const renderLabel = (index: number, filteredList: SelectionListItem[]) => {
     const {name} = filteredList[index];
-    const parentId = filteredList[index][parentIdentifier];
+    const parentId: string = filteredList[index][parentIdentifier];
     const {name: parentName} = parentSelectionLookup[parentId];
-    const translatedName = parentName === unknown ? translate(unknown) : parentName;
+    const translatedName: string = parentName === unknown ? translate(unknown) : parentName;
     return ([
       <Normal key={1}>{name}</Normal>,
       <div className="first-uppercase" key={2} style={dropDownStyle.parentStyle}>{translatedName}</div>,

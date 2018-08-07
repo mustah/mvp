@@ -62,10 +62,8 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
 
   render() {
     const {anchorElement, isOpen, searchText, filteredList} = this.state;
-    const {selectionText, list} = this.props;
+    const {selectionText, list, rowHeight, visibleItems} = this.props;
 
-    const rowHeight = this.props.rowHeight;
-    const visibleItems = this.props.visibleItems;
     const numEntries = filteredList.length;
 
     const selected: number = selectedOptions(list);
