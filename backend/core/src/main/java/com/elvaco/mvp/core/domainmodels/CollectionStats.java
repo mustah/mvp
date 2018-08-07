@@ -16,7 +16,9 @@ public class CollectionStats {
   public CollectionStats(double missing, double expected) {
     this.missing = missing;
     this.expected = expected;
-    this.collectionPercentage = expected == 0 ? Double.NaN : 100 - ((missing / expected) * 100);
+    this.collectionPercentage = expected == 0
+      ? Double.NaN
+      : ((expected - missing) / expected) * 100;
   }
 
   public static CollectionStats asSumOf(Collection<CollectionStats> stats) {

@@ -9,5 +9,5 @@ public class LogicalMeterCollectionStats {
 
   public final UUID id;
   public final Long missingReadingCount;
-  public final Long expectedReadingCount;
+  public final Long readInterval;
 }

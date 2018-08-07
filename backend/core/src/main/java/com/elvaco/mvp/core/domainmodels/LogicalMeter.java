@@ -269,7 +269,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     return Optional.of(physicalMeters.get(physicalMeters.size() - 1));
   }
 
-  LogicalMeter createdAt(ZonedDateTime creationTime) {
+  public LogicalMeter createdAt(ZonedDateTime creationTime) {
     return new LogicalMeter(
       id,
       externalId,

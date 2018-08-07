@@ -19,7 +19,7 @@ public class PagedLogicalMeter {
   public final PhysicalMeterStatusLogEntity currentStatus;
   public final LocationEntity location;
   public final PhysicalMeterEntity activePhysicalMeter;
-  public final Long readingCount;
+  public final Long missingReadingCount;
 
   public PagedLogicalMeter(
     UUID id,
@@ -57,7 +57,7 @@ public class PagedLogicalMeter {
     @Nullable PhysicalMeterEntity activePhysicalMeter,
     @Nullable GatewayEntity gateway,
     @Nullable PhysicalMeterStatusLogEntity currentStatus,
-    @Nullable Long readingCount
+    @Nullable Long missingReadingCount
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -68,7 +68,7 @@ public class PagedLogicalMeter {
     this.activePhysicalMeter = activePhysicalMeter;
     this.gateway = gateway;
     this.currentStatus = currentStatus;
-    this.readingCount = readingCount;
+    this.missingReadingCount = missingReadingCount;
   }
 
   public long expectedReadingCount(SelectionPeriod selectionPeriod) {
@@ -82,7 +82,7 @@ public class PagedLogicalMeter {
     );
   }
 
-  public PagedLogicalMeter withReadingCount(@Nullable Long readingCount) {
+  public PagedLogicalMeter withMissingReadingCount(@Nullable Long missingReadingCount) {
     return new PagedLogicalMeter(
       id,
       organisationId,
@@ -93,7 +93,7 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       currentStatus,
-      readingCount
+      missingReadingCount
     );
   }
 
@@ -108,7 +108,7 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       currentStatus,
-      readingCount
+      missingReadingCount
     );
   }
 }

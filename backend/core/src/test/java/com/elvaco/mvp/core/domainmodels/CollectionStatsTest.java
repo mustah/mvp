@@ -10,6 +10,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CollectionStatsTest {
 
   @Test
+  public void thirdCollected() {
+    assertThat(new CollectionStats(2, 3).collectionPercentage).isEqualTo(33.33333333333333);
+  }
+
+  @Test
+  public void noneCollected() {
+    assertThat(new CollectionStats(1, 1).collectionPercentage).isEqualTo(0);
+  }
+
+  @Test
+  public void allCollected() {
+    assertThat(new CollectionStats(0, 1).collectionPercentage).isEqualTo(100);
+  }
+
+  @Test
+  public void halfCollected() {
+    assertThat(new CollectionStats(1, 2).collectionPercentage).isEqualTo(50);
+  }
+
+  @Test
   public void emptyParam() {
     assertThat(CollectionStats.asSumOf(Collections.emptyList()))
       .isEqualTo(new CollectionStats(0.0, 0.0));

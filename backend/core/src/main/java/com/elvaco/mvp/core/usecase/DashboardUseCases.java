@@ -15,22 +15,22 @@ public class DashboardUseCases {
 
   private final LogicalMeters logicalMeters;
 
+  public static Optional<CollectionStats> sumCollectionStats(
+    List<CollectionStats> collectionStats
+  ) {
+    return Optional.of(CollectionStats.asSumOf(collectionStats))
+      .filter(sumStats -> sumStats.expected != 0.0);
+  }
+
   public Optional<CollectionStats> findCollectionStats(RequestParameters parameters) {
     if (!parameters.hasName("after") || !parameters.hasName("before")) {
       return Optional.empty();
     }
 
     List<CollectionStats> meterStats = logicalMeters.findMissingMeasurements(parameters).stream()
-      .map(entry -> new CollectionStats(entry.missingReadingCount, entry.expectedReadingCount))
+      .map(entry -> new CollectionStats(entry.missingReadingCount, entry.readInterval))
       .collect(toList());
 
     return sumCollectionStats(meterStats);
-  }
-
-  public static Optional<CollectionStats> sumCollectionStats(
-    List<CollectionStats> collectionStats
-  ) {
-    return Optional.of(CollectionStats.asSumOf(collectionStats))
-      .filter(sumStats -> sumStats.expected != 0.0);
   }
 }

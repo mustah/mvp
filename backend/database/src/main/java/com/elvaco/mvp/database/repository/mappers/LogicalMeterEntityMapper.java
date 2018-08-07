@@ -86,7 +86,7 @@ public class LogicalMeterEntityMapper {
     return new LogicalMeterCollectionStats(
       logicalMeterCollectionStats.id,
       logicalMeterCollectionStats.missingReadingCount,
-      calculateExpectedReadOuts(logicalMeterCollectionStats.expectedReadingCount, selectionPeriod)
+      calculateExpectedReadOuts(logicalMeterCollectionStats.readInterval, selectionPeriod)
     );
   }
 
@@ -144,7 +144,7 @@ public class LogicalMeterEntityMapper {
       emptyList(),
       LocationEntityMapper.toDomainModel(pagedLogicalMeter.location),
       expectedReadingCount,
-      pagedLogicalMeter.readingCount,
+      pagedLogicalMeter.missingReadingCount,
       Optional.ofNullable(pagedLogicalMeter.currentStatus)
         .map(MeterStatusLogEntityMapper::toDomainModel)
         .orElse(null)

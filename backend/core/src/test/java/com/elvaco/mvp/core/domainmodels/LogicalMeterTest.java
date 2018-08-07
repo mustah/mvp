@@ -305,7 +305,7 @@ public class LogicalMeterTest {
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(7.0);
     assertThat(collectionStats.missing).isEqualTo(3.0);
-    assertThat(collectionStats.collectionPercentage).isEqualTo(57.142857142857146);
+    assertThat(collectionStats.collectionPercentage).isEqualTo(57.14285714285714);
   }
 
   @Test

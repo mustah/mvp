@@ -38,12 +38,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayStatusLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMetersStatusLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterStatusLogs;
 import static com.querydsl.core.group.GroupBy.groupBy;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
@@ -179,15 +181,21 @@ class LogicalMeterQueryDslJpaRepository
   public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
     RequestParameters parameters
   ) {
+    if (!isDateRange(parameters)) {
+      return emptyList();
+    }
+
     JPQLQuery<LogicalMeterCollectionStats> query = createQuery()
       .select(Projections.constructor(
         LogicalMeterCollectionStats.class,
         LOGICAL_METER.id,
         MISSING_MEASUREMENT.count(),
         PHYSICAL_METER.readIntervalMinutes
-      )).where(new MissingMeasurementQueryFilters().toExpression(parameters))
+      )).where(new LogicalMeterQueryFilters().toExpression(parameters))
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
+      .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT).on(
+        new MissingMeasurementQueryFilters().toExpression(parameters)
+      )
       .groupBy(LOGICAL_METER.id, PHYSICAL_METER.readIntervalMinutes);
 
     joinLogicalMeterGateways(query, parameters);
@@ -241,14 +249,17 @@ class LogicalMeterQueryDslJpaRepository
 
     return pagedLogicalMeters.stream()
       .map(pagedLogicalMeter -> pagedLogicalMeter
-        .withReadingCount(logicalMeterIdToReadingCount.getOrDefault(pagedLogicalMeter.id, 0L))
+        .withMissingReadingCount(logicalMeterIdToReadingCount.getOrDefault(
+          pagedLogicalMeter.id,
+          0L
+        ))
         .withCurrentStatus(logicalMeterIdToCurrentStatus.get(pagedLogicalMeter.id))
       ).collect(toList());
   }
 
   private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
     if ((parameters.hasName("minValue") || parameters.hasName("maxValue"))
-      && parameters.hasName("quantity")) {
+        && parameters.hasName("quantity")) {
 
       String quantity = parameters.getFirst("quantity");
 

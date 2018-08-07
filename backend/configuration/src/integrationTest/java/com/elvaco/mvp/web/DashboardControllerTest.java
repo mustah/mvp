@@ -18,6 +18,7 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
+import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
@@ -41,8 +42,8 @@ import static org.junit.Assume.assumeTrue;
 
 public class DashboardControllerTest extends IntegrationTest {
 
-  private final ZonedDateTime startDate = ZonedDateTime.parse("2018-08-01T00:00:00.00Z");
-  private final ZonedDateTime beforeDate = ZonedDateTime.parse("2018-08-03T00:00:00.00Z");
+  private final ZonedDateTime startDate = ZonedDateTime.parse("2018-08-04T00:00:00.00Z");
+  private final ZonedDateTime beforeDate = ZonedDateTime.parse("2018-08-07T00:00:00.00Z");
 
   private double readingCount = 0.0;
   private double readingFailedCount = 0.0;
@@ -59,6 +60,9 @@ public class DashboardControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
+  @Autowired
+  private MissingMeasurementJpaRepository missingMeasurementJpaRepository;
+
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
@@ -66,6 +70,10 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    measurementJpaRepository.deleteAll();
+    physicalMeterStatusLogJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test
@@ -88,17 +96,18 @@ public class DashboardControllerTest extends IntegrationTest {
     );
 
     List<PhysicalMeterEntity> physicalMeters = Arrays.asList(
-      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER),
       newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER)
     );
 
-    newActiveStatusLogs(physicalMeters, startDate);
+    newActiveStatusLogs(physicalMeters, startDate.minusMinutes(15));
 
     createMeasurementMockData(
       physicalMeters,
       startDate,
       Duration.between(startDate, beforeDate).toDays()
     );
+
+    missingMeasurementJpaRepository.refreshLocked();
 
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
@@ -108,7 +117,11 @@ public class DashboardControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody().widgets.get(0))
-      .isEqualTo(new WidgetDto(WidgetType.COLLECTION.name, 12, 6));
+      .isEqualTo(new WidgetDto(
+        WidgetType.COLLECTION.name,
+        readingFailedCount + readingCount,
+        readingFailedCount
+      ));
   }
 
   @Test
@@ -129,6 +142,8 @@ public class DashboardControllerTest extends IntegrationTest {
       startDate,
       Duration.between(startDate, beforeDate).toDays()
     );
+
+    missingMeasurementJpaRepository.refreshLocked();
 
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
