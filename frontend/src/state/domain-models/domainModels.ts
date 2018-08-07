@@ -29,6 +29,8 @@ export interface NormalizedState<T extends Identifiable> extends DomainModel<T> 
   error?: ErrorResponse;
 }
 
+// TODO remove Address from this type (a.k.a. replace usages of SelectionEntity with IdNamed)
+// we don't want the address to depend on "city", it should be flat, which would reduce complexity
 export type SelectionEntity = IdNamed | Address;
 
 export type SelectionEntityState = NormalizedState<SelectionEntity>;

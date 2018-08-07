@@ -31,11 +31,8 @@ import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestPar
 public class SelectionController {
 
   private final PhysicalMeterUseCases physicalMeterUseCases;
-
   private final LogicalMeterUseCases logicalMeterUseCases;
-
   private final LocationUseCases locationUseCases;
-
   private final GatewayUseCases gatewayUseCases;
 
   @GetMapping
@@ -68,7 +65,6 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Location> page = locationUseCases.findAll(parameters, adapter);

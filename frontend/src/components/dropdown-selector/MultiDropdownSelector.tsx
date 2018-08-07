@@ -34,7 +34,7 @@ export const MultiDropdownSelector = (props: MultiDropdownSelectorProps) => {
       {...DropdownProps}
       renderLabel={renderLabel}
       rowHeight={40}
-      visibleItems={8}
+      visibleItems={10}
     />
   );
 };
