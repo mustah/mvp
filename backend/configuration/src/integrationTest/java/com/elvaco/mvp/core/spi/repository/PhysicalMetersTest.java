@@ -96,7 +96,7 @@ public class PhysicalMetersTest extends IntegrationTest {
 
     assertThat(
       physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-        context().getOrganisationId(),
+        context().organisationId(),
         "12",
         "123456789"
       )

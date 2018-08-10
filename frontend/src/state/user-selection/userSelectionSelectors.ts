@@ -1,5 +1,6 @@
-import {createSelector, OutputSelector} from 'reselect';
+import {createSelector} from 'reselect';
 import {DateRange, Period} from '../../components/dates/dateModels';
+import {byNameAsc} from '../../helpers/comparators';
 import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {getTranslationOrName} from '../../helpers/translations';
@@ -10,182 +11,104 @@ import {
   toPaginationApiParameters,
 } from '../../helpers/urlFactory';
 
-import {EncodedUriParameters, uuid} from '../../types/Types';
-import {DomainModel, SelectionEntity} from '../domain-models/domainModels';
+import {EncodedUriParameters} from '../../types/Types';
+import {SelectionItem} from '../domain-models/domainModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 import {
-  LookupState,
   ParameterName,
   SelectedParameters,
   SelectionInterval,
   SelectionListItem,
+  UriLookupState,
+  UriLookupStatePaginated,
   UserSelection,
   UserSelectionState,
 } from './userSelectionModels';
 
-const getSelectedIds = (state: LookupState): SelectedParameters =>
-  state.userSelection.userSelection.selectionParameters;
-
-const getSelectionGroup = (entityType: string) =>
-  (state: LookupState): DomainModel<SelectionEntity> => {
-  return state.domainModels[entityType];
-};
-
-const getSelectedEntityIdsSelector = (entityType: string) =>
-  createSelector<LookupState, SelectedParameters, uuid[]>(
-    getSelectedIds,
-    (selectedParameters: SelectedParameters) => selectedParameters[entityType],
-  );
-
-const arrayDiff = <T>(
-  superSet: T[],
-  subSet: T[],
-): T[] => superSet.filter((a) => !subSet.includes(a));
-
-const getDiffCombiner = (entityType: string) => (
-  {result}: DomainModel<SelectionEntity>,
-  selected: SelectedParameters,
-) => arrayDiff(
-  result,
-  selected[entityType] || '',
-);
-
-const deselectedIdsSelector = (entityType: string) =>
-  createSelector<LookupState, DomainModel<SelectionEntity>, SelectedParameters, uuid[]>(
-    getSelectionGroup(entityType),
-    getSelectedIds,
-    getDiffCombiner(entityType),
-  );
-
-const getDeselectedEntities = (entityType: string) =>
-  createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
-    deselectedIdsSelector(entityType),
-    getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: DomainModel<SelectionEntity>) => ids.map((id) => entities[id]),
-  );
-
-const getCombiner = (ids: uuid[] = [], {entities}: DomainModel<SelectionEntity>): any => {
-  return ids
-    .map((id: uuid) => entities[id])
-    .filter((item) => item);
-};
-
-const getSelectedEntities = (entityType: ParameterName) =>
-  createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
-    getSelectedEntityIdsSelector(entityType),
-    getSelectionGroup(entityType),
-    getCombiner,
-  );
-
-export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
-
-type ListResultCombiner = (
-  selected: SelectionEntity[],
-  deselected: SelectionEntity[],
-) => SelectionListItem[];
-
-type ListSelector = OutputSelector<LookupState, SelectionListItem[], ListResultCombiner>;
-
-const getList = (entityType: ParameterName): ListSelector =>
-  createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[]>(
-    getSelectedEntities(entityType),
-    getDeselectedEntities(entityType),
-    (selected: SelectionEntity[], deselected: SelectionEntity[]): SelectionListItem[] => {
-      const selectedEntities: SelectionListItem[] =
-        selected
-          .map(({id, name, ...extra}: SelectionEntity) =>
-            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: true}))
-          .sort(comparatorByNameAsc);
-
-      const deselectedEntities: SelectionListItem[] =
-        deselected
-          .map(({id, name, ...extra}: SelectionEntity) =>
-            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: false}))
-          .sort(comparatorByNameAsc);
-
-      return [...selectedEntities, ...deselectedEntities];
-    },
-  );
-
-const comparatorByNameAsc = (objA: SelectionEntity, objB: SelectionEntity) =>
-  (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
-
-export const getAddresses = getList(ParameterName.addresses);
-export const getCities = getList(ParameterName.cities);
-export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
-export const getMedia = getList(ParameterName.media);
-export const getMeterStatuses = getList(ParameterName.meterStatuses);
-export const getSecondaryAddresses = getList(ParameterName.secondaryAddresses);
-export const getFacilities = getList(ParameterName.facilities);
-export const getGatewaySerials = getList(ParameterName.gatewaySerials);
-
-export interface UriLookupState extends UserSelectionState {
-  now: Date;
-}
-
-export interface UriLookupStatePaginated extends UriLookupState {
-  pagination: Pagination;
-}
-
-const getSelectedParameters = (state: UserSelectionState): SelectedParameters =>
+const getSelectionParameters = (state: UserSelectionState): SelectedParameters =>
   state.userSelection.selectionParameters;
+
+const sortAndTranslateItems =
+  (items: SelectionItem[] = [], entityType: ParameterName, selected: boolean): SelectionListItem[] =>
+    items.map(({id, name, ...extra}: SelectionItem) =>
+      ({id, name: getTranslationOrName(name, entityType), ...extra, selected}))
+      .sort(byNameAsc);
+
+const selectedEntitiesCombiner = (entityType: ParameterName) =>
+  (selected: SelectionItem[]): SelectionListItem[] =>
+    [...sortAndTranslateItems(selected, entityType, true)];
+
+const selectionCombiner = (entityType: ParameterName) =>
+  (selectedParameters: SelectedParameters): SelectionListItem[] =>
+    selectedEntitiesCombiner(entityType)(selectedParameters[entityType]);
+
+const getSelectedItems = (entityType: ParameterName) =>
+  createSelector<UserSelectionState, SelectedParameters, SelectionListItem[]>(
+    getSelectionParameters,
+    selectionCombiner(entityType),
+  );
+
+export const getSelectedGatewayStatuses = getSelectedItems(ParameterName.gatewayStatuses);
+export const getSelectedMedia = getSelectedItems(ParameterName.media);
+export const getSelectedMeterStatuses = getSelectedItems(ParameterName.meterStatuses);
+export const getSelectedCities = getSelectedItems(ParameterName.cities);
+export const getSelectedAddresses = getSelectedItems(ParameterName.addresses);
+export const getSelectedFacilities = getSelectedItems(ParameterName.facilities);
+export const getSelectedSecondaryAddresses = getSelectedItems(ParameterName.secondaryAddresses);
+export const getSelectedGatewaySerials = getSelectedItems(ParameterName.gatewaySerials);
 
 const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
   const {now} = state;
-  const {dateRange: {period, customDateRange}} = getSelectedParameters(state);
+  const {dateRange: {period, customDateRange}} = getSelectionParameters(state);
   return ({now, period, customDateRange: Maybe.maybe(customDateRange)});
 };
 
 export const getPaginatedMeterParameters =
   createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
     ({pagination}) => pagination,
-    getSelectedParameters,
+    getSelectionParameters,
     getCurrentPeriod,
-    (pagination, {dateRange, ...rest}, currentPeriod) => {
-      return encodedUriParametersFrom([
+    (pagination, {dateRange, ...rest}, currentPeriod) =>
+      encodedUriParametersFrom([
         ...toEntityApiParametersMeters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
-      ]);
-    },
+      ]),
   );
 
 export const getPaginatedGatewayParameters =
   createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
     ({pagination}) => pagination,
-    getSelectedParameters,
+    getSelectionParameters,
     getCurrentPeriod,
-    (pagination, {dateRange, ...rest}, currentPeriod) => {
-      return encodedUriParametersFrom([
+    (pagination, {dateRange, ...rest}, currentPeriod) =>
+      encodedUriParametersFrom([
         ...toEntityApiParametersGateways(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
-      ]);
-    },
+      ]),
   );
 
 export const getMeterParameters =
   createSelector<UriLookupState, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
-    getSelectedParameters,
+    getSelectionParameters,
     getCurrentPeriod,
-    ({dateRange, ...rest}, currentPeriod) => {
-      return encodedUriParametersFrom([
+    ({dateRange, ...rest}, currentPeriod) =>
+      encodedUriParametersFrom([
         ...toEntityApiParametersMeters(rest),
         ...toPeriodApiParameters(currentPeriod),
-      ]);
-    },
+      ]),
   );
 
 export const getGatewayParameters =
   createSelector<UriLookupState, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
-    getSelectedParameters,
+    getSelectionParameters,
     getCurrentPeriod,
-    ({dateRange, ...rest}, currentPeriod) => {
-      return encodedUriParametersFrom([
+    ({dateRange, ...rest}, currentPeriod) =>
+      encodedUriParametersFrom([
         ...toEntityApiParametersGateways(rest),
         ...toPeriodApiParameters(currentPeriod),
-      ]);
-    },
+      ]),
   );
 
 export const getSelectedPeriod =
@@ -197,4 +120,4 @@ export const getSelectedPeriod =
     }),
   );
 
-export const getSelection = (state: UserSelectionState): UserSelection => state.userSelection;
+export const getUserSelection = (state: UserSelectionState): UserSelection => state.userSelection;

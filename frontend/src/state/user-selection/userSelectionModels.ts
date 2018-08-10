@@ -1,53 +1,53 @@
 import {DateRange, Period} from '../../components/dates/dateModels';
-import {IdNamed, ItemOrArray, uuid} from '../../types/Types';
-import {DomainModelsState, SelectionEntity} from '../domain-models/domainModels';
+import {IdNamed, Selected, uuid} from '../../types/Types';
+import {SelectionItem} from '../domain-models/domainModels';
+import {Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
   addresses = 'addresses',
-  alarms = 'alarms',
   cities = 'cities',
-  countries = 'countries',
   gatewayStatuses = 'gatewayStatuses',
-  manufacturers = 'manufacturers',
   media = 'media',
   meterStatuses = 'meterStatuses',
   period = 'period',
-  productModels = 'productModels',
   secondaryAddresses = 'secondaryAddresses',
   facilities = 'facilities',
   gatewaySerials = 'gatewaySerials',
 }
 
-export type FilterParam = uuid | boolean;
-
 export interface SelectionParameter {
-  id: ItemOrArray<FilterParam>;
-  name?: string;
+  item: SelectionItem;
   parameter: ParameterName;
 }
 
 /**
- * After https://github.com/Microsoft/TypeScript/issues/13042 is resolved, we can replace the repetitive definitions
- * below with something prettier, like:
- * interface SelectedParameters {
- *   period: Period;
+ * After https://github.com/Microsoft/TypeScript/issues/13042 is resolved, we can replace the
+ * repetitive definitions below with something prettier, like: interface SelectedParameters {
+ * period: Period;
  *   [key: ParameterName]: uuid[]
  * }
  */
 export interface SelectedParameters {
-  addresses?: uuid[];
-  alarms?: uuid[];
-  cities?: uuid[];
+  addresses?: SelectionItem[];
+  cities?: SelectionItem[];
   dateRange: SelectionInterval;
-  gatewayStatuses?: uuid[];
-  manufacturers?: uuid[];
-  media?: uuid[];
-  meterIds?: uuid[];
-  meterStatuses?: uuid[];
-  productModels?: uuid[];
-  facilities?: uuid[];
-  secondaryAddresses?: uuid[];
-  gatewaySerials?: uuid[];
+  facilities?: IdNamed[];
+  gatewaySerials?: IdNamed[];
+  gatewayStatuses?: IdNamed[];
+  media?: IdNamed[];
+  meterStatuses?: IdNamed[];
+  secondaryAddresses?: IdNamed[];
+}
+
+export interface OldSelectionParameters {
+  addresses: uuid[];
+  cities: uuid[];
+  facilities: uuid[];
+  gatewaySerials: uuid[];
+  gatewayStatuses: uuid[];
+  media: uuid[];
+  meterStatuses: uuid[];
+  secondaryAddresses: uuid[];
 }
 
 export interface SelectionInterval {
@@ -58,15 +58,20 @@ export interface SelectionInterval {
 export interface UserSelection extends IdNamed {
   selectionParameters: SelectedParameters;
   isChanged: boolean;
+  ownerUserId?: uuid;
+  organisationId?: uuid;
 }
 
 export interface UserSelectionState {
   userSelection: UserSelection;
 }
 
-export interface LookupState {
-  userSelection: UserSelectionState;
-  domainModels: DomainModelsState;
+export interface UriLookupState extends UserSelectionState {
+  now: Date;
+}
+
+export interface UriLookupStatePaginated extends UriLookupState {
+  pagination: Pagination;
 }
 
 export type OnSelectPeriod = (period: Period) => void;
@@ -74,6 +79,6 @@ export type OnSelectCustomDateRange = (dateRange: DateRange) => void;
 
 export type OnSelectSelection = (selection: UserSelection) => void;
 
-export type SelectionListItem = SelectionEntity & {selected: boolean};
+export type SelectionListItem = SelectionItem & Selected;
 
 export type OnSelectParameter = (selectionParameter: SelectionParameter) => void;

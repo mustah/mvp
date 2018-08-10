@@ -25,6 +25,7 @@ import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMappe
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.SortUtil;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -105,7 +106,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
-    List<LogicalMeterEntity> meters = sortingMapper.getAsSpringSort(parameters)
+    List<LogicalMeterEntity> meters = SortUtil.getSort(parameters)
       .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
       .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));
 

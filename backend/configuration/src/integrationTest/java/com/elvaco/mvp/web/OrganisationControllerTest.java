@@ -76,7 +76,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminDoesNotFindOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asTestAdmin()
-      .get("/organisations/" + context().getOrganisationId(), OrganisationDto.class);
+      .get("/organisations/" + context().organisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -92,7 +92,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserDoesNotFindOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asTestUser()
-      .get("/organisations/" + context().getOrganisationId(), OrganisationDto.class);
+      .get("/organisations/" + context().organisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }

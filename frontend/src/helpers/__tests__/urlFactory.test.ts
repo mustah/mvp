@@ -1,19 +1,22 @@
 import {Period} from '../../components/dates/dateModels';
-import {SelectedParameters} from '../../state/user-selection/userSelectionModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
-import {Status} from '../../types/Types';
+import {SelectedParameters} from '../../state/user-selection/userSelectionModels';
+import {IdNamed, Status, toIdNamed} from '../../types/Types';
 import {momentWithTimeZone, toPeriodApiParameters} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 import {
-  encodedUriParametersFrom, toEntityApiParametersGateways, toEntityApiParametersMeters,
+  encodedUriParametersFrom,
+  toEntityApiParametersGateways,
+  toEntityApiParametersMeters,
   toPaginationApiParameters,
 } from '../urlFactory';
 
 describe('urlFactory', () => {
 
-  const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters => {
-    return parameters as SelectedParameters;
-  };
+  const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters =>
+    parameters as SelectedParameters;
+
+  const cities: IdNamed[] = [toIdNamed('got'), toIdNamed('sto'), toIdNamed('mmx')];
 
   describe('toEntityApiParameters', () => {
     it('returns empty parameters string when nothing is selected', () => {
@@ -26,16 +29,14 @@ describe('urlFactory', () => {
     });
 
     it('returns selected city', () => {
-      const selection = selectedParameters({cities: ['got']});
+      const selection = selectedParameters({cities: [toIdNamed('got')]});
 
-      expect(toEntityApiParametersMeters(selection))
-        .toEqual(['city=got']);
-      expect(toEntityApiParametersGateways(selection))
-        .toEqual(['city=got']);
+      expect(toEntityApiParametersMeters(selection)).toEqual(['city=got']);
+      expect(toEntityApiParametersGateways(selection)).toEqual(['city=got']);
     });
 
     it('returns selected cities', () => {
-      const selection = selectedParameters({cities: ['got', 'sto', 'mmx']});
+      const selection = selectedParameters({cities});
 
       expect(toEntityApiParametersMeters(selection))
         .toEqual(['city=got', 'city=sto', 'city=mmx']);
@@ -44,7 +45,7 @@ describe('urlFactory', () => {
     });
 
     it('returns selected address', () => {
-      const selection = selectedParameters({addresses: ['address 2']});
+      const selection = selectedParameters({addresses: [toIdNamed('address 2')]});
 
       expect(toEntityApiParametersMeters(selection))
         .toEqual(['address=address%202']);
@@ -53,7 +54,9 @@ describe('urlFactory', () => {
     });
 
     it('returns selected addresses', () => {
-      const selection = selectedParameters({addresses: ['address 2', 'storgatan 5']});
+      const selection = selectedParameters({
+        addresses: [toIdNamed('address 2'), toIdNamed('storgatan 5')],
+      });
 
       expect(toEntityApiParametersMeters(selection))
         .toEqual(['address=address%202', 'address=storgatan%205']);
@@ -63,28 +66,24 @@ describe('urlFactory', () => {
 
     it('returns selected statuses', () => {
       const selection = selectedParameters({
-        meterStatuses: [Status.ok, Status.warning],
-        gatewayStatuses: [Status.ok],
+        meterStatuses: [toIdNamed(Status.ok), toIdNamed(Status.warning)],
+        gatewayStatuses: [toIdNamed(Status.ok)],
       });
 
-      const expectedMeterParameters = ['status=ok', 'status=warning', 'gatewayStatus=ok'];
-
       expect(toEntityApiParametersMeters(selection))
-        .toEqual(expectedMeterParameters);
-
-      const expectedGatewayParameters = ['meterStatus=ok', 'meterStatus=warning', 'status=ok'];
+        .toEqual(['status=ok', 'status=warning', 'gatewayStatus=ok']);
 
       expect(toEntityApiParametersGateways(selection))
-        .toEqual(expectedGatewayParameters);
+        .toEqual(['meterStatus=ok', 'meterStatus=warning', 'status=ok']);
     });
   });
 
   it('returns all selected parameters', () => {
     const selection = selectedParameters({
-      addresses: ['address 2', 'storgatan 5'],
-      cities: ['got', 'sto', 'mmx'],
-      meterStatuses: [Status.ok, Status.warning],
-      gatewayStatuses: [Status.ok],
+      addresses: [toIdNamed('address 2'), toIdNamed('storgatan 5')],
+      cities,
+      meterStatuses: [toIdNamed(Status.ok), toIdNamed(Status.warning)],
+      gatewayStatuses: [toIdNamed(Status.ok)],
     });
 
     expect(toEntityApiParametersMeters(selection))

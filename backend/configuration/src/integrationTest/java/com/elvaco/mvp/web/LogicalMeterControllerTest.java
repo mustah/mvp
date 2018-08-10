@@ -203,7 +203,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new LogicalMeter(
         randomUUID(),
         "externalId",
-        context().getOrganisationId(),
+        context().organisationId(),
         MeterDefinition.GAS_METER,
         start,
         emptyList(),
@@ -244,7 +244,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       meterId,
       meterId.toString(),
-      context().getOrganisationId(),
+      context().organisationId(),
       UNKNOWN_METER,
       new LocationBuilder().city("kungsbacka").country("sweden").address("kabelgatan 2t").build()
     ));
@@ -427,7 +427,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void gatewayIsSetOnPagedMeter() {
     Gateway gateway = gateways.save(new Gateway(
       randomUUID(),
-      context().getOrganisationId(),
+      context().organisationId(),
       "gateway-serial",
       "gateway-product"
     ));
@@ -1152,7 +1152,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     createLogicalMeter();
 
     Page<PagedLogicalMeterDto> response = asTestUser()
-      .getPage("/meters?organisation=" + context().getOrganisationId(), PagedLogicalMeterDto.class);
+      .getPage("/meters?organisation=" + context().organisationId(), PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isGreaterThanOrEqualTo(1L);
   }
@@ -1166,7 +1166,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<PagedLogicalMeterDto> response = restClient()
       .loginWith(user.email, user.password)
       .tokenAuthorization()
-      .getPage("/meters?organisation=" + context().getOrganisationId(), PagedLogicalMeterDto.class);
+      .getPage("/meters?organisation=" + context().organisationId(), PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0L);
   }
@@ -1184,7 +1184,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "not-my-meter",
-      context().getOrganisationId(),
+      context().organisationId(),
       hotWaterMeterDefinition,
       UNKNOWN_LOCATION
     ));
@@ -1245,7 +1245,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       facility,
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       UNKNOWN_LOCATION
     ));
@@ -1253,7 +1253,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "another-mapped-meter",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       UNKNOWN_LOCATION
     ));
@@ -1309,7 +1309,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       UNKNOWN_LOCATION
     ));
@@ -1325,14 +1325,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       UNKNOWN_LOCATION
     ));
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "123-123-123",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       new LocationBuilder()
         .country("sweden")
@@ -1355,7 +1355,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       UNKNOWN_LOCATION
     ));
@@ -1363,7 +1363,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "123-123-123",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       new LocationBuilder()
         .country("sweden")
@@ -1378,7 +1378,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "123-456",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       new LocationBuilder()
         .country("sweden")
@@ -1401,7 +1401,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "123-123-123",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       new LocationBuilder()
         .country("sweden")
@@ -1416,7 +1416,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "123-456",
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       new LocationBuilder()
         .country("sweden")
@@ -1718,7 +1718,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       meterId,
       meterId.toString(),
-      context().getOrganisationId(),
+      context().organisationId(),
       DISTRICT_HEATING_METER,
       ZonedDateTime.now(),
       emptyList(),
@@ -1741,7 +1741,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       randomUUID(),
       meterExternalId,
-      context().getOrganisationId(),
+      context().organisationId(),
       ZonedDateTime.now(),
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.UNKNOWN_METER)
     );
@@ -1852,7 +1852,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return logicalMeterRepository.save(new LogicalMeter(
       meterId,
       meterId.toString(),
-      context().getOrganisationId(),
+      context().organisationId(),
       meterDefinition,
       UNKNOWN_LOCATION
     ));

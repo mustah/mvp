@@ -106,7 +106,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
 
   @Test
   public void regularUserSyncingMeterBelongingToSameOrganisationReturns403() {
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().getOrganisationId()));
+    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestUser().post(
       synchronizeUrl(logicalMeter.id),
@@ -120,7 +120,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
 
   @Test
   public void adminUserSyncingMeterBelongingToSameOrganisationReturns403() {
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().getOrganisationId()));
+    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestAdmin().post(
       synchronizeUrl(logicalMeter.id),
@@ -137,9 +137,9 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     List<UUID> meterIds = Stream.of(
-      logicalMeters.save(newLogicalMeter(context().getOrganisationId())),
-      logicalMeters.save(newLogicalMeter(context().getOrganisationId())),
-      logicalMeters.save(newLogicalMeter(context().getOrganisationId()))
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId()))
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
@@ -162,8 +162,8 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     List<UUID> meterIds = Stream.of(
-      logicalMeters.save(newLogicalMeter(context().getOrganisationId())),
-      logicalMeters.save(newLogicalMeter(context().getOrganisationId()))
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId()))
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
@@ -180,7 +180,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
 
   @Test
   public void submittingRequestWhenQueueUnavailableReturns503() {
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().getOrganisationId()));
+    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
     ConnectionFactory oldConnectionFactory = rabbitTemplate.getConnectionFactory();
     rabbitTemplate.setConnectionFactory(new BrokenConnectionFactory());
@@ -207,7 +207,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
   public void successfullySubmittedRequestShouldRespondWith_AcceptedStatusCode() {
     assumeTrue(isRabbitConnected());
 
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().getOrganisationId()));
+    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestSuperAdmin().post(
       synchronizeUrl(logicalMeter.id),
@@ -227,7 +227,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     TestRabbitConsumer consumer = newResponseConsumer();
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().getOrganisationId()));
+    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
     ResponseEntity<Void> responseEntity = asTestSuperAdmin().post(
       synchronizeUrl(logicalMeter.id),
@@ -273,7 +273,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     return propertiesUseCases.findBy(
       FeatureType.UPDATE_GEOLOCATION,
       id,
-      context().getOrganisationId()
+      context().organisationId()
     ).orElseThrow(() -> new PropertyNotFound(FeatureType.UPDATE_GEOLOCATION, id));
   }
 

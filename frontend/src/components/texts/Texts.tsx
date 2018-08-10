@@ -5,6 +5,7 @@ import './Texts.scss';
 interface TextProps {
   className?: string;
   children?: React.ReactNode | React.ReactNode[];
+  style?: React.CSSProperties;
 }
 
 export const Normal = (props: TextProps) => {

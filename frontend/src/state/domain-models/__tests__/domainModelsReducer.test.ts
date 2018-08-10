@@ -1,180 +1,28 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
-import {testData} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
-import {Action, IdNamed} from '../../../types/Types';
+import {Action} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
-import {ADD_PARAMETER_TO_SELECTION} from '../../user-selection/userSelectionActions';
-import {ParameterName} from '../../user-selection/userSelectionModels';
-import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
+import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
   deleteRequestOf,
   domainModelsGetSuccess,
   getEntityRequestOf,
-  getRequestOf,
   postRequestOf,
   putRequestOf,
 } from '../domainModelsActions';
 import {
-  addresses,
-  cities,
   domainModels,
   gatewayMapMarkers,
   initialDomain,
   meterMapMarkers,
   users,
 } from '../domainModelsReducer';
-import {selectionsDataFormatter} from '../selections/selectionsSchemas';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
-
-  const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
-  const normalizedSelections = selectionsDataFormatter(testData.selections);
-
-  describe('/selections', () => {
-    it('does not clear on change in selections', () => {
-      const emptyState: Partial<DomainModelsState> = {};
-      const initialState = domainModels(emptyState as DomainModelsState, {type: 'undefined'});
-      const populatedCitiesState: Partial<DomainModelsState> = {
-        ...initialState,
-        cities: {
-          isFetching: false,
-          isSuccessfullyFetched: true,
-          total: 1,
-          result: [1],
-          entities: {1: {id: 1, name: '1'}},
-        },
-      };
-
-      expect(domainModels(populatedCitiesState as DomainModelsState, {
-        type: ADD_PARAMETER_TO_SELECTION, payload: {
-          id: 1,
-          parameter: ParameterName.cities,
-        },
-      })).toEqual({
-        ...populatedCitiesState,
-      });
-    });
-  });
-
-  describe('addresses', () => {
-
-    const initialState = initialDomain<SelectionEntity>();
-    it('has initial state', () => {
-      expect(addresses(initialState, {type: 'unknown'})).toEqual({...initialState});
-    });
-
-    it('fetches selections for addresses', () => {
-      expect(addresses(initialState, selectionsRequest.request())).toEqual({
-        ...initialState,
-        isFetching: true,
-      });
-    });
-
-    it('has fetched selections successfully ', () => {
-
-      expect(addresses(initialState, selectionsRequest.success(normalizedSelections))).toEqual({
-        ...initialState,
-        isSuccessfullyFetched: true,
-        entities: {
-          'sweden,göteborg,kungsgatan': {
-            id: 'sweden,göteborg,kungsgatan',
-            name: 'kungsgatan',
-            parentId: 'sweden,göteborg',
-          },
-          'sweden,stockholm,drottninggatan': {
-            id: 'sweden,stockholm,drottninggatan',
-            name: 'drottninggatan',
-            parentId: 'sweden,stockholm',
-          },
-          'sweden,stockholm,kungsgatan': {
-            id: 'sweden,stockholm,kungsgatan',
-            name: 'kungsgatan',
-            parentId: 'sweden,stockholm',
-          },
-          'finland,vasa,kungsgatan': {
-            id: 'finland,vasa,kungsgatan',
-            name: 'kungsgatan',
-            parentId: 'finland,vasa',
-          },
-        },
-        result: [
-          'sweden,göteborg,kungsgatan',
-          'sweden,stockholm,kungsgatan',
-          'sweden,stockholm,drottninggatan',
-          'finland,vasa,kungsgatan',
-        ],
-        total: 4,
-      });
-    });
-
-    it('has error when fetching has failed', () => {
-      const payload = {message: 'failed'};
-
-      expect(addresses(initialState, selectionsRequest.failure(payload))).toEqual({
-        ...initialState,
-        error: payload,
-      });
-    });
-  });
-
-  describe('cities', () => {
-
-    const initialState = initialDomain<SelectionEntity>();
-    it('has initial state', () => {
-      expect(cities(initialState, {type: 'unknown'})).toEqual({...initialState});
-    });
-
-    it('fetches selections for cities', () => {
-      expect(cities(initialState, selectionsRequest.request())).toEqual({
-        ...initialState,
-        isFetching: true,
-      });
-    });
-
-    it('has fetched selections successfully', () => {
-
-      expect(cities(initialState, selectionsRequest.success(normalizedSelections))).toEqual({
-        ...initialState,
-        isSuccessfullyFetched: true,
-        entities: {
-          'sweden,göteborg': {
-            id: 'sweden,göteborg',
-            name: 'göteborg',
-            parentId: 'sweden',
-            addresses: ['sweden,göteborg,kungsgatan'],
-          },
-          'sweden,stockholm': {
-            id: 'sweden,stockholm',
-            name: 'stockholm',
-            parentId: 'sweden',
-            addresses: ['sweden,stockholm,kungsgatan', 'sweden,stockholm,drottninggatan'],
-          },
-          'finland,vasa': {
-            id: 'finland,vasa',
-            name: 'vasa',
-            parentId: 'finland',
-            addresses: ['finland,vasa,kungsgatan'],
-          },
-
-        },
-        result: ['sweden,göteborg', 'sweden,stockholm', 'finland,vasa'],
-        total: 3,
-      });
-    });
-
-    it('has error when fetching has failed', () => {
-      const payload = {message: 'failed'};
-
-      expect(cities(initialState, selectionsRequest.failure(payload))).toEqual({
-        ...initialState,
-        error: payload,
-      });
-    });
-  });
 
   describe('users', () => {
 
@@ -340,57 +188,28 @@ describe('domainModelsReducer', () => {
   });
 
   describe('clear domainModels', () => {
+
     it('resets all domain models except the ones related to selection drop downs', () => {
       const initialState: DomainModelsState = {
-        addresses: initialDomain(),
-        alarms: initialDomain(),
-        cities: initialDomain(),
-        countries: initialDomain(),
         gatewayMapMarkers: initialDomain(),
-        gatewayStatuses: initialDomain(),
-        media: initialDomain(),
         meters: initialDomain(),
         meterMapMarkers: initialDomain(),
-        meterStatuses: initialDomain(),
         organisations: initialDomain(),
         userSelections: initialDomain(),
         users: initialDomain(),
-        facilities: initialDomain(),
-        secondaryAddresses: initialDomain(),
-        gatewaySerials: initialDomain(),
-      };
-      const isFetchingState: DomainModelsState = {
-        addresses: {...initialState.addresses, isFetching: true},
-        alarms: {...initialState.alarms, isFetching: true},
-        cities: {...initialState.cities, isFetching: true},
-        countries: {...initialState.countries, isFetching: true},
-        gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
-        gatewayStatuses: {...initialState.gatewayStatuses, isFetching: true},
-        media: {...initialState.media, isFetching: true},
-        meters: {...initialState.meters, isFetching: true},
-        meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
-        meterStatuses: {...initialState.meterStatuses, isFetching: true},
-        organisations: {...initialState.organisations, isFetching: true},
-        userSelections: initialDomain(),
-        users: {...initialState.users, isFetching: true},
-        facilities: {...initialState.facilities, isFetching: true},
-        secondaryAddresses: {...initialState.secondaryAddresses, isFetching: true},
-        gatewaySerials: {...initialState.gatewaySerials, isFetching: true},
       };
 
-      const expected: DomainModelsState = {
-        ...initialState,
-        countries: {...isFetchingState.countries},
-        cities: {...isFetchingState.cities},
-        addresses: {...isFetchingState.addresses},
-        alarms: {...isFetchingState.alarms},
-        gatewayStatuses: {...isFetchingState.gatewayStatuses},
-        media: {...isFetchingState.media},
-        meterStatuses: {...isFetchingState.meterStatuses},
-        facilities: {...isFetchingState.facilities},
-        secondaryAddresses: {...isFetchingState.secondaryAddresses},
-        gatewaySerials: {...isFetchingState.gatewaySerials},
+      const isFetchingState: DomainModelsState = {
+        gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
+        meters: {...initialState.meters, isFetching: true},
+        meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
+        organisations: {...initialState.organisations, isFetching: true},
+        userSelections: {...initialState.userSelections, isFetching: false},
+        users: {...initialState.users, isFetching: true},
       };
+
+      const expected: DomainModelsState = {...initialState};
+
       expect(domainModels(isFetchingState, mockSelectionAction)).toEqual(expected);
     });
   });

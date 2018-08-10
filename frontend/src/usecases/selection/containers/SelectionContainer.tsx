@@ -10,17 +10,17 @@ import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {uuid} from '../../../types/Types';
 import {SelectionContentContainer} from './SelectionContentContainer';
 
 interface StateToProps {
   title: string;
+  selectionId: uuid;
 }
 
 type Props = StateToProps & InjectedAuthRouterProps;
 
-const SelectionContainerComponent = (props: Props) => {
-
-  const {title} = props;
+const SelectionContainerComponent = ({title, selectionId}: Props) => {
   return (
     <MvpPageContainer>
       <Row className="space-between">
@@ -31,7 +31,7 @@ const SelectionContainerComponent = (props: Props) => {
         </Row>
       </Row>
       <Paper style={paperStyle}>
-        <SelectionContentContainer/>
+        <SelectionContentContainer selectionId={selectionId}/>
       </Paper>
     </MvpPageContainer>
   );
@@ -41,6 +41,7 @@ const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToPr
   const title = userSelection.id === -1 ? translate('selection') : userSelection.name;
   return {
     title,
+    selectionId: userSelection.id,
   };
 };
 

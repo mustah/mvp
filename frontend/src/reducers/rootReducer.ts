@@ -45,7 +45,7 @@ export type GetState = () => RootState;
 
 const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection'];
 
-const migrate: MigrationDispatch = createMigrate(migrations);
+const migrate: MigrationDispatch = createMigrate(migrations, {debug: true});
 
 const persistConfig: PersistConfig = {
   key: 'primary',

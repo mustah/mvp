@@ -9,9 +9,8 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressDto {
+public class CityDto {
 
+  public String name;
   public String country;
-  public String city;
-  public String street;
 }

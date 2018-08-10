@@ -1,11 +1,9 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -14,22 +12,18 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.RestClient;
 import com.elvaco.mvp.web.dto.IdNamedDto;
-import com.elvaco.mvp.web.dto.LocationDto;
+import com.elvaco.mvp.web.dto.geoservice.AddressDto;
+import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,9 +37,6 @@ public class SelectionControllerTest extends IntegrationTest {
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
-
-  @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Autowired
@@ -57,465 +48,355 @@ public class SelectionControllerTest extends IntegrationTest {
   @Autowired
   private Gateways gateways;
 
-  private OrganisationEntity anotherOrganisation = null;
-
   @After
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
-
-    if (anotherOrganisation != null) {
-      organisationJpaRepository.delete(anotherOrganisation);
-      anotherOrganisation = null;
-    }
   }
 
   @Test
-  public void getLocation() {
-    createLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1");
-    createLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2");
-    createLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3");
-    createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
+  public void getCities() {
+    prepareMeters();
 
-    Page<LocationDto> response = asTestUser()
-      .getPage("/selections/locations", LocationDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(4);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-  }
-
-  @Test
-  public void getLocationFilteredOnCity() {
-    createLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1");
-    createLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2");
-    createLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3");
-    createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
-
-    Page<LocationDto> response = asTestUser()
-      .getPage("/selections/locations?city=Kungsbacka", LocationDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(2);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).city.name).isEqualTo("kungsbacka");
-    assertThat(response.getContent().get(1).city.name).isEqualTo("kungsbacka");
-  }
-
-  @Test
-  public void getLocationFilteredOnAddress() {
-    createLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1");
-    createLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2");
-    createLogicalMeter("sweden", "gothenburg", "snabelgatan 3", "extId3");
-    createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
-
-    Page<LocationDto> response = asTestUser()
-      .getPage("/selections/locations?address=abel&sort=address", LocationDto.class);
-
-    List<String> addresses = asList("kabelgatan 1", "kabelgatan 2", "snabelgatan 3");
+    Page<CityDto> response = asTestUser()
+      .getPage("/selections/cities", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).address.name).isIn(addresses);
-    assertThat(response.getContent().get(1).address.name).isIn(addresses);
-    assertThat(response.getContent().get(2).address.name).isIn(addresses);
+    assertThat(response.getContent()).containsExactlyInAnyOrder(
+      new CityDto("kungsbacka", "sweden"),
+      new CityDto("gothenburg", "sweden"),
+      new CityDto("helsinki", "finland")
+    );
   }
 
   @Test
-  public void userCanNotAccessOtherOrganisationsLocations() {
-    RestClient userClient = restAsUser(context().user);
+  public void getCities_SortedByCityAsc() {
+    prepareMeters();
 
-    anotherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Another Organisation",
-        "another-organisation",
-        "another-organisation"
-      ));
+    Page<CityDto> response = asTestUser()
+      .getPage("/selections/cities?sort=city", CityDto.class);
 
+    assertThat(response.getTotalElements()).isEqualTo(3);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new CityDto("gothenburg", "sweden"),
+      new CityDto("helsinki", "finland"),
+      new CityDto("kungsbacka", "sweden")
+    );
+  }
+
+  @Test
+  public void getCities_SortedByCityDesc() {
+    prepareMeters();
+
+    Page<CityDto> response = asTestUser()
+      .getPage("/selections/cities?sort=city,desc", CityDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(3);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new CityDto("kungsbacka", "sweden"),
+      new CityDto("helsinki", "finland"),
+      new CityDto("gothenburg", "sweden")
+    );
+  }
+
+  @Test
+  public void getAddresses_SortAsc() {
+    prepareMeters();
+
+    Page<AddressDto> response = asTestUser()
+      .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(4);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new AddressDto("finland", "helsinki", "joksigatan 2"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 1"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 2"),
+      new AddressDto("sweden", "gothenburg", "snabelgatan 3")
+    );
+  }
+
+  @Test
+  public void getAddresses_SortDesc() {
+    prepareMeters();
+
+    Page<AddressDto> response = asTestUser()
+      .getPage("/selections/addresses?sort=streetAddress,desc", AddressDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(4);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new AddressDto("sweden", "gothenburg", "snabelgatan 3"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 2"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 1"),
+      new AddressDto("finland", "helsinki", "joksigatan 2")
+    );
+  }
+
+  @Test
+  public void getAddresses_IgnoresNull() {
+    prepareMeters();
+    createLogicalMeter(null, "kungsbacka", "kabelgatan 17", "extId17");
+
+    Page<AddressDto> response = asTestUser()
+      .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(4);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new AddressDto("finland", "helsinki", "joksigatan 2"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 1"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 2"),
+      new AddressDto("sweden", "gothenburg", "snabelgatan 3")
+    );
+  }
+
+  @Test
+  public void userCanNotAccessOtherOrganisationsCities() {
     createLogicalMeter(
       "sweden",
       "kungsbacka",
       "kabelgatan 1",
       "extId1",
-      context().user.organisation.id
-    );
-    createLogicalMeter(
-      "finland",
-      "helsinki",
-      "joksigatan 2",
-      "extId4",
-      context().user.organisation.id
+      context().organisationId()
     );
     createLogicalMeter(
       "sweden",
       "kungsbacka",
       "kabelgatan 2",
       "extId2",
-      anotherOrganisation.id
+      context().organisationId()
     );
     createLogicalMeter(
       "sweden",
-      "gothenburg",
-      "snabelgatan 3",
+      "kungsbacka",
+      "kabelgatan 3",
       "extId3",
-      anotherOrganisation.id
+      context().organisationId()
+    );
+    createLogicalMeter(
+      "sweden",
+      "stockholm",
+      "kungsgatan 3",
+      "extId4",
+      context().organisationId2()
     );
 
-    Page<LocationDto> response = userClient.getPage(
-      "/selections/locations?address=abel",
-      LocationDto.class
-    );
+    Page<CityDto> response = asOtherUser().getPage("/selections/cities", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).address.name).isEqualTo("kabelgatan 1");
+    assertThat(response.getContent()).containsExactly(new CityDto("stockholm", "sweden"));
   }
 
   @Test
-  public void getFacility() {
-    LogicalMeter logicalMeter = createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1"
-    );
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
+  public void getFacilities_SortedAsc() {
+    prepareMeters();
 
-    logicalMeter = createLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2");
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    logicalMeter = createLogicalMeter("sweden", "gothenburg", "snabelgatan 3", "extId3");
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    logicalMeter = createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/facilities",
-      IdNamedDto.class
-    );
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/facilities?sort=externalId,asc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new IdNamedDto("extId1"),
+      new IdNamedDto("extId2"),
+      new IdNamedDto("extId3"),
+      new IdNamedDto("extId4")
+    );
   }
 
   @Test
-  public void getFacilityFiltered() {
-    LogicalMeter logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1"
-    ));
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
+  public void getFacilities_SortedDesc() {
+    prepareMeters();
 
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 2",
-      "extId2"
-    ));
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/facilities?sort=externalId,desc", IdNamedDto.class);
 
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "gothenburg",
-      "snabelgatan 3",
-      "extId3"
-    ));
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "finland",
-      "helsinki",
-      "joksigatan 2",
-      "extId4"
-    ));
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/facilities?containsFacility=3",
-      IdNamedDto.class
+    assertThat(response.getTotalElements()).isEqualTo(4);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new IdNamedDto("extId4"),
+      new IdNamedDto("extId3"),
+      new IdNamedDto("extId2"),
+      new IdNamedDto("extId1")
     );
+  }
+
+  @Test
+  public void getFacilities_FilteredOnFacilitySearchText() {
+    prepareMeters();
+
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/facilities?sort=externalId,asc&facility=3", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).name).isEqualTo("extId3");
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("extId3"));
   }
 
   @Test
   public void userCanNotAccessOtherOrganisationsFacilities() {
-    anotherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Another Organisation",
-        "another-organisation",
-        "another-organisation"
-      ));
-
-    Organisation anotherOrganisationModel = OrganisationEntityMapper.toDomainModel(
-      anotherOrganisation);
+    prepareMeters();
 
     LogicalMeter logicalMeter = createLogicalMeter(
       "sweden",
       "kungsbacka",
-      "kabelgatan 1",
-      "extId1",
-      context().user.organisation.id
-    );
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    logicalMeter = createLogicalMeter(
-      "finland",
-      "helsinki",
-      "joksigatan 2",
-      "extId4",
-      context().user.organisation.id
-    );
-    createPhysicalMeter(context().organisation(), "", logicalMeter);
-
-    logicalMeter = createLogicalMeter(
-      "sweden",
-      "kungsbacka",
       "kabelgatan 2",
-      "extId2",
-      anotherOrganisation.id
+      "extId5",
+      context().organisationId2()
     );
-    createPhysicalMeter(anotherOrganisationModel, "", logicalMeter);
+    createPhysicalMeter(context().organisation2(), "", logicalMeter);
 
     logicalMeter = createLogicalMeter(
       "sweden",
       "gothenburg",
       "snabelgatan 3",
-      "extId3",
-      anotherOrganisation.id
+      "extId6",
+      context().organisationId2()
     );
-    createPhysicalMeter(anotherOrganisationModel, "", logicalMeter);
+    createPhysicalMeter(context().organisation2(), "", logicalMeter);
 
-    RestClient userClient = restAsUser(context().user);
-    Page<LocationDto> response = userClient.getPage(
-      "/selections/facilities?containsFacility=extId3",
-      LocationDto.class
-    );
+    String url = "/selections/facilities?sort=externalId,asc&facility=extId6";
+
+    Page<IdNamedDto> response = asTestUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
     assertThat(response.getTotalPages()).isEqualTo(0);
+    assertThat(response.getContent()).isEmpty();
+
+    response = asOtherUser().getPage(url, IdNamedDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("extId6"));
   }
 
   @Test
-  public void getSecondaryAddress() {
-    LogicalMeter logicalMeter = createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1"
-    );
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "1234", logicalMeter));
+  public void getSecondaryAddresses_SortedDesc() {
+    prepareMeters();
 
-    logicalMeter = createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 2",
-      "extId2"
-    );
-    createPhysicalMeter(context().organisation(), "666", logicalMeter);
-
-    logicalMeter = createLogicalMeter(
-      "sweden",
-      "gothenburg",
-      "snabelgatan 3",
-      "extId3"
-    );
-    createPhysicalMeter(context().organisation(), "4321", logicalMeter);
-
-    logicalMeter = createLogicalMeter(
-      "finland",
-      "helsinki",
-      "joksigatan 2",
-      "extId4"
-    );
-    createPhysicalMeter(context().organisation(), "777", logicalMeter);
-
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/secondaryAddresses",
-      IdNamedDto.class
-    );
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/secondary-addresses?sort=address,desc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new IdNamedDto("444"),
+      new IdNamedDto("333"),
+      new IdNamedDto("222"),
+      new IdNamedDto("111")
+    );
   }
 
   @Test
   public void getSecondaryAddressFiltered() {
-    LogicalMeter logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1"
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "1234", logicalMeter));
+    prepareMeters();
 
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 2",
-      "extId2"
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "666", logicalMeter));
-
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "gothenburg",
-      "snabelgatan 3",
-      "extId3"
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "4321", logicalMeter));
-
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "finland",
-      "helsinki",
-      "joksigatan 2",
-      "extId4"
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "777", logicalMeter));
-
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/secondaryAddresses?containsSecondaryAddress=777",
-      IdNamedDto.class
-    );
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/secondary-addresses?secondaryAddress=444", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).name).isEqualTo("777");
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("444"));
   }
 
   @Test
   public void userCanNotAccessOtherOrganisationsSecondaryAddresses() {
-    anotherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Another Organisation",
-        "another-organisation",
-        "another-organisation"
-      ));
-
-    Organisation anotherOrganisationModel = OrganisationEntityMapper.toDomainModel(
-      anotherOrganisation);
+    prepareMeters();
 
     LogicalMeter logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1"
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "1234", logicalMeter));
-
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 2",
-      "extId2"
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation(), "666", logicalMeter));
-
-    logicalMeter = logicalMeters.save(createLogicalMeter(
-      "sweden",
-      "gothenburg",
-      "snabelgatan 3",
-      "extId3",
-      anotherOrganisationModel.id
-    ));
-    physicalMeters.save(createPhysicalMeter(anotherOrganisationModel, "4321", logicalMeter));
-
-    logicalMeter = logicalMeters.save(createLogicalMeter(
       "finland",
       "helsinki",
       "joksigatan 2",
-      "extId4",
-      anotherOrganisationModel.id
+      "extId777",
+      context().organisationId2()
     ));
-    physicalMeters.save(createPhysicalMeter(anotherOrganisationModel, "777", logicalMeter));
+    physicalMeters.save(createPhysicalMeter(context().organisation2(), "777", logicalMeter));
 
-    RestClient userClient = restAsUser(context().user);
-    Page<LocationDto> response = userClient.getPage(
-      "/selections/secondaryAddresses?containsSecondaryAddress=777",
-      LocationDto.class
-    );
+    String url = "/selections/secondary-addresses?secondaryAddress=777";
+
+    Page<IdNamedDto> response = asTestUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
     assertThat(response.getTotalPages()).isEqualTo(0);
-  }
+    assertThat(response.getContent()).isEmpty();
 
-  @Test
-  public void getGatewaySerials() {
-    createGateway(context().user.organisation.id, "0016000458");
-    createGateway(context().user.organisation.id, "0016000666");
-    createGateway(context().user.organisation.id, "0016002100");
-
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/gateway/serials",
-      IdNamedDto.class
-    );
-
-    assertThat(response.getTotalElements()).isEqualTo(3);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-  }
-
-  @Test
-  public void getGatewaySerialsFiltered() {
-    createGateway(context().user.organisation.id, "0016000458");
-    createGateway(context().user.organisation.id, "0016000466");
-    createGateway(context().user.organisation.id, "0016002100");
-
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/gateway/serials?containsGatewaySerial=46",
-      IdNamedDto.class
-    );
+    response = asOtherUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).name).isEqualTo("0016000466");
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("777"));
+  }
+
+  @Test
+  public void getGatewaySerials_SortedDesc() {
+    prepareGateways();
+
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/gateway-serials?sort=serial,desc", IdNamedDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(3);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(
+      new IdNamedDto("5566"),
+      new IdNamedDto("3344"),
+      new IdNamedDto("1122")
+    );
+  }
+
+  @Test
+  public void getGatewaySerials_FilteredOnQueryString() {
+    prepareGateways();
+
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/gateway-serials?serial=66", IdNamedDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("5566"));
   }
 
   @Test
   public void userCanNotAccessOtherOrganisationsGatewaySerials() {
-    anotherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Another Organisation",
-        "another-organisation",
-        "another-organisation"
-      ));
+    prepareGateways();
+    createGateway(context().organisationId2(), "6666");
 
-    createGateway(context().user.organisation.id, "0016000458");
-    createGateway(context().user.organisation.id, "0016000466");
-    createGateway(anotherOrganisation.id, "0016002100");
+    Page<IdNamedDto> response = asOtherUser()
+      .getPage("/selections/gateway-serials", IdNamedDto.class);
 
-    RestClient userClient = restAsUser(context().user);
-
-    Page<IdNamedDto> response = userClient.getPage(
-      "/selections/gateway/serials?containsGatewaySerial",
-      IdNamedDto.class
-    );
-
-    List<String> serials = asList("0016000458", "0016000466");
-
-    assertThat(response.getTotalElements()).isEqualTo(2);
+    assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent().get(0).name).isIn(serials);
-    assertThat(response.getContent().get(1).name).isIn(serials);
+    assertThat(response.getContent()).containsExactly(new IdNamedDto("6666"));
+  }
+
+  private void prepareGateways() {
+    createGateway(context().organisationId(), "1122");
+    createGateway(context().organisationId(), "3344");
+    createGateway(context().organisationId(), "5566");
+  }
+
+  private void prepareMeters() {
+    LogicalMeter logicalMeter = createLogicalMeter(
+      "sweden",
+      "kungsbacka",
+      "kabelgatan 1",
+      "extId1"
+    );
+    createPhysicalMeter(context().organisation(), "111", logicalMeter);
+
+    logicalMeter = createLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2");
+    createPhysicalMeter(context().organisation(), "222", logicalMeter);
+
+    logicalMeter = createLogicalMeter("sweden", "gothenburg", "snabelgatan 3", "extId3");
+    createPhysicalMeter(context().organisation(), "333", logicalMeter);
+
+    logicalMeter = createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
+    createPhysicalMeter(context().organisation(), "444", logicalMeter);
   }
 
   private Gateway createGateway(UUID organisationId, String serial) {
@@ -546,7 +427,7 @@ public class SelectionControllerTest extends IntegrationTest {
     String address,
     String externalId
   ) {
-    return createLogicalMeter(country, city, address, externalId, context().getOrganisationId());
+    return createLogicalMeter(country, city, address, externalId, context().organisationId());
   }
 
   private LogicalMeter createLogicalMeter(
@@ -556,11 +437,6 @@ public class SelectionControllerTest extends IntegrationTest {
     String externalId,
     UUID organisationId
   ) {
-    Location location = new LocationBuilder()
-      .country(country)
-      .city(city)
-      .address(address)
-      .build();
     return logicalMeters.save(new LogicalMeter(
       randomUUID(),
       externalId,
@@ -569,7 +445,11 @@ public class SelectionControllerTest extends IntegrationTest {
       ZonedDateTime.now(),
       emptyList(),
       emptyList(),
-      location
+      new LocationBuilder()
+        .country(country)
+        .city(city)
+        .address(address)
+        .build()
     ));
   }
 }

@@ -41,7 +41,7 @@ public class LocationDtoMapper {
     return new LocationDto(toCity(location), toAddress(location), toGeoPositionDto(location));
   }
 
-  static IdNamedDto toCity(Location location) {
+  public static IdNamedDto toCity(Location location) {
     return Optional.ofNullable(location)
       .filter(l -> nonNull(l.getCity()))
       .map(l -> new IdNamedDto(l.getCity()))

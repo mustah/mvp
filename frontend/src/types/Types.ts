@@ -59,6 +59,10 @@ export interface Selectable {
   isSelected?: boolean;
 }
 
+export interface Selected {
+  selected: boolean;
+}
+
 export interface HasContent {
   hasContent: boolean;
 }
@@ -113,6 +117,7 @@ const status = {
   maintenance_scheduled: Status.info,
 };
 
-export const statusFor = (statusCode: uuid): Status => {
-  return Maybe.maybe(status[statusCode]).orElse(Status.unknown);
-};
+export const statusFor = (statusCode: uuid): Status =>
+  Maybe.maybe(status[statusCode]).orElse(Status.unknown);
+
+export const toIdNamed = (id: string): IdNamed => ({id, name: id});

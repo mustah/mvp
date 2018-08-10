@@ -1,6 +1,7 @@
+import {SelectionItem} from '../state/domain-models/domainModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
-import {EncodedUriParameters, Omit, uuid} from '../types/Types';
+import {EncodedUriParameters, Omit} from '../types/Types';
 import {toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
 
@@ -50,19 +51,20 @@ export const toEntityApiParametersGateways =
   (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
     toEntityApiParameters(selectionParameters, gatewayParameterNames);
 
-const toEntityApiParameters =
-  // TODO: perhaps make sure it could handle if dateRange is included, as it is now the function
-  // would most likely fail.
-  (
-    selectionParameters: Omit<SelectedParameters, 'dateRange'>,
-    parameterNames: ParameterNames,
-  ): EncodedUriParameters[] =>
-    Object.keys(selectionParameters)
-      .reduce((prev: EncodedUriParameters[], parameter: string) =>
-        [...prev,
-         ...selectionParameters[parameter]
-           .map((value: uuid) => `${parameterNames[parameter]}=${encodeURIComponent(value.toString())}`),
-        ], []);
+// TODO: perhaps make sure it could handle if dateRange is included, as it is now the function
+// would most likely fail.
+const toEntityApiParameters = (
+  selectionParameters: Omit<SelectedParameters, 'dateRange'>,
+  parameterNames: ParameterNames,
+): EncodedUriParameters[] =>
+  Object.keys(selectionParameters)
+    .reduce((prev: EncodedUriParameters[], parameter: string) =>
+      [
+        ...prev,
+        ...selectionParameters[parameter]
+          .filter(({id}: SelectionItem) => id !== undefined)
+          .map(({id}: SelectionItem) => `${parameterNames[parameter]}=${encodeURIComponent(id.toString())}`),
+      ], []);
 
 export const makeApiParametersOf = (
   start: Date,

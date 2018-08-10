@@ -108,7 +108,7 @@ export const nestedListItemStyle: React.CSSProperties = {
 export const dropDownStyle: Styles = {
   popoverStyle: {marginTop: 6, marginLeft: 2},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
-  parentStyle: {fontSize: 12, color: colors.lightBlack},
+  parentStyle: {fontSize: 11, fontWeight: 'normal', color: colors.lightBlack},
 };
 
 export const underlineFocusStyle = {

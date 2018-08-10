@@ -6,7 +6,12 @@ interface SearchBoxProps {
   onUpdateSearch: (event: any) => void;
 }
 
-const searchStyle: React.CSSProperties = {position: 'absolute', right: 12, top: 7, color: '#7b7b7b'};
+const searchStyle: React.CSSProperties = {
+  position: 'absolute',
+  right: 12,
+  top: 7,
+  color: '#7b7b7b',
+};
 
 export const SearchBox = ({value, onUpdateSearch}: SearchBoxProps) => (
   <div className="SearchBox">

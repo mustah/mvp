@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -53,8 +52,7 @@ class StatusLogsDataLoader {
   }
 
   private void createGatewayLogMockData() {
-    gateways.findAll(new RequestParametersAdapter())
-      .stream()
+    gateways.findAll(new RequestParametersAdapter()).stream()
       .map(gateway -> new StatusLogEntry<>(
         gateway.id,
         nextRandomStatusType(),

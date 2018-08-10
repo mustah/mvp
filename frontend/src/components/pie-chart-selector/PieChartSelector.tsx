@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Cell, Legend, LegendPayload, LegendProps, Pie, PieChart, Tooltip} from 'recharts';
-import {FilterParam} from '../../state/user-selection/userSelectionModels';
 import {ItemOrArray, uuid} from '../../types/Types';
 import {WidgetWithTitle} from '../../usecases/dashboard/components/widgets/Widget';
 import {ColumnCenter, ColumnContent} from '../layouts/column/Column';
@@ -11,14 +10,14 @@ import './PieChartSelector.scss';
 export interface PieSlice {
   name: string;
   value: number;
-  filterParam: ItemOrArray<FilterParam>;
+  filterParam: ItemOrArray<uuid>;
 }
 
 export interface PieData {
   [key: string]: PieSlice;
 }
 
-export type PieClick = (id: ItemOrArray<FilterParam>) => void;
+export type PieClick = (id: ItemOrArray<uuid>) => void;
 
 export interface PieChartSelectorProps {
   data: PieData;
@@ -64,7 +63,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
 
   const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(
     filterParam);
-  const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(
+  const onLegendClick = (filterParam: ItemOrArray<uuid>) => setSelection && setSelection(
     filterParam);
 
   const renderCell = (entry: any, index: number) => (

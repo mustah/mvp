@@ -30,8 +30,7 @@ public class UserSelectionController {
 
   @GetMapping
   public List<UserSelectionDto> getAllUserSelections() {
-    return useCases.findAllForCurrentUser()
-      .stream()
+    return useCases.findAllForCurrentUser().stream()
       .map(UserSelectionDtoMapper::toDto)
       .collect(toList());
   }
@@ -47,18 +46,16 @@ public class UserSelectionController {
   public ResponseEntity<UserSelectionDto> saveSelection(
     @RequestBody UserSelectionDto userSelectionDto
   ) {
-    return ResponseEntity
-      .status(HttpStatus.CREATED)
+    return ResponseEntity.status(HttpStatus.CREATED)
       .body(toDto(useCases.save(toDomainModel(userSelectionDto))));
   }
 
   @PutMapping
   public UserSelectionDto updateSelection(@RequestBody UserSelectionDto userSelectionDto) {
-    //Id may belong to another user, do not leak information.
-    useCases.findByIdForCurrentUser(userSelectionDto.id)
+    return useCases.findByIdForCurrentUser(userSelectionDto.id)
+      .map(found -> useCases.save(toDomainModel(userSelectionDto)))
+      .map(UserSelectionDtoMapper::toDto)
       .orElseThrow(() -> new UserSelectionNotFound(userSelectionDto.id));
-
-    return toDto(useCases.save(toDomainModel(userSelectionDto)));
   }
 
   @DeleteMapping("{id}")

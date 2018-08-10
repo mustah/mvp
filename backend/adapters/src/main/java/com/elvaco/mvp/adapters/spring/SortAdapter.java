@@ -12,7 +12,7 @@ public class SortAdapter implements Sort {
   private final List<Order> orders;
 
   SortAdapter(org.springframework.data.domain.Sort sort) {
-    orders = new ArrayList<>();
+    this.orders = new ArrayList<>();
 
     if (sort != null) {
       Iterator<org.springframework.data.domain.Sort.Order> iterator = sort.iterator();

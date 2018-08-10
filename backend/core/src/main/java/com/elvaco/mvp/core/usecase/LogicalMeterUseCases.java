@@ -28,10 +28,7 @@ public class LogicalMeterUseCases {
   private final Measurements measurements;
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
-    return logicalMeters.findAllBy(setCurrentUsersOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.findAllBy(setCurrentUsersOrganisationId(currentUser, parameters));
   }
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
@@ -41,10 +38,7 @@ public class LogicalMeterUseCases {
     ));
   }
 
-  public Page<LogicalMeter> findAll(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findAllWithStatuses(
       setCurrentUsersOrganisationId(currentUser, parameters),
       pageable

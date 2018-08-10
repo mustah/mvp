@@ -51,7 +51,7 @@ public class GeocodeControllerTest extends IntegrationTest {
     logicalMeters.save(new LogicalMeter(
       logicalMeterId,
       "test-123",
-      context().getOrganisationId(),
+      context().organisationId(),
           MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
           emptyList(),
@@ -85,7 +85,7 @@ public class GeocodeControllerTest extends IntegrationTest {
     logicalMeters.save(new LogicalMeter(
       logicalMeterId,
       "test-123",
-      context().getOrganisationId(),
+      context().organisationId(),
           MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
           emptyList(),
@@ -126,7 +126,7 @@ public class GeocodeControllerTest extends IntegrationTest {
     logicalMeters.save(new LogicalMeter(
       logicalMeterId,
       "test-123",
-      context().getOrganisationId(),
+      context().organisationId(),
           MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
           emptyList(),

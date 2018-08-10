@@ -13,13 +13,7 @@ import {
   SET_CUSTOM_DATE_RANGE,
 } from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
-import {
-  DomainModelsState,
-  Normalized,
-  NormalizedState,
-  ObjectsById,
-  SelectionEntity,
-} from './domainModels';
+import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
 import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
@@ -186,19 +180,17 @@ export const resetReducer = <S>(
   }
 };
 
-export const countries = reducerFor<SelectionEntity>('countries', EndPoints.selections);
-export const cities = reducerFor<SelectionEntity>('cities', EndPoints.selections);
-export const addresses = reducerFor<SelectionEntity>('addresses', EndPoints.selections);
-export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections);
-export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
-export const facilities = reducerFor<SelectionEntity>('facilities', EndPoints.selections);
-export const secondaryAddresses = reducerFor<SelectionEntity>('secondaryAddresses', EndPoints.selections);
-export const gatewaySerials = reducerFor<SelectionEntity>('gatewaySerials', EndPoints.selections);
-export const media = reducerFor<SelectionEntity>('media', EndPoints.selections);
-export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
+export const meters = reducerFor<MeterDetails>(
+  'meters',
+  EndPoints.meters,
+  resetStateReducer,
+);
 
-export const meters = reducerFor<MeterDetails>('meters', EndPoints.meters, resetStateReducer);
-export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
+export const users = reducerFor<User>(
+  'users',
+  EndPoints.users,
+  resetStateReducer,
+);
 
 export const meterMapMarkers = reducerFor<MapMarker>(
   'meterMapMarkers',
@@ -221,20 +213,10 @@ export const organisations = reducerFor<Organisation>(
 export const userSelections = reducerFor<UserSelection>('userSelections', EndPoints.userSelections);
 
 export const domainModels = combineReducers<DomainModelsState>({
-  addresses,
-  alarms,
-  cities,
-  countries,
   gatewayMapMarkers,
-  gatewayStatuses,
-  media,
   meters,
   meterMapMarkers,
-  meterStatuses,
   organisations,
   userSelections,
   users,
-  facilities,
-  secondaryAddresses,
-  gatewaySerials,
 });

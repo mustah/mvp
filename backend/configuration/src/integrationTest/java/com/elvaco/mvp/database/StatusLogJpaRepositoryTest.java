@@ -78,7 +78,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
     UUID gatewayId = randomUUID();
     gatewayJpaRepository.save(new GatewayEntity(
       gatewayId,
-      context().getOrganisationId(),
+      context().organisationId(),
       "",
       "",
       emptySet()
