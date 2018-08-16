@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
   <changeSet id="Create missing measurement materialized view" author="Must Tahir" dbms="postgresql">
-    <validCheckSum>7:9fbe31ee18e0c0ce3f61e8132429279f</validCheckSum>
+    <validCheckSum>7:6d7def963827cbb8e4719991a92be43b</validCheckSum>
     <sqlFile path="../sql/postgresql/create_missing_measurement_materialized_view.sql"
              relativeToChangelogFile="true"
              splitStatements="false"

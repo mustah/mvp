@@ -1,7 +1,3 @@
---
--- create materialized view with no data and populate it later.
---
---DROP MATERIALIZED VIEW missing_measurement;
 CREATE MATERIALIZED VIEW missing_measurement
   AS
     SELECT
@@ -17,10 +13,20 @@ CREATE MATERIALIZED VIEW missing_measurement
               ON pm.organisation_id = lm.organisation_id AND pm.logical_meter_id = lm.id
             JOIN (SELECT
                     physical_meter.id,
-                    generate_series(date_trunc('hour' :: text, lm2.created),
-                                    ((CURRENT_TIMESTAMP) :: timestamp WITHOUT TIME ZONE) :: timestamp WITH TIME ZONE,
-                                    (concat(physical_meter.read_interval_minutes,
-                                            ' minutes')) :: interval) AS expected_time
+
+                    -- Serie of dates for when meter should have readings
+                    generate_series(
+                      (
+                        --Begin serie at meter creation date, but not longer then 3 months back.
+                        CASE WHEN date_trunc('hour' :: text, lm2.created :: TIMESTAMP) < date_trunc('hour' :: text, (CURRENT_TIMESTAMP - '3 month' ::interval)) THEN
+                          date_trunc('hour' :: text, (CURRENT_TIMESTAMP - '3 month' ::interval))
+                        ELSE
+                          date_trunc('hour' :: text, lm2.created :: TIMESTAMP)
+                        END
+                      ),
+                      ((CURRENT_TIMESTAMP) :: timestamp WITHOUT TIME ZONE) :: timestamp WITH TIME ZONE,
+                      (concat(physical_meter.read_interval_minutes, ' minutes')) :: interval
+                    ) AS expected_time
                   FROM physical_meter
                     JOIN logical_meter lm2
                       ON physical_meter.organisation_id = lm2.organisation_id AND
@@ -34,6 +40,7 @@ CREATE MATERIALIZED VIEW missing_measurement
                            meter_definition_type = expected_measurements.meter_definition_type)
 WITH NO DATA;
 
+
 CREATE UNIQUE INDEX missing_measurement_meter_idx
   ON missing_measurement (expected_time, physical_meter_id, meter_definition_type);
 
@@ -41,8 +48,3 @@ CREATE UNIQUE INDEX missing_measurement_meter_idx
 -- populate view for the first time
 --
 REFRESH MATERIALIZED VIEW missing_measurement;
-
---
--- refresh view without blocking
---
---refresh materialized view concurrently missing_measurement;
