@@ -4,6 +4,7 @@ import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertic
 import * as React from 'react';
 import {Index, InfiniteLoader, List, ListRowProps} from 'react-virtualized';
 import {dropDownStyle} from '../../app/themes';
+import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Address, City} from '../../state/domain-models/location/locationModels';
@@ -57,9 +58,9 @@ const replaceAtIndex = (
 ): SelectionListItem[] =>
   ([...array.slice(0, index), newItem, ...array.slice(index + 1)]);
 
-const searchOverviewText = (list: SelectionListItem[]): string => {
+const searchOverviewText = (list: SelectionListItem[], totalElements: number): string => {
   const numSelected: number = selectedOptions(list);
-  return numSelected && numSelected + ' / ' + list.length || firstUpperTranslated('all');
+  return numSelected && numSelected + ' / ' + totalElements || firstUpperTranslated('all');
 };
 
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
@@ -84,11 +85,23 @@ class PaginatedDropdownSelector extends React.Component<OwnProps, State> {
     await this.loadMoreRows();
   }
 
+  componentWillReceiveProps({selectedItems}: OwnProps) {
+    if (!this.state.isOpen && this.props.selectedItems.length !== selectedItems.length) {
+      const selectedItemIds = selectedItems.map(getId);
+      this.setState((prevState) => ({
+        items: prevState.items.map((item: SelectionListItem) => ({
+          ...item,
+          selected: selectedItemIds.includes(item.id),
+        })),
+      }));
+    }
+  }
+
   render() {
     const {anchorElement, isOpen, searchText, items, totalElements} = this.state;
     const {selectionText, selectedItems} = this.props;
 
-    const selectedOverview: string = searchOverviewText(selectedItems);
+    const selectedOverview: string = searchOverviewText(selectedItems, totalElements);
 
     const numSelectedItems: number = selectedItems.length;
     const numItems = items.length;
@@ -206,7 +219,7 @@ class PaginatedDropdownSelector extends React.Component<OwnProps, State> {
     const {items, totalElements} = await fetchItems(this.state.page);
 
     return new Promise((resolve) => {
-      const selectedIds = selectedItems.map((item: SelectionListItem) => item.id);
+      const selectedIds = selectedItems.map(getId);
       const unselected = items
         .map((item: SelectionListItem) => ({...item, selected: false}))
         .filter((item: SelectionListItem) => !selectedIds.includes(item.id));

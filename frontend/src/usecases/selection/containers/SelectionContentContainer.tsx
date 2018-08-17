@@ -44,10 +44,6 @@ import {
 import {uuid} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';
 
-interface OwnProps {
-  selectionId: uuid;
-}
-
 interface StateToProps {
   addresses: SelectionListItem[];
   cities: SelectionListItem[];
@@ -57,6 +53,7 @@ interface StateToProps {
   media: SelectionListItem[];
   meterStatuses: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
+  selectionId: uuid;
 }
 
 interface DispatchToProps {
@@ -66,7 +63,7 @@ interface DispatchToProps {
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
-class SelectionContent extends React.Component<OwnProps & StateToProps & DispatchToProps> {
+class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
 
   render() {
     const {
@@ -187,6 +184,7 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   media: getSelectedMedia(userSelection),
   meterStatuses: getSelectedMeterStatuses(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),
+  selectionId: userSelection.userSelection.id,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
@@ -194,7 +192,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const SelectionContentContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(
-    () => mapStateToProps,
-    mapDispatchToProps,
-  )(SelectionContent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SelectionContent);
