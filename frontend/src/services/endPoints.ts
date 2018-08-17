@@ -1,5 +1,12 @@
 export const enum EndPoints {
-  selections = '/selections',
+  addresses = '/selections/addresses',
+  cities = '/selections/cities',
+  facilities = '/selections/facilities',
+  gatewaySerials = '/selections/gateway-serials',
+  gatewayStatuses = '/selections/gateway-statuses',
+  meterStatuses = '/selections/meter-statuses',
+  media = '/selections/media',
+  secondaryAddresses = '/selections/secondary-addresses',
   selectionTree = '/selection-tree',
   meters = '/meters',
   meterMapMarkers = '/map-markers/meters',

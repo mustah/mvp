@@ -240,7 +240,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void superAdminsCanListAllGateways() {
     saveGateway(dailyPlanet.id);
     saveGateway(dailyPlanet.id);
-    saveGateway(context().getOrganisationId());
+    saveGateway(context().organisationId());
 
     Page<GatewayDto> response = asTestSuperAdmin()
       .getPage("/gateways", GatewayDto.class);
@@ -252,7 +252,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
-    saveGateway(context().getOrganisationId());
+    saveGateway(context().organisationId());
 
     Page<GatewayDto> response = restAsUser(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
@@ -266,7 +266,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void userCanOnlyListGatewaysWithinSameOrganisation() {
     Gateway g1 = saveGateway(dailyPlanet.id);
     Gateway g2 = saveGateway(dailyPlanet.id);
-    saveGateway(context().getOrganisationId());
+    saveGateway(context().organisationId());
 
     Page<GatewayDto> response = as(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);

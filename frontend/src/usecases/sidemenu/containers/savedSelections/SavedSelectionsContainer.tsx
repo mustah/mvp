@@ -24,7 +24,7 @@ import {
   selectSavedSelection,
 } from '../../../../state/user-selection/userSelectionActions';
 import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {getSelection} from '../../../../state/user-selection/userSelectionSelectors';
+import {getUserSelection} from '../../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWithId, OnClick, uuid} from '../../../../types/Types';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {SavedSelectionActionsDropdown} from '../../components/saved-selections/SavedSelectionActionsDropdown';
@@ -128,7 +128,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
 const mapStateToProps =
   ({userSelection, domainModels: {userSelections}}: RootState): StateToProps =>
     ({
-      selection: getSelection(userSelection),
+      selection: getUserSelection(userSelection),
       savedSelections: userSelections,
       isFetching: userSelections.isFetching,
     });

@@ -1,11 +1,13 @@
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {testData} from '../../../__tests__/testDataFactory';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {momentWithTimeZone} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
-import {IdNamed} from '../../../types/Types';
+import {EndPoints} from '../../../services/endPoints';
+import {IdNamed, toIdNamed} from '../../../types/Types';
+import {putRequestOf} from '../../domain-models/domainModelsActions';
+import {mapSelectedIdToCity} from '../../domain-models/selections/selectionsApiActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   closeSelectionPage,
@@ -16,18 +18,24 @@ import {
   selectSavedSelection,
   SET_CUSTOM_DATE_RANGE,
   setCustomDateRange,
-  toggleParameterInSelection,
+  shouldMigrateSelectionParameters,
+  toggleParameter,
 } from '../userSelectionActions';
-import {ParameterName, SelectionParameter, UserSelectionState} from '../userSelectionModels';
+import {
+  OldSelectionParameters,
+  ParameterName,
+  SelectedParameters,
+  SelectionParameter,
+  UserSelection,
+} from '../userSelectionModels';
 import {initialState} from '../userSelectionReducer';
 
 const configureMockStore = configureStore([thunk]);
 
 describe('userSelectionActions', () => {
 
-  const country = testData.selections.locations.countries[0];
-  const gothenburg: IdNamed = {name: country.cities[0].name, id: 'got'};
-  const stockholm: IdNamed = {name: country.cities[1].name, id: 'sto'};
+  const gothenburg: IdNamed = {name: 'göteborg', id: 'got'};
+  const stockholm: IdNamed = {name: 'stockholm', id: 'sto'};
 
   let store;
 
@@ -35,28 +43,34 @@ describe('userSelectionActions', () => {
     store = configureMockStore({});
   });
 
-  const savedSelection21 = {
-    ...initialState,
-    id: 21,
-    name: 'test 21',
+  const oldUserSelectionWithGasType = {
+    ...initialState.userSelection,
+    selectionParameters: {
+      ...initialState.userSelection.selectionParameters,
+      media: ['Gas'],
+    },
+    id: 33,
+    name: 'old media',
   };
 
-  const userSelection: UserSelectionState = {...initialState};
   const rootState = {
-    userSelection,
+    userSelection: {...initialState},
     domainModels: {
       userSelections: {
         entities: {
           1: {
-            ...initialState,
+            ...initialState.userSelection,
             id: 1,
             name: 'test 1',
           },
           21: {
-            ...savedSelection21,
+            ...initialState.userSelection,
+            id: 21,
+            name: 'test 21',
           },
+          33: oldUserSelectionWithGasType,
         },
-        result: [1, 21],
+        result: [1, 21, 33],
       },
     },
   };
@@ -93,45 +107,122 @@ describe('userSelectionActions', () => {
     });
   });
 
-  describe('select from saved selections', () => {
+  describe('from saved selections', () => {
 
     it('sets new selection', () => {
       store = configureMockStore(rootState);
 
-      store.dispatch(selectSavedSelection(savedSelection21.id));
+      store.dispatch(selectSavedSelection(21));
+
+      const payload: UserSelection = {...initialState.userSelection, id: 21, name: 'test 21'};
 
       expect(store.getActions()).toEqual([
-        {type: SELECT_SAVED_SELECTION, payload: savedSelection21},
+        {type: SELECT_SAVED_SELECTION, payload},
+      ]);
+    });
+
+    it('set new selection and migrates its state when old state is stored', () => {
+      store = configureMockStore(rootState);
+
+      store.dispatch(selectSavedSelection(33));
+
+      const payload = {...oldUserSelectionWithGasType};
+
+      expect(store.getActions()).toEqual([
+        {
+          ...putRequestOf<UserSelection>(EndPoints.userSelections).request(),
+        },
+        {
+          type: SELECT_SAVED_SELECTION,
+          payload: {
+            ...payload,
+            selectionParameters: {
+              ...payload.selectionParameters,
+              media: [{...toIdNamed('Gas')}],
+            },
+          },
+        },
       ]);
     });
 
     it('does not dispatch if the selection cannot be found', () => {
       store = configureMockStore(rootState);
 
-      store.dispatch(selectSavedSelection({
-        ...initialState,
-        id: 99,
-        name: 'test 99',
-      }.id));
+      store.dispatch(selectSavedSelection(-99));
 
       expect(store.getActions()).toEqual([]);
     });
 
+    describe('shouldMigrateSelectionParameters', () => {
+
+      const oldSelectedParameters: OldSelectionParameters = {
+        addresses: [],
+        cities: [],
+        facilities: [],
+        gatewayStatuses: [],
+        gatewaySerials: [],
+        media: [],
+        meterStatuses: [],
+        secondaryAddresses: [],
+      };
+
+      describe('new selection parameters', () => {
+
+        it('should not migrate initial selection parameters', () => {
+          const selectionParameters = initialState.userSelection.selectionParameters;
+          expect(shouldMigrateSelectionParameters(selectionParameters)).toBe(false);
+        });
+
+        it('should not migrate selection parameters as objects', () => {
+          const selected: SelectedParameters = {
+            ...initialState.userSelection.selectionParameters,
+            media: [{...toIdNamed('Gas')}],
+          };
+          expect(shouldMigrateSelectionParameters(selected)).toBe(false);
+        });
+
+        it('should not migrate city selection parameters as objects', () => {
+          const selected: SelectedParameters = {
+            ...initialState.userSelection.selectionParameters,
+            cities: [{...mapSelectedIdToCity('norge,olso')}],
+          };
+          expect(shouldMigrateSelectionParameters(selected)).toBe(false);
+        });
+
+      });
+
+      describe('old selection parameters', () => {
+
+        it('should migrate selection parameters with media type as ids only', () => {
+          const parameters: OldSelectionParameters = {
+            ...oldSelectedParameters,
+            media: ['Gas'],
+          };
+          expect(shouldMigrateSelectionParameters(parameters)).toBe(true);
+        });
+
+        it('should migrate selection parameters with city as ids only', () => {
+          const parameters: OldSelectionParameters = {
+            ...oldSelectedParameters,
+            cities: ['sweden,stockholm'],
+          };
+          expect(shouldMigrateSelectionParameters(parameters)).toBe(true);
+        });
+
+        it('should migrate selection parameters with address as ids only', () => {
+          const parameters: OldSelectionParameters = {
+            ...oldSelectedParameters,
+            cities: ['sweden,stockholm,kungsgatan 18'],
+          };
+          expect(shouldMigrateSelectionParameters(parameters)).toBe(true);
+        });
+      });
+
+    });
+
   });
 
-  describe('toggle selection', () => {
-
-    it('set selection', async () => {
-      const selection: IdNamed = {...gothenburg};
-      const parameter: SelectionParameter = {...selection, parameter: ParameterName.cities};
-      store = configureMockStore(rootStateNoSaved);
-
-      store.dispatch(toggleParameterInSelection(parameter));
-
-      expect(store.getActions()).toEqual([
-        {type: ADD_PARAMETER_TO_SELECTION, payload: parameter},
-      ]);
-    });
+  describe('toggle cities selection', () => {
 
     it('deselects selected city', () => {
       const stateWithSelection: Partial<RootState> = {
@@ -140,34 +231,74 @@ describe('userSelectionActions', () => {
             ...initialState.userSelection,
             selectionParameters: {
               ...initialState.userSelection.selectionParameters,
-              [ParameterName.cities]: [stockholm.id],
+              [ParameterName.cities]: [stockholm],
             },
           },
         },
       };
       store = configureMockStore(stateWithSelection);
 
-      const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      store.dispatch(toggleParameterInSelection(payload));
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      store.dispatch(toggleParameter(payload));
 
       expect(store.getActions()).toEqual([
         {type: DESELECT_SELECTION, payload},
       ]);
     });
 
-    it('set several selections', () => {
-      const p1: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const p2: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
+    it('set selection', async () => {
+      const selection: IdNamed = {...gothenburg};
+      const parameter: SelectionParameter = {item: {...selection}, parameter: ParameterName.cities};
       store = configureMockStore(rootStateNoSaved);
 
-      store.dispatch(toggleParameterInSelection(p1));
-      store.dispatch(toggleParameterInSelection(p2));
+      store.dispatch(toggleParameter(parameter));
+
+      expect(store.getActions()).toEqual([
+        {type: ADD_PARAMETER_TO_SELECTION, payload: parameter},
+      ]);
+    });
+
+    it('set several selections', () => {
+      const p1: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const p2: SelectionParameter = {item: {...gothenburg}, parameter: ParameterName.cities};
+      store = configureMockStore(rootStateNoSaved);
+
+      store.dispatch(toggleParameter(p1));
+      store.dispatch(toggleParameter(p2));
 
       expect(store.getActions()).toEqual([
         {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
         {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
       ]);
     });
+
+  });
+
+  describe('toggle gateway serials', () => {
+
+    it('adds non-existing gateways serials', () => {
+      const p1: SelectionParameter = {
+        item: {id: '123', name: '123'},
+        parameter: ParameterName.gatewaySerials,
+      };
+      const p2: SelectionParameter = {
+        item: {id: 'abc', name: 'abc'},
+        parameter: ParameterName.gatewaySerials,
+      };
+      store = configureMockStore(rootStateNoSaved);
+
+      store.dispatch(toggleParameter(p1));
+      store.dispatch(toggleParameter(p2));
+
+      expect(store.getActions()).toEqual([
+        {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
+        {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
+      ]);
+    });
+
+  });
+
+  describe('select period', () => {
 
     it('select period', async () => {
       const period = Period.previousMonth;

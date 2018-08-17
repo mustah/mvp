@@ -30,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper.ofPageableDomainModel;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrNull;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -47,17 +48,20 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
-    PageRequest pageRequest = new PageRequest(pageable.getPageNumber(), pageable.getPageSize());
+    PageRequest pageRequest = new PageRequest(
+      pageable.getPageNumber(),
+      pageable.getPageSize(),
+      getSortOrNull(parameters)
+    );
     org.springframework.data.domain.Page<PagedGateway> pagedGateways =
       gatewayJpaRepository.findAll(parameters, pageRequest);
 
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
       .findAllGroupedByGatewayId(toStatusPredicate(pagedGateways.getContent(), parameters));
 
-    org.springframework.data.domain.Page<Gateway> pageableGateways =
-      pagedGateways.map(pagedGateway -> ofPageableDomainModel(pagedGateway, statusLogMap));
-
-    return new PageAdapter<>(pageableGateways);
+    return new PageAdapter<>(
+      pagedGateways.map(pagedGateway -> ofPageableDomainModel(pagedGateway, statusLogMap))
+    );
   }
 
   @Transactional

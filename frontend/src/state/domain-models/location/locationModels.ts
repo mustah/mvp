@@ -1,4 +1,4 @@
-import {IdNamed, uuid} from '../../../types/Types';
+import {IdNamed} from '../../../types/Types';
 
 export interface Location {
   address: IdNamed;
@@ -11,8 +11,13 @@ export interface GeoPosition {
   longitude: number;
 }
 
+export interface City extends IdNamed {
+  country: IdNamed;
+}
+
 export interface Address extends IdNamed {
-  parentId: uuid;
+  city: IdNamed;
+  country: IdNamed;
 }
 
 export interface LocationHolder {

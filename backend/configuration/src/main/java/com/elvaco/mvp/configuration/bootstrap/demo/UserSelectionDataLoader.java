@@ -61,7 +61,7 @@ public class UserSelectionDataLoader implements CommandLineRunner {
     String unknownJson =
       "{\"cities\":[\"unknown,unknown\"],\"addresses\":[],"
       + "\"meterStatuses\":[],\"gatewayStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
-      + "\"productModels\":[],\"period\":\"latest\"}";
+      + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
 
     JsonField selectionForUnknownCity = new JsonField(
       (ObjectNode) OBJECT_MAPPER.readTree(unknownJson)
@@ -70,7 +70,7 @@ public class UserSelectionDataLoader implements CommandLineRunner {
     String perstorpJson =
       "{\"cities\":[\"sweden,perstorp\"],\"addresses\":[],"
       + "\"meterStatuses\":[],\"gatewayStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
-      + "\"productModels\":[],\"period\":\"latest\"}";
+      + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
 
     JsonField selectionForPerstorp = new JsonField(
       (ObjectNode) OBJECT_MAPPER.readTree(perstorpJson)

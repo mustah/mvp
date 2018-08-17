@@ -1,49 +1,55 @@
 package com.elvaco.mvp.web.dto;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.GATEWAY_STATUSES;
-import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.MEDIA;
-import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.METER_ALARMS;
-import static com.elvaco.mvp.web.mapper.SelectionsDtoMapper.METER_STATUSES;
+import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.StatusType;
+import lombok.experimental.UtilityClass;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
+
+@UtilityClass
 public class SelectionsDto {
 
-  public final LocationsDto locations;
-  public final List<IdNamedDto> gatewayStatuses;
-  public final List<IdNamedDto> meterStatuses;
-  public final List<IdNamedDto> alarms;
-  public final List<IdNamedDto> media;
-  public final Set<IdNamedDto> facilities;
-  public final Set<IdNamedDto> secondaryAddresses;
-  public final Set<IdNamedDto> gatewaySerials;
+  public static final List<IdNamedDto> GATEWAY_STATUSES = unmodifiableList(asList(
+    new IdNamedDto("ok"),
+    new IdNamedDto("warning"),
+    new IdNamedDto("fault")
+  ));
 
-  public SelectionsDto() {
-    this.locations = new LocationsDto();
-    this.gatewayStatuses = GATEWAY_STATUSES;
-    this.meterStatuses = METER_STATUSES;
-    this.alarms = METER_ALARMS;
-    this.media = MEDIA;
-    this.facilities = new HashSet<>();
-    this.secondaryAddresses = new HashSet<>();
-    this.gatewaySerials = new HashSet<>();
-  }
+  public static final List<IdNamedDto> METER_STATUSES = unmodifiableList(
+    Stream.of(StatusType.values())
+      .map(value -> value.name)
+      .map(IdNamedDto::new)
+      .collect(toList()));
 
-  public void addGateway(IdNamedDto gateway) {
-    gatewaySerials.add(gateway);
-  }
+  public static final List<IdNamedDto> METER_ALARMS = unmodifiableList(asList(
+    new IdNamedDto("no error"),
+    new IdNamedDto("battery low"),
+    new IdNamedDto("flow sensor error (air)"),
+    new IdNamedDto("flow sensor error (generic)"),
+    new IdNamedDto("flow sensor error (dirty)"),
+    new IdNamedDto("leakage"),
+    new IdNamedDto("overflow"),
+    new IdNamedDto("backflow"),
+    new IdNamedDto("forward temperature sensor error"),
+    new IdNamedDto("return temperature sensor error"),
+    new IdNamedDto("temperature sensor error (generic)"),
+    new IdNamedDto("temperature sensor inverted"),
+    new IdNamedDto("tamper error"),
+    new IdNamedDto("supply voltage error"),
+    new IdNamedDto("time for battery change"),
+    new IdNamedDto("internal meter error")
+  ));
 
-  public void addFacility(IdNamedDto facility) {
-    facilities.add(facility);
-  }
-
-  public void addSecondaryAddress(IdNamedDto secondaryAddress) {
-    secondaryAddresses.add(secondaryAddress);
-  }
-
-  public void addLocation(String country, String city, String address) {
-    locations.addLocation(country, city, address);
-  }
+  public static final List<IdNamedDto> MEDIA = unmodifiableList(
+    Stream.of(Medium.values())
+      .map(medium -> medium.medium)
+      .filter(medium -> !medium.equals("Heat, Return temp"))
+      .map(IdNamedDto::new)
+      .collect(toList())
+  );
 }

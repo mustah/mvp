@@ -77,7 +77,7 @@ describe('paginationSelectors', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'dont exist',
-        entityType: 'cities',
+        entityType: 'users',
       };
 
       const expected: Pagination = {

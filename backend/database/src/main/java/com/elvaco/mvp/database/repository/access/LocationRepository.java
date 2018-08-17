@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
+import com.elvaco.mvp.core.domainmodels.Address;
+import com.elvaco.mvp.core.domainmodels.City;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
@@ -16,7 +18,6 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
-import com.elvaco.mvp.database.repository.queryfilters.LocationQueryFilters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 
@@ -53,16 +54,26 @@ public class LocationRepository implements Locations {
   }
 
   @Override
-  public Page<Location> findAll(
-    RequestParameters parameters, Pageable pageable
-  ) {
+  public Page<Location> findAll(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(locationJpaRepository.findAll(
       parameters,
-      new LocationQueryFilters().toExpression(parameters),
-      new PageRequest(
-        pageable.getPageNumber(),
-        pageable.getPageSize()
-      )
+      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
     ).map(LocationEntityMapper::toDomainModel));
+  }
+
+  @Override
+  public Page<City> findAllCities(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(locationJpaRepository.findAllCities(
+      parameters,
+      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+    ));
+  }
+
+  @Override
+  public Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(locationJpaRepository.findAllAddresses(
+      parameters,
+      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+    ));
   }
 }

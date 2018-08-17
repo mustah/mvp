@@ -3,10 +3,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../reducers/rootReducer';
 import {isSelectionPage} from '../selectors/routerSelectors';
+import {isSideMenuOpen} from '../state/ui/uiSelectors';
 import {resetSelection, selectSavedSelection} from '../state/user-selection/userSelectionActions';
 import {UserSelection} from '../state/user-selection/userSelectionModels';
-import {getSelection} from '../state/user-selection/userSelectionSelectors';
-import {isSideMenuOpen} from '../state/ui/uiSelectors';
+import {getUserSelection} from '../state/user-selection/userSelectionSelectors';
 import {OnClick, OnClickWithId} from '../types/Types';
 import {SelectionMenuSummary} from '../usecases/selection/components/selection-menu/SelectionMenuSummary';
 import {SelectionMenuContainer} from '../usecases/selection/containers/SelectionMenuContainer';
@@ -55,7 +55,7 @@ const MvpPageComponent = (props: Props) => {
 
 const mapStateToProps = ({routing, ui, userSelection}: RootState): StateToProps => {
   return {
-    selection: getSelection(userSelection),
+    selection: getUserSelection(userSelection),
     isSelectionPage: isSelectionPage(routing),
     isSideMenuOpen: isSideMenuOpen(ui),
   };
@@ -66,6 +66,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectSavedSelection,
 }, dispatch);
 
-// TODO: Should MvpPageContainer really be a container? For optimization reasons.
 export const MvpPageContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MvpPageComponent);

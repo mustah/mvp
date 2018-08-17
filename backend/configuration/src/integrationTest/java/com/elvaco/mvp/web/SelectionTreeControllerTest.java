@@ -89,16 +89,16 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     return new LogicalMeter(
       id,
       externalId,
-      context().getOrganisationId(),
-          MeterDefinition.UNKNOWN_METER,
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
+      emptyList(),
+      emptyList(),
+      emptyList(),
       location,
-          null,
+      null,
       0L, null
-        );
+    );
   }
 
   private LogicalMeter newLogicalMeter(
@@ -114,7 +114,5 @@ public class SelectionTreeControllerTest extends IntegrationTest {
       randomUUID(),
       externalId
     );
-
   }
-
 }

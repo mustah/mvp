@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toEntity;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrNull;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
@@ -50,10 +51,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(physicalMeterJpaRepository.findAll(
       new PhysicalMeterQueryFilters().toExpression(parameters),
-      new PageRequest(
-        pageable.getPageNumber(),
-        pageable.getPageSize()
-      )
+      new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
     ).map(PhysicalMeterEntityMapper::toDomainModel));
   }
 

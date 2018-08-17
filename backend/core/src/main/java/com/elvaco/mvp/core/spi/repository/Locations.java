@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Address;
+import com.elvaco.mvp.core.domainmodels.City;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
@@ -21,5 +23,9 @@ public interface Locations {
 
   Set<MapMarker> findAllGatewayMapMarkers(RequestParameters parameters);
 
-  Page<Location> findAll(RequestParameters requestParameters, Pageable pageable);
+  Page<Location> findAll(RequestParameters parameters, Pageable pageable);
+
+  Page<City> findAllCities(RequestParameters parameters, Pageable pageable);
+
+  Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable);
 }

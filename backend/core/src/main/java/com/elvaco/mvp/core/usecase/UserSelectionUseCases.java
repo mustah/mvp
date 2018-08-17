@@ -16,7 +16,6 @@ public class UserSelectionUseCases {
 
   public Optional<UserSelection> findByIdForCurrentUser(UUID id) {
     return userSelections.findByIdAndOwnerUserIdAndOrganisationId(
-
       id,
       currentUser.getUserId(),
       currentUser.getOrganisationId()
@@ -32,8 +31,8 @@ public class UserSelectionUseCases {
 
   public UserSelection save(UserSelection userSelection) {
     return userSelections.save(userSelection
-                                 .withUserId(currentUser.getUserId())
-                                 .withOrganisationId(currentUser.getOrganisationId())
+      .withUserId(currentUser.getUserId())
+      .withOrganisationId(currentUser.getOrganisationId())
     );
   }
 

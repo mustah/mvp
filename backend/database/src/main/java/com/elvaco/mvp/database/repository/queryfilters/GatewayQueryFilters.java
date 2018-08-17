@@ -46,8 +46,8 @@ public class GatewayQueryFilters extends QueryFilters {
         return GATEWAY.organisationId.in(toUuids(values));
       case "gatewaySerial":
         return GATEWAY.serial.in(values);
-      case "containsGatewaySerial":
-        return GATEWAY.serial.contains(values.get(0).toLowerCase());
+      case "serial":
+        return GATEWAY.serial.containsIgnoreCase(values.get(0));
       case "city":
         return LocationExpressions.whereCity(toCityParameters(values));
       case "address":

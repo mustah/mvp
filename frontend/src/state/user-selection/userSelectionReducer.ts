@@ -1,7 +1,8 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
-import {Action, uuid} from '../../types/Types';
+import {Action, IdNamed} from '../../types/Types';
+import {SelectionItem} from '../domain-models/domainModels';
 import {
   domainModelsDeleteSuccess,
   domainModelsPostSuccess,
@@ -12,10 +13,15 @@ import {
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
-  SELECT_SAVED_SELECTION, SET_CUSTOM_DATE_RANGE,
-  SET_SELECTION,
+  SELECT_SAVED_SELECTION,
+  SET_CUSTOM_DATE_RANGE,
 } from './userSelectionActions';
-import {FilterParam, SelectionParameter, UserSelection, UserSelectionState} from './userSelectionModels';
+import {
+  ParameterName,
+  SelectionParameter,
+  UserSelection,
+  UserSelectionState,
+} from './userSelectionModels';
 
 export const initialState: UserSelectionState = {
   userSelection: {
@@ -24,14 +30,11 @@ export const initialState: UserSelectionState = {
     isChanged: false,
     selectionParameters: {
       addresses: [],
-      alarms: [],
       cities: [],
       dateRange: {period: Period.latest},
       gatewayStatuses: [],
-      manufacturers: [],
       media: [],
       meterStatuses: [],
-      productModels: [],
       facilities: [],
       secondaryAddresses: [],
       gatewaySerials: [],
@@ -39,44 +42,32 @@ export const initialState: UserSelectionState = {
   },
 };
 
+const getSelectionItems = (state: UserSelectionState, parameter: ParameterName): SelectionItem[] =>
+  state.userSelection.selectionParameters[parameter];
+
 const addSelected = (
   state: UserSelectionState,
-  {payload: {parameter, id}}: Action<SelectionParameter>,
+  {payload: {parameter, item}}: Action<SelectionParameter>,
 ): UserSelectionState => {
-  const selectedIds = new Set<FilterParam>(state.userSelection.selectionParameters[parameter] as FilterParam[]);
-  Array.isArray(id) ? id.forEach((filterParam) => selectedIds.add(filterParam)) : selectedIds.add(id);
+  const {userSelection} = state;
+  const selected = new Set<SelectionItem>(getSelectionItems(state, parameter)).add(item);
   return {
     ...state,
     userSelection: {
-      ...state.userSelection,
+      ...userSelection,
       isChanged: true,
       selectionParameters: {
-        ...state.userSelection.selectionParameters,
-        [parameter]: Array.from(selectedIds),
+        ...userSelection.selectionParameters,
+        [parameter]: Array.from(selected),
       },
     },
   };
 };
 
-const setSelected = (
+const selectSaved = (
   state: UserSelectionState,
-  {payload: {parameter, id}}: Action<SelectionParameter>,
-): UserSelectionState => {
-  const selected = Array.isArray(id) ? [...id] : [id];
-  return {
-    ...state,
-    userSelection: {
-      ...state.userSelection,
-      isChanged: true,
-      selectionParameters: {
-        ...state.userSelection.selectionParameters,
-        [parameter]: selected,
-      },
-    },
-  };
-};
-
-const selectSaved = (state: UserSelectionState, {payload}: Action<UserSelection>): UserSelectionState => ({
+  {payload}: Action<UserSelection>,
+): UserSelectionState => ({
   ...state,
   userSelection: {
     ...payload,
@@ -100,9 +91,11 @@ const updatePeriod = (state: UserSelectionState, {payload}: Action<Period>): Use
     },
   });
 
-const removeSelected = (state: UserSelectionState, {payload}: Action<SelectionParameter>): UserSelectionState => {
-  const {parameter, id} = payload;
-  const selectedIds = state.userSelection.selectionParameters[parameter]! as uuid[];
+const removeSelected = (
+  state: UserSelectionState,
+  {payload}: Action<SelectionParameter>,
+): UserSelectionState => {
+  const {parameter, item} = payload;
   return {
     ...state,
     userSelection: {
@@ -110,7 +103,8 @@ const removeSelected = (state: UserSelectionState, {payload}: Action<SelectionPa
       isChanged: true,
       selectionParameters: {
         ...state.userSelection.selectionParameters,
-        [parameter]: selectedIds.filter((selectedId) => selectedId !== id),
+        [parameter]: getSelectionItems(state, parameter)
+          .filter((it: IdNamed) => it.id !== item.id),
       },
     },
   };
@@ -123,34 +117,44 @@ type ActionTypes =
   | Action<Period>
   | Action<DateRange>;
 
-export const userSelection = (state: UserSelectionState = initialState, action: ActionTypes): UserSelectionState => {
+const updateCustomDateRange = (
+  state: UserSelectionState,
+  action: Action<DateRange>,
+): UserSelectionState => {
+  const {payload} = action;
+  const {userSelection} = state;
+  return {
+    ...state,
+    userSelection: {
+      ...userSelection,
+      isChanged: true,
+      selectionParameters: {
+        ...userSelection.selectionParameters,
+        dateRange: {
+          ...userSelection.selectionParameters.dateRange,
+          period: Period.custom,
+          customDateRange: payload,
+        },
+      },
+    },
+  };
+};
+
+export const userSelection = (
+  state: UserSelectionState = initialState,
+  action: ActionTypes,
+): UserSelectionState => {
   switch (action.type) {
     case RESET_SELECTION:
       return {...initialState};
     case ADD_PARAMETER_TO_SELECTION:
       return addSelected(state, action as Action<SelectionParameter>);
-    case SET_SELECTION:
-      return setSelected(state, action as Action<SelectionParameter>);
     case DESELECT_SELECTION:
       return removeSelected(state, action as Action<SelectionParameter>);
     case SELECT_PERIOD:
       return updatePeriod(state, action as Action<Period>);
     case SET_CUSTOM_DATE_RANGE:
-      return {
-        ...state,
-        userSelection: {
-          ...state.userSelection,
-          isChanged: true,
-          selectionParameters: {
-            ...state.userSelection.selectionParameters,
-            dateRange: {
-              ...state.userSelection.selectionParameters.dateRange,
-              period: Period.custom,
-              customDateRange: (action as Action<DateRange>).payload,
-            },
-          },
-        },
-      };
+      return updateCustomDateRange(state, action as Action<DateRange>);
     case SELECT_SAVED_SELECTION:
     case domainModelsPostSuccess(EndPoints.userSelections):
     case domainModelsPutSuccess(EndPoints.userSelections):

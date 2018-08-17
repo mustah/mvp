@@ -19,5 +19,5 @@ export const getError =
 export const getDomainModelById = <T extends Identifiable>(id: uuid) =>
   createSelector<NormalizedState<T>, ObjectsById<T>, Maybe<T>>(
     getEntitiesDomainModels,
-    ((entities: ObjectsById<T>) => Maybe.maybe<T>(entities[id])),
+    (entities: ObjectsById<T>) => Maybe.maybe<T>(entities[id]),
   );

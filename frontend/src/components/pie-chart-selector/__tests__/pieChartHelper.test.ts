@@ -1,6 +1,6 @@
-import {PieSlice, PieData} from '../PieChartSelector';
-import {splitDataIntoSlices} from '../pieChartHelper';
 import {uuid} from '../../../types/Types';
+import {splitDataIntoSlices} from '../pieChartHelper';
+import {PieData, PieSlice} from '../PieChartSelector';
 
 describe('pieChartHelper', () => {
   const testData: PieData = {

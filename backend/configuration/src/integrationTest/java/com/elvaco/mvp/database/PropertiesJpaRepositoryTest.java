@@ -24,7 +24,7 @@ public class PropertiesJpaRepositoryTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    organisationId = context().getOrganisationId();
+    organisationId = context().organisationId();
   }
 
   @After

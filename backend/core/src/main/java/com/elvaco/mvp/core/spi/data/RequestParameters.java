@@ -53,4 +53,8 @@ public interface RequestParameters {
     }
     return Optional.empty();
   }
+
+  default Optional<RequestParameters> has(String name) {
+    return hasName(name) ? Optional.of(this) : Optional.empty();
+  }
 }

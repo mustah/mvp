@@ -173,7 +173,7 @@ public class SummaryControllerTest extends IntegrationTest {
     return new LogicalMeter(
       meterId,
       "externalId-" + meterId,
-      context().getOrganisationId(),
+      context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       ZonedDateTime.now(),
       emptyList(),

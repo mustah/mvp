@@ -4,6 +4,7 @@ import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../domain-models/domainModelsReducer';
+import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
 import {
   NormalizedPaginated,
@@ -93,11 +94,12 @@ const addEntities = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
   {payload}: Action<T | T[]>,
 ): NormalizedPaginatedState<T> => {
-
-  const newEntities: ObjectsById<T> = Array.isArray(payload) ? payload.reduce((prev, curr) => ({
-    ...prev,
-    [curr.id]: curr,
-  }), {}) : {[payload.id]: payload};
+  const newEntities: ObjectsById<T> = Array.isArray(payload)
+    ? payload.reduce((prev, curr) => ({
+      ...prev,
+      [curr.id]: curr,
+    }), {})
+    : {[payload.id]: payload};
   return ({
     ...state,
     isFetchingSingle: false,
@@ -153,7 +155,7 @@ const reducerFor = <T extends Identifiable>(
   };
 
 export const meters = reducerFor<Meter>('meters', EndPoints.meters);
-export const gateways = reducerFor<Meter>('gateways', EndPoints.gateways);
+export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({
   meters,

@@ -43,7 +43,7 @@ public class GatewaysTest extends IntegrationTest {
     gateways.save(
       Gateway.builder()
         .id(gatewayId)
-        .organisationId(context().getOrganisationId())
+        .organisationId(context().organisationId())
         .serial("")
         .productModel("")
         .statusLogs(singletonList(new StatusLogEntry<>(gatewayId, StatusType.ERROR, start)))

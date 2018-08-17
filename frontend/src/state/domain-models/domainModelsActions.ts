@@ -55,8 +55,6 @@ interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, Reques
   dispatch: Dispatch<RootState>;
 }
 
-// TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same
-// try-catch?
 const asyncRequest = async <REQUEST_MODEL, DATA>(
   {
     request,

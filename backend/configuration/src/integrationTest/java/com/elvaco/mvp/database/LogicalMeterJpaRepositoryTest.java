@@ -59,7 +59,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeterId,
       "Some external ID",
-      context().getOrganisationId(),
+      context().organisationId(),
       ZonedDateTime.now(),
       meterDefinitionEntity
     );
@@ -69,7 +69,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       randomUUID(),
-      organisationRepository.findOne(context().getOrganisationId()),
+      organisationRepository.findOne(context().organisationId()),
       "123123",
       "Some external ID",
       "Some medium",

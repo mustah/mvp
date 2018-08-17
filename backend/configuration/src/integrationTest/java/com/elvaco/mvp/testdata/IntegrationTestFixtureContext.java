@@ -47,11 +47,11 @@ public class IntegrationTestFixtureContext {
     return OrganisationEntityMapper.toDomainModel(organisationEntity2);
   }
 
-  public UUID getOrganisationId() {
+  public UUID organisationId() {
     return organisation().id;
   }
 
-  public UUID getOrganisationId2() {
+  public UUID organisationId2() {
     return organisation2().id;
   }
 }

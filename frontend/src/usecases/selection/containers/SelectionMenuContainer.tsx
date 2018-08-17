@@ -12,7 +12,7 @@ import {
   updateSelection,
 } from '../../../state/user-selection/userSelectionActions';
 import {OnSelectSelection, UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {getSelection} from '../../../state/user-selection/userSelectionSelectors';
+import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
 import {OnClick, OnClickWithId} from '../../../types/Types';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 
@@ -29,7 +29,15 @@ interface DispatchToProps {
 }
 
 export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
-  const {closeSelectionPage, selection, saveSelection, updateSelection, resetSelection, selectSavedSelection} = props;
+  const {
+    closeSelectionPage,
+    selection,
+    saveSelection,
+    updateSelection,
+    resetSelection,
+    selectSavedSelection,
+  } = props;
+
   const key = `${selection.id}-${selection.isChanged}`;
   return (
     <RowCenter>
@@ -50,7 +58,7 @@ export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
 };
 
 const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
-  selection: getSelection(userSelection),
+  selection: getUserSelection(userSelection),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

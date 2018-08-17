@@ -15,19 +15,17 @@ public class PhysicalMeterQueryFilters extends QueryFilters {
     QPhysicalMeterEntity.physicalMeterEntity;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(
-    String filter, List<String> values
-  ) {
+  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
     return Optional.ofNullable(buildNullablePredicateFor(filter, values));
   }
 
   @Nullable
   private Predicate buildNullablePredicateFor(String filter, List<String> values) {
     switch (filter) {
-      case "containsFacility":
-        return PHYSICAL_METER.externalId.contains(values.get(0).toLowerCase());
-      case "containsSecondaryAddress":
-        return PHYSICAL_METER.address.contains(values.get(0).toLowerCase());
+      case "facility":
+        return PHYSICAL_METER.externalId.containsIgnoreCase(values.get(0));
+      case "secondaryAddress":
+        return PHYSICAL_METER.address.containsIgnoreCase(values.get(0));
       case "organisation":
         return PHYSICAL_METER.organisation.id.in(toUuids(values));
       default:
