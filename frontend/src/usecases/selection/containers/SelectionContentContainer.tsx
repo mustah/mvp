@@ -105,12 +105,6 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
     const gatewaySerialSelectionText = translate('gateway serial') + ': ';
 
-    const isNotUnknown = ({name}) => name !== 'unknown';
-    const selectedCities: SelectionListItem[] =
-      [...cities.filter(isNotUnknown), unknownCity as SelectionListItem];
-    const selectedAddresses: SelectionListItem[] =
-      [...addresses.filter(isNotUnknown), unknownAddress as SelectionListItem];
-
     return (
       <Column className="SelectionContentBox" key={selectionId === -1 ? 1 : selectionId}>
         <Subtitle>{translate('filter')}</Subtitle>
@@ -124,19 +118,21 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
           />
           <DropdownSelector
             fetchItems={fetchCities}
-            selectedItems={selectedCities}
+            selectedItems={cities}
             selectionText={citySelectionText}
             select={selectCity}
             renderLabel={renderCityLabel}
             rowHeight={44}
+            unknownItem={unknownCity as SelectionListItem}
           />
           <DropdownSelector
             fetchItems={fetchAddresses}
-            selectedItems={selectedAddresses}
+            selectedItems={addresses}
             selectionText={addressSelectionText}
             select={selectAddress}
             renderLabel={renderAddressLabel}
             rowHeight={44}
+            unknownItem={unknownAddress as SelectionListItem}
           />
           <DropdownSelector
             fetchItems={fetchMedia}

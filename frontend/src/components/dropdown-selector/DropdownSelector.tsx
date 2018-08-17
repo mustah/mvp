@@ -34,6 +34,7 @@ interface Props {
   selectionText: string;
   selectedItems: SelectionListItem[];
   select: (props: SelectionListItem) => void;
+  unknownItem?: SelectionListItem;
 }
 
 interface State extends PagedResponse {
@@ -63,6 +64,14 @@ const searchOverviewText = (list: SelectionListItem[], totalElements: number): s
   return numSelected && numSelected + ' / ' + totalElements || firstUpperTranslated('all');
 };
 
+const unknownItems = (props: OwnProps): SelectionListItem[] => {
+  const {selectedItems, unknownItem} = props;
+  const unknownIsSelected = unknownItem && selectedItems.find((item) => item.id === unknownItem.id);
+  return unknownIsSelected === undefined && unknownItem !== undefined
+    ? [unknownItem]
+    : [];
+};
+
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
 const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
 
@@ -75,7 +84,7 @@ class PaginatedDropdownSelector extends React.Component<OwnProps, State> {
     this.state = {
       isOpen: false,
       searchText: '',
-      items: [...props.selectedItems],
+      items: [...props.selectedItems, ...unknownItems(props)],
       totalElements: 0,
       page: 0,
     };
