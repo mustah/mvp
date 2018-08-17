@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ import static java.util.Collections.unmodifiableSet;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
-@ToString(exclude = {"measurements", "statusLogs"})
+@ToString(exclude = {"measurements", "statusLogs", "missingMeasurements"})
 @Audited
 public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
@@ -53,6 +54,11 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter")
   public List<MeasurementEntity> measurements;
+
+  @NotAudited
+  @JsonManagedReference
+  @OneToMany(mappedBy = "id.physicalMeter")
+  public List<MissingMeasurementEntity> missingMeasurements;
 
   @NotAudited
   @OrderBy("stop desc, start desc")

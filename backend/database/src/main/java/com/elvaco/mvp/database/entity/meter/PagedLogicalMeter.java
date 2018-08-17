@@ -19,7 +19,7 @@ public class PagedLogicalMeter {
   public final PhysicalMeterStatusLogEntity currentStatus;
   public final LocationEntity location;
   public final PhysicalMeterEntity activePhysicalMeter;
-  public final Long measurementCount;
+  public final Long missingReadingCount;
 
   public PagedLogicalMeter(
     UUID id,
@@ -57,7 +57,7 @@ public class PagedLogicalMeter {
     @Nullable PhysicalMeterEntity activePhysicalMeter,
     @Nullable GatewayEntity gateway,
     @Nullable PhysicalMeterStatusLogEntity currentStatus,
-    @Nullable Long measurementCount
+    @Nullable Long missingReadingCount
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -68,10 +68,10 @@ public class PagedLogicalMeter {
     this.activePhysicalMeter = activePhysicalMeter;
     this.gateway = gateway;
     this.currentStatus = currentStatus;
-    this.measurementCount = measurementCount;
+    this.missingReadingCount = missingReadingCount;
   }
 
-  public long expectedMeasurementCount(SelectionPeriod selectionPeriod) {
+  public long expectedReadingCount(SelectionPeriod selectionPeriod) {
     if (activePhysicalMeter == null) {
       return 0;
     }
@@ -79,10 +79,10 @@ public class PagedLogicalMeter {
     return LogicalMeterHelper.calculateExpectedReadOuts(
       activePhysicalMeter.readIntervalMinutes,
       selectionPeriod
-    ) * meterDefinition.quantities.size();
+    );
   }
 
-  public PagedLogicalMeter withMeasurementCount(@Nullable Long measurementCount) {
+  public PagedLogicalMeter withMissingReadingCount(@Nullable Long missingReadingCount) {
     return new PagedLogicalMeter(
       id,
       organisationId,
@@ -93,7 +93,7 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       currentStatus,
-      measurementCount
+      missingReadingCount
     );
   }
 
@@ -108,7 +108,7 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       currentStatus,
-      measurementCount
+      missingReadingCount
     );
   }
 }

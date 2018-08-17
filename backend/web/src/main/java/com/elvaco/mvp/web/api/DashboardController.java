@@ -1,9 +1,7 @@
 package com.elvaco.mvp.web.api;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
-import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
 @RequiredArgsConstructor
@@ -33,21 +31,19 @@ public class DashboardController {
   ) {
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
 
-    List<WidgetDto> widgets = getCollectionWidget(parameters)
-      .map(Collections::singletonList)
-      .orElse(emptyList());
-
-    return new DashboardDto(randomUUID(), widgets);
+    return new DashboardDto(randomUUID(), findCollectionWidget(parameters));
   }
 
-  private Optional<WidgetDto> getCollectionWidget(RequestParameters parameters) {
-    return dashboardUseCases.getMeasurementsStatistics(parameters)
-      .map(collectionStats ->
-        new WidgetDto(
-          WidgetType.COLLECTION.name,
-          collectionStats.expected,
-          collectionStats.expected - collectionStats.actual
-        )
-      );
+  private List<WidgetDto> findCollectionWidget(RequestParameters parameters) {
+    return singletonList(
+      dashboardUseCases.findCollectionStats(parameters)
+        .map(collectionStats ->
+          new WidgetDto(
+            WidgetType.COLLECTION.name,
+            collectionStats.expected,
+            collectionStats.missing
+          ))
+        .orElse(new WidgetDto(WidgetType.COLLECTION.name, 0, 0))
+    );
   }
 }

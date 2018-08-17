@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -90,6 +91,11 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters) {
+    return emptyList();
+  }
+
+  @Override
   public void delete(LogicalMeter logicalMeter) {
     throw new NotImplementedYet();
   }
@@ -107,7 +113,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       entity.latestReadouts,
       entity.location,
       entity.expectedMeasurementCount,
-      entity.actualMeasurementCount,
+      entity.missingMeasurementCount,
       entity.currentStatus
     );
   }

@@ -3,9 +3,8 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-  <changeSet id="Grant mvp db user privileges" author="Daniel Svensson" runAlways="true">
-    <validCheckSum>7:c2dad7389a0fc8dfa6cf97adec682273</validCheckSum>
-    <sqlFile path="../sql/postgresql/db_privileges.sql"
+  <changeSet id="Refresh missing measurements" author="Daniel Svensson" runAlways="true">
+    <sqlFile path="../sql/postgresql/refresh_missing_measurements.sql"
              dbms="postgresql"
              relativeToChangelogFile="true"
              splitStatements="false"

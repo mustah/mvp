@@ -9,28 +9,27 @@ import lombok.ToString;
 @ToString
 public class CollectionStats {
 
-  public final double actual;
+  public final double missing;
   public final double expected;
+  public final double collectionPercentage;
 
-  public CollectionStats(double actual, double expected) {
-    this.actual = actual;
+  public CollectionStats(double missing, double expected) {
+    this.missing = missing;
     this.expected = expected;
+    this.collectionPercentage = expected == 0
+      ? Double.NaN
+      : ((expected - missing) / expected) * 100;
   }
 
   public static CollectionStats asSumOf(Collection<CollectionStats> stats) {
-    double totalExpected = 0.0;
-    double totalActual = 0.0;
+    double missing = 0.0;
+    double expected = 0.0;
     for (CollectionStats meterStat : stats) {
-      if (meterStat.expected <= 0.0) {
-        continue;
+      if (meterStat.expected > 0.0) {
+        missing += meterStat.missing;
+        expected += meterStat.expected;
       }
-      totalActual += meterStat.actual;
-      totalExpected += meterStat.expected;
     }
-    return new CollectionStats(totalActual, totalExpected);
-  }
-
-  public double getCollectionPercentage() {
-    return expected == 0 ? Double.NaN : (actual / expected) * 100;
+    return new CollectionStats(missing, expected);
   }
 }

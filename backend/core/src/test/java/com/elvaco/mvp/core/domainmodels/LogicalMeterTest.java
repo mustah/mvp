@@ -264,8 +264,8 @@ public class LogicalMeterTest {
 
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(0L);
-    assertThat(collectionStats.actual).isEqualTo(0L);
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.missing).isEqualTo(0L);
+    assertThat(collectionStats.collectionPercentage).isEqualTo(Double.NaN);
   }
 
   @Test
@@ -274,8 +274,8 @@ public class LogicalMeterTest {
 
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(1.0);
-    assertThat(collectionStats.actual).isEqualTo(0.0);
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(0);
+    assertThat(collectionStats.missing).isEqualTo(0.0);
+    assertThat(collectionStats.collectionPercentage).isEqualTo(100.0);
   }
 
   @Test
@@ -284,8 +284,8 @@ public class LogicalMeterTest {
 
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(1.0);
-    assertThat(collectionStats.actual).isEqualTo(1.0);
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100);
+    assertThat(collectionStats.missing).isEqualTo(1.0);
+    assertThat(collectionStats.collectionPercentage).isEqualTo(0);
   }
 
   @Test
@@ -294,8 +294,8 @@ public class LogicalMeterTest {
 
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(7.0);
-    assertThat(collectionStats.actual).isEqualTo(7.0);
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(100);
+    assertThat(collectionStats.missing).isEqualTo(7.0);
+    assertThat(collectionStats.collectionPercentage).isEqualTo(0);
   }
 
   @Test
@@ -304,8 +304,8 @@ public class LogicalMeterTest {
 
     CollectionStats collectionStats = meter.getCollectionStats();
     assertThat(collectionStats.expected).isEqualTo(7.0);
-    assertThat(collectionStats.actual).isEqualTo(3.0);
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(42.857142857142854);
+    assertThat(collectionStats.missing).isEqualTo(3.0);
+    assertThat(collectionStats.collectionPercentage).isEqualTo(57.14285714285714);
   }
 
   @Test
@@ -313,9 +313,9 @@ public class LogicalMeterTest {
     LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(0L, 1L);
 
     CollectionStats collectionStats = meter.getCollectionStats();
+    assertThat(collectionStats.collectionPercentage).isEqualTo(Double.NaN);
     assertThat(collectionStats.expected).isEqualTo(0.0);
-    assertThat(collectionStats.actual).isEqualTo(1.0);
-    assertThat(collectionStats.getCollectionPercentage()).isEqualTo(Double.NaN);
+    assertThat(collectionStats.missing).isEqualTo(1.0);
   }
 
   private StatusLogEntry<UUID> newStatusLog(

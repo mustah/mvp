@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.util;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
+import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
@@ -12,15 +13,19 @@ import lombok.experimental.UtilityClass;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isGatewayQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isGatewayStatusQuery;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isMeterStatusQuery;
 
 @UtilityClass
 public final class JoinIfNeededUtil {
 
+  private static final QLocationEntity LOCATION =
+    QLocationEntity.locationEntity;
+
   private static final QLogicalMeterEntity LOGICAL_METER =
     QLogicalMeterEntity.logicalMeterEntity;
 
-  private static final QGatewayEntity GATEWAY =
-    QGatewayEntity.gatewayEntity;
+  private static final QGatewayEntity GATEWAY = QGatewayEntity.gatewayEntity;
 
   private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
@@ -50,12 +55,30 @@ public final class JoinIfNeededUtil {
     }
   }
 
+  public static <T> void joinMeterStatusLogs(
+    JPQLQuery<T> query,
+    RequestParameters parameters
+  ) {
+    if (isMeterStatusQuery(parameters) || isDateRange(parameters)) {
+      query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+    }
+  }
+
   public static <T> void joinGatewayStatusLogs(
     JPQLQuery<T> query,
     RequestParameters parameters
   ) {
     if (isGatewayStatusQuery(parameters)) {
       query.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
+    }
+  }
+
+  public static <T> void joinLogicalMeterLocation(
+    JPQLQuery<T> query,
+    RequestParameters parameters
+  ) {
+    if (isLocationQuery(parameters)) {
+      query.leftJoin(LOGICAL_METER.location, LOCATION);
     }
   }
 }
