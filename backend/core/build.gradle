@@ -5,7 +5,7 @@ dependencies {
   compile 'ch.qos.logback:logback-classic:1.1.11'
   compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
 
-  compileOnly 'org.projectlombok:lombok:1.16.20'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile "junit:junit:${junitVersion}"
   testCompile "org.assertj:assertj-core:${assertjVersion}"
