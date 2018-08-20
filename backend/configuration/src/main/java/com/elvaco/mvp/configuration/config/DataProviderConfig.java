@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.MissingMeasurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
@@ -24,6 +25,7 @@ import com.elvaco.mvp.database.repository.access.LogicalMeterRepository;
 import com.elvaco.mvp.database.repository.access.MeasurementRepository;
 import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
+import com.elvaco.mvp.database.repository.access.MissingMeasurementRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
@@ -39,6 +41,7 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
@@ -79,6 +82,7 @@ class DataProviderConfig {
   private final SummaryJpaRepository summaryJpaRepository;
   private final PropertiesJpaRepository propertiesJpaRepository;
   private final QuantityJpaRepository quantityJpaRepository;
+  private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
   @Bean
   Users users() {
@@ -169,5 +173,10 @@ class DataProviderConfig {
   @Bean
   Quantities quantities() {
     return new QuantityRepository(quantityJpaRepository);
+  }
+
+  @Bean
+  MissingMeasurements missingMeasurements() {
+    return new MissingMeasurementRepository(missingMeasurementJpaRepository);
   }
 }
