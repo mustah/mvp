@@ -15,6 +15,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -45,8 +47,9 @@ public class MeasurementEntity extends IdentifiableType<Long> {
   @Column(nullable = false)
   public ZonedDateTime created;
 
-  @Column(nullable = false)
-  public String quantity;
+  @ManyToOne(optional = false, cascade = javax.persistence.CascadeType.MERGE)
+  @JoinColumn(name = "quantity", nullable = false)
+  public QuantityEntity quantity;
 
   @Type(type = "measurement-unit")
   @Column(nullable = false)

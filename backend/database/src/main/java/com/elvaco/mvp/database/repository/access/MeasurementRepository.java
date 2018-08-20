@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -73,7 +74,7 @@ public class MeasurementRepository implements Measurements {
       measurementJpaRepository.save(
         physicalMeter.id,
         created,
-        quantity,
+        QuantityAccess.singleton().getByName(quantity).getId(),
         measurementUnit.getUnit(),
         measurementUnit.getValue()
       );

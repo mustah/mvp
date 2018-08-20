@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.Quantities;
 
-public class MockQuantities extends MockRepository<Long, Quantity> implements Quantities {
+public class MockQuantities extends MockRepository<Integer, Quantity> implements Quantities {
 
   @Override
   public List<Quantity> findAll() {
@@ -25,12 +25,12 @@ public class MockQuantities extends MockRepository<Long, Quantity> implements Qu
   }
 
   @Override
-  protected Quantity copyWithId(Long id, Quantity entity) {
+  protected Quantity copyWithId(Integer id, Quantity entity) {
     return new Quantity(id, entity.name, entity.getPresentationInformation());
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
+  protected Integer generateId() {
+    return (int) nextId();
   }
 }

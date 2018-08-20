@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
@@ -12,7 +13,7 @@ public class MeasurementEntityMapper {
     return new Measurement(
       entity.id,
       entity.created,
-      entity.quantity,
+      entity.quantity.name,
       entity.value.getValue(),
       entity.value.getUnit(),
       PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs(entity.physicalMeter)
@@ -23,7 +24,7 @@ public class MeasurementEntityMapper {
     return new MeasurementEntity(
       domainModel.id,
       domainModel.created,
-      domainModel.quantity,
+      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(domainModel.quantity)),
       new MeasurementUnit(domainModel.unit, domainModel.value),
       PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
     );

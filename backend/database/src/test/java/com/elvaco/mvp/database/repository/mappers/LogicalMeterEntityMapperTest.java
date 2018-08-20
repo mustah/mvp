@@ -97,7 +97,7 @@ public class LogicalMeterEntityMapperTest {
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "speed-o-meter",
           singleton(new Quantity(
-            1L,
+            1,
             "Speed",
             new QuantityPresentationInformation("mps", SeriesDisplayMode.READOUT)
           )),
@@ -138,7 +138,7 @@ public class LogicalMeterEntityMapperTest {
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "My energy meter",
           singleton(new Quantity(
-            1L,
+            1,
             "Energy",
             new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
           )),
@@ -175,7 +175,7 @@ public class LogicalMeterEntityMapperTest {
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "Energy meter",
           singleton(new Quantity(
-            1L,
+            1,
             "Energy",
             new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
           )),
@@ -205,7 +205,7 @@ public class LogicalMeterEntityMapperTest {
   ) {
     return new MeterDefinitionEntity(
       MeterDefinitionType.UNKNOWN_METER_TYPE,
-      singleton(new QuantityEntity(1L, quantityName, quantityUnit, SeriesDisplayMode.READOUT)),
+      singleton(new QuantityEntity(1, quantityName, quantityUnit, SeriesDisplayMode.READOUT)),
       name,
       false
     );

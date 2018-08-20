@@ -35,7 +35,7 @@ public interface MeasurementJpaRepository
     + "interval_start FROM "
     + "measurement WHERE"
     + "     physical_meter_id IN :meter_ids"
-    + "     AND quantity = :quantity"
+    + "     AND quantity = (select id from quantity where quantity.name=:quantity)"
     + "     AND created >= cast(:from AS TIMESTAMPTZ) - cast('1 ' || :resolution as interval)"
     + "     AND created <= cast(:to AS TIMESTAMPTZ)"
     + ") y"
@@ -62,7 +62,7 @@ public interface MeasurementJpaRepository
     // ... Otherwise, pick the latest value in the series _before_ this period, and diff against
     // _that_, to avoid surprising null consumptions at the beginning of a period
     + "        (select value from measurement"
-    + "          where quantity = :quantity and"
+    + "          where quantity = (select id from quantity where quantity.name=:quantity) and"
     + "          physical_meter_id = :meter_id and"
     + "          created < cast(:from AS TIMESTAMPTZ)"
     + "          order by created desc limit 1))"
@@ -71,6 +71,7 @@ public interface MeasurementJpaRepository
     + "  created as when"
     + "  from measurement"
     + "  where created >= cast(:from AS TIMESTAMPTZ)"
+    + "  and quantity = (select id from quantity where quantity.name=:quantity)"
     + "  and created <= cast(:to AS TIMESTAMPTZ)"
     + "  and created in ("
     + "   SELECT generate_series("
@@ -79,7 +80,6 @@ public interface MeasurementJpaRepository
     + "     cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS interval_start"
     + "  )"
     + "  and physical_meter_id = :meter_id"
-    + "  and quantity = :quantity"
     + "  ORDER BY created ASC"
   )
   List<MeasurementValueProjection> getSeriesForPeriod(
@@ -97,7 +97,7 @@ public interface MeasurementJpaRepository
     + " unit_at(value, :unit) as value"
     + " from measurement"
     + " where physical_meter_id = :meter_id"
-    + " and quantity = :quantity"
+    + " and quantity = (select id from quantity where quantity.name=:quantity)"
     + " and created <= :before"
     + " order by created desc"
     + " limit 1")
@@ -123,7 +123,7 @@ public interface MeasurementJpaRepository
   void save(
     @Param("physical_meter_id") UUID physicalMeterId,
     @Param("created") ZonedDateTime created,
-    @Param("quantity") String quantity,
+    @Param("quantity") Integer quantity,
     @Param("unit") String unit,
     @Param("value") double value
   );

@@ -12,7 +12,7 @@ import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
 @ToString
-public class Quantity implements Identifiable<Long>, Serializable {
+public class Quantity implements Identifiable<Integer>, Serializable {
 
   public static final Quantity VOLUME = new Quantity("Volume")
     .withDefaultPresentation("m³", SeriesDisplayMode.CONSUMPTION);
@@ -68,11 +68,11 @@ public class Quantity implements Identifiable<Long>, Serializable {
   public final String name;
 
   @Nullable
-  public final Long id;
+  public final Integer id;
   private final QuantityPresentationInformation presentationInformation;
 
   public Quantity(
-    @Nullable Long id,
+    @Nullable Integer id,
     String name,
     QuantityPresentationInformation presentationInformation
   ) {
@@ -133,7 +133,7 @@ public class Quantity implements Identifiable<Long>, Serializable {
 
   @Nullable
   @Override
-  public Long getId() {
+  public Integer getId() {
     return id;
   }
 

@@ -35,7 +35,7 @@ public class MeasurementJpaRepositoryImpl
     ZonedDateTime created
   ) {
     Predicate predicate = MEASUREMENT.physicalMeter.id.eq(physicalMeterId)
-      .and(MEASUREMENT.quantity.eq(quantity))
+      .and(MEASUREMENT.quantity.name.eq(quantity))
       .and(MEASUREMENT.created.eq(created));
 
     return Optional.ofNullable(
