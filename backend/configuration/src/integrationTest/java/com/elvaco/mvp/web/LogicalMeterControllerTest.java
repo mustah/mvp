@@ -91,7 +91,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private MeterDefinition hotWaterMeterDefinition;
 
   @Autowired
-  private LogicalMeters logicalMeterRepository;
+  private LogicalMeters logicalMeters;
 
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
@@ -203,7 +203,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void shouldNotHaveStatusChangedSetWhenMeterCreatedAfterPeriodEnd() {
     ZonedDateTime start = ZonedDateTime.now();
-    LogicalMeter logicalMeter = logicalMeterRepository.save(
+    LogicalMeter logicalMeter = logicalMeters.save(
       new LogicalMeter(
         randomUUID(),
         "externalId",
@@ -245,7 +245,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void locationIsAttachedToPagedMeter() {
     UUID meterId = UUID.randomUUID();
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       meterId,
       meterId.toString(),
       context().organisationId(),
@@ -254,10 +254,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ));
 
     PagedLogicalMeterDto logicalMeterDto = asTestUser()
-      .getPage(
-        "/meters",
-        PagedLogicalMeterDto.class
-      ).getContent().get(0);
+      .getPage("/meters", PagedLogicalMeterDto.class)
+      .getContent().get(0);
 
     assertThat(logicalMeterDto.location.city.name).isEqualTo("kungsbacka");
     assertThat(logicalMeterDto.location.address.name).isEqualTo("kabelgatan 2t");
@@ -457,7 +455,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       "gateway-product"
     ));
 
-    LogicalMeter districtHeatingMeter = logicalMeterRepository.save(
+    LogicalMeter districtHeatingMeter = logicalMeters.save(
       new LogicalMeter(
         randomUUID(),
         "external-id",
@@ -1155,12 +1153,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void malformedDateParameter() {
     ResponseEntity<ErrorMessageDto> response = asTestUser()
-      .get(
-        "/meters?"
-          + "after=NotAValidTimestamp"
-          + "&before=AndNeitherIsThis",
-        ErrorMessageDto.class
-      );
+      .get("/meters?after=NotAValidTimestamp&before=AndNeitherIsThis", ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
@@ -1207,14 +1200,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void doesntFindOtherOrganisationsMetersUsingFilter() {
     createUserIfNotPresent(userBuilder().build());
-    LogicalMeter myMeter = logicalMeterRepository.save(new LogicalMeter(
+    LogicalMeter myMeter = logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "my-own-meter",
       anotherOrganisation.id,
       hotWaterMeterDefinition,
       UNKNOWN_LOCATION
     ));
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "not-my-meter",
       context().organisationId(),
@@ -1233,7 +1226,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void cantAccessOtherOrganisationsMeterById() {
-    LogicalMeter theirMeter = logicalMeterRepository.save(new LogicalMeter(
+    LogicalMeter theirMeter = logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "this-is-not-my-meter",
       anotherOrganisation.id,
@@ -1275,7 +1268,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findAllMeters_WithFacility() {
     String facility = "my-mapped-meter";
 
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       facility,
       context().organisationId(),
@@ -1283,7 +1276,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       UNKNOWN_LOCATION
     ));
 
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "another-mapped-meter",
       context().organisationId(),
@@ -1339,7 +1332,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithUnknownCity() {
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
       context().organisationId(),
@@ -1355,26 +1348,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_IncludeMetersWith_UnknownCity() {
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
       context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
       UNKNOWN_LOCATION
     ));
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "123-123-123",
       context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(11.123)
-        .latitude(12.345)
-        .confidence(0.78)
-        .build()
+      kungsbacka().build()
     ));
 
     Page<PagedLogicalMeterDto> result = asTestUser()
@@ -1385,7 +1371,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_IncludeMetersWith_UnknownCity_AndLowConfidence() {
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
       context().organisationId(),
@@ -1393,34 +1379,20 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       UNKNOWN_LOCATION
     ));
 
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "123-123-123",
       context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(11.123)
-        .latitude(12.345)
-        .confidence(0.75)
-        .build()
+      kungsbacka().build()
     ));
 
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "123-456",
       context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(11.123456)
-        .latitude(12.345789)
-        .confidence(0.74)
-        .build()
+      kungsbacka().confidence(0.74).build()
     ));
 
     Page<PagedLogicalMeterDto> result = asTestUser()
@@ -1430,40 +1402,91 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAllMeters_WithUnknownAddress() {
-    logicalMeterRepository.save(new LogicalMeter(
+  public void findAllMetersWithUnknownCity() {
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "123",
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "123-123-123",
       context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(11.123)
-        .latitude(12.345)
-        .confidence(0.75)
-        .build()
+      kungsbacka().build()
     ));
 
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       randomUUID(),
-      "123-456",
+      "456",
       context().organisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .longitude(11.123456)
-        .latitude(12.345789)
-        .confidence(0.77)
-        .build()
+      kungsbacka().confidence(0.74).build()
+    ));
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "789",
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      kungsbacka()
+        .longitude(null)
+        .latitude(null)
+        .confidence(null).build()
+    ));
+
+    Page<PagedLogicalMeterDto> result = asTestUser()
+      .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).extracting("facility")
+      .containsExactlyInAnyOrder("123", "456", "789");
+  }
+
+  @Test
+  public void findAllMeters_WithUnknownAddress() {
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "abc",
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "123",
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      kungsbacka().confidence(0.75).build()
+    ));
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "456",
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      kungsbacka().confidence(0.80).build()
+    ));
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "789",
+      context().organisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      kungsbacka()
+        .longitude(null)
+        .latitude(null)
+        .confidence(null).build()
     ));
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?address=unknown,unknown,unknown", PagedLogicalMeterDto.class);
 
-    assertThat(result.getContent()).hasSize(1);
+    assertThat(result.getContent()).extracting("facility")
+      .containsExactlyInAnyOrder("abc", "789");
   }
 
   @Test
@@ -1732,7 +1755,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertThat(logicalMeterRepository.findById(districtHeatingMeter.id)).isEmpty();
+    assertThat(logicalMeters.findById(districtHeatingMeter.id)).isEmpty();
     assertThat(physicalMeterJpaRepository.findOne(physicalMeter.id)).isNull();
     assertThat(measurementUseCases.findBy(physicalMeter.id, Quantity.VOLUME.name, date)).isEmpty();
   }
@@ -1748,7 +1771,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void nullFieldsAreNotIncludedInDto() {
     UUID meterId = UUID.randomUUID();
-    logicalMeterRepository.save(new LogicalMeter(
+    logicalMeters.save(new LogicalMeter(
       meterId,
       meterId.toString(),
       context().organisationId(),
@@ -1881,11 +1904,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   private LogicalMeter createLogicalMeter(MeterDefinition meterDefinition) {
-    return logicalMeterRepository.save(buildLogicalMeter(meterDefinition));
+    return logicalMeters.save(buildLogicalMeter(meterDefinition));
   }
 
   private LogicalMeter createLogicalMeter(MeterDefinition meterDefinition, ZonedDateTime dateTime) {
-    return logicalMeterRepository.save(buildLogicalMeter(meterDefinition).createdAt(dateTime));
+    return logicalMeters.save(buildLogicalMeter(meterDefinition).createdAt(dateTime));
   }
 
   private LogicalMeter createLogicalMeter() {
@@ -1952,6 +1975,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .address("111-222-333-444-1")
       .medium("Heat")
       .manufacturer("ELV1");
+  }
+
+  private static LocationBuilder kungsbacka() {
+    return new LocationBuilder()
+      .country("sweden")
+      .city("kungsbacka")
+      .address("kabelgatan 1")
+      .longitude(11.123)
+      .latitude(12.345)
+      .confidence(0.75);
   }
 
   private static String metersUrl(ZonedDateTime start, ZonedDateTime before) {

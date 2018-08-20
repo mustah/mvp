@@ -134,7 +134,7 @@ public class LocationParametersParserTest {
     assertThat(parameters.countries).containsExactly("abc");
     assertThat(parameters.cities).containsExactly("beer");
     assertThat(parameters.addresses).isEmpty();
-    assertThat(parameters.hasCities()).isTrue();
+    assertThat(parameters.hasCountriesAndCities()).isTrue();
   }
 
   @Test

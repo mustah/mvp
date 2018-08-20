@@ -46,18 +46,20 @@ class LocationExpressions {
   }
 
   @Nullable
-  private Predicate hasLowConfidence(Parameters parameters) {
-    return parameters.hasUnknownCities ? location.confidence.lt(0.75) : null;
-  }
-
-  @Nullable
   private Predicate unknownAddress(Parameters parameters) {
     return parameters.hasUnknownAddresses ? location.streetAddress.isNull() : null;
   }
 
   @Nullable
+  private Predicate hasLowConfidence(Parameters parameters) {
+    return parameters.hasUnknownCities
+      ? location.confidence.lt(0.75).or(location.confidence.isNull())
+      : null;
+  }
+
+  @Nullable
   private Predicate countriesAndCities(Parameters parameters) {
-    if (parameters.hasCities()) {
+    if (parameters.hasCountriesAndCities()) {
       return location.country.toLowerCase().in(parameters.countries)
         .and(location.city.toLowerCase().in(parameters.cities));
     }
