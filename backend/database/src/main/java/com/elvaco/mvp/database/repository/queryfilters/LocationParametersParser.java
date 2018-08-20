@@ -23,9 +23,9 @@ class LocationParametersParser {
   static Parameters toCityParameters(List<String> cityIds) {
     Parameters parameters = new Parameters();
     toCityParams(cityIds).forEach(cityParam -> {
-        parameters.addCountry(cityParam.country);
-        parameters.addCity(cityParam.city);
-      });
+      parameters.addCountry(cityParam.country);
+      parameters.addCity(cityParam.city);
+    });
     return parameters;
   }
 
