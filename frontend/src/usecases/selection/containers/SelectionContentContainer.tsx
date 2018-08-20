@@ -44,10 +44,6 @@ import {
 import {uuid} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';
 
-interface OwnProps {
-  selectionId: uuid;
-}
-
 interface StateToProps {
   addresses: SelectionListItem[];
   cities: SelectionListItem[];
@@ -57,6 +53,7 @@ interface StateToProps {
   media: SelectionListItem[];
   meterStatuses: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
+  selectionId: uuid;
 }
 
 interface DispatchToProps {
@@ -66,7 +63,7 @@ interface DispatchToProps {
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
-class SelectionContent extends React.Component<OwnProps & StateToProps & DispatchToProps> {
+class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
 
   render() {
     const {
@@ -108,12 +105,6 @@ class SelectionContent extends React.Component<OwnProps & StateToProps & Dispatc
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
     const gatewaySerialSelectionText = translate('gateway serial') + ': ';
 
-    const isNotUnknown = ({name}) => name !== 'unknown';
-    const selectedCities: SelectionListItem[] =
-      [...cities.filter(isNotUnknown), unknownCity as SelectionListItem];
-    const selectedAddresses: SelectionListItem[] =
-      [...addresses.filter(isNotUnknown), unknownAddress as SelectionListItem];
-
     return (
       <Column className="SelectionContentBox" key={selectionId === -1 ? 1 : selectionId}>
         <Subtitle>{translate('filter')}</Subtitle>
@@ -127,19 +118,21 @@ class SelectionContent extends React.Component<OwnProps & StateToProps & Dispatc
           />
           <DropdownSelector
             fetchItems={fetchCities}
-            selectedItems={selectedCities}
+            selectedItems={cities}
             selectionText={citySelectionText}
             select={selectCity}
             renderLabel={renderCityLabel}
             rowHeight={44}
+            unknownItem={unknownCity as SelectionListItem}
           />
           <DropdownSelector
             fetchItems={fetchAddresses}
-            selectedItems={selectedAddresses}
+            selectedItems={addresses}
             selectionText={addressSelectionText}
             select={selectAddress}
             renderLabel={renderAddressLabel}
             rowHeight={44}
+            unknownItem={unknownAddress as SelectionListItem}
           />
           <DropdownSelector
             fetchItems={fetchMedia}
@@ -187,6 +180,7 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   media: getSelectedMedia(userSelection),
   meterStatuses: getSelectedMeterStatuses(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),
+  selectionId: userSelection.userSelection.id,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
@@ -194,7 +188,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const SelectionContentContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(
-    () => mapStateToProps,
-    mapDispatchToProps,
-  )(SelectionContent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SelectionContent);

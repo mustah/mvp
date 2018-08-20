@@ -38,10 +38,6 @@ describe('userSelectionReducer', () => {
     },
   };
 
-  const mockPayloadState: UserSelectionState = {
-    userSelection: {...mockPayload},
-  };
-
   describe('select saved selections', () => {
 
     it('replaces current selection', () => {
@@ -125,13 +121,17 @@ describe('userSelectionReducer', () => {
   describe('deselect', () => {
 
     it('will deselect selected city', () => {
+      const userSelectionState: UserSelectionState = {
+        userSelection: {...mockPayload},
+      };
+
       const payload: SelectionParameter = {
         parameter: ParameterName.cities,
         item: {...gothenburg},
       };
 
       const state: UserSelectionState = userSelection(
-        mockPayloadState,
+        userSelectionState,
         {type: DESELECT_SELECTION, payload},
       );
 
