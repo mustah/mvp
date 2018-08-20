@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Assume;
@@ -227,22 +230,22 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void valuesAreFilteredByQuantity() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0, "W", "A");
-    newMeasurement(meter, START_TIME, 6.0, "W", "B");
+    newMeasurement(meter, START_TIME, 2.0, "°C", Quantity.TEMPERATURE.name);
+    newMeasurement(meter, START_TIME, 6.0, "°C", Quantity.RETURN_TEMPERATURE.name);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
         "hour",
-        "A",
-        "W",
+        Quantity.TEMPERATURE.name,
+        "°C",
         "default",
         START_TIME,
         START_TIME.plus(Duration.ofSeconds(1))
       );
 
     assertThat(results).hasSize(1);
-    assertThat(results.get(0).getValue()).isEqualTo("2 W");
+    assertThat(results.get(0).getValue()).isEqualTo("2 °C");
   }
 
   @Test
@@ -585,7 +588,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     measurementJpaRepository.save(new MeasurementEntity(
       null,
       when.toZonedDateTime(),
-      quantity,
+      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
       new MeasurementUnit(unit, value),
       meter
     ));

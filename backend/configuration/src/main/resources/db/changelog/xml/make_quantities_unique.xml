@@ -13,4 +13,42 @@
     />
   </changeSet>
 
+    <changeSet id="change quantity id from long to integer" author="erimel">
+        <modifyDataType tableName="quantity" columnName="id" newDataType="int"/>
+        <modifyDataType tableName="meter_definition_quantities" columnName="quantity_id" newDataType="int"/>
+        <modifyDataType schemaName="evoaudit" tableName="quantity_aud" columnName="id" newDataType="int"/>
+        <modifyDataType schemaName="evoaudit" tableName="meter_definition_quantities_aud" columnName="quantity_id" newDataType="int"/>
+    </changeSet>
+    <changeSet id="change quantity id to autoincrement" author="erimel" dbms="h2">
+        <addAutoIncrement tableName="quantity" columnName="id" columnDataType="int"/>
+    </changeSet>
+
+    <changeSet id="drop constraints postgres" author="erimel" dbms="postgres">
+        <sql dbms="postgresql">
+            ALTER TABLE measurement DISABLE TRIGGER reject_mixed_measurement_dimensions;
+        </sql>
+        <dropUniqueConstraint tableName="measurement"
+                              constraintName="measurement_physical_meter_id_created_quantity_key"/>
+
+    </changeSet>
+    <changeSet id="drop constraints h2" author="erimel" dbms="h2">
+        <dropUniqueConstraint tableName="measurement"
+                              constraintName="CONSTRAINT_1"/>
+    </changeSet>
+
+    <changeSet id="Make measurements use qunatity id instead of string" author="erimel">
+
+        <renameColumn tableName="measurement" oldColumnName="quantity" newColumnName="old_quantity"/>
+        <addColumn tableName="measurement">
+            <column name="quantity" type="int" valueComputed="(select id from quantity where name=old_quantity)"/>
+        </addColumn>
+        <dropColumn tableName="measurement" columnName="old_quantity"/>
+        <addUniqueConstraint columnNames="physical_meter_id, created, quantity"
+                             constraintName="measurement_physical_meter_id_created_quantity_key"
+                             tableName="measurement"/>
+        <sql dbms="postgresql">
+            ALTER TABLE measurement ENABLE TRIGGER reject_mixed_measurement_dimensions;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
