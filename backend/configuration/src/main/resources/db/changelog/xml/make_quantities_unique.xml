@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
   <changeSet id="Make quantities unique" author="erimel">
@@ -73,6 +73,12 @@
     <addUniqueConstraint columnNames="physical_meter_id, created, quantity"
                          constraintName="measurement_physical_meter_id_created_quantity_key"
                          tableName="measurement"/>
+
+    <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="measurement"
+                             constraintName="measurement_physical_meter_id_fkey" deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                             referencedColumnNames="id" referencedTableName="physical_meter"/>
+
     <sql dbms="postgresql">
       CREATE CONSTRAINT TRIGGER reject_mixed_measurement_dimensions
       after insert or update
