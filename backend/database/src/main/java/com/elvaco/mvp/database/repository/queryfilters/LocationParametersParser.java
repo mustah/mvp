@@ -22,22 +22,20 @@ class LocationParametersParser {
 
   static Parameters toCityParameters(List<String> cityIds) {
     Parameters parameters = new Parameters();
-    toCityParams(cityIds)
-      .forEach(cityParam -> {
-        parameters.addCountry(cityParam.country);
-        parameters.addCity(cityParam.city);
-      });
+    toCityParams(cityIds).forEach(cityParam -> {
+      parameters.addCountry(cityParam.country);
+      parameters.addCity(cityParam.city);
+    });
     return parameters;
   }
 
   static Parameters toAddressParameters(List<String> addressIds) {
     Parameters parameters = new Parameters();
-    toAddressParams(addressIds)
-      .forEach(addressParam -> {
-        parameters.addCountry(addressParam.country);
-        parameters.addCity(addressParam.city);
-        parameters.addAddress(addressParam.address);
-      });
+    toAddressParams(addressIds).forEach(addressParam -> {
+      parameters.addCountry(addressParam.country);
+      parameters.addCity(addressParam.city);
+      parameters.addAddress(addressParam.address);
+    });
     return parameters;
   }
 
@@ -102,12 +100,12 @@ class LocationParametersParser {
       this.addresses = new HashSet<>();
     }
 
-    boolean hasCities() {
+    boolean hasCountriesAndCities() {
       return !cities.isEmpty() && !countries.isEmpty();
     }
 
-    public boolean hasAddresses() {
-      return hasCities() && !addresses.isEmpty();
+    boolean hasAddresses() {
+      return hasCountriesAndCities() && !addresses.isEmpty();
     }
 
     private void addCountry(String country) {

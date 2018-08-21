@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.UUID;
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
@@ -11,7 +12,6 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -22,6 +22,7 @@ import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntit
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.querydsl.core.types.ExpressionUtils.allOf;
 import static com.querydsl.core.types.ExpressionUtils.isNotNull;
@@ -61,48 +62,59 @@ class SummaryQueryDslJpaRepository
   }
 
   private long countMeters(RequestParameters parameters, Predicate predicate) {
-    JPQLQuery<?> query = createCountQuery(predicate)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+    JPQLQuery<?> query = createCountQuery(predicate);
 
-    joinLogicalMeterGateways(query, parameters);
+    applyJoins(query, parameters);
 
-    return query.distinct().fetchCount();
+    return query.fetchCount();
   }
 
   private long countCities(RequestParameters parameters, Predicate predicate) {
-    JPQLQuery<Tuple> query = createQuery(predicate)
+    JPQLQuery<?> query = createQuery(predicate)
       .select(Expressions.list(LOCATION.country, LOCATION.city))
-      .where(
-        allOf(
-          isNotNull(LOCATION.country), isNotNull(LOCATION.city)
-        )
-      )
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+      .where(hasCity(parameters));
 
-    joinLogicalMeterGateways(query, parameters);
+    applyJoins(query, parameters);
 
     return (long) query.distinct().fetch().size();
   }
 
   private long countAddresses(RequestParameters parameters, Predicate predicate) {
-    JPQLQuery<Tuple> query = createQuery(predicate)
+    JPQLQuery<?> query = createQuery(predicate)
       .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress))
-      .where(
-        allOf(
-          isNotNull(LOCATION.country), isNotNull(LOCATION.city), isNotNull(LOCATION.streetAddress)
-        )
-      )
+      .where(hasAddress(parameters));
+
+    applyJoins(query, parameters);
+
+    return (long) query.distinct().fetch().size();
+  }
+
+  private static JPQLQuery<?> applyJoins(JPQLQuery<?> query, RequestParameters parameters) {
+    query
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
     joinLogicalMeterGateways(query, parameters);
 
-    return (long) query.distinct().fetch().size();
+    return query;
+  }
+
+  @Nullable
+  private static Predicate hasCity(RequestParameters parameters) {
+    return isLocationQuery(parameters)
+      ? null
+      : allOf(isNotNull(LOCATION.country), isNotNull(LOCATION.city));
+  }
+
+  private static Predicate hasAddress(RequestParameters parameters) {
+    return isLocationQuery(parameters)
+      ? null
+      : allOf(
+        isNotNull(LOCATION.country),
+        isNotNull(LOCATION.city),
+        isNotNull(LOCATION.streetAddress)
+      );
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {
