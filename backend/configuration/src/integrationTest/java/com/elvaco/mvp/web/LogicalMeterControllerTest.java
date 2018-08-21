@@ -17,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -36,13 +35,11 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
@@ -127,12 +124,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
   @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
-
-  @Autowired
   private MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
-  private OrganisationEntity anotherOrganisation;
   private ZonedDateTime start;
 
   @Before
@@ -140,14 +133,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
 
     hotWaterMeterDefinition = meterDefinitions.save(MeterDefinition.HOT_WATER_METER);
-
-    anotherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Another Organisation",
-        "another-organisation",
-        "another-organisation"
-      ));
   }
 
   @After
@@ -158,7 +143,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
-    organisationJpaRepository.delete(anotherOrganisation.id);
   }
 
   @Test
@@ -1203,7 +1187,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter myMeter = logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "my-own-meter",
-      anotherOrganisation.id,
+      context().organisationId2(),
       hotWaterMeterDefinition,
       UNKNOWN_LOCATION
     ));
@@ -1229,7 +1213,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter theirMeter = logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "this-is-not-my-meter",
-      anotherOrganisation.id,
+      context().organisationId2(),
       hotWaterMeterDefinition,
       UNKNOWN_LOCATION
     ));
@@ -1944,12 +1928,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .email("me@myorg.com")
       .password("secr3t")
       .language(Language.en)
-      .organisation(new Organisation(
-        anotherOrganisation.id,
-        anotherOrganisation.name,
-        anotherOrganisation.slug,
-        anotherOrganisation.externalId
-      ))
+      .organisation(context().organisation2())
       .asUser();
   }
 
