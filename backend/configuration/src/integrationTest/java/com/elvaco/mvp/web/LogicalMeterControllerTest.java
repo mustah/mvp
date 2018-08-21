@@ -152,7 +152,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    measurementJpaRepository.deleteAll();
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
