@@ -17,7 +17,7 @@ public class MissingMeasurementsController {
     if (missingMeasurementUseCases.refreshAsUser()) {
       return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     } else {
-      return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build();
+      return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).build();
     }
   }
 }
