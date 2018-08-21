@@ -23,6 +23,9 @@ public class Quantity implements Identifiable<Integer>, Serializable {
   public static final Quantity TEMPERATURE = new Quantity("Temperature")
     .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
 
+  public static final Quantity EXTERNAL_TEMPERATURE = new Quantity("External temperature")
+    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+
   public static final Quantity HUMIDITY = new Quantity("Relative humidity")
     .withDefaultPresentation("%", SeriesDisplayMode.READOUT);
 
@@ -58,7 +61,8 @@ public class Quantity implements Identifiable<Integer>, Serializable {
     RETURN_TEMPERATURE,
     DIFFERENCE_TEMPERATURE,
     ENERGY_RETURN,
-    REACTIVE_ENERGY
+    REACTIVE_ENERGY,
+    EXTERNAL_TEMPERATURE
   ));
 
   private static final long serialVersionUID = -4279706519680318521L;

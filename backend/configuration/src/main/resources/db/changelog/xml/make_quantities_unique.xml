@@ -13,42 +13,79 @@
     />
   </changeSet>
 
-    <changeSet id="change quantity id from long to integer" author="erimel">
-        <modifyDataType tableName="quantity" columnName="id" newDataType="int"/>
-        <modifyDataType tableName="meter_definition_quantities" columnName="quantity_id" newDataType="int"/>
-        <modifyDataType schemaName="evoaudit" tableName="quantity_aud" columnName="id" newDataType="int"/>
-        <modifyDataType schemaName="evoaudit" tableName="meter_definition_quantities_aud" columnName="quantity_id" newDataType="int"/>
-    </changeSet>
-    <changeSet id="change quantity id to autoincrement" author="erimel" dbms="h2">
-        <addAutoIncrement tableName="quantity" columnName="id" columnDataType="int"/>
-    </changeSet>
+  <changeSet id="change quantity id from long to integer" author="erimel">
+    <modifyDataType tableName="quantity" columnName="id" newDataType="int"/>
+    <modifyDataType tableName="meter_definition_quantities" columnName="quantity_id" newDataType="int"/>
+    <modifyDataType schemaName="evoaudit" tableName="quantity_aud" columnName="id" newDataType="int"/>
+    <modifyDataType schemaName="evoaudit" tableName="meter_definition_quantities_aud" columnName="quantity_id" newDataType="int"/>
+  </changeSet>
+  <changeSet id="change quantity id to autoincrement" author="erimel" dbms="h2">
+    <addAutoIncrement tableName="quantity" columnName="id" columnDataType="int"/>
+  </changeSet>
 
-    <changeSet id="drop constraints postgres" author="erimel" dbms="postgres">
-        <sql dbms="postgresql">
-            ALTER TABLE measurement DISABLE TRIGGER reject_mixed_measurement_dimensions;
-        </sql>
-        <dropUniqueConstraint tableName="measurement"
-                              constraintName="measurement_physical_meter_id_created_quantity_key"/>
+  <changeSet id="drop constraints postgres" author="erimel" dbms="postgres">
+    <sql dbms="postgresql">
+      ALTER TABLE measurement DISABLE TRIGGER reject_mixed_measurement_dimensions;
+    </sql>
+    <dropUniqueConstraint tableName="measurement"
+                          constraintName="measurement_physical_meter_id_created_quantity_key"/>
+  </changeSet>
+  <changeSet id="drop constraints h2" author="erimel" dbms="h2">
+    <dropUniqueConstraint tableName="measurement" constraintName="CONSTRAINT_1"/>
+  </changeSet>
 
-    </changeSet>
-    <changeSet id="drop constraints h2" author="erimel" dbms="h2">
-        <dropUniqueConstraint tableName="measurement"
-                              constraintName="CONSTRAINT_1"/>
-    </changeSet>
+  <changeSet id="Make measurements use quantity id instead of string by creating new table" author="erimel">
+    <createTable tableName="new_measurement">
+      <column autoIncrement="true" name="id" type="BIGSERIAL">
+        <constraints primaryKey="true" primaryKeyName="measurement_pk"/>
+      </column>
+      <column name="physical_meter_id" type="UUID">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="now()" name="created" type="TIMESTAMP WITH TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="quantity" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="${unit_type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
 
-    <changeSet id="Make measurements use qunatity id instead of string" author="erimel">
+    <sql>
+      INSERT INTO quantity(name, unit, series_display_mode) VALUES ('External temp', '°C', 1);
 
-        <renameColumn tableName="measurement" oldColumnName="quantity" newColumnName="old_quantity"/>
-        <addColumn tableName="measurement">
-            <column name="quantity" type="int" valueComputed="(select id from quantity where name=old_quantity)"/>
-        </addColumn>
-        <dropColumn tableName="measurement" columnName="old_quantity"/>
-        <addUniqueConstraint columnNames="physical_meter_id, created, quantity"
-                             constraintName="measurement_physical_meter_id_created_quantity_key"
-                             tableName="measurement"/>
-        <sql dbms="postgresql">
-            ALTER TABLE measurement ENABLE TRIGGER reject_mixed_measurement_dimensions;
-        </sql>
-    </changeSet>
+      INSERT INTO evoaudit.QUANTITY_AUD (REV, REVTYPE, ID, NAME, NAME_MOD, SERIES_DISPLAY_MODE,
+      SERIES_DISPLAY_MODE_MOD, UNIT, UNIT_MOD)
+      SELECT (SELECT MAX(id) FROM evoaudit.REVISION_ENTITY), 0, ID, NAME, true, SERIES_DISPLAY_MODE,
+      true , UNIT , true FROM QUANTITY;
+
+      INSERT INTO new_measurement(physical_meter_id, created, quantity, value)
+      (SELECT physical_meter_id, created, (SELECT id FROM quantity WHERE name=quantity), value FROM
+      measurement);
+
+      DROP TABLE measurement;
+
+      ALTER TABLE new_measurement RENAME TO measurement;
+    </sql>
+
+    <addUniqueConstraint columnNames="physical_meter_id, created, quantity"
+                         constraintName="measurement_physical_meter_id_created_quantity_key"
+                         tableName="measurement"/>
+    <sql dbms="postgresql">
+      CREATE CONSTRAINT TRIGGER reject_mixed_measurement_dimensions
+      after insert or update
+      on measurement
+      for each row
+      execute procedure ensure_no_mixed_dimensions();
+    </sql>
+  </changeSet>
+
+  <changeSet id="Rename Quantity External Temp" author="Must Tahir">
+    <sql>
+      UPDATE quantity SET name = 'External temperature' WHERE name = 'External temp';
+    </sql>
+  </changeSet>
 
 </databaseChangeLog>
