@@ -43,8 +43,3 @@ WITH NO DATA;
 
 CREATE UNIQUE INDEX missing_measurement_meter_idx
   ON missing_measurement (expected_time, physical_meter_id, meter_definition_type);
-
---
--- populate view for the first time
---
-REFRESH MATERIALIZED VIEW missing_measurement;

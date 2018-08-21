@@ -19,4 +19,22 @@ public interface MissingMeasurementJpaRepository
   @Query(nativeQuery = true, value = "REFRESH MATERIALIZED VIEW missing_measurement")
   void refreshLocked();
 
+  @Transactional
+  @Modifying
+  @Query(
+    nativeQuery = true,
+    value =
+      "DO \n"
+      + "$do$ \n"
+      + "BEGIN \n"
+      + "  SET LOCAL lock_timeout = '500ms';"
+      + "  IF (SELECT relispopulated FROM pg_class WHERE relname = 'missing_measurement') THEN \n"
+      + "    REFRESH MATERIALIZED VIEW CONCURRENTLY missing_measurement; \n"
+      + "  ELSE \n"
+      + "    REFRESH MATERIALIZED VIEW missing_measurement; \n"
+      + "  END IF; \n"
+      + "END \n"
+      + "$do$"
+  )
+  void refresh();
 }
