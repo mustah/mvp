@@ -146,23 +146,23 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     private LogicalMeter logicalMeter;
     private PhysicalMeter physicalMeter;
 
-    LogicalMeter logicalMeter(LogicalMeter logicalMeter) {
+    private LogicalMeter logicalMeter(LogicalMeter logicalMeter) {
       this.logicalMeter = logicalMeter;
       return logicalMeter;
     }
 
-    PhysicalMeter physicalMeter(PhysicalMeter physicalMeter) {
+    private PhysicalMeter physicalMeter(PhysicalMeter physicalMeter) {
       this.physicalMeter = physicalMeter;
       return physicalMeter;
     }
 
-    void shouldSaveLogicalMeter(Supplier<LogicalMeter> supplier) {
+    private void shouldSaveLogicalMeter(Supplier<LogicalMeter> supplier) {
       if (logicalMeter == null || logicalMeter.gateways.isEmpty()) {
         supplier.get();
       }
     }
 
-    void shouldSavePhysicalMeter(Supplier<PhysicalMeter> supplier) {
+    private void shouldSavePhysicalMeter(Supplier<PhysicalMeter> supplier) {
       if (physicalMeter == null) {
         supplier.get();
       }
