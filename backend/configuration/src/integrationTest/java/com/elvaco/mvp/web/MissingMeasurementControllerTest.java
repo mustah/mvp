@@ -2,7 +2,6 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,12 +29,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 public class MissingMeasurementControllerTest extends IntegrationTest {
+
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
@@ -51,9 +52,15 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   @Autowired
   private MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
+  private ZonedDateTime startDate;
+  private ZonedDateTime endDate;
+
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
+
+    startDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(10);
+    endDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
   }
 
   @After
@@ -69,16 +76,13 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void refreshAsSuperAdmin() {
-    ZonedDateTime startDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(10);
-    ZonedDateTime endDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
+    LogicalMeterEntity logicalMeter = newLogicalMeter(
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate.minusMinutes(11)
     );
 
-    List<PhysicalMeterEntity> physicalMeters = Arrays.asList(
-      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER, 1)
+    List<PhysicalMeterEntity> physicalMeters = singletonList(
+      newPhysicalMeter(logicalMeter.id)
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
@@ -92,9 +96,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    RequestParameters parameters = new RequestParametersAdapter();
-    parameters.add("after", startDate.toString());
-    parameters.add("before", endDate.toString());
+    RequestParameters parameters = makeParametersWithDateRange();
 
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts = logicalMeterJpaRepository
       .findMissingMeterReadingsCounts(parameters);
@@ -105,16 +107,13 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void refreshAsUserDenied() {
-    ZonedDateTime startDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(10);
-    ZonedDateTime endDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
+    LogicalMeterEntity logicalMeter = newLogicalMeter(
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate.minusMinutes(11)
     );
 
-    List<PhysicalMeterEntity> physicalMeters = Arrays.asList(
-      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER, 1)
+    List<PhysicalMeterEntity> physicalMeters = singletonList(
+      newPhysicalMeter(logicalMeter.id)
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
@@ -128,12 +127,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
-    RequestParameters parameters = new RequestParametersAdapter();
-    parameters.add("after", startDate.toString());
-    parameters.add("before", endDate.toString());
-
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts = logicalMeterJpaRepository
-      .findMissingMeterReadingsCounts(parameters);
+      .findMissingMeterReadingsCounts(makeParametersWithDateRange());
 
     assertThat(missingMeterReadingsCounts.size()).isEqualTo(1);
     assertThat(missingMeterReadingsCounts.get(0).missingReadingCount).isEqualTo(0);
@@ -141,16 +136,13 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void refreshAsAdminDenied() {
-    ZonedDateTime startDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(10);
-    ZonedDateTime endDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
+    LogicalMeterEntity logicalMeter = newLogicalMeter(
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate.minusMinutes(11)
     );
 
-    List<PhysicalMeterEntity> physicalMeters = Arrays.asList(
-      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER, 1)
+    List<PhysicalMeterEntity> physicalMeters = singletonList(
+      newPhysicalMeter(logicalMeter.id)
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
@@ -164,23 +156,24 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
-    RequestParameters parameters = new RequestParametersAdapter();
-    parameters.add("after", startDate.toString());
-    parameters.add("before", endDate.toString());
-
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts = logicalMeterJpaRepository
-      .findMissingMeterReadingsCounts(parameters);
+      .findMissingMeterReadingsCounts(makeParametersWithDateRange());
 
     assertThat(missingMeterReadingsCounts.size()).isEqualTo(1);
     assertThat(missingMeterReadingsCounts.get(0).missingReadingCount).isEqualTo(0);
+  }
+
+  private RequestParameters makeParametersWithDateRange() {
+    return new RequestParametersAdapter()
+      .add("after", startDate.toString())
+      .add("before", endDate.toString());
   }
 
   private void newActiveStatusLogs(
     List<PhysicalMeterEntity> physicalMeters,
     ZonedDateTime startDate
   ) {
-    List<PhysicalMeterStatusLogEntity> statuses = physicalMeters
-      .stream()
+    List<PhysicalMeterStatusLogEntity> statuses = physicalMeters.stream()
       .map(physicalMeterEntity ->
         new PhysicalMeterStatusLogEntity(
           null,
@@ -188,14 +181,13 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
           StatusType.ACTIVE,
           startDate,
           null
-        )).collect(
-        toList());
+        )).collect(toList());
 
     physicalMeterStatusLogJpaRepository.save(statuses);
   }
 
-  private LogicalMeterEntity newLogicalMeterEntity(
-    MeterDefinitionEntity meterDefinitionEntity,
+  private LogicalMeterEntity newLogicalMeter(
+    MeterDefinitionEntity meterDefinition,
     ZonedDateTime created
   ) {
     UUID uuid = randomUUID();
@@ -204,25 +196,21 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       uuid.toString(),
       context().organisationEntity.id,
       created,
-      meterDefinitionEntity
+      meterDefinition
     ));
   }
 
-  private PhysicalMeterEntity newPhysicalMeterEntity(
-    UUID logicalMeterId,
-    MeterDefinition meterDefinition,
-    long readIntervalMinutes
-  ) {
+  private PhysicalMeterEntity newPhysicalMeter(UUID logicalMeterId) {
     UUID uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
       context().organisationEntity,
       "",
       uuid.toString(),
-      meterDefinition.medium,
+      MeterDefinition.GAS_METER.medium,
       "",
       logicalMeterId,
-      readIntervalMinutes,
+      (long) 1,
       emptySet()
     ));
   }
