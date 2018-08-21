@@ -152,13 +152,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    measurementJpaRepository.deleteAll();
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
-    measurementJpaRepository.deleteAll();
   }
 
   @Test
@@ -704,8 +704,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeterDto logicalMeterDto = asTestUser()
       .get("/meters/" + logicalMeter.id
-           + "?before=" + NOW
-           + "&after=" + YESTERDAY, LogicalMeterDto.class)
+        + "?before=" + NOW
+        + "&after=" + YESTERDAY, LogicalMeterDto.class)
       .getBody();
 
     assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
@@ -1157,8 +1157,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
         "/meters?"
-        + "after=NotAValidTimestamp"
-        + "&before=AndNeitherIsThis",
+          + "after=NotAValidTimestamp"
+          + "&before=AndNeitherIsThis",
         ErrorMessageDto.class
       );
 
