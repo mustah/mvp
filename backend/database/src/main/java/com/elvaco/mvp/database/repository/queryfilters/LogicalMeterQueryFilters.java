@@ -74,6 +74,13 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return PHYSICAL_METER.manufacturer.in(values);
       case SECONDARY_ADDRESS:
         return PHYSICAL_METER.address.in(values);
+      case WILDCARD:
+        String str = values.get(0);
+        return LOGICAL_METER.externalId.startsWith(str)
+          .or(LOGICAL_METER.location.city.startsWith(str))
+          .or(LOGICAL_METER.location.streetAddress.startsWith(str))
+          .or(PHYSICAL_METER.manufacturer.startsWith(str))
+          .or(LOGICAL_METER.meterDefinition.medium.startsWith(str));
       default:
         return null;
     }
