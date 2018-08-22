@@ -7,21 +7,26 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Sort;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class SortUtil {
 
-  public static Optional<Sort> getSort(RequestParameters parameters) {
-    return parameters.has("sort")
-      .map(p -> p.getValues("sort").stream()
+  public static Optional<Sort> getSort(
+    RequestParameters parameters
+  ) {
+    return parameters.has(SORT)
+      .map(p -> p.getValues(SORT).stream()
         .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
         .collect(toList()))
       .map(Sort::new);
   }
 
   @Nullable
-  public static Sort getSortOrNull(RequestParameters parameters) {
+  public static Sort getSortOrNull(
+    RequestParameters parameters
+  ) {
     return getSort(parameters).orElse(null);
   }
 

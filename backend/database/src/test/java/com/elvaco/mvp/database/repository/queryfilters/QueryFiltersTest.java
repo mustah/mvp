@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,15 +20,16 @@ public class QueryFiltersTest {
 
   @Test
   public void mapNullFilters() {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .add("prop", "1")
-      .add("prop", "2")
-      .add("prop", "3");
+    RequestParameters parameters =
+      new RequestParametersAdapter()
+        .add(ID, "1")
+        .add(ID, "2")
+        .add(ID, "3");
 
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        String parameterName, List<String> values
+        RequestParameter parameter, List<String> values
       ) {
         return Optional.empty();
       }
@@ -36,12 +40,14 @@ public class QueryFiltersTest {
 
   @Test
   public void mapEmptyFilter() {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .setAll("foo", emptyList());
+    RequestParameters parameters = new RequestParametersAdapter().setAll(ID, emptyList());
 
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+      public Optional<Predicate> buildPredicateFor(
+        RequestParameter parameter,
+        List<String> values
+      ) {
         return Optional.empty();
       }
     };
@@ -53,7 +59,10 @@ public class QueryFiltersTest {
   public void mapEmptyProperties() {
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+      public Optional<Predicate> buildPredicateFor(
+        RequestParameter parameter,
+        List<String> values
+      ) {
         return Optional.empty();
       }
     };
@@ -63,12 +72,16 @@ public class QueryFiltersTest {
 
   @Test
   public void mapSingleParameter() {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .add("foo", "42");
+    RequestParameters parameters =
+      new RequestParametersAdapter()
+        .add(ID, "42");
 
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
+      public Optional<Predicate> buildPredicateFor(
+        RequestParameter parameter,
+        List<String> values
+      ) {
         return Optional.of(
           Expressions.predicate(
             Ops.EQ,
@@ -89,14 +102,18 @@ public class QueryFiltersTest {
 
   @Test
   public void mapAndedProperties() {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .add("bar", "Woop!")
-      .add("foo", "42");
+    RequestParameters parameters =
+      new RequestParametersAdapter()
+        .add(CITY, "Woop!")
+        .add(ID, "42");
 
     QueryFilters test = new QueryFilters() {
       @Override
-      public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
-        if (parameterName.equals("foo")) {
+      public Optional<Predicate> buildPredicateFor(
+        RequestParameter parameter,
+        List<String> values
+      ) {
+        if (parameter.equals(ID)) {
           return Optional.of(
             Expressions.predicate(
               Ops.EQ,
@@ -104,7 +121,7 @@ public class QueryFiltersTest {
               Expressions.constant(Integer.parseInt(values.get(0)))
             )
           );
-        } else if (parameterName.equals("bar")) {
+        } else if (parameter.equals(CITY)) {
           return Optional.of(
             Expressions.predicate(
               Ops.EQ,

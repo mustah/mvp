@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 import static java.util.Collections.emptyList;
@@ -16,75 +17,75 @@ import static java.util.stream.Collectors.toList;
 
 public class MockRequestParameters implements RequestParameters {
 
-  private final Map<String, List<String>> map;
+  private final Map<RequestParameter, List<String>> map;
 
   public MockRequestParameters() {
     this(new HashMap<>());
   }
 
-  private MockRequestParameters(Map<String, List<String>> map) {
+  private MockRequestParameters(Map<RequestParameter, List<String>> map) {
     this.map = map;
   }
 
   @Override
-  public RequestParameters add(String name, String value) {
-    map.computeIfAbsent(name, v -> {
+  public RequestParameters add(RequestParameter param, String value) {
+    map.computeIfAbsent(param, v -> {
       List<String> values = new ArrayList<>();
-      values.add(v);
+      values.add(value);
       return values;
     });
-    map.computeIfPresent(name, (s, strings) -> {
-      strings.add(s);
+    map.computeIfPresent(param, (s, strings) -> {
+      strings.add(value);
       return strings;
     });
     return this;
   }
 
   @Override
-  public RequestParameters setAll(Map<String, String> values) {
+  public RequestParameters setAll(Map<RequestParameter, String> values) {
     return this;
   }
 
   @Override
-  public RequestParameters setAll(String name, List<String> values) {
+  public RequestParameters setAll(RequestParameter param, List<String> values) {
     return this;
   }
 
   @Override
-  public RequestParameters setAllIds(String name, List<UUID> ids) {
+  public RequestParameters setAllIds(RequestParameter param, List<UUID> ids) {
     List<String> values = ids.stream().map(UUID::toString).collect(toList());
-    map.put(name, values);
+    map.put(param, values);
     return this;
   }
 
   @Override
-  public RequestParameters replace(String name, String value) {
+  public RequestParameters replace(RequestParameter param, String value) {
     List<String> values = new ArrayList<>();
     values.add(value);
-    map.put(name, values);
+    map.put(param, values);
     return this;
   }
 
   @Override
-  public List<String> getValues(String name) {
-    return map.getOrDefault(name, emptyList());
+  public List<String> getValues(RequestParameter param) {
+    return map.getOrDefault(param, emptyList());
   }
 
   @Override
-  public Set<Entry<String, List<String>>> entrySet() {
+  public Set<Entry<RequestParameter, List<String>>> entrySet() {
     return map.entrySet();
   }
 
   @Nullable
   @Override
-  public String getFirst(String name) {
-    List<String> values = map.get(name);
+  public String getFirst(RequestParameter param) {
+    List<String> values = map.get(param);
     return values.isEmpty() ? null : values.get(0);
   }
 
   @Override
-  public boolean hasName(String name) {
-    return map.containsKey(name);
+  public boolean hasParam(RequestParameter param) {
+    return map.containsKey(param);
   }
 
   @Override

@@ -14,38 +14,40 @@ import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 
 public interface RequestParameters {
 
-  RequestParameters add(String name, String value);
+  RequestParameters add(RequestParameter param, String value);
 
-  RequestParameters setAll(Map<String, String> values);
+  RequestParameters setAll(Map<RequestParameter, String> values);
 
-  RequestParameters setAll(String name, List<String> values);
+  RequestParameters setAll(RequestParameter param, List<String> values);
 
-  RequestParameters setAllIds(String name, List<UUID> ids);
+  RequestParameters setAllIds(RequestParameter param, List<UUID> ids);
 
-  RequestParameters replace(String name, String value);
+  RequestParameters replace(RequestParameter param, String value);
 
-  List<String> getValues(String name);
+  List<String> getValues(RequestParameter param);
 
-  Set<Entry<String, List<String>>> entrySet();
+  Set<Entry<RequestParameter, List<String>>> entrySet();
 
   @Nullable
-  String getFirst(String name);
+  String getFirst(RequestParameter param);
 
-  boolean hasName(String name);
+  boolean hasParam(RequestParameter param);
 
   boolean isEmpty();
 
   RequestParameters shallowCopy();
 
-  default Optional<ZonedDateTime> getAsZonedDateTime(String name) {
+  default Optional<ZonedDateTime> getAsZonedDateTime(RequestParameter param) {
     try {
-      return Optional.ofNullable(getFirst(name)).map(ZonedDateTime::parse);
+      return Optional.ofNullable(getFirst(param)).map(ZonedDateTime::parse);
     } catch (DateTimeParseException ex) {
       return Optional.empty();
     }
   }
 
-  default Optional<SelectionPeriod> getAsSelectionPeriod(String startParam, String endParam) {
+  default Optional<SelectionPeriod> getAsSelectionPeriod(
+    RequestParameter startParam, RequestParameter endParam
+  ) {
     Optional<ZonedDateTime> start = getAsZonedDateTime(startParam);
     Optional<ZonedDateTime> end = getAsZonedDateTime(endParam);
     if (start.isPresent() && end.isPresent()) {
@@ -54,7 +56,7 @@ public interface RequestParameters {
     return Optional.empty();
   }
 
-  default Optional<RequestParameters> has(String name) {
-    return hasName(name) ? Optional.of(this) : Optional.empty();
+  default Optional<RequestParameters> has(RequestParameter param) {
+    return hasParam(param) ? Optional.of(this) : Optional.empty();
   }
 }

@@ -1,7 +1,5 @@
 package com.elvaco.mvp.web.api;
 
-import java.util.Map;
-
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -16,7 +14,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
@@ -55,11 +52,10 @@ public class SelectionController {
 
   @GetMapping("cities")
   public org.springframework.data.domain.Page<CityDto> cities(
-    @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams);
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<CityDto> page = locationUseCases.findAllCities(parameters, adapter)
@@ -70,11 +66,10 @@ public class SelectionController {
 
   @GetMapping("addresses")
   public org.springframework.data.domain.Page<AddressDto> addresses(
-    @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams);
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<AddressDto> page = locationUseCases.findAllAddresses(parameters, adapter)
       .map(address -> new AddressDto(address.country, address.city, address.street));
@@ -84,11 +79,10 @@ public class SelectionController {
 
   @GetMapping("facilities")
   public org.springframework.data.domain.Page<IdNamedDto> facilities(
-    @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams);
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<IdNamedDto> page = physicalMeterUseCases.findAll(parameters, adapter)
@@ -100,11 +94,10 @@ public class SelectionController {
 
   @GetMapping("secondary-addresses")
   public org.springframework.data.domain.Page<IdNamedDto> secondaryAddresses(
-    @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams);
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<IdNamedDto> page = physicalMeterUseCases.findAll(parameters, adapter)
@@ -116,11 +109,10 @@ public class SelectionController {
 
   @GetMapping("gateway-serials")
   public org.springframework.data.domain.Page<IdNamedDto> gatewaySerials(
-    @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams);
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<IdNamedDto> page = gatewayUseCases.findAll(parameters, adapter)

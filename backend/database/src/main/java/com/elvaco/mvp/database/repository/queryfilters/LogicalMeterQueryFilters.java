@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
@@ -35,43 +36,43 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   private List<StatusType> statuses;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
-    return Optional.ofNullable(buildNullablePredicateFor(parameterName, values));
+  public Optional<Predicate> buildPredicateFor(RequestParameter parameter, List<String> values) {
+    return Optional.ofNullable(buildNullablePredicateFor(parameter, values));
   }
 
   @Nullable
-  private Predicate buildNullablePredicateFor(String parameterName, List<String> values) {
-    switch (parameterName) {
-      case "id":
+  private Predicate buildNullablePredicateFor(RequestParameter parameter, List<String> values) {
+    switch (parameter) {
+      case ID:
         return LOGICAL_METER.id.in(toUuids(values));
-      case "organisation":
+      case ORGANISATION:
         return LOGICAL_METER.organisationId.in(toUuids(values));
-      case "medium":
+      case MEDIUM:
         return LOGICAL_METER.meterDefinition.medium.in(values);
-      case "facility":
+      case FACILITY:
         return LOGICAL_METER.externalId.in(values);
-      case "city":
+      case CITY:
         return LocationExpressions.whereCity(toCityParameters(values));
-      case "address":
+      case ADDRESS:
         return LocationExpressions.whereAddress(toAddressParameters(values));
-      case "before":
+      case BEFORE:
         before = getZonedDateTimeFrom(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case "after":
+      case AFTER:
         after = getZonedDateTimeFrom(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case "status":
-      case "meterStatus":
+      case STATUS:
+      case METER_STATUS:
         statuses = toStatusTypes(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case "gatewayStatus":
+      case GATEWAY_STATUS:
         statuses = toStatusTypes(values);
         return gatewayStatusQueryFilter(after, before, statuses);
-      case "gatewaySerial":
+      case GATEWAY_SERIAL:
         return GATEWAY.serial.in(values);
-      case "manufacturer":
+      case MANUFACTURER:
         return PHYSICAL_METER.manufacturer.in(values);
-      case "secondaryAddress":
+      case SECONDARY_ADDRESS:
         return PHYSICAL_METER.address.in(values);
       default:
         return null;

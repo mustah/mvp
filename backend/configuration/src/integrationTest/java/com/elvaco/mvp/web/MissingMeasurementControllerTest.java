@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -165,8 +167,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
   private RequestParameters makeParametersWithDateRange() {
     return new RequestParametersAdapter()
-      .add("after", startDate.toString())
-      .add("before", endDate.toString());
+      .add(AFTER, startDate.toString())
+      .add(BEFORE, endDate.toString());
   }
 
   private void newActiveStatusLogs(

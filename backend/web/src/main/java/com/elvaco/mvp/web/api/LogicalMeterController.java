@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
@@ -32,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 @RequiredArgsConstructor
@@ -53,10 +55,9 @@ public class LogicalMeterController {
       defaultValue = "1970-01-01T00:00:00Z"
     ) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after
   ) {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .replace("id", id.toString())
-      .replace("before", before != null ? before.toString() : ZonedDateTime.now().toString())
-      .replace("after", after.toString());
+    RequestParameters parameters = new RequestParametersAdapter().replace(ID, id.toString())
+      .replace(BEFORE, before != null ? before.toString() : ZonedDateTime.now().toString())
+      .replace(AFTER, after.toString());
 
     return logicalMeterUseCases.findBy(parameters)
       .map(LogicalMeterDtoMapper::toDto)
@@ -76,7 +77,7 @@ public class LogicalMeterController {
   public ResponseEntity<Void> synchronizeMetersByIds(
     @RequestBody List<UUID> logicalMetersIds
   ) {
-    logicalMeterUseCases.findAllBy(new RequestParametersAdapter().setAllIds("id", logicalMetersIds))
+    logicalMeterUseCases.findAllBy(new RequestParametersAdapter().setAllIds(ID, logicalMetersIds))
       .forEach(this::sync);
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -84,11 +85,12 @@ public class LogicalMeterController {
 
   @GetMapping
   public org.springframework.data.domain.Page<PagedLogicalMeterDto> logicalMeters(
-    @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(
+      requestParams
+    );
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
 
