@@ -27,7 +27,8 @@ public enum RequestParameter {
   SECONDARY_ADDRESS("secondaryAddress"),
   SERIAL("serial"),
   SORT("sort"),
-  STATUS("status");
+  STATUS("status"),
+  WILDCARD("w");
 
   private final String name;
 

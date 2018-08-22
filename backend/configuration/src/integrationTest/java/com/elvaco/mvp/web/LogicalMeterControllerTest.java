@@ -63,6 +63,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
@@ -686,8 +687,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeterDto logicalMeterDto = asTestUser()
       .get("/meters/" + logicalMeter.id
-        + "?before=" + NOW
-        + "&after=" + YESTERDAY, LogicalMeterDto.class)
+           + "?before=" + NOW
+           + "&after=" + YESTERDAY, LogicalMeterDto.class)
       .getBody();
 
     assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
@@ -1775,6 +1776,221 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       );
 
     assertThat(logicalMeterJson.has("collectionPercentage")).isFalse();
+  }
+
+  @Test
+  public void wildcardSearchMatchesFacilityStart() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "abcdef",
+      context().organisationId(),
+      DISTRICT_HEATING_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=abc",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
+    assertThat(logicalMeterDto.facility).isEqualTo("abcdef");
+  }
+
+  @Test
+  public void wildcardSearchMatchesCityStart() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().organisationId(),
+      DISTRICT_HEATING_METER,
+      new LocationBuilder().city("ringhals").build()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=ring",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
+    assertThat(logicalMeterDto.location.city.name).isEqualTo("ringhals");
+  }
+
+  @Test
+  public void wildcardSearchMatchesAddressStart() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().organisationId(),
+      DISTRICT_HEATING_METER,
+      new LocationBuilder().city("ringhals").address("storgatan 34").build()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=storgat",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
+    assertThat(logicalMeterDto.location.address.name).isEqualTo("storgatan 34");
+  }
+
+  @Test
+  public void wildcardSearchMatchesManufacturerStart() {
+    UUID meterId = UUID.randomUUID();
+
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().organisationId(),
+      DISTRICT_HEATING_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .externalId(randomUUID().toString())
+      .manufacturer("ELV")
+      .address("1234")
+      .logicalMeterId(meterId)
+      .build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=EL",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
+    assertThat(logicalMeterDto.manufacturer).isEqualTo("ELV");
+  }
+
+  @Test
+  public void wildcardSearchMatchesMediumStart() {
+    UUID meterId = UUID.randomUUID();
+
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().organisationId(),
+      HOT_WATER_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=Hot",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
+    assertThat(logicalMeterDto.medium).isEqualTo("Hot water");
+  }
+
+  @Test
+  public void wildcardSearchDoesNotReturnNonMatches() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "first facility",
+      context().organisationId(),
+      DISTRICT_HEATING_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "second facility",
+      context().organisationId(),
+      DISTRICT_HEATING_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=secon",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
+    assertThat(logicalMeterDto.facility).isEqualTo("second facility");
+  }
+
+  @Test
+  public void wildcardSearchWithMultipleFieldsMatching() {
+    UUID meterId = UUID.randomUUID();
+
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "street facility",
+      context().organisationId(),
+      HOT_WATER_METER,
+      new LocationBuilder().city("city town").address("street road 1").build()
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .address("12345")
+      .externalId(randomUUID().toString())
+      .manufacturer("stre")
+      .logicalMeterId(meterId)
+      .build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=str",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(1);
+  }
+
+  @Test
+  public void wildcardSearchReturnsAllMatches() {
+    UUID meterIdOne = UUID.randomUUID();
+    UUID meterIdTwo = UUID.randomUUID();
+
+    logicalMeters.save(new LogicalMeter(
+      meterIdOne,
+      meterIdOne.toString(),
+      context().organisationId(),
+      HOT_WATER_METER,
+      new LocationBuilder().address("street 1").build()
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .address("12345")
+      .externalId(randomUUID().toString())
+      .logicalMeterId(meterIdOne)
+      .build());
+
+    logicalMeters.save(new LogicalMeter(
+      meterIdTwo,
+      "street facility",
+      context().organisationId(),
+      HOT_WATER_METER,
+      UNKNOWN_LOCATION
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .address("12345")
+      .externalId(randomUUID().toString())
+      .logicalMeterId(meterIdTwo)
+      .build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=street",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page).hasSize(2);
   }
 
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
