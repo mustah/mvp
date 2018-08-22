@@ -15,6 +15,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -59,12 +60,17 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
+  public Page<LogicalMeter> findAllWithStatuses(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
     return null;
   }
 
   @Override
-  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(
+    RequestParameters parameters
+  ) {
     return filter(isWithinOrganisation(parameters))
       .collect(toList());
   }
@@ -91,7 +97,9 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters) {
+  public List<LogicalMeterCollectionStats> findMissingMeasurements(
+    RequestParameters parameters
+  ) {
     return emptyList();
   }
 
@@ -133,9 +141,8 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
 
   private Predicate<LogicalMeter> isWithinOrganisation(RequestParameters parameters) {
     return logicalMeter ->
-      !parameters.hasName("organisation")
-        || Objects.equals(
-        parameters.getFirst("organisation"),
+      !parameters.hasParam(ORGANISATION) || Objects.equals(
+        parameters.getFirst(ORGANISATION),
         logicalMeter.organisationId.toString()
       );
   }

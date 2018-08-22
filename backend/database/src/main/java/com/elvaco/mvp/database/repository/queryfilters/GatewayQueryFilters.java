@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
@@ -33,45 +34,54 @@ public class GatewayQueryFilters extends QueryFilters {
   private List<StatusType> statuses;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
-    return Optional.ofNullable(buildNullablePredicateFor(parameterName, values));
+  public Optional<Predicate> buildPredicateFor(
+    RequestParameter parameter,
+    List<String> values
+  ) {
+    return Optional.ofNullable(buildNullablePredicateFor(parameter, values));
   }
 
   @Nullable
-  private Predicate buildNullablePredicateFor(String filter, List<String> values) {
-    switch (filter) {
-      case "id":
+  private Predicate buildNullablePredicateFor(
+    RequestParameter parameter,
+    List<String> values
+  ) {
+    switch (parameter) {
+      case SORT:
+        return null;
+      case GATEWAY_ID:
+      case ID:
         return GATEWAY.id.in(toUuids(values));
-      case "organisation":
+      case ORGANISATION:
         return GATEWAY.organisationId.in(toUuids(values));
-      case "gatewaySerial":
+      case GATEWAY_SERIAL:
         return GATEWAY.serial.in(values);
-      case "serial":
+      case SERIAL:
         return GATEWAY.serial.containsIgnoreCase(values.get(0));
-      case "city":
+      case CITY:
         return LocationExpressions.whereCity(toCityParameters(values));
-      case "address":
+      case ADDRESS:
         return LocationExpressions.whereAddress(toAddressParameters(values));
-      case "before":
+      case BEFORE:
         before = getZonedDateTimeFrom(values);
         return gatewayStatusQueryFilter(after, before, statuses);
-      case "after":
+      case AFTER:
         after = getZonedDateTimeFrom(values);
         return gatewayStatusQueryFilter(after, before, statuses);
-      case "status":
-      case "gatewayStatus":
+      case STATUS:
+      case GATEWAY_STATUS:
         statuses = toStatusTypes(values);
         return gatewayStatusQueryFilter(after, before, statuses);
-      case "meterStatus":
+      case METER_STATUS:
         statuses = toStatusTypes(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case "facility":
+      case FACILITY:
         return LOGICAL_METER.externalId.in(values);
-      case "medium":
+      case MEDIUM:
         return LOGICAL_METER.meterDefinition.medium.in(values);
-      case "manufacturer":
+      case MANUFACTURER:
         return PHYSICAL_METER.manufacturer.in(values);
-      case "secondaryAddress":
+      case SECONDARY_ADDRESS:
         return PHYSICAL_METER.address.in(values);
       default:
         return null;

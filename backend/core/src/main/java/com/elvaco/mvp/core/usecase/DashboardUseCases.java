@@ -8,6 +8,8 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import lombok.RequiredArgsConstructor;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class DashboardUseCases {
   }
 
   public Optional<CollectionStats> findCollectionStats(RequestParameters parameters) {
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
+    if (!parameters.hasParam(AFTER) || !parameters.hasParam(BEFORE)) {
       return Optional.empty();
     }
 

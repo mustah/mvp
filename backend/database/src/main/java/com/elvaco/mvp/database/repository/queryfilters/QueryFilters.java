@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -16,7 +17,10 @@ import com.querydsl.core.types.Predicate;
  */
 public abstract class QueryFilters {
 
-  public abstract Optional<Predicate> buildPredicateFor(String parameterName, List<String> values);
+  public abstract Optional<Predicate> buildPredicateFor(
+    RequestParameter parameterName,
+    List<String> values
+  );
 
   @Nullable
   public final Predicate toExpression(RequestParameters parameters) {
@@ -25,14 +29,14 @@ public abstract class QueryFilters {
     }
 
     List<Predicate> predicates = new ArrayList<>();
-    for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
+    for (Entry<RequestParameter, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> values = propertyFilter.getValue();
       if (!values.isEmpty()) {
-        String parameterName = propertyFilter.getKey();
+        RequestParameter parameter = propertyFilter.getKey();
         try {
-          buildPredicateFor(parameterName, values).ifPresent(predicates::add);
+          buildPredicateFor(parameter, values).ifPresent(predicates::add);
         } catch (Exception exception) {
-          throw new PredicateConstructionFailure(parameterName, values, exception);
+          throw new PredicateConstructionFailure(parameter.toString(), values, exception);
         }
       }
     }

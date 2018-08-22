@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
@@ -26,21 +27,21 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(String parameterName, List<String> values) {
-    return Optional.ofNullable(nullablePredicate(parameterName, values));
+  public Optional<Predicate> buildPredicateFor(RequestParameter parameter, List<String> values) {
+    return Optional.ofNullable(nullablePredicate(parameter, values));
   }
 
   @Nullable
-  private Predicate nullablePredicate(String parameterName, List<String> values) {
-    switch (parameterName) {
-      case "physicalMeterId":
+  private Predicate nullablePredicate(RequestParameter parameter, List<String> values) {
+    switch (parameter) {
+      case PHYSICAL_METER_ID:
         return METER_STATUS_LOG.physicalMeterId.in(toUuids(values));
-      case "id":
+      case ID:
         return LOGICAL_METER.id.in(toUuids(values));
-      case "before":
+      case BEFORE:
         stop = getZonedDateTimeFrom(values);
         return periodQueryFilter(start, stop);
-      case "after":
+      case AFTER:
         start = getZonedDateTimeFrom(values);
         return periodQueryFilter(start, stop);
       default:

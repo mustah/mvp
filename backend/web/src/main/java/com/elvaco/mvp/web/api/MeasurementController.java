@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.stream.Collectors.toList;
@@ -160,11 +161,10 @@ public class MeasurementController {
   }
 
   private List<LogicalMeter> getLogicalMetersByIds(List<UUID> meters) {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .setAll("id", meters.stream()
-        .map(UUID::toString)
-        .collect(toList())
-      );
+    RequestParameters parameters = new RequestParametersAdapter().setAll(
+      ID,
+      meters.stream().map(UUID::toString).collect(toList())
+    );
     return logicalMeterUseCases.findAll(parameters);
   }
 }

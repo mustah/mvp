@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -27,8 +26,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 import static com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper.ofPageableDomainModel;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrNull;
 import static java.util.stream.Collectors.toList;
@@ -47,7 +46,10 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
-  public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<Gateway> findAll(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
     PageRequest pageRequest = new PageRequest(
       pageable.getPageNumber(),
       pageable.getPageSize(),
@@ -62,17 +64,6 @@ public class GatewayRepository implements Gateways {
     return new PageAdapter<>(
       pagedGateways.map(pagedGateway -> ofPageableDomainModel(pagedGateway, statusLogMap))
     );
-  }
-
-  @Transactional
-  @Override
-  public List<Gateway> findAllByOrganisationId(UUID organisationId) {
-    List<GatewayEntity> gateways = gatewayJpaRepository.findAllByOrganisationId(organisationId);
-
-    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
-      .findAllGroupedByGatewayId(toStatusPredicate(gateways, new RequestParametersAdapter()));
-
-    return toGateways(gateways, statusLogMap);
   }
 
   @Override
@@ -115,24 +106,14 @@ public class GatewayRepository implements Gateways {
       .map(GatewayWithMetersMapper::toDomainModel);
   }
 
-  private static List<Gateway> toGateways(
-    List<GatewayEntity> entities,
-    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap
-  ) {
-    return entities.stream()
-      .map(gateway -> GatewayWithMetersMapper.toDomainModel(gateway, statusLogMap))
-      .collect(toList());
-  }
-
   @Nullable
   private static Predicate toStatusPredicate(
-    List<? extends Identifiable<UUID>> identifiables,
-    RequestParameters parameters
+    List<? extends Identifiable<UUID>> identifiables, RequestParameters parameters
   ) {
     List<String> gatewayIds = identifiables.stream()
       .map(entity -> entity.getId().toString())
       .collect(toList());
     return new GatewayStatusLogQueryFilters()
-      .toExpression(parameters.shallowCopy().setAll("gatewayId", gatewayIds));
+      .toExpression(parameters.shallowCopy().setAll(GATEWAY_ID, gatewayIds));
   }
 }

@@ -13,6 +13,15 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.experimental.UtilityClass;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ADDRESS;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_STATUS;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.METER_STATUS;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.STATUS;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static java.util.stream.Collectors.toList;
@@ -27,27 +36,31 @@ public final class FilterUtils {
     physicalMeterStatusLogEntity;
 
   public static boolean isDateRange(RequestParameters parameters) {
-    return parameters.hasName("before") && parameters.hasName("after");
+    return parameters.hasParam(BEFORE)
+           && parameters.hasParam(AFTER);
   }
 
   public static boolean isGatewayQuery(RequestParameters parameters) {
-    return parameters.hasName("gatewaySerial") || isGatewayStatusQuery(parameters);
+    return parameters.hasParam(GATEWAY_SERIAL)
+           || isGatewayStatusQuery(parameters);
   }
 
   public static boolean isGatewayStatusQuery(RequestParameters parameters) {
-    return parameters.hasName("gatewayStatus");
+    return parameters.hasParam(GATEWAY_STATUS);
   }
 
   public static boolean isMeterStatusQuery(RequestParameters parameters) {
-    return parameters.hasName("status") || parameters.hasName("meterStatus");
+    return parameters.hasParam(STATUS)
+           || parameters.hasParam(METER_STATUS);
   }
 
   public static boolean isOrganisationQuery(RequestParameters parameters) {
-    return parameters.hasName("organisation");
+    return parameters.hasParam(ORGANISATION);
   }
 
   public static boolean isLocationQuery(RequestParameters parameters) {
-    return parameters.hasName("city") || parameters.hasName("address");
+    return parameters.hasParam(CITY)
+           || parameters.hasParam(ADDRESS);
   }
 
   static List<StatusType> toStatusTypes(List<String> values) {

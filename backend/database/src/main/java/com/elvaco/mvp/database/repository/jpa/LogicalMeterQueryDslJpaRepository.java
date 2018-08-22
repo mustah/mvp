@@ -38,6 +38,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.MAX_VALUE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.MIN_VALUE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayStatusLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
@@ -76,8 +80,7 @@ class LogicalMeterQueryDslJpaRepository
   private static final QMissingMeasurementEntity MISSING_MEASUREMENT =
     QMissingMeasurementEntity.missingMeasurementEntity;
 
-  @Autowired
-  LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
+  @Autowired LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
     super(entityManager, LogicalMeterEntity.class);
   }
 
@@ -161,7 +164,7 @@ class LogicalMeterQueryDslJpaRepository
 
     if (!all.isEmpty()) {
       parameters.setAll(
-        "id",
+        ID,
         all.stream()
           .map(pagedLogicalMeter -> pagedLogicalMeter.id.toString())
           .collect(toList())
@@ -251,11 +254,14 @@ class LogicalMeterQueryDslJpaRepository
       ).collect(toList());
   }
 
-  private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
-    if ((parameters.hasName("minValue") || parameters.hasName("maxValue"))
-      && parameters.hasName("quantity")) {
+  private Predicate withMeasurementPredicate(
+    RequestParameters parameters,
+    Predicate predicate
+  ) {
+    if ((parameters.hasParam(MIN_VALUE) || parameters.hasParam(MAX_VALUE))
+        && parameters.hasParam(QUANTITY)) {
 
-      String quantity = parameters.getFirst("quantity");
+      String quantity = parameters.getFirst(QUANTITY);
 
       JPAQuery<UUID> queryIds = new JPAQueryFactory(entityManager)
         .select(LOGICAL_METER.id).from(path)
@@ -273,31 +279,23 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private Predicate withMeasurementBelowMin(RequestParameters parameters, Predicate predicate) {
-    if (parameters.hasName("minValue")) {
-      MeasurementUnit minValue = MeasurementUnit.from(parameters.getFirst("minValue"));
-
-      return Expressions.booleanOperation(
+    return Optional.ofNullable(parameters.getFirst(MIN_VALUE))
+      .map(minVal -> (Predicate) Expressions.booleanOperation(
         Ops.LT,
         MEASUREMENT.value,
-        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", minValue)
-      ).and(predicate);
-    }
-
-    return predicate;
+        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", MeasurementUnit.from(minVal))
+        ).and(predicate)
+      ).orElse(predicate);
   }
 
   private Predicate withMeasurementAboveMax(RequestParameters parameters, Predicate predicate) {
-    if (parameters.hasName("maxValue")) {
-      MeasurementUnit maxValue = MeasurementUnit.from(parameters.getFirst("maxValue"));
-
-      return Expressions.booleanOperation(
+    return Optional.ofNullable(parameters.getFirst(MAX_VALUE))
+      .map(maxVal -> (Predicate) Expressions.booleanOperation(
         Ops.GT,
         MEASUREMENT.value,
-        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", maxValue)
-      ).and(predicate);
-    }
-
-    return predicate;
+        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", MeasurementUnit.from(maxVal))
+        ).and(predicate)
+      ).orElse(predicate);
   }
 
   private LogicalMeterEntity fetchOne(Predicate predicate, RequestParameters parameters) {

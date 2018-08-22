@@ -15,8 +15,6 @@ public interface Gateways {
 
   Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable);
 
-  List<Gateway> findAllByOrganisationId(UUID organisationId);
-
   Gateway save(Gateway gateway);
 
   Optional<Gateway> findBy(

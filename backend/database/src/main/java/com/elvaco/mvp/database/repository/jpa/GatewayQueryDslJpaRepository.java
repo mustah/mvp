@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
@@ -46,8 +47,7 @@ class GatewayQueryDslJpaRepository
   private static final QLocationEntity LOCATION = locationEntity;
   private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
 
-  @Autowired
-  GatewayQueryDslJpaRepository(EntityManager entityManager) {
+  @Autowired GatewayQueryDslJpaRepository(EntityManager entityManager) {
     super(entityManager, GatewayEntity.class);
   }
 
@@ -127,11 +127,10 @@ class GatewayQueryDslJpaRepository
   }
 
   private List<PagedGateway> fetchAllLogicalMetersByGatewayIds(
-    List<PagedGateway> pagedGateways,
-    RequestParameters parameters
+    List<PagedGateway> pagedGateways, RequestParameters parameters
   ) {
     if (!pagedGateways.isEmpty()) {
-      parameters.setAll("id", pagedGateways.stream()
+      parameters.setAll(ID, pagedGateways.stream()
         .map(item -> item.id.toString())
         .collect(toList())
       );

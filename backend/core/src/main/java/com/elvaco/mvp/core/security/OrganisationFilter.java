@@ -2,6 +2,8 @@ package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+
 public final class OrganisationFilter {
 
   private OrganisationFilter() {}
@@ -11,7 +13,7 @@ public final class OrganisationFilter {
     RequestParameters parameters
   ) {
     if (!currentUser.isSuperAdmin()) {
-      parameters.replace("organisation", currentUser.getOrganisationId().toString());
+      parameters.replace(ORGANISATION, currentUser.getOrganisationId().toString());
     }
     return parameters;
   }

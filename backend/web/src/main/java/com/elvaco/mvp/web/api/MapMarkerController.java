@@ -12,7 +12,6 @@ import com.elvaco.mvp.web.dto.MapMarkersDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
 import com.elvaco.mvp.web.mapper.MapMarkerDtoMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -34,7 +33,9 @@ public class MapMarkerController {
   public MapMarkersDto meterMapMarkers(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return toMapMarkersDto(mapUseCases.findAllMeterMapMarkers(requestParametersOf(requestParams)));
+    return toMapMarkersDto(mapUseCases.findAllMeterMapMarkers(
+      requestParametersOf(requestParams))
+    );
   }
 
   @GetMapping("/gateways")

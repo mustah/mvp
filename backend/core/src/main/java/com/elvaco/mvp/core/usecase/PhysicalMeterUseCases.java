@@ -46,15 +46,21 @@ public class PhysicalMeterUseCases {
     return Optional.empty();
   }
 
-  public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<PhysicalMeter> findAll(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
     return physicalMeters.findAll(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      setCurrentUsersOrganisationId(
+        currentUser,
+        parameters
+      ),
       pageable
     );
   }
 
   private boolean hasTenantAccess(PhysicalMeter physicalMeter) {
     return currentUser.isSuperAdmin()
-      || currentUser.isWithinOrganisation(physicalMeter.organisation.id);
+           || currentUser.isWithinOrganisation(physicalMeter.organisation.id);
   }
 }

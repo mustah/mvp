@@ -33,6 +33,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
 import static java.util.stream.Collectors.toList;
@@ -47,15 +51,18 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
-    return findBy(new RequestParametersAdapter().replace("id", id.toString()));
+    return findBy(new RequestParametersAdapter().replace(
+      ID,
+      id.toString()
+    ));
   }
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return findBy(
       new RequestParametersAdapter()
-        .replace("id", id.toString())
-        .replace("organisation", organisationId.toString())
+        .replace(ID, id.toString())
+        .replace(ORGANISATION, organisationId.toString())
     );
   }
 
@@ -79,7 +86,10 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable) {
+  public Page<LogicalMeter> findAllWithStatuses(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
     org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
       logicalMeterJpaRepository.findAll(
         parameters,
@@ -91,22 +101,22 @@ public class LogicalMeterRepository implements LogicalMeters {
         )
       );
 
-    return parameters.getAsSelectionPeriod("after", "before")
-      .map(selectionPeriod ->
-        new PageAdapter<>(
-          pagedLogicalMeters.map(source ->
-            toDomainModelWithCollectionPercentage(
-              source,
-              source.expectedReadingCount(selectionPeriod)
-            )
+    return parameters.getAsSelectionPeriod(AFTER, BEFORE).map(selectionPeriod ->
+      new PageAdapter<>(
+        pagedLogicalMeters.map(source ->
+          toDomainModelWithCollectionPercentage(
+            source,
+            source.expectedReadingCount(selectionPeriod)
           )
         )
       )
-      .orElse(new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel)));
+    ).orElse(new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel)));
   }
 
   @Override
-  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(
+    RequestParameters parameters
+  ) {
     List<LogicalMeterEntity> meters = SortUtil.getSort(parameters)
       .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
       .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));
@@ -144,9 +154,11 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters) {
+  public List<LogicalMeterCollectionStats> findMissingMeasurements(
+    RequestParameters parameters
+  ) {
     Optional<SelectionPeriod> selectionPeriod =
-      parameters.getAsSelectionPeriod("after", "before");
+      parameters.getAsSelectionPeriod(AFTER, BEFORE);
 
     return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
       .map(entry -> LogicalMeterEntityMapper.toDomainModel(entry, selectionPeriod.get()))
@@ -168,10 +180,13 @@ public class LogicalMeterRepository implements LogicalMeters {
         new PhysicalMeterStatusLogQueryFilters().toExpression(parameters)
       );
 
-    return parameters.getAsSelectionPeriod("after", "before")
-      .map(selectionPeriod ->
-        withStatusesAndCollectionStats(meters, parameters, mappedStatuses, selectionPeriod)
-      )
+    return parameters.getAsSelectionPeriod(AFTER, BEFORE)
+      .map(selectionPeriod -> withStatusesAndCollectionStats(
+        meters,
+        parameters,
+        mappedStatuses,
+        selectionPeriod
+      ))
       .orElse(withStatusesOnly(meters, mappedStatuses));
   }
 
@@ -212,7 +227,9 @@ public class LogicalMeterRepository implements LogicalMeters {
       .collect(toList());
   }
 
-  private Map<UUID, Long> getMissingCountForMetersWithinPeriod(RequestParameters parameters) {
+  private Map<UUID, Long> getMissingCountForMetersWithinPeriod(
+    RequestParameters parameters
+  ) {
     return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
       .collect(toMap(entry -> entry.id, entry -> entry.missingReadingCount));
   }
