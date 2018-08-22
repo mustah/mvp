@@ -94,17 +94,77 @@ public class MeasurementRepository implements Measurements {
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-    return measurementJpaRepository.getAverageForPeriod(
-      meterIds,
-      resolution.toString(),
-      seriesQuantity.name,
-      seriesQuantity.presentationUnit(),
-      seriesQuantity.seriesDisplayMode().toString(),
-      OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-      OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
-    ).stream()
+    List<MeasurementValueProjection> averageForPeriod;
+
+    switch (seriesQuantity.seriesDisplayMode()) {
+      case CONSUMPTION:
+        averageForPeriod = measurementJpaRepository.getAverageForPeriodConsumption(
+          meterIds,
+          resolution.toString(),
+          seriesQuantity.name,
+          seriesQuantity.presentationUnit(),
+          OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+          OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
+          maxNumberOfDatapointsForResolution(resolution)
+        );
+        break;
+      default:
+        averageForPeriod = measurementJpaRepository.getAverageForPeriod(
+          meterIds,
+          resolution.toString(),
+          seriesQuantity.name,
+          seriesQuantity.presentationUnit(),
+          OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+          OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
+        );
+        break;
+    }
+
+    return averageForPeriod.stream()
       .map(this::projectionToMeasurementValue)
       .collect(toList());
+  }
+
+  @Override
+  public List<MeasurementValue> findSeriesForPeriod(
+    UUID meterId,
+    Quantity seriesQuantity,
+    ZonedDateTime from,
+    ZonedDateTime to,
+    TemporalResolution resolution
+  ) {
+    try {
+      List<MeasurementValueProjection> seriesForPeriod;
+
+      switch (seriesQuantity.seriesDisplayMode()) {
+        case CONSUMPTION:
+          seriesForPeriod = measurementJpaRepository.getSeriesForPeriodConsumption(
+            meterId,
+            seriesQuantity.name,
+            seriesQuantity.presentationUnit(),
+            OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+            OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
+            resolution.toString(),
+            maxNumberOfDatapointsForResolution(resolution)
+          );
+          break;
+        default:
+          seriesForPeriod = measurementJpaRepository.getSeriesForPeriod(
+            meterId,
+            seriesQuantity.name,
+            seriesQuantity.presentationUnit(),
+            OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+            OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
+            resolution.toString()
+          );
+      }
+
+      return seriesForPeriod.stream()
+        .map(this::projectionToMeasurementValue)
+        .collect(toList());
+    } catch (DataIntegrityViolationException ex) {
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex, seriesQuantity.presentationUnit());
+    }
   }
 
   @Override
@@ -131,28 +191,15 @@ public class MeasurementRepository implements Measurements {
     ).map(MeasurementEntityMapper::toDomainModel);
   }
 
-  @Override
-  public List<MeasurementValue> findSeriesForPeriod(
-    UUID meterId,
-    Quantity seriesQuantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
-    try {
-      return measurementJpaRepository.getSeriesForPeriod(
-        meterId,
-        seriesQuantity.name,
-        seriesQuantity.presentationUnit(),
-        seriesQuantity.seriesDisplayMode().toString(),
-        OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-        OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
-        resolution.toString()
-      ).stream()
-        .map(this::projectionToMeasurementValue)
-        .collect(toList());
-    } catch (DataIntegrityViolationException ex) {
-      throw SqlErrorMapper.mapDataIntegrityViolation(ex, seriesQuantity.presentationUnit());
+  private int maxNumberOfDatapointsForResolution(TemporalResolution resolution) {
+    switch (resolution) {
+      case month:
+        return 3;
+      case hour:
+        return 96;
+      case day:
+      default:
+        return 10;
     }
   }
 
@@ -161,8 +208,10 @@ public class MeasurementRepository implements Measurements {
   }
 
   private static MeasurementPk toPk(Measurement.Id id) {
-    return new MeasurementPk(id.created,
+    return new MeasurementPk(
+      id.created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(id.quantity)),
-      PhysicalMeterEntityMapper.toEntity(id.physicalMeter));
+      PhysicalMeterEntityMapper.toEntity(id.physicalMeter)
+    );
   }
 }
