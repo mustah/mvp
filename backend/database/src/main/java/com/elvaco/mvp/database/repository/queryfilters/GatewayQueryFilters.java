@@ -83,6 +83,12 @@ public class GatewayQueryFilters extends QueryFilters {
         return PHYSICAL_METER.manufacturer.in(values);
       case SECONDARY_ADDRESS:
         return PHYSICAL_METER.address.in(values);
+      case WILDCARD:
+        String str = values.get(0);
+        return GATEWAY.serial.startsWith(str)
+          .or(GATEWAY.productModel.startsWith(str))
+          .or(LOGICAL_METER.location.city.startsWith(str))
+          .or(LOGICAL_METER.location.streetAddress.startsWith(str));
       default:
         return null;
     }

@@ -157,8 +157,8 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
-          + "?after=" + date.minusDays(60)
-          + "&before=" + date.minusDays(30),
+        + "?after=" + date.minusDays(60)
+        + "&before=" + date.minusDays(30),
         GatewayDto.class
       );
 
@@ -468,6 +468,103 @@ public class GatewayControllerTest extends IntegrationTest {
       .getPage("/gateways?address=unknown,unknown,unknown", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(1);
+  }
+
+  @Test
+  public void wildcardSearchMatchesSerialStart() {
+    gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("product-model")
+      .build());
+
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=1234", GatewayDto.class);
+
+    assertThat(page).hasSize(1);
+    GatewayDto gateway = page.getContent().get(0);
+    assertThat(gateway.serial).isEqualTo("123456");
+  }
+
+  @Test
+  public void wildcardSearchMatchesCityStart() {
+    Gateway gateway = gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("product-model")
+      .build());
+
+    logicalMeters.save(newLogicalMeter(
+      randomUUID(),
+      "external-id",
+      singletonList(gateway),
+      new LocationBuilder()
+        .city("kungsbacka")
+        .build()
+    ));
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=kungsb", GatewayDto.class);
+
+    assertThat(page).hasSize(1);
+  }
+
+  @Test
+  public void wildcardSearchMatchesAddressStart() {
+    Gateway gateway = gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("product-model")
+      .build());
+
+    logicalMeters.save(newLogicalMeter(
+      randomUUID(),
+      "external-id",
+      singletonList(gateway),
+      new LocationBuilder()
+        .city("kungsbacka")
+        .address("teknikgatan 2t")
+        .build()
+    ));
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=tekni", GatewayDto.class);
+
+    assertThat(page).hasSize(1);
+  }
+
+  @Test
+  public void wildcardSearchMatchesProductTypeStart() {
+    gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("CMe3100")
+      .build());
+
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=CMe3", GatewayDto.class);
+
+    assertThat(page).hasSize(1);
+  }
+
+  @Test
+  public void wildcardSearchDoesNotReturnNonMatches() {
+    gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("product-model")
+      .build());
+
+    gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("789")
+      .productModel("product-model")
+      .build());
+
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=1234", GatewayDto.class);
+
+    assertThat(page).hasSize(1);
+    GatewayDto gateway = page.getContent().get(0);
+    assertThat(gateway.serial).isEqualTo("123456");
   }
 
   private LogicalMeter newLogicalMeter(
