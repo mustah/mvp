@@ -10,10 +10,12 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import lombok.experimental.UtilityClass;
@@ -113,6 +115,16 @@ public class LogicalMeterEntityMapper {
       .collect(toSet());
 
     return logicalMeterEntity;
+  }
+
+  public static LogicalMeter toDomainModelWithLocation(LogicalMeterWithLocation logicalMeter) {
+    return new LogicalMeter(
+      logicalMeter.id,
+      logicalMeter.externalId,
+      logicalMeter.organisationId,
+      MeterDefinition.UNKNOWN_METER,
+      LocationEntityMapper.toDomainModel(logicalMeter.location)
+    );
   }
 
   private static List<PhysicalMeter> toPhysicalMeters(LogicalMeterEntity logicalMeterEntity) {

@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
@@ -36,6 +37,8 @@ public interface LogicalMeterJpaRepository {
     Predicate predicate,
     Pageable pageable
   );
+
+  List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 
   List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
 
