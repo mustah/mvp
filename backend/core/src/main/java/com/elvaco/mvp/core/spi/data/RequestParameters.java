@@ -24,6 +24,8 @@ public interface RequestParameters {
 
   RequestParameters replace(RequestParameter param, String value);
 
+  RequestParameters transform(RequestParameter from, RequestParameter into);
+
   List<String> getValues(RequestParameter param);
 
   Set<Entry<RequestParameter, List<String>>> entrySet();
@@ -59,4 +61,5 @@ public interface RequestParameters {
   default Optional<RequestParameters> has(RequestParameter param) {
     return hasParam(param) ? Optional.of(this) : Optional.empty();
   }
+
 }

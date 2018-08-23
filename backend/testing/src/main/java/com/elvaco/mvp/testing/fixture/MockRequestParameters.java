@@ -66,6 +66,16 @@ public class MockRequestParameters implements RequestParameters {
     return this;
   }
 
+  @Override public RequestParameters transform(RequestParameter from, RequestParameter into) {
+    if (!hasParam(from)) {
+      return this;
+    }
+
+    map.put(into, getValues(from));
+    map.remove(from);
+    return this;
+  }
+
   @Override
   public List<String> getValues(RequestParameter param) {
     return map.getOrDefault(param, emptyList());

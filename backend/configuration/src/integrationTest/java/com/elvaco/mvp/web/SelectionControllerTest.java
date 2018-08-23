@@ -4,8 +4,10 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -372,6 +374,158 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
     assertThat(response.getContent()).containsExactly(new IdNamedDto("6666"));
+  }
+
+  @Test
+  public void facilityWildcardSearch() {
+    UUID meterId = randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "abcdef",
+      context().organisationId(),
+      MeterDefinition.HOT_WATER_METER,
+      Location.UNKNOWN_LOCATION
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("abcdef")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    Page<IdNamedDto> response = asTestUser().getPage(
+      "/selections/facilities?q=bcd",
+      IdNamedDto.class
+    );
+
+    assertThat(response).hasSize(1);
+    assertThat(response.getContent().get(0).name).isEqualTo("abcdef");
+    assertThat(
+      asTestUser().getPage(
+        "/selections/facilities?q=qwerty",
+        IdNamedDto.class
+      )
+    ).hasSize(0);
+  }
+
+  @Test
+  public void secondaryAddressWildcardSearch() {
+    UUID meterId = randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "1234",
+      context().organisationId(),
+      MeterDefinition.HOT_WATER_METER,
+      new LocationBuilder().city("Kungsbacka").address("Stora vägen 24").build()
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("1234")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    Page<IdNamedDto> response = asTestUser().getPage(
+      "/selections/secondary-addresses?q=2345",
+      IdNamedDto.class
+    );
+
+    assertThat(response).hasSize(1);
+    assertThat(response.getContent().get(0).name).isEqualTo("123456");
+    assertThat(
+      asTestUser().getPage(
+        "/selections/secondary-addresses?q=000000",
+        IdNamedDto.class
+      )
+    ).hasSize(0);
+  }
+
+  @Test
+  public void gatewaySerialWildcardSearch() {
+    createGateway(context().organisationId(), "1234567");
+    Page<IdNamedDto> response = asTestUser().getPage(
+      "/selections/gateway-serials?q=3456",
+      IdNamedDto.class
+    );
+
+    assertThat(response).hasSize(1);
+    assertThat(response.getContent().get(0).name).isEqualTo("1234567");
+    assertThat(asTestUser().getPage(
+      "/selections/gateway-serials?q=90909090",
+      IdNamedDto.class
+    )).hasSize(0);
+  }
+
+  @Test
+  public void cityWildcardSearch() {
+    UUID meterId = randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "1234",
+      context().organisationId(),
+      MeterDefinition.HOT_WATER_METER,
+      new LocationBuilder().country("sverige").city("Kungsbacka").address("Stora vägen 24").build()
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("1234")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    Page<CityDto> response = asTestUser().getPage(
+      "/selections/cities?q=ngsback",
+      CityDto.class
+    );
+
+    assertThat(response).hasSize(1);
+    assertThat(response.getContent().get(0).name).isEqualTo("kungsbacka");
+    assertThat(asTestUser().getPage(
+      "/selections/cities?q=tockholm",
+      IdNamedDto.class
+    )).hasSize(0);
+  }
+
+  @Test
+  public void addressWildcardSearch() {
+    UUID meterId = randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      "1234",
+      context().organisationId(),
+      MeterDefinition.HOT_WATER_METER,
+      new LocationBuilder().country("sverige").city("Kungsbacka").address("Stora vägen 24").build()
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("1234")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    Page<AddressDto> response = asTestUser().getPage(
+      "/selections/addresses?q=tora",
+      AddressDto.class
+    );
+
+    assertThat(response).hasSize(1);
+    assertThat(response.getContent().get(0).street).isEqualTo("stora vägen 24");
+    assertThat(asTestUser().getPage(
+      "/selections/addresses?q=illa",
+      AddressDto.class
+    )).hasSize(0);
   }
 
   private void prepareGateways() {

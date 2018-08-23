@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LocationUseCases;
@@ -55,7 +56,10 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = requestParametersOf(requestParams).transform(
+      RequestParameter.Q,
+      RequestParameter.Q_CITY
+    );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<CityDto> page = locationUseCases.findAllCities(parameters, adapter)
@@ -69,11 +73,13 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = requestParametersOf(requestParams).transform(
+      RequestParameter.Q,
+      RequestParameter.Q_ADDRESS
+    );
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<AddressDto> page = locationUseCases.findAllAddresses(parameters, adapter)
       .map(address -> new AddressDto(address.country, address.city, address.street));
-
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
   }
 
@@ -82,7 +88,10 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = requestParametersOf(requestParams).transform(
+      RequestParameter.Q,
+      RequestParameter.Q_FACILITY
+    );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<IdNamedDto> page = physicalMeterUseCases.findAll(parameters, adapter)
@@ -97,7 +106,10 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = requestParametersOf(requestParams).transform(
+      RequestParameter.Q,
+      RequestParameter.Q_SECONDARY_ADDRESS
+    );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<IdNamedDto> page = physicalMeterUseCases.findAll(parameters, adapter)
@@ -112,7 +124,10 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = requestParametersOf(requestParams).transform(
+      RequestParameter.Q,
+      RequestParameter.Q_SERIAL
+    );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<IdNamedDto> page = gatewayUseCases.findAll(parameters, adapter)

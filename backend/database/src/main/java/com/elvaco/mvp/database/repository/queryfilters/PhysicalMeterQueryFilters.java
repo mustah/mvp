@@ -24,8 +24,10 @@ public class PhysicalMeterQueryFilters extends QueryFilters {
   private Predicate buildNullablePredicateFor(RequestParameter parameter, List<String> values) {
     switch (parameter) {
       case FACILITY:
+      case Q_FACILITY:
         return PHYSICAL_METER.externalId.containsIgnoreCase(values.get(0));
       case SECONDARY_ADDRESS:
+      case Q_SECONDARY_ADDRESS:
         return PHYSICAL_METER.address.containsIgnoreCase(values.get(0));
       case ORGANISATION:
         return PHYSICAL_METER.organisation.id.in(toUuids(values));
