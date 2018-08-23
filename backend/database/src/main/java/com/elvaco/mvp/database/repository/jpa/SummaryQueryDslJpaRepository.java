@@ -66,7 +66,7 @@ class SummaryQueryDslJpaRepository
 
     applyJoins(query, parameters);
 
-    return query.fetchCount();
+    return query.distinct().fetchCount();
   }
 
   private long countCities(RequestParameters parameters, Predicate predicate) {

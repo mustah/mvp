@@ -391,7 +391,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       emptyList(),
       location,
       null,
-      0L, null
+      0L,
+      null
     ).withGateway(gateway));
   }
 
@@ -407,7 +408,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       emptyList(),
       location,
       null,
-      0L, null
+      0L,
+      null
     );
     return logicalMeters.save(logicalMeter);
   }
@@ -427,7 +429,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
       emptyList(),
       location,
       null,
-      0L, null
+      0L,
+      null
     );
 
     logicalMeter = logicalMeters.save(logicalMeter);
