@@ -87,6 +87,11 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public List<LogicalMeter> findAllForSelectionTree(RequestParameters parameters) {
+    return emptyList();
+  }
+
+  @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
     return saveMock(logicalMeter);
   }

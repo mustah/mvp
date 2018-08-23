@@ -109,6 +109,13 @@ public class LogicalMeterUseCases {
     ));
   }
 
+  public List<LogicalMeter> selectionTree(RequestParameters parameters) {
+    return logicalMeters.findAllForSelectionTree(setCurrentUsersOrganisationId(
+      currentUser,
+      parameters
+    ));
+  }
+
   private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter, ZonedDateTime before) {
     if (!logicalMeter.activePhysicalMeter().isPresent()) {
       return logicalMeter;

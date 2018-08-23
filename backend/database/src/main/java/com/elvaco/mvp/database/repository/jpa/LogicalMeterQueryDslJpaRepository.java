@@ -14,6 +14,7 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
@@ -80,7 +81,8 @@ class LogicalMeterQueryDslJpaRepository
   private static final QMissingMeasurementEntity MISSING_MEASUREMENT =
     QMissingMeasurementEntity.missingMeasurementEntity;
 
-  @Autowired LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
+  @Autowired
+  LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
     super(entityManager, LogicalMeterEntity.class);
   }
 
@@ -176,6 +178,30 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
+  public List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
+    Predicate predicate = new LogicalMeterQueryFilters().toExpression(parameters);
+
+    JPQLQuery<LogicalMeterWithLocation> query = createQuery(predicate)
+      .select(Projections.constructor(
+        LogicalMeterWithLocation.class,
+        LOGICAL_METER.id,
+        LOGICAL_METER.organisationId,
+        LOGICAL_METER.externalId,
+        LOCATION.country,
+        LOCATION.city,
+        LOCATION.streetAddress
+      ))
+      .leftJoin(LOGICAL_METER.location, LOCATION)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER);
+
+    joinMeterStatusLogs(query, parameters);
+    joinLogicalMeterGateways(query, parameters);
+    joinGatewayStatusLogs(query, parameters);
+
+    return query.distinct().fetch();
+  }
+
+  @Override
   public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
     RequestParameters parameters
   ) {
@@ -263,7 +289,7 @@ class LogicalMeterQueryDslJpaRepository
     Predicate predicate
   ) {
     if ((parameters.hasParam(MIN_VALUE) || parameters.hasParam(MAX_VALUE))
-        && parameters.hasParam(QUANTITY)) {
+      && parameters.hasParam(QUANTITY)) {
 
       String quantity = parameters.getFirst(QUANTITY);
 
