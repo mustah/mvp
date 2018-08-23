@@ -19,14 +19,14 @@ abstract class MockRepository<K, V extends Identifiable<K>> {
 
   protected abstract V copyWithId(K id, V entity);
 
-  protected abstract K generateId();
+  protected abstract K generateId(V entity);
 
   final V saveMock(V mock) {
     if (mock.getId() != null) {
       repository.put(mock.getId(), mock);
       return mock;
     } else {
-      K id = generateId();
+      K id = generateId(mock);
       V withId = copyWithId(id, mock);
       repository.put(id, withId);
       return withId;

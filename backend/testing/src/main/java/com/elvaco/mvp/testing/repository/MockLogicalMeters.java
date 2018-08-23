@@ -132,7 +132,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  protected UUID generateId() {
+  protected UUID generateId(LogicalMeter entity) {
     return randomUUID();
   }
 

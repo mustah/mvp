@@ -67,7 +67,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
-  protected UUID generateId() {
+  protected UUID generateId(PhysicalMeter entity) {
     return randomUUID();
   }
 }

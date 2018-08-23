@@ -52,7 +52,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   @NotAudited
   @JsonManagedReference
-  @OneToMany(mappedBy = "physicalMeter")
+  @OneToMany(mappedBy = "id.physicalMeter")
   public List<MeasurementEntity> measurements;
 
   @NotAudited

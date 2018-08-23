@@ -21,7 +21,7 @@ public class MeasurementUseCases {
   private final AuthenticatedUser currentUser;
   private final Measurements measurements;
 
-  public Optional<Measurement> findById(Long id) {
+  public Optional<Measurement> findById(Measurement.Id id) {
     return measurements.findById(id)
       .filter(m -> currentUser.isSuperAdmin() || isWithinOrganisation(m.physicalMeter));
   }

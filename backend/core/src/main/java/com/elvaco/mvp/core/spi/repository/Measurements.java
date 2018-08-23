@@ -14,7 +14,7 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 
 public interface Measurements {
 
-  Optional<Measurement> findById(Long id);
+  Optional<Measurement> findById(Measurement.Id id);
 
   Measurement save(Measurement measurement);
 

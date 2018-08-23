@@ -25,7 +25,7 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   }
 
   @Override
-  protected UUID generateId() {
+  protected UUID generateId(User entity) {
     return randomUUID();
   }
 

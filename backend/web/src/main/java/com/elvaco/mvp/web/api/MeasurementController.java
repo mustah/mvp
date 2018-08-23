@@ -19,16 +19,12 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.util.ResolutionHelper;
-import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
-import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
-import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
@@ -44,13 +40,6 @@ public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
-
-  @GetMapping("{id}")
-  public MeasurementDto measurement(@PathVariable("id") Long id) {
-    return measurementUseCases.findById(id)
-      .map(MeasurementDtoMapper::toDto)
-      .orElseThrow(() -> new MeasurementNotFound(id));
-  }
 
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(

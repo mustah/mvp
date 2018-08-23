@@ -68,7 +68,7 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.created).isEqualTo(created);
+    assertThat(found.id.created).isEqualTo(created);
     assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
@@ -90,7 +90,7 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.created).isEqualTo(created);
+    assertThat(found.id.created).isEqualTo(created);
     assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 

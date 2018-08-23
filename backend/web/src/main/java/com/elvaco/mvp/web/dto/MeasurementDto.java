@@ -11,7 +11,6 @@ import lombok.ToString;
 @ToString
 public class MeasurementDto {
 
-  public Long id;
   public String quantity;
   public double value;
   public String unit;

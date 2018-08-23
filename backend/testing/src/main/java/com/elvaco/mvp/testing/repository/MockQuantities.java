@@ -30,7 +30,7 @@ public class MockQuantities extends MockRepository<Integer, Quantity> implements
   }
 
   @Override
-  protected Integer generateId() {
+  protected Integer generateId(Quantity entity) {
     return (int) nextId();
   }
 }
