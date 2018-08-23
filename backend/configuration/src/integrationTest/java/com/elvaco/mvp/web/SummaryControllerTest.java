@@ -8,8 +8,15 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
 import org.junit.After;
@@ -25,14 +32,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SummaryControllerTest extends IntegrationTest {
 
   @Autowired
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
+
+  @Autowired
+  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
+  @Autowired
+  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+
+  @Autowired
   private LogicalMeters logicalMeters;
 
   @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
+  private PhysicalMeters physicalMeters;
+
+  @Autowired
+  private MeterStatusLogs meterStatusLogs;
 
   @After
   public void tearDown() {
     logicalMeterJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
+    physicalMeterStatusLogJpaRepository.deleteAll();
   }
 
   @Test
@@ -46,7 +67,7 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void getSummaryOfMetersShouldHaveOneResult() {
-    logicalMeters.save(newMeter());
+    logicalMeters.save(newLogicalMeter());
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
@@ -57,8 +78,8 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void metersWithSameAddress() {
-    logicalMeters.save(newMeter());
-    logicalMeters.save(newMeter());
+    logicalMeters.save(newLogicalMeter());
+    logicalMeters.save(newLogicalMeter());
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
@@ -69,8 +90,8 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void filteredByStatus() {
-    logicalMeters.save(newMeter());
-    logicalMeters.save(newMeterWith(sweden().city("kungsbacka").address("gatan med G")));
+    logicalMeters.save(newLogicalMeter());
+    logicalMeters.save(newLogicalMeterWith(sweden().city("kungsbacka").address("gatan med G")));
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get(
@@ -84,8 +105,8 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void metersWithDifferentAddresses() {
-    logicalMeters.save(newMeter());
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeter());
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 1")));
 
@@ -98,11 +119,11 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void metersWithSameCityDifferentStreetAddress() {
-    logicalMeters.save(newMeter());
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeter());
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 1")));
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
@@ -115,9 +136,9 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void metersWithNoLocation() {
-    logicalMeters.save(newMeter());
-    logicalMeters.save(newMeterWithLocation(null));
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeter());
+    logicalMeters.save(newLogicalMeterWithLocation(null));
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
@@ -130,11 +151,11 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyGetSummaryForMetersWithinTheOrganisation() {
-    logicalMeters.save(newMeter());
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeter());
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 1")));
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
@@ -147,13 +168,13 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void fetchOnlyMetersInKungsbacka() {
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("stockholm")
       .address("kungsgatan 1")));
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 1")));
-    logicalMeters.save(newMeterWith(sweden()
+    logicalMeters.save(newLogicalMeterWith(sweden()
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
@@ -164,11 +185,57 @@ public class SummaryControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(2, 1, 2));
   }
 
-  private LogicalMeter newMeterWith(LocationBuilder locationBuilder) {
-    return newMeterWithLocation(locationBuilder.build());
+  @Test
+  public void fetchNumberOfMetersDistinct_WhenTheyHaveManyStatusUpdates() {
+    LogicalMeter logicalMeter = newLogicalMeter();
+
+    logicalMeters.save(logicalMeter);
+    logicalMeters.save(newLogicalMeter());
+
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .logicalMeterId(logicalMeter.id)
+      .externalId(logicalMeter.externalId)
+      .address("v1")
+      .manufacturer("ELV")
+      .organisation(context().organisation())
+      .build();
+
+    physicalMeters.save(physicalMeter);
+
+    meterStatusLogs.save(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter.id)
+        .status(StatusType.OK)
+        .start(ZonedDateTime.now())
+        .build()
+    );
+
+    meterStatusLogs.save(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter.id)
+        .status(StatusType.WARNING)
+        .start(ZonedDateTime.now().plusDays(1))
+        .build()
+    );
+
+    ResponseEntity<MeterSummaryDto> response = asTestUser()
+      .get("/summary/meters", MeterSummaryDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(2, 1, 1));
   }
 
-  private LogicalMeter newMeterWithLocation(@Nullable Location location) {
+  private LogicalMeter newLogicalMeterWith(LocationBuilder locationBuilder) {
+    return newLogicalMeterWithLocation(locationBuilder.build());
+  }
+
+  private LogicalMeter newLogicalMeter() {
+    return newLogicalMeterWith(sweden()
+      .city("stockholm")
+      .address("kungsgatan 1"));
+  }
+
+  private LogicalMeter newLogicalMeterWithLocation(@Nullable Location location) {
     UUID meterId = randomUUID();
     return new LogicalMeter(
       meterId,
@@ -178,17 +245,8 @@ public class SummaryControllerTest extends IntegrationTest {
       ZonedDateTime.now(),
       emptyList(),
       emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L, null
+      location
     );
-  }
-
-  private LogicalMeter newMeter() {
-    return newMeterWith(sweden()
-      .city("stockholm")
-      .address("kungsgatan 1"));
   }
 
   private static LocationBuilder sweden() {
