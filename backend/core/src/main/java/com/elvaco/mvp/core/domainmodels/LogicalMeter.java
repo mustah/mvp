@@ -109,11 +109,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       ZonedDateTime.now(),
       emptyList(),
       emptyList(),
-      emptyList(),
-      location,
-      null,
-      null,
-      null
+      location
     );
   }
 
