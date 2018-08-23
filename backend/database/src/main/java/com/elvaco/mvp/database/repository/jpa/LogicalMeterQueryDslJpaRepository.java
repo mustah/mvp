@@ -239,7 +239,11 @@ class LogicalMeterQueryDslJpaRepository
   ) {
     Map<UUID, Long> logicalMeterIdToReadingCount =
       findMissingMeterReadingsCounts(parameters).stream()
-        .collect(toMap(entry -> entry.id, entry -> entry.missingReadingCount));
+        .collect(toMap(
+          entry -> entry.id,
+          entry -> entry.missingReadingCount,
+          (oldCount, newCount) -> oldCount + newCount
+        ));
 
     Map<UUID, PhysicalMeterStatusLogEntity> logicalMeterIdToCurrentStatus =
       findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));

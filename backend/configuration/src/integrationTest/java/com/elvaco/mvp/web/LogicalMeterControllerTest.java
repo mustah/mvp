@@ -77,6 +77,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterControllerTest extends IntegrationTest {
@@ -595,6 +596,67 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .get(0);
 
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(33.33333333333333);
+  }
+
+  @Test
+  public void collectionStatusMeterChangeWithIntervalUpdate() {
+    assumeTrue(isPostgresDialect());
+
+    LogicalMeter districtHeatingMeter = createLogicalMeter(
+      DISTRICT_HEATING_METER,
+      YESTERDAY.minusMinutes(15)
+    );
+
+    PhysicalMeter physicalMeter1 = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(0)
+      .build()
+    );
+
+    PhysicalMeter physicalMeter2 = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(60)
+      .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter1.id)
+        .status(OK)
+        .start(YESTERDAY.minusMinutes(15))
+        .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter2.id)
+        .status(OK)
+        .start(YESTERDAY.minusMinutes(15))
+        .build()
+    );
+
+    addMeasurementsForMeter(
+      physicalMeter2,
+      districtHeatingMeter.getQuantities(),
+      YESTERDAY.plusHours(1),
+      Duration.ofDays(1),
+      physicalMeter2.readIntervalMinutes,
+      1.0
+    );
+
+    missingMeasurementJpaRepository.refreshLocked();
+
+    PagedLogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusDays(1)), PagedLogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(logicalMeterDto.collectionPercentage).isCloseTo(
+      95.83333, //one out of 24 missing
+      within(0.1)
+    );
   }
 
   @Test
