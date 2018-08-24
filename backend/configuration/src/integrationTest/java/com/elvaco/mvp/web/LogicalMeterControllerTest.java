@@ -2102,7 +2102,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .isEqualTo(1);
 
     List<MeasurementEntity> measurements = measurementJpaRepository.findAll(
-      QMeasurementEntity.measurementEntity.physicalMeter.id.eq(physicalMeter.id)
+      QMeasurementEntity.measurementEntity.id.physicalMeter.id.eq(physicalMeter.id)
     );
 
     assertThat(measurements.size())

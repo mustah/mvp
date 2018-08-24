@@ -39,7 +39,7 @@ public class MockProperties extends MockRepository<Property.Id, Property> implem
   }
 
   @Override
-  protected Id generateId() {
+  protected Id generateId(Property entity) {
     return null;
   }
 }

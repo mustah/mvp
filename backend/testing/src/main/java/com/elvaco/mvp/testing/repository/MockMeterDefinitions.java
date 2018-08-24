@@ -18,7 +18,7 @@ public class MockMeterDefinitions extends MockRepository<MeterDefinitionType, Me
   }
 
   @Override
-  protected MeterDefinitionType generateId() {
+  protected MeterDefinitionType generateId(MeterDefinition entity) {
     return null;
   }
 }

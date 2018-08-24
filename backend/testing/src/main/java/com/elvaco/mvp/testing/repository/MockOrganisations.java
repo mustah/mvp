@@ -23,7 +23,7 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  protected UUID generateId() {
+  protected UUID generateId(Organisation entity) {
     return randomUUID();
   }
 

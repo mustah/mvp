@@ -299,7 +299,7 @@ class LogicalMeterQueryDslJpaRepository
         .join(PHYSICAL_METER.measurements, MEASUREMENT)
         .where(withMeasurementAboveMax(
           parameters,
-          withMeasurementBelowMin(parameters, MEASUREMENT.quantity.name.eq(quantity))
+          withMeasurementBelowMin(parameters, MEASUREMENT.id.quantity.name.eq(quantity))
         ));
 
       return LOGICAL_METER.id.in(queryIds);

@@ -34,14 +34,14 @@ public class MeasurementJpaRepositoryImpl
     String quantity,
     ZonedDateTime created
   ) {
-    Predicate predicate = MEASUREMENT.physicalMeter.id.eq(physicalMeterId)
-      .and(MEASUREMENT.quantity.name.eq(quantity))
-      .and(MEASUREMENT.created.eq(created));
+    Predicate predicate = MEASUREMENT.id.physicalMeter.id.eq(physicalMeterId)
+      .and(MEASUREMENT.id.quantity.name.eq(quantity))
+      .and(MEASUREMENT.id.created.eq(created));
 
     return Optional.ofNullable(
       createQuery(predicate)
         .select(path)
-        .join(MEASUREMENT.physicalMeter, PHYSICAL_METER)
+        .join(MEASUREMENT.id.physicalMeter, PHYSICAL_METER)
         .fetchJoin()
         .fetchOne()
     );

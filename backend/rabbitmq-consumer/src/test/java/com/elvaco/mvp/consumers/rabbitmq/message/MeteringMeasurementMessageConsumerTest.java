@@ -298,7 +298,6 @@ public class MeteringMeasurementMessageConsumerTest {
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     Measurement expectedMeasurement = new Measurement(
-      1L,
       CREATED_DATE_TIME,
       QUANTITY,
       1.0,
@@ -341,7 +340,6 @@ public class MeteringMeasurementMessageConsumerTest {
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(new Measurement(
-      1L,
       CREATED_DATE_TIME,
       QUANTITY,
       1.0,

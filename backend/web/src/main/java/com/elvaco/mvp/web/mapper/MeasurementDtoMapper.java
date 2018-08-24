@@ -20,7 +20,6 @@ public class MeasurementDtoMapper {
 
   public static MeasurementDto toDto(Measurement measurement) {
     return new MeasurementDto(
-      measurement.id,
       measurement.quantity,
       measurement.value,
       measurement.unit,

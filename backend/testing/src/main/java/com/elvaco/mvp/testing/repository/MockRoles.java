@@ -18,7 +18,7 @@ public class MockRoles extends MockRepository<String, Role> implements Roles {
   }
 
   @Override
-  protected String generateId() {
+  protected String generateId(Role entity) {
     return null;
   }
 }

@@ -17,7 +17,7 @@ public class MockSettings extends MockRepository<UUID, Setting> implements Setti
   }
 
   @Override
-  protected UUID generateId() {
+  protected UUID generateId(Setting entity) {
     return randomUUID();
   }
 

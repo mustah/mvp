@@ -2,7 +2,6 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import javax.annotation.Nullable;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -11,12 +10,10 @@ import lombok.ToString;
 @Builder
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString
-public class Measurement implements Identifiable<Long>, Serializable {
+public class Measurement implements Identifiable<Measurement.Id>, Serializable {
 
   private static final long serialVersionUID = 7241986426136993573L;
 
-  @Nullable
-  public final Long id;
   public final ZonedDateTime created;
   public final String quantity;
   public final double value;
@@ -24,25 +21,17 @@ public class Measurement implements Identifiable<Long>, Serializable {
   public final PhysicalMeter physicalMeter;
 
   public Measurement(
-    @Nullable Long id,
     ZonedDateTime created,
     String quantity,
     double value,
     String unit,
     PhysicalMeter physicalMeter
   ) {
-    this.id = id;
     this.created = created;
     this.quantity = quantity;
     this.value = value;
     this.unit = unit;
     this.physicalMeter = physicalMeter;
-  }
-
-  @Nullable
-  @Override
-  public Long getId() {
-    return id;
   }
 
   public Quantity getQuantity() {
@@ -51,7 +40,6 @@ public class Measurement implements Identifiable<Long>, Serializable {
 
   public Measurement withValue(double value) {
     return new Measurement(
-      id,
       created,
       quantity,
       value,
@@ -62,7 +50,6 @@ public class Measurement implements Identifiable<Long>, Serializable {
 
   public Measurement withUnit(String unit) {
     return new Measurement(
-      id,
       created,
       quantity,
       value,
@@ -73,12 +60,39 @@ public class Measurement implements Identifiable<Long>, Serializable {
 
   public Measurement withQuantity(String quantity) {
     return new Measurement(
-      id,
       created,
       quantity,
       value,
       unit,
       physicalMeter
     );
+  }
+
+  @Override
+  public Measurement.Id getId() {
+    return idOf(created, quantity, physicalMeter);
+  }
+
+  public static Measurement.Id idOf(
+    ZonedDateTime created,
+    String quantity,
+    PhysicalMeter physicalMeter
+  ) {
+    return new Measurement.Id(created, quantity, physicalMeter);
+  }
+
+  @ToString
+  @EqualsAndHashCode
+  public static class Id {
+
+    public final ZonedDateTime created;
+    public final String quantity;
+    public final PhysicalMeter physicalMeter;
+
+    private Id(ZonedDateTime created, String quantity, PhysicalMeter physicalMeter) {
+      this.created = created;
+      this.quantity = quantity;
+      this.physicalMeter = physicalMeter;
+    }
   }
 }

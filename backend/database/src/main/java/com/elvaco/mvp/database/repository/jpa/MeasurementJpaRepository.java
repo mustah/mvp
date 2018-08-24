@@ -7,13 +7,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MeasurementJpaRepository
-  extends MeasurementJpaRepositoryCustom, JpaRepository<MeasurementEntity, Long> {
+  extends MeasurementJpaRepositoryCustom, JpaRepository<MeasurementEntity, MeasurementPk> {
 
   @Query(nativeQuery = true, value = "SELECT "
     + "cast(unit_at(avg(value), :unit) AS TEXT) AS value,"
@@ -93,7 +94,7 @@ public interface MeasurementJpaRepository
   );
 
   @Query(nativeQuery = true, value = "select "
-    + " id, physical_meter_id, created, quantity,"
+    + " physical_meter_id, created, quantity,"
     + " unit_at(value, :unit) as value"
     + " from measurement"
     + " where physical_meter_id = :meter_id"

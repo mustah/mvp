@@ -18,11 +18,12 @@ import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyList;
 
-public class MockMeasurements extends MockRepository<Long, Measurement> implements Measurements {
+public class MockMeasurements extends MockRepository<Measurement.Id, Measurement>
+  implements Measurements {
 
   @Override
-  public Optional<Measurement> findById(Long id) {
-    return filter(measurement -> Objects.equals(measurement.id, id)).findFirst();
+  public Optional<Measurement> findById(Measurement.Id id) {
+    return filter(measurement -> Objects.equals(measurement.getId(), id)).findFirst();
   }
 
   @Override
@@ -52,9 +53,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
       .unit(unit)
       .value(value);
 
-    Measurement measurement = findBy(physicalMeter.id, created, quantity)
-      .map(m -> builder.id(m.id).build())
-      .orElseGet(builder::build);
+    Measurement measurement = builder.build();
 
     saveMock(measurement);
   }
@@ -103,9 +102,8 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
-  protected Measurement copyWithId(Long id, Measurement entity) {
+  protected Measurement copyWithId(Measurement.Id id, Measurement entity) {
     return new Measurement(
-      id,
       entity.created,
       entity.quantity,
       entity.value,
@@ -115,7 +113,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
+  protected Measurement.Id generateId(Measurement entity) {
+    return Measurement.idOf(entity.created, entity.quantity, entity.physicalMeter);
   }
 }

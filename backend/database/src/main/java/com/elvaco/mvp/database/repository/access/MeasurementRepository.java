@@ -15,10 +15,13 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,8 +34,8 @@ public class MeasurementRepository implements Measurements {
   private final MeasurementJpaRepository measurementJpaRepository;
 
   @Override
-  public Optional<Measurement> findById(Long id) {
-    return Optional.ofNullable(measurementJpaRepository.findOne(id))
+  public Optional<Measurement> findById(Measurement.Id id) {
+    return Optional.ofNullable(measurementJpaRepository.findOne(toPk(id)))
       .map(MeasurementEntityMapper::toDomainModel);
   }
 
@@ -155,5 +158,11 @@ public class MeasurementRepository implements Measurements {
 
   private MeasurementValue projectionToMeasurementValue(MeasurementValueProjection projection) {
     return new MeasurementValue(projection.getDoubleValue(), projection.getInstant());
+  }
+
+  private static MeasurementPk toPk(Measurement.Id id) {
+    return new MeasurementPk(id.created,
+      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(id.quantity)),
+      PhysicalMeterEntityMapper.toEntity(id.physicalMeter));
   }
 }

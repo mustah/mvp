@@ -29,7 +29,6 @@ public class DemoDataHelper {
 
     return singletonList(
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(Quantity.VOLUME.name)),
         new MeasurementUnit(Quantity.VOLUME.presentationUnit(), value),
@@ -47,7 +46,6 @@ public class DemoDataHelper {
 
     return asList(
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.FORWARD_TEMPERATURE.name)),
@@ -55,7 +53,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.RETURN_TEMPERATURE.name)),
@@ -63,7 +60,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.DIFFERENCE_TEMPERATURE.name)),
@@ -71,7 +67,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.VOLUME_FLOW.name)),
@@ -79,7 +74,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.POWER.name)),
@@ -87,14 +81,12 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(Quantity.ENERGY.name)),
         new MeasurementUnit(Quantity.ENERGY.presentationUnit(), RANDOM.nextDouble(1000.0, 3000.0)),
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(Quantity.VOLUME.name)),
         new MeasurementUnit(Quantity.VOLUME.presentationUnit(), RANDOM.nextDouble(1.0, 3.0)),
@@ -112,7 +104,6 @@ public class DemoDataHelper {
 
     return singletonList(
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(Quantity.VOLUME.name)),
         new MeasurementUnit(Quantity.VOLUME.presentationUnit(), value),
@@ -133,14 +124,12 @@ public class DemoDataHelper {
 
     return asList(
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(Quantity.ENERGY.name)),
         new MeasurementUnit(Quantity.ENERGY.presentationUnit(), energy),
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.ENERGY_RETURN.name)),
@@ -148,7 +137,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.REACTIVE_ENERGY.name)),
@@ -156,7 +144,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(Quantity.POWER.name)),
         new MeasurementUnit(Quantity.POWER.presentationUnit(), power),
@@ -171,7 +158,6 @@ public class DemoDataHelper {
   ) {
     return asList(
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.TEMPERATURE.name)),
@@ -179,7 +165,6 @@ public class DemoDataHelper {
         meter
       ),
       new MeasurementEntity(
-        null,
         created,
         QuantityEntityMapper.toEntity(
           QuantityAccess.singleton().getByName(Quantity.HUMIDITY.name)),

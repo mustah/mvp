@@ -123,21 +123,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void measurementRetrievableById() {
-    Long butterTemperatureId = newButterTemperatureMeasurement(
-      newButterMeter(),
-      ZonedDateTime.parse("1990-01-01T08:00:00Z")
-    ).id;
-
-    MeasurementDto measurement = asTestUser()
-      .get("/measurements/" + butterTemperatureId, MeasurementDto.class)
-      .getBody();
-
-    assertThat(measurement.id).isEqualTo(butterTemperatureId);
-    assertThat(measurement.quantity).isEqualTo("Difference temperature");
-  }
-
-  @Test
   public void measurementUnitScaled() {
     PhysicalMeterEntity butterMeter = newButterMeter();
     newButterTemperatureMeasurement(butterMeter, ZonedDateTime.parse("1990-01-01T08:00:00Z"));
@@ -173,45 +158,6 @@ public class MeasurementControllerTest extends IntegrationTest {
       .getBody();
 
     assertThat(measurements).isEmpty();
-  }
-
-  @Test
-  public void cannotAccessMeasurementIdOfOtherOrganisationDirectly() {
-    Long measurementId = newButterTemperatureMeasurement(
-      newButterMeterBelongingTo(otherOrganisation),
-      ZonedDateTime.parse("1990-01-01T08:00:00Z")
-    ).id;
-
-    HttpStatus statusCode = asTestUser()
-      .get("/measurements/" + measurementId, MeasurementDto.class)
-      .getStatusCode();
-
-    assertThat(statusCode).isEqualTo(HttpStatus.NOT_FOUND);
-  }
-
-  @Test
-  public void superAdminCanAccessAnyMeasurementDirectly() {
-    Long firstOrganisationsMeasurementId = newButterTemperatureMeasurement(
-      newButterMeterBelongingTo(otherOrganisation),
-      ZonedDateTime.parse("1990-01-01T08:00:00Z")
-    ).id;
-
-    Long secondOrganisationsMeasurementId = newButterTemperatureMeasurement(
-      newButterMeterBelongingTo(context().organisationEntity),
-      ZonedDateTime.parse("1990-01-01T08:00:00Z")
-    ).id;
-
-    HttpStatus statusCode = asSuperAdmin()
-      .get("/measurements/" + firstOrganisationsMeasurementId, MeasurementDto.class)
-      .getStatusCode();
-
-    assertThat(statusCode).isEqualTo(HttpStatus.OK);
-
-    statusCode = asSuperAdmin()
-      .get("/measurements/" + secondOrganisationsMeasurementId, MeasurementDto.class)
-      .getStatusCode();
-
-    assertThat(statusCode).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -401,15 +347,15 @@ public class MeasurementControllerTest extends IntegrationTest {
         "K",
         butterMeter.externalId,
         asList(
-          new MeasurementValueDto(temperature1.created.toInstant(), 558.74),
-          new MeasurementValueDto(temperature2.created.toInstant(), 558.74)
+          new MeasurementValueDto(temperature1.id.created.toInstant(), 558.74),
+          new MeasurementValueDto(temperature2.id.created.toInstant(), 558.74)
         )
       ),
       new MeasurementSeriesDto(
         "Energy",
         "kWh",
         butterMeter.externalId,
-        singletonList(new MeasurementValueDto(energy.created.toInstant(), null))
+        singletonList(new MeasurementValueDto(energy.id.created.toInstant(), null))
       )
     );
   }
@@ -1318,7 +1264,6 @@ public class MeasurementControllerTest extends IntegrationTest {
     String unit
   ) {
     return measurementJpaRepository.save(new MeasurementEntity(
-      null,
       created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
       new MeasurementUnit(unit, value),
