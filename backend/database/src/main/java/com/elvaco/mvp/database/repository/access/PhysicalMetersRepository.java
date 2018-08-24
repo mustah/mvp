@@ -83,6 +83,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       organisationId,
       externalId,
       address
-    ).map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs);
+    ).map(PhysicalMeterEntityMapper::toDomainModel);
   }
 }

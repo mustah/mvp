@@ -23,7 +23,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -41,6 +40,7 @@ import com.elvaco.mvp.testing.geocode.MockGeocodeService;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
+import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockProperties;
@@ -50,9 +50,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ConstantConditions")
@@ -82,17 +84,10 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private ReferenceInfoMessageConsumer messageHandler;
   private MockGeocodeService geocodeService;
   private PropertiesUseCases propertiesUseCases;
+  private MockMeterStatusLogs meterStatusLogs;
 
   @Before
   public void setUp() {
-    User superAdmin = new UserBuilder()
-      .name("super-admin")
-      .email("super@admin.io")
-      .password("password")
-      .language(Language.en)
-      .organisationElvaco()
-      .asSuperAdmin()
-      .build();
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
       new UserBuilder()
         .name("mock user")
@@ -116,17 +111,27 @@ public class MeteringReferenceInfoMessageConsumerTest {
     geocodeService = new MockGeocodeService();
     propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
 
+    meterStatusLogs = new MockMeterStatusLogs();
     messageHandler = new MeteringReferenceInfoMessageConsumer(
       new LogicalMeterUseCases(
         authenticatedUser,
         logicalMeters,
         new MockMeasurements()
       ),
-      new PhysicalMeterUseCases(authenticatedUser, physicalMeters),
+      new PhysicalMeterUseCases(authenticatedUser, physicalMeters, meterStatusLogs),
       new OrganisationUseCases(
         authenticatedUser,
         organisations,
-        new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
+        new OrganisationPermissions(new MockUsers(singletonList(
+          new UserBuilder()
+            .name("super-admin")
+            .email("super@admin.io")
+            .password("password")
+            .language(Language.en)
+            .organisationElvaco()
+            .asSuperAdmin()
+            .build()
+        )))
       ),
       new GatewayUseCases(gateways, authenticatedUser),
       geocodeService,
@@ -153,7 +158,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       organisation.id,
       MeterDefinition.HOT_WATER_METER,
       logicalMeter.created,
-      singletonList(savedPhysicalMeter),
+      emptyList(),
       singletonList(gateways.findBy(
         organisation.id,
         PRODUCT_MODEL,
@@ -322,12 +327,18 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(newMessageWithManufacturer("ELV"));
 
     LogicalMeter meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
-    assertThat(meter.getManufacturer()).isEqualTo("ELV");
 
+    List<PhysicalMeter> all = physicalMeters.findAll();
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).manufacturer).isEqualTo("ELV");
+    assertThat(physicalMeters.findAll().stream().map(pm -> pm.logicalMeterId).collect(toList()))
+      .containsExactly(meter.id);
+
+    // Add same message with different manufacturer
     messageHandler.accept(newMessageWithManufacturer("KAM"));
 
-    meter = logicalMeters.findAllWithStatuses(new MockRequestParameters()).get(0);
-    assertThat(meter.getManufacturer()).isEqualTo("KAM");
+    assertThat(physicalMeters.findAll().get(0).manufacturer).isEqualTo("KAM");
+    assertThat(logicalMeters.findAllWithStatuses(new MockRequestParameters())).hasSize(1);
   }
 
   @Test
@@ -378,9 +389,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
     Organisation organisation = organisations.save(
       newOrganisation(ORGANISATION_EXTERNAL_ID, ORGANISATION_SLUG)
     );
-    ZonedDateTime now = ZonedDateTime.now();
     UUID logicalMeterId = randomUUID();
-    PhysicalMeter existingPhysicalMeter = physicalMeters.save(
+    physicalMeters.save(
       physicalMeter()
         .organisation(organisation)
         .logicalMeterId(logicalMeterId)
@@ -392,21 +402,17 @@ public class MeteringReferenceInfoMessageConsumerTest {
       EXTERNAL_ID,
       organisation.id,
       MeterDefinition.HOT_WATER_METER,
-      now,
-      singletonList(existingPhysicalMeter),
+      ZonedDateTime.now(),
+      emptyList(),
       emptyList(),
       UNKNOWN_LOCATION
     ));
 
-    MeteringReferenceInfoMessageDto message =
-      newMessageWithMediumAndPhysicalMeterId(HOT_WATER_MEDIUM, "4321");
+    messageHandler.accept(newMessageWithMediumAndPhysicalMeterId(HOT_WATER_MEDIUM, "4321"));
 
-    messageHandler.accept(message);
-
-    List<LogicalMeter> organisationMeters = logicalMeters.findAllByOrganisationId(organisation.id);
-    assertThat(organisationMeters).hasSize(1);
-    LogicalMeter meter = organisationMeters.get(0);
-    assertThat(meter.physicalMeters).hasSize(2);
+    assertThat(logicalMeters.findAllByOrganisationId(organisation.id)).hasSize(1);
+    assertThat(physicalMeters.findAll().stream().map(pm -> pm.logicalMeterId))
+      .isEqualTo(asList(logicalMeterId, logicalMeterId));
   }
 
   @Test
@@ -495,6 +501,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
+    assertThat(meterStatusLogs.allMocks()).extracting("status").containsExactly(StatusType.OK);
   }
 
   @Test
@@ -506,6 +513,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
+    assertThat(meterStatusLogs.allMocks()).extracting("status").containsOnly(StatusType.OK);
   }
 
   @Test

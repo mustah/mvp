@@ -1,25 +1,28 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PhysicalMetersTest extends IntegrationTest {
 
@@ -27,16 +30,13 @@ public class PhysicalMetersTest extends IntegrationTest {
   private PhysicalMeters physicalMeters;
 
   @Autowired
+  private MeterStatusLogs meterStatusLogs;
+
+  @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Before
-  public void setUp() {
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-  }
 
   @After
   public void tearDown() {
@@ -94,20 +94,38 @@ public class PhysicalMetersTest extends IntegrationTest {
     assertThat(physicalMeters.findAll()).hasSize(3);
   }
 
+  @Transactional
   @Test
   public void findByOrganisationAndExternalIdAndAddress() {
+    UUID meterId = randomUUID();
+
+    StatusLogEntry<UUID> activeStatus = StatusLogEntry.<UUID>builder()
+      .id(1L)
+      .entityId(meterId)
+      .status(OK)
+      .start(ZonedDateTime.now())
+      .build();
+
     physicalMeters.save(physicalMeter()
+      .id(meterId)
       .externalId("12")
       .address("123456789")
       .build());
 
-    assertThat(
-      physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-        context().organisationId(),
-        "12",
-        "123456789"
-      )
-        .isPresent()).isTrue();
+    meterStatusLogs.save(activeStatus);
+
+    PhysicalMeter physicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+      context().organisationId(),
+      "12",
+      "123456789"
+    ).get();
+
+    List<PhysicalMeterStatusLogEntity> all = physicalMeterStatusLogJpaRepository.findAll();
+    assertThat(all)
+      .extracting("physicalMeterId")
+      .containsExactly(meterId);
+
+    assertThat(physicalMeter.id).isEqualTo(meterId);
   }
 
   @Transactional
@@ -131,30 +149,6 @@ public class PhysicalMetersTest extends IntegrationTest {
         .build());
 
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);
-  }
-
-  @Transactional
-  @Test
-  public void savingMeterSavesLogs() {
-    UUID meterId = randomUUID();
-    ZonedDateTime start = ZonedDateTime.now();
-
-    physicalMeters.save(physicalMeter()
-      .id(meterId)
-      .statuses(
-        singletonList(new StatusLogEntry<>(
-          meterId,
-          ERROR,
-          start
-        ))
-      )
-      .build());
-
-    PhysicalMeter found = physicalMeters.findAll().get(0);
-
-    assertThat(found.statuses).hasSize(1);
-    assertThat(found.statuses.get(0).start).isEqualTo(start);
-    assertThat(found.statuses.get(0).status).isEqualTo(ERROR);
   }
 
   @Test
@@ -182,25 +176,20 @@ public class PhysicalMetersTest extends IntegrationTest {
     UUID meterId = randomUUID();
     ZonedDateTime start = ZonedDateTime.now();
 
-    physicalMeters.save(
-      physicalMeter()
-        .id(meterId)
-        .status(StatusLogEntry.<UUID>builder()
-          .entityId(meterId)
-          .status(ERROR)
-          .start(start)
-          .build())
-        .build());
+    physicalMeters.save(physicalMeter().id(meterId).build());
 
-    physicalMeters.save(
-      physicalMeter()
-        .id(meterId)
-        .status(StatusLogEntry.<UUID>builder()
-          .entityId(meterId)
-          .status(OK)
-          .start(start.minusDays(2))
-          .build())
-        .build());
+    meterStatusLogs.save(asList(
+      StatusLogEntry.<UUID>builder()
+        .entityId(meterId)
+        .status(OK)
+        .start(start.minusDays(2))
+        .build(),
+      StatusLogEntry.<UUID>builder()
+        .entityId(meterId)
+        .status(ERROR)
+        .start(start)
+        .build()
+    ));
 
     assertThat(physicalMeterStatusLogJpaRepository.findAll())
       .filteredOn("physicalMeterId", meterId)
@@ -210,19 +199,19 @@ public class PhysicalMetersTest extends IntegrationTest {
   @Test
   public void cannotSaveMeterWithSameStatusLog() {
     UUID meterId = randomUUID();
-    ZonedDateTime start = ZonedDateTime.now();
 
-    for (int i = 0; i < 2; i++) {
-      physicalMeters.save(
-        physicalMeter()
-          .id(meterId)
-          .status(StatusLogEntry.<UUID>builder()
-            .entityId(meterId)
-            .status(OK)
-            .start(start)
-            .build())
-          .build());
-    }
+    physicalMeters.save(physicalMeter().id(meterId).build());
+
+    StatusLogEntry<UUID> status = StatusLogEntry.<UUID>builder()
+      .entityId(meterId)
+      .status(OK)
+      .start(ZonedDateTime.now())
+      .build();
+
+    meterStatusLogs.save(status);
+
+    assertThatThrownBy(() -> meterStatusLogs.save(status))
+      .isInstanceOf(DataIntegrityViolationException.class);
 
     assertThat(physicalMeterStatusLogJpaRepository.findAll()).hasSize(1);
   }
