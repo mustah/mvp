@@ -52,6 +52,7 @@ import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -77,7 +78,6 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterControllerTest extends IntegrationTest {
@@ -701,15 +701,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     missingMeasurementJpaRepository.refreshLocked();
 
-    PagedLogicalMeterDto logicalMeterDto = asTestUser()
+    List<PagedLogicalMeterDto> pagedMeters = asTestUser()
       .getPage(metersUrl(YESTERDAY, YESTERDAY.plusDays(1)), PagedLogicalMeterDto.class)
-      .getContent()
-      .get(0);
+      .getContent();
 
-    assertThat(logicalMeterDto.collectionPercentage).isCloseTo(
-      95.83333, //one out of 24 missing
-      within(0.1)
-    );
+    /* NOTE! We get _two_ entries for the same logical meter here, since we have two physical meters
+    connected - one with no collection percentage (since it has no interval) and one with the
+    expected percentage. */
+    assertThat(pagedMeters).extracting("collectionPercentage")
+      .usingComparatorForType(new DoubleComparator(0.1), Double.class)
+      .containsExactlyInAnyOrder(null, 95.8333);
   }
 
   @Test
