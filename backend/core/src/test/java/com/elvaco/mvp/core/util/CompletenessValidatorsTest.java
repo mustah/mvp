@@ -104,6 +104,16 @@ public class CompletenessValidatorsTest {
   }
 
   @Test
+  public void physicalMeterValidatorZeroReportInterval() {
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .manufacturer("ELV")
+      .readIntervalMinutes(0)
+      .build();
+    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+  }
+
+  @Test
   public void gatewayValidatorComplete() {
     Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "CMi2110");
     assertThat(gatewayValidator().isComplete(gateway)).isTrue();
