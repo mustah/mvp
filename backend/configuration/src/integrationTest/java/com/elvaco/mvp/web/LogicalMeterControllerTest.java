@@ -395,6 +395,59 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void collectionStatusFiftyPercentWhenMeterHasMultipleActiveStatusesWithinPeriod() {
+    assumeTrue(isPostgresDialect());
+
+    LogicalMeter districtHeatingMeter = createLogicalMeter(
+      DISTRICT_HEATING_METER,
+      YESTERDAY.minusMinutes(15)
+    );
+
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(60)
+      .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter.id)
+        .status(OK)
+        .start(YESTERDAY.minusMinutes(15))
+        .stop(YESTERDAY.plusHours(1))
+        .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter.id)
+        .status(StatusType.WARNING)
+        .start(YESTERDAY.plusHours(1))
+        .build()
+    );
+
+    addMeasurementsForMeter(
+      physicalMeter,
+      districtHeatingMeter.getQuantities(),
+      YESTERDAY,
+      Duration.ofHours(2),
+      60L,
+      1.0,
+      1.0
+    );
+
+    missingMeasurementJpaRepository.refreshLocked();
+
+    PagedLogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusHours(4)), PagedLogicalMeterDto.class)
+      .getContent()
+      .get(0);
+
+    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(50.0);
+  }
+
+  @Test
   public void readIntervalIsSetOnPagedMeter() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
