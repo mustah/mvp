@@ -99,6 +99,6 @@ class CacheManagerConfig {
   }
 
   private void onEvent(CacheEvent<?, ?> event) {
-    log.info("Ehcache event listener callback: {}", event);
+    log.debug("Ehcache event listener callback: {}", event);
   }
 }

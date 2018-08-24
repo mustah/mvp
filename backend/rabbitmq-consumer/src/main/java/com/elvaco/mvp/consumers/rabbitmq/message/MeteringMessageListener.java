@@ -59,7 +59,7 @@ public class MeteringMessageListener implements MessageListener {
   private boolean throttleAndLog(GetReferenceInfoDto getReferenceInfoDto) {
     boolean throttle = referenceInfoThrottler.throttle(getReferenceInfoDto);
     if (throttle) {
-      log.info("Throttling Get-Reference message {}", getReferenceInfoDto);
+      log.debug("Throttling Get-Reference message {}", getReferenceInfoDto);
     }
     return !throttle;
   }
