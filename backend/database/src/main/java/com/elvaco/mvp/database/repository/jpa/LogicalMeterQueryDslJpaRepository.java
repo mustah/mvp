@@ -213,7 +213,7 @@ class LogicalMeterQueryDslJpaRepository
       .select(Projections.constructor(
         LogicalMeterCollectionStats.class,
         LOGICAL_METER.id,
-        MISSING_MEASUREMENT.count(),
+        MISSING_MEASUREMENT.id.expectedTime.countDistinct(),
         PHYSICAL_METER.readIntervalMinutes
       )).where(new LogicalMeterQueryFilters().toExpression(parameters))
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
