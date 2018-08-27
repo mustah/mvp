@@ -338,6 +338,7 @@ deploy:production:
   only:
     - schedules
     - tags
+  when: manual
   environment:
     name: production
     url: https://evo.elvaco.se
