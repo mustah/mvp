@@ -339,6 +339,7 @@ deploy:production:
     - schedules
     - tags
   when: manual
+  allow_failure: false #block the pipeline from continuing until we've deployed to prod
   environment:
     name: production
     url: https://evo.elvaco.se
