@@ -57,6 +57,7 @@ public class GatewayQueryFilters extends QueryFilters {
       case GATEWAY_SERIAL:
         return GATEWAY.serial.in(values);
       case SERIAL:
+      case Q_SERIAL:
         return GATEWAY.serial.containsIgnoreCase(values.get(0));
       case CITY:
         return LocationExpressions.whereCity(toCityParameters(values));

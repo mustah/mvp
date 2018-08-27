@@ -77,6 +77,17 @@ public class RequestParametersAdapter implements RequestParameters {
   }
 
   @Override
+  public RequestParameters transform(RequestParameter from, RequestParameter into) {
+    if (!hasParam(from)) {
+      return this;
+    }
+
+    delegate.put(into, getValues(from));
+    delegate.remove(from);
+    return this;
+  }
+
+  @Override
   public List<String> getValues(RequestParameter param) {
     List<String> values = delegate.get(param);
     return values != null ? values : emptyList();

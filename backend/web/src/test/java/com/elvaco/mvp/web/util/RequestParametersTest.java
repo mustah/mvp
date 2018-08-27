@@ -165,6 +165,16 @@ public class RequestParametersTest {
   }
 
   @Test
+  public void transformParameter() {
+    RequestParameters parameters = new RequestParametersAdapter()
+      .setAll(ORGANISATION, asList("1", "2"))
+      .transform(ORGANISATION, ID);
+
+    assertThat(parameters.hasParam(ORGANISATION)).isFalse();
+    assertThat(parameters.getValues(ID)).containsExactly("1", "2");
+  }
+
+  @Test
   public void getNonExistingValuesShouldReturnEmptyList() {
     assertThat(new RequestParametersAdapter().getValues(ID)).isEmpty();
   }

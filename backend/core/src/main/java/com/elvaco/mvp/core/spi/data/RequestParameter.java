@@ -28,6 +28,12 @@ public enum RequestParameter {
   SERIAL("serial"),
   SORT("sort"),
   STATUS("status"),
+  Q("q"),
+  Q_FACILITY(null),
+  Q_ADDRESS(null),
+  Q_SECONDARY_ADDRESS(null),
+  Q_SERIAL(null),
+  Q_CITY(null),
   WILDCARD("w");
 
   private final String name;
@@ -35,6 +41,7 @@ public enum RequestParameter {
   @Nullable
   public static RequestParameter from(String name) {
     return Arrays.stream(values())
+      .filter(parameter -> parameter.name != null)
       .filter(parameter -> parameter.name.equals(name))
       .findAny()
       .orElse(null);
@@ -42,6 +49,6 @@ public enum RequestParameter {
 
   @Override
   public String toString() {
-    return name;
+    return name == null ? this.name() : name;
   }
 }

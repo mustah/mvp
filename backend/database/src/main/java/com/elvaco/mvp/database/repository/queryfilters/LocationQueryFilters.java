@@ -25,8 +25,10 @@ public class LocationQueryFilters extends QueryFilters {
   private Predicate buildNullablePredicateFor(RequestParameter parameter, List<String> values) {
     switch (parameter) {
       case CITY:
+      case Q_CITY:
         return LOCATION.city.contains(values.get(0).toLowerCase());
       case ADDRESS:
+      case Q_ADDRESS:
         return LOCATION.streetAddress.contains(values.get(0).toLowerCase());
       case ORGANISATION:
         return LOGICAL_METER.organisationId.in(toUuids(values));
