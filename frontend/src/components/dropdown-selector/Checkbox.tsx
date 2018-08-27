@@ -12,17 +12,15 @@ interface CheckBox extends Clickable, ClassNamed {
 }
 
 export const Checkbox = (props: CheckBox) => {
-  const {id, label, checked, style, onClick, className} = props;
-  const htmlId = `id-${id}`;
+  const {label, checked, style, onClick, className} = props;
   return (
     <RowMiddle className="Checkbox" style={style}>
-      <input
-        type="checkbox"
-        id={htmlId}
-        onClick={onClick}
-        defaultChecked={checked}
-      />
-      <label htmlFor={htmlId} className={classNames('clickable', className)}>
+      <label className={classNames('clickable', className)}>
+        <input
+          type="checkbox"
+          onClick={onClick}
+          defaultChecked={checked}
+        />
         {label}
       </label>
     </RowMiddle>

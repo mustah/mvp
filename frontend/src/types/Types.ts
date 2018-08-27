@@ -17,9 +17,9 @@ export type OnClick = (...args) => void;
 export type OnChange = OnClick;
 export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
-export type RenderFunction<T> = (props: T) => Children;
-
+export type CallbackWith<T> = (result: T) => void;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
+export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
 export type ClearError = () => void;

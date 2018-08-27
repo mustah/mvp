@@ -2,6 +2,11 @@
 
 .Checkbox {
 
+  label {
+    flex: 1;
+    display: flex;
+  }
+
   &:hover {
     background-color: $light-grey;
   }

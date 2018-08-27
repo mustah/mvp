@@ -8,9 +8,10 @@ import {Address, City} from '../location/locationModels';
 export interface PagedResponse {
   items: SelectionListItem[];
   totalElements: number;
+  query?: string;
 }
 
-export type FetchByPage = (page: number) => Promise<PagedResponse>;
+export type FetchByPage = (page: number, query?: string) => Promise<PagedResponse>;
 
 interface CityResponse {
   name: string;
@@ -68,39 +69,45 @@ const fetchItems = async <T, R>(
   return {items: content.map(contentMapper), totalElements};
 };
 
-export const fetchCities = async (page: number): Promise<PagedResponse> =>
+const queryParameter = (query?: string): string => query ? `&q=${query}` : ``;
+
+const requestParameters = (sort: string, page: number, query?: string): string =>
+  `sort=${sort},asc&page=${page}${queryParameter(query)}`;
+
+export const fetchCities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<CityResponse, City>(
     EndPoints.cities,
     toCity,
-    `sort=city,asc&page=${page}`,
+    requestParameters('city', page, query),
   );
 
-export const fetchAddresses = async (page: number): Promise<PagedResponse> =>
+export const fetchAddresses = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<AddressResponse, Address>(
     EndPoints.addresses,
     toAddress,
-    `sort=streetAddress,asc&page=${page}`,
+    requestParameters('streetAddress', page, query),
   );
 
-export const fetchFacilities = async (page: number): Promise<PagedResponse> =>
+export const fetchFacilities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.facilities,
     identity,
-    `sort=externalId,asc&page=${page}`,
+    requestParameters('externalId', page, query),
   );
 
-export const fetchSecondaryAddresses = async (page: number): Promise<PagedResponse> =>
-  fetchItems<IdNamed, IdNamed>(
-    EndPoints.secondaryAddresses,
-    identity,
-    `sort=address,asc&page=${page}`,
-  );
+export const fetchSecondaryAddresses =
+  async (page: number, query?: string): Promise<PagedResponse> =>
+    fetchItems<IdNamed, IdNamed>(
+      EndPoints.secondaryAddresses,
+      identity,
+      requestParameters('address', page, query),
+    );
 
-export const fetchGatewaySerials = async (page: number): Promise<PagedResponse> =>
+export const fetchGatewaySerials = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.gatewaySerials,
     identity,
-    `sort=serial,asc&page=${page}`,
+    requestParameters('serial', page, query),
   );
 
 export const fetchGatewayStatuses = async (): Promise<PagedResponse> =>

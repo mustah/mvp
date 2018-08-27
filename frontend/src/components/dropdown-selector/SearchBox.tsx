@@ -1,9 +1,14 @@
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import * as React from 'react';
+import {OnChange} from '../../types/Types';
 
-interface SearchBoxProps {
+interface Props {
+  onChange: OnChange;
+  clear?: boolean;
+}
+
+interface State {
   value: string;
-  onUpdateSearch: (event: any) => void;
 }
 
 const searchStyle: React.CSSProperties = {
@@ -13,9 +18,35 @@ const searchStyle: React.CSSProperties = {
   color: '#7b7b7b',
 };
 
-export const SearchBox = ({value, onUpdateSearch}: SearchBoxProps) => (
-  <div className="SearchBox">
-    <input type="textfield" className="SearchBox-input" value={value} onChange={onUpdateSearch}/>
-    <ActionSearch style={searchStyle}/>
-  </div>
-);
+export class SearchBox extends React.Component<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {value: ''};
+  }
+
+  render() {
+    const {clear} = this.props;
+    const {value} = this.state;
+
+    return (
+      <div className="SearchBox">
+        <input
+          autoFocus={true}
+          type="textfield"
+          className="SearchBox-input"
+          value={clear ? '' : value}
+          onChange={this.onChange}
+        />
+        <ActionSearch style={searchStyle}/>
+      </div>
+    );
+  }
+
+  onChange = (event: any) => {
+    event.preventDefault();
+    const value = event.target.value;
+    this.setState({value});
+    this.props.onChange(value);
+  }
+}
