@@ -93,7 +93,8 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           .medium(UNKNOWN_MEDIUM.medium)
           .logicalMeterId(logicalMeter.id)
           .readIntervalMinutes(0)
-          .build());
+          .build()
+        );
 
     LogicalMeter connectedLogicalMeter = measurementMessage.gateway()
       .map(gatewayIdDto -> gatewayIdDto.id)

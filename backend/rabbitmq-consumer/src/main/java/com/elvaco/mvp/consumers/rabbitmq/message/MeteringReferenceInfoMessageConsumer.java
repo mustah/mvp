@@ -85,15 +85,12 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       organisation.id
     ));
 
-    gateway.ifPresent(gatewayUseCases::save);
-
     Optional.ofNullable(logicalMeter)
-      .map(meter -> physicalMeter
-        .map(meter::withPhysicalMeter)
-        .orElse(meter))
-      .map(meter -> gateway.map(meter::withGateway).orElse(meter))
       .map(logicalMeterUseCases::save)
       .ifPresent(this::onFetchCoordinates);
+
+    physicalMeter.ifPresent(physicalMeterUseCases::saveWithStatuses);
+    gateway.ifPresent(gatewayUseCases::save);
   }
 
   private void onFetchCoordinates(LogicalMeter meter) {

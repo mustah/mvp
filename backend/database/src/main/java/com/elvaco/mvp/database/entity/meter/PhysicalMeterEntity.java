@@ -63,7 +63,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   @NotAudited
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "physicalMeterId", orphanRemoval = true)
-  @Cascade(value = CascadeType.MERGE)
+  @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
   public UUID logicalMeterId;

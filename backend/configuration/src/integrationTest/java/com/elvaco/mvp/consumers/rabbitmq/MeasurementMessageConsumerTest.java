@@ -40,6 +40,7 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
   private CacheManager cacheManager;
 
   @Before
+  @Override
   public void setUp() {
     assumeTrue(isRabbitConnected());
     assumeTrue(isPostgresDialect());
@@ -48,6 +49,7 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
   }
 
   @After
+  @Override
   public void tearDown() {
     cacheManager.getCacheNames().stream()
       .map(name -> cacheManager.getCache(name))

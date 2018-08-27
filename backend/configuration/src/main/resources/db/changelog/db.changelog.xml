@@ -32,7 +32,8 @@
   <include file="xml/drop_table_property_aud.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_missing_measurement_materialized_view.xml" relativeToChangelogFile="true"/>
   <include file="xml/drop_measurement_id_column.xml" relativeToChangelogFile="true"/>
-  
+  <include file="xml/delete_duplicate_old_status_logs.xml" relativeToChangelogFile="true"/>
+
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created chengesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

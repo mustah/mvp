@@ -41,6 +41,7 @@ import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
+import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
@@ -117,7 +118,7 @@ public class MeteringMeasurementMessageConsumerTest {
         logicalMeters,
         measurements
       ),
-      new PhysicalMeterUseCases(authenticatedUser, physicalMeters),
+      new PhysicalMeterUseCases(authenticatedUser, physicalMeters, new MockMeterStatusLogs()),
       new OrganisationUseCases(
         authenticatedUser,
         organisations,

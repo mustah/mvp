@@ -54,7 +54,7 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      statuses
+      unmodifiableList(statuses)
     );
   }
 
@@ -68,7 +68,7 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      statuses
+      unmodifiableList(statuses)
     );
   }
 
@@ -82,7 +82,7 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      statuses
+      unmodifiableList(statuses)
     );
   }
 
@@ -96,7 +96,7 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes != null ? readIntervalMinutes : this.readIntervalMinutes,
-      statuses
+      unmodifiableList(statuses)
     );
   }
 

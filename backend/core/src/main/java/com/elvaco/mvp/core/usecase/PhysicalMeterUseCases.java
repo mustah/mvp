@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import lombok.RequiredArgsConstructor;
 
@@ -19,16 +20,22 @@ public class PhysicalMeterUseCases {
 
   private final AuthenticatedUser currentUser;
   private final PhysicalMeters physicalMeters;
+  private final MeterStatusLogs meterStatusLogs;
 
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    if (!hasTenantAccess(physicalMeter)) {
-      throw new Unauthorized(String.format(
-        "User '%s' is not allowed to update physical meter with ID %s",
-        currentUser.getUsername(),
-        physicalMeter.id
-      ));
+    if (hasTenantAccess(physicalMeter)) {
+      return physicalMeters.save(physicalMeter);
     }
-    return physicalMeters.save(physicalMeter);
+    throw userIsUnauthorized(physicalMeter.id);
+  }
+
+  public PhysicalMeter saveWithStatuses(PhysicalMeter physicalMeter) {
+    if (hasTenantAccess(physicalMeter)) {
+      PhysicalMeter saved = physicalMeters.save(physicalMeter);
+      meterStatusLogs.save(physicalMeter.statuses);
+      return saved;
+    }
+    throw userIsUnauthorized(physicalMeter.id);
   }
 
   public Optional<PhysicalMeter> findBy(
@@ -59,8 +66,16 @@ public class PhysicalMeterUseCases {
     );
   }
 
+  private Unauthorized userIsUnauthorized(UUID id) {
+    return new Unauthorized(String.format(
+      "User '%s' is not allowed to update physical meter with ID %s",
+      currentUser.getUsername(),
+      id
+    ));
+  }
+
   private boolean hasTenantAccess(PhysicalMeter physicalMeter) {
     return currentUser.isSuperAdmin()
-           || currentUser.isWithinOrganisation(physicalMeter.organisation.id);
+      || currentUser.isWithinOrganisation(physicalMeter.organisation.id);
   }
 }
