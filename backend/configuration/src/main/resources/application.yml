@@ -41,8 +41,8 @@ ehcache:
     heap-entries: 1000
     idle-time: 60
   metering:
-    heap-entries: 1000
-    idle-time: 10
+    heap-entries: 20000
+    idle-time: 60
 
 liquibase:
   enabled: true
