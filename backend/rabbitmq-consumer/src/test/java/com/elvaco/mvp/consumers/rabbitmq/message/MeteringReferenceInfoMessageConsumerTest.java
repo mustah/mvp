@@ -159,13 +159,11 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MeterDefinition.HOT_WATER_METER,
       logicalMeter.created,
       emptyList(),
-      singletonList(gateways.findBy(
-        organisation.id,
-        PRODUCT_MODEL,
-        GATEWAY_EXTERNAL_ID
-      ).get()),
+      emptyList(),
       new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build()
     );
+
+    Gateway gateway = gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID).get();
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
     assertThat(savedPhysicalMeter).isEqualTo(new PhysicalMeter(
@@ -179,6 +177,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       READ_INTERVAL_IN_MINUTES,
       savedPhysicalMeter.statuses
     ));
+    assertThat(gateway.meters).extracting("id").containsExactly(logicalMeter.id);
   }
 
   @Test

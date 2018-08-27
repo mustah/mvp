@@ -12,6 +12,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,6 +38,12 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+
+  @Before
+  public void setUp() {
+    physicalMeterStatusLogJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
+  }
 
   @After
   public void tearDown() {
