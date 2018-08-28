@@ -18,7 +18,7 @@ import {EncodedUriParameters, Fetch} from '../../../types/Types';
 import {fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {MapMarker} from '../../map/mapModels';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
-import {fetchDashboard} from '../dashboardApiActions';
+import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
 import {MapWidgetContainer} from './MapWidgetContainer';
 

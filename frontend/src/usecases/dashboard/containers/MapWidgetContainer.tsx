@@ -11,6 +11,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
+import {GeoPosition} from '../../../state/domain-models/location/locationModels';
 import {ClearError, ErrorResponse, OnClick} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -28,6 +29,7 @@ interface OwnProps {
 interface MapContentProps {
   bounds?: Bounds;
   lowConfidenceText?: string;
+  viewCenter?: GeoPosition;
 }
 
 interface StateToProps extends MapContentProps {
@@ -45,12 +47,13 @@ type MapContentWrapperProps = MapContentProps & OwnProps & WithEmptyContentProps
 
 type Props = MapContentProps & OwnProps & StateToProps & DispatchToProps;
 
-const MapContent = ({bounds, lowConfidenceText, markers}: MapContentProps & OwnProps) => (
+const MapContent = ({bounds, viewCenter, lowConfidenceText, markers}: MapContentProps & OwnProps) => (
   <Map
     height={600}
     width={774}
     bounds={bounds}
     lowConfidenceText={lowConfidenceText}
+    viewCenter={viewCenter}
   >
     <ClusterContainer markers={markers.entities}/>
   </Map>
@@ -68,6 +71,7 @@ const MapWidget =
     markers,
     lowConfidenceText,
     map,
+    viewCenter,
   }: Props) => {
 
     const dialog = map.selectedMarker && map.isClusterDialogOpen && (
@@ -82,6 +86,7 @@ const MapWidget =
       markers,
       hasContent: markers.result.length > 0,
       noContentText: firstUpperTranslated('no meters'),
+      viewCenter,
     };
 
     return (
@@ -107,6 +112,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     isFetching: meterMapMarkers.isFetching,
     lowConfidenceText: getMeterLowConfidenceTextInfo(rootState),
     map,
+    viewCenter: map.viewCenter,
   });
 };
 

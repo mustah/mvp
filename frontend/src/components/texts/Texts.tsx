@@ -6,6 +6,7 @@ interface TextProps {
   className?: string;
   children?: React.ReactNode | React.ReactNode[];
   style?: React.CSSProperties;
+  title?: string;
 }
 
 export const Normal = (props: TextProps) => {

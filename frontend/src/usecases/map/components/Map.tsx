@@ -45,7 +45,7 @@ export const Map = ({
 
   if (viewCenter) {
     centerProps.center = [viewCenter.latitude, viewCenter.longitude];
-    centerProps.zoom = 14;
+    centerProps.zoom = 17;
   } else if (bounds) {
     centerProps.bounds = bounds;
     centerProps.boundsOptions = defaultBoundOptions;

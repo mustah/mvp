@@ -18,3 +18,8 @@ export const isReportPage = createSelector<RouterState, string, boolean>(
   getPathname,
   (pathname) => pathname.match(/\/report$/) !== null || pathname.match(/\/report\/(.*)$/) !== null,
 );
+
+export const isDashboardPage = createSelector<RouterState, string, boolean>(
+  getPathname,
+  (pathname) => ['/', '/dashboard'].includes(pathname),
+);

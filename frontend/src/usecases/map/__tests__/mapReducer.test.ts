@@ -1,5 +1,5 @@
 import {LOGOUT_USER} from '../../auth/authActions';
-import {CLOSE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG} from '../mapActions';
+import {CENTER_MAP, CLOSE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG} from '../mapActions';
 import {initialState, map, MapState} from '../mapReducer';
 
 describe('mapReducer', () => {
@@ -12,6 +12,15 @@ describe('mapReducer', () => {
   it('should handle OPEN_CLUSTER_DIALOG', () => {
     const state: MapState = map(initialState, {type: OPEN_CLUSTER_DIALOG, payload: {}});
     expect(state).toEqual({isClusterDialogOpen: true, selectedMarker: {}});
+  });
+
+  it('centers on map', () => {
+    expect(initialState.viewCenter).toBeUndefined();
+
+    const geoPosition = {latitude: 1, longitude: 2};
+    const state: MapState = map(initialState, {type: CENTER_MAP, payload: geoPosition});
+
+    expect(state).toEqual({...initialState, viewCenter: geoPosition});
   });
 
   describe('logout user', () => {

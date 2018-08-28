@@ -3,14 +3,10 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {
-  listStyle,
-  nestedListItemStyle,
-  sideBarHeaderStyle,
-  sideBarStyles,
-} from '../../../../app/themes';
+import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
+import {isDashboardPage} from '../../../../selectors/routerSelectors';
 import {translate} from '../../../../services/translationService';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
@@ -19,10 +15,14 @@ import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selecti
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
 import {toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {LoadingListItem} from '../../components/LoadingListItem';
-import {renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import {
+  ItemCapabilities,
+  renderSelectionTreeCities,
+} from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
 
 interface StateToProps {
@@ -31,6 +31,7 @@ interface StateToProps {
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
   parameters: EncodedUriParameters;
+  itemCapabilities: ItemCapabilities;
 }
 
 interface DispatchToProps {
@@ -38,6 +39,7 @@ interface DispatchToProps {
   toggleExpand: OnClickWithId;
   toggleSingleEntry: OnClickWithId;
   toggleIncludingChildren: OnClick;
+  centerMapOnMeter: OnClickWithId;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -62,6 +64,8 @@ class SelectionTreeComponent extends React.Component<Props> {
       selectedListItems,
       toggleIncludingChildren,
       toggleSingleEntry,
+      itemCapabilities,
+      centerMapOnMeter,
     } = this.props;
 
     const renderSelectionOverview = (id: uuid) =>
@@ -73,18 +77,20 @@ class SelectionTreeComponent extends React.Component<Props> {
         selectedListItems,
         toggleIncludingChildren,
         toggleSingleEntry,
+        itemCapabilities,
+        centerMapOnMeter,
       });
 
     const cityIds = selectionTree.result.cities;
     const nestedItems = cityIds.length
       ? [...cityIds].sort().map(renderSelectionOverview)
       : [(
-           <LoadingListItem
-             isFetching={isFetching}
-             text={translate('no meters')}
-             key="loading-list-item"
-           />
-         )];
+        <LoadingListItem
+          isFetching={isFetching}
+          text={translate('no meters')}
+          key="loading-list-item"
+        />
+      )];
 
     return (
       <List style={listStyle}>
@@ -102,26 +108,30 @@ class SelectionTreeComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps =
+const mapStateToProps = ({
+  report,
+  userSelection: {userSelection},
+  selectionTree,
+  ui: {selectionTree: selectionTreeUi},
+  routing,
+}: RootState): StateToProps =>
   ({
-    report,
-    userSelection: {userSelection},
-    selectionTree,
-    ui: {selectionTree: selectionTreeUi},
-  }: RootState): StateToProps =>
-    ({
-      isFetching: selectionTree.isFetching,
-      selectionTree: getSelectionTree(selectionTree),
-      openListItems: getOpenListItems(selectionTreeUi),
-      selectedListItems: getSelectedListItems(report),
-      parameters: getMeterParameters({userSelection, now: now()}),
-    });
+    isFetching: selectionTree.isFetching,
+    selectionTree: getSelectionTree(selectionTree),
+    openListItems: getOpenListItems(selectionTreeUi),
+    selectedListItems: getSelectedListItems(report),
+    parameters: getMeterParameters({userSelection, now: now()}),
+    itemCapabilities: {
+      zoomable: isDashboardPage(routing),
+    },
+  });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchSelectionTree,
   toggleExpand: selectionTreeToggleId,
   toggleSingleEntry,
   toggleIncludingChildren,
+  centerMapOnMeter,
 }, dispatch);
 
 export const SelectionTreeContainer =

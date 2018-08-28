@@ -1,6 +1,11 @@
+import IconButton from 'material-ui/IconButton';
+import ActionZoomIn from 'material-ui/svg-icons/action/zoom-in';
 import * as React from 'react';
-import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
+import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
+import {Row, RowCenter} from '../../../../components/layouts/row/Row';
+import {Normal} from '../../../../components/texts/Texts';
 import {orUnknown} from '../../../../helpers/translations';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
@@ -13,6 +18,12 @@ interface RenderProps {
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
+  itemCapabilities: ItemCapabilities;
+  centerMapOnMeter: OnClickWithId;
+}
+
+export interface ItemCapabilities {
+  zoomable?: boolean;
 }
 
 export const renderSelectionTreeCities = ({id, selectionTree, toggleSingleEntry, ...other}: RenderProps) => {
@@ -77,6 +88,8 @@ interface Props {
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
+  itemCapabilities: ItemCapabilities;
+  centerMapOnMeter: OnClickWithId;
 }
 
 const renderSelectableListItem = ({
@@ -89,16 +102,51 @@ const renderSelectableListItem = ({
   selectedListItems,
   selectable,
   nestedItems,
+  itemCapabilities,
+  centerMapOnMeter,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
   const onToggleSelect = nestedItems
     ? () => toggleIncludingChildren(id)
     : () => toggleSingleEntry(id);
 
+  const zoomInOn = (ev: React.SyntheticEvent<{}>) => {
+    ev.stopPropagation();
+    centerMapOnMeter(id);
+  };
+
+  const content = !nestedItems && itemCapabilities.zoomable
+    ? (
+      <RowCenter className="space-between">
+        <Row className="first-uppercase" style={listItemStyleWithActions.textStyle}>
+          <Normal title={primaryText}>
+            {primaryText}
+          </Normal>
+        </Row>
+        <Row style={{marginRight: '24px'}}>
+          <IconButton
+            tooltip={firstUpperTranslated('show on map')}
+            onClick={zoomInOn}
+          >
+            <ActionZoomIn/>
+          </IconButton>
+        </Row>
+      </RowCenter>
+    )
+    : (
+      <Normal
+        className="first-uppercase"
+        style={listItemStyle.textStyle}
+        title={primaryText}
+      >
+        {primaryText}
+      </Normal>
+    );
+
   return (
     <SelectableListItem
       className="TreeListItem"
-      primaryText={<div style={listItemStyle.textStyle}>{primaryText}</div>}
+      primaryText={content}
       key={id}
       innerDivStyle={sideBarStyles.padding}
       initiallyOpen={openListItems.has(id)}

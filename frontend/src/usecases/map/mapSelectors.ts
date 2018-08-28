@@ -4,11 +4,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {DomainModel, NormalizedState} from '../../state/domain-models/domainModels';
 import {getDomainModel} from '../../state/domain-models/domainModelsSelectors';
 import {uuid} from '../../types/Types';
-import {
-  boundsFromMarkers,
-  gatewayLowConfidenceTextInfo,
-  meterLowConfidenceTextInfo,
-} from './helper/mapHelper';
+import {boundsFromMarkers, gatewayLowConfidenceTextInfo, meterLowConfidenceTextInfo} from './helper/mapHelper';
 import {Bounds, MapMarker} from './mapModels';
 import {MapState} from './mapReducer';
 

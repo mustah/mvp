@@ -19,31 +19,16 @@ import {getDomainModel, getError} from '../../../state/domain-models/domainModel
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {
-  TabName,
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-} from '../../../state/ui/tabs/tabsModels';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {
-  ClearError,
-  EncodedUriParameters,
-  ErrorResponse,
-  Fetch,
-  OnClick,
-  uuid,
-} from '../../../types/Types';
+import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
-import {
-  getBounds,
-  getGatewayLowConfidenceTextInfo,
-  getSelectedMapMarker,
-} from '../../map/mapSelectors';
+import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
 import {GatewayListContainer} from './GatewayListContainer';
 
 interface MapProps {
