@@ -149,7 +149,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     }
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
-      .findBy(organisation.id, facility.id, address)
+      .findByWithStatuses(organisation.id, facility.id, address)
       .orElseGet(() ->
         PhysicalMeter.builder()
           .organisation(organisation)

@@ -743,7 +743,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   private PhysicalMeter findPhysicalMeterByOrganisationId(Organisation organisation) {
-    return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+    return physicalMeters.findByWithStatuses(
       organisation.id,
       EXTERNAL_ID,
       ADDRESS

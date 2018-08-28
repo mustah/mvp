@@ -328,7 +328,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
     Organisation organisation = organisations.findBySlug(ORGANISATION_SLUG).get();
 
-    PhysicalMeter physicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+    PhysicalMeter physicalMeter = physicalMeters.findBy(
       organisation.id,
       EXTERNAL_ID,
       ADDRESS
