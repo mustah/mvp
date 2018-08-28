@@ -296,6 +296,23 @@ describe('userSelectionActions', () => {
       ]);
     });
 
+    it('adds selected parameter when selected gateway serials are undefined', () => {
+      const oldRootState = {...rootState};
+      delete oldRootState.userSelection.userSelection.selectionParameters[ParameterName.gatewaySerials];
+
+      const p1: SelectionParameter = {
+        item: {id: '123', name: '123'},
+        parameter: ParameterName.gatewaySerials,
+      };
+      store = configureMockStore(oldRootState);
+
+      store.dispatch(toggleParameter(p1));
+
+      expect(store.getActions()).toEqual([
+        {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
+      ]);
+    });
+
   });
 
   describe('select period', () => {

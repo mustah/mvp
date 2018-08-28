@@ -78,8 +78,10 @@ public class SelectionController {
       RequestParameter.Q_ADDRESS
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
+
     Page<AddressDto> page = locationUseCases.findAllAddresses(parameters, adapter)
       .map(address -> new AddressDto(address.country, address.city, address.street));
+
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
   }
 
