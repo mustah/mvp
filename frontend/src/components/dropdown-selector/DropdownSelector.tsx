@@ -278,7 +278,7 @@ const translatedNameOf = ({name}: IdNamed): string =>
 const renderLabels = (name: string, parentName: string) => {
   return (
     <Column>
-      <Normal>{name}</Normal>
+      <Normal className="first-uppercase">{name}</Normal>
       <div className="first-uppercase" style={dropDownStyle.parentStyle}>{parentName}</div>
     </Column>
   );
