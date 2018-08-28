@@ -3,9 +3,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import 'SelectionContentContainer.scss';
 import {
-  DropdownSelector,
   renderAddressLabel,
   renderCityLabel,
+  SearchDropdownSelector,
+  SimpleDropdownSelector,
 } from '../../../components/dropdown-selector/DropdownSelector';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
@@ -110,13 +111,13 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
         <Subtitle>{translate('filter')}</Subtitle>
 
         <Row className="SelectionDropdownOptions">
-          <DropdownSelector
+          <SearchDropdownSelector
             fetchItems={fetchFacilities}
             selectedItems={facilities}
             selectionText={facilitySelectionText}
             select={selectFacilities}
           />
-          <DropdownSelector
+          <SearchDropdownSelector
             fetchItems={fetchCities}
             selectedItems={cities}
             selectionText={citySelectionText}
@@ -125,7 +126,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             rowHeight={44}
             unknownItem={unknownCity as SelectionListItem}
           />
-          <DropdownSelector
+          <SearchDropdownSelector
             fetchItems={fetchAddresses}
             selectedItems={addresses}
             selectionText={addressSelectionText}
@@ -134,31 +135,31 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             rowHeight={44}
             unknownItem={unknownAddress as SelectionListItem}
           />
-          <DropdownSelector
+          <SimpleDropdownSelector
             fetchItems={fetchMedia}
             selectedItems={media}
             selectionText={mediumSelectionText}
             select={selectMedium}
           />
-          <DropdownSelector
+          <SimpleDropdownSelector
             fetchItems={fetchMeterStatuses}
             selectedItems={meterStatuses}
             selectionText={meterStatusSelectionText}
             select={selectMeterStatus}
           />
-          <DropdownSelector
+          <SimpleDropdownSelector
             fetchItems={fetchGatewayStatuses}
             selectedItems={gatewayStatuses}
             selectionText={gatewayStatusSelectionText}
             select={selectGatewayStatus}
           />
-          <DropdownSelector
+          <SearchDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
             selectionText={secondaryAddressSelectionText}
             select={selectSecondaryAddresses}
           />
-          <DropdownSelector
+          <SearchDropdownSelector
             fetchItems={fetchGatewaySerials}
             selectedItems={gatewaySerials}
             selectionText={gatewaySerialSelectionText}

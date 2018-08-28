@@ -209,13 +209,15 @@ class LogicalMeterQueryDslJpaRepository
       return emptyList();
     }
 
-    JPQLQuery<LogicalMeterCollectionStats> query = createQuery()
+    Predicate predicate = new LogicalMeterQueryFilters().toExpression(parameters);
+
+    JPQLQuery<LogicalMeterCollectionStats> query = createQuery(predicate)
       .select(Projections.constructor(
         LogicalMeterCollectionStats.class,
         LOGICAL_METER.id,
         MISSING_MEASUREMENT.id.expectedTime.countDistinct(),
         PHYSICAL_METER.readIntervalMinutes
-      )).where(new LogicalMeterQueryFilters().toExpression(parameters))
+      ))
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
       .on(new MissingMeasurementQueryFilters().toExpression(parameters))

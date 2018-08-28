@@ -94,6 +94,7 @@
     "uglify-js": "^3.3.22"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.116",
     "axios": "^0.17.1",
     "classnames": "^2.2.5",
     "es6-shim": "^0.35.3",
@@ -102,6 +103,7 @@
     "i18next-xhr-backend": "^1.5.0",
     "leaflet": "^1.2.0",
     "leaflet.markercluster": "^1.2.0",
+    "lodash": "^4.17.10",
     "material-ui": "^0.20.0",
     "moment-timezone": "^0.5.16",
     "normalizr": "^3.2.4",

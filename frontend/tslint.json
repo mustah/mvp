@@ -20,6 +20,7 @@
       "moment-timezone",
       "leaflet",
       "leaflet.markercluster",
+      "lodash",
       "react-dates",
       "redux-persist",
       "moment"
