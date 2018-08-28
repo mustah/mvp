@@ -189,6 +189,8 @@ class RabbitMqConfig {
     container.setTransactionManager(transactionManager);
     container.setChannelTransacted(true);
     container.setAlwaysRequeueWithTxManagerRollback(consumerProperties.getRequeueRejected());
+    container.setPrefetchCount(consumerProperties.getPrefetchCount());
+    container.setTxSize(consumerProperties.getTxSize());
     return container;
   }
 }
