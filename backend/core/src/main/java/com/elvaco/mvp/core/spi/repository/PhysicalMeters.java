@@ -19,7 +19,13 @@ public interface PhysicalMeters {
 
   PhysicalMeter save(PhysicalMeter physicalMeter);
 
-  Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
+  Optional<PhysicalMeter> findByWithStatuses(
+    UUID organisationId,
+    String externalId,
+    String address
+  );
+
+  Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,
     String address

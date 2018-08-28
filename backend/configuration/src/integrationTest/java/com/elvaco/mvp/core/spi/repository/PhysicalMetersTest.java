@@ -121,7 +121,7 @@ public class PhysicalMetersTest extends IntegrationTest {
 
     meterStatusLogs.save(activeStatus);
 
-    PhysicalMeter physicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+    PhysicalMeter physicalMeter = physicalMeters.findByWithStatuses(
       context().organisationId(),
       "12",
       "123456789"

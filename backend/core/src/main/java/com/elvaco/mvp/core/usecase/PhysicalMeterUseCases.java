@@ -23,14 +23,14 @@ public class PhysicalMeterUseCases {
   private final MeterStatusLogs meterStatusLogs;
 
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    if (hasTenantAccess(physicalMeter)) {
+    if (hasTenantAccess(physicalMeter.organisation.id)) {
       return physicalMeters.save(physicalMeter);
     }
     throw userIsUnauthorized(physicalMeter.id);
   }
 
   public PhysicalMeter saveWithStatuses(PhysicalMeter physicalMeter) {
-    if (hasTenantAccess(physicalMeter)) {
+    if (hasTenantAccess(physicalMeter.organisation.id)) {
       PhysicalMeter saved = physicalMeters.save(physicalMeter);
       meterStatusLogs.save(physicalMeter.statuses);
       return saved;
@@ -38,13 +38,13 @@ public class PhysicalMeterUseCases {
     throw userIsUnauthorized(physicalMeter.id);
   }
 
-  public Optional<PhysicalMeter> findBy(
+  public Optional<PhysicalMeter> findByWithStatuses(
     UUID organisationId,
     String externalId,
     String address
   ) {
-    if (currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(organisationId)) {
-      return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+    if (hasTenantAccess(organisationId)) {
+      return physicalMeters.findByWithStatuses(
         organisationId,
         externalId,
         address
@@ -53,10 +53,22 @@ public class PhysicalMeterUseCases {
     return Optional.empty();
   }
 
-  public Page<PhysicalMeter> findAll(
-    RequestParameters parameters,
-    Pageable pageable
+  public Optional<PhysicalMeter> findBy(
+    UUID organisationId,
+    String externalId,
+    String address
   ) {
+    if (hasTenantAccess(organisationId)) {
+      return physicalMeters.findBy(
+        organisationId,
+        externalId,
+        address
+      );
+    }
+    return Optional.empty();
+  }
+
+  public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return physicalMeters.findAll(
       setCurrentUsersOrganisationId(
         currentUser,
@@ -74,8 +86,7 @@ public class PhysicalMeterUseCases {
     ));
   }
 
-  private boolean hasTenantAccess(PhysicalMeter physicalMeter) {
-    return currentUser.isSuperAdmin()
-      || currentUser.isWithinOrganisation(physicalMeter.organisation.id);
+  private boolean hasTenantAccess(UUID id) {
+    return currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(id);
   }
 }
