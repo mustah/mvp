@@ -95,12 +95,10 @@ export const toggleParameter = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: GetState) => {
     const {parameter, item} = selectionParameter;
     const selectionItems = getSelectionItems(getState, parameter);
-    if (selectionItems) {
-      Maybe.maybe<SelectionItem[]>(selectionItems)
-        .filter((selected: SelectionItem[]) => selected.map(getId).includes(item.id))
-        .map(() => dispatch(deselectParameterInSelection(selectionParameter)))
-        .orElseGet(() => dispatch(addParameterToSelection(selectionParameter)));
-    }
+    Maybe.maybe<SelectionItem[]>(selectionItems)
+      .filter((selected: SelectionItem[]) => selected.map(getId).includes(item.id))
+      .map(() => dispatch(deselectParameterInSelection(selectionParameter)))
+      .orElseGet(() => dispatch(addParameterToSelection(selectionParameter)));
   };
 
 export const saveSelection = postRequest<UserSelection>(EndPoints.userSelections, {
