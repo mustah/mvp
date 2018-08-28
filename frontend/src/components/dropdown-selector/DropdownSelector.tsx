@@ -59,6 +59,7 @@ interface State extends PagedResponse {
   isOpen: boolean;
   isSearching: boolean;
   page: number;
+  query?: string;
 }
 
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
@@ -99,7 +100,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
   }
 
   render() {
-    const {anchorElement, cache, isOpen, isSearching, items, totalElements} = this.state;
+    const {anchorElement, cache, isOpen, isSearching, items, totalElements, query} = this.state;
     const {fetchItemsByQuery, selectionText, selectedItems} = this.props;
 
     const selectedOverview: string = searchOverviewText(selectedItems, cache.totalElements);
@@ -140,6 +141,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
             {renderSearchBox}
             <Row>
               <InfiniteLoader
+                key={query}
                 isRowLoaded={this.isRowLoaded}
                 loadMoreRows={this.loadMoreRows}
                 rowCount={rowCount}
@@ -181,6 +183,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
             isSearching: true,
             page: 1,
             totalElements,
+            query,
           });
         } else {
           this.setState((prevState: State) => ({
@@ -188,6 +191,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
             isSearching: false,
             page: 0,
             totalElements: prevState.cache.totalElements,
+            query: undefined,
           }));
         }
       },
