@@ -57,24 +57,12 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   public void setUp() {
     assumeTrue(isRabbitConnected());
     assumeTrue(isPostgresDialect());
+    deleteAllTestData();
   }
 
   @After
   public void tearDown() {
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
-    gatewayStatusLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
-    organisationJpaRepository.findBySlug("some-organisation")
-      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
-    organisationJpaRepository.findBySlug("organisation-123")
-      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
-    organisationJpaRepository.findBySlug("organisation-123-456")
-      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
-    cacheManager.getCacheNames().stream()
-      .map(name -> cacheManager.getCache(name))
-      .forEach(Cache::clear);
+    deleteAllTestData();
   }
 
   @Test
@@ -148,6 +136,23 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     publishMessage(toJson(message).getBytes());
 
     assertOrganisationWithSlugWasCreated("organisation-123-456");
+  }
+
+  private void deleteAllTestData() {
+    physicalMeterStatusLogJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
+    organisationJpaRepository.findBySlug("some-organisation")
+      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
+    organisationJpaRepository.findBySlug("organisation-123")
+      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
+    organisationJpaRepository.findBySlug("organisation-123-456")
+      .ifPresent(organisation -> organisationJpaRepository.delete(organisation));
+    cacheManager.getCacheNames().stream()
+      .map(name -> cacheManager.getCache(name))
+      .forEach(Cache::clear);
   }
 
   private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {
