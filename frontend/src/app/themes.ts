@@ -126,6 +126,11 @@ export const paperStyle: React.CSSProperties = {
   ...evoBorderRadius,
 };
 
+export const mainContentPaperStyle: React.CSSProperties = {
+  ...paperStyle,
+  paddingBottom: 0,
+};
+
 export const cardStyle: React.CSSProperties = {
   ...evoBorderRadius,
 };

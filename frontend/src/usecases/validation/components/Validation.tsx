@@ -1,6 +1,6 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
-import {paperStyle} from '../../../app/themes';
+import {mainContentPaperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
@@ -21,7 +21,7 @@ export const Validation = () => (
       </Row>
     </Row>
 
-    <Paper style={paperStyle}>
+    <Paper style={mainContentPaperStyle}>
       <ValidationTabsContainer/>
     </Paper>
   </MvpPageContainer>
