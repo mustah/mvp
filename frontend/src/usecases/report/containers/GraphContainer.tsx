@@ -214,8 +214,6 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
     return (<Dot {...rest} />);
   }
 
-  resetDots = () => this.dots = {};
-
   clearError = async () => {};
 
   setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {

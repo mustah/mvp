@@ -92,7 +92,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                                                                    // return "true"
     if (somethingChanged) {
       this.setState({isFetching: true});
-      //this.resetDots();
       await fetchMeasurements(
         selectedIndicators,
         selectedQuantities,
@@ -151,7 +150,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   clearError = async () => {
     const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
     this.setState({error: Maybe.nothing(), isFetching: true});
-    //this.resetDots(); //TODO
     await fetchMeasurements(
       selectedIndicators,
       selectedQuantities,
