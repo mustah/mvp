@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/SelectionResultActionsDropdown';
 import {testOrNull} from '../../components/hoc/hocs';
 import {withContent} from '../../components/hoc/withContent';
-import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
+import {withEmptyContent, WithEmptyContentProps,} from '../../components/hoc/withEmptyContent';
 import {superAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
 import {Loader} from '../../components/loading/Loader';
