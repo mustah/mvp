@@ -9,7 +9,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
-import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
+import {OnUpdateGraph} from '../../../../usecases/report/containers/ReportContainer';
 import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {
