@@ -68,7 +68,7 @@ public class MeteringMessageListener implements MessageListener {
     long elapsedTime = System.nanoTime() - start;
     long millis = TimeUnit.NANOSECONDS.toMillis(elapsedTime);
     if (millis >= 30) {
-      log.info(message + ": {} ms", millis);
+      log.debug(message + ": {} ms", millis);
     }
   }
 }
