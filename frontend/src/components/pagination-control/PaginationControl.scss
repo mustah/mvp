@@ -1,7 +1,7 @@
 @import '../../app/variables';
 
 .PaginationControl {
-  margin: 20px 0 10px;
+  margin: $space 0 $space;
 
   .rounded {
     min-height: 40px !important;

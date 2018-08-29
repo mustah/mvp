@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/SelectionResultActionsDropdown';
+import {testOrNull} from '../../components/hoc/hocs';
 import {withContent} from '../../components/hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {superAdminOnly} from '../../components/hoc/withRoles';
@@ -11,6 +12,7 @@ import {Loader} from '../../components/loading/Loader';
 import {now} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
+import {isSelectionPage} from '../../selectors/routerSelectors';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   clearErrorMeters,
@@ -43,7 +45,11 @@ import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {MeterList} from '../../usecases/validation/components/MeterList';
 import {syncAllMeters, syncWithMetering} from '../../usecases/validation/validationActions';
 
-interface StateToProps {
+interface SelectionPage {
+  isSelectionPage: boolean;
+}
+
+interface StateToProps extends SelectionPage {
   result: uuid[];
   entities: ObjectsById<Meter>;
   isFetching: boolean;
@@ -71,7 +77,13 @@ export type MeterListProps = StateToProps & DispatchToProps & OwnProps;
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const enhance = compose<Clickable, Clickable & HasContent>(superAdminOnly, withContent);
+const selectionPage = testOrNull<SelectionPage>(({isSelectionPage}: SelectionPage) => isSelectionPage);
+
+const enhance = compose<Clickable, Clickable & HasContent & SelectionPage>(
+  selectionPage,
+  superAdminOnly,
+  withContent,
+);
 
 const SuperAdminSelectionResultActionsDropdown = enhance(SelectionResultActionsDropdown);
 
@@ -87,7 +99,7 @@ class MeterListComponent extends React.Component<MeterListProps> {
   }
 
   render() {
-    const {result, isFetching, error} = this.props;
+    const {result, isFetching, isSelectionPage, error} = this.props;
     const {children, ...otherProps} = this.props;
     const hasContent = result.length > 0;
     const wrapperProps: MeterListProps & WithEmptyContentProps = {
@@ -102,6 +114,7 @@ class MeterListComponent extends React.Component<MeterListProps> {
           <SuperAdminSelectionResultActionsDropdown
             onClick={this.syncAllMeters}
             hasContent={hasContent}
+            isSelectionPage={isSelectionPage}
           />
           <MeterListWrapper {...wrapperProps}/>
         </Column>
@@ -119,11 +132,11 @@ const mapStateToProps = (
     auth: {user},
     userSelection: {userSelection},
     paginatedDomainModels: {meters},
+    routing,
     ui: {pagination},
   }: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
-
   const entityType: EntityTypes = 'meters';
   const paginationData: Pagination = getPagination({componentId, entityType, pagination});
   const {page} = paginationData;
@@ -138,6 +151,7 @@ const mapStateToProps = (
     }),
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
+    isSelectionPage: isSelectionPage(routing),
     pagination: paginationData,
     error: getPageError<Meter>(meters, page),
     entityType,

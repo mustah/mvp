@@ -118,16 +118,20 @@ Sparky.task('tests', runTests);
 
 Sparky.task('run-type-checker', runTypeChecker);
 
-Sparky.task('default', ['clean', 'config', 'watch:assets'], () => {
+const defaultTaskRunner = (onComplete) => {
   fuse.dev();
-  app.watch()
-    .hmr()
-    .completed(() => {
-      runTypeChecker();
-      runTests();
-    });
+  app.watch().hmr().completed(onComplete);
   return fuse.run();
-});
+};
+
+const defaultTasks = ['clean', 'config', 'watch:assets'];
+
+Sparky.task('default', defaultTasks, () => defaultTaskRunner(() => {
+  runTypeChecker();
+  runTests();
+}));
+
+Sparky.task('no-tests', defaultTasks, () => defaultTaskRunner(runTypeChecker));
 
 Sparky.task('verify', ['run-type-checker', 'tests'], () => {});
 

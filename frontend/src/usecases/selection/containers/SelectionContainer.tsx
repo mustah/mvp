@@ -2,7 +2,7 @@ import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
-import {paperStyle} from '../../../app/themes';
+import {mainContentPaperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
@@ -28,7 +28,7 @@ const SelectionContainerComponent = ({title}: Props) => {
           <PeriodContainer/>
         </Row>
       </Row>
-      <Paper style={paperStyle}>
+      <Paper style={mainContentPaperStyle}>
         <SelectionContentContainer/>
       </Paper>
     </MvpPageContainer>

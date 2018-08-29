@@ -120,10 +120,15 @@ export const floatingLabelFocusStyle = {
 };
 
 export const paperStyle: React.CSSProperties = {
-  paddingTop: 24,
-  paddingBottom: 24,
+  paddingTop: 16,
+  paddingBottom: 16,
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.16)',
   ...evoBorderRadius,
+};
+
+export const mainContentPaperStyle: React.CSSProperties = {
+  ...paperStyle,
+  paddingBottom: 0,
 };
 
 export const cardStyle: React.CSSProperties = {
