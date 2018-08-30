@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -25,13 +25,14 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 
 @NoArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
-@ToString(exclude = {"measurements", "statusLogs", "missingMeasurements"})
+@ToString(exclude = {"statusLogs", "missingMeasurements", "measurements"})
 @Audited
 public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
@@ -53,18 +54,18 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   @NotAudited
   @JsonManagedReference
   @OneToMany(mappedBy = "id.physicalMeter")
-  public List<MeasurementEntity> measurements;
+  public Set<MeasurementEntity> measurements = emptySet();
 
   @NotAudited
   @JsonManagedReference
   @OneToMany(mappedBy = "id.physicalMeter")
-  public List<MissingMeasurementEntity> missingMeasurements;
+  public Set<MissingMeasurementEntity> missingMeasurements = emptySet();
 
   @NotAudited
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "physicalMeterId", orphanRemoval = true)
   @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
-  public Set<PhysicalMeterStatusLogEntity> statusLogs;
+  public Set<PhysicalMeterStatusLogEntity> statusLogs = new HashSet<>();
 
   public UUID logicalMeterId;
 
