@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.user;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
@@ -34,7 +35,7 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
   public String externalId;
 
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
-  public Set<UserEntity> users;
+  public Set<UserEntity> users = new HashSet<>();
 
   public OrganisationEntity(UUID id, String name, String slug, String externalId) {
     this.id = id;

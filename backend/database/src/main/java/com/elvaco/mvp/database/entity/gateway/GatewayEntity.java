@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.gateway;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
@@ -51,13 +52,13 @@ public class GatewayEntity extends IdentifiableType<UUID> {
 
   @ManyToMany(mappedBy = "gateways")
   @Fetch(FetchMode.SUBSELECT)
-  public Set<LogicalMeterEntity> meters;
+  public Set<LogicalMeterEntity> meters = new HashSet<>();
 
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "gatewayId", fetch = FetchType.LAZY)
   @Cascade(value = CascadeType.MERGE)
   @NotAudited
-  public Set<GatewayStatusLogEntity> statusLogs;
+  public Set<GatewayStatusLogEntity> statusLogs = new HashSet<>();
 
   public GatewayEntity(
     UUID id,

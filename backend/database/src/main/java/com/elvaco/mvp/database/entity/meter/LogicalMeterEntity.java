@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
@@ -50,7 +51,7 @@ public class LogicalMeterEntity extends IdentifiableType<UUID> {
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
   @Fetch(FetchMode.SUBSELECT)
   @Cascade(CascadeType.MERGE)
-  public Set<PhysicalMeterEntity> physicalMeters;
+  public Set<PhysicalMeterEntity> physicalMeters = new HashSet<>();
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
