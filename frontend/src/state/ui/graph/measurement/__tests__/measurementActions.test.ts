@@ -5,7 +5,7 @@ import {Maybe} from '../../../../../helpers/Maybe';
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
 import {Unauthorized} from '../../../../../usecases/auth/authModels';
-import {GraphContainerState} from '../../../../../usecases/report/containers/GraphContainer';
+import {ReportContainerState} from '../../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
 import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
@@ -37,6 +37,9 @@ describe('measurementActions', () => {
       it('extracts a single axis if all measurements are of the same unit', () => {
         const sameUnit: MeasurementApiResponse = [
           {
+            id: 'meter a',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -48,6 +51,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
+            id: 'meter b',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -71,6 +77,9 @@ describe('measurementActions', () => {
       it('extracts two axes if measurements are of exactly two different units', () => {
         const twoDifferentUnits: MeasurementApiResponse = [
           {
+            id: 'meter a',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -82,6 +91,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
+            id: 'meter b',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.forwardTemperature,
             values: [
               {
@@ -106,6 +118,9 @@ describe('measurementActions', () => {
       it('ignores all measurements of a third unit, if there already are two', () => {
         const threeDifferentUnits: MeasurementApiResponse = [
           {
+            id: 'meter a',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -117,6 +132,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
+            id: 'meter b',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.energy,
             values: [
               {
@@ -128,6 +146,9 @@ describe('measurementActions', () => {
             unit: 'kWh',
           },
           {
+            id: 'meter c',
+            city: 'Varberg',
+            address: 'Västgötagatan 10',
             quantity: Quantity.differenceTemperature,
             values: [
               {
@@ -155,6 +176,9 @@ describe('measurementActions', () => {
           const firstMeasurement: number = 1516521585107;
           const slightlyLaterThanFirstAverage: MeasurementApiResponse = [
             {
+              id: 'meter a',
+              city: 'Varberg',
+              address: 'Drottningatan 1',
               quantity: Quantity.power,
               values: [
                 {
@@ -169,6 +193,9 @@ describe('measurementActions', () => {
 
           const average: MeasurementApiResponse = [
             {
+              id: 'meter a',
+              city: 'Varberg',
+              address: 'Drottningatan 1',
               quantity: Quantity.power,
               values: [
                 {
@@ -180,6 +207,9 @@ describe('measurementActions', () => {
               unit: 'mW',
             },
             {
+              id: 'meter b',
+              city: 'Varberg',
+              address: 'Drottningatan 1',
               quantity: Quantity.power,
               values: [
                 {
@@ -220,9 +250,9 @@ describe('measurementActions', () => {
       },
     });
 
-    let state: GraphContainerState;
+    let state: ReportContainerState;
     let loggedOut: string;
-    const updateState = (updatedState: GraphContainerState) => state = {...updatedState};
+    const updateState = (updatedState: ReportContainerState) => state = {...updatedState};
     const logout = (error?: Unauthorized) => error ? loggedOut = error.message : 'logged out';
 
     beforeEach(() => {
@@ -232,7 +262,7 @@ describe('measurementActions', () => {
 
     it('sets default state if no quantities are provided', async () => {
       updateState({...initialState, isFetching: true});
-      const fetching: GraphContainerState = {...initialState};
+      const fetching: ReportContainerState = {...initialState};
       expect(state).not.toEqual(fetching);
 
       await fetchMeasurements(
@@ -244,7 +274,7 @@ describe('measurementActions', () => {
         updateState,
         logout,
       );
-      const expected: GraphContainerState = {...initialState};
+      const expected: ReportContainerState = {...initialState};
       expect(state).toEqual(expected);
     });
 
@@ -264,7 +294,7 @@ describe('measurementActions', () => {
         ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
         Period.currentMonth,
         Maybe.nothing(),
-        (state: GraphContainerState) => void(0),
+        (state: ReportContainerState) => void(0),
         (error?: Unauthorized) => void(0),
       );
 
@@ -274,7 +304,7 @@ describe('measurementActions', () => {
 
     it('returns empty data if no meter ids are provided', async () => {
       updateState({...initialState, isFetching: true});
-      const fetching: GraphContainerState = {...initialState};
+      const fetching: ReportContainerState = {...initialState};
       expect(state).not.toEqual(fetching);
 
       await fetchMeasurements(
@@ -286,7 +316,7 @@ describe('measurementActions', () => {
         updateState,
         logout,
       );
-      const expected: GraphContainerState = {...initialState};
+      const expected: ReportContainerState = {...initialState};
       expect(state).toEqual(expected);
     });
 
@@ -357,6 +387,9 @@ describe('measurementActions', () => {
 
         const measurement: MeasurementApiResponse = [
           {
+            id: 'meter a',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -368,6 +401,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
+            id: 'meter b',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -382,6 +418,9 @@ describe('measurementActions', () => {
 
         const average: MeasurementApiResponse = [
           {
+            id: 'Varberg',
+            city: 'Varberg',
+            address: '',
             quantity: Quantity.power,
             unit: 'mW',
             label: 'average',
@@ -432,6 +471,9 @@ describe('measurementActions', () => {
 
         const measurement: MeasurementApiResponse = [
           {
+            id: 'meter a',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -443,6 +485,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
+            id: 'meter b',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -457,6 +502,9 @@ describe('measurementActions', () => {
 
         const average: MeasurementApiResponse = [
           {
+            id: 'Varberg',
+            city: 'Varberg',
+            address: '',
             quantity: Quantity.power,
             unit: 'mW',
             label: 'average',
@@ -505,6 +553,9 @@ describe('measurementActions', () => {
 
         const measurement: MeasurementApiResponse = [
           {
+            id: 'meter a',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -516,6 +567,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
+            id: 'meter b',
+            city: 'Varberg',
+            address: 'Drottningatan 1',
             quantity: Quantity.power,
             values: [
               {
@@ -530,6 +584,9 @@ describe('measurementActions', () => {
 
         const average: MeasurementApiResponse = [
           {
+            id: 'Varberg',
+            city: 'Varberg',
+            address: '',
             quantity: Quantity.power,
             unit: 'mW',
             label: 'average',

@@ -27,14 +27,18 @@ public class MeasurementDtoMapperTest {
 
   @Test
   public void oneMeasurementMappedToSeries() {
+    UUID logicalMeterId = randomUUID();
     UUID physicalMeterId = randomUUID();
     Measurement measurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
 
     List<MeasurementSeriesDto> expected = singletonList(
       new MeasurementSeriesDto(
+        logicalMeterId.toString(),
         "Cheese",
         "pcs",
         physicalMeterId.toString(),
+        "city",
+        "address",
         singletonList(
           new MeasurementValueDto(measurement.created.toInstant(), 3.0)
         )
@@ -42,21 +46,25 @@ public class MeasurementDtoMapperTest {
     );
 
     assertThat(MeasurementDtoMapper.toSeries(singletonList(
-      LabeledMeasurementValue.from(measurement)
+      LabeledMeasurementValue.of(measurement, logicalMeterId, "city", "address")
     ))).isEqualTo(expected);
   }
 
   @Test
   public void twoMeasurementsMappedToSameSeries() {
+    UUID logicalMeterId = randomUUID();
     UUID physicalMeterId = randomUUID();
     Measurement firstMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
 
     List<MeasurementSeriesDto> expected = singletonList(
       new MeasurementSeriesDto(
+        logicalMeterId.toString(),
         "Cheese",
         "pcs",
         physicalMeterId.toString(),
+        "city",
+        "address",
         asList(
           new MeasurementValueDto(firstMeasurement.created.toInstant(), 3.0),
           new MeasurementValueDto(secondMeasurement.created.toInstant(), 3.0)
@@ -65,34 +73,41 @@ public class MeasurementDtoMapperTest {
     );
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.from(firstMeasurement),
-      LabeledMeasurementValue.from(secondMeasurement)
+      LabeledMeasurementValue.of(firstMeasurement, logicalMeterId, "city", "address"),
+      LabeledMeasurementValue.of(secondMeasurement, logicalMeterId, "city", "address")
     ))).isEqualTo(expected);
   }
 
   @Test
   public void twoSeriesFromSameMeter() {
+    UUID logicalMeterId = randomUUID();
     UUID physicalMeterId = randomUUID();
     Measurement firstMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondMeasurement = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.from(firstMeasurement),
-      LabeledMeasurementValue.from(secondMeasurement)
+      LabeledMeasurementValue.of(firstMeasurement, logicalMeterId, "city", "address"),
+      LabeledMeasurementValue.of(secondMeasurement, logicalMeterId, "city", "address")
     ))).isEqualTo(
       asList(
         new MeasurementSeriesDto(
+          logicalMeterId.toString(),
           "Cheese",
           "pcs",
           physicalMeterId.toString(),
+          "city",
+          "address",
           singletonList(
             new MeasurementValueDto(firstMeasurement.created.toInstant(), 3.0)
           )
         ),
         new MeasurementSeriesDto(
+          logicalMeterId.toString(),
           "Milk",
           "l",
           physicalMeterId.toString(),
+          "city",
+          "address",
           singletonList(
             new MeasurementValueDto(secondMeasurement.created.toInstant(), 3.0)
           )
@@ -103,6 +118,8 @@ public class MeasurementDtoMapperTest {
 
   @Test
   public void sameQuantityDifferentMeters() {
+    UUID firstLogicalMeterId = randomUUID();
+    UUID secondLogicalMeterId = randomUUID();
     UUID firstPhysicalMeterId = randomUUID();
     UUID secondPhysicalMeterId = randomUUID();
     Measurement firstMeasurement = newMeasurement(
@@ -115,22 +132,28 @@ public class MeasurementDtoMapperTest {
     );
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.from(firstMeasurement),
-      LabeledMeasurementValue.from(secondMeasurement)
+      LabeledMeasurementValue.of(firstMeasurement, firstLogicalMeterId, "city", "address"),
+      LabeledMeasurementValue.of(secondMeasurement, secondLogicalMeterId, "city", "address")
     ))).isEqualTo(
       asList(
         new MeasurementSeriesDto(
+          firstLogicalMeterId.toString(),
           "Cheese",
           "pcs",
           firstPhysicalMeterId.toString(),
+          "city",
+          "address",
           singletonList(
             new MeasurementValueDto(firstMeasurement.created.toInstant(), 3.0)
           )
         ),
         new MeasurementSeriesDto(
+          secondLogicalMeterId.toString(),
           "Cheese",
           "pcs",
           secondPhysicalMeterId.toString(),
+          "city",
+          "address",
           singletonList(
             new MeasurementValueDto(secondMeasurement.created.toInstant(), 3.0)
           )
@@ -140,30 +163,37 @@ public class MeasurementDtoMapperTest {
 
   @Test
   public void differentlySizedSeries() {
+    UUID logicalMeterId = randomUUID();
     UUID physicalMeterId = randomUUID();
     Measurement firstCheese = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondCheese = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement firstMilk = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.from(firstCheese),
-      LabeledMeasurementValue.from(secondCheese),
-      LabeledMeasurementValue.from(firstMilk)
+      LabeledMeasurementValue.of(firstCheese, logicalMeterId, "city", "address"),
+      LabeledMeasurementValue.of(secondCheese, logicalMeterId, "city", "address"),
+      LabeledMeasurementValue.of(firstMilk, logicalMeterId, "city", "address")
     ))).isEqualTo(
       asList(
         new MeasurementSeriesDto(
+          logicalMeterId.toString(),
           "Cheese",
           "pcs",
           physicalMeterId.toString(),
+          "city",
+          "address",
           asList(
             new MeasurementValueDto(firstCheese.created.toInstant(), 3.0),
             new MeasurementValueDto(secondCheese.created.toInstant(), 3.0)
           )
         ),
         new MeasurementSeriesDto(
+          logicalMeterId.toString(),
           "Milk",
           "l",
           physicalMeterId.toString(),
+          "city",
+          "address",
           singletonList(
             new MeasurementValueDto(firstMilk.created.toInstant(), 3.0)
           )

@@ -79,6 +79,7 @@ const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = (
   {lines, axes}: GraphContents,
+  outerHiddenKeys,
   hiddenKeys,
   renderDot: (props) => React.ReactNode,
   renderActiveDot: (props) => React.ReactNode,
@@ -86,6 +87,7 @@ const renderGraphContents = (
 
   const components: Children[] = lines
     .filter((line) => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
+    .filter((line) => outerHiddenKeys.indexOf(line.id) === -1)
     .map((props: LineProps, index: number) => {
       const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
       return (
@@ -145,7 +147,7 @@ const GraphContent =
 const GraphContentWrapper = withEmptyContent<GraphContentWrapperProps>(GraphContent);
 
 class GraphComponent extends React.Component<Props, GraphComponentState> {
-  state: GraphComponentState = {hiddenKeys:[]};
+  state: GraphComponentState = {hiddenKeys: []};
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
@@ -154,11 +156,20 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
   private activeDataKey: uuid;
 
   render() {
-    const {graphContents, outerHiddenKeys,selectedListItems, selectedQuantities, selectQuantities, selectedIndicators} = this.props;
+    const {
+      graphContents,
+      outerHiddenKeys,
+      selectedListItems,
+      selectedQuantities,
+      selectQuantities,
+      selectedIndicators,
+    } = this.props;
+
     const {hiddenKeys} = this.state;
 
     const lines: Children[] = renderGraphContents(
       graphContents,
+      outerHiddenKeys,
       hiddenKeys,
       this.renderAndStoreDot,
       this.renderActiveDot,
@@ -196,9 +207,6 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
     );
   }
 
-  //TODO move loader up
-//<Loader isFetching={isFetching} error={error} clearError={this.clearError}>
-//</Loader>
   renderActiveDot = (props: ActiveDotReChartProps) =>
     <ActiveDot {...props} activeDataKey={this.activeDataKey}/>
 
@@ -213,8 +221,6 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
     };
     return (<Dot {...rest} />);
   }
-
-  clearError = async () => {};
 
   setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
     if (isTooltipActive) {
@@ -255,7 +261,7 @@ const mapStateToProps =
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  selectQuantities
+  selectQuantities,
 }, dispatch);
 
 export const GraphContainer =

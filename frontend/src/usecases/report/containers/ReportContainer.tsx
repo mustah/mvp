@@ -11,6 +11,7 @@ import {
   SelectedIndicatorWidgetProps,
 } from '../../../components/indicators/ReportIndicatorWidgets';
 import {Row} from '../../../components/layouts/row/Row';
+import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
@@ -20,13 +21,14 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
+import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
 import {initialState, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {
-  toggleReportIndicatorWidget
+  toggleReportIndicatorWidget,
 } from '../../../state/ui/indicator/indicatorActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
@@ -35,6 +37,7 @@ import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
 import {GraphContents, hardcodedIndicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
+import {LegendContainer} from './LegendContainer';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
@@ -53,7 +56,6 @@ export interface ReportContainerState {
 
 interface DispatchToProps {
   toggleReportIndicatorWidget: OnSelectIndicator;
-//  selectQuantities: (quantities: Quantity[]) => void;
   logout: OnLogout;
 }
 
@@ -65,6 +67,8 @@ const selectedTab: TabName = TabName.graph;
 
 export type OnUpdateGraph = (state: ReportContainerState) => void;
 
+const onChangeTab = () => void(0);
+
 class ReportComponent extends React.Component<Props, ReportContainerState> {
   constructor(props) {
     super(props);
@@ -73,7 +77,9 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
   async componentDidMount() {
     const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
+
     this.setState({isFetching: true});
+
     await fetchMeasurements(
       selectedIndicators,
       selectedQuantities,
@@ -88,26 +94,30 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   async componentWillReceiveProps({
     selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
   }: Props) {
-    const somethingChanged = true || period !== this.props.period; // TODO: Should not always
-                                                                   // return "true"
-    if (somethingChanged) {
-      this.setState({isFetching: true});
-      await fetchMeasurements(
-        selectedIndicators,
-        selectedQuantities,
-        selectedListItems,
-        period,
-        customDateRange,
-        this.updateState,
-        logout,
-      );
-    }
+    this.setState({isFetching: true});
+    await fetchMeasurements(
+      selectedIndicators,
+      selectedQuantities,
+      selectedListItems,
+      period,
+      customDateRange,
+      this.updateState,
+      logout,
+    );
   }
 
   render() {
     const {selectedIndicatorTypes, toggleReportIndicatorWidget} = this.props;
+    const {isFetching, error} = this.state;
 
-    const onChangeTab = () => void(0);
+    const onToggleLine = (dataKey: string) => {
+      this.setState({
+        hiddenKeys: toggle(
+          dataKey,
+          this.state.hiddenKeys,
+        ),
+      });
+    };
 
     const indicators = hardcodedIndicators();
 
@@ -127,23 +137,26 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
         onClick={toggleReportIndicatorWidget}
       />
 
-        <Paper style={contentStyle}>
-          <div style={style}>
-            <Tabs>
-              <TabTopBar>
-                <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-                  <Tab tab={TabName.graph} title={translate('graph')}/>
-                </TabHeaders>
-              </TabTopBar>
-              <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-                <GraphContainer graphContents={this.state.graphContents} outerHiddenKeys={this.state.hiddenKeys}/>
-              </TabContent>
-            </Tabs>
-          </div>
-        </Paper>
+        <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
+          <Paper style={contentStyle}>
+            <div style={style}>
+              <Tabs>
+                <TabTopBar>
+                  <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+                    <Tab tab={TabName.graph} title={translate('graph')}/>
+                  </TabHeaders>
+                </TabTopBar>
+                <TabContent tab={TabName.graph} selectedTab={selectedTab}>
+                  <GraphContainer graphContents={this.state.graphContents} outerHiddenKeys={this.state.hiddenKeys}/>
+                </TabContent>
+              </Tabs>
+            </div>
+            <LegendContainer graphContents={this.state.graphContents} onToggleLine={onToggleLine} />
+          </Paper>
+        </Loader>
       </MvpPageContainer>
     );
-  };
+  }
 
   updateState = (state: ReportContainerState) => this.setState({...state});
 
@@ -178,7 +191,6 @@ const mapStateToProps =
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleReportIndicatorWidget,
-  //selectQuantities,
   logout,
 }, dispatch);
 

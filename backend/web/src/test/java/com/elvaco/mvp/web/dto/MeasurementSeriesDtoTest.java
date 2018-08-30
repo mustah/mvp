@@ -19,7 +19,7 @@ public class MeasurementSeriesDtoTest {
       new MeasurementValueDto(now.plusMinutes(12).toInstant(), 1.0)
     );
 
-    assertThat(new MeasurementSeriesDto("quantity", "unit", "label",
+    assertThat(new MeasurementSeriesDto(null, "quantity", "unit", "label", null, null,
       values
     ).values).containsExactly(
       new MeasurementValueDto(now.minusDays(1).toInstant(), 1.0),
@@ -27,5 +27,4 @@ public class MeasurementSeriesDtoTest {
       new MeasurementValueDto(now.plusMinutes(12).toInstant(), 1.0)
     );
   }
-
 }

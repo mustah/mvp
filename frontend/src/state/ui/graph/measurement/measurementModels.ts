@@ -18,7 +18,7 @@ const emptyGraphContents: GraphContents = {
   lines: [],
 };
 
-export const initialState: ReportContainerState= {
+export const initialState: ReportContainerState = {
   hiddenKeys: [],
   graphContents: emptyGraphContents,
   isFetching: false,
@@ -26,9 +26,12 @@ export const initialState: ReportContainerState= {
 };
 
 export interface MeasurementApiResponsePart {
+  id: string;
   quantity: Quantity;
   unit: string;
   label: string;
+  city: string;
+  address: string;
   values: Array<{
     when: number;
     value?: number;
