@@ -27,7 +27,6 @@ public class MeasurementEntityMapper {
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(domainModel.quantity)),
         PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
       ),
-
       new MeasurementUnit(domainModel.unit, domainModel.value)
     );
 

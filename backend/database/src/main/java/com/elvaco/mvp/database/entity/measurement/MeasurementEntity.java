@@ -19,11 +19,9 @@ import org.hibernate.annotations.Type;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Entity
 @Access(AccessType.FIELD)
-@Table(
-  name = "measurement"
-)
+@Entity
+@Table(name = "measurement")
 public class MeasurementEntity extends IdentifiableType<MeasurementPk> {
 
   private static final long serialVersionUID = -3650501037709018061L;
