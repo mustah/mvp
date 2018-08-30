@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-06-05 11:23+0200\n"
+"POT-Creation-Date: 2018-08-30 00:23+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,6 +28,9 @@ msgstr "delete organisation"
 
 msgid "add organisation"
 msgstr "add organisation"
+
+msgid "sync all meters on this page"
+msgstr "sync all meters on this page"
 
 msgid "edit user"
 msgstr "edit user"
@@ -86,6 +89,9 @@ msgstr "are you sure you want to delete this item"
 msgid "all"
 msgstr "all"
 
+msgid "unknown"
+msgstr "unknown"
+
 msgid "version"
 msgstr "version"
 
@@ -127,9 +133,6 @@ msgstr "other"
 
 msgid "no"
 msgstr "no"
-
-msgid "unknown"
-msgstr "unknown"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -209,20 +212,8 @@ msgstr "collected at"
 msgid "date"
 msgstr "date"
 
-msgid "collection percentage"
-msgstr "collection"
-
 msgid "no meters"
 msgstr "no meters"
-
-msgid "facility"
-msgstr "facility"
-
-msgid "gateway"
-msgstr "gateway"
-
-msgid "status change"
-msgstr "status change"
 
 msgid "ok"
 msgstr "OK"
@@ -267,6 +258,11 @@ msgstr "an unexpected error occurred"
 
 msgid "the internet connection appears to be offline"
 msgstr "the internet connection appears to be offline"
+
+msgid ""
+"looks like the server is taking to long to respond, please try again in soon"
+msgstr ""
+"looks like the server is taking to long to respond, please try again in soon"
 
 msgid "successfully deleted the organisation {{name}}"
 msgstr "successfully deleted the organisation {{name}}"
@@ -337,20 +333,17 @@ msgstr "your email address"
 msgid "your password"
 msgstr "your password"
 
-msgid "flagged for action"
-msgstr "flagged for action"
+msgid "gateway"
+msgstr "gateway"
 
-msgid "cities"
-msgstr "cities"
-
-msgid "product models"
-msgstr "product models"
-
-msgid "list"
-msgstr "list"
+msgid "status change"
+msgstr "status change"
 
 msgid "no gateways"
 msgstr "no gateways"
+
+msgid "list"
+msgstr "list"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -375,9 +368,6 @@ msgstr "select quantities"
 
 msgid "select meters to include in graph"
 msgstr "select meters to include in graph"
-
-msgid "no data found for selected meters during chosen interval"
-msgstr "no data found for selected meters during chosen interval"
 
 msgid "graph"
 msgstr "graph"
@@ -427,11 +417,20 @@ msgstr "meter status"
 msgid "gateway status"
 msgstr "gateway status"
 
+msgid "facility"
+msgstr "facility"
+
+msgid "secondary address"
+msgstr "secondary address"
+
 msgid "filter"
 msgstr "filter"
 
 msgid "delete user selection"
 msgstr "delete selection"
+
+msgid "show on map"
+msgstr "show on map"
 
 msgid "no saved selections"
 msgstr "no saved selections"
@@ -451,18 +450,11 @@ msgstr "logout"
 msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 
-msgid "sync all meters on this page"
-msgstr "sync all meters on this page"
+msgid "collection percentage"
+msgstr "collection"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} meter will soon be synchronized"
-
-msgctxt "°plural"
-msgid "{{count}} meter will soon be synchronized°"
-msgstr "{{count}} meters will soon be synchronized"
-
-msgid "looks like the server is taking to long to respond, please try again in soon"
-msgstr "looks like the server is taking to long to respond, please try again in soon"
 
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"
@@ -493,8 +485,21 @@ msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
 msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
 
 msgctxt "°plural"
-msgid "alarm°"
-msgstr "alarms"
+msgid "{{count}} meter will soon be synchronized°"
+msgstr "{{count}} meters will soon be synchronized"
 
-msgid "secondary address"
-msgstr "secondary address"
+#~ msgid "flagged for action"
+#~ msgstr "flagged for action"
+
+#~ msgid "cities"
+#~ msgstr "cities"
+
+#~ msgid "product models"
+#~ msgstr "product models"
+
+#~ msgid "no data found for selected meters during chosen interval"
+#~ msgstr "no data found for selected meters during chosen interval"
+
+#~ msgctxt "°plural"
+#~ msgid "alarm°"
+#~ msgstr "alarms"

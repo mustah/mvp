@@ -82,10 +82,22 @@ export const dividerStyle: React.CSSProperties = {
 export const listItemStyle: React.CSSProperties = {
   fontSize: fontSizeNormal,
   textStyle: {
+    display: 'inline-block',
     textOverflow: 'ellipsis',
-    width: 150,
+    maxWidth: 150,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
+    // instead of hardcoding a height, the padding alleviates the "inline-block"
+    // that causes descenders (g j p etc) to be cut off (tested in Chrome and Firefox)
+    padding: '1px 0',
+  },
+};
+
+export const listItemStyleWithActions: React.CSSProperties = {
+  ...listItemStyle,
+  textStyle: {
+    ...listItemStyle.textStyle,
+    maxWidth: 100,
   },
 };
 

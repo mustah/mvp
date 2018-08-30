@@ -94,7 +94,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const statusChangelog = normalizedStatusChangelogFor(meter);
     const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
 
-    const hasContent = meterMapMarker
+    const hasContent: boolean = meterMapMarker
       .filter(({status}: MapMarker) => status !== undefined)
       .isJust();
 

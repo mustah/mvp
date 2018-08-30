@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-06-05 11:22+0200\n"
+"POT-Creation-Date: 2018-08-30 00:23+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,6 +28,9 @@ msgstr "ta bort organisation"
 
 msgid "add organisation"
 msgstr "lägg till organisation"
+
+msgid "sync all meters on this page"
+msgstr "synka alla mätare på denna sida"
 
 msgid "edit user"
 msgstr "redigera användare"
@@ -86,6 +89,9 @@ msgstr "är du säker på att du vill ta bort detta objekt"
 msgid "all"
 msgstr "alla"
 
+msgid "unknown"
+msgstr "okänd"
+
 msgid "version"
 msgstr "version"
 
@@ -127,9 +133,6 @@ msgstr "övriga"
 
 msgid "no"
 msgstr "nej"
-
-msgid "unknown"
-msgstr "okänd"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -209,20 +212,8 @@ msgstr "insamlades"
 msgid "date"
 msgstr "datum"
 
-msgid "collection percentage"
-msgstr "insamling"
-
 msgid "no meters"
 msgstr "inga mätare"
-
-msgid "facility"
-msgstr "anläggning"
-
-msgid "gateway"
-msgstr "gateway"
-
-msgid "status change"
-msgstr "statusförändring"
 
 msgid "ok"
 msgstr "ok"
@@ -256,8 +247,8 @@ msgstr "ej flaggad"
 
 msgid "token missing or invalid"
 msgstr ""
-"du är utloggad, för att du har varit inaktiv för länge. Logga in igen för att "
-"fortsätta"
+"du är utloggad, för att du har varit inaktiv för länge. Logga in igen för "
+"att fortsätta"
 
 msgid "bad credentials"
 msgstr "felaktigt användarnamn eller lösenord"
@@ -267,6 +258,10 @@ msgstr "ett oväntat fel inträffade"
 
 msgid "the internet connection appears to be offline"
 msgstr "du har ingen internetuppkoppling"
+
+msgid ""
+"looks like the server is taking to long to respond, please try again in soon"
+msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
 
 msgid "successfully deleted the organisation {{name}}"
 msgstr "lyckades ta bort organisationen {{name}}"
@@ -337,20 +332,17 @@ msgstr "din e-post"
 msgid "your password"
 msgstr "ditt lösenord"
 
-msgid "flagged for action"
-msgstr "flaggad för åtgärd"
+msgid "gateway"
+msgstr "gateway"
 
-msgid "cities"
-msgstr "städer"
-
-msgid "product models"
-msgstr "produktmodeller"
-
-msgid "list"
-msgstr "lista"
+msgid "status change"
+msgstr "statusförändring"
 
 msgid "no gateways"
 msgstr "inga gateways"
+
+msgid "list"
+msgstr "lista"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -362,10 +354,12 @@ msgid "report"
 msgstr "rapport"
 
 msgid "{{count}} meter are not displayed in the map due to low accuracy"
-msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
-msgstr "{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgid "select medium"
 msgstr "välj mätartyp"
@@ -375,9 +369,6 @@ msgstr "välj storheter"
 
 msgid "select meters to include in graph"
 msgstr "välj mätare för att inkludera dem i grafen"
-
-msgid "no data found for selected meters during chosen interval"
-msgstr "ingen data finns för valda mätare under tidsperioden"
 
 msgid "graph"
 msgstr "graf"
@@ -427,11 +418,20 @@ msgstr "mätarstatus"
 msgid "gateway status"
 msgstr "gatewaystatus"
 
+msgid "facility"
+msgstr "anläggning"
+
+msgid "secondary address"
+msgstr "sekundäradress"
+
 msgid "filter"
 msgstr "filtrera"
 
 msgid "delete user selection"
 msgstr "ta bort urval"
+
+msgid "show on map"
+msgstr "visa på karta"
 
 msgid "no saved selections"
 msgstr "inga sparade urval"
@@ -451,18 +451,11 @@ msgstr "logga ut"
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
-msgid "sync all meters on this page"
-msgstr "synka alla mätare på denna sida"
+msgid "collection percentage"
+msgstr "insamling"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
-
-msgctxt "°plural"
-msgid "{{count}} meter will soon be synchronized°"
-msgstr "{{count}} mätare kommer snart att uppdateras"
-
-msgid "looks like the server is taking to long to respond, please try again in soon"
-msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
 
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"
@@ -486,15 +479,30 @@ msgstr "mätare"
 
 msgctxt "°plural"
 msgid "{{count}} meter are not displayed in the map due to low accuracy°"
-msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
-msgstr "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
-msgid "alarm°"
-msgstr "larm"
+msgid "{{count}} meter will soon be synchronized°"
+msgstr "{{count}} mätare kommer snart att uppdateras"
 
-msgid "secondary address"
-msgstr "sekundäradress"
+#~ msgid "flagged for action"
+#~ msgstr "flaggad för åtgärd"
+
+#~ msgid "cities"
+#~ msgstr "städer"
+
+#~ msgid "product models"
+#~ msgstr "produktmodeller"
+
+#~ msgid "no data found for selected meters during chosen interval"
+#~ msgstr "ingen data finns för valda mätare under tidsperioden"
+
+#~ msgctxt "°plural"
+#~ msgid "alarm°"
+#~ msgstr "larm"

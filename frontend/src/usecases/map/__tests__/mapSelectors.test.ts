@@ -7,11 +7,7 @@ import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {initialState} from '../../../state/summary/summaryReducer';
 import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
-import {
-  getGatewayLowConfidenceTextInfo,
-  getMeterLowConfidenceTextInfo,
-  getSelectedMapMarker,
-} from '../mapSelectors';
+import {getGatewayLowConfidenceTextInfo, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../mapSelectors';
 
 describe('mapSelectors', () => {
 
@@ -143,4 +139,5 @@ describe('mapSelectors', () => {
     });
 
   });
+
 });

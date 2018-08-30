@@ -18,31 +18,16 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
-import {
-  TabName,
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-} from '../../../state/ui/tabs/tabsModels';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {
-  ClearError,
-  EncodedUriParameters,
-  ErrorResponse,
-  Fetch,
-  OnClick,
-  uuid,
-} from '../../../types/Types';
+import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
-import {
-  getBounds,
-  getMeterLowConfidenceTextInfo,
-  getSelectedMapMarker,
-} from '../../map/mapSelectors';
+import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
 
 interface MapProps {
   bounds?: Bounds;
