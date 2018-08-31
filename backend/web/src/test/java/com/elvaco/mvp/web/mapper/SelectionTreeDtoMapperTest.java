@@ -39,7 +39,7 @@ public class SelectionTreeDtoMapperTest {
       "12345"
     );
 
-    selectionTree.addToSelectionTree(logicalMeter);
+    selectionTree.add(logicalMeter);
 
     assertThat(selectionTree.getCity("sweden,kungsbacka").name).isEqualTo("kungsbacka");
   }
@@ -53,7 +53,7 @@ public class SelectionTreeDtoMapperTest {
       "12345"
     );
 
-    Stream.of(logicalMeter, logicalMeter).forEach((lm) -> selectionTree.addToSelectionTree(lm));
+    Stream.of(logicalMeter, logicalMeter).forEach((lm) -> selectionTree.add(lm));
 
     assertThat(selectionTree.getCities().size()).isEqualTo(1);
     assertThat(selectionTree.getCity("sweden,kungsbacka").getAddresses().size()).isEqualTo(1);
@@ -71,7 +71,7 @@ public class SelectionTreeDtoMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1245"),
       newLogicalMeter("finland", "kungsbacka", "kabelgatan 1", "1245")
     )
-      .forEach((lm) -> selectionTree.addToSelectionTree(lm));
+      .forEach((lm) -> selectionTree.add(lm));
 
     assertThat(selectionTree.getCities().size()).isEqualTo(2);
     assertThat(selectionTree.getCity("sweden,kungsbacka").getAddresses().size()).isEqualTo(1);
@@ -84,7 +84,7 @@ public class SelectionTreeDtoMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1245"),
       newLogicalMeter("sweden", "gothenburg", "kabelgatan 1", "1245")
     )
-      .forEach((lm) -> selectionTree.addToSelectionTree(lm));
+      .forEach((lm) -> selectionTree.add(lm));
 
     assertThat(selectionTree.getCity("sweden,kungsbacka").getAddresses().size()).isEqualTo(1);
     assertThat(selectionTree.getCity("sweden,gothenburg").getAddresses().size()).isEqualTo(1);
@@ -98,7 +98,7 @@ public class SelectionTreeDtoMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId, "1245"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", logicalMeterId, "1245")
     )
-      .forEach((lm) -> selectionTree.addToSelectionTree(lm));
+      .forEach((lm) -> selectionTree.add(lm));
 
     assertThat(selectionTree.getCity("sweden,kungsbacka")
       .getAddress("kabelgatan 1")
@@ -119,7 +119,7 @@ public class SelectionTreeDtoMapperTest {
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId1, "1245"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId2, "1245")
     )
-      .forEach((lm) -> selectionTree.addToSelectionTree(lm));
+      .forEach((lm) -> selectionTree.add(lm));
 
     assertThat(selectionTree.getCity("sweden,kungsbacka")
       .getAddress("kabelgatan 1")
@@ -131,7 +131,7 @@ public class SelectionTreeDtoMapperTest {
   public void logicalMeterWithNullLocationDefaultsToUnknownLocation() {
     LogicalMeter logicalMeter = newLogicalMeter(null, null, null, "1245");
 
-    selectionTree.addToSelectionTree(logicalMeter);
+    selectionTree.add(logicalMeter);
     assertThat(
       selectionTree
         .getCity("unknown,unknown")
@@ -145,7 +145,7 @@ public class SelectionTreeDtoMapperTest {
     Stream.of(
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1245"),
       newLogicalMeter("sweden", "gothenburg", "kabelgatan 1", "1234")
-    ).forEach((lm) -> selectionTree.addToSelectionTree(lm));
+    ).forEach((lm) -> selectionTree.add(lm));
 
     SelectionTreeDto selectionTreeDto = SelectionTreeDtoMapper.toDto(selectionTree);
 
@@ -160,7 +160,7 @@ public class SelectionTreeDtoMapperTest {
     Stream.of(
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "1234"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "1234")
-    ).forEach((lm) -> selectionTree.addToSelectionTree(lm));
+    ).forEach((lm) -> selectionTree.add(lm));
 
     SelectionTreeDto selectionTreeDto = SelectionTreeDtoMapper.toDto(selectionTree);
 
@@ -178,7 +178,7 @@ public class SelectionTreeDtoMapperTest {
     Stream.of(
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId1, "1245"),
       newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", logicalMeterId2, "1234")
-    ).forEach((lm) -> selectionTree.addToSelectionTree(lm));
+    ).forEach((lm) -> selectionTree.add(lm));
 
     SelectionTreeDto selectionTreeDto = SelectionTreeDtoMapper.toDto(selectionTree);
 
