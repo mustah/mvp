@@ -9,6 +9,7 @@ import {firstUpper, firstUpperTranslated} from '../../../../services/translation
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
+import ListItemProps = __MaterialUI.List.ListItemProps;
 
 interface RenderProps {
   id: uuid;
@@ -26,45 +27,83 @@ export interface ItemCapabilities {
   zoomable?: boolean;
 }
 
-export const renderSelectionTreeCities = ({id, selectionTree, toggleSingleEntry, ...other}: RenderProps) => {
+export const renderSelectionTreeCities = ({
+  id, selectionTree, toggleSingleEntry, openListItems, ...other
+}: RenderProps) => {
   const city = selectionTree.entities.cities[id];
-  const clusters = [...city.clusters].sort()
-    .map((id) => renderSelectionTreeClusters({...other, toggleSingleEntry, selectionTree, id}));
+
+  let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
+  if (city.clusters) {
+    if (openListItems.has(id)) {
+      nestedItems = [...city.clusters].sort()
+        .map((id) => renderSelectionTreeClusters({...other, openListItems, toggleSingleEntry, selectionTree, id}));
+    } else {
+      // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
+      nestedItems = [<React.Fragment key="city123"/>];
+    }
+  }
+
   return renderSelectableListItem({
     ...other,
     toggleSingleEntry,
+    openListItems,
     id,
     selectable: true,
     primaryText: orUnknown(city.name),
-    nestedItems: clusters,
+    nestedItems,
   });
 };
 
-const renderSelectionTreeClusters = ({id, selectionTree, ...other}: RenderProps) => {
+const renderSelectionTreeClusters = ({id, openListItems, selectionTree, ...other}: RenderProps) => {
   const cluster = selectionTree.entities.clusters[id];
-  const addresses = [...cluster.addresses].sort().map((id) => renderSelectionTreeAddresses({
-    ...other,
-    selectionTree,
-    id,
-  }));
+
+  let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
+  if (cluster.addresses) {
+    if (openListItems.has(id)) {
+      nestedItems = [...cluster.addresses].sort().map((id) => renderSelectionTreeAddresses({
+        ...other,
+        selectionTree,
+        openListItems,
+        id,
+      }));
+    } else {
+      // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
+      nestedItems = [<React.Fragment key="cluster123"/>];
+    }
+  }
+
   return renderSelectableListItem({
     ...other,
     id,
     selectable: true,
     primaryText: cluster.name,
-    nestedItems: addresses,
+    openListItems,
+    nestedItems,
   });
 };
 
-const renderSelectionTreeAddresses = ({id, selectionTree, ...other}: RenderProps) => {
+const renderSelectionTreeAddresses = ({id, openListItems, selectionTree, ...other}: RenderProps) => {
   const address = selectionTree.entities.addresses[id];
-  const meters = [...address.meters].sort().map((id) => renderSelectionTreeMeters({...other, selectionTree, id}));
+
+  // TODO is the id really an address..? don't think so
+  let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
+  if (openListItems.has(id)) {
+    nestedItems = [...address.meters]
+      .sort()
+      .map((id) => renderSelectionTreeMeters({...other, openListItems, selectionTree, id}));
+  } else {
+    // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
+    nestedItems = [<React.Fragment key="address123"/>];
+  }
+
+
   return renderSelectableListItem({
     ...other,
     id,
     selectable: true,
     primaryText: orUnknown(address.name),
-    nestedItems: meters,
+    openListItems,
+    nestedItems,
   });
 };
 
