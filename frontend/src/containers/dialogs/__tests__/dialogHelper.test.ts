@@ -1,14 +1,12 @@
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
+import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {
-  allQuantities,
-  Quantity,
-} from '../../../state/ui/graph/measurement/measurementModels';
-import {meterMeasurementsForTable, normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
-import {RenderableMeasurement} from '../MeterDetailsTabs';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
+import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {meterMeasurementsForTable, titleOf} from '../dialogHelper';
+import {RenderableMeasurement} from '../MeterDetailsTabs';
 
 describe('dialogHelper', () => {
 
@@ -39,7 +37,7 @@ describe('dialogHelper', () => {
 
   });
 
-  describe('normalizedStatusChangelogFor', () => {
+  describe('statusChangelogDataFormatter', () => {
 
     const gateway: Gateway = {
       id: '12032010',
@@ -80,7 +78,7 @@ describe('dialogHelper', () => {
     };
 
     it('normalizes and uses only statusChangelog property', () => {
-      expect(normalizedStatusChangelogFor(gateway)).toEqual({
+      expect(statusChangelogDataFormatter(gateway)).toEqual({
         entities:
           {
             '967af275-0026-43b9-a0ef-123dfb05612a':

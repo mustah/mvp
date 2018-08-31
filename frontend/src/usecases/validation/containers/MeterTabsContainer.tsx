@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Dialog} from '../../../components/dialog/Dialog';
+import {SearchBox} from '../../../components/dropdown-selector/SearchBox';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -18,16 +19,33 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
-import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {
+  getBounds,
+  getMeterLowConfidenceTextInfo,
+  getSelectedMapMarker,
+} from '../../map/mapSelectors';
+import {validationSearch} from '../../search/searchActions';
+import {OnSearch, Query} from '../../search/searchModels';
 
 interface MapProps {
   bounds?: Bounds;
@@ -35,7 +53,7 @@ interface MapProps {
   meterMapMarkers: DomainModel<MapMarker>;
 }
 
-interface StateToProps extends MapProps, TabsContainerStateToProps {
+interface StateToProps extends MapProps, TabsContainerStateToProps, Query {
   isFetching: boolean;
   selectedMarker: Maybe<uuid>;
   parameters: EncodedUriParameters;
@@ -46,6 +64,7 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   closeClusterDialog: OnClick;
   fetchMeterMapMarkers: Fetch;
   clearError: ClearError;
+  wildcardSearch: OnSearch;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -87,6 +106,8 @@ class ValidationTabs extends React.Component<Props> {
       meterMapMarkers,
       selectedMarker,
       closeClusterDialog,
+      query,
+      wildcardSearch,
     } = this.props;
 
     const wrapperProps: MapProps & WithEmptyContentProps = {
@@ -110,9 +131,14 @@ class ValidationTabs extends React.Component<Props> {
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
+          <SearchBox
+            onChange={wildcardSearch}
+            value={query}
+            className="SearchBox-list"
+          />
         </TabTopBar>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
-          <MeterListContainer componentId={'validationMeterList'}/>
+          <MeterListContainer componentId="validationMeterList"/>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} clearError={clearError} error={error}>
@@ -134,6 +160,7 @@ const mapStateToProps =
       userSelection: {userSelection},
       map,
       domainModels: {meterMapMarkers},
+      search: {validation: {query}},
     }: RootState = rootState;
     return ({
       bounds: getBounds(meterMapMarkers),
@@ -144,6 +171,7 @@ const mapStateToProps =
       parameters: getMeterParameters({userSelection, now: now()}),
       error: getError(meterMapMarkers),
       isFetching: meterMapMarkers.isFetching,
+      query,
     });
   };
 
@@ -152,7 +180,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeClusterDialog,
   clearError: clearErrorMeterMapMarkers,
   fetchMeterMapMarkers,
+  wildcardSearch: validationSearch,
 }, dispatch);
 
-export const ValidationTabsContainer =
+export const MeterTabsContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);

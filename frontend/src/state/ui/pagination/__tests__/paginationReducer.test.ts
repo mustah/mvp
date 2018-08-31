@@ -1,5 +1,7 @@
 import {mockSelectionAction} from '../../../../__tests__/testActions';
-import {changePaginationPage, paginationUpdateMetaData} from '../paginationActions';
+import {search} from '../../../../usecases/search/searchActions';
+import {collectionQuery, validationQuery} from '../../../../usecases/search/searchModels';
+import {changePage, updatePageMetaData} from '../paginationActions';
 import {
   PaginationChangePayload,
   PaginationMetadataPayload,
@@ -53,7 +55,7 @@ describe('paginationReducer', () => {
           useCases: {},
         },
       };
-      expect(pagination(undefined, paginationUpdateMetaData(payload))).toEqual(expectedState);
+      expect(pagination(undefined, updatePageMetaData(payload))).toEqual(expectedState);
     });
   });
   it('updates pagination but leaves useCases intact', () => {
@@ -68,7 +70,7 @@ describe('paginationReducer', () => {
       totalPages: 200,
     };
 
-    expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
+    expect(pagination(paginatedState, updatePageMetaData(payload))).toEqual({
       meters: {
         size: limit,
         totalPages: 200,
@@ -88,14 +90,12 @@ describe('paginationReducer', () => {
     };
 
     it('changes requestedPage', () => {
-
       const expectedState: PaginationState = {
         ...initialPaginationState,
         meters: {...initialPaginationState.meters, useCases: {test: {page: 10}}},
       };
 
-      expect(pagination(undefined, changePaginationPage(payload))).toEqual(expectedState);
-
+      expect(pagination(undefined, changePage(payload))).toEqual(expectedState);
     });
 
     it('only changes requestedPage for the targeted component', () => {
@@ -107,10 +107,39 @@ describe('paginationReducer', () => {
         },
       };
 
-      expect(pagination(paginatedState, changePaginationPage(payload))).toEqual(expectedState);
-
+      expect(pagination(paginatedState, changePage(payload))).toEqual(expectedState);
     });
+
+    it('changes page when wildcard search is performed', () => {
+      const expectedState: PaginationState = {
+        ...paginatedState,
+        meters: {
+          ...paginatedState.meters,
+          useCases: {
+            ...paginatedState.meters.useCases,
+            validationMeterList: {page: 0},
+          },
+        },
+      };
+      expect(pagination(paginatedState, search(validationQuery('ok')))).toEqual(expectedState);
+    });
+
+    it('changes page when gateway wildcard search is performed', () => {
+      const expectedState: PaginationState = {
+        ...paginatedState,
+        gateways: {
+          ...paginatedState.meters,
+          useCases: {
+            ...paginatedState.meters.useCases,
+            collectionGatewayList: {page: 0},
+          },
+        },
+      };
+      expect(pagination(paginatedState, search(collectionQuery('error')))).toEqual(expectedState);
+    });
+
   });
+
   describe('reset pagination', () => {
     it('sets pagination to initialState when getting the reset action', () => {
       const paginatedState: PaginationState = {

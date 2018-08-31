@@ -19,6 +19,7 @@ import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
+import {statusChangelogDataFormatter} from '../../state/domain-models-paginated/gateway/gatewaySchema';
 import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -28,7 +29,7 @@ import {Children, Identifiable, OnClickWithId} from '../../types/Types';
 import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
+import {meterMeasurementsForTable} from './dialogHelper';
 
 interface State {
   selectedTab: TabName;
@@ -91,7 +92,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
       result: [gateway.id],
     };
 
-    const statusChangelog = normalizedStatusChangelogFor(meter);
+    const statusChangelog = statusChangelogDataFormatter(meter);
     const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
 
     const hasContent: boolean = meterMapMarker

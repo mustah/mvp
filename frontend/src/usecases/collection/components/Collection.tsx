@@ -7,7 +7,7 @@ import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
-import {CollectionTabsContainer} from '../containers/CollectionTabsContainer';
+import {GatewayTabsContainer} from '../containers/GatewayTabsContainer';
 
 export const Collection = () => (
   <MvpPageContainer>
@@ -22,7 +22,7 @@ export const Collection = () => (
     </Row>
 
     <Paper style={mainContentPaperStyle}>
-      <CollectionTabsContainer/>
+      <GatewayTabsContainer/>
     </Paper>
   </MvpPageContainer>
 );

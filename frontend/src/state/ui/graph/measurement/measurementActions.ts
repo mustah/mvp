@@ -245,12 +245,12 @@ export const fetchMeasurements =
     } catch (error) {
       if (error instanceof InvalidToken) {
         await logout(error);
+      } else if (wasRequestCanceled(error)) {
+        return;
       } else if (isTimeoutError(error)) {
         updateState({...initialState, error: Maybe.maybe(requestTimeout())});
       } else if (!error.response) {
         updateState({...initialState, error: Maybe.maybe(noInternetConnection())});
-      } else if (wasRequestCanceled(error)) {
-        return;
       } else {
         updateState({
           ...initialState,

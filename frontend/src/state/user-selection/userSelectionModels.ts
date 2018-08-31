@@ -1,5 +1,6 @@
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {IdNamed, Selected, uuid} from '../../types/Types';
+import {Query} from '../../usecases/search/searchModels';
 import {SelectionItem} from '../domain-models/domainModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 
@@ -70,7 +71,7 @@ export interface UriLookupState extends UserSelectionState {
   now: Date;
 }
 
-export interface UriLookupStatePaginated extends UriLookupState {
+export interface UriLookupStatePaginated extends UriLookupState, Query {
   pagination: Pagination;
 }
 

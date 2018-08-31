@@ -59,7 +59,6 @@ interface State extends PagedResponse {
   isOpen: boolean;
   isSearching: boolean;
   page: number;
-  query?: string;
 }
 
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};

@@ -1,7 +1,7 @@
 import {Period} from '../../../components/dates/dateModels';
 import {momentWithTimeZone} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {EncodedUriParameters, IdNamed} from '../../../types/Types';
+import {EncodedUriParameters, IdNamed, Status, toIdNamed} from '../../../types/Types';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../userSelectionActions';
@@ -14,6 +14,7 @@ import {
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 import {
+  getPaginatedGatewayParameters,
   getPaginatedMeterParameters,
   getSelectedPeriod,
   getUserSelection,
@@ -49,7 +50,7 @@ describe('userSelectionSelectors', () => {
     expect(initialEncodedParameters).toEqual(`${latestUrlParameters}&size=${limit}&page=0`);
   });
 
-  describe('encodedUriParameters', () => {
+  describe('parameters', () => {
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
@@ -104,6 +105,96 @@ describe('userSelectionSelectors', () => {
         `&${latestUrlParameters}&size=${limit}&page=0`,
       );
     });
+
+    it('has wildcard search parameters when there is search query', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        {type: ADD_PARAMETER_TO_SELECTION, payload},
+      );
+
+      const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
+        query: 'bro',
+        userSelection: state.userSelection,
+        pagination: getPagination({
+          entityType: 'meters',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=bro`);
+    });
+  });
+
+  describe('getPaginatedGatewayParameters', () => {
+
+    it('has no wildcard search parameter without a query string', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        {type: ADD_PARAMETER_TO_SELECTION, payload},
+      );
+
+      const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
+        userSelection: state.userSelection,
+        pagination: getPagination({
+          entityType: 'gateways',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
+    });
+
+    it('has wildcard search parameter for gateways', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        {type: ADD_PARAMETER_TO_SELECTION, payload},
+      );
+
+      const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
+        query: 'sto',
+        userSelection: state.userSelection,
+        pagination: getPagination({
+          entityType: 'gateways',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=sto`);
+    });
+
+    it('has gateway search parameters', () => {
+      const payload: SelectionParameter = {
+        item: {...toIdNamed(Status.ok)},
+        parameter: ParameterName.gatewayStatuses,
+      };
+      const state: UserSelectionState = userSelection(
+        initialState,
+        {type: ADD_PARAMETER_TO_SELECTION, payload},
+      );
+
+      const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
+        query: 'sto',
+        userSelection: state.userSelection,
+        pagination: getPagination({
+          entityType: 'gateways',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
+        now,
+      });
+
+      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&size=20&page=0&w=sto`);
+    });
+
   });
 
   describe('get selected period', () => {

@@ -19,7 +19,7 @@ import {
   getPaginatedEntities,
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
+import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
@@ -31,6 +31,7 @@ import {
   uuid,
 } from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
+import {Query} from '../../search/searchModels';
 import {GatewayList} from '../components/GatewayList';
 
 interface ListProps {
@@ -40,8 +41,8 @@ interface ListProps {
   result: uuid[];
 }
 
-interface StateToProps extends ListProps {
-  encodedUriParametersForGateways: string;
+interface StateToProps extends ListProps, Query {
+  parameters: string;
   error: Maybe<ErrorResponse>;
   isFetching: boolean;
 }
@@ -66,20 +67,21 @@ const GatewayListWrapper = withEmptyContent<GatewayListProps & WithEmptyContentP
 class GatewayListComponent extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchGateways, encodedUriParametersForGateways, pagination: {page}} = this.props;
-    fetchGateways(page, encodedUriParametersForGateways);
+    const {fetchGateways, parameters, pagination: {page}} = this.props;
+    fetchGateways(page, parameters);
   }
 
-  componentWillReceiveProps({fetchGateways, encodedUriParametersForGateways, pagination: {page}}: Props) {
-    fetchGateways(page, encodedUriParametersForGateways);
+  componentWillReceiveProps({fetchGateways, parameters, pagination: {page}}: Props) {
+    fetchGateways(page, parameters);
   }
 
   render() {
     const {
       children,
-      encodedUriParametersForGateways,
+      parameters,
       isFetching,
       error,
+      query,
       result,
       ...otherProps,
     } = this.props;
@@ -103,7 +105,7 @@ class GatewayListComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}}: RootState,
+  {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}, search: {collection: {query}}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
   const entityType: EntityTypes = 'gateways';
@@ -113,11 +115,13 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities<Gateway>(gateways),
     result: getPageResult(gateways, page),
-    encodedUriParametersForGateways: getPaginatedGatewayParameters({
+    parameters: getPaginatedGatewayParameters({
+      query,
       pagination: paginationData,
       ...userSelection,
       now: now(),
     }),
+    query,
     isFetching: getPageIsFetching(gateways, page),
     pagination: paginationData,
     error: getPageError<Gateway>(gateways, page),
@@ -128,7 +132,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchGateways,
-  changePaginationPage,
+  changePaginationPage: changePage,
   clearError: clearErrorGateways,
 }, dispatch);
 

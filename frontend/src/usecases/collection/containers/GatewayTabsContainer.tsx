@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Dialog} from '../../../components/dialog/Dialog';
+import {SearchBox} from '../../../components/dropdown-selector/SearchBox';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -16,19 +17,36 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
+import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {Bounds, MapMarker} from '../../map/mapModels';
-import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {
+  getBounds,
+  getGatewayLowConfidenceTextInfo,
+  getSelectedMapMarker,
+} from '../../map/mapSelectors';
+import {collectionSearch} from '../../search/searchActions';
+import {OnSearch, Query} from '../../search/searchModels';
 import {GatewayListContainer} from './GatewayListContainer';
 
 interface MapProps {
@@ -37,7 +55,7 @@ interface MapProps {
   gatewayMapMarkers: DomainModel<MapMarker>;
 }
 
-interface StateToProps extends MapProps, TabsContainerStateToProps {
+interface StateToProps extends MapProps, TabsContainerStateToProps, Query {
   parameters?: EncodedUriParameters;
   selectedMarker: Maybe<uuid>;
   isFetching: boolean;
@@ -49,6 +67,7 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   closeClusterDialog: OnClick;
   clearError: ClearError;
   fetchGatewayMapMarkers: Fetch;
+  wildcardSearch: OnSearch;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -86,6 +105,8 @@ class CollectionTabs extends React.Component<Props> {
       error,
       gatewayMapMarkers,
       clearError,
+      query,
+      wildcardSearch,
     } = this.props;
 
     const dialog = selectedMarker.isJust() && (
@@ -109,6 +130,11 @@ class CollectionTabs extends React.Component<Props> {
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
+          <SearchBox
+            onChange={wildcardSearch}
+            value={query}
+            className="SearchBox-list"
+          />
         </TabTopBar>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <GatewayListContainer componentId="collectionGatewayList"/>
@@ -133,6 +159,7 @@ const mapStateToProps =
       map,
       domainModels: {gatewayMapMarkers},
       userSelection: {userSelection},
+      search: {collection: {query}},
     }: RootState = rootState;
     return ({
       bounds: getBounds(gatewayMapMarkers),
@@ -143,16 +170,18 @@ const mapStateToProps =
       selectedMarker: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),
+      query,
     });
   };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
-  changePaginationPage,
+  changePaginationPage: changePage,
   closeClusterDialog,
   fetchGatewayMapMarkers,
   clearError: clearErrorGatewayMapMarkers,
+  wildcardSearch: collectionSearch,
 }, dispatch);
 
-export const CollectionTabsContainer =
+export const GatewayTabsContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionTabs);

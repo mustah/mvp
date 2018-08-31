@@ -3,10 +3,8 @@ import {Column} from '../../../components/layouts/column/Column';
 import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import './SelectionResultList.scss';
 
-export const SearchResultList = () => {
-  return (
-    <Column className="SearchResultList">
-      <MeterListContainer componentId={'selectionMeterList'}/>
-    </Column>
-  );
-};
+export const SearchResultList = () => (
+  <Column className="SearchResultList">
+    <MeterListContainer componentId="selectionMeterList"/>
+  </Column>
+);

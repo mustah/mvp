@@ -2,13 +2,13 @@ import {makeUrl} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient} from '../../../services/restClient';
 import {EncodedUriParameters, IdNamed, toIdNamed, uuid} from '../../../types/Types';
+import {Query} from '../../../usecases/search/searchModels';
 import {SelectionListItem} from '../../user-selection/userSelectionModels';
 import {Address, City} from '../location/locationModels';
 
-export interface PagedResponse {
+export interface PagedResponse extends Query {
   items: SelectionListItem[];
   totalElements: number;
-  query?: string;
 }
 
 export type FetchByPage = (page: number, query?: string) => Promise<PagedResponse>;

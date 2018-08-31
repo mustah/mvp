@@ -43,6 +43,8 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
   `page=${encodeURIComponent(page.toString())}`,
 ];
 
+export const toQueryApiParameters = (query?: string): string[] => query ? [`w=${query}`] : [];
+
 export const toEntityApiParametersMeters =
   (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
     toEntityApiParameters(selectionParameters, meterParameterNames);

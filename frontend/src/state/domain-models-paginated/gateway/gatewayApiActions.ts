@@ -1,22 +1,22 @@
 import {EndPoints} from '../../../services/endPoints';
-import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
+import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {clearError, fetchIfNeeded} from '../paginatedDomainModelsActions';
 import {fetchEntityIfNeeded} from '../paginatedDomainModelsEntityActions';
 import {Gateway} from './gatewayModels';
-import {gatewaySchema} from './gatewaySchema';
+import {gatewayDataFormatter} from './gatewaySchema';
 
 export const clearErrorGateways = clearError(EndPoints.gateways);
 
 export const fetchGateways = fetchIfNeeded<Gateway>(
   EndPoints.gateways,
-  gatewaySchema,
+  gatewayDataFormatter,
   'gateways',
   {
     afterSuccess: (
       {result}: NormalizedPaginated<Gateway>,
       dispatch,
-    ) => dispatch(paginationUpdateMetaData({entityType: 'gateways', ...result})),
+    ) => dispatch(updatePageMetaData({entityType: 'gateways', ...result})),
   },
 );
 

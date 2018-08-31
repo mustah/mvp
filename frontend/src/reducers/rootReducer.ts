@@ -22,6 +22,7 @@ import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer'
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';
+import {search, SearchState} from '../usecases/search/searchReducer';
 import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {
@@ -37,6 +38,7 @@ export interface RootState {
   userSelection: UserSelectionState;
   ui: UiState;
   map: MapState;
+  search: SearchState;
 }
 
 export type AppState = RootState | undefined;
@@ -69,4 +71,5 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     selectionTree,
     ui,
     map,
+    search,
   });
