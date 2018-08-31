@@ -5,7 +5,7 @@ import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarSty
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {orUnknown} from '../../../../helpers/translations';
-import {firstUpperTranslated} from '../../../../services/translationService';
+import {firstUpper, firstUpperTranslated} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
@@ -119,7 +119,7 @@ const renderSelectableListItem = ({
     ? (
       <RowCenter className="space-between">
         <Row className="first-uppercase" style={listItemStyleWithActions.textStyle}>
-          <Normal title={primaryText}>
+          <Normal title={firstUpper(primaryText)}>
             {primaryText}
           </Normal>
         </Row>
@@ -137,7 +137,7 @@ const renderSelectableListItem = ({
       <Normal
         className="first-uppercase"
         style={listItemStyle.textStyle}
-        title={primaryText}
+        title={firstUpper(primaryText)}
       >
         {primaryText}
       </Normal>
