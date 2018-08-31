@@ -1,18 +1,18 @@
 import {EndPoints} from '../../../services/endPoints';
-import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
+import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {clearError, fetchIfNeeded} from '../paginatedDomainModelsActions';
 import {fetchEntitiesIfNeeded} from '../paginatedDomainModelsEntityActions';
 import {Meter} from './meterModels';
-import {meterProcessStrategy, meterSchema} from './meterSchema';
+import {meterDataFormatter, meterProcessStrategy} from './meterSchema';
 
 export const fetchMeters = fetchIfNeeded<Meter>(
   EndPoints.meters,
-  meterSchema,
+  meterDataFormatter,
   'meters',
   {
     afterSuccess: ({result}: NormalizedPaginated<Meter>, dispatch) =>
-      dispatch(paginationUpdateMetaData({entityType: 'meters', ...result})),
+      dispatch(updatePageMetaData({entityType: 'meters', ...result})),
   },
 );
 

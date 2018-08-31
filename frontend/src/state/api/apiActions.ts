@@ -58,12 +58,12 @@ const makeAsyncRequest = async <P>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else if (isTimeoutError(error)) {
       dispatch(failure(requestTimeout()));
     } else if (!error.response) {
       dispatch(failure(noInternetConnection()));
-    } else if (wasRequestCanceled(error)) {
-      return;
     } else {
       dispatch(failure(responseMessageOrFallback(error.response)));
     }

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {makeMeterDto, MeterDto} from '../../../../__tests__/testDataFactory';
@@ -9,7 +8,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse, uuid} from '../../../../types/Types';
 import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
-import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
+import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
 import {
   domainModelPaginatedClearError,
@@ -19,7 +18,7 @@ import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActio
 import {makeInitialState} from '../../paginatedDomainModelsReducer';
 import {clearErrorMeters, fetchMeterEntities, fetchMeters} from '../meterApiActions';
 import {Meter, MetersState} from '../meterModels';
-import {meterSchema} from '../meterSchema';
+import {meterDataFormatter} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('meterApiActions', () => {
@@ -94,7 +93,7 @@ describe('meterApiActions', () => {
 
     const normalizedMeterResponse = (page: number): NormalizedPaginated<Meter> => ({
       page,
-      ...normalize(meterResponse, meterSchema),
+      ...meterDataFormatter(meterResponse),
     });
 
     it('normalizes data on successful request', async () => {
@@ -104,7 +103,7 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(page),
         requestMeters.success({...normalizedMeterResponse(page)}),
-        paginationUpdateMetaData({entityType: 'meters', ...normalizedMeterResponse(page).result}),
+        updatePageMetaData({entityType: 'meters', ...normalizedMeterResponse(page).result}),
       ]);
     });
 

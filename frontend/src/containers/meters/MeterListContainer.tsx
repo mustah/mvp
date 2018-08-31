@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/SelectionResultActionsDropdown';
 import {testOrNull} from '../../components/hoc/hocs';
 import {withContent} from '../../components/hoc/withContent';
-import {withEmptyContent, WithEmptyContentProps,} from '../../components/hoc/withEmptyContent';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {superAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
 import {Loader} from '../../components/loading/Loader';
@@ -27,7 +27,7 @@ import {
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
-import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
+import {changePage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
@@ -134,11 +134,13 @@ const mapStateToProps = (
     paginatedDomainModels: {meters},
     routing,
     ui: {pagination},
+    search: {validation: {query}},
   }: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
   const entityType: EntityTypes = 'meters';
   const paginationData: Pagination = getPagination({componentId, entityType, pagination});
+  const selectionPage = isSelectionPage(routing);
   const {page} = paginationData;
 
   return ({
@@ -148,10 +150,11 @@ const mapStateToProps = (
       pagination: paginationData,
       userSelection,
       now: now(),
+      query: selectionPage ? undefined : query,
     }),
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
-    isSelectionPage: isSelectionPage(routing),
+    isSelectionPage: selectionPage,
     pagination: paginationData,
     error: getPageError<Meter>(meters, page),
     entityType,
@@ -163,7 +166,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   syncWithMetering,
   syncAllMeters,
   fetchMeters,
-  changePaginationPage,
+  changePaginationPage: changePage,
   clearError: clearErrorMeters,
 }, dispatch);
 

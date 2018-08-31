@@ -40,7 +40,7 @@ export interface RequestCallbacks<T> {
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
-export type DataFormatter = (data?: any) => any;
+export type DataFormatter<T> = (data?: any) => T;
 
 interface RequestHandler<T> {
   request: () => EmptyAction<string>;
@@ -50,7 +50,7 @@ interface RequestHandler<T> {
 
 interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, RequestCallbacks<DATA> {
   requestFunc: (requestData?: REQUEST_MODEL) => any;
-  formatData?: DataFormatter;
+  formatData?: DataFormatter<DATA>;
   requestData?: REQUEST_MODEL;
   dispatch: Dispatch<RootState>;
 }
@@ -78,12 +78,12 @@ const asyncRequest = async <REQUEST_MODEL, DATA>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else if (isTimeoutError(error)) {
       dispatch(failure(requestTimeout()));
     } else if (!error.response) {
       dispatch(failure(noInternetConnection()));
-    } else if (wasRequestCanceled(error)) {
-      return;
     } else {
       const errorResponse: ErrorResponse = responseMessageOrFallback(error.response);
       dispatch(failure(errorResponse));
@@ -106,7 +106,7 @@ const shouldFetchEntity = (
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
   entityType: keyof DomainModelsState,
-  formatData: DataFormatter,
+  formatData: DataFormatter<Normalized<T>>,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
   (requestData?: string) =>

@@ -1,7 +1,10 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {Action} from '../../../types/Types';
+import {Maybe} from '../../../helpers/Maybe';
+import {Action, UseCases} from '../../../types/Types';
+import {SEARCH} from '../../../usecases/search/searchActions';
+import {QueryParameter} from '../../../usecases/search/searchModels';
 import {resetReducer} from '../../domain-models/domainModelsReducer';
-import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
+import {CHANGE_PAGE, UPDATE_PAGE_METADATA} from './paginationActions';
 import {
   PaginationChangePayload,
   PaginationMetadataPayload,
@@ -24,13 +27,14 @@ export const initialPaginationState: PaginationState = {
 };
 
 type ActionTypes =
-  Action<PaginationMetadataPayload>
+  | Action<PaginationMetadataPayload>
   | Action<PaginationChangePayload>
+  | Action<QueryParameter>
   | EmptyAction<string>;
 
-const requestPage = (
+const changePage = (
   state: PaginationState,
-  {payload: {entityType, componentId, page}}: Action<PaginationChangePayload>,
+  {entityType, componentId, page}: PaginationChangePayload,
 ): PaginationState => ({
   ...state,
   [entityType]: {
@@ -47,15 +51,41 @@ const updateMetaData = (
   [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
 });
 
+const hasQuery = (it: QueryParameter) => !!it.query;
+
+const resetGatewaysPage: PaginationChangePayload = {
+  entityType: 'gateways',
+  componentId: 'collectionGatewayList',
+  page: 0,
+};
+
+const resetMetersPage: PaginationChangePayload = {
+  entityType: 'meters',
+  componentId: 'validationMeterList',
+  page: 0,
+};
+
+const toPaginationChangePayload = (payload: QueryParameter): PaginationChangePayload => {
+  return Maybe.maybe(payload[UseCases.collection])
+    .filter(hasQuery)
+    .map(() => resetGatewaysPage)
+    .orElse(resetMetersPage);
+};
+
 export const pagination = (
   state: PaginationState = initialPaginationState,
   action: ActionTypes,
 ) => {
   switch (action.type) {
-    case PAGINATION_CHANGE_PAGE:
-      return requestPage(state, action as Action<PaginationChangePayload>);
-    case PAGINATION_UPDATE_METADATA:
+    case CHANGE_PAGE:
+      return changePage(state, (action as Action<PaginationChangePayload>).payload);
+    case UPDATE_PAGE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
+    case SEARCH:
+      return changePage(
+        state,
+        toPaginationChangePayload((action as Action<QueryParameter>).payload),
+      );
     default:
       return resetReducer<PaginationState>(state, action, {...initialPaginationState});
   }

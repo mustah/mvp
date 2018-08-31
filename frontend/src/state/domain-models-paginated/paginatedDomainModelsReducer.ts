@@ -1,7 +1,12 @@
-import {combineReducers} from 'redux';
+import {Location} from 'history';
+import {LOCATION_CHANGE} from 'react-router-redux';
+import {combineReducers, Reducer} from 'redux';
+import {routes} from '../../app/routes';
+import {Maybe} from '../../helpers/Maybe';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
+import {SEARCH} from '../../usecases/search/searchActions';
 import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../domain-models/domainModelsReducer';
 import {Gateway} from './gateway/gatewayModels';
@@ -122,11 +127,26 @@ type ActionTypes<T extends Identifiable> =
   | Action<ErrorResponse & PageNumbered>
   | Action<PageNumbered>
   | Action<T | T[]>
-  | Action<SingleEntityFailure>;
+  | Action<SingleEntityFailure>
+  | Action<Location>;
+
+const metersReducer = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T> = makeInitialState<T>(),
+  action: ActionTypes<T>,
+): NormalizedPaginatedState<T> => {
+  if (action.type === LOCATION_CHANGE) {
+    const location = (action as Action<Location>).payload;
+    if (location.pathname === routes.selection) {
+      return {...makeInitialState()};
+    }
+  }
+  return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+};
 
 const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
   endPoint: EndPoints,
+  additionalReducers?: Reducer<NormalizedPaginatedState<T>>,
 ) =>
   (
     state: NormalizedPaginatedState<T> = makeInitialState<T>(),
@@ -148,13 +168,16 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(endPoint):
         return entityFailure(state, action as Action<SingleEntityFailure>);
       case LOGOUT_USER:
+      case SEARCH:
         return {...makeInitialState()};
       default:
-        return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+        return Maybe.maybe(additionalReducers)
+          .map((reducer: Reducer<NormalizedPaginatedState<T>>) => reducer(state, action))
+          .orElse(resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>()));
     }
   };
 
-export const meters = reducerFor<Meter>('meters', EndPoints.meters);
+export const meters = reducerFor<Meter>('meters', EndPoints.meters, metersReducer);
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({

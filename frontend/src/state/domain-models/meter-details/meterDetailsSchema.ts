@@ -1,5 +1,7 @@
 import {normalize, schema, Schema} from 'normalizr';
+import {Normalized} from '../domainModels';
 import {DataFormatter} from '../domainModelsActions';
+import {User} from '../user/userModels';
 
 export const meterDetailsProcessStrategy = (entity: any): schema.StrategyFunction => {
   if (entity.status) {
@@ -16,5 +18,5 @@ export const meterDetailsProcessStrategy = (entity: any): schema.StrategyFunctio
 };
 const meterDetails: Schema = new schema.Entity('meters', {}, {processStrategy: meterDetailsProcessStrategy});
 
-export const meterDetailsDataFormatter: DataFormatter =
+export const meterDetailsDataFormatter: DataFormatter<Normalized<User>> =
   (response) => normalize(response, meterDetails);

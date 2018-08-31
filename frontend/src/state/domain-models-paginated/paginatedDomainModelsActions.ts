@@ -1,4 +1,3 @@
-import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
@@ -15,7 +14,7 @@ import {
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestType} from '../domain-models/domainModels';
-import {RequestCallbacks} from '../domain-models/domainModelsActions';
+import {DataFormatter, RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
   NormalizedPaginated,
   NormalizedPaginatedState,
@@ -41,7 +40,7 @@ interface PaginatedRequestHandler<T> {
 
 interface AsyncRequest<REQUEST_MODEL, DATA> extends PaginatedRequestHandler<DATA>, RequestCallbacks<DATA> {
   requestFunc: (requestModel?: REQUEST_MODEL) => any;
-  formatData?: (data: any) => DATA;
+  formatData?: DataFormatter<DATA>;
   requestData?: REQUEST_MODEL;
   page: number;
   dispatch: Dispatch<RootState>;
@@ -71,12 +70,12 @@ const asyncRequest = async <REQ, DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else if (isTimeoutError(error)) {
       dispatch(failure({...requestTimeout(), page}));
     } else if (!error.response) {
       dispatch(failure({...noInternetConnection(), page}));
-    } else if (wasRequestCanceled(error)) {
-      return;
     } else {
       const errorResponse: ErrorResponse = responseMessageOrFallback(error.response);
       dispatch(failure({...errorResponse, page}));
@@ -99,19 +98,18 @@ export const makeRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestHa
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
-  schema: Schema,
+  formatData: DataFormatter<NormalizedPaginated<T>>,
   entityType: keyof PaginatedDomainModelsState,
   requestCallbacks?: RequestCallbacks<NormalizedPaginated<T>>,
 ): FetchPaginated =>
   (page: number, requestData?: string) =>
     (dispatch: Dispatch<RootState>, getState: GetState) => {
       const {paginatedDomainModels} = getState();
-
       if (shouldFetch(page, paginatedDomainModels[entityType])) {
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, NormalizedPaginated<T>>({
           ...makeRequestActionsOf<NormalizedPaginated<T>>(endPoint),
-          formatData: (data) => ({...normalize(data, schema), page}),
+          formatData: (data) => ({...formatData(data), page}),
           requestFunc,
           requestData,
           page,

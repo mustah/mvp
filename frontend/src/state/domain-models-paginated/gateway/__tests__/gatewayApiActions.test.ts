@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
@@ -8,7 +7,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {uuid} from '../../../../types/Types';
 import {requestTimeout} from '../../../api/apiActions';
-import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
+import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PaginatedDomainModelsState} from '../../paginatedDomainModels';
 import {
   domainModelPaginatedClearError,
@@ -18,7 +17,7 @@ import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActio
 import {makeInitialState} from '../../paginatedDomainModelsReducer';
 import {clearErrorGateways, fetchGateway, fetchGateways} from '../gatewayApiActions';
 import {Gateway, GatewaysState} from '../gatewayModels';
-import {gatewaySchema} from '../gatewaySchema';
+import {gatewayDataFormatter} from '../gatewaySchema';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
@@ -63,8 +62,8 @@ describe('gatewayApiActions', () => {
 
       expect(store.getActions()).toEqual([
         getGateways.request(page),
-        getGateways.success({...normalize(testData.gateways, gatewaySchema), page}),
-        paginationUpdateMetaData({
+        getGateways.success({...gatewayDataFormatter(testData.gateways), page}),
+        updatePageMetaData({
           entityType: 'gateways',
           content: ['g1', 'g2', 'g3', 'g4', 'g5'],
           totalElements: 5,

@@ -9,6 +9,7 @@ import {
   toEntityApiParametersGateways,
   toEntityApiParametersMeters,
   toPaginationApiParameters,
+  toQueryApiParameters,
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters} from '../../types/Types';
@@ -29,7 +30,11 @@ const getSelectionParameters = (state: UserSelectionState): SelectedParameters =
   state.userSelection.selectionParameters;
 
 const sortAndTranslateItems =
-  (items: SelectionItem[] = [], entityType: ParameterName, selected: boolean): SelectionListItem[] =>
+  (
+    items: SelectionItem[] = [],
+    entityType: ParameterName,
+    selected: boolean,
+  ): SelectionListItem[] =>
     items.map(({id, name, ...extra}: SelectionItem) =>
       ({id, name: getTranslationOrName(name, entityType), ...extra, selected}))
       .sort(byNameAsc);
@@ -64,28 +69,32 @@ const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
 };
 
 export const getPaginatedMeterParameters =
-  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+  createSelector<UriLookupStatePaginated, string, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+    ({query}) => query!,
     ({pagination}) => pagination,
     getSelectionParameters,
     getCurrentPeriod,
-    (pagination, {dateRange, ...rest}, currentPeriod) =>
+    (query, pagination, {dateRange, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
         ...toEntityApiParametersMeters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
+        ...toQueryApiParameters(query),
       ]),
   );
 
 export const getPaginatedGatewayParameters =
-  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+  createSelector<UriLookupStatePaginated, string, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+    ({query}) => query!,
     ({pagination}) => pagination,
     getSelectionParameters,
     getCurrentPeriod,
-    (pagination, {dateRange, ...rest}, currentPeriod) =>
+    (query, pagination, {dateRange, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
         ...toEntityApiParametersGateways(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
+        ...toQueryApiParameters(query),
       ]),
   );
 

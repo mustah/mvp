@@ -1,10 +1,13 @@
+import * as classNames from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import * as React from 'react';
-import {OnChange} from '../../types/Types';
+import 'SearchBox.scss';
+import {ClassNamed, OnChange} from '../../types/Types';
 
-interface Props {
+interface Props extends ClassNamed {
   onChange: OnChange;
   clear?: boolean;
+  value?: string;
 }
 
 interface State {
@@ -22,15 +25,21 @@ export class SearchBox extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {value: props.value || ''};
+  }
+
+  componentWillReceiveProps({value}: Props) {
+    if (this.props.value && value === undefined) {
+      this.setState({value: ''});
+    }
   }
 
   render() {
-    const {clear} = this.props;
+    const {className, clear} = this.props;
     const {value} = this.state;
 
     return (
-      <div className="SearchBox">
+      <div className={classNames('SearchBox', className)}>
         <input
           autoFocus={true}
           type="textfield"

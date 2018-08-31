@@ -14,12 +14,12 @@ import {logout} from '../auth/authActions';
 const onError = (dispatch: Dispatcher, error): void => {
   if (error instanceof InvalidToken) {
     dispatch(logout(error));
+  } else if (wasRequestCanceled(error)) {
+    return;
   } else if (isTimeoutError(error)) {
     dispatch(showFailMessage(requestTimeout().message));
   } else if (!error.response) {
     dispatch(showFailMessage(noInternetConnection().message));
-  } else if (wasRequestCanceled(error)) {
-    return;
   } else {
     dispatch(showFailMessage(responseMessageOrFallback(error.response).message));
   }

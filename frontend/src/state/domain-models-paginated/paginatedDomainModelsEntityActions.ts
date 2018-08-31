@@ -71,12 +71,12 @@ const asyncRequestEntities = async <DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else if (isTimeoutError(error)) {
       dispatch(failure({id, ...requestTimeout()}));
     } else if (!error.response) {
       dispatch(failure({id, ...noInternetConnection()}));
-    } else if (wasRequestCanceled(error)) {
-      return;
     } else {
       const errorResponse: ErrorResponse = responseMessageOrFallback(error.response);
       dispatch(failure({id, ...errorResponse}));

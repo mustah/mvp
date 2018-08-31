@@ -7,7 +7,7 @@ import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
-import {ValidationTabsContainer} from '../containers/ValidationTabsContainer';
+import {MeterTabsContainer} from '../containers/MeterTabsContainer';
 
 export const Validation = () => (
   <MvpPageContainer>
@@ -22,7 +22,7 @@ export const Validation = () => (
     </Row>
 
     <Paper style={mainContentPaperStyle}>
-      <ValidationTabsContainer/>
+      <MeterTabsContainer/>
     </Paper>
   </MvpPageContainer>
 );
