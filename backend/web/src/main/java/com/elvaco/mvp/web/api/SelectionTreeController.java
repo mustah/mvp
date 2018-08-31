@@ -24,10 +24,7 @@ public class SelectionTreeController {
     SelectionTree selectionTree = new SelectionTree();
 
     logicalMeterUseCases.selectionTree(requestParametersOf(requestParams))
-      .forEach((logicalMeter -> SelectionTreeDtoMapper.addToDto(
-        logicalMeter,
-        selectionTree
-      )));
+      .forEach(logicalMeter -> selectionTree.addToSelectionTree(logicalMeter));
 
     return SelectionTreeDtoMapper.toDto(selectionTree);
   }
