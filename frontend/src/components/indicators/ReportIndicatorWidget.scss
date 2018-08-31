@@ -1,0 +1,45 @@
+@import "../../app/variables";
+
+.ReportIndicatorWidget {
+  margin-right: $lg-space;
+
+  .Indicator {
+    cursor: pointer;
+    justify-content: space-around;
+    width: 94px;
+
+    .Indicator-name {
+      font-size: $sm;
+      text-transform: uppercase;
+    }
+
+    .Indicator-icon-wrapper {
+      margin-bottom: $sm-space;
+
+      .Indicator-icon-bg {
+        background-color: rgba($blue, 0.85);
+        box-shadow: $box-shadow;
+        border-radius: 22px;
+        width: 44px;
+        height: 44px;
+
+        &:hover {
+          background-color: rgba($blue, 1);
+          box-shadow: $box-shadow-hover;
+        }
+      }
+    }
+
+  }
+
+  .Indicator-separator {
+    border-radius: $border-radius;
+    background-color: transparent;
+    height: 4px;
+    margin-top: $xs-space;
+
+    &.isSelected {
+      background-color: $blue;
+    }
+  }
+}

@@ -6,9 +6,9 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {
-  SelectableIndicatorWidgets,
+  ReportIndicatorWidgets,
   SelectedIndicatorWidgetProps,
-} from '../../../components/indicators/SelectableIndicatorWidgets';
+} from '../../../components/indicators/ReportIndicatorWidgets';
 import {Row} from '../../../components/layouts/row/Row';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
@@ -33,7 +33,7 @@ interface DispatchToProps {
 type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
 const style: React.CSSProperties = {width: '100%', height: '100%'};
-const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
+const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16};
 const selectedTab: TabName = TabName.graph;
 
 const ReportComponent = ({selectedIndicatorTypes, toggleReportIndicatorWidget}: Props) => {
@@ -52,7 +52,7 @@ const ReportComponent = ({selectedIndicatorTypes, toggleReportIndicatorWidget}: 
         </Row>
       </Row>
 
-      <SelectableIndicatorWidgets
+      <ReportIndicatorWidgets
         indicators={indicators}
         selectedIndicatorTypes={selectedIndicatorTypes}
         onClick={toggleReportIndicatorWidget}
