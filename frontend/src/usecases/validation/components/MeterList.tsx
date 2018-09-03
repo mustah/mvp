@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
+import {Row} from '../../../components/layouts/row/Row';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
@@ -31,16 +32,19 @@ export const MeterList = (
   const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
   const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
   const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
-  const renderActionDropdown = ({id, manufacturer}: Meter) => (
-    <ListActionsDropdown
-      item={{id, name: manufacturer}}
-      selectEntryAdd={selectEntryAdd}
-      syncWithMetering={syncWithMetering}
-    />);
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
   const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-  const renderStatusChanged = ({statusChanged}: Meter) =>
-    <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
+  const renderStatusChangedAndActions = ({id, manufacturer, statusChanged}: Meter) => (
+    <Row className="StatusChanged space-between">
+      <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+      <ListActionsDropdown
+        item={{id, name: manufacturer}}
+        selectEntryAdd={selectEntryAdd}
+        syncWithMetering={syncWithMetering}
+      />
+    </Row>
+  );
+
   const renderMedium = ({medium}: Meter) => medium;
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
@@ -93,11 +97,7 @@ export const MeterList = (
         />
         <TableColumn
           header={<TableHead>{translate('status change')}</TableHead>}
-          renderCell={renderStatusChanged}
-        />
-        <TableColumn
-          header={<TableHead className="actionDropdown">{' '}</TableHead>}
-          renderCell={renderActionDropdown}
+          renderCell={renderStatusChangedAndActions}
         />
       </Table>
       <TableInfoText/>

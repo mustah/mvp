@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
+import {Row} from '../../../components/layouts/row/Row';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
@@ -26,10 +27,13 @@ export const GatewayList = ({
   const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
-  const renderActionDropdown = ({id, productModel}: Gateway) =>
-    <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
-  const renderStatusChanged = ({statusChanged}: Gateway) =>
-    <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
+  const renderStatusChanged = ({id, productModel, statusChanged}: Gateway) => (
+      <Row className="StatusChanged space-between">
+        <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+        <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>
+      </Row>
+    )
+  ;
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
   const changePage = (page: number) => changePaginationPage({entityType, componentId, page});
@@ -62,10 +66,6 @@ export const GatewayList = ({
         <TableColumn
           header={<TableHead>{translate('status change')}</TableHead>}
           renderCell={renderStatusChanged}
-        />
-        <TableColumn
-          header={<TableHead className="actionDropdown">{' '}</TableHead>}
-          renderCell={renderActionDropdown}
         />
       </Table>
       <TableInfoText/>
