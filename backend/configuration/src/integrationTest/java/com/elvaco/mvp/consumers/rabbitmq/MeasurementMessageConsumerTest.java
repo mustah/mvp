@@ -12,6 +12,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.offset;
 import static org.junit.Assume.assumeTrue;
 
-public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
+public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
 
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
@@ -40,7 +41,6 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
   private CacheManager cacheManager;
 
   @Before
-  @Override
   public void setUp() {
     assumeTrue(isRabbitConnected());
     assumeTrue(isPostgresDialect());
@@ -49,7 +49,6 @@ public class MeasurementMessageConsumerTest extends RabbitMqConsumerTest {
   }
 
   @After
-  @Override
   public void tearDown() {
     cacheManager.getCacheNames().stream()
       .map(name -> cacheManager.getCache(name))

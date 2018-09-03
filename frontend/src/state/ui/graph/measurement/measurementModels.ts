@@ -82,9 +82,6 @@ export const allQuantities = {
   [Medium.water]: [
     Quantity.volume,
   ],
-  [Medium.coldWater]: [
-    Quantity.volume,
-  ],
   [Medium.hotWater]: [
     Quantity.volume,
   ],

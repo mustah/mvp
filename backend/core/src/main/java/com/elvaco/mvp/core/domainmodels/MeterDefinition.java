@@ -6,7 +6,6 @@ import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static com.elvaco.mvp.core.domainmodels.Medium.COLD_WATER;
 import static com.elvaco.mvp.core.domainmodels.Medium.DISTRICT_COOLING;
 import static com.elvaco.mvp.core.domainmodels.Medium.DISTRICT_HEATING;
 import static com.elvaco.mvp.core.domainmodels.Medium.ELECTRICITY;
@@ -32,8 +31,6 @@ public class MeterDefinition implements Identifiable<MeterDefinitionType>, Seria
   public static final MeterDefinition GAS_METER = fromMedium(GAS);
 
   public static final MeterDefinition WATER_METER = fromMedium(WATER);
-
-  public static final MeterDefinition COLD_WATER_METER = fromMedium(COLD_WATER);
 
   public static final MeterDefinition ROOM_TEMP_METER = fromMedium(ROOM_TEMP);
 

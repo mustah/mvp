@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.UnknownQuantity;
@@ -36,8 +37,7 @@ class MeteringMessageMapper {
   private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = mapMeterQuantities();
 
   static MeterDefinition resolveMeterDefinition(List<ValueDto> values) {
-    Set<String> quantities = values
-      .stream()
+    Set<String> quantities = values.stream()
       .map(valueDto -> valueDto.quantity)
       .collect(toSet());
 
@@ -52,8 +52,15 @@ class MeteringMessageMapper {
     Quantity quantity = METER_TO_MVP_QUANTITIES.get(quantityName);
     if (quantity != null) {
       return quantity.name;
+    }
+    throw new UnknownQuantity(quantityName);
+  }
+
+  static String mapToEvoMedium(String medium) {
+    if ("Cold water".equals(medium)) {
+      return Medium.WATER.medium;
     } else {
-      throw new UnknownQuantity(quantityName);
+      return medium;
     }
   }
 

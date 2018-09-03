@@ -106,8 +106,6 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         measurements = gasMeasurement(created, meter, consumingMediumMeterReading);
       } else if (meter.medium.equals(Medium.WATER.medium)) {
         measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
-      } else if (meter.medium.equals(Medium.COLD_WATER.medium)) {
-        measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
       } else if (meter.medium.equals(Medium.HOT_WATER.medium)) {
         measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
       } else if (meter.medium.equals(Medium.ELECTRICITY.medium)) {

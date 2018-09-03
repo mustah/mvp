@@ -26,7 +26,6 @@ const orderedQuantities = (medium: string): string[] => {
     'District heating': Medium.districtHeating,
     'Gas': Medium.gas,
     'Water': Medium.water,
-    'Cold water': Medium.coldWater,
     'Hot water': Medium.hotWater,
     'Temperature inside': Medium.temperatureInside,
   };

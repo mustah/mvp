@@ -30,6 +30,7 @@ import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mapToEvoMedium;
 import static java.util.UUID.randomUUID;
 
 @Slf4j
@@ -121,7 +122,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     String facilityId
   ) {
     MeterDefinition meterDefinition = Optional.ofNullable(meterDto)
-      .map(dto -> MeterDefinition.fromMedium(Medium.from(dto.medium)))
+      .map(dto -> MeterDefinition.fromMedium(Medium.from(mapToEvoMedium(dto.medium))))
       .orElse(MeterDefinition.UNKNOWN_METER);
 
     return logicalMeterUseCases.findBy(organisationId, facilityId)
@@ -157,7 +158,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
           .externalId(facility.id)
           .build());
 
-    physicalMeter = physicalMeter.withMedium(meterDto.medium)
+    physicalMeter = physicalMeter.withMedium(mapToEvoMedium(meterDto.medium))
       .withManufacturer(meterDto.manufacturer)
       .replaceActiveStatus(StatusType.from(meterDto.status))
       .withReadIntervalMinutes(CronHelper.toReportInterval(meterDto.cron)
