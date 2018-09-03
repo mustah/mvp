@@ -2,7 +2,7 @@ import {EmptyAction} from 'react-redux-typescript';
 import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';
 import {SEARCH} from '../../../usecases/search/searchActions';
-import {QueryParameter} from '../../../usecases/search/searchModels';
+import {Query, QueryParameter} from '../../../usecases/search/searchModels';
 import {resetReducer} from '../../domain-models/domainModelsReducer';
 import {CHANGE_PAGE, UPDATE_PAGE_METADATA} from './paginationActions';
 import {
@@ -51,7 +51,7 @@ const updateMetaData = (
   [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
 });
 
-const hasQuery = (it) => !!it.query;
+const hasQuery = (it: Query) => !!it.query;
 
 const resetGatewaysPage: PaginationChangePayload = {
   entityType: 'gateways',

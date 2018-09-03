@@ -121,25 +121,26 @@ class SelectionTreeComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  report,
-  userSelection: {userSelection},
-  selectionTree,
-  ui: {selectionTree: selectionTreeUi},
-  routing,
-  search: {selectionTree: {query}},
-}: RootState): StateToProps =>
+const mapStateToProps =
   ({
-    isFetching: selectionTree.isFetching,
-    selectionTree: getSelectionTree(selectionTree),
-    openListItems: getOpenListItems(selectionTreeUi),
-    selectedListItems: getSelectedListItems(report),
-    parameters: getMeterParameters({userSelection, now: now()}),
-    itemCapabilities: {
-      zoomable: isDashboardPage(routing),
-    },
-    query,
-  });
+    report,
+    userSelection: {userSelection},
+    selectionTree,
+    ui: {selectionTree: selectionTreeUi},
+    routing,
+    search: {selectionTree: {query}},
+  }: RootState): StateToProps =>
+    ({
+      isFetching: selectionTree.isFetching,
+      selectionTree: getSelectionTree({...selectionTree, query}),
+      openListItems: getOpenListItems(selectionTreeUi),
+      selectedListItems: getSelectedListItems(report),
+      parameters: getMeterParameters({userSelection, now: now()}),
+      itemCapabilities: {
+        zoomable: isDashboardPage(routing),
+      },
+      query,
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchSelectionTree,

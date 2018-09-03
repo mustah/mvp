@@ -28,7 +28,7 @@ export interface ItemCapabilities {
 }
 
 export const renderSelectionTreeCities = ({
-  id, selectionTree, toggleSingleEntry, openListItems, ...other
+  id, selectionTree, toggleSingleEntry, openListItems, ...other,
 }: RenderProps) => {
   const city = selectionTree.entities.cities[id];
 
@@ -36,7 +36,13 @@ export const renderSelectionTreeCities = ({
   if (city.clusters) {
     if (openListItems.has(id)) {
       nestedItems = [...city.clusters].sort()
-        .map((id) => renderSelectionTreeClusters({...other, openListItems, toggleSingleEntry, selectionTree, id}));
+        .map((id) => renderSelectionTreeClusters({
+          ...other,
+          openListItems,
+          toggleSingleEntry,
+          selectionTree,
+          id,
+        }));
     } else {
       // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
       nestedItems = [<React.Fragment key="city123"/>];
@@ -85,7 +91,6 @@ const renderSelectionTreeClusters = ({id, openListItems, selectionTree, ...other
 const renderSelectionTreeAddresses = ({id, openListItems, selectionTree, ...other}: RenderProps) => {
   const address = selectionTree.entities.addresses[id];
 
-  // TODO is the id really an address..? don't think so
   let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
   if (openListItems.has(id)) {
     nestedItems = [...address.meters]
@@ -95,7 +100,6 @@ const renderSelectionTreeAddresses = ({id, openListItems, selectionTree, ...othe
     // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
     nestedItems = [<React.Fragment key="address123"/>];
   }
-
 
   return renderSelectableListItem({
     ...other,
