@@ -289,7 +289,7 @@ const renderLabels = (name: string, parentName: string) => {
 
 const renderLabelAtIndex = (index: number, filteredList: SelectionListItem[]) => {
   const {name} = filteredList[index];
-  return <Normal>{name}</Normal>;
+  return <Normal className="first-uppercase">{name}</Normal>;
 };
 
 export const renderCityLabel = (index: number, filteredList: SelectionListItem[]) => {
