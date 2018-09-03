@@ -31,7 +31,7 @@ export const mvpTheme = getMuiTheme({
     padding: 16,
     color: colors.darkBlue,
   },
-  fontFamily: 'TTNorms, sans-serif',
+  fontFamily: 'TTNorms, Arial, sans-serif',
   palette: {
     primary1Color: fullBlack,
     textColor: darkBlack,
