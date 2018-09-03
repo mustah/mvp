@@ -379,9 +379,6 @@ msgstr "endast {{limit}} mätare kan väljas samtidigt"
 msgid "electricity"
 msgstr "el"
 
-msgid "cold water"
-msgstr "kallvatten"
-
 msgid "hot water"
 msgstr "varmvatten"
 

@@ -110,7 +110,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   public void processMessageWithMissingGatewayStatusAndShouldUpdateMeterManufacturer()
     throws Exception {
     MeteringReferenceInfoMessageDto newMessage = getMeteringReferenceInfoMessageDto()
-      .withMeter(new MeterDto("1234", "Some medium", "OK", "Acme", "*/15 * * * *"))
+      .withMeter(newMeterDto("Acme"))
       .withFacility(new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"))
       .withGatewayStatus(null);
 
@@ -119,7 +119,21 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     assertOrganisationWithSlugWasCreated("some-organisation");
 
     UUID organisationId = organisationJpaRepository.findBySlug("some-organisation").get().id;
-    assertPhysicalMeterManufacturer(organisationId, "facility-id", "1234", "Acme");
+    assertPhysicalMeterManufacturer(organisationId, "facility-id", "1234", "Acme", "Some medium");
+  }
+
+  @Test
+  public void mapsMeteringMediumToEvoMedium() throws Exception {
+    MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto()
+      .withMeter(newMeterDto("EVO", "Cold water"))
+      .withFacility(new FacilityDto("test-123", "Sweden", "Kungsbacka", "Kabelgatan 2T"));
+
+    publishMessage(toJson(message).getBytes());
+
+    assertOrganisationWithSlugWasCreated("some-organisation");
+
+    UUID organisationId = organisationJpaRepository.findBySlug("some-organisation").get().id;
+    assertPhysicalMeterManufacturer(organisationId, "test-123", "1234", "EVO", "Water");
   }
 
   @Test
@@ -136,6 +150,14 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     publishMessage(toJson(message).getBytes());
 
     assertOrganisationWithSlugWasCreated("organisation-123-456");
+  }
+
+  private MeterDto newMeterDto(String manufacturer) {
+    return newMeterDto(manufacturer, "Some medium");
+  }
+
+  private MeterDto newMeterDto(String manufacturer, String medium) {
+    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *");
   }
 
   private void deleteAllTestData() {
@@ -157,7 +179,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
   private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {
     return new MeteringReferenceInfoMessageDto(
-      new MeterDto("1234", "Some medium", "OK", "A manufacturer", "*/15 * * * *"),
+      newMeterDto("A manufacturer"),
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",
       "Some organisation",
@@ -178,11 +200,13 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     UUID organisationId,
     String externalId,
     String meterId,
-    String manufacturer
+    String manufacturer,
+    String medium
   ) throws InterruptedException {
     assertThat(waitForCondition(() -> physicalMeterJpaRepository
       .findByOrganisationIdAndExternalIdAndAddress(organisationId, externalId, meterId)
       .filter(meter -> meter.manufacturer.equalsIgnoreCase(manufacturer))
+      .filter(meter -> meter.medium.equals(medium))
       .isPresent()
     )).as("Physical meter '" + externalId + "' has manufacturer '" + manufacturer + "'").isTrue();
   }

@@ -30,10 +30,9 @@ public class QuantityEntity extends IdentifiableType<Integer> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(
-    columnDefinition = "INT"
-  )
+  @Column(columnDefinition = "INT")
   public Integer id;
+
   @NaturalId
   public String name;
 

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.COLD_WATER_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.DISTRICT_COOLING_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.DISTRICT_HEATING_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.ELECTRICITY_METER_TYPE;
@@ -49,13 +48,6 @@ public enum Medium {
   },
 
   WATER("Water", WATER_METER_TYPE) {
-    @Override
-    protected Set<Quantity> quantities() {
-      return WATER_QUANTITIES;
-    }
-  },
-
-  COLD_WATER("Cold water", COLD_WATER_METER_TYPE) {
     @Override
     protected Set<Quantity> quantities() {
       return WATER_QUANTITIES;

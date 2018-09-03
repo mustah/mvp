@@ -4,7 +4,7 @@ import 'ReportIndicatorWidget.scss';
 import {colors} from '../../app/themes';
 import {OnClick} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
-import {IconColdWater} from '../icons/IconColdWater';
+import {IconWater} from '../icons/IconWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
@@ -25,9 +25,8 @@ const indicatorIconFor: IndicatorComponentType = {
   [Medium.collection]: IconCollection,
   [Medium.measurementQuality]: IconValidation,
   [Medium.electricity]: IconCurrent,
-  [Medium.water]: IconColdWater,
-  [Medium.coldWater]: IconColdWater,
-  [Medium.hotWater]: IconColdWater,
+  [Medium.water]: IconWater,
+  [Medium.hotWater]: IconWater,
   [Medium.districtHeating]: IconDistrictHeating,
   [Medium.gas]: IconGas,
   [Medium.temperatureInside]: IconTemperature,

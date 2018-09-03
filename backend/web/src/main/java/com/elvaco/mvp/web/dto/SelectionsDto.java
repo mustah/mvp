@@ -15,16 +15,14 @@ import static java.util.stream.Collectors.toList;
 public class SelectionsDto {
 
   public static final List<IdNamedDto> GATEWAY_STATUSES = unmodifiableList(asList(
-    new IdNamedDto("ok"),
-    new IdNamedDto("warning"),
-    new IdNamedDto("fault")
+    new IdNamedDto(StatusType.OK.name),
+    new IdNamedDto(StatusType.ERROR.name)
   ));
 
-  public static final List<IdNamedDto> METER_STATUSES = unmodifiableList(
-    Stream.of(StatusType.values())
-      .map(value -> value.name)
-      .map(IdNamedDto::new)
-      .collect(toList()));
+  public static final List<IdNamedDto> METER_STATUSES = unmodifiableList(asList(
+    new IdNamedDto(StatusType.OK.name),
+    new IdNamedDto(StatusType.ERROR.name)
+  ));
 
   public static final List<IdNamedDto> METER_ALARMS = unmodifiableList(asList(
     new IdNamedDto("no error"),

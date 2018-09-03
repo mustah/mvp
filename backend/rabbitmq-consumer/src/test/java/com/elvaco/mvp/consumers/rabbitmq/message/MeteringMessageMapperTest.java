@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import org.junit.Test;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mapToEvoMedium;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -37,6 +39,22 @@ public class MeteringMessageMapperTest {
     );
 
     assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN_METER);
+  }
+
+  @Test
+  public void mapColdWaterMediumAsWater() {
+    assertThat(mapToEvoMedium("Cold water")).isEqualTo("Water");
+  }
+
+  @Test
+  public void mapMeteringMediumToInputMediumString() {
+    assertThat(mapToEvoMedium("Something")).isEqualTo("Something");
+  }
+
+  @Test
+  public void mapKnownMediums() {
+    assertThat(mapToEvoMedium("Hot water")).isEqualTo(Medium.HOT_WATER.medium);
+    assertThat(mapToEvoMedium("District cooling")).isEqualTo(Medium.DISTRICT_COOLING.medium);
   }
 
   @Test

@@ -63,14 +63,6 @@ export const hardcodedIndicators = (): Indicator[] => ([
     subtitle: '',
   },
   {
-    type: Medium.coldWater,
-    title: firstUpperTranslated('cold water'),
-    state: Status.info,
-    value: 0,
-    unit: 'l/m2',
-    subtitle: '',
-  },
-  {
     type: Medium.hotWater,
     title: firstUpperTranslated('hot water'),
     state: Status.info,

@@ -58,27 +58,14 @@ public class LogicalMeterTest {
       MeterDefinition.WATER_METER
     );
 
-    assertThat(waterMeter.getQuantities()).containsOnly(
-      Quantity.VOLUME
-    );
+    assertThat(waterMeter.getQuantities()).containsOnly(Quantity.VOLUME);
 
     LogicalMeter hotWaterMeter = newLogicalMeter(
       randomUUID(),
       randomUUID(),
       MeterDefinition.HOT_WATER_METER
     );
-    assertThat(hotWaterMeter.getQuantities()).containsOnly(
-      Quantity.VOLUME
-    );
-
-    LogicalMeter coldWaterMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.COLD_WATER_METER
-    );
-    assertThat(coldWaterMeter.getQuantities()).containsOnly(
-      Quantity.VOLUME
-    );
+    assertThat(hotWaterMeter.getQuantities()).containsOnly(Quantity.VOLUME);
   }
 
   @Test

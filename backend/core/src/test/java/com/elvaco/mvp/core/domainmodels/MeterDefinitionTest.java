@@ -27,9 +27,6 @@ public class MeterDefinitionTest {
     assertThat(MeterDefinition.fromMedium(Medium.from("Water")))
       .isEqualTo(MeterDefinition.WATER_METER);
 
-    assertThat(MeterDefinition.fromMedium(Medium.from("Cold water")))
-      .isEqualTo(MeterDefinition.COLD_WATER_METER);
-
     assertThat(MeterDefinition.fromMedium(Medium.from("Electricity")))
       .isEqualTo(MeterDefinition.ELECTRICITY_METER);
 

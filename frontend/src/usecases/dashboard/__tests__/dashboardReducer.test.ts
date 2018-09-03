@@ -13,7 +13,7 @@ describe('dashboardReducer', () => {
   it('extracts valid widgets from JSON response', () => {
     const widgets: WidgetModel[] = [
       {
-        type: Medium.coldWater,
+        type: Medium.water,
         total: 1000,
         pending: 20,
       },

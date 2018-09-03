@@ -147,12 +147,8 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             selectionText={meterStatusSelectionText}
             select={selectMeterStatus}
           />
-          <SimpleDropdownSelector
-            fetchItems={fetchGatewayStatuses}
-            selectedItems={gatewayStatuses}
-            selectionText={gatewayStatusSelectionText}
-            select={selectGatewayStatus}
-          />
+        </Row>
+        <Row className="SelectionDropdownOptions">
           <SearchDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
@@ -164,6 +160,12 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             selectedItems={gatewaySerials}
             selectionText={gatewaySerialSelectionText}
             select={selectGatewaySerials}
+          />
+          <SimpleDropdownSelector
+            fetchItems={fetchGatewayStatuses}
+            selectedItems={gatewayStatuses}
+            selectionText={gatewayStatusSelectionText}
+            select={selectGatewayStatus}
           />
         </Row>
         <SearchResultList/>
