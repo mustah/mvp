@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
-import {Row} from '../../../components/layouts/row/Row';
+import {RowCenter} from '../../../components/layouts/row/Row';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
@@ -35,14 +35,14 @@ export const MeterList = (
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
   const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
   const renderStatusChangedAndActions = ({id, manufacturer, statusChanged}: Meter) => (
-    <Row className="StatusChanged space-between">
+    <RowCenter className="StatusChanged space-between">
       <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
       <ListActionsDropdown
         item={{id, name: manufacturer}}
         selectEntryAdd={selectEntryAdd}
         syncWithMetering={syncWithMetering}
       />
-    </Row>
+    </RowCenter>
   );
 
   const renderMedium = ({medium}: Meter) => medium;

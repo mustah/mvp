@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
-import {Row} from '../../../components/layouts/row/Row';
+import {RowCenter} from '../../../components/layouts/row/Row';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
@@ -28,10 +28,10 @@ export const GatewayList = ({
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
   const renderStatusChanged = ({id, productModel, statusChanged}: Gateway) => (
-      <Row className="StatusChanged space-between">
+      <RowCenter className="StatusChanged space-between">
         <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
         <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>
-      </Row>
+      </RowCenter>
     )
   ;
   const renderProductModel = ({productModel}: Gateway) => productModel;
