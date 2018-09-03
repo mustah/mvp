@@ -16,11 +16,13 @@ import {Query, QueryParameter} from './searchModels';
 export interface SearchState {
   collection: Query;
   validation: Query;
+  selectionTree: Query;
 }
 
 export const initialState = {
   collection: {},
   validation: {},
+  selectionTree: {},
 };
 
 type Actions =
@@ -30,6 +32,8 @@ type Actions =
 
 const resetValidationQuery = (state: SearchState, {pathname}: Location): SearchState => {
   if (pathname === routes.selection) {
+    // the selection page reuses the validation rendering view,
+    // resetting the search term shows potentially hidden items in the selection view
     return {...state, validation: {}};
   } else {
     return state;

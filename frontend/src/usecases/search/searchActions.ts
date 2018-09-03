@@ -2,7 +2,7 @@ import {throttle} from 'lodash';
 import {Dispatch} from 'react-redux';
 import {RootState} from '../../reducers/rootReducer';
 import {payloadActionOf} from '../../types/Types';
-import {collectionQuery, OnSearch, QueryParameter, validationQuery} from './searchModels';
+import {collectionQuery, OnSearch, QueryParameter, selectionTreeQuery, validationQuery} from './searchModels';
 
 export const SEARCH = 'SEARCH';
 
@@ -18,3 +18,4 @@ const wildcardSearch = (parameter: QueryParameter) =>
 
 export const collectionSearch = (query?: string) => wildcardSearch(collectionQuery(query));
 export const validationSearch = (query?: string) => wildcardSearch(validationQuery(query));
+export const selectionTreeSearch = (query?: string) => wildcardSearch(selectionTreeQuery(query));

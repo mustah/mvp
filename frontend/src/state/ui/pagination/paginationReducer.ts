@@ -51,7 +51,7 @@ const updateMetaData = (
   [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
 });
 
-const hasQuery = (it: QueryParameter) => !!it.query;
+const hasQuery = (it) => !!it.query;
 
 const resetGatewaysPage: PaginationChangePayload = {
   entityType: 'gateways',
