@@ -13,7 +13,7 @@ public class SelectionTree {
 
   private final Map<String, City> cities = new HashMap<>();
 
-  public void addToSelectionTree(LogicalMeter logicalMeter) {
+  public void add(LogicalMeter logicalMeter) {
     Location location = logicalMeter.location;
 
     String country = location.getCountryOrUnknown();

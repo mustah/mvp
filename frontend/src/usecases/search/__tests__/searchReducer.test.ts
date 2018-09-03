@@ -84,6 +84,7 @@ describe('searchReducer', () => {
 
     it('reset validation query when location changes to selection page', () => {
       let state: SearchState = {
+        ...initialState,
         collection: {query: 'stop'},
         validation: {query: 'bro'},
       };
@@ -99,6 +100,7 @@ describe('searchReducer', () => {
 
     it('does not reset validation query when location does not changes to selection page', () => {
       const state: SearchState = {
+        ...initialState,
         collection: {query: 'stop'},
         validation: {query: 'bro'},
       };

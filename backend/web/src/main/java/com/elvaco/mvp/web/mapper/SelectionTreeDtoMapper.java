@@ -1,11 +1,11 @@
 package com.elvaco.mvp.web.mapper;
 
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.SelectionTree;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.AddressDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.CityDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
+
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.domainmodels.SelectionTree.Address;
@@ -15,10 +15,6 @@ import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class SelectionTreeDtoMapper {
-
-  public static void addToDto(LogicalMeter logicalMeter, SelectionTree selectionTree) {
-    selectionTree.addToSelectionTree(logicalMeter);
-  }
 
   public static SelectionTreeDto toDto(SelectionTree selectionTree) {
     return new SelectionTreeDto(selectionTree.getCities()

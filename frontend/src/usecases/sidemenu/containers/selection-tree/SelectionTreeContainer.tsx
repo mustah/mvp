@@ -4,6 +4,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
+import {SearchBox} from '../../../../components/dropdown-selector/SearchBox';
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage} from '../../../../selectors/routerSelectors';
@@ -18,6 +19,8 @@ import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../.
 import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
 import {toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
+import {selectionTreeSearch} from '../../../search/searchActions';
+import {OnSearch, Query} from '../../../search/searchModels';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {
   ItemCapabilities,
@@ -25,7 +28,7 @@ import {
 } from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
 
-interface StateToProps {
+interface StateToProps extends Query {
   isFetching: boolean;
   selectionTree: SelectionTree;
   openListItems: Set<uuid>;
@@ -40,6 +43,7 @@ interface DispatchToProps {
   toggleSingleEntry: OnClickWithId;
   toggleIncludingChildren: OnClick;
   centerMapOnMeter: OnClickWithId;
+  wildcardSearch: OnSearch;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -66,6 +70,8 @@ class SelectionTreeComponent extends React.Component<Props> {
       toggleSingleEntry,
       itemCapabilities,
       centerMapOnMeter,
+      wildcardSearch,
+      query,
     } = this.props;
 
     const renderSelectionOverview = (id: uuid) =>
@@ -93,38 +99,48 @@ class SelectionTreeComponent extends React.Component<Props> {
       )];
 
     return (
-      <List style={listStyle}>
-        <ListItem
-          className="ListItem"
-          primaryText={translate('selection overview')}
-          initiallyOpen={true}
-          style={sideBarHeaderStyle}
-          hoverColor={sideBarStyles.onHover.color}
-          nestedItems={nestedItems}
-          nestedListStyle={nestedListItemStyle}
+      <React.Fragment>
+        <SearchBox
+          onChange={wildcardSearch}
+          value={query}
+          className="SearchBox-list"
         />
-      </List>
+        <List style={listStyle}>
+          <ListItem
+            className="ListItem"
+            primaryText={translate('selection overview')}
+            initiallyOpen={true}
+            style={sideBarHeaderStyle}
+            hoverColor={sideBarStyles.onHover.color}
+            nestedItems={nestedItems}
+            nestedListStyle={nestedListItemStyle}
+          />
+        </List>
+      </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = ({
-  report,
-  userSelection: {userSelection},
-  selectionTree,
-  ui: {selectionTree: selectionTreeUi},
-  routing,
-}: RootState): StateToProps =>
+const mapStateToProps =
   ({
-    isFetching: selectionTree.isFetching,
-    selectionTree: getSelectionTree(selectionTree),
-    openListItems: getOpenListItems(selectionTreeUi),
-    selectedListItems: getSelectedListItems(report),
-    parameters: getMeterParameters({userSelection, now: now()}),
-    itemCapabilities: {
-      zoomable: isDashboardPage(routing),
-    },
-  });
+    report,
+    userSelection: {userSelection},
+    selectionTree,
+    ui: {selectionTree: selectionTreeUi},
+    routing,
+    search: {selectionTree: {query}},
+  }: RootState): StateToProps =>
+    ({
+      isFetching: selectionTree.isFetching,
+      selectionTree: getSelectionTree({...selectionTree, query}),
+      openListItems: getOpenListItems(selectionTreeUi),
+      selectedListItems: getSelectedListItems(report),
+      parameters: getMeterParameters({userSelection, now: now()}),
+      itemCapabilities: {
+        zoomable: isDashboardPage(routing),
+      },
+      query,
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchSelectionTree,
@@ -132,6 +148,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleSingleEntry,
   toggleIncludingChildren,
   centerMapOnMeter,
+  wildcardSearch: selectionTreeSearch,
 }, dispatch);
 
 export const SelectionTreeContainer =
