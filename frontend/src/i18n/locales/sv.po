@@ -350,6 +350,9 @@ msgstr "dashboard"
 msgid "all meters in selection"
 msgstr "alla mätare i urvalet"
 
+msgid "all timestamps are displayed in UTC+1"
+msgstr "alla tider visas i UTC+1"
+
 msgid "report"
 msgstr "rapport"
 

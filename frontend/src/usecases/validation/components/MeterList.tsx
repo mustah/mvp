@@ -6,6 +6,7 @@ import {PaginationControl} from '../../../components/pagination-control/Paginati
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
+import {TableInfoText} from '../../../components/table/TableInfoText';
 import {MeterListProps} from '../../../containers/meters/MeterListContainer';
 import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
@@ -99,6 +100,7 @@ export const MeterList = (
           renderCell={renderActionDropdown}
         />
       </Table>
+      <TableInfoText/>
       <PaginationControl pagination={pagination} changePage={changePage}/>
     </div>
   );

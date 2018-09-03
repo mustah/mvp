@@ -5,6 +5,7 @@ import {PaginationControl} from '../../../components/pagination-control/Paginati
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
+import {TableInfoText} from '../../../components/table/TableInfoText';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
@@ -67,6 +68,7 @@ export const GatewayList = ({
           renderCell={renderActionDropdown}
         />
       </Table>
+      <TableInfoText/>
       <PaginationControl pagination={pagination} changePage={changePage}/>
     </div>
   );
