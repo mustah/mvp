@@ -29,8 +29,10 @@ export const toggleSingleEntry = (id: uuid) =>
   (dispatch, getState: GetState) =>
     dispatchIfWithinLimits(dispatch, toggle(id, getState().report.selectedListItems));
 
+type Level = 'clusters' | 'cities' | 'addresses';
+
 // this is what you get when you model a DAG in a flat way..
-const levelFromId = (id: string): string => {
+const levelFromId = (id: string): Level => {
   if (id.indexOf(':') !== -1) {
     return 'clusters';
   }
@@ -47,7 +49,7 @@ export const toggleIncludingChildren = (id: uuid) =>
     listItems.has(id) ? listItems.delete(id) : listItems.add(id);
     const shouldShow: boolean = listItems.has(id);
 
-    const level: string = levelFromId(id as string);
+    const level: Level = levelFromId(id as string);
 
     let addresses: uuid[] = [];
     const clusters: uuid[] = [];
