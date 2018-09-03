@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {Children} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
-import {Row} from '../layouts/row/Row';
+import {RowCenter} from '../layouts/row/Row';
 import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
-import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
+import {ReportIndicatorWidget} from './ReportIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
   selectedIndicatorTypes: Medium[];
@@ -19,11 +19,11 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
   className?: string;
 }
 
-export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
+export const ReportIndicatorWidgets = (props: IndicatorWidgetProps) => {
   const {className, children, indicators, selectedIndicatorTypes, onClick} = props;
 
   const indicatorWidgets = indicators.map((indicator: Indicator) => (
-    <SelectableIndicatorWidget
+    <ReportIndicatorWidget
       key={indicator.type}
       indicator={indicator}
       isSelected={selectedIndicatorTypes.includes(indicator.type)}
@@ -32,8 +32,8 @@ export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
   ));
 
   return (
-    <Row className={className}>
+    <RowCenter className={className}>
       {indicatorWidgets}
       {children}
-    </Row>);
+    </RowCenter>);
 };

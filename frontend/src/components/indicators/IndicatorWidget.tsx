@@ -8,7 +8,7 @@ import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {WidgetModel} from './indicatorWidgetModels';
-import {iconComponentFor} from './SelectableIndicatorWidget';
+import {iconComponentFor} from './ReportIndicatorWidget';
 import classNames = require('classnames');
 
 interface Props {

@@ -1,7 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import 'ReportIndicatorWidget.scss';
 import {colors} from '../../app/themes';
-import {OnClick, Status} from '../../types/Types';
+import {OnClick} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
 import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
@@ -11,9 +12,8 @@ import {IconGas} from '../icons/IconGas';
 import {IconTemperature} from '../icons/IconTemperature';
 import {IconValidation} from '../icons/IconValidation';
 import {Column, ColumnCenter} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Bold} from '../texts/Texts';
-import './IndicatorWidget.scss';
+import {RowCenter} from '../layouts/row/Row';
+import {Small} from '../texts/Texts';
 import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
@@ -38,8 +38,8 @@ export const iconComponentFor =
   (type: Medium): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
 
 const style: React.CSSProperties = {
-  width: '48px',
-  height: '48px',
+  width: '24px',
+  height: '24px',
 };
 
 interface IndicatorProps {
@@ -48,30 +48,27 @@ interface IndicatorProps {
   isSelected?: boolean;
 }
 
-export const SelectableIndicatorWidget = ({onClick, indicator: {state, title, type}, isSelected}: IndicatorProps) => {
+export const ReportIndicatorWidget =
+  ({onClick, indicator: {state, title, type}, isSelected}: IndicatorProps) => {
 
-  const selectWidget: OnClick = () => onClick(type);
+    const selectWidget: OnClick = () => onClick(type);
 
-  const IndicatorIcon = iconComponentFor(type);
+    const IndicatorIcon = iconComponentFor(type);
 
-  const foreground: string = isSelected && [Status.ok].includes(state)
-    ? colors.white
-    : colors.black;
-
-  return (
-    <div onClick={selectWidget}>
-      <Column className="Indicator-wrapper">
+    return (
+      <Column className="ReportIndicatorWidget" onClick={selectWidget}>
         <ColumnCenter className={classNames('Indicator', state)}>
-          <Row className="Indicator-name Row-center">
-            <Bold>{title}</Bold>
-          </Row>
-          <Row className="Row-center Row-bottom">
-            <IndicatorIcon style={style} className="Indicator-icon" color={foreground}/>
-          </Row>
+          <RowCenter className="Indicator-icon-wrapper">
+            <RowCenter className="Indicator-icon-bg">
+              <IndicatorIcon style={style} className="Indicator-icon" color={colors.white}/>
+            </RowCenter>
+          </RowCenter>
+          <RowCenter className="Indicator-name">
+            <Small>{title}</Small>
+          </RowCenter>
         </ColumnCenter>
 
         <div className={classNames('Indicator-separator', {isSelected}, state)}/>
       </Column>
-    </div>
-  );
-};
+    );
+  };
