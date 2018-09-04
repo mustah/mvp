@@ -54,7 +54,7 @@ $ yarn json-server
 $ yarn test 
 
 # TDD style
-$ yarn test:watch
+$ yarn test-watch
 ```
 
 # Upgrading packages
