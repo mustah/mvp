@@ -43,7 +43,7 @@ interface DispatchToProps {
   toggleSingleEntry: OnClickWithId;
   toggleIncludingChildren: OnClick;
   centerMapOnMeter: OnClickWithId;
-  wildcardSearch: OnSearch;
+  selectionTreeSearch: OnSearch;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -70,7 +70,7 @@ class SelectionTreeComponent extends React.Component<Props> {
       toggleSingleEntry,
       itemCapabilities,
       centerMapOnMeter,
-      wildcardSearch,
+      selectionTreeSearch,
       query,
     } = this.props;
 
@@ -101,7 +101,7 @@ class SelectionTreeComponent extends React.Component<Props> {
     return (
       <React.Fragment>
         <SearchBox
-          onChange={wildcardSearch}
+          onChange={selectionTreeSearch}
           value={query}
           className="SearchBox-list"
         />
@@ -148,7 +148,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleSingleEntry,
   toggleIncludingChildren,
   centerMapOnMeter,
-  wildcardSearch: selectionTreeSearch,
+  selectionTreeSearch,
 }, dispatch);
 
 export const SelectionTreeContainer =
