@@ -5,8 +5,7 @@
   font-style: normal;
   font-weight: 400;
   font-variant-ligatures: none;
-  src: url('../assets/fonts/TTNorms/TTNorms-Regular.otf'), /* IE9 Compat Modes */
-  url(../assets/fonts/TTNorms/TTNorms-Regular.otf) format('otf'); /* Super Modern Browsers */
+  src: url('../assets/fonts/TTNorms/TTNorms-Regular.otf') format('opentype');
 }
 
 @font-face {
@@ -14,7 +13,6 @@
   font-style: normal;
   font-weight: 700;
   font-variant-ligatures: none;
-  src: url('../assets/fonts/TTNorms/TTNorms-Bold.otf'), /* IE9 Compat Modes */
-  url(../assets/fonts/TTNorms/TTNorms-Bold.otf) format('otf'); /* Super Modern Browsers */
+  src: url('../assets/fonts/TTNorms/TTNorms-Bold.otf') format('opentype');
 }
 
