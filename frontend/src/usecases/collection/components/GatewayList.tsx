@@ -14,7 +14,7 @@ import {GatewayListProps} from '../containers/GatewayListContainer';
 import {GatewayListItem} from './GatewayListItem';
 
 export const GatewayList = ({
-  changePaginationPage,
+  changePage,
   componentId,
   result,
   entities,
@@ -28,15 +28,14 @@ export const GatewayList = ({
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
   const renderStatusChanged = ({id, productModel, statusChanged}: Gateway) => (
-      <RowCenter className="StatusChanged space-between">
-        <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
-        <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>
-      </RowCenter>
-    )
-  ;
+    <RowCenter className="StatusChanged space-between">
+      <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+      <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>
+    </RowCenter>
+  );
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
-  const changePage = (page: number) => changePaginationPage({entityType, componentId, page});
+  const onChangePage = (page: number) => changePage({entityType, componentId, page});
 
   return (
     <div>
@@ -69,7 +68,7 @@ export const GatewayList = ({
         />
       </Table>
       <TableInfoText/>
-      <PaginationControl pagination={pagination} changePage={changePage}/>
+      <PaginationControl pagination={pagination} changePage={onChangePage}/>
     </div>
   );
 };

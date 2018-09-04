@@ -12,7 +12,7 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
-import {ClearError, ErrorResponse, OnClick} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -74,9 +74,10 @@ const MapWidget =
     viewCenter,
   }: Props) => {
 
-    const dialog = map.selectedMarker && map.isClusterDialogOpen && (
+    const selectedId = Maybe.maybe<uuid>(map.selectedMarker);
+    const dialog = selectedId.isJust() && map.isClusterDialogOpen && (
       <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog} autoScrollBodyContent={true}>
-        <MeterDetailsContainer meterId={map.selectedMarker}/>
+        <MeterDetailsContainer selectedId={selectedId}/>
       </Dialog>
     );
 

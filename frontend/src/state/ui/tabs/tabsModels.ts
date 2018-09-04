@@ -24,7 +24,7 @@ export interface TabSelection {
   useCase: UseCases.collection | UseCases.validation;
 }
 
-export interface TabsContainerStateToProps {
+export interface SelectedTab {
   selectedTab: TabName;
 }
 

@@ -17,7 +17,7 @@ import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 export const MeterList = (
   {
     componentId,
-    changePaginationPage,
+    changePage,
     result,
     entities,
     entityType,
@@ -55,7 +55,7 @@ export const MeterList = (
     </TableHead>
   );
 
-  const changePage = (page: number) => changePaginationPage({entityType, componentId, page});
+  const onChangePage = (page: number) => changePage({entityType, componentId, page});
 
   return (
     <div>
@@ -101,7 +101,7 @@ export const MeterList = (
         />
       </Table>
       <TableInfoText/>
-      <PaginationControl pagination={pagination} changePage={changePage}/>
+      <PaginationControl pagination={pagination} changePage={onChangePage}/>
     </div>
   );
 };

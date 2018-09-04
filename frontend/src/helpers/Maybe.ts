@@ -8,6 +8,7 @@ const enum Type {
 interface MaybeApi<T> {
   isNothing: () => boolean;
   isJust: () => boolean;
+  do: <U>(f: (value: T) => void) => void;
   map: <U>(f: (value: T) => U) => Maybe<U>;
   flatMap: <U>(f: (value: T) => Maybe<U>) => Maybe<U>;
   get: () => T;
@@ -46,6 +47,12 @@ export class Maybe<T> implements MaybeApi<T> {
     return this.type === Type.just;
   }
 
+  do(f: (value: T) => void): void {
+    if (this.isJust()) {
+      f(this.get());
+    }
+  }
+
   map<U>(f: (value: T) => U): Maybe<U> {
     return this.isJust()
       ? Maybe.maybe<U>(f(this.get()))
@@ -67,6 +74,10 @@ export class Maybe<T> implements MaybeApi<T> {
 
   orElse(value: T): T {
     return this.isJust() ? this.get() : value;
+  }
+
+  getOrElseUndefined(): T | undefined {
+    return this.isJust() ? this.get() : undefined;
   }
 
   orElseGet(f: () => T): T {
