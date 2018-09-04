@@ -6,12 +6,9 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
@@ -36,8 +33,4 @@ public class MissingMeasurementPk implements Serializable {
 
   @Column(nullable = false, updatable = false)
   public ZonedDateTime expectedTime;
-
-  @Column(nullable = false, updatable = false)
-  @Enumerated(EnumType.ORDINAL)
-  public MeterDefinitionType meterDefinitionType;
 }

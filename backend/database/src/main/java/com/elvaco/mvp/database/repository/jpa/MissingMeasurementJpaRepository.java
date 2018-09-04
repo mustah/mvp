@@ -10,10 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface MissingMeasurementJpaRepository
   extends JpaRepository<MissingMeasurementEntity, MissingMeasurementPk> {
 
-  @Modifying
-  @Query(nativeQuery = true, value = "REFRESH MATERIALIZED VIEW CONCURRENTLY missing_measurement")
-  void refreshConcurrently();
-
   @Transactional
   @Modifying
   @Query(nativeQuery = true, value = "REFRESH MATERIALIZED VIEW missing_measurement")
