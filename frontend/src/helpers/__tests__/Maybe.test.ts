@@ -28,6 +28,41 @@ describe('Maybe', () => {
     });
   });
 
+  describe('getOrElseUndefined', () => {
+
+    it('can return undefined if desired', () => {
+      const n: number = undefined!;
+      expect(Maybe.maybe<number>(n).getOrElseUndefined()).toBeUndefined();
+    });
+
+    it('gets the value when defined', () => {
+      const n: number = 2;
+      expect(Maybe.maybe<number>(n).getOrElseUndefined()).toBe(2);
+    });
+  });
+
+  describe('do', () => {
+
+    let total = 0;
+    const add = (n: number): void => {
+      total = total + n;
+    };
+
+    beforeEach(() => total = 2);
+
+    it('just executes callback function with current value', () => {
+      Maybe.maybe<number>(1).do(add);
+
+      expect(total).toBe(3);
+    });
+
+    it('does nothing', () => {
+      Maybe.nothing<number>().do(add);
+
+      expect(total).toBe(2);
+    });
+  });
+
   describe('get', () => {
 
     it('gets defined value', () => {

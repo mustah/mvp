@@ -14,19 +14,10 @@ import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/p
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {CallbackWithId, uuid} from '../../types/Types';
-import {MapMarker} from '../../usecases/map/mapModels';
+import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import './GatewayDetailsContainer.scss';
 import {GatewayDetailsInfoContainer} from './GatewayDetailsInfo';
 import {GatewayDetailsTabs} from './GatewayDetailsTabs';
-
-interface OwnProps {
-  gatewayId: uuid;
-}
-
-interface DispatchToProps {
-  fetchGateway: CallbackWithId;
-  fetchMeterEntities: (ids: uuid[], size?: number) => void;
-}
 
 interface StateToProps {
   isFetching: boolean;
@@ -35,7 +26,12 @@ interface StateToProps {
   meters: Maybe<ObjectsById<Meter>>;
 }
 
-type Props = OwnProps & StateToProps & DispatchToProps;
+interface DispatchToProps {
+  fetchGateway: CallbackWithId;
+  fetchMeterEntities: (ids: uuid[], size?: number) => void;
+}
+
+type Props = StateToProps & DispatchToProps & SelectedId;
 
 const GatewayDetailsContent = (props: Props) => {
   const {gateway, meters} = props;
@@ -53,8 +49,8 @@ const GatewayDetailsContent = (props: Props) => {
 const GatewayDetailsContentLoader = withLargeLoader<Props>(GatewayDetailsContent);
 
 const fetchGatewayAndItsMeters =
-  ({fetchGateway, gatewayId, gateway, fetchMeterEntities}: Props) => {
-    fetchGateway(gatewayId);
+  ({fetchGateway, gateway, fetchMeterEntities, selectedId}: Props) => {
+    selectedId.do((id: uuid) => fetchGateway(id));
     gateway
       .filter(({meterIds}: Gateway) => meterIds.length > 0)
       .map(({meterIds}: Gateway) => {
@@ -79,13 +75,15 @@ class GatewayDetails extends React.Component<Props> {
 
 const mapStateToProps = (
   {paginatedDomainModels: {meters, gateways}, domainModels: {gatewayMapMarkers}}: RootState,
-  {gatewayId}: OwnProps,
+  {selectedId}: SelectedId,
 ): StateToProps => {
-  const gateway: Maybe<Gateway> = getPaginatedDomainModelById<Gateway>(gatewayId)(gateways);
+  const gateway: Maybe<Gateway> = selectedId
+    .flatMap((id: uuid) => getPaginatedDomainModelById<Gateway>(id)(gateways));
   return ({
     gateway,
     meters: getMetersByIds(getGatewayMeterIdsFrom(gateway))(meters),
-    gatewayMapMarker: getDomainModelById<MapMarker>(gatewayId)(gatewayMapMarkers),
+    gatewayMapMarker: selectedId
+      .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(gatewayMapMarkers)),
     isFetching: gateways.isFetchingSingle || meters.isFetchingSingle,
   });
 };
@@ -96,7 +94,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const GatewayDetailsContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(
+  connect<StateToProps, DispatchToProps, SelectedId>(
     () => mapStateToProps,
     mapDispatchToProps,
   )(GatewayDetails);

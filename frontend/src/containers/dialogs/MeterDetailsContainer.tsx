@@ -12,16 +12,12 @@ import {MeterDetails} from '../../state/domain-models/meter-details/meterDetails
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {CallbackWithId, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
-import {MapMarker} from '../../usecases/map/mapModels';
+import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfo';
 import {MeterDetailsTabs} from './MeterDetailsTabs';
-
-interface OwnProps {
-  meterId: uuid;
-}
 
 interface StateToProps {
   isFetching: boolean;
@@ -37,7 +33,7 @@ interface DispatchToProps {
   syncWithMetering: CallbackWithId;
 }
 
-type Props = StateToProps & DispatchToProps & OwnProps;
+type Props = StateToProps & DispatchToProps & SelectedId;
 
 const MeterDetailsContent = (props: Props) => {
   if (props.meter.isNothing()) {
@@ -55,9 +51,11 @@ const MeterDetailsContent = (props: Props) => {
 const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 
 const fetchMeterAndMapMarker =
-  ({dateRange, fetchMeterDetails, fetchMeterMapMarker, meterId}: Props) => {
-    fetchMeterDetails(meterId, makeApiParametersOf(now(), dateRange));
-    fetchMeterMapMarker(meterId);
+  ({dateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId}: Props) => {
+    selectedId.do((id: uuid) => {
+      fetchMeterDetails(id, makeApiParametersOf(now(), dateRange));
+      fetchMeterMapMarker(id);
+    });
   };
 
 class MeterDetailsComponent extends React.Component<Props> {
@@ -80,12 +78,14 @@ const mapStateToProps = (
     domainModels: {meterMapMarkers, meters},
     userSelection: {userSelection: {selectionParameters: {dateRange}}},
   }: RootState,
-  {meterId}: OwnProps,
+  {selectedId}: SelectedId,
 ): StateToProps => ({
   dateRange,
   isFetching: [meterMapMarkers, meters].some((models) => models.isFetching),
-  meter: getDomainModelById<MeterDetails>(meterId)(meters),
-  meterMapMarker: getDomainModelById<MapMarker>(meterId)(meterMapMarkers),
+  meter: selectedId
+    .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
+  meterMapMarker: selectedId
+    .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(meterMapMarkers)),
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -95,7 +95,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   syncWithMetering,
 }, dispatch);
 
-export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, OwnProps>(
+export const MeterDetailsContainer = connect<StateToProps, DispatchToProps, SelectedId>(
   () => mapStateToProps,
   mapDispatchToProps,
 )(MeterDetailsComponent);

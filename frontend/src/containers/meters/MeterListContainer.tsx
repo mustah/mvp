@@ -65,7 +65,7 @@ interface DispatchToProps {
   syncWithMetering: OnClickWithId;
   syncAllMeters: (ids: uuid[]) => void;
   fetchMeters: FetchPaginated;
-  changePaginationPage: OnChangePage;
+  changePage: OnChangePage;
   clearError: ClearErrorPaginated;
 }
 
@@ -166,7 +166,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   syncWithMetering,
   syncAllMeters,
   fetchMeters,
-  changePaginationPage: changePage,
+  changePage,
   clearError: clearErrorMeters,
 }, dispatch);
 

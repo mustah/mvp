@@ -50,7 +50,7 @@ interface StateToProps extends ListProps, Query {
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchGateways: FetchPaginated;
-  changePaginationPage: OnChangePage;
+  changePage: OnChangePage;
   clearError: ClearErrorPaginated;
 }
 
@@ -132,7 +132,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchGateways,
-  changePaginationPage: changePage,
+  changePage,
   clearError: clearErrorGateways,
 }, dispatch);
 
