@@ -26,15 +26,14 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
-const MvpPageComponent = (props: Props) => {
-  const {
-    children,
-    selection,
-    isSelectionPage,
-    isSideMenuOpen,
-    selectSavedSelection,
-    resetSelection,
-  } = props;
+const MvpPageComponent = ({
+  children,
+  selection,
+  isSelectionPage,
+  isSideMenuOpen,
+  selectSavedSelection,
+  resetSelection,
+}: Props) => {
 
   const renderSelectionSearch = isSelectionPage
     ? <SelectionMenuContainer/>
@@ -53,13 +52,11 @@ const MvpPageComponent = (props: Props) => {
   );
 };
 
-const mapStateToProps = ({routing, ui, userSelection}: RootState): StateToProps => {
-  return {
-    selection: getUserSelection(userSelection),
-    isSelectionPage: isSelectionPage(routing),
-    isSideMenuOpen: isSideMenuOpen(ui),
-  };
-};
+const mapStateToProps = ({routing, ui, userSelection}: RootState): StateToProps => ({
+  selection: getUserSelection(userSelection),
+  isSelectionPage: isSelectionPage(routing),
+  isSideMenuOpen: isSideMenuOpen(ui),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   resetSelection,
