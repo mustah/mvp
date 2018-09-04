@@ -2,7 +2,7 @@ import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../../app/routes';
 import {LOGOUT_USER} from '../../auth/authActions';
 import {search as searchAction} from '../searchActions';
-import {collectionQuery, QueryParameter, validationQuery} from '../searchModels';
+import {collectionQuery, QueryParameter, selectionTreeQuery, validationQuery} from '../searchModels';
 import {initialState, search, SearchState} from '../searchReducer';
 
 describe('searchReducer', () => {
@@ -62,6 +62,40 @@ describe('searchReducer', () => {
 
       state = search(initialState, searchAction(collectionQuery('hop')));
       expect(state).toEqual({...initialState, collection: {query: 'hop'}});
+    });
+  });
+
+  describe('selectionTreeSearch', () => {
+
+    it('defaults to empty', () => {
+      const payload: QueryParameter = selectionTreeQuery();
+      const state: SearchState = search(
+        initialState,
+        searchAction(payload),
+      );
+
+      const expected: SearchState = {...initialState, selectionTree: {}};
+
+      expect(state).toEqual(expected);
+    });
+
+    it('can search in selection tree', () => {
+      const payload: QueryParameter = selectionTreeQuery('bro');
+      const state: SearchState = search(initialState, searchAction(payload));
+      const expected: SearchState = {...initialState, selectionTree: {query: 'bro'}};
+
+      expect(state).toEqual(expected);
+    });
+
+    it('replaces previous selection tree search query', () => {
+      const firstState: SearchState = search(initialState, searchAction(selectionTreeQuery('bro')));
+      const firstExpected: SearchState = {...initialState, selectionTree: {query: 'bro'}};
+
+      expect(firstState).toEqual(firstExpected);
+
+      const secondState: SearchState = search(initialState, searchAction(selectionTreeQuery('hop')));
+      const secondExpected: SearchState = {...initialState, selectionTree: {query: 'hop'}};
+      expect(secondState).toEqual(secondExpected);
     });
   });
 

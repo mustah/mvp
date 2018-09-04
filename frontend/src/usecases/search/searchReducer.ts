@@ -10,7 +10,7 @@ import {
 } from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
-import {SEARCH} from './searchActions';
+import {SEARCH, SEARCH_SELECTION_TREE} from './searchActions';
 import {Query, QueryParameter} from './searchModels';
 
 export interface SearchState {
@@ -43,6 +43,7 @@ const resetValidationQuery = (state: SearchState, {pathname}: Location): SearchS
 export const search = (state: SearchState = initialState, action: Actions): SearchState => {
   switch (action.type) {
     case SEARCH:
+    case SEARCH_SELECTION_TREE:
       return {...state, ...(action as Action<QueryParameter>).payload};
     case LOCATION_CHANGE:
       return resetValidationQuery(state, (action as Action<Location>).payload);
