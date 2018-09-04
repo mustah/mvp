@@ -42,7 +42,7 @@ export const mvpTheme = getMuiTheme({
   },
 });
 
-export const drawerWidth = 74; // Should be the same as $main-menu-width in _variables.scss
+export const drawerWidth = 84; // Should be the same as $main-menu-width in _variables.scss
 
 export const iconStyle: React.CSSProperties = {
   padding: 0,

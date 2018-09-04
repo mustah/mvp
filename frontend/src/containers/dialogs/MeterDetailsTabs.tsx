@@ -7,6 +7,7 @@ import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
+import {TableInfoText} from '../../components/table/TableInfoText';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
@@ -151,6 +152,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
                 renderCell={renderStatusCell}
               />
             </Table>
+            <TableInfoText/>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <MapContentWrapper {...wrapperProps}/>

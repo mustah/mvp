@@ -103,7 +103,7 @@ const utcOffsetHours = 1;
 
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string => {
   const date = momentWithTimeZone(input).add(utcOffsetHours, 'hours');
-  return `${date.format(format)} ${timezoneUtc}+${utcOffsetHours}`;
+  return `${date.format(format)}`;
 };
 
 export const timestamp = (input: moment.MomentInput): string =>

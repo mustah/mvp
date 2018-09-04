@@ -351,6 +351,9 @@ msgstr "dashboard"
 msgid "all meters in selection"
 msgstr "all meters in selection"
 
+msgid "all timestamps are displayed in UTC+1"
+msgstr "all timestamps are displayed in UTC+1"
+
 msgid "report"
 msgstr "report"
 

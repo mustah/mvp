@@ -9,6 +9,7 @@
     text-align: left;
     text-transform: uppercase;
     border-bottom: 1px solid $grey;
+    padding: $sm-space;
 
     &.actionDropdown {
       text-align: right;
@@ -31,13 +32,20 @@
     }
   }
 
-  th {
-    padding: $sm-space;
-  }
-
   td {
-    padding: 2px $sm-space;
+    padding: 2px 2px 2px $sm-space;
     border-bottom: 1px solid $light-grey;
+
+    &.actionDropdown {
+      width: 0;
+      padding: 0;
+    }
+
+    .StatusChanged {
+      .PopoverMenu {
+        padding-right: $xs-space;
+      }
+    }
   }
 
   tr:hover {
@@ -48,8 +56,4 @@
     max-width: 120px;
   }
 
-  td.number, th.number {
-    text-align: right;
-    padding-right: 20px;
-  }
 }

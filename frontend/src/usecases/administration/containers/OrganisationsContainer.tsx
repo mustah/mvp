@@ -9,18 +9,19 @@ import {RowRight} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
+import {TableInfoText} from '../../../components/table/TableInfoText';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {
   clearOrganisationErrors,
   deleteOrganisation,
   fetchOrganisations,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
-import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
-import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, Fetch, OnClickWithId, uuid} from '../../../types/Types';
 
 interface StateToProps {
   organisations: DomainModel<Organisation>;
@@ -86,6 +87,7 @@ class OrganisationsComponent extends React.Component<Props, State> {
               renderCell={renderActionDropdown}
             />
           </Table>
+          <TableInfoText/>
           <ConfirmDialog
             isOpen={this.state.isDeleteDialogOpen}
             close={this.closeDialog}
