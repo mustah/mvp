@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="Create missing measurement materialized view (v2)" author="Anton Löfgren"
+               dbms="postgresql">
+        <sqlFile path="../sql/postgresql/create_missing_measurement_materialized_view_v2.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 stripComments="true"/>
+        <sql>refresh materialized view missing_measurement;</sql>
+    </changeSet>
+
+    <changeSet id="Drop missing measurement materialized table - h2" author="Anton Löfgren"
+               dbms="h2">
+        <dropTable tableName="missing_measurement"/>
+    </changeSet>
+
+    <changeSet
+            id="Re-create missing measurement materialized table without meter definition type - h2"
+            author="Anton Löfgren" dbms="h2">
+
+        <createTable tableName="missing_measurement" schemaName="public">
+            <column name="physical_meter_id" type="uuid">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="expected_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+
+

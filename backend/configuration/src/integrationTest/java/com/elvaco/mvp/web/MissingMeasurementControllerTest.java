@@ -61,8 +61,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   public void setUp() {
     assumeTrue(isPostgresDialect());
 
-    startDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(10);
-    endDate = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    endDate = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES);
+    startDate = endDate.minusMinutes(10);
   }
 
   @After
