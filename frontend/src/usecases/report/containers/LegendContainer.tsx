@@ -45,7 +45,8 @@ class LegendComponent extends React.Component<Props> {
         id: line.id,
       };
 
-      if (!lines.has(legendItem.id) && !legendItem.label.startsWith('average')) { // TODO remove average condition
+      // TODO averages should be represented in legend
+      if (!lines.has(legendItem.id) && !legendItem.label.toLowerCase().startsWith('average')) {
         lines.set(legendItem.id, legendItem);
       }
     }
