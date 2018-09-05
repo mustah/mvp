@@ -11,8 +11,9 @@
     min-width: 774px;
   }
 
-  a {
+  a,a:visited {
     text-decoration: none;
+    color: inherit;
   }
 
   .PopoverMenu {

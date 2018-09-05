@@ -9,7 +9,7 @@
   }
 
   .info {
-    background-color: $grey;
+    background-color: $white;
     color: $blackest;
   }
 
@@ -83,5 +83,11 @@
         @extend .error;
       }
     }
+  }
+
+  &.NoExpectedMeasurementsWidget {
+    text-align: center;
+    padding: $sm-space 0;
+
   }
 }
