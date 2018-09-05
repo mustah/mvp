@@ -11,12 +11,8 @@ import {getMeterParameters} from '../../../state/user-selection/userSelectionSel
 import {withMapMarkersFetcher} from '../../map/helper/mapMarkersHoc';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
-import {
-  getBounds,
-  getMeterLowConfidenceTextInfo,
-  getSelectedMapMarker,
-} from '../../map/mapSelectors';
-import {validationSearch} from '../../search/searchActions';
+import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {clearValidationSearch, validationSearch} from '../../search/searchActions';
 import {ValidationTabs} from '../components/ValidationTabs';
 
 const mapStateToProps =
@@ -46,8 +42,9 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   close: closeClusterDialog,
   clearError: clearErrorMeterMapMarkers,
+  clearSearch: clearValidationSearch,
   fetchMapMarkers: fetchMeterMapMarkers,
-  wildcardSearch: validationSearch,
+  search: validationSearch,
 }, dispatch);
 
 export const ValidationTabsContainer =

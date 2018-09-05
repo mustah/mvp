@@ -60,7 +60,7 @@ class LegendComponent extends React.Component<Props> {
       <ButtonDelete onClick={toggleSingleEntry} id={line.id}/>;
 
     return (
-      <Row>
+      <Row className="LegendContainer">
         <Table result={result} entities={entities.lines}>
           <TableColumn
             header={<TableHead className="first">{translate('facility')}</TableHead>}

@@ -8,26 +8,17 @@ import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
 import {translate} from '../../services/translationService';
 import {Address, City} from '../../state/domain-models/location/locationModels';
-import {
-  FetchByPage,
-  PagedResponse,
-} from '../../state/domain-models/selections/selectionsApiActions';
+import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsApiActions';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
 import {Children, IdNamed, uuid} from '../../types/Types';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
+import {SearchBox} from '../search-box/SearchBox';
 import {Normal} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
-import {
-  replaceWhereId,
-  searchOverviewText,
-  throttledSearch,
-  ThrottledSearch,
-  unknownItems,
-} from './dropdownHelper';
+import {replaceWhereId, searchOverviewText, throttledSearch, ThrottledSearch, unknownItems} from './dropdownHelper';
 import './DropdownSelector.scss';
-import {SearchBox} from './SearchBox';
 import origin = __MaterialUI.propTypes.origin;
 
 interface OptionalProps {
@@ -113,7 +104,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
       : totalElements;
 
     const renderSearchBox =
-      fetchItemsByQuery && <SearchBox onChange={this.onUpdateSearch} clear={!isOpen}/>;
+      fetchItemsByQuery && <SearchBox onChange={this.onUpdateSearch} clear={!isOpen} onClear={this.onClear}/>;
 
     return (
       <Row className="DropdownSelector">
@@ -185,16 +176,20 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
             query,
           });
         } else {
-          this.setState((prevState: State) => ({
-            items: [...prevState.cache.items],
-            isSearching: false,
-            page: 0,
-            totalElements: prevState.cache.totalElements,
-            query: undefined,
-          }));
+          this.onClear();
         }
       },
     );
+  }
+
+  onClear = () => {
+    this.setState((prevState: State) => ({
+      items: [...prevState.cache.items],
+      isSearching: false,
+      page: 0,
+      totalElements: prevState.cache.totalElements,
+      query: undefined,
+    }));
   }
 
   onSelect = (selectedItem: SelectionListItem, id: uuid) => {
