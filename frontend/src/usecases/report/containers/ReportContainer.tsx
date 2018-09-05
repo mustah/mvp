@@ -25,8 +25,14 @@ import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
-import {initialState, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  fetchMeasurements,
+  mapApiResponseToGraphData,
+} from '../../../state/ui/graph/measurement/measurementActions';
+import {
+  initialState, MeasurementResponses,
+  Quantity,
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {
   toggleReportIndicatorWidget,
 } from '../../../state/ui/indicator/indicatorActions';
@@ -38,6 +44,7 @@ import {OnLogout} from '../../auth/authModels';
 import {GraphContents, hardcodedIndicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 import {LegendContainer} from './LegendContainer';
+import {MeasurementListContainer} from './MeasurementListContainer';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
@@ -49,9 +56,10 @@ interface StateToProps {
 
 export interface ReportContainerState {
   hiddenKeys: string[];
-  graphContents: GraphContents;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
+  selectedTab: TabName;
+  measurementResponse: MeasurementResponses;
 }
 
 interface DispatchToProps {
@@ -63,11 +71,8 @@ type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & Inj
 
 const style: React.CSSProperties = {width: '100%', height: '100%'};
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16};
-const selectedTab: TabName = TabName.graph;
 
 export type OnUpdateGraph = (state: ReportContainerState) => void;
-
-const onChangeTab = () => void(0);
 
 class ReportComponent extends React.Component<Props, ReportContainerState> {
   constructor(props) {
@@ -108,7 +113,11 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
   render() {
     const {selectedIndicatorTypes, toggleReportIndicatorWidget} = this.props;
-    const {isFetching, error, hiddenKeys, graphContents} = this.state;
+    const {isFetching, error, hiddenKeys, selectedTab, measurementResponse} = this.state;
+
+    const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
+
+    const onChangeTab = (selectedTab: TabName) => this.setState({selectedTab});
 
     const onToggleLine = (dataKey: string) => {
       this.setState({
@@ -147,10 +156,14 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                 <TabTopBar>
                   <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
                     <Tab tab={TabName.graph} title={translate('graph')}/>
+                    <Tab tab={TabName.list} title={translate('list')}/>
                   </TabHeaders>
                 </TabTopBar>
                 <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-                  <GraphContainer graphContents={graphContents} outerHiddenKeys={this.state.hiddenKeys}/>
+                  <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenKeys}/>
+                </TabContent>
+                <TabContent tab={TabName.list} selectedTab={selectedTab}>
+                  <MeasurementListContainer measurement={measurementResponse.measurement} />
                 </TabContent>
               </Tabs>
             </div>

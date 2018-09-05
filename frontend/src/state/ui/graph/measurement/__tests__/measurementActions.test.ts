@@ -455,9 +455,12 @@ describe('measurementActions', () => {
       );
 
       expect(requestedUrls.length).toEqual(2);
-      expect(state.graphContents.axes.left).toEqual('mW');
-      expect(state.graphContents.data).toHaveLength(2);
-      expect(state.graphContents.lines).toHaveLength(3);
+
+      const graphContents: GraphContents = mapApiResponseToGraphData(state.measurementResponse);
+
+      expect(graphContents.axes.left).toEqual('mW');
+      expect(graphContents.data).toHaveLength(2);
+      expect(graphContents.lines).toHaveLength(3);
     });
 
     it('filters out average readouts without values', async () => {
@@ -537,9 +540,8 @@ describe('measurementActions', () => {
         logout,
       );
 
-      const timestampsWithAverageValues = state.graphContents.data
-        .filter((pointInTime) => Object.keys(pointInTime).includes('Average Power'));
-      expect(timestampsWithAverageValues).toHaveLength(1);
+      expect(state.measurementResponse.average[0].values).toHaveLength(1);
+      expect(state.measurementResponse.average[0].values[0].value).toBe(0.55);
     });
 
     it('keeps average readouts with a value of 0', async () => {
@@ -620,9 +622,9 @@ describe('measurementActions', () => {
         logout,
       );
 
-      const timestampsWithAverageValues = state.graphContents.data
-        .filter((pointInTime) => Object.keys(pointInTime).includes('Average Power'));
-      expect(timestampsWithAverageValues).toHaveLength(2);
+      expect(state.measurementResponse.average[0].values).toHaveLength(2);
+      expect(state.measurementResponse.average[0].values[0].value).toBe(0);
+      expect(state.measurementResponse.average[0].values[1].value).toBe(0.55);
     });
   });
 });
