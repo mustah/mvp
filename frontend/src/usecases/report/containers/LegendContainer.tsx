@@ -63,16 +63,8 @@ class LegendComponent extends React.Component<Props> {
       <Row>
         <Table result={normalized.result} entities={normalized.entities.lines}>
           <TableColumn
-            header={<TableHead className="icon" />}
-            renderCell={renderDeleteButton}
-          />
-          <TableColumn
-            header={<TableHead className="icon" />}
-            renderCell={renderVisibilityButton}
-          />
-          <TableColumn
-            header={<TableHead>{translate('facility')}</TableHead>}
-            cellClassName={'first-uppercase'}
+            header={<TableHead className="first">{translate('facility')}</TableHead>}
+            cellClassName={'first first-uppercase'}
             renderCell={renderName}
           />
           <TableColumn
@@ -84,6 +76,16 @@ class LegendComponent extends React.Component<Props> {
             header={<TableHead>{translate('address')}</TableHead>}
             cellClassName={'first-uppercase'}
             renderCell={renderAddress}
+          />
+          <TableColumn
+            header={<TableHead className="icon" />}
+            cellClassName="icon"
+            renderCell={renderVisibilityButton}
+          />
+          <TableColumn
+            header={<TableHead className="icon" />}
+            cellClassName="icon"
+            renderCell={renderDeleteButton}
           />
         </Table>
       </Row>
