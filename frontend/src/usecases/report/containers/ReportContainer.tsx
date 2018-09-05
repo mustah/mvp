@@ -121,6 +121,9 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
     const indicators = hardcodedIndicators();
 
+    const renderLegend = () => graphContents.lines.length > 0 ?
+        <LegendContainer graphContents={graphContents} onToggleLine={onToggleLine}/> : null;
+
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -151,7 +154,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                 </TabContent>
               </Tabs>
             </div>
-            <LegendContainer graphContents={graphContents} onToggleLine={onToggleLine} />
+            {renderLegend()}
           </Paper>
         </Loader>
       </MvpPageContainer>
