@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
@@ -378,13 +377,12 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void facilityWildcardSearch() {
     UUID meterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "abcdef",
-      context().organisationId(),
-      MeterDefinition.HOT_WATER_METER,
-      Location.UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId("abcdef")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .logicalMeterId(meterId)
@@ -413,13 +411,16 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void secondaryAddressWildcardSearch() {
     UUID meterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "1234",
-      context().organisationId(),
-      MeterDefinition.HOT_WATER_METER,
-      new LocationBuilder().city("Kungsbacka").address("Stora vägen 24").build()
-    ));
+    logicalMeters.save(
+      LogicalMeter.builder()
+        .id(meterId)
+        .externalId("1234")
+        .organisationId(context().organisationId())
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .location(
+          new LocationBuilder().city("Kungsbacka").address("Stora vägen 24").build()
+        )
+        .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .logicalMeterId(meterId)
@@ -464,13 +465,16 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void cityWildcardSearch() {
     UUID meterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "1234",
-      context().organisationId(),
-      MeterDefinition.HOT_WATER_METER,
-      new LocationBuilder().country("sverige").city("Kungsbacka").address("Stora vägen 24").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId("1234")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("sverige")
+        .city("Kungsbacka")
+        .address("Stora vägen 24")
+        .build())
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .logicalMeterId(meterId)
@@ -497,13 +501,17 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void addressWildcardSearch() {
     UUID meterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "1234",
-      context().organisationId(),
-      MeterDefinition.HOT_WATER_METER,
-      new LocationBuilder().country("sverige").city("Kungsbacka").address("Stora vägen 24").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId("1234")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("sverige")
+        .city("Kungsbacka")
+        .address("Stora vägen 24")
+        .build()
+      )
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .logicalMeterId(meterId)
@@ -525,6 +533,178 @@ public class SelectionControllerTest extends IntegrationTest {
       "/selections/addresses?q=illa",
       AddressDto.class
     )).hasSize(0);
+  }
+
+  @Test
+  public void getCities_duplicatesAreNotIncluded() {
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("1")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("sverige").city("kungsbacka").build())
+      .build()
+    );
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("2")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("sverige").city("kungsbacka").build())
+      .build()
+    );
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("3")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("norge").city("kungsbacka").build())
+      .build()
+    );
+
+    Page<CityDto> response = asTestUser().getPage(
+      "/selections/cities",
+      CityDto.class
+    );
+
+    assertThat(response.getContent()).containsExactlyInAnyOrder(
+      new CityDto("kungsbacka", "sverige"),
+      new CityDto("kungsbacka", "norge")
+    );
+  }
+
+  @Test
+  public void getAddresses_duplicatesAreNotIncluded() {
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("1")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("sverige")
+        .city("kungsbacka")
+        .address("teknikgatan 2")
+        .build())
+      .build()
+    );
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("2")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(new LocationBuilder().country("sverige")
+        .city("kungsbacka")
+        .address("teknikgatan 2")
+        .build())
+      .build()
+    );
+
+    Page<AddressDto> response = asTestUser().getPage(
+      "/selections/addresses",
+      AddressDto.class
+    );
+
+    assertThat(response.getContent()).containsExactly(
+      new AddressDto("sverige", "kungsbacka", "teknikgatan 2")
+    );
+  }
+
+  @Test
+  public void getSecondaryAddresses_duplicatesAreNotIncluded() {
+    UUID meterId = randomUUID();
+    UUID meterIdTwo = randomUUID();
+    logicalMeters.save(
+      LogicalMeter.builder()
+        .id(meterId)
+        .externalId("1234")
+        .organisationId(context().organisationId())
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .build());
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("1234")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterIdTwo)
+      .externalId("5678")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.HOT_WATER_METER).build()
+    );
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterIdTwo)
+      .externalId("5678")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    Page<IdNamedDto> response = asTestUser().getPage(
+      "/selections/secondary-addresses",
+      IdNamedDto.class
+    );
+
+    assertThat(response).extracting("name").containsExactly("123456");
+  }
+
+  @Test
+  public void getFacilities_duplicatesAreNotIncluded() {
+    UUID meterId = randomUUID();
+    logicalMeters.save(
+      LogicalMeter.builder()
+        .id(meterId)
+        .externalId("1234")
+        .organisationId(context().organisationId())
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .build());
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("1234")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("123456")
+      .build());
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .logicalMeterId(meterId)
+      .externalId("1234")
+      .readIntervalMinutes(60)
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .organisation(context().organisation())
+      .address("78910")
+      .build());
+
+    Page<IdNamedDto> response = asTestUser().getPage(
+      "/selections/facilities",
+      IdNamedDto.class
+    );
+
+    assertThat(response).extracting("name").containsExactly("1234");
+  }
+
+  @Test
+  public void getGatewaySerials_duplicatesAreNotIncluded() {
+    gateways.save(new Gateway(randomUUID(), context().organisationId(), "1", "3100"));
+    gateways.save(new Gateway(randomUUID(), context().organisationId(), "1", "2100"));
+    gateways.save(new Gateway(randomUUID(), context().organisationId(), "2", "3100"));
+
+    Page<IdNamedDto> response = asTestUser().getPage(
+      "/selections/gateway-serials",
+      IdNamedDto.class
+    );
+
+    assertThat(response).extracting("name").containsExactlyInAnyOrder("1", "2");
   }
 
   private void prepareGateways() {

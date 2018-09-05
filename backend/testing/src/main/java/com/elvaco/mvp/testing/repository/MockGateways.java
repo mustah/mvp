@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.UUID.randomUUID;
 
@@ -55,6 +56,13 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
   @Override
   public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return Optional.empty();
+  }
+
+  @Override
+  public Page<String> findSerials(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    throw new NotImplementedYet();
   }
 
   @Override

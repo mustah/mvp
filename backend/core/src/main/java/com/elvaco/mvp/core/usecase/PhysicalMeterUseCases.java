@@ -78,6 +78,26 @@ public class PhysicalMeterUseCases {
     );
   }
 
+  public Page<String> findAddresses(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return physicalMeters.findAddresses(
+      setCurrentUsersOrganisationId(currentUser, parameters),
+      pageable
+    );
+  }
+
+  public Page<String> findFacilities(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return physicalMeters.findFacilities(
+      setCurrentUsersOrganisationId(currentUser, parameters),
+      pageable
+    );
+  }
+
   private Unauthorized userIsUnauthorized(UUID id) {
     return new Unauthorized(String.format(
       "User '%s' is not allowed to update physical meter with ID %s",

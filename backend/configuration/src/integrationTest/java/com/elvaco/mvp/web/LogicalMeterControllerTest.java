@@ -1857,7 +1857,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     assertThat(logicalMeters.findById(districtHeatingMeter.id)).isEmpty();
-    assertThat(physicalMeterJpaRepository.findOne(physicalMeter.id)).isNull();
+    assertThat(physicalMeterJpaRepository.findById(physicalMeter.id)).isEmpty();
     assertThat(measurementUseCases.findBy(physicalMeter.id, Quantity.VOLUME.name, date)).isEmpty();
   }
 

@@ -47,7 +47,8 @@ class GatewayQueryDslJpaRepository
   private static final QLocationEntity LOCATION = locationEntity;
   private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
 
-  @Autowired GatewayQueryDslJpaRepository(EntityManager entityManager) {
+  @Autowired
+  GatewayQueryDslJpaRepository(EntityManager entityManager) {
     super(entityManager, GatewayEntity.class);
   }
 
@@ -124,6 +125,11 @@ class GatewayQueryDslJpaRepository
   public Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     Predicate predicate = GATEWAY.organisationId.eq(organisationId).and(GATEWAY.id.eq(id));
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
+  }
+
+  @Override
+  public Page<String> findSerials(Predicate predicate, Pageable pageable) {
+    return findDistinctProperties(GATEWAY.serial, predicate, pageable);
   }
 
   private List<PagedGateway> fetchAllLogicalMetersByGatewayIds(

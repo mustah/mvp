@@ -29,4 +29,5 @@ public interface Gateways {
 
   Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
+  Page<String> findSerials(RequestParameters parameters, Pageable pageable);
 }

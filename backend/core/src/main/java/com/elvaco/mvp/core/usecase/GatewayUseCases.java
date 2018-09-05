@@ -52,4 +52,11 @@ public class GatewayUseCases {
       return gateways.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
     }
   }
+
+  public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
+    return gateways.findSerials(
+      setCurrentUsersOrganisationId(currentUser, parameters),
+      pageable
+    );
+  }
 }
