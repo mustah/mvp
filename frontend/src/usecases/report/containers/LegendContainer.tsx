@@ -52,7 +52,7 @@ class LegendComponent extends React.Component<Props> {
     }
 
     const lineSchema = [new schema.Entity('lines', {}, {idAttribute: 'id'})];
-    const normalized: Normalized<LegendItem> = normalize(Array.from(lines.values()), lineSchema);
+    const {result, entities}: Normalized<LegendItem> = normalize(Array.from(lines.values()), lineSchema);
 
     const renderVisibilityButton = (line: LegendItem) =>
       <ButtonVisibility onClick={onToggleLine} id={line.id}/>;
@@ -61,7 +61,7 @@ class LegendComponent extends React.Component<Props> {
 
     return (
       <Row>
-        <Table result={normalized.result} entities={normalized.entities.lines}>
+        <Table result={result} entities={entities.lines}>
           <TableColumn
             header={<TableHead className="first">{translate('facility')}</TableHead>}
             cellClassName={'first first-uppercase'}

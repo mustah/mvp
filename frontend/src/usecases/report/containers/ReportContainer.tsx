@@ -108,13 +108,13 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
   render() {
     const {selectedIndicatorTypes, toggleReportIndicatorWidget} = this.props;
-    const {isFetching, error} = this.state;
+    const {isFetching, error, hiddenKeys, graphContents} = this.state;
 
     const onToggleLine = (dataKey: string) => {
       this.setState({
         hiddenKeys: toggle(
           dataKey,
-          this.state.hiddenKeys,
+          hiddenKeys,
         ),
       });
     };
@@ -147,11 +147,11 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                   </TabHeaders>
                 </TabTopBar>
                 <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-                  <GraphContainer graphContents={this.state.graphContents} outerHiddenKeys={this.state.hiddenKeys}/>
+                  <GraphContainer graphContents={graphContents} outerHiddenKeys={this.state.hiddenKeys}/>
                 </TabContent>
               </Tabs>
             </div>
-            <LegendContainer graphContents={this.state.graphContents} onToggleLine={onToggleLine} />
+            <LegendContainer graphContents={graphContents} onToggleLine={onToggleLine} />
           </Paper>
         </Loader>
       </MvpPageContainer>
