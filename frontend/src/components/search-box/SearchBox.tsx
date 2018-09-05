@@ -1,11 +1,13 @@
 import * as classNames from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
+import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
 import 'SearchBox.scss';
 import {ClassNamed, OnChange} from '../../types/Types';
 
 interface Props extends ClassNamed {
   onChange: OnChange;
+  onClear: OnChange;
   clear?: boolean;
   value?: string;
 }
@@ -14,7 +16,8 @@ interface State {
   value: string;
 }
 
-const searchStyle: React.CSSProperties = {
+const style: React.CSSProperties = {
+  cursor: 'pointer',
   position: 'absolute',
   right: 12,
   top: 7,
@@ -47,7 +50,7 @@ export class SearchBox extends React.Component<Props, State> {
           value={clear ? '' : value}
           onChange={this.onChange}
         />
-        <ActionSearch style={searchStyle}/>
+        {value ? <ContentClear onClick={this.onClear} style={style}/> : <ActionSearch style={style}/>}
       </div>
     );
   }
@@ -57,5 +60,11 @@ export class SearchBox extends React.Component<Props, State> {
     const value = event.target.value;
     this.setState({value});
     this.props.onChange(value);
+  }
+
+  onClear = () => {
+    const value = '';
+    this.setState({value});
+    this.props.onClear(value);
   }
 }

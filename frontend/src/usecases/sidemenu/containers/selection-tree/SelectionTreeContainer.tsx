@@ -15,11 +15,11 @@ import {getSelectionTree} from '../../../../state/selection-tree/selectionTreeSe
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
-import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {EncodedUriParameters, Fetch, OnChange, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
 import {toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
-import {selectionTreeSearch} from '../../../search/searchActions';
+import {clearSelectionTreeSearch, selectionTreeSearch} from '../../../search/searchActions';
 import {OnSearch, Query} from '../../../search/searchModels';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {
@@ -44,6 +44,7 @@ interface DispatchToProps {
   toggleIncludingChildren: OnClick;
   centerMapOnMeter: OnClickWithId;
   selectionTreeSearch: OnSearch;
+  clearSearch: OnChange;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -61,6 +62,7 @@ class SelectionTreeComponent extends React.Component<Props> {
 
   render() {
     const {
+      clearSearch,
       isFetching,
       selectionTree,
       toggleExpand,
@@ -91,17 +93,18 @@ class SelectionTreeComponent extends React.Component<Props> {
     const nestedItems = cityIds.length
       ? [...cityIds].sort().map(renderSelectionOverview)
       : [(
-        <LoadingListItem
-          isFetching={isFetching}
-          text={translate('no meters')}
-          key="loading-list-item"
-        />
-      )];
+           <LoadingListItem
+             isFetching={isFetching}
+             text={translate('no meters')}
+             key="loading-list-item"
+           />
+         )];
 
     return (
       <React.Fragment>
         <SearchBox
           onChange={selectionTreeSearch}
+          onClear={clearSearch}
           value={query}
           className="SearchBox-list"
         />
@@ -136,19 +139,18 @@ const mapStateToProps =
       openListItems: getOpenListItems(selectionTreeUi),
       selectedListItems: getSelectedListItems(report),
       parameters: getMeterParameters({userSelection, now: now()}),
-      itemCapabilities: {
-        zoomable: isDashboardPage(routing),
-      },
+      itemCapabilities: {zoomable: isDashboardPage(routing)},
       query,
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  centerMapOnMeter,
+  clearSearch: clearSelectionTreeSearch,
   fetchSelectionTree,
+  selectionTreeSearch,
   toggleExpand: selectionTreeToggleId,
   toggleSingleEntry,
   toggleIncludingChildren,
-  centerMapOnMeter,
-  selectionTreeSearch,
 }, dispatch);
 
 export const SelectionTreeContainer =

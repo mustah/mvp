@@ -15,9 +15,16 @@ const throttledSearch = throttle(
     dispatch(searchFunction(parameter)), 600, {leading: false, trailing: true},
 );
 
-const wildcardSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>
+const onSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>
   (dispatch: Dispatch<RootState>): OnSearch => throttledSearch(dispatch, parameter, searchFunction);
 
-export const collectionSearch = (query?: string) => wildcardSearch(collectionQuery(query), search);
-export const validationSearch = (query?: string) => wildcardSearch(validationQuery(query), search);
-export const selectionTreeSearch = (query?: string) => wildcardSearch(selectionTreeQuery(query), searchSelectionTree);
+const clearSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>
+  (dispatch: Dispatch<RootState>) => dispatch(searchFunction(parameter));
+
+export const collectionSearch = (query?: string) => onSearch(collectionQuery(query), search);
+export const validationSearch = (query?: string) => onSearch(validationQuery(query), search);
+export const selectionTreeSearch = (query?: string) => onSearch(selectionTreeQuery(query), searchSelectionTree);
+
+export const clearCollectionSearch = () => clearSearch(collectionQuery(), search);
+export const clearValidationSearch = () => clearSearch(validationQuery(), search);
+export const clearSelectionTreeSearch = () => clearSearch(selectionTreeQuery(), searchSelectionTree);

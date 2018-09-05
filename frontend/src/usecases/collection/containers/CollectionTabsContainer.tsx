@@ -12,7 +12,7 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersHoc';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
-import {collectionSearch} from '../../search/searchActions';
+import {clearCollectionSearch, collectionSearch} from '../../search/searchActions';
 import {CollectionTabs} from '../components/CollectionTabs';
 
 const mapStateToProps =
@@ -41,9 +41,10 @@ const mapStateToProps =
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
   clearError: clearErrorGatewayMapMarkers,
+  clearSearch: clearCollectionSearch,
   close: closeClusterDialog,
   fetchMapMarkers: fetchGatewayMapMarkers,
-  wildcardSearch: collectionSearch,
+  search: collectionSearch,
 }, dispatch);
 
 export const CollectionTabsContainer =
