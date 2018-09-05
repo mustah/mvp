@@ -19,7 +19,7 @@ interface TableProps extends ClassNamed {
   children: Array<React.ReactElement<TableColumnProps>> | React.ReactElement<TableColumnProps>;
 }
 
-export const TableColumn = (props: TableColumnProps) => <td/>;
+export const TableColumn = (_: TableColumnProps) => <td/>;
 
 export const Table = ({result, entities, children, className}: TableProps) => {
 
