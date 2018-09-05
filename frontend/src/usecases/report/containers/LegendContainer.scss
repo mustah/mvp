@@ -1,8 +1,14 @@
-.icon {
-  width: 24px;
-}
+@import "../../../app/variables";
 
-.icon button {
-  min-width: 24px !important;
-  line-height: inherit !important;
+.LegendContainer {
+  margin-top: $lg-space;
+
+  .icon {
+    width: 24px;
+  }
+
+  td.icon button {
+    min-width: 24px !important;
+    line-height: inherit !important;
+  }
 }
