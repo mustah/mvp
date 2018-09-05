@@ -97,14 +97,12 @@ public final class FilterUtils {
     ZonedDateTime stop,
     List<StatusType> statuses
   ) {
-    if (start == null || stop == null) {
+    if (start == null || stop == null || statuses == null || statuses.isEmpty()) {
       return null;
     }
-    BooleanExpression dateRangeExpression = METER_STATUS_LOG.start.before(stop)
-      .and(METER_STATUS_LOG.stop.isNull().or(METER_STATUS_LOG.stop.after(start)));
-    return (statuses == null || statuses.isEmpty())
-      ? dateRangeExpression
-      : dateRangeExpression.and(METER_STATUS_LOG.status.in(statuses));
+    return METER_STATUS_LOG.start.before(stop)
+      .and(METER_STATUS_LOG.stop.isNull().or(METER_STATUS_LOG.stop.after(start)))
+      .and(METER_STATUS_LOG.status.in(statuses));
   }
 
   static ZonedDateTime getZonedDateTimeFrom(List<String> values) {

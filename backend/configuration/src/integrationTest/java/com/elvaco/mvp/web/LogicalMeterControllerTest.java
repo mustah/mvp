@@ -225,7 +225,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(metersUrl(start, start.minusDays(7)), PagedLogicalMeterDto.class)
       .getContent();
 
-    assertThat(content).isEmpty();
+    assertThat(content).extracting("statusChanged")
+      .containsExactlyElementsOf(singletonList(null));
   }
 
   @Test
@@ -2107,6 +2108,32 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     assertThat(page).hasSize(2);
+  }
+
+  @Test
+  public void findsMeterWithinPeriodWithNoActiveStatus() {
+    UUID meterId = UUID.randomUUID();
+
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      meterId.toString(),
+      context().organisationId(),
+      HOT_WATER_METER,
+      new LocationBuilder().address("street 1").build()
+    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .address("12345")
+      .externalId(randomUUID().toString())
+      .logicalMeterId(meterId)
+      .build());
+
+    List<PagedLogicalMeterDto> content = asTestUser().getPage(
+      metersUrl(start.minusHours(1), start.plusHours(1)),
+      PagedLogicalMeterDto.class
+    ).getContent();
+    assertThat(content).extracting("id").containsExactly(meterId);
   }
 
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
