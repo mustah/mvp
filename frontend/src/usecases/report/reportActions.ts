@@ -27,7 +27,15 @@ const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
 
 export const toggleSingleEntry = (id: uuid) =>
   (dispatch, getState: GetState) =>
-  dispatchIfWithinLimits(dispatch, toggle(id, getState().report.selectedListItems));
+    dispatchIfWithinLimits(dispatch, toggle(id, getState().report.selectedListItems));
+
+export const addToReport = (id: uuid) =>
+  (dispatch, getState: GetState) => {
+    const alreadyInReport: uuid[] = getState().report.selectedListItems;
+    if (!alreadyInReport.includes(id)) {
+      dispatch(setSelectedEntries([...alreadyInReport, id]));
+    }
+  };
 
 type Level = 'clusters' | 'cities' | 'addresses';
 

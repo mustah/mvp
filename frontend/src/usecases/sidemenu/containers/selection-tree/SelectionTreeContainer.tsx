@@ -7,7 +7,7 @@ import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from 
 import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
-import {isDashboardPage} from '../../../../selectors/routerSelectors';
+import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
 import {translate} from '../../../../services/translationService';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
@@ -17,7 +17,7 @@ import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTre
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnChange, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
-import {toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
+import {toggleIncludingChildren, toggleSingleEntry, addToReport} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {clearSelectionTreeSearch, selectionTreeSearch} from '../../../search/searchActions';
 import {OnSearch, Query} from '../../../search/searchModels';
@@ -38,6 +38,7 @@ interface StateToProps extends Query {
 }
 
 interface DispatchToProps {
+  addToReport: OnClickWithId;
   fetchSelectionTree: Fetch;
   toggleExpand: OnClickWithId;
   toggleSingleEntry: OnClickWithId;
@@ -62,6 +63,7 @@ class SelectionTreeComponent extends React.Component<Props> {
 
   render() {
     const {
+      addToReport,
       clearSearch,
       isFetching,
       selectionTree,
@@ -78,6 +80,7 @@ class SelectionTreeComponent extends React.Component<Props> {
 
     const renderSelectionOverview = (id: uuid) =>
       renderSelectionTreeCities({
+        addToReport,
         id,
         selectionTree,
         toggleExpand,
@@ -139,13 +142,17 @@ const mapStateToProps =
       openListItems: getOpenListItems(selectionTreeUi),
       selectedListItems: getSelectedListItems(report),
       parameters: getMeterParameters({userSelection, now: now()}),
-      itemCapabilities: {zoomable: isDashboardPage(routing)},
+      itemCapabilities: {
+        zoomable: isDashboardPage(routing),
+        report: isReportPage(routing),
+      },
       query,
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   centerMapOnMeter,
   clearSearch: clearSelectionTreeSearch,
+  addToReport,
   fetchSelectionTree,
   selectionTreeSearch,
   toggleExpand: selectionTreeToggleId,

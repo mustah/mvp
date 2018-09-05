@@ -1,17 +1,19 @@
 import IconButton from 'material-ui/IconButton';
 import ActionZoomIn from 'material-ui/svg-icons/action/zoom-in';
+import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import * as React from 'react';
 import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {orUnknown} from '../../../../helpers/translations';
-import {firstUpper, firstUpperTranslated} from '../../../../services/translationService';
+import {firstUpper} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
 interface RenderProps {
+  addToReport: OnClickWithId;
   id: uuid;
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
@@ -25,6 +27,7 @@ interface RenderProps {
 
 export interface ItemCapabilities {
   zoomable?: boolean;
+  report?: boolean;
 }
 
 export const renderSelectionTreeCities = ({
@@ -122,6 +125,7 @@ const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) =
 };
 
 interface Props {
+  addToReport: OnClickWithId;
   id: uuid;
   nestedItems?: Array<React.ReactElement<any>>;
   openListItems: Set<uuid>;
@@ -136,6 +140,7 @@ interface Props {
 }
 
 const renderSelectableListItem = ({
+  addToReport,
   id,
   primaryText,
   openListItems,
@@ -145,7 +150,7 @@ const renderSelectableListItem = ({
   selectedListItems,
   selectable,
   nestedItems,
-  itemCapabilities,
+  itemCapabilities: {zoomable, report},
   centerMapOnMeter,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
@@ -158,7 +163,30 @@ const renderSelectableListItem = ({
     centerMapOnMeter(id);
   };
 
-  const content = !nestedItems && itemCapabilities.zoomable
+  const addMeterToReport = (ev: React.SyntheticEvent<{}>) => {
+    ev.stopPropagation();
+    addToReport(id);
+  };
+
+  const zoomIcon = zoomable && (
+    <IconButton
+      key="1"
+      onClick={zoomInOn}
+    >
+      <ActionZoomIn/>
+    </IconButton>
+  );
+
+  const reportIcon = report && (
+    <IconButton
+      key="2"
+      onClick={addMeterToReport}
+    >
+      <AvPlaylistAdd/>
+    </IconButton>
+  );
+
+  const content = !nestedItems && (zoomable || report)
     ? (
       <RowCenter className="space-between">
         <Row className="first-uppercase" style={listItemStyleWithActions.textStyle}>
@@ -167,12 +195,8 @@ const renderSelectableListItem = ({
           </Normal>
         </Row>
         <Row style={{marginRight: '24px'}}>
-          <IconButton
-            tooltip={firstUpperTranslated('show on map')}
-            onClick={zoomInOn}
-          >
-            <ActionZoomIn/>
-          </IconButton>
+          {zoomIcon}
+          {reportIcon}
         </Row>
       </RowCenter>
     )
