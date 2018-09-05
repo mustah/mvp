@@ -97,6 +97,22 @@ describe('searchReducer', () => {
       const secondExpected: SearchState = {...initialState, selectionTree: {query: 'hop'}};
       expect(secondState).toEqual(secondExpected);
     });
+
+    it('keeps the validation and collection queries when searching the selection tree', () => {
+      const state: SearchState = search(
+        {...initialState, validation: {query: 'asdf'}, collection: {query: 'fdsa'}},
+        searchAction(selectionTreeQuery('bro')),
+      );
+      const expected: SearchState = {
+        ...initialState,
+        validation: {query: 'asdf'},
+        collection: {query: 'fdsa'},
+        selectionTree: {query: 'bro'},
+      };
+
+      expect(state).toEqual(expected);
+    });
+
   });
 
   describe('gateway and meter search queries', () => {
