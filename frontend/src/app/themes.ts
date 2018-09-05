@@ -13,9 +13,9 @@ const evoBorderRadius: React.CSSProperties = {borderRadius: 4};
 export const colors = {
   darkBlue: '#006da3',
   darkGreen: '#4caf50',
-  blue: '#00b6f7',
+  blue: '#00a7e2',
   orange: '#ff9800',
-  red: '#ff3d00',
+  red: '#e84d6f',
   white: '#ffffff',
   lightGrey: '#f9f9f9',
   black: '#000000',
