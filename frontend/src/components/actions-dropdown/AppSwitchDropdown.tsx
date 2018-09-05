@@ -8,12 +8,9 @@ import {colors, menuItemInnerDivStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnClick, RenderFunction} from '../../types/Types';
 import {ColumnCenter} from '../layouts/column/Column';
-import {PopoverMenu} from '../popover/PopoverMenu';
+import {anchorOrigin, PopoverMenu, targetOrigin} from '../popover/PopoverMenu';
 import {Xsmall} from '../texts/Texts';
-import origin = __MaterialUI.propTypes.origin;
 
-const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
-const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
 const appSwitchIconStyle: React.CSSProperties = {width: '100%', alignItems: 'center'};
 
 const renderAdmin = () => translate('admin');

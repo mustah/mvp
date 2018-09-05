@@ -15,27 +15,22 @@ interface OwnProps {
   children?: Children;
 }
 
-const SideMenu = ({isSideMenuOpen, children}: StateToProps & OwnProps) => {
+const containerStyle: React.CSSProperties = {left: drawerWidth};
 
-  const containerStyle: React.CSSProperties = {left: drawerWidth};
+const SideMenu = ({isSideMenuOpen, children}: StateToProps & OwnProps) => (
+  <Drawer
+    containerClassName="DrawerContainer"
+    open={isSideMenuOpen}
+    docked={true}
+    containerStyle={containerStyle}
+  >
+    {children}
+  </Drawer>
+);
 
-  return (
-    <Drawer
-      containerClassName="DrawerContainer"
-      open={isSideMenuOpen}
-      docked={true}
-      containerStyle={containerStyle}
-    >
-      {children}
-    </Drawer>
-  );
-};
-
-const mapStateToProps = ({ui}: RootState): StateToProps => {
-  return {
-    isSideMenuOpen: isSideMenuOpen(ui),
-  };
-};
+const mapStateToProps = ({ui}: RootState): StateToProps => ({
+  isSideMenuOpen: isSideMenuOpen(ui),
+});
 
 export const SideMenuContainer =
   connect<StateToProps, {}, OwnProps>(mapStateToProps)(SideMenu);

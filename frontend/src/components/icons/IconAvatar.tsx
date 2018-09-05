@@ -1,20 +1,16 @@
 import IconButton from 'material-ui/IconButton';
 import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle';
 import * as React from 'react';
-import {Clickable} from '../../types/Types';
 import {colors} from '../../app/themes';
 
-const avatarStyle = {
+const avatarStyle: React.CSSProperties = {
   padding: 0,
-  height: 24,
-  width: 24,
+  height: 36,
+  width: 36,
 };
 
-export const IconAvatar = (props: Clickable) => {
-  const {onClick} = props;
-  return (
-    <IconButton style={avatarStyle} onClick={onClick}>
-      <ActionAccountCircle color={colors.darkBlue}/>
-    </IconButton>
-  );
-};
+export const IconAvatar = () => (
+  <IconButton style={avatarStyle}>
+    <ActionAccountCircle color={colors.white} style={avatarStyle}/>
+  </IconButton>
+);

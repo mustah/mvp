@@ -1,6 +1,6 @@
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
-import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
+import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
 import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
@@ -26,6 +26,14 @@ const textFieldStyle: React.CSSProperties = {
   marginLeft: 16,
   fontSize: 14,
   width: 180,
+};
+
+const inputStyle: React.CSSProperties = {
+  color: colors.white,
+};
+
+const hintStyle: React.CSSProperties = {
+  color: colors.dividerColor,
 };
 
 const isInitialSelection = (id: uuid) => id === -1;
@@ -83,7 +91,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = name && (isChanged || this.props.isChanged || isInitialSelection(id));
     const shouldRenderResetButton = this.props.isChanged && isInitialSelection(id) ||
-      isSavedSelection(id) && !this.props.isChanged;
+                                    isSavedSelection(id) && !this.props.isChanged;
     const shouldRenderResetSelectionButton = isSavedSelection(id) && this.props.isChanged;
 
     return (
@@ -91,8 +99,10 @@ export class InlineEditInput extends React.Component<Props, State> {
         <TextField
           style={textFieldStyle}
           floatingLabelFocusStyle={floatingLabelFocusStyle}
-          hintText={firstUpperTranslated('give the selection a name')}
+          inputStyle={inputStyle}
+          hintStyle={hintStyle}
           underlineFocusStyle={underlineFocusStyle}
+          hintText={firstUpperTranslated('give the selection a name')}
           value={name}
           onChange={this.onChange}
           id={`selection-${id}`}

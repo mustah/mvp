@@ -7,7 +7,7 @@
   right: 0;
   z-index: $selection-header-z-index;
   padding: 0 $space 0 $lg-space;
-  background-color: $white;
+  background-color: $main-menu-color;
   height: $main-menu-height;
   justify-content: space-between;
   box-shadow: $box-shadow;
@@ -22,6 +22,8 @@
   }
 
   .SelectionMenuSummary {
+    color: $white;
+
     .Normal {
       margin-right: $space;
     }
