@@ -2,30 +2,20 @@ import * as React from 'react';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {SelectedTab, TabName, TabsContainerDispatchToProps} from '../../../state/ui/tabs/tabsModels';
-import {
-  Children,
-  ClearError,
-  EncodedUriParameters,
-  ErrorResponse,
-  Fetch,
-  OnChange,
-  OnClick,
-} from '../../../types/Types';
+import {Children, ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick} from '../../../types/Types';
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
-import {OnSearch, Query} from '../../../usecases/search/searchModels';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
 import {Loader} from '../../loading/Loader';
-import {SearchBox} from '../../search-box/SearchBox';
 import {Tab} from './Tab';
 import {TabContent} from './TabContent';
 import {TabHeaders} from './TabHeaders';
 import {Tabs} from './Tabs';
 import {TabTopBar} from './TabTopBar';
 
-export interface StateToProps extends MapProps, SelectedTab, Query, EmptyContentProps, SelectedId {
+export interface StateToProps extends MapProps, SelectedTab, EmptyContentProps, SelectedId {
   isFetching: boolean;
   parameters: EncodedUriParameters;
   error: Maybe<ErrorResponse>;
@@ -34,9 +24,7 @@ export interface StateToProps extends MapProps, SelectedTab, Query, EmptyContent
 export interface DispatchToProps extends TabsContainerDispatchToProps {
   close: OnClick;
   clearError: ClearError;
-  clearSearch: OnChange;
   fetchMapMarkers: Fetch;
-  search: OnSearch;
 }
 
 export interface MainContentTabsProps extends StateToProps, DispatchToProps {
@@ -51,7 +39,6 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
     DetailsDialog,
     bounds,
     children,
-    clearSearch,
     selectedTab,
     changeTab,
     clearError,
@@ -62,8 +49,6 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
     noContentText,
     selectedId,
     close,
-    query,
-    search,
   } = props;
 
   const wrapperProps: MapProps & WithEmptyContentProps = {
@@ -88,12 +73,6 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
           <Tab tab={TabName.list} title={translate('list')}/>
           <Tab tab={TabName.map} title={translate('map')}/>
         </TabHeaders>
-        <SearchBox
-          onChange={search}
-          onClear={clearSearch}
-          value={query}
-          className="SearchBox-list"
-        />
       </TabTopBar>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
         {children}

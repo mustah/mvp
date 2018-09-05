@@ -26,7 +26,7 @@ const style: React.CSSProperties = {
   borderRadius: 4,
   marginLeft: 24,
   marginBottom: 16,
-  borderWidth: 2,
+  borderWidth: 1,
 };
 
 const listStyle: React.CSSProperties = {
