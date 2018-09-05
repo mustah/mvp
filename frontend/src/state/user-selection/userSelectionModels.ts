@@ -67,13 +67,12 @@ export interface UserSelectionState {
   userSelection: UserSelection;
 }
 
-export interface UriLookupState extends UserSelectionState {
+export interface UriLookupState extends UserSelectionState, Query {
   now: Date;
 }
 
 export interface UriLookupStatePaginated extends UriLookupState, Query {
   pagination: Pagination;
-  query?: string;
 }
 
 export type OnSelectPeriod = (period: Period) => void;

@@ -5,6 +5,7 @@ import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {initialState} from '../../../state/summary/summaryReducer';
+import {initialState as initialSearchState} from '../../search/searchReducer';
 import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import {getGatewayLowConfidenceTextInfo, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../mapSelectors';
@@ -62,6 +63,7 @@ describe('mapSelectors', () => {
       const state = {
         summary: initialState,
         domainModels,
+        search: initialSearchState,
       };
 
       expect(getMeterLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -73,8 +75,25 @@ describe('mapSelectors', () => {
       };
 
       const state = {
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 12}},
+        domainModels,
+        search: initialSearchState,
+      };
+
+      const text = getMeterLowConfidenceTextInfo(state as RootState);
+
+      expect(text).toBe('2 meter are not displayed in the map due to low accuracy');
+    });
+
+    it('shows low confidence info with regard to selection when a filtering is performed', () => {
+      const domainModels: Partial<DomainModelsState> = {
+        meterMapMarkers: {...initialDomain<MapMarker>(), total: 10},
+      };
+
+      const state = {
         summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         domainModels,
+        search: {...initialSearchState, validation: {query: 'bro'}},
       };
 
       expect(getMeterLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -88,6 +107,7 @@ describe('mapSelectors', () => {
       const state = {
         summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         domainModels,
+        search: initialSearchState,
       };
 
       expect(getMeterLowConfidenceTextInfo(state as RootState))
@@ -104,8 +124,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: initialState,
         domainModels,
+        summary: initialState,
+        search: initialSearchState,
       };
 
       expect(getGatewayLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -117,8 +138,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         domainModels,
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
+        search: initialSearchState,
       };
 
       expect(getGatewayLowConfidenceTextInfo(state as RootState)).toBeUndefined();
@@ -130,8 +152,9 @@ describe('mapSelectors', () => {
       };
 
       const state = {
-        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
         domainModels,
+        summary: {...initialState, payload: {...initialState.payload, numMeters: 10}},
+        search: initialSearchState,
       };
 
       expect(getGatewayLowConfidenceTextInfo(state as RootState))

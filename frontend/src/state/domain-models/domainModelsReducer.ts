@@ -4,6 +4,8 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {SEARCH} from '../../usecases/search/searchActions';
+import {QueryParameter} from '../../usecases/search/searchModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -113,9 +115,26 @@ const setError = <T extends Identifiable>(
   error,
 });
 
+const canResetEntities = (entity: keyof DomainModelsState, payload: QueryParameter): boolean =>
+  !!((entity === 'meterMapMarkers' && payload.validation && payload.validation.query) ||
+     (entity === 'gatewayMapMarkers' && payload.collection && payload.collection.query));
+
+const resetDomainModel = <T extends Identifiable>(
+  state: NormalizedState<T>,
+  entity: keyof DomainModelsState,
+  payload: QueryParameter,
+): NormalizedState<T> => {
+  if (canResetEntities(entity, payload)) {
+    return {...initialDomain<T>()};
+  } else {
+    return state;
+  }
+};
+
 type ActionTypes<T extends Identifiable> =
   | EmptyAction<string>
   | Action<Normalized<T>>
+  | Action<QueryParameter>
   | Action<T>
   | Action<ErrorResponse>;
 
@@ -149,6 +168,8 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsClearError(endPoint):
       case LOGOUT_USER:
         return {...initialDomain<T>()};
+      case SEARCH:
+        return resetDomainModel<T>(state, entity, (action as Action<QueryParameter>).payload);
       default:
         return resetState(state, action, endPoint);
     }

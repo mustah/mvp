@@ -363,9 +363,16 @@ msgid "{{count}} meter are not displayed in the map due to low accuracy"
 msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
+msgid "{{count}} meter of your selection, are not displayed in the map"
+msgstr ""
+"{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
+
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
 msgstr ""
-"{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+"{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
+
+msgid "{{count}} gateway of your selection, are not displayed in the map"
+msgstr "{{count}} gateway of your selection, are not displayed in the map"
 
 msgid "select medium"
 msgstr "välj mätartyp"
@@ -486,9 +493,19 @@ msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
+msgid "{{count}} meter of your selection, are not displayed in the map°"
+msgstr ""
+"{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
+
+msgctxt "°plural"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
 msgstr ""
 "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+
+msgctxt "°plural"
+msgid "{{count}} gateway of your selection, are not displayed in the map°"
+msgstr ""
+"{{count}} gateways av ditt ursprungliga urval, visas inte på kartan"
 
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
