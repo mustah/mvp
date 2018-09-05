@@ -45,12 +45,15 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
 
 export const toQueryApiParameters = (query?: string): string[] => query ? [`w=${query}`] : [];
 
+export type EntityApiParametersFactory =
+  (selectionParameters: Omit<SelectedParameters, 'dateRange'>) => EncodedUriParameters[];
+
 export const toEntityApiParametersMeters =
-  (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
+  (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
     toEntityApiParameters(selectionParameters, meterParameterNames);
 
 export const toEntityApiParametersGateways =
-  (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
+  (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
     toEntityApiParameters(selectionParameters, gatewayParameterNames);
 
 // TODO: perhaps make sure it could handle if dateRange is included, as it is now the function

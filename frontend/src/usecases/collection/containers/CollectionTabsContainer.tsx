@@ -11,11 +11,7 @@ import {getGatewayParameters} from '../../../state/user-selection/userSelectionS
 import {withMapMarkersFetcher} from '../../map/helper/mapMarkersHoc';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
-import {
-  getBounds,
-  getGatewayLowConfidenceTextInfo,
-  getSelectedMapMarker,
-} from '../../map/mapSelectors';
+import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
 import {collectionSearch} from '../../search/searchActions';
 import {CollectionTabs} from '../components/CollectionTabs';
 
@@ -34,7 +30,7 @@ const mapStateToProps =
       noContentText: firstUpperTranslated('no gateways'),
       selectedTab: getSelectedTab(tabs.collection),
       mapMarkers: getDomainModel(gatewayMapMarkers),
-      parameters: getGatewayParameters({userSelection, now: now()}),
+      parameters: getGatewayParameters({now: now(), userSelection, query}),
       selectedId: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),

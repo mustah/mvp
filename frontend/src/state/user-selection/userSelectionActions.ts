@@ -33,7 +33,7 @@ export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
 
-const addParameterToSelection = payloadActionOf<SelectionParameter>(ADD_PARAMETER_TO_SELECTION);
+export const addParameterToSelection = payloadActionOf<SelectionParameter>(ADD_PARAMETER_TO_SELECTION);
 const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELECT_SELECTION);
 
 export const resetSelection = emptyActionOf(RESET_SELECTION);

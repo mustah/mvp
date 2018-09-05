@@ -4,7 +4,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {EncodedUriParameters, IdNamed, Status, toIdNamed} from '../../../types/Types';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
-import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../userSelectionActions';
+import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {
   ParameterName,
   SelectionParameter,
@@ -14,6 +14,8 @@ import {
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 import {
+  getGatewayParameters,
+  getMeterParameters,
   getPaginatedGatewayParameters,
   getPaginatedMeterParameters,
   getSelectedPeriod,
@@ -56,7 +58,7 @@ describe('userSelectionSelectors', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload},
+        addParameterToSelection(payload),
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
@@ -83,11 +85,11 @@ describe('userSelectionSelectors', () => {
       };
       const prevState: UserSelectionState = userSelection(
         initialState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload: payloadGot},
+        addParameterToSelection(payloadGot),
       );
       const state: UserSelectionState = userSelection(
         prevState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload: payloadSto},
+        addParameterToSelection(payloadSto),
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
@@ -110,7 +112,7 @@ describe('userSelectionSelectors', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload},
+        addParameterToSelection(payload),
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
@@ -134,7 +136,7 @@ describe('userSelectionSelectors', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload},
+        addParameterToSelection(payload),
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
@@ -154,7 +156,7 @@ describe('userSelectionSelectors', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload},
+        addParameterToSelection(payload),
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
@@ -178,7 +180,7 @@ describe('userSelectionSelectors', () => {
       };
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: ADD_PARAMETER_TO_SELECTION, payload},
+        addParameterToSelection(payload),
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
@@ -197,6 +199,114 @@ describe('userSelectionSelectors', () => {
 
   });
 
+  describe('getMeterParameters', () => {
+
+    it('has no wildcard search parameter without a query string', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
+    });
+
+    it('has wildcard search parameter for meters', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({
+        query: 'sto',
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&w=sto`);
+    });
+
+    it('has meter search parameters', () => {
+      const payload: SelectionParameter = {
+        item: {...toIdNamed(Status.ok)},
+        parameter: ParameterName.meterStatuses,
+      };
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({
+        query: 'sto',
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&w=sto`);
+    });
+
+  });
+
+  describe('getGatewayParameters', () => {
+
+    it('has no wildcard search parameter without a query string', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getGatewayParameters({
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
+    });
+
+    it('has wildcard search parameter for gateways', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getGatewayParameters({
+        query: 'sto',
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&w=sto`);
+    });
+
+    it('has gateways search parameters', () => {
+      const payload: SelectionParameter = {
+        item: {...toIdNamed(Status.ok)},
+        parameter: ParameterName.gatewayStatuses,
+      };
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getGatewayParameters({
+        query: 'sto',
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&w=sto`);
+    });
+
+  });
+
   describe('get selected period', () => {
 
     it('there is a default period', () => {
@@ -207,7 +317,7 @@ describe('userSelectionSelectors', () => {
     it('get selected period', () => {
       const state: UserSelectionState = userSelection(
         initialState,
-        {type: SELECT_PERIOD, payload: Period.currentWeek},
+        selectPeriod(Period.currentWeek),
       );
 
       expect(getSelectedPeriod(state.userSelection))

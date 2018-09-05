@@ -363,8 +363,14 @@ msgstr "report"
 msgid "{{count}} meter are not displayed in the map due to low accuracy"
 msgstr "{{count}} meter is not displayed in the map due to low accuracy"
 
+msgid "{{count}} meter of your selection, are not displayed in the map"
+msgstr "{{count}} meter of your selection, are not displayed in the map"
+
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
 msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
+
+msgid "{{count}} gateway of your selection, are not displayed in the map"
+msgstr "{{count}} gateway of your selection, are not displayed in the map"
 
 msgid "select medium"
 msgstr "select medium"
@@ -484,8 +490,16 @@ msgid "{{count}} meter are not displayed in the map due to low accuracy°"
 msgstr "{{count}} meters are not displayed in the map due to low accuracy"
 
 msgctxt "°plural"
+msgid "{{count}} meter of your selection, are not displayed in the map°"
+msgstr "{{count}} meters of your selection, are not displayed in the map"
+
+msgctxt "°plural"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
 msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
+
+msgctxt "°plural"
+msgid "{{count}} gateway of your selection, are not displayed in the map°"
+msgstr "{{count}} gateways of your selection, are not displayed in the map"
 
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"

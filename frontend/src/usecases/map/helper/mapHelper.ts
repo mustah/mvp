@@ -85,27 +85,39 @@ const lowConfidenceTextInfo = (
 };
 
 export const meterLowConfidenceTextInfo = (
+  query: string | undefined,
   totalMeters: number,
   totalMarkers: number,
 ): string | undefined =>
   lowConfidenceTextInfo(
     totalMeters,
     totalMarkers,
-    (count: number) => firstUpperTranslated(
-      '{{count}} meter are not displayed in the map due to low accuracy', {count},
-    ),
+    (count: number) => query
+      ? firstUpperTranslated(
+        '{{count}} meter of your selection, are not displayed in the map',
+        {count},
+      )
+      : firstUpperTranslated(
+        '{{count}} meter are not displayed in the map due to low accuracy',
+        {count},
+      ),
   );
 
 export const gatewayLowConfidenceTextInfo = (
+  query: string | undefined,
   totalMeters: number,
   totalMarkers: number,
 ): string | undefined =>
   lowConfidenceTextInfo(
     totalMeters,
     totalMarkers,
-    (count: number) => firstUpperTranslated(
-      '{{count}} gateway are not displayed in the map due to low accuracy', {count},
-    ),
+    (count: number) => query
+      ? firstUpperTranslated(
+        '{{count}} gateway of your selection, are not displayed in the map', {count},
+      )
+      : firstUpperTranslated(
+        '{{count}} gateway are not displayed in the map due to low accuracy', {count},
+      ),
   );
 
 export const maxZoom = 18;

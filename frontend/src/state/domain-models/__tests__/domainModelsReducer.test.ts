@@ -1,9 +1,11 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {EndPoints} from '../../../services/endPoints';
-import {Action} from '../../../types/Types';
+import {Action, Status} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
+import {search} from '../../../usecases/search/searchActions';
+import {collectionQuery, validationQuery} from '../../../usecases/search/searchModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
@@ -13,13 +15,7 @@ import {
   postRequestOf,
   putRequestOf,
 } from '../domainModelsActions';
-import {
-  domainModels,
-  gatewayMapMarkers,
-  initialDomain,
-  meterMapMarkers,
-  users,
-} from '../domainModelsReducer';
+import {domainModels, gatewayMapMarkers, initialDomain, meterMapMarkers, users} from '../domainModelsReducer';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
@@ -136,9 +132,7 @@ describe('domainModelsReducer', () => {
   describe('meterMapMarkers', () => {
 
     it('stores empty result as object, not undefined', () => {
-      const emptyState: NormalizedState<MapMarker> = {
-        ...initialDomain<MapMarker>(),
-      };
+      const emptyState: NormalizedState<MapMarker> = initialDomain<MapMarker>();
 
       const meterAction: Action<Normalized<MapMarker>> = {
         type: domainModelsGetSuccess(EndPoints.meterMapMarkers),
@@ -152,6 +146,70 @@ describe('domainModelsReducer', () => {
         ...initialDomain<Gateway>(),
         isSuccessfullyFetched: true,
       });
+    });
+
+    it('reset meterMapMarkers state when new search query is typed', () => {
+      const initialState: NormalizedState<MapMarker> = initialDomain<MapMarker>();
+
+      const meterAction: Action<Normalized<MapMarker>> = {
+        type: domainModelsGetSuccess(EndPoints.meterMapMarkers),
+        payload: {
+          result: [1],
+          entities: {
+            meterMapMarkers: {
+              1: {id: 1, status: Status.ok, latitude: 1.2, longitude: 2.2},
+            },
+          },
+        },
+      };
+
+      const nextState = meterMapMarkers(initialState, meterAction);
+
+      const expected: NormalizedState<MapMarker> = {
+        result: [1],
+        entities: {1: {id: 1, status: Status.ok, latitude: 1.2, longitude: 2.2}},
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        total: 1,
+      };
+
+      expect(nextState).toEqual(expected);
+
+      const state = meterMapMarkers(nextState, search(validationQuery('test')));
+
+      expect(state).toEqual(initialDomain<MapMarker>());
+    });
+
+    it('reset meterMapMarkers state when new search query is typed', () => {
+      const initialState: NormalizedState<MapMarker> = initialDomain<MapMarker>();
+
+      const gatewayAction: Action<Normalized<MapMarker>> = {
+        type: domainModelsGetSuccess(EndPoints.gatewayMapMarkers),
+        payload: {
+          result: [1],
+          entities: {
+            gatewayMapMarkers: {
+              1: {id: 1, status: Status.ok, latitude: 1.2, longitude: 2.2},
+            },
+          },
+        },
+      };
+
+      const nextState = gatewayMapMarkers(initialState, gatewayAction);
+
+      const expected: NormalizedState<MapMarker> = {
+        result: [1],
+        entities: {1: {id: 1, status: Status.ok, latitude: 1.2, longitude: 2.2}},
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        total: 1,
+      };
+
+      expect(nextState).toEqual(expected);
+
+      const state = gatewayMapMarkers(nextState, search(collectionQuery('test')));
+
+      expect(state).toEqual(initialDomain<MapMarker>());
     });
 
   });
@@ -173,13 +231,13 @@ describe('domainModelsReducer', () => {
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
-      let state: NormalizedState<MapMarker> = {
+      const initialState: NormalizedState<MapMarker> = {
         ...initialDomain<MapMarker>(),
         isSuccessfullyFetched: true,
         error: {message: 'an error'},
       };
 
-      state = gatewayMapMarkers(state, {type: LOGOUT_USER});
+      const state = gatewayMapMarkers(initialState, {type: LOGOUT_USER});
 
       const expected: NormalizedState<MapMarker> = {...initialDomain<MapMarker>()};
 
