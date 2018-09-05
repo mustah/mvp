@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {statusClassName} from '../../helpers/thresholds';
-import {translate} from '../../services/translationService';
+import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Children} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {WidgetModel} from './indicatorWidgetModels';
-import {iconComponentFor} from './ReportIndicatorWidget';
+import {IconCollection} from '../icons/IconCollection';
 import classNames = require('classnames');
 
 interface Props {
@@ -18,14 +18,39 @@ interface Props {
   title: string;
 }
 
-export const IndicatorWidget =
-  ({className, title, widget: {total, pending, type}}: Props) => {
-  const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
-  const value = collectionPercent.toFixed(1);
-  const IndicatorIcon = iconComponentFor(type);
-  const statusCss = statusClassName(collectionPercent);
+interface EmptyStateProps {
+  className?: string;
+  title: string;
+}
 
-  return (
+const NoExpectedMeasurementsWidget =
+  ({className, title}: EmptyStateProps) => (
+    <Column className={classNames('Indicator-wrapper NoExpectedMeasurementsWidget', className)}>
+      <ColumnCenter className={classNames('Indicator', 'info')}>
+        <Row className="Indicator-name Row-center">
+          <Normal>{title}</Normal>
+        </Row>
+        <Row className="Row-center Row-bottom">
+          {firstUpperTranslated('no measurements expected for the selected period')}
+        </Row>
+        <Row className="Indicator-subtitle Row-center">
+          <IconCollection className="Indicator-icon" color={colors.blue}/>
+        </Row>
+      </ColumnCenter>
+    </Column>
+  );
+
+export const IndicatorWidget =
+  ({className, title, widget: {total, pending}}: Props) => {
+
+    if (pending === 0 && total === 0) {
+      return <NoExpectedMeasurementsWidget title={title} className={className} />;
+    }
+    const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
+    const value = collectionPercent.toFixed(1);
+    const statusCss = statusClassName(collectionPercent);
+
+    return (
       <Column className={classNames('Indicator-wrapper', className)}>
         <ColumnCenter className={classNames('Indicator', statusCss)}>
           <Row className="Indicator-name Row-center">
@@ -36,7 +61,7 @@ export const IndicatorWidget =
             <Normal className="Indicator-unit">%</Normal>
           </Row>
           <Row className="Indicator-subtitle Row-center">
-            <IndicatorIcon className="Indicator-icon" color={colors.white}/>
+            <IconCollection className="Indicator-icon" color={colors.white}/>
             <Column className="Indicator-details">
               <Normal>{translate('{{pending}} of {{count}}', {pending, count: total})}</Normal>
               <Normal>{translate('measurement', {count: total})}</Normal>
