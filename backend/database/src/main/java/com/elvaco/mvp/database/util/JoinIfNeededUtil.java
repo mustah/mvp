@@ -59,7 +59,7 @@ public final class JoinIfNeededUtil {
     JPQLQuery<T> query,
     RequestParameters parameters
   ) {
-    if (isMeterStatusQuery(parameters) || isDateRange(parameters)) {
+    if (isMeterStatusQuery(parameters) && isDateRange(parameters)) {
       query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
     }
   }
