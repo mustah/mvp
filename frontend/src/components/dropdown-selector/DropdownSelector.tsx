@@ -27,7 +27,7 @@ import {
   unknownItems,
 } from './dropdownHelper';
 import './DropdownSelector.scss';
-import {SearchBox} from './SearchBox';
+import {SearchBox} from '../search-box/SearchBox';
 import origin = __MaterialUI.propTypes.origin;
 
 interface OptionalProps {

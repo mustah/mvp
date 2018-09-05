@@ -4,7 +4,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
-import {SearchBox} from '../../../../components/dropdown-selector/SearchBox';
+import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage} from '../../../../selectors/routerSelectors';

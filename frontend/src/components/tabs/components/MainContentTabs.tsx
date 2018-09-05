@@ -18,7 +18,7 @@ import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
 import {OnSearch, Query} from '../../../usecases/search/searchModels';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
-import {SearchBox} from '../../dropdown-selector/SearchBox';
+import {SearchBox} from '../../search-box/SearchBox';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
 import {Loader} from '../../loading/Loader';
