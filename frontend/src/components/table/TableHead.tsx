@@ -11,13 +11,11 @@ export interface TableHeadProps extends ClassNamed {
   children?: Children;
 }
 
-export const TableHead = (props: TableHeadProps) => {
-  const {children, sortable, currentSort, key} = props;
-  const toggle = (order: SortOrder) => order === 'asc' ? ' ▲' : ' ▼';
-  // TODO render link here, for switching order
-  return (
-    <th className={classNames(props.className, {clickable: sortable})} key={key}>
-      {children}{sortable && toggle(currentSort!)}
-    </th>
-  );
-};
+// TODO render link here, for switching order
+const toggle = (order: SortOrder) => order === 'asc' ? ' ▲' : ' ▼';
+
+export const TableHead = ({children, sortable, currentSort, key, className}: TableHeadProps) => (
+  <th className={classNames(className, {clickable: sortable})} key={key}>
+    {children}{sortable && toggle(currentSort!)}
+  </th>
+);
