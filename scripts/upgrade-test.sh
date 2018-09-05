@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 MVP_UPGRADE_FROM_TAG=$1
 MVP_UPGRADE_TO_TAG=$2
 TEST_HOST=localhost
@@ -32,7 +32,8 @@ function check_application_startup () {
 		sleep 1
 	done
 	docker-compose logs ${APPLICATION}
-	test "$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)" = 'healthy' || exit 1
+	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
+	test "${healthStatus}" = 'healthy' || (echo ${healthStatus} && exit 1)
 }
 
 function check_rabbitmq_startup () {
