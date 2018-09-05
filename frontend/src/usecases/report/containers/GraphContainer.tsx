@@ -18,21 +18,15 @@ import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
 import {toggle} from '../../../helpers/collections';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {
-  fetchMeasurements,
-  } from '../../../state/ui/graph/measurement/measurementActions';
-import {initialState, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectQuantities} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
-import {Children, Dictionary, ErrorResponse, OnClick, uuid} from '../../../types/Types';
-import {logout} from '../../auth/authActions';
-import {OnLogout} from '../../auth/authModels';
+import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
@@ -47,16 +41,17 @@ interface StateToProps {
   selectedQuantities: Quantity[];
 }
 
-export interface GraphContainerState {
-  hiddenKeys: string[];
+export interface OwnProps {
+  outerHiddenKeys: string[];
   graphContents: GraphContents;
-  isFetching: boolean;
-  error: Maybe<ErrorResponse>;
+}
+
+export interface GraphComponentState {
+  hiddenKeys: string[];
 }
 
 interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
-  logout: OnLogout;
 }
 
 interface MouseOverProps {
@@ -76,9 +71,7 @@ interface GraphContentProps {
   setTooltipPayload: OnClick;
 }
 
-export type OnUpdateGraph = (state: GraphContainerState) => void;
-
-type Props = StateToProps & DispatchToProps;
+type Props = OwnProps & StateToProps & DispatchToProps;
 
 type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
@@ -86,6 +79,7 @@ const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = (
   {lines, axes}: GraphContents,
+  outerHiddenKeys,
   hiddenKeys,
   renderDot: (props) => React.ReactNode,
   renderActiveDot: (props) => React.ReactNode,
@@ -93,6 +87,7 @@ const renderGraphContents = (
 
   const components: Children[] = lines
     .filter((line) => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
+    .filter((line) => outerHiddenKeys.indexOf(line.id) === -1)
     .map((props: LineProps, index: number) => {
       const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
       return (
@@ -151,9 +146,8 @@ const GraphContent =
 
 const GraphContentWrapper = withEmptyContent<GraphContentWrapperProps>(GraphContent);
 
-class GraphComponent extends React.Component<Props, GraphContainerState> {
-
-  state: GraphContainerState = {...initialState};
+class GraphComponent extends React.Component<Props, GraphComponentState> {
+  state: GraphComponentState = {hiddenKeys: []};
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
@@ -161,45 +155,21 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
   private activeDataKey: uuid;
 
-  async componentDidMount() {
-    const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
-    this.setState({isFetching: true});
-    await fetchMeasurements(
-      selectedIndicators,
-      selectedQuantities,
-      selectedListItems,
-      period,
-      customDateRange,
-      this.updateState,
-      logout,
-    );
-  }
-
-  async componentWillReceiveProps({
-    selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
-  }: Props) {
-    const somethingChanged = true || period !== this.props.period; // TODO: Should not always
-                                                                   // return "true"
-    if (somethingChanged) {
-      this.setState({isFetching: true});
-      this.resetDots();
-      await fetchMeasurements(
-        selectedIndicators,
-        selectedQuantities,
-        selectedListItems,
-        period,
-        customDateRange,
-        this.updateState,
-        logout,
-      );
-    }
-  }
-
   render() {
-    const {selectedListItems, selectedQuantities, selectQuantities, selectedIndicators} = this.props;
-    const {graphContents, hiddenKeys, isFetching, error} = this.state;
+    const {
+      graphContents,
+      outerHiddenKeys,
+      selectedListItems,
+      selectedQuantities,
+      selectQuantities,
+      selectedIndicators,
+    } = this.props;
+
+    const {hiddenKeys} = this.state;
+
     const lines: Children[] = renderGraphContents(
       graphContents,
+      outerHiddenKeys,
       hiddenKeys,
       this.renderAndStoreDot,
       this.renderActiveDot,
@@ -231,27 +201,9 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
           selectedQuantities={selectedQuantities}
           selectQuantities={selectQuantities}
         />
-        <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
+
           <GraphContentWrapper {...wrapperProps}/>
-        </Loader>
       </div>
-    );
-  }
-
-  updateState = (state: GraphContainerState) => this.setState({...state});
-
-  clearError = async () => {
-    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
-    this.setState({error: Maybe.nothing(), isFetching: true});
-    this.resetDots();
-    await fetchMeasurements(
-      selectedIndicators,
-      selectedQuantities,
-      selectedListItems,
-      period,
-      customDateRange,
-      this.updateState,
-      logout,
     );
   }
 
@@ -269,8 +221,6 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     };
     return (<Dot {...rest} />);
   }
-
-  resetDots = () => this.dots = {};
 
   setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
     if (isTooltipActive) {
@@ -312,8 +262,7 @@ const mapStateToProps =
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectQuantities,
-  logout,
 }, dispatch);
 
 export const GraphContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);

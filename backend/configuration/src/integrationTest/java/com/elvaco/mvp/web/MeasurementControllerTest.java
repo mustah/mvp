@@ -242,6 +242,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(contents).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
+        butterMeter.logicalMeterId.toString(),
         "Difference temperature",
         "K",
         butterMeter.externalId,
@@ -250,6 +251,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
       ),
       new MeasurementSeriesDto(
+        butterMeter.logicalMeterId.toString(),
         "Energy",
         "kWh",
         butterMeter.externalId,
@@ -288,12 +290,9 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
 
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    MeasurementEntity temperature1 = newButterTemperatureMeasurement(butterMeter, date);
-    MeasurementEntity temperature2 = newButterTemperatureMeasurement(
-      butterMeter,
-      date.plusHours(1)
-    );
-    MeasurementEntity energy = newButterEnergyMeasurement(butterMeter, date);
+    newButterTemperatureMeasurement(butterMeter, date);
+    newButterTemperatureMeasurement(butterMeter, date.plusHours(1));
+    newButterEnergyMeasurement(butterMeter, date);
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
@@ -305,6 +304,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(contents).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
+        butterMeter.logicalMeterId.toString(),
         "Difference temperature",
         "K",
         butterMeter.externalId,
@@ -314,6 +314,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
       ),
       new MeasurementSeriesDto(
+        butterMeter.logicalMeterId.toString(),
         "Energy",
         "kWh",
         butterMeter.externalId,
@@ -419,6 +420,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
       singletonList(new MeasurementSeriesDto(
+        "average",
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
         "average",
@@ -458,6 +460,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
+          "average",
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
           "average",
@@ -495,11 +498,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    List<MeasurementSeriesDto> body = response.getBody();
-
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
+          "average",
           Quantity.ENERGY.name,
           Quantity.ENERGY.presentationUnit(),
           "average",
@@ -556,12 +558,14 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
+        "average",
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
         "average",
         singletonList(new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 4.0))
       ),
       new MeasurementSeriesDto(
+        "average",
         Quantity.DIFFERENCE_TEMPERATURE.name,
         Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
         "average",
@@ -595,6 +599,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
+          "average",
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
           "average",
@@ -638,6 +643,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
+          "average",
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
           "average",
@@ -719,6 +725,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
+          "average",
           Quantity.POWER.name, "W",
           "average",
           singletonList(new MeasurementValueDto(
@@ -751,7 +758,10 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          Quantity.POWER.name, "kW", "average",
+          "average",
+          Quantity.POWER.name,
+          "kW",
+          "average",
           singletonList(new MeasurementValueDto(
             Instant.parse("2018-03-06T05:00:00Z"),
             40.0
@@ -782,12 +792,13 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    List<MeasurementSeriesDto> body = response.getBody();
-
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          Quantity.POWER.name, "W", "average",
+          "average",
+          Quantity.POWER.name,
+          "W",
+          "average",
           asList(
             new MeasurementValueDto(
               Instant.parse("2018-03-06T00:00:00Z"),
@@ -827,7 +838,10 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          Quantity.POWER.name, "W", "average",
+          "average",
+          Quantity.POWER.name,
+          "W",
+          "average",
           asList(
             new MeasurementValueDto(
               Instant.parse("2018-01-01T00:00:00Z"),
@@ -961,6 +975,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.get(0)).isEqualTo(
       new MeasurementSeriesDto(
+        "average",
         Quantity.POWER.name,
         "W",
         "average",
@@ -1023,6 +1038,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(seriesDto).isEqualTo(
       new MeasurementSeriesDto(
+        meter.logicalMeterId.toString(),
         "Volume",
         "m³",
         meter.externalId,
@@ -1062,7 +1078,11 @@ public class MeasurementControllerTest extends IntegrationTest {
       ), MeasurementSeriesDto.class).getBody().get(0);
 
     assertThat(seriesDto).isEqualTo(
-      new MeasurementSeriesDto("Volume", "m³", meter.externalId,
+      new MeasurementSeriesDto(
+        meter.logicalMeterId.toString(),
+        "Volume",
+        "m³",
+        meter.externalId,
         asList(
           new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
           new MeasurementValueDto(when.plusHours(2).toInstant(), 20.0)
@@ -1271,12 +1291,6 @@ public class MeasurementControllerTest extends IntegrationTest {
       ZonedDateTime.now(),
       meterDefinitionEntity
     ));
-  }
-
-  private PhysicalMeterEntity newButterMeterBelongingTo(OrganisationEntity organisationEntity) {
-    return newPhysicalMeterEntity(
-      organisationEntity, ZonedDateTime.now()
-    );
   }
 
   private PhysicalMeterEntity newButterMeterBelongingTo(

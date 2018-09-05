@@ -13,12 +13,23 @@ export interface Axes {
 }
 
 export interface LineProps {
+  id: string;
   dataKey: string;
   key: string;
   name: string;
+  city: string;
+  address: string;
   stroke: string;
   strokeWidth?: number;
   yAxisId: string;
+}
+
+export interface LegendItem {
+  label: string;
+  address: string;
+  city: string;
+  color: string;
+  id: uuid;
 }
 
 export interface ProprietaryLegendProps extends LegendPayload {

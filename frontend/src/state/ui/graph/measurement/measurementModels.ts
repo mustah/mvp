@@ -1,7 +1,7 @@
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Identifiable} from '../../../../types/Types';
-import {GraphContainerState} from '../../../../usecases/report/containers/GraphContainer';
+import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../usecases/report/reportModels';
 
 export interface Measurement extends Identifiable {
@@ -18,7 +18,7 @@ const emptyGraphContents: GraphContents = {
   lines: [],
 };
 
-export const initialState: GraphContainerState = {
+export const initialState: ReportContainerState = {
   hiddenKeys: [],
   graphContents: emptyGraphContents,
   isFetching: false,
@@ -26,9 +26,12 @@ export const initialState: GraphContainerState = {
 };
 
 export interface MeasurementApiResponsePart {
+  id: string;
   quantity: Quantity;
   unit: string;
   label: string;
+  city: string;
+  address: string;
   values: Array<{
     when: number;
     value?: number;

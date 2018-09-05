@@ -32,6 +32,10 @@
     }
   }
 
+  td.first {
+    padding-left: $space;
+  }
+
   td {
     padding: 2px 2px 2px $sm-space;
     border-bottom: 1px solid $light-grey;

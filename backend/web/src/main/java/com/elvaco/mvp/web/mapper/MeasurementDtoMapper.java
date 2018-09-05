@@ -34,7 +34,13 @@ public class MeasurementDtoMapper {
       new LinkedHashMap<>();
     for (LabeledMeasurementValue measurement : foundMeasurements) {
       Quantity quantity = measurement.quantity;
-      LabeledQuantity key = new LabeledQuantity(quantity, measurement.label);
+      LabeledQuantity key = new LabeledQuantity(
+        measurement.id,
+        quantity,
+        measurement.label,
+        measurement.address,
+        measurement.city
+      );
       if (!quantityMeasurements.containsKey(key)) {
         quantityMeasurements.put(key, new ArrayList<>());
       }
@@ -47,7 +53,12 @@ public class MeasurementDtoMapper {
       LabeledQuantity key = entry.getKey();
       series.add(
         new MeasurementSeriesDto(
-          key.quantity.name, key.quantity.presentationUnit(), key.label,
+          key.id,
+          key.quantity.name,
+          key.quantity.presentationUnit(),
+          key.label,
+          key.city,
+          key.address,
           entry.getValue()
             .stream()
             .map(measurement -> new MeasurementValueDto(
@@ -63,13 +74,24 @@ public class MeasurementDtoMapper {
 
   @EqualsAndHashCode
   private static class LabeledQuantity {
-
+    String id;
     Quantity quantity;
     String label;
+    String city;
+    String address;
 
-    private LabeledQuantity(Quantity quantity, String label) {
+    private LabeledQuantity(
+      String id,
+      Quantity quantity,
+      String label,
+      String address,
+      String city
+    ) {
+      this.id = id;
       this.quantity = quantity;
       this.label = label;
+      this.city = city;
+      this.address = address;
     }
   }
 }

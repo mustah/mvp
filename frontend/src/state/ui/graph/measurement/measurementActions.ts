@@ -9,7 +9,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
-import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
+import {OnUpdateGraph} from '../../../../usecases/report/containers/ReportContainer';
 import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {
@@ -105,7 +105,7 @@ export const mapApiResponseToGraphData =
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
-    measurement.forEach(({quantity, label, values, unit}: MeasurementApiResponsePart) => {
+    measurement.forEach(({id, quantity, label, city, address, values, unit}: MeasurementApiResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
       values.forEach(({when, value}) => {
@@ -130,10 +130,14 @@ export const mapApiResponseToGraphData =
 
       if (!uniqueMeters.has(dataKey) && yAxisId) {
         uniqueMeters.add(dataKey);
+
         const props: LineProps = {
+          id,
           dataKey,
-          key: `line-${dataKey}`,
-          name: dataKey,
+          key: dataKey,
+          name: label,
+          city,
+          address,
           stroke: colorizeMeters(quantity as Quantity),
           strokeWidth: meterStrokeWidth,
           yAxisId,
@@ -142,16 +146,19 @@ export const mapApiResponseToGraphData =
       }
     });
 
-    average.forEach(({quantity, values, unit}: MeasurementApiResponsePart) => {
+    average.forEach(({id, quantity, values, unit, address, city}: MeasurementApiResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
       if (!yAxisId) {
         return;
       }
       const dataKey: string = `Average ${quantity}`;
       const props: LineProps = {
+        id,
         dataKey,
         key: `average-${quantity}`,
         name: dataKey,
+        city,
+        address,
         stroke: colorizeAverage(quantity as Quantity),
         strokeWidth: thickStroke,
         yAxisId,
@@ -241,6 +248,7 @@ export const fetchMeasurements =
           values: averageEntity.values.filter(({value}) => value !== undefined),
         })),
       };
+
       updateState({...initialState, graphContents: mapApiResponseToGraphData(graphData)});
     } catch (error) {
       if (error instanceof InvalidToken) {
