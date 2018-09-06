@@ -41,6 +41,7 @@ export const GatewayList = ({
     <div>
       <Table result={result} entities={entities}>
         <TableColumn
+          cellClassName="icon"
           header={<TableHead className="first">{translate('gateway')}</TableHead>}
           renderCell={renderGatewayListItem}
         />

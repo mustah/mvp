@@ -62,6 +62,7 @@ export const MeterList = (
       <Table result={result} entities={entities}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
+          cellClassName="icon"
           renderCell={renderMeterListItem}
         />
         <TableColumn

@@ -36,8 +36,12 @@
     padding-left: $space;
   }
 
+  td.icon {
+    padding: 0 2px 0 $sm-space;
+  }
+
   td {
-    padding: 2px 2px 2px $sm-space;
+    padding: $sm-space;
     border-bottom: 1px solid $light-grey;
 
     &.actionDropdown {
