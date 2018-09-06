@@ -4,7 +4,13 @@ import {idGenerator} from '../../../helpers/idGenerator';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
 import {SHOW_FAIL_MESSAGE} from '../../../state/ui/message/messageActions';
-import {selectEntryAdd, SET_SELECTED_ENTRIES, toggleIncludingChildren, toggleSingleEntry} from '../reportActions';
+import {
+  addToReport,
+  selectEntryAdd,
+  SET_SELECTED_ENTRIES,
+  toggleIncludingChildren,
+  toggleSingleEntry,
+} from '../reportActions';
 import {ReportState} from '../reportModels';
 
 const configureMockStore = configureStore([thunk]);
@@ -40,6 +46,33 @@ describe('reportActions', () => {
           payload: [2, 3],
         },
       ]);
+    });
+
+  });
+
+  describe('addToReport', () => {
+
+    it('adds a meter that is not already selected', () => {
+      const initialState: ReportState = {selectedListItems: [1, 2, 3]};
+      const store = configureMockStore({report: {...initialState}});
+
+      store.dispatch(addToReport(4));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: [1, 2, 3, 4],
+        },
+      ]);
+    });
+
+    it('does not fire an event if meter is already selected', () => {
+      const initialState: ReportState = {selectedListItems: [1, 2, 3]};
+      const store = configureMockStore({report: {...initialState}});
+
+      store.dispatch(addToReport(1));
+
+      expect(store.getActions()).toHaveLength(0);
     });
 
   });

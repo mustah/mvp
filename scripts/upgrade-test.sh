@@ -20,7 +20,9 @@ echo ""
 function check_application_startup () {
 	APPLICATION=$1
 	slept=0
-	while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)" != 'exited' ]]; do
+	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
+	status=$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)
+	while [[ "$healthStatus" = 'starting' || "$healthStatus" = 'unhealthy' ]] && [[ "$status" != 'exited' ]]; do
 		slept=$((slept+1))
 		echo -n "."
 		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
@@ -30,6 +32,8 @@ function check_application_startup () {
 			exit 1
 		fi
 		sleep 1
+		healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
+		status=$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)
 	done
 	docker-compose logs ${APPLICATION}
 	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
