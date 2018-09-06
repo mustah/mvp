@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {getLogoPath} from '../../../app/routes';
+import {getLoginLogoPath} from '../../../app/routes';
 import {ButtonLogin} from '../../../components/buttons/ButtonLogin';
 import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
 import {TextFieldInput} from '../../../components/inputs/InputText';
@@ -48,7 +48,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
           <RowCenter className="customerLogo">
-            <Logo src={getLogoPath(organisation)}/>
+            <Logo src={getLoginLogoPath(organisation)}/>
           </RowCenter>
           <form onSubmit={this.onSubmit}>
             <TextFieldInput
