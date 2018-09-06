@@ -28,3 +28,6 @@ const organisationLogo = {
 
 export const getLogoPath = (organisationId: uuid): string =>
   organisationLogo[organisationId] || imagePathFor('evo_beta_logo.svg');
+
+export const getLoginLogoPath = (organisationId: uuid): string =>
+  organisationLogo[organisationId] || imagePathFor('evo_beta_logo_blue.svg');
