@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
+import com.elvaco.mvp.web.converter.CityConverter;
+import com.elvaco.mvp.web.converter.QuantityConverter;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
@@ -15,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
@@ -36,6 +40,12 @@ public class MvpApplication extends WebMvcConfigurerAdapter {
 
   public static void main(String[] args) {
     SpringApplication.run(MvpApplication.class, args);
+  }
+
+  @Override
+  public void addFormatters(FormatterRegistry registry) {
+    registry.addConverter(new CityConverter());
+    registry.addConverter(new QuantityConverter());
   }
 
   @Override
