@@ -3,6 +3,7 @@ import {AppSwitchDropdown} from '../../../../components/actions-dropdown/AppSwit
 import {adminOnly} from '../../../../components/hoc/withRoles';
 import {Column, ColumnBottom} from '../../../../components/layouts/column/Column';
 import {Children} from '../../../../types/Types';
+import {ProfileContainer} from '../../../topmenu/containers/ProfileContainer';
 import './MainMenuWrapper.scss';
 
 interface Props {
@@ -17,6 +18,7 @@ export const MainMenuWrapper = ({children}: Props) => (
       {children}
     </Column>
     <ColumnBottom className="flex-1">
+      <ProfileContainer/>
       <AppSwitchDropdownComponent/>
     </ColumnBottom>
   </Column>

@@ -1,0 +1,19 @@
+@import "../../../app/variables";
+
+.ProfileWrapper {
+  color: $white;
+  width: $main-menu-width;
+
+  .MenuItem {
+    padding: $sm-space 0;
+  }
+
+  .Profile {
+    padding: 0;
+    justify-content: center;
+
+    .Username {
+      text-align: center;
+    }
+  }
+}

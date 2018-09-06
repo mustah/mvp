@@ -78,12 +78,12 @@ class LegendComponent extends React.Component<Props> {
             renderCell={renderAddress}
           />
           <TableColumn
-            header={<TableHead className="icon" />}
+            header={<TableHead className="icon"/>}
             cellClassName="icon"
             renderCell={renderVisibilityButton}
           />
           <TableColumn
-            header={<TableHead className="icon" />}
+            header={<TableHead className="icon"/>}
             cellClassName="icon"
             renderCell={renderDeleteButton}
           />

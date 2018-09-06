@@ -6,15 +6,17 @@
   display: flex;
 
   .SearchBox-input {
-    $border-focused: 2px;
+    $border-focused: 1px;
     $border-unfocused: 1px;
 
     flex: 1;
     font-size: $normal;
+    font-family: $font-family;
     margin: $border-focused - $border-unfocused 5px;
-    padding: 8px 20px 8px 5px;
-    border: $border-unfocused solid $grey;
+    padding: 0 20px 0 5px;
+    border: $border-unfocused solid $darkest-grey;
     border-radius: $border-radius;
+    line-height: 32px;
 
     &:focus {
       border: $border-focused solid $blue;
@@ -25,8 +27,13 @@
 
   &.SearchBox-list {
     width: 240px;
-    margin-left: auto;
+    margin-left: $lg-space;
     margin-right: 10px;
     margin-bottom: 12px;
   }
+
+  &.SearchBox-tree {
+    margin-left: auto;
+  }
+
 }

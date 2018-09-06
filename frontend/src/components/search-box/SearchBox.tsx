@@ -20,7 +20,7 @@ const style: React.CSSProperties = {
   cursor: 'pointer',
   position: 'absolute',
   right: 12,
-  top: 7,
+  top: 6,
   color: '#7b7b7b',
 };
 

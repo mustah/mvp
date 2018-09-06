@@ -7,6 +7,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {Layout} from '../../components/layouts/layout/Layout';
 import {Row} from '../../components/layouts/row/Row';
+import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
@@ -16,7 +17,6 @@ import {AdminMainMenuContainer} from '../../usecases/main-menu/containers/AdminM
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import {AdminPages} from './AdminPages';
-import {MessageContainer} from '../../containers/message/MessageContainer';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
@@ -28,26 +28,23 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-const AdminApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => {
-
-  return (
-    <Row className="AdminApp">
-      <AdminMainMenuContainer/>
-      <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
-        <SideMenuContainer>
-          <AppBar
-            className="AppTitle"
-            title={translate('admin')}
-            showMenuIconButton={false}
-          />
-        </SideMenuContainer>
-      </Layout>
-      <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
-      <AdminPages/>
-      <MessageContainer/>
-    </Row>
-  );
-};
+const AdminApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
+  <Row className="AdminApp">
+    <AdminMainMenuContainer/>
+    <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
+      <SideMenuContainer>
+        <AppBar
+          className="AppTitle"
+          title={translate('admin')}
+          showMenuIconButton={false}
+        />
+      </SideMenuContainer>
+    </Layout>
+    <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
+    <AdminPages/>
+    <MessageContainer/>
+  </Row>
+);
 
 const mapStateToProps = ({ui}: RootState) => ({
   isSideMenuOpen: isSideMenuOpen(ui),

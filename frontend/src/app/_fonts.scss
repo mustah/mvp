@@ -1,18 +1,42 @@
 @import "variables";
 
+* {
+  font-variant-ligatures: none;
+}
+
 @font-face {
   font-family: 'TTNorms';
   font-style: normal;
   font-weight: 400;
-  font-variant-ligatures: none;
-  src: url('../assets/fonts/TTNorms/TTNorms-Regular.otf') format('opentype');
+  src: url('../assets/fonts/TTNorms/TTNorms-Regular.eot'); /* IE9 Compat Modes */
+  src: url('../assets/fonts/TTNorms/TTNorms-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../assets/fonts/TTNorms/TTNorms-Regular.woff2') format('woff2'), /* Super Modern Browsers */
+  url('../assets/fonts/TTNorms/TTNorms-Regular.woff') format('woff'), /* Modern Browsers */
+  url('../assets/fonts/TTNorms/TTNorms-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('../assets/fonts/TTNorms/TTNorms-Regular.svg#PTSans') format('svg'); /* Legacy iOS */
+}
+
+@font-face {
+  font-family: 'TTNorms';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../assets/fonts/TTNorms/TTNorms-Italic.eot'); /* IE9 Compat Modes */
+  src: url('../assets/fonts/TTNorms/TTNorms-Italic.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../assets/fonts/TTNorms/TTNorms-Italic.woff2') format('woff2'), /* Super Modern Browsers */
+  url('../assets/fonts/TTNorms/TTNorms-Italic.woff') format('woff'), /* Modern Browsers */
+  url('../assets/fonts/TTNorms/TTNorms-Italic.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('../assets/fonts/TTNorms/TTNorms-Italic.svg#PTSans') format('svg'); /* Legacy iOS */
 }
 
 @font-face {
   font-family: 'TTNorms';
   font-style: normal;
   font-weight: 700;
-  font-variant-ligatures: none;
-  src: url('../assets/fonts/TTNorms/TTNorms-Bold.otf') format('opentype');
+  src: url('../assets/fonts/TTNorms/TTNorms-Bold.eot'); /* IE9 Compat Modes */
+  src: url('../assets/fonts/TTNorms/TTNorms-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../assets/fonts/TTNorms/TTNorms-Bold.woff2') format('woff2'), /* Super Modern Browsers */
+  url('../assets/fonts/TTNorms/TTNorms-Bold.woff') format('woff'), /* Modern Browsers */
+  url('../assets/fonts/TTNorms/TTNorms-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
+  url('../assets/fonts/TTNorms/TTNorms-Bold.svg#PTSans') format('svg'); /* Legacy iOS */
 }
 

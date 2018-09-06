@@ -14,7 +14,7 @@ export const ButtonLink = (props: Props) => {
   const {className, children, onClick} = props;
   return (
     <Row className={classNames('ButtonLink', className)} onClick={onClick}>
-      <Normal className="first-uppercase">{children}</Normal>
+      <Normal className="Bold first-uppercase">{children}</Normal>
     </Row>
   );
 };

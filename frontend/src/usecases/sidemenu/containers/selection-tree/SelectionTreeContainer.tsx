@@ -106,7 +106,7 @@ class SelectionTreeComponent extends React.Component<Props> {
           onChange={selectionTreeSearch}
           onClear={clearSearch}
           value={query}
-          className="SearchBox-list"
+          className="SearchBox-list SearchBox-tree"
         />
         <List style={listStyle}>
           <ListItem
