@@ -5,17 +5,15 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonSyntaxException;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class MeteringMessageDto {
 
   public final MessageType messageType;
-
-  public MeteringMessageDto(MessageType messageType) {
-    this.messageType = messageType;
-  }
 
   public final boolean validate() throws IllegalAccessException {
     for (Field field : getClass().getDeclaredFields()) {

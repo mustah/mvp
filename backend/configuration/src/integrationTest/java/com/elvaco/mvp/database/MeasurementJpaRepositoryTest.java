@@ -565,6 +565,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "",
       null,
       0,
+      emptySet(),
       emptySet()
     ));
   }

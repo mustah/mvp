@@ -157,7 +157,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   }
 
   private MeterDto newMeterDto(String manufacturer, String medium) {
-    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *");
+    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *",1,1);
   }
 
   private void deleteAllTestData() {

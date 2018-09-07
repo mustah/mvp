@@ -1330,6 +1330,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       "",
       logicalMeterId,
       0,
+      emptySet(),
       emptySet()
     ));
   }
@@ -1345,6 +1346,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       "",
       logicalMeterId,
       0,
+      emptySet(),
       emptySet()
     ));
   }

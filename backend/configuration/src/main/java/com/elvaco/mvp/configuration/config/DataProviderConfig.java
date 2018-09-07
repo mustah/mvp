@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MissingMeasurements;
@@ -23,6 +24,7 @@ import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.LocationRepository;
 import com.elvaco.mvp.database.repository.access.LogicalMeterRepository;
 import com.elvaco.mvp.database.repository.access.MeasurementRepository;
+import com.elvaco.mvp.database.repository.access.MeterAlarmLogsRepository;
 import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.MissingMeasurementRepository;
@@ -40,6 +42,7 @@ import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -83,6 +86,7 @@ class DataProviderConfig {
   private final PropertiesJpaRepository propertiesJpaRepository;
   private final QuantityJpaRepository quantityJpaRepository;
   private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
+  private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
 
   @Bean
   Users users() {
@@ -158,6 +162,11 @@ class DataProviderConfig {
   @Bean
   MeterStatusLogs meterStatusLog() {
     return new MeterStatusLogsRepository(physicalMeterStatusLogJpaRepository);
+  }
+
+  @Bean
+  MeterAlarmLogs meterAlarmLogs() {
+    return new MeterAlarmLogsRepository(meterAlarmLogJpaRepository);
   }
 
   @Bean

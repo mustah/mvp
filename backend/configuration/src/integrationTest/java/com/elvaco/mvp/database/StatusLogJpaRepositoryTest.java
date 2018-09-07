@@ -57,6 +57,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
         "",
         null,
         0,
+        emptySet(),
         emptySet()
       )
     );

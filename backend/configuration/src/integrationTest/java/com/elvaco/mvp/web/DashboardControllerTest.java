@@ -269,6 +269,7 @@ public class DashboardControllerTest extends IntegrationTest {
       "",
       logicalMeterId,
       TimeUnit.DAYS.toMinutes(1),
+      emptySet(),
       emptySet()
     ));
   }

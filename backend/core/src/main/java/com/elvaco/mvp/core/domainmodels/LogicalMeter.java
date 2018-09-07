@@ -10,7 +10,9 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Singular;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
@@ -18,21 +20,26 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
+@Builder
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
 public class LogicalMeter implements Identifiable<UUID>, Serializable {
 
   private static final long serialVersionUID = -7467562865583613538L;
 
-  public final UUID id;
+  @Builder.Default
+  public UUID id = UUID.randomUUID();
   public final String externalId;
   public final UUID organisationId;
-  public final Location location;
   public final MeterDefinition meterDefinition;
   public final ZonedDateTime created;
+  @Singular
   public final List<PhysicalMeter> physicalMeters;
+  @Singular
   public final List<Gateway> gateways;
+  @Singular
   public final List<Measurement> latestReadouts;
+  public final Location location;
   @Nullable
   public final Long expectedMeasurementCount;
   @Nullable
@@ -52,20 +59,20 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     Location location,
     @Nullable Long expectedMeasurementCount,
     @Nullable Long missingMeasurementCount,
-    @Nullable StatusLogEntry<UUID> status
+    @Nullable StatusLogEntry<UUID> currentStatus
   ) {
     this.id = id;
     this.externalId = externalId;
     this.organisationId = organisationId;
-    this.location = location;
     this.meterDefinition = meterDefinition;
     this.created = created;
     this.physicalMeters = unmodifiableList(physicalMeters);
     this.gateways = unmodifiableList(gateways);
     this.latestReadouts = unmodifiableList(latestReadouts);
+    this.location = location;
     this.expectedMeasurementCount = expectedMeasurementCount;
     this.missingMeasurementCount = missingMeasurementCount;
-    this.currentStatus = status;
+    this.currentStatus = currentStatus;
   }
 
   public LogicalMeter(

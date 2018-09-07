@@ -76,6 +76,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       "ELV",
       logicalMeterId,
       15,
+      emptySet(),
       emptySet()
     );
     physicalMeterJpaRepository.save(physicalMeterEntity);

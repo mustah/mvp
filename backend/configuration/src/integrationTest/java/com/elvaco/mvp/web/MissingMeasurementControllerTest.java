@@ -213,6 +213,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       "",
       logicalMeterId,
       (long) 1,
+      emptySet(),
       emptySet()
     ));
   }

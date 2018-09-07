@@ -65,6 +65,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private static final String GATEWAY_EXTERNAL_ID = "123";
   private static final String FIFTEEN_MINUTE_CRON = "*/15 * * * *";
   private static final String HOUR_CRON = "0 * * * *";
+  private static final Integer REVISION_ONE = 1;
+  private static final Integer MBUS_METER_TYPE_ONE = 1;
   private static final Integer READ_INTERVAL_IN_MINUTES = 15;
   private static final String HOT_WATER_MEDIUM = "Hot water";
   private static final String ADDRESS = "1234";
@@ -166,17 +168,17 @@ public class MeteringReferenceInfoMessageConsumerTest {
     Gateway gateway = gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID).get();
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
-    assertThat(savedPhysicalMeter).isEqualTo(new PhysicalMeter(
-      savedPhysicalMeter.id,
-      organisation,
-      ADDRESS,
-      EXTERNAL_ID,
-      HOT_WATER_MEDIUM,
-      MANUFACTURER,
-      logicalMeter.id,
-      READ_INTERVAL_IN_MINUTES,
-      savedPhysicalMeter.statuses
-    ));
+    assertThat(savedPhysicalMeter).isEqualTo(PhysicalMeter.builder()
+      .id(savedPhysicalMeter.id)
+      .organisation(organisation)
+      .address(ADDRESS)
+      .externalId(EXTERNAL_ID)
+      .medium(HOT_WATER_MEDIUM)
+      .manufacturer(MANUFACTURER)
+      .logicalMeterId(logicalMeter.id)
+      .readIntervalMinutes(READ_INTERVAL_IN_MINUTES)
+      .statuses(savedPhysicalMeter.statuses)
+      .build());
     assertThat(gateway.meters).extracting("id").containsExactly(logicalMeter.id);
   }
 
@@ -452,6 +454,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       "manufacturer",
       "meter-id",
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       UNKNOWN_LOCATION,
       ""
     );
@@ -479,7 +483,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   @Test
   public void physicalMeterRequiresMeterId() {
     MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
-      new MeterDto(null, null, null, null, null),
+      new MeterDto(null, null, null, null, null, null, null),
       new FacilityDto("valid facility id", null, null, null),
       "Test source system",
       "organisation id",
@@ -714,7 +718,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(
       newMessageWithGatewayStatus(StatusType.CRITICAL)
-        .withMeter(new MeterDto(null, null, null, null, null))
+        .withMeter(new MeterDto(null, null, null, null, null, null, null))
     );
 
     assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
@@ -731,7 +735,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(
       newMessageWithGatewayStatus(StatusType.CRITICAL)
-        .withMeter(new MeterDto(null, null, null, null, null))
+        .withMeter(new MeterDto(null, null, null, null, null, null, null))
     );
 
     assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
@@ -772,6 +776,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       StatusType.OK,
@@ -787,6 +793,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       meterStatus,
@@ -803,6 +811,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       "KAM",
       physicalMeterId,
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -813,6 +823,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       location
     );
   }
@@ -823,6 +835,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       manufacturer,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -835,6 +849,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -845,6 +861,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       cron,
+      REVISION_ONE,
+      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -854,6 +872,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
     String manufacturer,
     String physicalMeterId,
     @Nullable String cron,
+    @Nullable Integer revision,
+    @Nullable Integer mbusDeviceType,
     Location location
   ) {
     return newMessage(
@@ -861,6 +881,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       manufacturer,
       physicalMeterId,
       cron,
+      revision,
+      mbusDeviceType,
       location,
       EXTERNAL_ID
     );
@@ -871,6 +893,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
     String manufacturer,
     String physicalMeterId,
     @Nullable String cron,
+    @Nullable Integer revision,
+    @Nullable Integer mbusDeviceType,
     Location location,
     String externalId
   ) {
@@ -879,6 +903,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       manufacturer,
       physicalMeterId,
       cron,
+      revision,
+      mbusDeviceType,
       location,
       externalId,
       StatusType.OK,
@@ -891,13 +917,23 @@ public class MeteringReferenceInfoMessageConsumerTest {
     String manufacturer,
     String physicalMeterId,
     @Nullable String cron,
+    @Nullable Integer revision,
+    @Nullable Integer mbusDeviceType,
     Location location,
     String externalId,
     StatusType meterStatus,
     StatusType gatewayStatus
   ) {
     return new MeteringReferenceInfoMessageDto(
-      new MeterDto(physicalMeterId, medium, meterStatus.name(), manufacturer, cron),
+      new MeterDto(
+        physicalMeterId,
+        medium,
+        meterStatus.name(),
+        manufacturer,
+        cron,
+        revision,
+        mbusDeviceType
+      ),
       new FacilityDto(
         externalId,
         location.getCountry(),

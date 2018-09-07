@@ -32,39 +32,34 @@ public class LogicalMeterDtoMapperTest {
 
   @Test
   public void mapLogicalMeterToMapMarkerDto() {
-    UUID meterId = randomUUID();
+    UUID logicalMeterId = randomUUID();
 
-    PhysicalMeter physicalMeter = new PhysicalMeter(
-      null,
-      ELVACO,
-      "",
-      "",
-      "",
-      "",
-      meterId,
-      0,
-      singletonList(
-        new StatusLogEntry<>(
-          randomUUID(),
-          StatusType.OK,
-          ZonedDateTime.now()
-        )
-      )
-    );
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .organisation(ELVACO)
+      .logicalMeterId(logicalMeterId)
+      .status(StatusLogEntry.<UUID>builder()
+        .status(StatusType.OK)
+        .start(ZonedDateTime.now())
+        .build())
+      .build();
 
     LogicalMeter logicalMeter = new LogicalMeter(
-      meterId,
+      logicalMeterId,
       "some-external-id",
       ELVACO.id,
-      null, ZonedDateTime.now(), singletonList(physicalMeter), emptyList(), new LocationBuilder()
-      .latitude(3.1)
-      .longitude(2.1)
-      .build()
+      null,
+      ZonedDateTime.now(),
+      singletonList(physicalMeter),
+      emptyList(),
+      new LocationBuilder()
+        .latitude(3.1)
+        .longitude(2.1)
+        .build()
     );
 
     assertThat(LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter))
       .isEqualTo(new MapMarkerWithStatusDto(
-        meterId,
+        logicalMeterId,
         StatusType.OK.name,
         3.1,
         2.1
@@ -128,23 +123,20 @@ public class LogicalMeterDtoMapperTest {
         )))
       .build());
     List<PhysicalMeter> physicalMeters = singletonList(
-      new PhysicalMeter(
-        randomUUID(),
-        ELVACO,
-        "123123",
-        "an-external-id",
-        "Some device specific medium",
-        "ELV",
-        meterId,
-        15,
-        singletonList(
-          new StatusLogEntry<>(
-            randomUUID(),
-            StatusType.OK,
-            statusChanged
-          )
-        )
-      ));
+      PhysicalMeter.builder()
+        .organisation(ELVACO)
+        .address("123123")
+        .externalId("an-external-id")
+        .medium("Gas")
+        .manufacturer("ELV")
+        .logicalMeterId(meterId)
+        .readIntervalMinutes(15)
+        .status(StatusLogEntry.<UUID>builder()
+          .status(StatusType.OK)
+          .start(statusChanged)
+          .build())
+        .build()
+    );
     assertThat(
       LogicalMeterDtoMapper.toDto(
         new LogicalMeter(

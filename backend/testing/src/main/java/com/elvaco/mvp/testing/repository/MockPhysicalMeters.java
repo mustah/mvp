@@ -52,6 +52,15 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
+  public Optional<PhysicalMeter> findByWithAlarms(
+    UUID organisationId,
+    String externalId,
+    String address
+  ) {
+    return findByWithStatuses(organisationId, externalId, address);
+  }
+
+  @Override
   public Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,
@@ -62,17 +71,16 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
 
   @Override
   protected PhysicalMeter copyWithId(UUID id, PhysicalMeter entity) {
-    return new PhysicalMeter(
-      id,
-      entity.organisation,
-      entity.address,
-      entity.externalId,
-      entity.medium,
-      entity.manufacturer,
-      entity.logicalMeterId,
-      entity.readIntervalMinutes,
-      emptyList()
-    );
+    return PhysicalMeter.builder()
+      .id(id)
+      .organisation(entity.organisation)
+      .address(entity.address)
+      .externalId(entity.externalId)
+      .medium(entity.medium)
+      .manufacturer(entity.manufacturer)
+      .logicalMeterId(entity.logicalMeterId)
+      .readIntervalMinutes(entity.readIntervalMinutes)
+      .build();
   }
 
   @Override
