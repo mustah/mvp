@@ -1,4 +1,3 @@
-import 'MeterDetailsTabs.scss';
 import * as React from 'react';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';

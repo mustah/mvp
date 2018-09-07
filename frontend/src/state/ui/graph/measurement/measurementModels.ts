@@ -2,7 +2,7 @@ import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Identifiable} from '../../../../types/Types';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
-import {GraphContents} from '../../../../usecases/report/reportModels';
+import {TabName} from '../../tabs/tabsModels';
 
 export interface Measurement extends Identifiable {
   created: number;
@@ -11,18 +11,17 @@ export interface Measurement extends Identifiable {
   unit: string;
 }
 
-const emptyGraphContents: GraphContents = {
-  axes: {},
-  data: [],
-  legend: [],
-  lines: [],
+const emptyMeasurementResponse = {
+  measurement: [],
+  average: [],
 };
 
 export const initialState: ReportContainerState = {
   hiddenKeys: [],
-  graphContents: emptyGraphContents,
   isFetching: false,
   error: Maybe.nothing(),
+  selectedTab: TabName.graph,
+  measurementResponse: emptyMeasurementResponse,
 };
 
 export interface MeasurementApiResponsePart {

@@ -249,7 +249,10 @@ export const fetchMeasurements =
         })),
       };
 
-      updateState({...initialState, graphContents: mapApiResponseToGraphData(graphData)});
+      updateState({
+        ...initialState,
+        measurementResponse: graphData,
+      });
     } catch (error) {
       if (error instanceof InvalidToken) {
         await logout(error);
