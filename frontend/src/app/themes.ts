@@ -6,7 +6,12 @@ interface Styles {
   [key: string]: React.CSSProperties;
 }
 
-export const fontSizeNormal = 14;
+export const fontSize = {
+  small: 12,
+  normal: 14,
+  big: 16,
+  bigger: 20,
+};
 
 const evoBorderRadius: React.CSSProperties = {borderRadius: 4};
 
@@ -37,7 +42,7 @@ export const mvpTheme = getMuiTheme({
     textColor: darkBlack,
   },
   dialog: {
-    bodyFontSize: fontSizeNormal,
+    bodyFontSize: fontSize.normal,
     bodyColor: darkBlack,
   },
 });
@@ -56,7 +61,7 @@ export const iconSizeLarge: React.CSSProperties = {
 };
 
 export const sideBarStyles: Styles = {
-  fontSize: {fontSize: fontSizeNormal},
+  fontSize: {fontSize: fontSize.normal},
   padding: {padding: '5px 0'},
   selected: {color: colors.blue},
   notSelectable: {color: colors.lightBlack},
@@ -65,7 +70,7 @@ export const sideBarStyles: Styles = {
 
 export const sideBarHeaderStyle: React.CSSProperties = {
   fontWeight: 'bold',
-  fontSize: fontSizeNormal,
+  fontSize: fontSize.big,
   paddingTop: 0,
 };
 
@@ -80,7 +85,7 @@ export const dividerStyle: React.CSSProperties = {
 };
 
 export const listItemStyle: React.CSSProperties = {
-  fontSize: fontSizeNormal,
+  fontSize: fontSize.normal,
   textStyle: {
     display: 'inline-block',
     textOverflow: 'ellipsis',
