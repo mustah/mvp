@@ -154,16 +154,17 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     PhysicalMeter savedPhysicalMeter = findPhysicalMeterByOrganisationId(organisation);
 
-    LogicalMeter expectedLogicalMeter = new LogicalMeter(
-      logicalMeter.id,
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.HOT_WATER_METER,
-      logicalMeter.created,
-      emptyList(),
-      emptyList(),
-      new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build()
-    );
+    LogicalMeter expectedLogicalMeter = LogicalMeter.builder()
+      .id(logicalMeter.id)
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .created(logicalMeter.created)
+      .location(new LocationBuilder().country("Sweden")
+        .city("Kungsbacka")
+        .address("Kabelgatan 2T")
+        .build())
+      .build();
 
     Gateway gateway = gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID).get();
 
@@ -398,16 +399,14 @@ public class MeteringReferenceInfoMessageConsumerTest {
         .build()
     );
 
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.HOT_WATER_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .created(ZonedDateTime.now())
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     messageHandler.accept(newMessageWithMediumAndPhysicalMeterId(HOT_WATER_MEDIUM, "4321"));
 

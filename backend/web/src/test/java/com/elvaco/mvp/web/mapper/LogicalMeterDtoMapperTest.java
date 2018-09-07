@@ -43,19 +43,18 @@ public class LogicalMeterDtoMapperTest {
         .build())
       .build();
 
-    LogicalMeter logicalMeter = new LogicalMeter(
-      logicalMeterId,
-      "some-external-id",
-      ELVACO.id,
-      null,
-      ZonedDateTime.now(),
-      singletonList(physicalMeter),
-      emptyList(),
-      new LocationBuilder()
+    LogicalMeter logicalMeter = LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("some-external-id")
+      .organisationId(ELVACO.id)
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .created(ZonedDateTime.now())
+      .physicalMeter(physicalMeter)
+      .location(new LocationBuilder()
         .latitude(3.1)
         .longitude(2.1)
-        .build()
-    );
+        .build())
+      .build();
 
     assertThat(LogicalMeterDtoMapper.toMapMarkerDto(logicalMeter))
       .isEqualTo(new MapMarkerWithStatusDto(

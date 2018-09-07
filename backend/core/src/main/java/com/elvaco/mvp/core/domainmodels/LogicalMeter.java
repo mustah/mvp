@@ -31,8 +31,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   public UUID id = UUID.randomUUID();
   public final String externalId;
   public final UUID organisationId;
-  public final MeterDefinition meterDefinition;
-  public final ZonedDateTime created;
+  public MeterDefinition meterDefinition = MeterDefinition.UNKNOWN_METER;
+  public ZonedDateTime created = ZonedDateTime.now();
   @Singular
   public final List<PhysicalMeter> physicalMeters;
   @Singular
@@ -80,32 +80,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     String externalId,
     UUID organisationId,
     MeterDefinition meterDefinition,
-    ZonedDateTime created,
-    List<PhysicalMeter> physicalMeters,
-    List<Gateway> gateways,
-    Location location
-  ) {
-    this(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      created,
-      physicalMeters,
-      gateways,
-      emptyList(),
-      location,
-      null,
-      null,
-      null
-    );
-  }
-
-  public LogicalMeter(
-    UUID id,
-    String externalId,
-    UUID organisationId,
-    MeterDefinition meterDefinition,
     Location location
   ) {
     this(
@@ -116,7 +90,11 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       ZonedDateTime.now(),
       emptyList(),
       emptyList(),
-      location
+      emptyList(),
+      location,
+      null,
+      null,
+      null
     );
   }
 
@@ -193,9 +171,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     );
   }
 
-  public LogicalMeter withMeasurements(
-    List<Measurement> measurements
-  ) {
+  public LogicalMeter withMeasurements(List<Measurement> measurements) {
     return new LogicalMeter(
       id,
       externalId,

@@ -36,9 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
-import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toMap;
 
 @Slf4j
@@ -91,16 +89,13 @@ class CsvDemoDataLoader implements CommandLineRunner {
       .stream(getFile(filePath), stream ->
         stream
           .map(csvData -> {
-            LogicalMeter logicalMeter = new LogicalMeter(
-              randomUUID(),
-              csvData.facilityId,
-              ELVACO.id,
-              MeterDefinition.fromMedium(Medium.from(csvData.medium)),
-              addDays(),
-              emptyList(),
-              emptyList(),
-              locationMap.get(csvData.address.toLowerCase())
-            );
+            LogicalMeter logicalMeter = LogicalMeter.builder()
+              .externalId(csvData.facilityId)
+              .organisationId(ELVACO.id)
+              .meterDefinition(MeterDefinition.fromMedium(Medium.from(csvData.medium)))
+              .created(addDays())
+              .location(locationMap.get(csvData.address.toLowerCase()))
+              .build();
             PhysicalMeter physicalMeter = PhysicalMeter.builder()
               .address(csvData.meterId)
               .externalId(csvData.facilityId)
