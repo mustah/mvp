@@ -20,6 +20,7 @@ public class MeteringMessageListener implements MessageListener {
   private final MessageParser messageParser;
   private final MeasurementMessageConsumer measurementMessageConsumer;
   private final ReferenceInfoMessageConsumer referenceInfoMessageConsumer;
+  private final AlarmMessageConsumer alarmMessageConsumer;
   private final MessageThrottler<String, GetReferenceInfoDto> referenceInfoThrottler;
 
   @Nullable
@@ -50,7 +51,10 @@ public class MeteringMessageListener implements MessageListener {
       stopAndLog("Reference Info", start);
       return null;
     } else if (meteringMessage instanceof MeteringAlarmMessageDto) {
-      return null;
+      return alarmMessageConsumer.accept((MeteringAlarmMessageDto) meteringMessage)
+        .filter(this::throttleAndLog)
+        .map(MessageSerializer::toJson)
+        .orElse(null);
     } else {
       throw new RuntimeException("Unknown message type: " + meteringMessage.getClass().getName());
     }

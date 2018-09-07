@@ -7,7 +7,6 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import lombok.experimental.UtilityClass;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -15,7 +14,7 @@ import static java.util.stream.Collectors.toSet;
 public class PhysicalMeterEntityMapper {
 
   public static PhysicalMeter toDomainModelWithoutStatusLogs(PhysicalMeterEntity entity) {
-    return toDomainModel(entity, emptyList());
+    return physicalMeterBuilderFrom(entity).build();
   }
 
   public static PhysicalMeter toDomainModel(PhysicalMeterEntity entity) {
@@ -26,17 +25,17 @@ public class PhysicalMeterEntityMapper {
     PhysicalMeterEntity entity,
     Collection<PhysicalMeterStatusLogEntity> statuses
   ) {
-    return new PhysicalMeter(
-      entity.id,
-      OrganisationEntityMapper.toDomainModel(entity.organisation),
-      entity.address,
-      entity.externalId,
-      entity.medium,
-      entity.manufacturer,
-      entity.logicalMeterId,
-      entity.readIntervalMinutes,
-      statuses.stream().map(MeterStatusLogEntityMapper::toDomainModel).collect(toList())
-    );
+    return physicalMeterBuilderFrom(entity)
+      .statuses(statuses.stream()
+        .map(MeterStatusLogEntityMapper::toDomainModel).collect(toList()))
+      .build();
+  }
+
+  public static PhysicalMeter toDomainModelWithAlarms(PhysicalMeterEntity entity) {
+    return physicalMeterBuilderFrom(entity)
+      .alarms(entity.alarms.stream()
+        .map(MeterAlarmLogEntityMapper::toDomainModel).collect(toSet()))
+      .build();
   }
 
   public static PhysicalMeterEntity toEntity(PhysicalMeter domainModel) {
@@ -49,7 +48,22 @@ public class PhysicalMeterEntityMapper {
       domainModel.manufacturer,
       domainModel.logicalMeterId,
       domainModel.readIntervalMinutes,
-      domainModel.statuses.stream().map(MeterStatusLogEntityMapper::toEntity).collect(toSet())
+      domainModel.statuses.stream().map(MeterStatusLogEntityMapper::toEntity).collect(toSet()),
+      domainModel.alarms.stream().map(MeterAlarmLogEntityMapper::toEntity).collect(toSet())
     );
+  }
+
+  private static PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilderFrom(
+    PhysicalMeterEntity entity
+  ) {
+    return PhysicalMeter.builder()
+      .id(entity.id)
+      .organisation(OrganisationEntityMapper.toDomainModel(entity.organisation))
+      .address(entity.address)
+      .externalId(entity.externalId)
+      .medium(entity.medium)
+      .manufacturer(entity.manufacturer)
+      .logicalMeterId(entity.logicalMeterId)
+      .readIntervalMinutes(entity.readIntervalMinutes);
   }
 }

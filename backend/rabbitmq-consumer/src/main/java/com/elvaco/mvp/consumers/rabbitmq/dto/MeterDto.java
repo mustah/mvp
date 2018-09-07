@@ -15,5 +15,9 @@ public class MeterDto {
   public final String manufacturer;
   @Nullable
   public final String cron;
-
+  @Nullable
+  public final Integer revision;
+  @Nullable
+  public final Integer mbusDeviceType;
+  //TODO: revision
 }

@@ -65,16 +65,20 @@ public class PhysicalMeterTest {
     UUID meterId,
     List<StatusLogEntry<UUID>> statusLogs
   ) {
-    return new PhysicalMeter(
-      meterId,
-      new Organisation(randomUUID(), "an-organisation", "an-organisation", "an-organisation"),
-      "12341234",
-      "an-external-id",
-      "Hot water",
-      "ELV",
-      randomUUID(),
-      0L,
-      statusLogs
-    );
+    return PhysicalMeter.builder()
+      .id(meterId)
+      .organisation(new Organisation(
+        randomUUID(),
+        "an-organisation",
+        "an-organisation",
+        "an-organisation"
+      ))
+      .address("12341234")
+      .externalId("an-external-id")
+      .medium("Hot water")
+      .manufacturer("ELV")
+      .logicalMeterId(randomUUID())
+      .statuses(statusLogs)
+      .build();
   }
 }

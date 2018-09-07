@@ -1,0 +1,23 @@
+{
+  "message_type": "Elvaco MVP MQ Alarm Message 1.0",
+  "facility": {
+    "id": "ABC-123"
+  },
+  "meter": {
+    "id": "112"
+  },
+  "alarm": [
+    {
+      "timestamp": "2017-09-22T08:45:49",
+      "mask": 42,
+      "description": "Low battery"
+    },
+    {
+      "timestamp": "2018-08-26T08:45:49",
+      "mask": 89,
+      "description": "Bad api"
+    }
+  ],
+  "organisation_id": "Organisation, Incorporated",
+  "source_system_id": "The Source System"
+}

@@ -1,8 +1,10 @@
 package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.adapters.spring.AmqpMessagePublisher;
+import com.elvaco.mvp.consumers.rabbitmq.message.AlarmMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringAlarmMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
@@ -78,15 +80,22 @@ class RabbitMqConfig {
   }
 
   @Bean
+  AlarmMessageConsumer alarmMessageConsumer() {
+    return new MeteringAlarmMessageConsumer();
+  }
+
+  @Bean
   MessageListener messageListener(
     MeasurementMessageConsumer measurementMessageConsumer,
     ReferenceInfoMessageConsumer referenceInfoMessageConsumer,
+    AlarmMessageConsumer alarmMessageConsumer,
     MessageThrottler<String, GetReferenceInfoDto> meteringMessageThrottler
   ) {
     return new MeteringMessageListener(
       new MeteringMessageParser(),
       measurementMessageConsumer,
       referenceInfoMessageConsumer,
+      alarmMessageConsumer,
       meteringMessageThrottler
     );
   }

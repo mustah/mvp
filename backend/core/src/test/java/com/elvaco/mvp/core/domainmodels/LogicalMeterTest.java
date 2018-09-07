@@ -399,22 +399,22 @@ public class LogicalMeterTest {
   ) {
     UUID organisationId = randomUUID();
     UUID logicalMeterId = randomUUID();
-    PhysicalMeter physicalMeter = new PhysicalMeter(
-      randomUUID(),
-      new Organisation(
+
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .organisation(new Organisation(
         organisationId,
         "Organisation, Inc.",
         "organisation-inc",
         "Organisation, Inc."
-      ),
-      "250",
-      "an-external-id",
-      "Heat, Return temp.",
-      "ELV",
-      logicalMeterId,
-      60L,
-      physicalMeterStatuses
-    );
+      ))
+      .address("250")
+      .externalId("an-external-id")
+      .medium("Heat, Return temp.")
+      .manufacturer("ELV")
+      .logicalMeterId(logicalMeterId)
+      .readIntervalMinutes(60)
+      .statuses(physicalMeterStatuses)
+      .build();
 
     return new LogicalMeter(
       logicalMeterId,

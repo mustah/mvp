@@ -155,7 +155,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter()
         .logicalMeterId(districtHeatingMeter.id)
         .externalId(randomUUID().toString())
-        .readIntervalMinutes(0)
         .build()
     );
 
@@ -804,8 +803,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeterDto logicalMeterDto = asTestUser()
       .get("/meters/" + logicalMeter.id
-           + "?before=" + NOW
-           + "&after=" + YESTERDAY, LogicalMeterDto.class)
+        + "?before=" + NOW
+        + "&after=" + YESTERDAY, LogicalMeterDto.class)
       .getBody();
 
     assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
@@ -815,17 +814,17 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findById_WithinPeriodOkStatus() {
     LogicalMeter logicalMeter = createLogicalMeter();
     UUID physicalMeterId = randomUUID();
-    physicalMeters.save(new PhysicalMeter(
-      physicalMeterId,
-      context().organisation(),
-      "address",
-      "external-id",
-      "medium",
-      "manufacturer",
-      logicalMeter.id,
-      0,
-      emptyList()
-    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .id(physicalMeterId)
+      .organisation(context().organisation())
+      .address("address")
+      .externalId("external-id")
+      .medium("medium")
+      .manufacturer("manufacturer")
+      .logicalMeterId(logicalMeter.id)
+      .build());
+
     saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
         .entityId(physicalMeterId)
@@ -845,17 +844,17 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter = createLogicalMeter();
 
     UUID physicalMeterId = randomUUID();
-    physicalMeters.save(new PhysicalMeter(
-      physicalMeterId,
-      context().organisation(),
-      "address",
-      "external-id",
-      "medium",
-      "manufacturer",
-      logicalMeter.id,
-      0,
-      emptyList()
-    ));
+
+    physicalMeters.save(PhysicalMeter.builder()
+      .id(physicalMeterId)
+      .organisation(context().organisation())
+      .address("address")
+      .externalId("external-id")
+      .medium("medium")
+      .manufacturer("manufacturer")
+      .logicalMeterId(logicalMeter.id)
+      .build());
+
     StatusLogEntry<UUID> logEntry = saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
         .entityId(physicalMeterId)

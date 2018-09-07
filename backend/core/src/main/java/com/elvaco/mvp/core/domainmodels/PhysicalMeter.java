@@ -7,7 +7,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
@@ -19,7 +18,6 @@ import static java.util.UUID.randomUUID;
 
 @Builder
 @EqualsAndHashCode
-@AllArgsConstructor
 @ToString
 public class PhysicalMeter implements Identifiable<UUID>, Serializable {
 
@@ -35,9 +33,35 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
   public final String manufacturer;
   @Nullable
   public final UUID logicalMeterId;
-  public final long readIntervalMinutes;
+  public long readIntervalMinutes;
   @Singular
   public List<StatusLogEntry<UUID>> statuses;
+  @Singular
+  public List<AlarmLogEntry> alarms;
+
+  private PhysicalMeter(
+    UUID id,
+    Organisation organisation,
+    String address,
+    String externalId,
+    String medium,
+    @Nullable String manufacturer,
+    @Nullable UUID logicalMeterId,
+    long readIntervalMinutes,
+    List<StatusLogEntry<UUID>> statuses,
+    List<AlarmLogEntry> alarms
+  ) {
+    this.id = id;
+    this.organisation = organisation;
+    this.address = address;
+    this.externalId = externalId;
+    this.medium = medium;
+    this.manufacturer = manufacturer;
+    this.logicalMeterId = logicalMeterId;
+    this.readIntervalMinutes = readIntervalMinutes;
+    this.statuses = statuses;
+    this.alarms = alarms;
+  }
 
   @Override
   public UUID getId() {
@@ -54,7 +78,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      unmodifiableList(statuses)
+      unmodifiableList(statuses),
+      unmodifiableList(alarms)
     );
   }
 
@@ -68,7 +93,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      unmodifiableList(statuses)
+      unmodifiableList(statuses),
+      unmodifiableList(alarms)
     );
   }
 
@@ -82,7 +108,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      unmodifiableList(statuses)
+      unmodifiableList(statuses),
+      unmodifiableList(alarms)
     );
   }
 
@@ -96,7 +123,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes != null ? readIntervalMinutes : this.readIntervalMinutes,
-      unmodifiableList(statuses)
+      unmodifiableList(statuses),
+      unmodifiableList(alarms)
     );
   }
 
@@ -123,7 +151,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      unmodifiableList(newStatuses)
+      unmodifiableList(newStatuses),
+      unmodifiableList(alarms)
     );
   }
 }

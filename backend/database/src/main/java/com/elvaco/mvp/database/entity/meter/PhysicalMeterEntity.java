@@ -67,6 +67,12 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
   public Set<PhysicalMeterStatusLogEntity> statusLogs = new HashSet<>();
 
+  @NotAudited
+  @OrderBy("stop desc, start desc")
+  @OneToMany(mappedBy = "physicalMeterId", orphanRemoval = true)
+  @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
+  public Set<MeterAlarmLogEntity> alarms = new HashSet<>();
+
   public UUID logicalMeterId;
 
   public long readIntervalMinutes;
@@ -80,7 +86,8 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
     @Nullable String manufacturer,
     @Nullable UUID logicalMeterId,
     long readIntervalMinutes,
-    Set<PhysicalMeterStatusLogEntity> statusLogs
+    Set<PhysicalMeterStatusLogEntity> statusLogs,
+    Set<MeterAlarmLogEntity> alarms
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -91,6 +98,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
     this.logicalMeterId = logicalMeterId;
     this.readIntervalMinutes = readIntervalMinutes;
     this.statusLogs = unmodifiableSet(statusLogs);
+    this.alarms = unmodifiableSet(alarms);
   }
 
   @Override

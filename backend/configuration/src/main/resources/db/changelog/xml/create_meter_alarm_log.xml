@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create meter_alarm_log table" author="Must Tahir">
+
+    <createTable tableName="meter_alarm_log">
+      <column autoIncrement="true" name="id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="meter_alarm_log_pkey"/>
+      </column>
+      <column name="physical_meter_id" type="uuid">
+        <constraints nullable="false"/>
+      </column>
+      <column name="mask" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="start" type="timestamp with time zone" defaultValueComputed="now()">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_seen" type="timestamp with time zone" defaultValueComputed="now()">
+        <constraints nullable="false"/>
+      </column>
+      <column name="stop" type="timestamp with time zone"/>
+      <column name="description" type="${text_type}"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="meter_alarm_log"
+      baseColumnNames="physical_meter_id"
+      constraintName="meter_alarm_log_physical_meter_id_fkey"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+      referencedColumnNames="id"
+      referencedTableName="physical_meter"
+    />
+
+    <addUniqueConstraint
+      tableName="meter_alarm_log"
+      columnNames="physical_meter_id, mask, start"
+      schemaName="public"
+    />
+
+  </changeSet>
+
+</databaseChangeLog>

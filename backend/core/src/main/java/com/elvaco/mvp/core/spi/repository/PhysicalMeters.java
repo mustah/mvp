@@ -25,6 +25,12 @@ public interface PhysicalMeters {
     String address
   );
 
+  Optional<PhysicalMeter> findByWithAlarms(
+    UUID organisationId,
+    String externalId,
+    String address
+  );
+
   Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,

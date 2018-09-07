@@ -562,17 +562,15 @@ public class SelectionControllerTest extends IntegrationTest {
     String address,
     LogicalMeter logicalMeter
   ) {
-    return physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      organisation,
-      address,
-      logicalMeter.externalId,
-      "Gas",
-      "elv",
-      logicalMeter.id,
-      60,
-      emptyList()
-    ));
+    return physicalMeters.save(PhysicalMeter.builder()
+      .organisation(organisation)
+      .address(address)
+      .externalId(logicalMeter.externalId)
+      .medium("Gas")
+      .manufacturer("elv")
+      .logicalMeterId(logicalMeter.id)
+      .readIntervalMinutes(60)
+      .build());
   }
 
   private LogicalMeter createLogicalMeter(
