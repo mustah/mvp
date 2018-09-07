@@ -4,6 +4,7 @@ import 'ReportIndicatorWidget.scss';
 import {colors} from '../../app/themes';
 import {OnClick} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
+import {IconUnknown} from '../icons/IconUnknown';
 import {IconWater} from '../icons/IconWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
@@ -31,6 +32,7 @@ const indicatorIconFor: IndicatorComponentType = {
   [Medium.gas]: IconGas,
   [Medium.temperatureInside]: IconTemperature,
   [Medium.temperatureOutside]: IconTemperature,
+  [Medium.unknown]: IconUnknown,
 };
 
 export const iconComponentFor =

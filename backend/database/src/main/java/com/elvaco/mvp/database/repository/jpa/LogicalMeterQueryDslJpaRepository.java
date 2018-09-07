@@ -19,6 +19,7 @@ import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
@@ -80,6 +81,9 @@ class LogicalMeterQueryDslJpaRepository
 
   private static final QMissingMeasurementEntity MISSING_MEASUREMENT =
     QMissingMeasurementEntity.missingMeasurementEntity;
+
+  private static final QMeterDefinitionEntity METER_DEFINITION =
+    QMeterDefinitionEntity.meterDefinitionEntity;
 
   @Autowired
   LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
@@ -189,10 +193,12 @@ class LogicalMeterQueryDslJpaRepository
         LOGICAL_METER.externalId,
         LOCATION.country,
         LOCATION.city,
-        LOCATION.streetAddress
+        LOCATION.streetAddress,
+        METER_DEFINITION.medium
       ))
       .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER);
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION);
 
     joinMeterStatusLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);
@@ -291,7 +297,7 @@ class LogicalMeterQueryDslJpaRepository
     Predicate predicate
   ) {
     if ((parameters.hasParam(MIN_VALUE) || parameters.hasParam(MAX_VALUE))
-      && parameters.hasParam(QUANTITY)) {
+        && parameters.hasParam(QUANTITY)) {
 
       String quantity = parameters.getFirst(QUANTITY);
 

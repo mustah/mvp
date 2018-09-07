@@ -13,7 +13,6 @@ import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.AddressDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.CityDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -183,8 +182,8 @@ public class SelectionTreeDtoMapperTest {
     SelectionTreeDto selectionTreeDto = SelectionTreeDtoMapper.toDto(selectionTree);
 
     assertThat(selectionTreeDto.cities.get(0).addresses.get(0).meters).containsOnly(
-      new MeterDto(logicalMeterId1, "1245"),
-      new MeterDto(logicalMeterId2, "1234")
+      new MeterDto(logicalMeterId1, "1245", MeterDefinition.UNKNOWN_METER.medium),
+      new MeterDto(logicalMeterId2, "1234", MeterDefinition.UNKNOWN_METER.medium)
     );
   }
 

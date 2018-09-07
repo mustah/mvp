@@ -59,10 +59,12 @@ public class SelectionTreeDto {
   public static class MeterDto {
     public UUID id;
     public String name;
+    public String medium;
 
-    public MeterDto(UUID id, String name) {
+    public MeterDto(UUID id, String name, String medium) {
       this.id = id;
       this.name = name;
+      this.medium = medium;
     }
   }
 }
