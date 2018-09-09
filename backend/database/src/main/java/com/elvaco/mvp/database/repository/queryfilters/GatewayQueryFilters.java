@@ -86,8 +86,8 @@ public class GatewayQueryFilters extends QueryFilters {
         return PHYSICAL_METER.address.in(values);
       case WILDCARD:
         String str = values.get(0);
-        return GATEWAY.serial.startsWith(str)
-          .or(GATEWAY.productModel.startsWith(str))
+        return GATEWAY.serial.startsWithIgnoreCase(str)
+          .or(GATEWAY.productModel.startsWithIgnoreCase(str))
           .or(LOGICAL_METER.location.city.startsWith(str))
           .or(LOGICAL_METER.location.streetAddress.startsWith(str));
       default:

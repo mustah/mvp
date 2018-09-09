@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
-import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
-import {RowCenter} from '../../../components/layouts/row/Row';
+import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
@@ -29,20 +28,20 @@ export const MeterList = (
   }: MeterListProps) => {
 
   const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
+  const renderMeterId = ({address}: Meter) => address;
   const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
   const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
   const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
   const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-  const renderStatusChangedAndActions = ({id, manufacturer, statusChanged}: Meter) => (
-    <RowCenter className="StatusChanged space-between">
-      <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+  const renderActions = ({id, manufacturer}: Meter) => (
+    <RowRight className="ActionsDropdown-list">
       <ListActionsDropdown
         item={{id, name: manufacturer}}
         selectEntryAdd={selectEntryAdd}
         syncWithMetering={syncWithMetering}
       />
-    </RowCenter>
+    </RowRight>
   );
 
   const renderMedium = ({medium}: Meter) => medium;
@@ -64,6 +63,10 @@ export const MeterList = (
           header={<TableHead className="first">{translate('facility')}</TableHead>}
           cellClassName="icon"
           renderCell={renderMeterListItem}
+        />
+        <TableColumn
+          header={<TableHead>{translate('meter id')}</TableHead>}
+          renderCell={renderMeterId}
         />
         <TableColumn
           header={<TableHead>{translate('city')}</TableHead>}
@@ -97,8 +100,8 @@ export const MeterList = (
           renderCell={renderStatusCell}
         />
         <TableColumn
-          header={<TableHead>{translate('status change')}</TableHead>}
-          renderCell={renderStatusChangedAndActions}
+          header={<TableHead/>}
+          renderCell={renderActions}
         />
       </Table>
       <TableInfoText/>

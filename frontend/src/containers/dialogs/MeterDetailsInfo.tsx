@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -98,6 +99,11 @@ class MeterDetailsInfo extends React.Component<Props> {
             <Info
               label={translate('status')}
               value={<Status name={meter.status.name}/>}
+            />
+            <Info
+              className="StatusChange"
+              label={translate('status change')}
+              value={<WrappedDateTime date={meter.statusChanged} hasContent={!!meter.statusChanged}/>}
             />
           </Row>
           <Row>

@@ -31,7 +31,9 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   public UUID id = UUID.randomUUID();
   public final String externalId;
   public final UUID organisationId;
+  @Builder.Default
   public MeterDefinition meterDefinition = MeterDefinition.UNKNOWN_METER;
+  @Builder.Default
   public ZonedDateTime created = ZonedDateTime.now();
   @Singular
   public final List<PhysicalMeter> physicalMeters;
@@ -75,6 +77,10 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     this.currentStatus = currentStatus;
   }
 
+  /**
+   * Please use <code>LogicalMeter.builder().build()</code> instead.
+   */
+  @Deprecated
   public LogicalMeter(
     UUID id,
     String externalId,

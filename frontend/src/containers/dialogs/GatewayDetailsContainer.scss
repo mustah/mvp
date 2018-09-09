@@ -7,6 +7,12 @@
       margin: 0 $xl-space $lg-space $xl-space;
     }
   }
+
+  .Info {
+    &.StatusChange {
+      margin-left: $lg-space;
+    }
+  }
 }
 
 .Scrollable-Table {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {imagePathFor} from '../../app/routes';
+import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -51,7 +52,10 @@ class GatewayDetailsInfo extends React.Component<Props> {
   }
 
   render() {
-    const {gateway: {location: {city, address}, serial, productModel, status}, organisation} = this.props;
+    const {
+      gateway: {location: {city, address}, serial, productModel, status, statusChanged},
+      organisation,
+    } = this.props;
     const gatewayImage = imagePathFor('cme2110.jpg');
     const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
 
@@ -74,6 +78,11 @@ class GatewayDetailsInfo extends React.Component<Props> {
           <Info
             label={translate('collection')}
             value={<Status name={status.name}/>}
+          />
+          <Info
+            className="StatusChange"
+            label={translate('status change')}
+            value={<WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>}
           />
         </Row>
       </Column>
