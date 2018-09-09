@@ -23,7 +23,7 @@ import {clearSelectionTreeSearch, selectionTreeSearch} from '../../../search/sea
 import {OnSearch, Query} from '../../../search/searchModels';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {
-  ItemCapabilities,
+  ItemOptions,
   renderSelectionTreeCities,
 } from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
@@ -34,7 +34,7 @@ interface StateToProps extends Query {
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
   parameters: EncodedUriParameters;
-  itemCapabilities: ItemCapabilities;
+  itemOptions: ItemOptions;
 }
 
 interface DispatchToProps {
@@ -72,7 +72,7 @@ class SelectionTreeComponent extends React.Component<Props> {
       selectedListItems,
       toggleIncludingChildren,
       toggleSingleEntry,
-      itemCapabilities,
+      itemOptions,
       centerMapOnMeter,
       selectionTreeSearch,
       query,
@@ -88,7 +88,7 @@ class SelectionTreeComponent extends React.Component<Props> {
         selectedListItems,
         toggleIncludingChildren,
         toggleSingleEntry,
-        itemCapabilities,
+        itemOptions,
         centerMapOnMeter,
       });
 
@@ -142,7 +142,7 @@ const mapStateToProps =
       openListItems: getOpenListItems(selectionTreeUi),
       selectedListItems: getSelectedListItems(report),
       parameters: getMeterParameters({userSelection, now: now()}),
-      itemCapabilities: {
+      itemOptions: {
         zoomable: isDashboardPage(routing),
         report: isReportPage(routing),
       },

@@ -1,8 +1,7 @@
-import IconButton from 'material-ui/IconButton';
-import ActionZoomIn from 'material-ui/svg-icons/action/zoom-in';
-import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import * as React from 'react';
 import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
+import {AddToListButton} from '../../../../components/buttons/AddToListButton';
+import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {orUnknown} from '../../../../helpers/translations';
@@ -21,11 +20,12 @@ interface RenderProps {
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
-  itemCapabilities: ItemCapabilities;
+  itemOptions: ItemOptions;
   centerMapOnMeter: OnClickWithId;
 }
 
-export interface ItemCapabilities {
+export interface ItemOptions {
+  hasInfoButton?: boolean;
   zoomable?: boolean;
   report?: boolean;
 }
@@ -124,6 +124,8 @@ const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) =
   });
 };
 
+const iconRowStyle: React.CSSProperties = {marginRight: '18px'};
+
 interface Props {
   addToReport: OnClickWithId;
   id: uuid;
@@ -135,7 +137,7 @@ interface Props {
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
-  itemCapabilities: ItemCapabilities;
+  itemOptions: ItemOptions;
   centerMapOnMeter: OnClickWithId;
 }
 
@@ -150,7 +152,7 @@ const renderSelectableListItem = ({
   selectedListItems,
   selectable,
   nestedItems,
-  itemCapabilities: {zoomable, report},
+  itemOptions: {zoomable, report},
   centerMapOnMeter,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
@@ -168,24 +170,6 @@ const renderSelectableListItem = ({
     addToReport(id);
   };
 
-  const zoomIcon = zoomable && (
-    <IconButton
-      key="1"
-      onClick={zoomInOn}
-    >
-      <ActionZoomIn/>
-    </IconButton>
-  );
-
-  const reportIcon = report && (
-    <IconButton
-      key="2"
-      onClick={addMeterToReport}
-    >
-      <AvPlaylistAdd/>
-    </IconButton>
-  );
-
   const content = !nestedItems && (zoomable || report)
     ? (
       <RowCenter className="space-between">
@@ -194,9 +178,9 @@ const renderSelectableListItem = ({
             {primaryText}
           </Normal>
         </Row>
-        <Row style={{marginRight: '24px'}}>
-          {zoomIcon}
-          {reportIcon}
+        <Row style={iconRowStyle}>
+          {zoomable && <ZoomButton onClick={zoomInOn}/>}
+          {report && <AddToListButton onClick={addMeterToReport}/>}
         </Row>
       </RowCenter>
     )
