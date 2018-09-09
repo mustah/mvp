@@ -17,22 +17,17 @@ import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTre
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnChange, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
-import {toggleIncludingChildren, toggleSingleEntry, addToReport} from '../../../report/reportActions';
-import {getSelectedListItems} from '../../../report/reportSelectors';
+import {addToReport, toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {clearSelectionTreeSearch, selectionTreeSearch} from '../../../search/searchActions';
 import {OnSearch, Query} from '../../../search/searchModels';
 import {LoadingListItem} from '../../components/LoadingListItem';
-import {
-  ItemOptions,
-  renderSelectionTreeCities,
-} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import {ItemOptions, renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
 
 interface StateToProps extends Query {
   isFetching: boolean;
   selectionTree: SelectionTree;
   openListItems: Set<uuid>;
-  selectedListItems: Set<uuid>;
   parameters: EncodedUriParameters;
   itemOptions: ItemOptions;
 }
@@ -69,7 +64,6 @@ class SelectionTreeComponent extends React.Component<Props> {
       selectionTree,
       toggleExpand,
       openListItems,
-      selectedListItems,
       toggleIncludingChildren,
       toggleSingleEntry,
       itemOptions,
@@ -85,7 +79,6 @@ class SelectionTreeComponent extends React.Component<Props> {
         selectionTree,
         toggleExpand,
         openListItems,
-        selectedListItems,
         toggleIncludingChildren,
         toggleSingleEntry,
         itemOptions,
@@ -140,7 +133,6 @@ const mapStateToProps =
       isFetching: selectionTree.isFetching,
       selectionTree: getSelectionTree({...selectionTree, query}),
       openListItems: getOpenListItems(selectionTreeUi),
-      selectedListItems: getSelectedListItems(report),
       parameters: getMeterParameters({userSelection, now: now()}),
       itemOptions: {
         zoomable: isDashboardPage(routing),

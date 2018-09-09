@@ -18,7 +18,6 @@ interface RenderProps {
   addToReport: OnClickWithId;
   id: uuid;
   openListItems: Set<uuid>;
-  selectedListItems: Set<uuid>;
   selectionTree: SelectionTree;
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
@@ -136,7 +135,6 @@ interface Props {
   openListItems: Set<uuid>;
   primaryText: string;
   selectable: boolean;
-  selectedListItems: Set<uuid>;
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
@@ -159,7 +157,6 @@ const renderSelectableListItem = ({
   toggleExpand,
   toggleSingleEntry,
   toggleIncludingChildren,
-  selectedListItems,
   selectable,
   nestedItems,
   itemOptions: {zoomable, report},
@@ -222,7 +219,6 @@ const renderSelectableListItem = ({
       onNestedListToggle={onToggleExpand}
       onClick={onToggleSelect}
       selectable={selectable}
-      selected={selectedListItems.has(id)}
     />
   );
 };
