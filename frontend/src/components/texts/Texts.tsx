@@ -12,7 +12,7 @@ interface TextProps {
 export const Normal = (props: TextProps) => {
   const {className, children} = props;
   return (
-    <span {...props} className={classNames('Normal', className)}>{children}</span>
+    <div {...props} className={classNames('Normal', className)}>{children}</div>
   );
 };
 

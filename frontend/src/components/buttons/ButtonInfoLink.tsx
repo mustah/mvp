@@ -1,24 +1,19 @@
-import FlatButton from 'material-ui/FlatButton';
-import ActionInfoOutline from 'material-ui/svg-icons/action/info-outline';
 import * as React from 'react';
-import {colors} from '../../app/themes';
 import {OnClick} from '../../types/Types';
+import {RowMiddle} from '../layouts/row/Row';
+import {Normal} from '../texts/Texts';
+import {InfoButton} from './InfoButton';
 
 interface InfoLinkProps {
   onClick: OnClick;
   label: string | number;
+  labelStyle?: React.CSSProperties;
+  iconStyle?: React.CSSProperties;
 }
 
-const labelStyle: React.CSSProperties = {paddingLeft: 8};
-const iconStyle: React.CSSProperties = {marginLeft: 4};
-
-export const ButtonInfoLink = ({label, onClick}: InfoLinkProps) => (
-  <FlatButton
-    hoverColor="inherit"
-    icon={<ActionInfoOutline style={iconStyle} color={colors.lightBlack} hoverColor={colors.iconHover}/>}
-    label={label}
-    labelPosition="after"
-    labelStyle={labelStyle}
-    onClick={onClick}
-  />
+export const ButtonInfoLink = ({iconStyle, label, onClick, labelStyle}: InfoLinkProps) => (
+  <RowMiddle>
+    <InfoButton onClick={onClick} iconStyle={iconStyle}/>
+    <Normal style={labelStyle}>{label}</Normal>
+  </RowMiddle>
 );

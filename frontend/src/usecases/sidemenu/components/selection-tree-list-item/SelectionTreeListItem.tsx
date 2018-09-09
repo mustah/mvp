@@ -2,8 +2,11 @@ import * as React from 'react';
 import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import {AddToListButton} from '../../../../components/buttons/AddToListButton';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
+import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
+import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
+import {Maybe} from '../../../../helpers/Maybe';
 import {orUnknown} from '../../../../helpers/translations';
 import {firstUpper} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
@@ -141,6 +144,13 @@ interface Props {
   centerMapOnMeter: OnClickWithId;
 }
 
+const labelStyle: React.CSSProperties = {
+  marginLeft: 4,
+  paddingLeft: 0,
+  paddingRight: 0,
+  textOverflow: 'ellipsis',
+};
+
 const renderSelectableListItem = ({
   addToReport,
   id,
@@ -170,14 +180,20 @@ const renderSelectableListItem = ({
     addToReport(id);
   };
 
-  const content = !nestedItems && (zoomable || report)
+  const selectedId: Maybe<uuid> = Maybe.maybe(id);
+
+  const content = !nestedItems
     ? (
       <RowCenter className="space-between">
-        <Row className="first-uppercase" style={listItemStyleWithActions.textStyle}>
-          <Normal title={firstUpper(primaryText)}>
-            {primaryText}
-          </Normal>
-        </Row>
+        <RowCenter className="first-uppercase" style={listItemStyleWithActions.textStyle}>
+          <OpenDialogInfoButton
+            label={primaryText}
+            autoScrollBodyContent={true}
+            labelStyle={labelStyle}
+          >
+            <MeterDetailsContainer selectedId={selectedId}/>
+          </OpenDialogInfoButton>
+        </RowCenter>
         <Row style={iconRowStyle}>
           {zoomable && <ZoomButton onClick={zoomInOn}/>}
           {report && <AddToListButton onClick={addMeterToReport}/>}
@@ -196,7 +212,7 @@ const renderSelectableListItem = ({
 
   return (
     <SelectableListItem
-      className="TreeListItem"
+      className="TreeListItem first-uppercase"
       primaryText={content}
       key={id}
       innerDivStyle={sideBarStyles.padding}
