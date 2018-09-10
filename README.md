@@ -55,6 +55,14 @@ or
 
 Look [here](https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_test) for more examples, and a more thorough explanation of test filters.
 
+#### Run single system test against postgresql from within IDEA
+
+> Caveat regarding losing all your data from previous section applies here too
+
+Run your test with the following VM arguments:
+
+    -ea -Dspring.profiles.active=postgresql -Dserver.port=8080 -Dspring.datasource.url="jdbc:postgresql://localhost:5432/mvp"
+
 ### Backend only
 If the changes you're working on are isolated to the backend, and do not rely
 on any database changes, this is probably the mode you're looking for. It is
