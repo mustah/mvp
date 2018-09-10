@@ -20,7 +20,6 @@ import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static java.util.Collections.emptyList;
@@ -29,6 +28,8 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterDtoMapperTest {
+
+  private static final String CREATED_DATE_STRING = "2018-02-12T14:14:25Z";
 
   @Test
   public void mapLogicalMeterToMapMarkerDto() {
@@ -70,8 +71,8 @@ public class LogicalMeterDtoMapperTest {
     UUID meterId = randomUUID();
     LogicalMeterDto expected = new LogicalMeterDto();
     expected.id = meterId;
-    expected.created = "2018-02-12T14:14:25Z";
-    expected.statusChanged = "2018-02-12T14:14:25Z";
+    expected.created = CREATED_DATE_STRING;
+    expected.statusChanged = CREATED_DATE_STRING;
     expected.medium = "Hot water";
     expected.status = StatusType.OK;
     expected.location = new LocationDto(
@@ -87,11 +88,11 @@ public class LogicalMeterDtoMapperTest {
       new MeterStatusLogDto(
         null,
         StatusType.OK.name,
-        "2018-02-12T14:14:25Z",
+        CREATED_DATE_STRING,
         ""
       )
     );
-    ZonedDateTime statusChanged = ZonedDateTime.parse("2018-02-12T14:14:25Z");
+    ZonedDateTime statusChanged = ZonedDateTime.parse(CREATED_DATE_STRING);
     expected.gateway = new GatewayMandatoryDto(
       randomUUID(),
       "CMi2110",
@@ -138,66 +139,50 @@ public class LogicalMeterDtoMapperTest {
     );
     assertThat(
       LogicalMeterDtoMapper.toDto(
-        new LogicalMeter(
-          meterId,
-          "an-external-id",
-          organisationId,
-          MeterDefinition.HOT_WATER_METER,
-          statusChanged,
-          physicalMeters,
-          gateways,
-          emptyList(),
-          new LocationBuilder()
+        LogicalMeter.builder()
+          .id(meterId)
+          .externalId("an-external-id")
+          .organisationId(organisationId)
+          .meterDefinition(MeterDefinition.HOT_WATER_METER)
+          .created(statusChanged)
+          .physicalMeters(physicalMeters)
+          .gateways(gateways)
+          .location(new LocationBuilder()
             .city("kungsbacka")
             .address("kabelgatan 2t")
             .latitude(57.5052592)
             .longitude(56.123)
             .confidence(1.0)
-            .build(),
-          100L,
-          25L,
-          null
-        )))
+            .build())
+          .expectedMeasurementCount(100L)
+          .missingMeasurementCount(25L)
+          .build()
+      ))
       .isEqualTo(expected);
   }
 
   @Test
   public void nullCollectionStatusIsMappedToNull() {
-    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(new LogicalMeter(
-      randomUUID(),
-      "external-id",
-      ELVACO.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.parse("2018-02-12T14:14:25Z"),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      null
-    ));
-
+    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(
+      LogicalMeter.builder()
+        .externalId("external-id")
+        .organisationId(ELVACO.id)
+        .created(ZonedDateTime.parse(CREATED_DATE_STRING))
+        .build()
+    );
     assertThat(logicalMeterDto.collectionPercentage).isNull();
   }
 
   @Test
   public void dtoCreatedTimeReflectsCallerTimeZone() {
-    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(new LogicalMeter(
-      randomUUID(),
-      "external-id",
-      ELVACO.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.parse("2018-02-12T14:14:25Z"),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      null
-    ));
+    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(
+      LogicalMeter.builder()
+        .externalId("external-id")
+        .organisationId(ELVACO.id)
+        .created(ZonedDateTime.parse(CREATED_DATE_STRING))
+        .build()
+    );
 
-    assertThat(logicalMeterDto.created).isEqualTo("2018-02-12T14:14:25Z");
+    assertThat(logicalMeterDto.created).isEqualTo(CREATED_DATE_STRING);
   }
 }

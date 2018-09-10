@@ -343,20 +343,13 @@ public class LogicalMeterTest {
     UUID organisationId,
     List<PhysicalMeter> physicalMeterList
   ) {
-    return new LogicalMeter(
-      id,
-      "an-external-id",
-      organisationId,
-      MeterDefinition.HOT_WATER_METER,
-      ZonedDateTime.now(),
-      physicalMeterList,
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      null
-    );
+    return LogicalMeter.builder()
+      .id(id)
+      .externalId("an-external-id")
+      .organisationId(organisationId)
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .physicalMeters(physicalMeterList)
+      .build();
   }
 
   private LogicalMeter newLogicalMeter(
@@ -377,24 +370,16 @@ public class LogicalMeterTest {
     Long expectedMeasurementCount,
     Long missingMeasurementCount
   ) {
-    return new LogicalMeter(
-      randomUUID(),
-      "an-external-id",
-      randomUUID(),
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      null
-    );
+    return LogicalMeter.builder()
+      .externalId("an-external-id")
+      .organisationId(randomUUID())
+      .expectedMeasurementCount(expectedMeasurementCount)
+      .missingMeasurementCount(missingMeasurementCount)
+      .build();
   }
 
   private LogicalMeter newLogicalMeterWithStatuses(
-    @Nullable StatusLogEntry<UUID> explicitStatus,
+    @Nullable StatusLogEntry<UUID> status,
     List<StatusLogEntry<UUID>> physicalMeterStatuses
   ) {
     UUID organisationId = randomUUID();
@@ -416,19 +401,13 @@ public class LogicalMeterTest {
       .statuses(physicalMeterStatuses)
       .build();
 
-    return new LogicalMeter(
-      logicalMeterId,
-      "an-external-id",
-      randomUUID(),
-      MeterDefinition.DISTRICT_HEATING_METER,
-      ZonedDateTime.now(),
-      singletonList(physicalMeter),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      explicitStatus
-    );
+    return LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("an-external-id")
+      .organisationId(randomUUID())
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .physicalMeter(physicalMeter)
+      .currentStatus(status)
+      .build();
   }
 }

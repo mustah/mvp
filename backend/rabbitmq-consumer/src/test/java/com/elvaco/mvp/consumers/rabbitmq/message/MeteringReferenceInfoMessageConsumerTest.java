@@ -51,7 +51,6 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -205,20 +204,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void locationIsUpdatedForExistingMeter() {
     UUID meterId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      Location.UNKNOWN_LOCATION,
-      null,
-      0L,
-      null
-    ));
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .build());
 
     Location newLocation = new LocationBuilder()
       .country("")
@@ -667,20 +658,11 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void emptyGatewayField_MeterIsUpdatedGatewayIsNotCreated() {
     UUID meterId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      Location.UNKNOWN_LOCATION,
-      null,
-      0L,
-      null
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .build());
 
     messageHandler.accept(
       newMessageWithLocation(new LocationBuilder().city("Borås").build())

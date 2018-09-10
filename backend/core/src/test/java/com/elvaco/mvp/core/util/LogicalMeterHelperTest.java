@@ -17,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
@@ -197,30 +196,19 @@ public class LogicalMeterHelperTest {
     );
   }
 
-  private LogicalMeter newMeter(
-    UUID meterId,
-    MeterDefinition meterDefinition
-  ) {
-    UUID organisationId = randomUUID();
-    return new LogicalMeter(
-      meterId,
-      "meter-" + meterId,
-      organisationId,
-      meterDefinition,
-      ZonedDateTime.now(),
-      singletonList(PhysicalMeter.builder()
+  private LogicalMeter newMeter(UUID meterId, MeterDefinition meterDefinition) {
+    return LogicalMeter.builder()
+      .id(meterId)
+      .externalId("meter-" + meterId)
+      .organisationId(randomUUID())
+      .meterDefinition(meterDefinition)
+      .physicalMeter(PhysicalMeter.builder()
         .address("address")
         .externalId("external-id")
         .medium(meterDefinition.medium)
         .manufacturer("ELV")
         .readIntervalMinutes(15)
-        .build()),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      null
-    );
+        .build())
+      .build();
   }
 }

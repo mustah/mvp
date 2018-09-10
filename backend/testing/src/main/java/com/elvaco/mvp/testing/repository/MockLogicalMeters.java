@@ -114,21 +114,21 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  protected LogicalMeter copyWithId(UUID id, LogicalMeter entity) {
-    return new LogicalMeter(
-      id,
-      entity.externalId,
-      entity.organisationId,
-      entity.meterDefinition,
-      entity.created,
-      entity.physicalMeters,
-      emptyList(),
-      entity.latestReadouts,
-      entity.location,
-      entity.expectedMeasurementCount,
-      entity.missingMeasurementCount,
-      entity.currentStatus
-    );
+  protected LogicalMeter copyWithId(UUID id, LogicalMeter logicalMeter) {
+    return LogicalMeter.builder()
+      .id(id)
+      .externalId(logicalMeter.externalId)
+      .organisationId(logicalMeter.organisationId)
+      .meterDefinition(logicalMeter.meterDefinition)
+      .created(logicalMeter.created)
+      .physicalMeters(logicalMeter.physicalMeters)
+      .latestReadouts(logicalMeter.latestReadouts)
+      .location(logicalMeter.location)
+      .expectedMeasurementCount(logicalMeter.expectedMeasurementCount)
+      .missingMeasurementCount(logicalMeter.missingMeasurementCount)
+      .currentStatus(logicalMeter.currentStatus)
+      .alarm(logicalMeter.alarm)
+      .build();
   }
 
   @Override

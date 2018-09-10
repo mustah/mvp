@@ -31,7 +31,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mapToEvoMedium;
-import static java.util.UUID.randomUUID;
 
 @Slf4j
 @AllArgsConstructor
@@ -130,12 +129,12 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .orElseGet(() ->
         Optional.ofNullable(meterDto)
           .map(dto -> LogicalMeter.builder()
-                .id(randomUUID())
-                .externalId(facilityId)
-                .organisationId(organisationId)
-                .meterDefinition(meterDefinition)
-                .location(location)
-                .build()).orElse(null));
+            .externalId(facilityId)
+            .organisationId(organisationId)
+            .meterDefinition(meterDefinition)
+            .location(location)
+            .build())
+          .orElse(null));
   }
 
   private Optional<PhysicalMeter> findOrCreatePhysicalMeter(

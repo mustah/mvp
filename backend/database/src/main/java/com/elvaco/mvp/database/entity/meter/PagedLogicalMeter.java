@@ -1,12 +1,14 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 
 public class PagedLogicalMeter {
 
@@ -20,6 +22,7 @@ public class PagedLogicalMeter {
   public final LocationEntity location;
   public final PhysicalMeterEntity activePhysicalMeter;
   public final Long missingReadingCount;
+  public final MeterAlarmLogEntity alarm;
 
   public PagedLogicalMeter(
     UUID id,
@@ -43,7 +46,8 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       null,
-      0L
+      0L,
+      null
     );
   }
 
@@ -57,7 +61,8 @@ public class PagedLogicalMeter {
     @Nullable PhysicalMeterEntity activePhysicalMeter,
     @Nullable GatewayEntity gateway,
     @Nullable PhysicalMeterStatusLogEntity currentStatus,
-    @Nullable Long missingReadingCount
+    @Nullable Long missingReadingCount,
+    @Nullable MeterAlarmLogEntity alarm
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -69,20 +74,20 @@ public class PagedLogicalMeter {
     this.gateway = gateway;
     this.currentStatus = currentStatus;
     this.missingReadingCount = missingReadingCount;
+    this.alarm = alarm;
   }
 
   public long expectedReadingCount(SelectionPeriod selectionPeriod) {
-    if (activePhysicalMeter == null) {
-      return 0;
-    }
-
-    return LogicalMeterHelper.calculateExpectedReadOuts(
-      activePhysicalMeter.readIntervalMinutes,
-      selectionPeriod
-    );
+    return Optional.ofNullable(activePhysicalMeter)
+      .map(meter -> calculateExpectedReadOuts(meter.readIntervalMinutes, selectionPeriod))
+      .orElse(0L);
   }
 
-  public PagedLogicalMeter withMissingReadingCount(@Nullable Long missingReadingCount) {
+  public PagedLogicalMeter withMetaData(
+    @Nullable Long missingReadingCount,
+    PhysicalMeterStatusLogEntity currentStatus,
+    @Nullable MeterAlarmLogEntity alarm
+  ) {
     return new PagedLogicalMeter(
       id,
       organisationId,
@@ -93,22 +98,8 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       currentStatus,
-      missingReadingCount
-    );
-  }
-
-  public PagedLogicalMeter withCurrentStatus(PhysicalMeterStatusLogEntity currentStatus) {
-    return new PagedLogicalMeter(
-      id,
-      organisationId,
-      externalId,
-      created,
-      meterDefinition,
-      location,
-      activePhysicalMeter,
-      gateway,
-      currentStatus,
-      missingReadingCount
+      missingReadingCount,
+      alarm
     );
   }
 }

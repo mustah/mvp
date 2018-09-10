@@ -7,7 +7,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -35,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -268,26 +266,19 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void mapMarkersIncludesGatewaysWithCityAndAddressLocation() {
     Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.UNKNOWN);
 
-    LocationBuilder location = new LocationBuilder()
-      .country("sweden")
-      .city("kungsbacka")
-      .address("super 1")
-      .latitude(1.234)
-      .longitude(2.3323);
-
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "external-1234",
-      context().organisationId2(),
-      MeterDefinition.UNKNOWN_METER,
-      NOW,
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location.build(),
-      null,
-      0L, null
-    ).withGateway(gateway));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-1234")
+      .organisationId(context().organisationId2())
+      .created(NOW)
+      .gateway(gateway)
+      .location(new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .address("super 1")
+        .latitude(1.234)
+        .longitude(2.3323)
+        .build())
+      .build());
 
     ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
       .get("/map-markers/gateways?address=sweden,kungsbacka,super 1", MapMarkersDto.class);
@@ -312,19 +303,13 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void cannotFindGatewayMapMarkers_WithUnknownCity() {
     Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.OK);
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "external-1234",
-      context().organisationId2(),
-      MeterDefinition.UNKNOWN_METER,
-      NOW,
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      new LocationBuilder().build(),
-      null,
-      0L, null
-    ).withGateway(gateway));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-1234")
+      .organisationId(context().organisationId2())
+      .created(NOW)
+      .gateway(gateway)
+      .location(new LocationBuilder().build())
+      .build());
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways?city=unknown,unknown", MapMarkersDto.class);
@@ -337,19 +322,13 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void doNotIncludeGatewayMapMarkerWithLowConfidence() {
     Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.OK);
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "external-1234",
-      context().organisationId2(),
-      MeterDefinition.UNKNOWN_METER,
-      NOW,
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      lowConfidenceLocation(),
-      null,
-      0L, null
-    ).withGateway(gateway));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-1234")
+      .organisationId(context().organisationId2())
+      .created(NOW)
+      .gateway(gateway)
+      .location(lowConfidenceLocation())
+      .build());
 
     ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
@@ -380,60 +359,35 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   private LogicalMeter saveLogicalMeterWith(Location location, Gateway gateway) {
-    return logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      randomUUID().toString(),
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      NOW,
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L,
-      null
-    ).withGateway(gateway));
+    return logicalMeters.save(LogicalMeter.builder()
+      .externalId(randomUUID().toString())
+      .organisationId(context().organisationId())
+      .created(NOW)
+      .gateway(gateway)
+      .location(location)
+      .build());
   }
 
   private LogicalMeter saveLogicalMeterWith(Location location, User user) {
-    LogicalMeter logicalMeter = new LogicalMeter(
-      randomUUID(),
-      randomUUID().toString(),
-      user.organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      NOW,
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L,
-      null
-    );
-    return logicalMeters.save(logicalMeter);
+    return logicalMeters.save(LogicalMeter.builder()
+      .externalId(randomUUID().toString())
+      .organisationId(user.organisation.id)
+      .created(NOW)
+      .location(location)
+      .build());
   }
 
   private LogicalMeter saveLogicalAndPhysicalMeters(
-    Location location, User user, StatusType
-    status
+    Location location,
+    User user,
+    StatusType status
   ) {
-    LogicalMeter logicalMeter = new LogicalMeter(
-      randomUUID(),
-      randomUUID().toString(),
-      user.organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      NOW,
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L,
-      null
-    );
-
-    logicalMeter = logicalMeters.save(logicalMeter);
+    LogicalMeter logicalMeter = logicalMeters.save(LogicalMeter.builder()
+      .externalId(randomUUID().toString())
+      .organisationId(user.organisation.id)
+      .created(NOW)
+      .location(location)
+      .build());
     savePhysicalMeterWith(logicalMeter, status);
     return logicalMeter;
   }

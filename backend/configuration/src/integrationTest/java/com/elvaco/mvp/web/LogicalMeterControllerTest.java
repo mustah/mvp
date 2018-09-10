@@ -64,6 +64,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
@@ -71,7 +72,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -188,21 +188,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void shouldNotHaveStatusChangedSetWhenMeterCreatedAfterPeriodEnd() {
     ZonedDateTime start = ZonedDateTime.now();
-    LogicalMeter logicalMeter = logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        "externalId",
-        context().organisationId(),
-        MeterDefinition.GAS_METER,
-        start,
-        emptyList(),
-        emptyList(),
-        emptyList(),
-        UNKNOWN_LOCATION,
-        null,
-        0L,
-        null
-      )
+
+    LogicalMeter logicalMeter = logicalMeters.save(LogicalMeter.builder()
+      .externalId("externalId")
+      .organisationId(context().organisationId())
+      .meterDefinition(GAS_METER)
+      .created(start)
+      .build()
     );
 
     PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
@@ -498,19 +490,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ));
 
     LogicalMeter districtHeatingMeter = logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        "external-id",
-        context().organisation().id,
-        DISTRICT_HEATING_METER,
-        ZonedDateTime.now(),
-        emptyList(),
-        singletonList(gateway),
-        emptyList(),
-        UNKNOWN_LOCATION,
-        null,
-        0L, null
-      )
+      LogicalMeter.builder()
+        .externalId("external-id")
+        .organisationId(context().organisation().id)
+        .meterDefinition(DISTRICT_HEATING_METER)
+        .created(start)
+        .gateway(gateway)
+        .build()
     );
 
     physicalMeters.save(physicalMeter()
@@ -1795,7 +1781,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void removingLogicalMeter_ShouldNotLeakInformation() {
     ResponseEntity<ErrorMessageDto> response = asTestUser()
-      .delete("/meters/" + UUID.randomUUID(), ErrorMessageDto.class);
+      .delete("/meters/" + randomUUID(), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode())
       .as("Test that we don't leak \"Meter not found\"")
@@ -1867,32 +1853,24 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void superAdminRemoveNonExistingLogicalMeter() {
     ResponseEntity<ErrorMessageDto> response = asTestSuperAdmin()
-      .delete("/meters/" + UUID.randomUUID(), ErrorMessageDto.class);
+      .delete("/meters/" + randomUUID(), ErrorMessageDto.class);
 
     assertThatStatusIsNotFound(response);
   }
 
   @Test
   public void nullFieldsAreNotIncludedInDto() {
-    UUID meterId = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      0L, null
-    ));
+    UUID meterId = randomUUID();
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisation().id)
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .created(start)
+      .build());
 
     JsonNode logicalMeterJson = asTestUser()
-      .getJson(
-        "/meters/" + meterId
-      );
+      .getJson("/meters/" + meterId);
 
     assertThat(logicalMeterJson.has("collectionPercentage")).isFalse();
   }
@@ -1962,7 +1940,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesManufacturerStart() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
 
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
@@ -1992,7 +1970,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesMediumStart_IgnoresCase() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
 
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
@@ -2014,7 +1992,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearch_StartsWithSecondaryAddress() {
-    UUID logicalMeterId = UUID.randomUUID();
+    UUID logicalMeterId = randomUUID();
 
     logicalMeters.save(LogicalMeter.builder()
       .id(logicalMeterId)
@@ -2041,7 +2019,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchDoesNotReturnNonMatches() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     LogicalMeter.LogicalMeterBuilder builder = LogicalMeter.builder()
       .id(meterId)
       .organisationId(context().organisationId())
@@ -2060,7 +2038,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchWithMultipleFieldsMatching() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
 
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
@@ -2130,7 +2108,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findsMeterWithinPeriodWithNoActiveStatus() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
 
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)

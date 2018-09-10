@@ -187,20 +187,11 @@ public class MeteringMeasurementMessageConsumerTest {
   @Test
   public void measurementIsMappedToMvpMeasurements() {
     Organisation organisation = saveDefaultOrganisation();
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      0L,
-      null
-    ));
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .build());
 
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
@@ -236,20 +227,10 @@ public class MeteringMeasurementMessageConsumerTest {
   @Test
   public void measurementIsAcceptedForDifferentQuantitiesWithSameTimestamp() {
     Organisation organisation = saveDefaultOrganisation();
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      0L,
-      null
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .build());
 
     messageConsumer.accept(newMeasurementMessage("Power", "W", 1.0));
     messageConsumer.accept(newMeasurementMessage("Flow temp.", "m³/h", 2.0));

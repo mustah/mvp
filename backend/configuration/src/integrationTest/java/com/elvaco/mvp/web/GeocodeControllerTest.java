@@ -1,13 +1,11 @@
 package com.elvaco.mvp.web;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -22,13 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
 public class GeocodeControllerTest extends IntegrationTest {
 
   @Autowired
@@ -48,19 +44,12 @@ public class GeocodeControllerTest extends IntegrationTest {
   @Test
   public void saveLocationForLogicalMeter() {
     UUID logicalMeterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      "test-123",
-      context().organisationId(),
-          MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
-      UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("test-123")
+      .organisationId(context().organisationId())
+      .build());
 
     GeoResponseDto geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -82,19 +71,12 @@ public class GeocodeControllerTest extends IntegrationTest {
   @Test
   public void saveLocationAsLowercaseStringForLogicalMeter() {
     UUID logicalMeterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      "test-123",
-      context().organisationId(),
-          MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
-      UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("test-123")
+      .organisationId(context().organisationId())
+      .build());
 
     GeoResponseDto geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -123,19 +105,12 @@ public class GeocodeControllerTest extends IntegrationTest {
   @Test
   public void doesNotSaveLocationWithNoCountry() {
     UUID logicalMeterId = randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      logicalMeterId,
-      "test-123",
-      context().organisationId(),
-          MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-          emptyList(),
-          emptyList(),
-          emptyList(),
-      UNKNOWN_LOCATION,
-          null,
-      0L, null
-        ));
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("test-123")
+      .organisationId(context().organisationId())
+      .build());
 
     GeoResponseDto geoResponse = new GeoResponseDto(
       new AddressDto(

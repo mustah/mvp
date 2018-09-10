@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
@@ -17,7 +16,6 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.getNextReadoutDate;
 import static java.util.Arrays.asList;
@@ -251,19 +249,11 @@ public class LogicalMeterUseCasesTest {
   }
 
   private LogicalMeter newMeter(UUID meterId, UUID organisationId) {
-    return new LogicalMeter(
-      meterId,
-      "meter-" + meterId,
-      organisationId,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      0L, null
-    );
+    return LogicalMeter.builder()
+      .id(meterId)
+      .externalId("meter-" + meterId)
+      .organisationId(organisationId)
+      .build();
   }
 
   private AuthenticatedUser newAuthenticatedUser(List<Role> roles) {

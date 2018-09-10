@@ -15,14 +15,17 @@ import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
+import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
+import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.group.GroupBy;
@@ -69,6 +72,9 @@ class LogicalMeterQueryDslJpaRepository
 
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+
+  private static final QMeterAlarmLogEntity ALARM_LOG =
+    QMeterAlarmLogEntity.meterAlarmLogEntity;
 
   private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
@@ -267,11 +273,20 @@ class LogicalMeterQueryDslJpaRepository
       .transform(groupBy(LOGICAL_METER.id).as(STATUS_LOG));
   }
 
+  private Map<UUID, MeterAlarmLogEntity> findAlarms(Predicate predicate) {
+    return createQuery(predicate)
+      .select(ALARM_LOG.start.max())
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.alarms, ALARM_LOG)
+      .orderBy(ALARM_LOG.start.desc(), ALARM_LOG.stop.desc())
+      .transform(groupBy(LOGICAL_METER.id).as(ALARM_LOG));
+  }
+
   private List<PagedLogicalMeter> fetchAdditionalPagedMeterData(
     RequestParameters parameters,
     List<PagedLogicalMeter> pagedLogicalMeters
   ) {
-    Map<UUID, Long> logicalMeterIdToReadingCount =
+    Map<UUID, Long> readingCounts =
       findMissingMeterReadingsCounts(parameters).stream()
         .collect(toMap(
           entry -> entry.id,
@@ -279,16 +294,19 @@ class LogicalMeterQueryDslJpaRepository
           (oldCount, newCount) -> oldCount + newCount
         ));
 
-    Map<UUID, PhysicalMeterStatusLogEntity> logicalMeterIdToCurrentStatus =
+    Map<UUID, PhysicalMeterStatusLogEntity> statuses =
       findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
+
+    Map<UUID, MeterAlarmLogEntity> alarms =
+      findAlarms(new MeterAlarmLogQueryFilters().toExpression(parameters));
 
     return pagedLogicalMeters.stream()
       .map(pagedLogicalMeter -> pagedLogicalMeter
-        .withMissingReadingCount(logicalMeterIdToReadingCount.getOrDefault(
-          pagedLogicalMeter.id,
-          0L
-        ))
-        .withCurrentStatus(logicalMeterIdToCurrentStatus.get(pagedLogicalMeter.id))
+        .withMetaData(
+          readingCounts.getOrDefault(pagedLogicalMeter.id, 0L),
+          statuses.get(pagedLogicalMeter.id),
+          alarms.get(pagedLogicalMeter.id)
+        )
       ).collect(toList());
   }
 
