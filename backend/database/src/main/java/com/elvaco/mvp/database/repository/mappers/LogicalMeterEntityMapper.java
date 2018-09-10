@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
@@ -135,49 +136,53 @@ public class LogicalMeterEntityMapper {
   }
 
   private static LogicalMeter newLogicalMeter(
-    PagedLogicalMeter pagedLogicalMeter,
+    PagedLogicalMeter logicalMeter,
     @Nullable Long expectedReadingCount
   ) {
-    List<Gateway> gateways = Optional.ofNullable(pagedLogicalMeter.gateway)
+    List<Gateway> gateways = Optional.ofNullable(logicalMeter.gateway)
       .map(gateway -> singletonList(GatewayEntityMapper.toDomainModelWithoutStatusLogs(gateway)))
       .orElse(emptyList());
 
-    List<PhysicalMeter> physicalMeters = Optional.ofNullable(pagedLogicalMeter.activePhysicalMeter)
+    List<PhysicalMeter> physicalMeters = Optional.ofNullable(logicalMeter.activePhysicalMeter)
       .map(meter -> singletonList(PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs(meter)))
       .orElse(emptyList());
 
     return LogicalMeter.builder()
-      .id(pagedLogicalMeter.id)
-      .externalId(pagedLogicalMeter.externalId)
-      .organisationId(pagedLogicalMeter.organisationId)
-      .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(pagedLogicalMeter.meterDefinition))
-      .created(pagedLogicalMeter.created)
+      .id(logicalMeter.id)
+      .externalId(logicalMeter.externalId)
+      .organisationId(logicalMeter.organisationId)
+      .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(logicalMeter.meterDefinition))
+      .created(logicalMeter.created)
       .physicalMeters(physicalMeters)
       .gateways(gateways)
-      .location(LocationEntityMapper.toDomainModel(pagedLogicalMeter.location))
+      .location(LocationEntityMapper.toDomainModel(logicalMeter.location))
       .expectedMeasurementCount(expectedReadingCount)
-      .missingMeasurementCount(pagedLogicalMeter.missingReadingCount)
-      .currentStatus(Optional.ofNullable(pagedLogicalMeter.currentStatus)
+      .missingMeasurementCount(logicalMeter.missingReadingCount)
+      .currentStatus(Optional.ofNullable(logicalMeter.currentStatus)
         .map(MeterStatusLogEntityMapper::toDomainModel)
+        .orElse(null))
+      .alarm(Optional.ofNullable(logicalMeter.alarm)
+        .map(MeterAlarmLogEntityMapper::toDomainModel)
+        .filter(AlarmLogEntry::isActive)
         .orElse(null))
       .build();
   }
 
   private static LogicalMeter toLogicalMeter(
-    LogicalMeterEntity logicalMeterEntity,
+    LogicalMeterEntity entity,
     List<PhysicalMeter> physicalMeters,
     @Nullable Long expectedMeasurementCount,
     @Nullable Long missingMeasurementCount
   ) {
     return LogicalMeter.builder()
-      .id(logicalMeterEntity.id)
-      .externalId(logicalMeterEntity.externalId)
-      .organisationId(logicalMeterEntity.organisationId)
-      .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(logicalMeterEntity.meterDefinition))
-      .created(logicalMeterEntity.created)
+      .id(entity.id)
+      .externalId(entity.externalId)
+      .organisationId(entity.organisationId)
+      .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(entity.meterDefinition))
+      .created(entity.created)
       .physicalMeters(physicalMeters)
-      .gateways(toGatewaysWithoutStatusLogs(logicalMeterEntity.gateways))
-      .location(LocationEntityMapper.toDomainModel(logicalMeterEntity.location))
+      .gateways(toGatewaysWithoutStatusLogs(entity.gateways))
+      .location(LocationEntityMapper.toDomainModel(entity.location))
       .expectedMeasurementCount(expectedMeasurementCount)
       .missingMeasurementCount(missingMeasurementCount)
       .build();

@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
+import com.elvaco.mvp.web.dto.SimpleAlarmDto;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
@@ -43,6 +44,9 @@ public class LogicalMeterDtoMapper {
     meterDto.medium = logicalMeter.getMedium();
     meterDto.id = logicalMeter.id;
     meterDto.status = logicalMeter.currentStatus();
+    meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
+      .map(alarm -> new SimpleAlarmDto(alarm.id, alarm.mask))
+      .orElse(null);
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = Optional.ofNullable(logicalMeter.currentStatus)
       .map(logEntry -> Dates.formatUtc(logEntry.start))
