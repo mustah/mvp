@@ -201,16 +201,16 @@ public class MeteringRequestPublisherTest {
     List<Gateway> gateways
   ) {
     UUID logicalMeterId = randomUUID();
-    return new LogicalMeter(
-      logicalMeterId,
-      logicalMeterId.toString(),
-      organisationId,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      physicalMeters,
-      gateways,
-      Location.UNKNOWN_LOCATION
-    );
+    return LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId(logicalMeterId.toString())
+      .organisationId(organisationId)
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .created(ZonedDateTime.now())
+      .physicalMeters(physicalMeters)
+      .gateways(gateways)
+      .location(Location.UNKNOWN_LOCATION)
+      .build();
   }
 
   private static MockAuthenticatedUser admin() {

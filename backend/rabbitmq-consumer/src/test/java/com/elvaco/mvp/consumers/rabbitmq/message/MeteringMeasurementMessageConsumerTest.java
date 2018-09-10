@@ -169,18 +169,12 @@ public class MeteringMeasurementMessageConsumerTest {
 
   @Test
   public void measurementIsUpdated() {
-    UUID meterId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     messageConsumer.accept(newMeasurementMessage("Power", "W", 1.0));
     messageConsumer.accept(newMeasurementMessage("Power", "W", 2.0));
@@ -267,16 +261,13 @@ public class MeteringMeasurementMessageConsumerTest {
   public void unknownQuantityThrowsException() {
     Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        EXTERNAL_ID,
-        organisation.id,
-        MeterDefinition.UNKNOWN_METER,
-        ZonedDateTime.now(),
-        emptyList(),
-        emptyList(),
-        UNKNOWN_LOCATION
-      ));
+      LogicalMeter.builder()
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .meterDefinition(MeterDefinition.UNKNOWN_METER)
+        .created(ZonedDateTime.now())
+        .location(UNKNOWN_LOCATION)
+        .build());
 
     assertThatThrownBy(() ->
       messageConsumer.accept(newMeasurementMessage("Half Life 3", "W", 1.0))

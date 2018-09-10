@@ -257,16 +257,16 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     List<Gateway> gateways
   ) {
     UUID logicalMeterId = randomUUID();
-    return new LogicalMeter(
-      logicalMeterId,
-      logicalMeterId.toString(),
-      organisationId,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      physicalMeters,
-      gateways,
-      UNKNOWN_LOCATION
-    );
+    return LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId(logicalMeterId.toString())
+      .organisationId(organisationId)
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .created(ZonedDateTime.now())
+      .physicalMeters(physicalMeters)
+      .gateways(gateways)
+      .location(UNKNOWN_LOCATION)
+      .build();
   }
 
   private Property getUpdateGeolocationWithEntityId(UUID id) {

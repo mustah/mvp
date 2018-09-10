@@ -16,4 +16,10 @@
   .display-none {
     display: none;
   }
+
+  .Info {
+    &.StatusChange {
+      margin-left: $lg-space;
+    }
+  }
 }

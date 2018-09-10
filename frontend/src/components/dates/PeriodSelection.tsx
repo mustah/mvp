@@ -1,14 +1,11 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
 import {Moment} from 'moment-timezone';
 import * as React from 'react';
-import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
+import {colors, fontSize, listItemStyle} from '../../app/themes';
 import {momentWithTimeZone, now, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {
-  OnSelectCustomDateRange,
-  OnSelectPeriod,
-} from '../../state/user-selection/userSelectionModels';
+import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
 import {OnClick} from '../../types/Types';
 import {PeriodConfirmDialog} from '../dialog/PeriodConfirmDialog';
 import {IconCalendar} from '../icons/IconCalendar';
@@ -21,7 +18,7 @@ const height = 32;
 const style: React.CSSProperties = {
   height,
   width: 210,
-  fontSize: fontSizeNormal,
+  fontSize: fontSize.normal,
   border: `2px solid ${colors.borderColor}`,
   borderRadius: 4,
   marginLeft: 24,

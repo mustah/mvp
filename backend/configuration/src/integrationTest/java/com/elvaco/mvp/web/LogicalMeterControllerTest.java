@@ -1988,19 +1988,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void wildcardSearchMatchesMediumStart() {
+  public void wildcardSearchMatchesMediumStart_IgnoresCase() {
     UUID meterId = UUID.randomUUID();
 
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      HOT_WATER_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .organisationId(context().organisationId())
+      .externalId(meterId.toString())
+      .meterDefinition(HOT_WATER_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     Page<PagedLogicalMeterDto> page = asTestUser().getPage(
-      "/meters?w=Hot",
+      "/meters?w=hot",
       PagedLogicalMeterDto.class
     );
 
@@ -2010,32 +2010,49 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void wildcardSearchDoesNotReturnNonMatches() {
-    UUID meterId = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "first facility",
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      UNKNOWN_LOCATION
-    ));
+  public void wildcardSearch_StartsWithSecondaryAddress() {
+    UUID logicalMeterId = UUID.randomUUID();
 
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "second facility",
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("external")
+      .organisationId(context().organisationId())
+      .meterDefinition(HOT_WATER_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
-    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
-      "/meters?w=secon",
-      PagedLogicalMeterDto.class
-    );
+    physicalMeters.save(PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .externalId(randomUUID().toString())
+      .manufacturer("ELV")
+      .address("032123")
+      .logicalMeterId(logicalMeterId)
+      .build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser()
+      .getPage("/meters?w=03", PagedLogicalMeterDto.class);
 
     assertThat(page).hasSize(1);
-    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
-    assertThat(logicalMeterDto.facility).isEqualTo("second facility");
+    assertThat(page.getContent()).extracting("address").containsExactly("032123");
+  }
+
+  @Test
+  public void wildcardSearchDoesNotReturnNonMatches() {
+    UUID meterId = UUID.randomUUID();
+    LogicalMeter.LogicalMeterBuilder builder = LogicalMeter.builder()
+      .id(meterId)
+      .organisationId(context().organisationId())
+      .meterDefinition(HOT_WATER_METER)
+      .location(UNKNOWN_LOCATION);
+
+    logicalMeters.save(builder.externalId("first facility").build());
+    logicalMeters.save(builder.externalId("second facility").build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser()
+      .getPage("/meters?w=secon", PagedLogicalMeterDto.class);
+
+    assertThat(page).hasSize(1);
+    assertThat(page.getContent()).extracting("facility").containsExactly("second facility");
   }
 
   @Test
@@ -2069,8 +2086,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void wildcardSearchReturnsAllMatches() {
     UUID meterIdOne = UUID.randomUUID();
-    UUID meterIdTwo = UUID.randomUUID();
-
     logicalMeters.save(new LogicalMeter(
       meterIdOne,
       meterIdOne.toString(),
@@ -2086,6 +2101,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .logicalMeterId(meterIdOne)
       .build());
 
+    UUID meterIdTwo = UUID.randomUUID();
     logicalMeters.save(new LogicalMeter(
       meterIdTwo,
       "street facility",

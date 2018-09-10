@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -589,19 +588,17 @@ public class SelectionControllerTest extends IntegrationTest {
     String externalId,
     UUID organisationId
   ) {
-    return logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      externalId,
-      organisationId,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      new LocationBuilder()
+    return logicalMeters.save(LogicalMeter.builder()
+      .externalId(externalId)
+      .organisationId(organisationId)
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .created(ZonedDateTime.now())
+      .location(new LocationBuilder()
         .country(country)
         .city(city)
         .address(address)
-        .build()
-    ));
+        .build())
+      .build()
+    );
   }
 }

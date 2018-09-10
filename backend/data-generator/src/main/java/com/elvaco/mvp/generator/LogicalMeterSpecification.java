@@ -19,7 +19,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 class LogicalMeterSpecification {
 
@@ -102,16 +101,18 @@ class LogicalMeterSpecification {
       .productModel(pickProductModel())
       .build();
 
-    return new GeneratedData(new LogicalMeter(
-      logicalMeterId,
-      externalId,
-      organisation.id,
-      meterDefinition,
-      measurements.get(0).created,
-      singletonList(physicalMeter),
-      singletonList(gateway),
-      Location.UNKNOWN_LOCATION
-    ), measurements, physicalMeter, gateway);
+    LogicalMeter logicalMeter = LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId(externalId)
+      .organisationId(organisation.id)
+      .meterDefinition(meterDefinition)
+      .created(measurements.get(0).created)
+      .physicalMeter(physicalMeter)
+      .gateway(gateway)
+      .location(Location.UNKNOWN_LOCATION)
+      .build();
+
+    return new GeneratedData(logicalMeter, measurements, physicalMeter, gateway);
   }
 
   private String pickProductModel() {

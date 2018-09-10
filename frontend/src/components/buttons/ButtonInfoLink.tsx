@@ -9,14 +9,15 @@ interface InfoLinkProps {
   label: string | number;
 }
 
-const labelStyle = {paddingLeft: 8};
+const labelStyle: React.CSSProperties = {paddingLeft: 8};
+const iconStyle: React.CSSProperties = {marginLeft: 4};
 
 export const ButtonInfoLink = ({label, onClick}: InfoLinkProps) => (
   <FlatButton
     hoverColor="inherit"
-    icon={<ActionInfoOutline color={colors.lightBlack} hoverColor={colors.iconHover}/>}
+    icon={<ActionInfoOutline style={iconStyle} color={colors.lightBlack} hoverColor={colors.iconHover}/>}
     label={label}
-    labelPosition="before"
+    labelPosition="after"
     labelStyle={labelStyle}
     onClick={onClick}
   />

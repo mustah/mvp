@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
-import {WrappedDateTime} from '../../../components/dates/WrappedDateTime';
-import {RowCenter} from '../../../components/layouts/row/Row';
+import {RowRight} from '../../../components/layouts/row/Row';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
@@ -27,11 +26,10 @@ export const GatewayList = ({
   const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
-  const renderStatusChanged = ({id, productModel, statusChanged}: Gateway) => (
-    <RowCenter className="StatusChanged space-between">
-      <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+  const renderActions = ({id, productModel}: Gateway) => (
+    <RowRight className="ActionsDropdown-list">
       <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>
-    </RowCenter>
+    </RowRight>
   );
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
@@ -64,8 +62,8 @@ export const GatewayList = ({
           renderCell={renderStatusCell}
         />
         <TableColumn
-          header={<TableHead>{translate('status change')}</TableHead>}
-          renderCell={renderStatusChanged}
+          header={<TableHead/>}
+          renderCell={renderActions}
         />
       </Table>
       <TableInfoText/>

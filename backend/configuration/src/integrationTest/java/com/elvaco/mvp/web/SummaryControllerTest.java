@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -237,16 +236,14 @@ public class SummaryControllerTest extends IntegrationTest {
 
   private LogicalMeter newLogicalMeterWithLocation(@Nullable Location location) {
     UUID meterId = randomUUID();
-    return new LogicalMeter(
-      meterId,
-      "externalId-" + meterId,
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      location
-    );
+    return LogicalMeter.builder()
+      .id(meterId)
+      .externalId("externalId-" + meterId)
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .created(ZonedDateTime.now())
+      .location(location)
+      .build();
   }
 
   private static LocationBuilder sweden() {
