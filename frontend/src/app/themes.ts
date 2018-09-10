@@ -62,7 +62,7 @@ export const iconSizeLarge: React.CSSProperties = {
 
 export const sideBarStyles: Styles = {
   fontSize: {fontSize: fontSize.normal},
-  padding: {padding: '5px 0'},
+  padding: {padding: '4px 0'},
   selected: {color: colors.blue},
   notSelectable: {color: colors.lightBlack},
   onHover: {color: colors.lightGrey},
@@ -87,7 +87,6 @@ export const dividerStyle: React.CSSProperties = {
 export const listItemStyle: React.CSSProperties = {
   fontSize: fontSize.normal,
   textStyle: {
-    display: 'inline-block',
     textOverflow: 'ellipsis',
     maxWidth: 150,
     whiteSpace: 'nowrap',
@@ -102,7 +101,7 @@ export const listItemStyleWithActions: React.CSSProperties = {
   ...listItemStyle,
   textStyle: {
     ...listItemStyle.textStyle,
-    maxWidth: 100,
+    maxWidth: 120,
   },
 };
 

@@ -7,21 +7,30 @@ interface Props {
   label: string | number;
   children: Children;
   autoScrollBodyContent: boolean;
+  labelStyle?: React.CSSProperties;
+  iconStyle?: React.CSSProperties;
 }
 
 interface State {
   isOpen: boolean;
 }
 
+const infoLabelStyle: React.CSSProperties = {paddingLeft: 0};
+
 export class OpenDialogInfoButton extends React.Component<Props, State> {
 
   state: State = {isOpen: false};
 
   render() {
-    const {label} = this.props;
+    const {iconStyle, label, labelStyle} = this.props;
     return (
       <div>
-        <ButtonInfoLink onClick={this.open} label={label}/>
+        <ButtonInfoLink
+          onClick={this.open}
+          label={label}
+          iconStyle={iconStyle}
+          labelStyle={labelStyle || infoLabelStyle}
+        />
         {this.renderDialog()}
       </div>
     );

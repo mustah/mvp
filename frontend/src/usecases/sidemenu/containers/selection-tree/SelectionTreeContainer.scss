@@ -1,18 +1,24 @@
 @import '../../../../app/variables';
 
 .TreeListItem {
-  $iconSize: 18px;
-  $iconPadding: 4px;
+  $iconSize: 20px;
+  $iconPadding: $xs-space;
 
-  &:first-letter {
-    text-transform: uppercase;
+  .PrimaryText {
+    margin-left: $xs-space;
   }
 
   button {
-    padding: $iconPadding !important;
+    padding: 0 !important;
     height: 2 * $iconPadding + $iconSize !important;
     width: 2 * $iconPadding + $iconSize !important;
     margin-right: 11px !important;
+
+    &.ZoomButton, &.AddToListButton, &.InfoButton {
+      margin-right: 0 !important;
+      height: $iconSize !important;
+      width: $iconSize !important;
+    }
 
     svg {
       height: $iconSize !important;

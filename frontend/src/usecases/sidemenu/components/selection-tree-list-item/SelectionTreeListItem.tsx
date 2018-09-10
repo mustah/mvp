@@ -1,10 +1,12 @@
-import IconButton from 'material-ui/IconButton';
-import ActionZoomIn from 'material-ui/svg-icons/action/zoom-in';
-import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import * as React from 'react';
 import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
+import {AddToListButton} from '../../../../components/buttons/AddToListButton';
+import {ZoomButton} from '../../../../components/buttons/ZoomButton';
+import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
+import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
+import {Maybe} from '../../../../helpers/Maybe';
 import {orUnknown} from '../../../../helpers/translations';
 import {firstUpper} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
@@ -16,16 +18,16 @@ interface RenderProps {
   addToReport: OnClickWithId;
   id: uuid;
   openListItems: Set<uuid>;
-  selectedListItems: Set<uuid>;
   selectionTree: SelectionTree;
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
-  itemCapabilities: ItemCapabilities;
+  itemOptions: ItemOptions;
   centerMapOnMeter: OnClickWithId;
 }
 
-export interface ItemCapabilities {
+export interface ItemOptions {
+  hasInfoButton?: boolean;
   zoomable?: boolean;
   report?: boolean;
 }
@@ -124,6 +126,8 @@ const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) =
   });
 };
 
+const iconRowStyle: React.CSSProperties = {marginRight: '18px'};
+
 interface Props {
   addToReport: OnClickWithId;
   id: uuid;
@@ -131,13 +135,19 @@ interface Props {
   openListItems: Set<uuid>;
   primaryText: string;
   selectable: boolean;
-  selectedListItems: Set<uuid>;
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
-  itemCapabilities: ItemCapabilities;
+  itemOptions: ItemOptions;
   centerMapOnMeter: OnClickWithId;
 }
+
+const labelStyle: React.CSSProperties = {
+  marginLeft: 4,
+  paddingLeft: 0,
+  paddingRight: 0,
+  textOverflow: 'ellipsis',
+};
 
 const renderSelectableListItem = ({
   addToReport,
@@ -147,10 +157,9 @@ const renderSelectableListItem = ({
   toggleExpand,
   toggleSingleEntry,
   toggleIncludingChildren,
-  selectedListItems,
   selectable,
   nestedItems,
-  itemCapabilities: {zoomable, report},
+  itemOptions: {zoomable, report},
   centerMapOnMeter,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
@@ -168,35 +177,23 @@ const renderSelectableListItem = ({
     addToReport(id);
   };
 
-  const zoomIcon = zoomable && (
-    <IconButton
-      key="1"
-      onClick={zoomInOn}
-    >
-      <ActionZoomIn/>
-    </IconButton>
-  );
+  const selectedId: Maybe<uuid> = Maybe.maybe(id);
 
-  const reportIcon = report && (
-    <IconButton
-      key="2"
-      onClick={addMeterToReport}
-    >
-      <AvPlaylistAdd/>
-    </IconButton>
-  );
-
-  const content = !nestedItems && (zoomable || report)
+  const content = !nestedItems
     ? (
       <RowCenter className="space-between">
-        <Row className="first-uppercase" style={listItemStyleWithActions.textStyle}>
-          <Normal title={firstUpper(primaryText)}>
-            {primaryText}
-          </Normal>
-        </Row>
-        <Row style={{marginRight: '24px'}}>
-          {zoomIcon}
-          {reportIcon}
+        <RowCenter className="first-uppercase" style={listItemStyleWithActions.textStyle}>
+          <OpenDialogInfoButton
+            label={primaryText}
+            autoScrollBodyContent={true}
+            labelStyle={labelStyle}
+          >
+            <MeterDetailsContainer selectedId={selectedId}/>
+          </OpenDialogInfoButton>
+        </RowCenter>
+        <Row style={iconRowStyle}>
+          {zoomable && <ZoomButton onClick={zoomInOn}/>}
+          {report && <AddToListButton onClick={addMeterToReport}/>}
         </Row>
       </RowCenter>
     )
@@ -212,7 +209,7 @@ const renderSelectableListItem = ({
 
   return (
     <SelectableListItem
-      className="TreeListItem"
+      className="TreeListItem first-uppercase"
       primaryText={content}
       key={id}
       innerDivStyle={sideBarStyles.padding}
@@ -222,7 +219,6 @@ const renderSelectableListItem = ({
       onNestedListToggle={onToggleExpand}
       onClick={onToggleSelect}
       selectable={selectable}
-      selected={selectedListItems.has(id)}
     />
   );
 };

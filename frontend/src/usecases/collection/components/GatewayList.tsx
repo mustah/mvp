@@ -58,7 +58,7 @@ export const GatewayList = ({
           renderCell={renderProductModel}
         />
         <TableColumn
-          header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
+          header={<TableHead className="TableHead-status">{translate('collection')}</TableHead>}
           renderCell={renderStatusCell}
         />
         <TableColumn
