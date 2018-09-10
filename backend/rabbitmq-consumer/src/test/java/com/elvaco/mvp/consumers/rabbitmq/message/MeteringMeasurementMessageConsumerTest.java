@@ -432,13 +432,13 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueFor_MissingPhysicalMeter_CreatesNewPhysicalMeter() {
     Organisation organisation = saveDefaultOrganisation();
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      EXTERNAL_ID,
-      organisation.id,
-      MeterDefinition.HOT_WATER_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
 
@@ -477,17 +477,17 @@ public class MeteringMeasurementMessageConsumerTest {
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        EXTERNAL_ID,
-        organisation.id,
-        MeterDefinition.HOT_WATER_METER,
-        new LocationBuilder()
+      LogicalMeter.builder()
+        .id(randomUUID())
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .location(new LocationBuilder()
           .country("Sweden")
           .city("Kungsbacka")
           .address("Gatan")
-          .build()
-      )
+          .build())
+        .build()
     );
 
     Optional<GetReferenceInfoDto> response =
@@ -502,17 +502,17 @@ public class MeteringMeasurementMessageConsumerTest {
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter().organisation(organisation).build());
     logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        EXTERNAL_ID,
-        organisation.id,
-        MeterDefinition.HOT_WATER_METER,
-        new LocationBuilder()
+      LogicalMeter.builder()
+        .id(randomUUID())
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .location(new LocationBuilder()
           .country("Sweden")
           .city("Kungsbacka")
           .address("Gatan")
-          .build()
-      )
+          .build())
+        .build()
     );
 
     Optional<GetReferenceInfoDto> response =
@@ -529,13 +529,13 @@ public class MeteringMeasurementMessageConsumerTest {
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        EXTERNAL_ID,
-        organisation.id,
-        MeterDefinition.HOT_WATER_METER,
-        UNKNOWN_LOCATION
-      )
+      LogicalMeter.builder()
+        .id(randomUUID())
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .location(UNKNOWN_LOCATION)
+        .build()
     );
 
     Optional<GetReferenceInfoDto> response =
@@ -558,17 +558,17 @@ public class MeteringMeasurementMessageConsumerTest {
 
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
-      new LogicalMeter(
-        randomUUID(),
-        EXTERNAL_ID,
-        organisation.id,
-        MeterDefinition.HOT_WATER_METER,
-        new LocationBuilder()
+      LogicalMeter.builder()
+        .id(randomUUID())
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .location(new LocationBuilder()
           .country("Sweden")
           .city("Kungsbacka")
           .address("Gatan")
-          .build()
-      )
+          .build())
+        .build()
     );
 
     Optional<GetReferenceInfoDto> response =

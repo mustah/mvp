@@ -72,13 +72,13 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .map(existing::logicalMeter)
       .orElseGet(() -> {
         Medium medium = Medium.from(resolveMeterDefinition(measurementMessage.values).medium);
-        return new LogicalMeter(
-          randomUUID(),
-          facilityId,
-          organisation.id,
-          MeterDefinition.fromMedium(medium),
-          UNKNOWN_LOCATION
-        );
+        return LogicalMeter.builder()
+          .id(randomUUID())
+          .externalId(facilityId)
+          .organisationId(organisation.id)
+          .meterDefinition(MeterDefinition.fromMedium(medium))
+          .location(UNKNOWN_LOCATION)
+          .build();
       });
 
     String address = measurementMessage.meter.id;

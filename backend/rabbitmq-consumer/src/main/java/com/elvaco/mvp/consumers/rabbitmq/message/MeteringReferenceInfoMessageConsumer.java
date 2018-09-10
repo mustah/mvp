@@ -129,13 +129,13 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .map(logicalMeter -> logicalMeter.withLocation(location).withMeterDefinition(meterDefinition))
       .orElseGet(() ->
         Optional.ofNullable(meterDto)
-          .map(dto -> new LogicalMeter(
-            randomUUID(),
-            facilityId,
-            organisationId,
-            meterDefinition,
-            location
-          )).orElse(null));
+          .map(dto -> LogicalMeter.builder()
+                .id(randomUUID())
+                .externalId(facilityId)
+                .organisationId(organisationId)
+                .meterDefinition(meterDefinition)
+                .location(location)
+                .build()).orElse(null));
   }
 
   private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
