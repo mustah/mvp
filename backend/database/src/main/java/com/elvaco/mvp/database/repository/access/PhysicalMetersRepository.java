@@ -56,6 +56,24 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
+  public Page<String> findAddresses(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(
+      physicalMeterJpaRepository.findAddresses(
+        new PhysicalMeterQueryFilters().toExpression(parameters),
+        new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+      ));
+  }
+
+  @Override
+  public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(
+      physicalMeterJpaRepository.findFacilities(
+        new PhysicalMeterQueryFilters().toExpression(parameters),
+        new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+      ));
+  }
+
+  @Override
   @CacheEvict(
     cacheNames = "physicalMeter.organisationIdExternalIdAddress",
     key = "#physicalMeter.organisation.id + #physicalMeter.externalId + #physicalMeter.address"
@@ -115,4 +133,5 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       address
     ).map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs);
   }
+
 }

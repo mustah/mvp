@@ -70,6 +70,21 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
+  public Page<String> findAddresses(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    throw new NotImplementedYet();
+
+  }
+
+  @Override
+  public Page<String> findFacilities(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    throw new NotImplementedYet();
+  }
+
+  @Override
   protected PhysicalMeter copyWithId(UUID id, PhysicalMeter entity) {
     return PhysicalMeter.builder()
       .id(id)

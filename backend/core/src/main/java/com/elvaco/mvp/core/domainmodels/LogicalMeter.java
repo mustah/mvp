@@ -15,7 +15,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -75,33 +74,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     this.expectedMeasurementCount = expectedMeasurementCount;
     this.missingMeasurementCount = missingMeasurementCount;
     this.currentStatus = currentStatus;
-  }
-
-  /**
-   * Please use <code>LogicalMeter.builder().build()</code> instead.
-   */
-  @Deprecated
-  public LogicalMeter(
-    UUID id,
-    String externalId,
-    UUID organisationId,
-    MeterDefinition meterDefinition,
-    Location location
-  ) {
-    this(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location,
-      null,
-      null,
-      null
-    );
   }
 
   @Override

@@ -364,13 +364,13 @@ public class LogicalMeterTest {
     UUID organisationId,
     MeterDefinition meterDefinition
   ) {
-    return new LogicalMeter(
-      id,
-      "an-external-id",
-      organisationId,
-      meterDefinition,
-      UNKNOWN_LOCATION
-    );
+    return LogicalMeter.builder()
+      .id(id)
+      .externalId("an-external-id")
+      .organisationId(organisationId)
+      .meterDefinition(meterDefinition)
+      .location(UNKNOWN_LOCATION)
+      .build();
   }
 
   private LogicalMeter newLogicalMeterWithExpectedAndMissing(

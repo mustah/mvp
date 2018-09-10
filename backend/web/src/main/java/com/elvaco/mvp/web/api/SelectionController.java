@@ -96,8 +96,7 @@ public class SelectionController {
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = physicalMeterUseCases.findAll(parameters, adapter)
-      .map(value -> value.externalId)
+    Page<IdNamedDto> page = physicalMeterUseCases.findFacilities(parameters, adapter)
       .map(IdNamedDto::new);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
@@ -114,8 +113,7 @@ public class SelectionController {
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = physicalMeterUseCases.findAll(parameters, adapter)
-      .map(value -> value.address)
+    Page<IdNamedDto> page = physicalMeterUseCases.findAddresses(parameters, adapter)
       .map(IdNamedDto::new);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
@@ -132,8 +130,7 @@ public class SelectionController {
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = gatewayUseCases.findAll(parameters, adapter)
-      .map(value -> value.serial)
+    Page<IdNamedDto> page = gatewayUseCases.findSerials(parameters, adapter)
       .map(IdNamedDto::new);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());

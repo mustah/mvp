@@ -5,12 +5,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-public interface PhysicalMeterJpaRepository
-  extends PagingAndSortingRepository<PhysicalMeterEntity, UUID>,
-          QueryDslPredicateExecutor<PhysicalMeterEntity> {
+public interface PhysicalMeterJpaRepository {
+
+  <S extends PhysicalMeterEntity> S save(S entity);
+
+  Optional<PhysicalMeterEntity> findById(UUID id);
 
   List<PhysicalMeterEntity> findByMedium(String medium);
 
@@ -19,4 +22,16 @@ public interface PhysicalMeterJpaRepository
     String externalId,
     String address
   );
+
+  List<PhysicalMeterEntity> findAll();
+
+  Page<PhysicalMeterEntity> findAll(Predicate predicate, Pageable pageable);
+
+  void deleteAll();
+
+  void delete(UUID meterId);
+
+  Page<String> findAddresses(Predicate predicate, Pageable pageable);
+
+  Page<String> findFacilities(Predicate predicate, Pageable pageable);
 }

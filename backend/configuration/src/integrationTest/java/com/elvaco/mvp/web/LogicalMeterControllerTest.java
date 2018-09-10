@@ -231,13 +231,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void locationIsAttachedToPagedMeter() {
     UUID meterId = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      UNKNOWN_METER,
-      new LocationBuilder().city("kungsbacka").country("sweden").address("kabelgatan 2t").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(UNKNOWN_METER)
+      .location(new LocationBuilder().city("kungsbacka")
+        .country("sweden")
+        .address("kabelgatan 2t")
+        .build())
+      .build());
 
     PagedLogicalMeterDto logicalMeterDto = asTestUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
@@ -1301,20 +1304,20 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void doesntFindOtherOrganisationsMetersUsingFilter() {
     createUserIfNotPresent(userBuilder().build());
-    LogicalMeter myMeter = logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "my-own-meter",
-      context().organisationId2(),
-      hotWaterMeterDefinition,
-      UNKNOWN_LOCATION
-    ));
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "not-my-meter",
-      context().organisationId(),
-      hotWaterMeterDefinition,
-      UNKNOWN_LOCATION
-    ));
+    LogicalMeter myMeter = logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("my-own-meter")
+      .organisationId(context().organisationId2())
+      .meterDefinition(hotWaterMeterDefinition)
+      .location(UNKNOWN_LOCATION)
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("not-my-meter")
+      .organisationId(context().organisationId())
+      .meterDefinition(hotWaterMeterDefinition)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     Page<PagedLogicalMeterDto> response = restClient()
       .loginWith("me@myorg.com", "secr3t")
@@ -1327,13 +1330,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void cantAccessOtherOrganisationsMeterById() {
-    LogicalMeter theirMeter = logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "this-is-not-my-meter",
-      context().organisationId2(),
-      hotWaterMeterDefinition,
-      UNKNOWN_LOCATION
-    ));
+    LogicalMeter theirMeter = logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("this-is-not-my-meter")
+      .organisationId(context().organisationId2())
+      .meterDefinition(hotWaterMeterDefinition)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
@@ -1369,21 +1372,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findAllMeters_WithFacility() {
     String facility = "my-mapped-meter";
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      facility,
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId(facility)
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "another-mapped-meter",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("another-mapped-meter")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?facility=" + facility, PagedLogicalMeterDto.class);
@@ -1433,13 +1436,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithUnknownCity() {
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "my-mapped-meter",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("my-mapped-meter")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
@@ -1449,20 +1452,20 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_IncludeMetersWith_UnknownCity() {
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "my-mapped-meter",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "123-123-123",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("my-mapped-meter")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("123-123-123")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().build())
+      .build());
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?city=unknown,unknown&city=sweden,kungsbacka", PagedLogicalMeterDto.class);
@@ -1472,29 +1475,29 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_IncludeMetersWith_UnknownCity_AndLowConfidence() {
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "my-mapped-meter",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("my-mapped-meter")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "123-123-123",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("123-123-123")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().build())
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "123-456",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().confidence(0.74).build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("123-456")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().confidence(0.74).build())
+      .build());
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?city=unknown,unknown&city=sweden,kungsbacka", PagedLogicalMeterDto.class);
@@ -1504,40 +1507,40 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMetersWithUnknownCity() {
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "123",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("123")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "123-123-123",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("123-123-123")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().build())
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "456",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().confidence(0.74).build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("456")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().confidence(0.74).build())
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "789",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka()
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("789")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka()
         .longitude(null)
         .latitude(null)
-        .confidence(null).build()
-    ));
+        .confidence(null).build())
+      .build());
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
@@ -1548,40 +1551,40 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithUnknownAddress() {
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "abc",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("abc")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "123",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().confidence(0.75).build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("123")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().confidence(0.75).build())
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "456",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka().confidence(0.80).build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("456")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka().confidence(0.80).build())
+      .build());
 
-    logicalMeters.save(new LogicalMeter(
-      randomUUID(),
-      "789",
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      kungsbacka()
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("789")
+      .organisationId(context().organisationId())
+      .meterDefinition(MeterDefinition.UNKNOWN_METER)
+      .location(kungsbacka()
         .longitude(null)
         .latitude(null)
-        .confidence(null).build()
-    ));
+        .confidence(null).build())
+      .build());
 
     Page<PagedLogicalMeterDto> result = asTestUser()
       .getPage("/meters?address=unknown,unknown,unknown", PagedLogicalMeterDto.class);
@@ -1857,7 +1860,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     assertThat(logicalMeters.findById(districtHeatingMeter.id)).isEmpty();
-    assertThat(physicalMeterJpaRepository.findOne(physicalMeter.id)).isNull();
+    assertThat(physicalMeterJpaRepository.findById(physicalMeter.id)).isEmpty();
     assertThat(measurementUseCases.findBy(physicalMeter.id, Quantity.VOLUME.name, date)).isEmpty();
   }
 
@@ -1897,13 +1900,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void wildcardSearchMatchesFacilityStart() {
     UUID meterId = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "abcdef",
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId("abcdef")
+      .organisationId(context().organisationId())
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     Page<PagedLogicalMeterDto> page = asTestUser().getPage(
       "/meters?w=abc",
@@ -1918,13 +1921,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void wildcardSearchMatchesCityStart() {
     UUID meterId = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      new LocationBuilder().city("ringhals").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .location(new LocationBuilder().city("ringhals").build())
+      .build());
 
     Page<PagedLogicalMeterDto> page = asTestUser().getPage(
       "/meters?w=ring",
@@ -1939,13 +1942,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void wildcardSearchMatchesAddressStart() {
     UUID meterId = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      new LocationBuilder().city("ringhals").address("storgatan 34").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .location(new LocationBuilder().city("ringhals").address("storgatan 34").build())
+      .build());
 
     Page<PagedLogicalMeterDto> page = asTestUser().getPage(
       "/meters?w=storgat",
@@ -1961,13 +1964,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void wildcardSearchMatchesManufacturerStart() {
     UUID meterId = UUID.randomUUID();
 
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      DISTRICT_HEATING_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .organisation(context().organisation())
@@ -2059,13 +2062,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void wildcardSearchWithMultipleFieldsMatching() {
     UUID meterId = UUID.randomUUID();
 
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      "street facility",
-      context().organisationId(),
-      HOT_WATER_METER,
-      new LocationBuilder().city("city town").address("street road 1").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId("street facility")
+      .organisationId(context().organisationId())
+      .meterDefinition(HOT_WATER_METER)
+      .location(new LocationBuilder().city("city town").address("street road 1").build())
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .organisation(context().organisation())
@@ -2086,13 +2089,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void wildcardSearchReturnsAllMatches() {
     UUID meterIdOne = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterIdOne,
-      meterIdOne.toString(),
-      context().organisationId(),
-      HOT_WATER_METER,
-      new LocationBuilder().address("street 1").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterIdOne)
+      .externalId(meterIdOne.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(HOT_WATER_METER)
+      .location(new LocationBuilder().address("street 1").build())
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .organisation(context().organisation())
@@ -2102,13 +2105,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     UUID meterIdTwo = UUID.randomUUID();
-    logicalMeters.save(new LogicalMeter(
-      meterIdTwo,
-      "street facility",
-      context().organisationId(),
-      HOT_WATER_METER,
-      UNKNOWN_LOCATION
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterIdTwo)
+      .externalId("street facility")
+      .organisationId(context().organisationId())
+      .meterDefinition(HOT_WATER_METER)
+      .location(UNKNOWN_LOCATION)
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .organisation(context().organisation())
@@ -2129,13 +2132,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findsMeterWithinPeriodWithNoActiveStatus() {
     UUID meterId = UUID.randomUUID();
 
-    logicalMeters.save(new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      HOT_WATER_METER,
-      new LocationBuilder().address("street 1").build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(HOT_WATER_METER)
+      .location(new LocationBuilder().address("street 1").build())
+      .build());
 
     physicalMeters.save(PhysicalMeter.builder()
       .organisation(context().organisation())
@@ -2275,13 +2278,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private LogicalMeter buildLogicalMeter(MeterDefinition meterDefinition) {
     UUID meterId = UUID.randomUUID();
-    return new LogicalMeter(
-      meterId,
-      meterId.toString(),
-      context().organisationId(),
-      meterDefinition,
-      UNKNOWN_LOCATION
-    );
+    return LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .meterDefinition(meterDefinition)
+      .location(UNKNOWN_LOCATION)
+      .build();
   }
 
   private StatusLogEntry<UUID> saveStatusLogForMeter(StatusLogEntry<UUID> statusLog) {

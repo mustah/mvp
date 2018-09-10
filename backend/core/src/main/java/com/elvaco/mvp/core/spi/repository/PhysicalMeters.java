@@ -36,4 +36,11 @@ public interface PhysicalMeters {
     String externalId,
     String address
   );
+
+  Page<String> findAddresses(
+    RequestParameters parameters,
+    Pageable pageable
+  );
+
+  Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
 }
