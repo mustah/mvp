@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 MVP_UPGRADE_FROM_TAG=$1
 MVP_UPGRADE_TO_TAG=$2
 TEST_HOST=localhost
