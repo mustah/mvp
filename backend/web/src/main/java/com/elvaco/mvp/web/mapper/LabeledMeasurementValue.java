@@ -13,6 +13,7 @@ public class LabeledMeasurementValue {
   public final String label;
   public final String city;
   public final String address;
+  public final String medium;
   public final Instant when;
   public final Double value;
   public final Quantity quantity;
@@ -22,6 +23,7 @@ public class LabeledMeasurementValue {
     String label,
     @Nullable String city,
     @Nullable String address,
+    @Nullable String medium,
     Instant when,
     Double value,
     Quantity quantity
@@ -30,6 +32,7 @@ public class LabeledMeasurementValue {
     this.label = label;
     this.city = city;
     this.address = address;
+    this.medium = medium;
     this.when = when;
     this.value = value;
     this.quantity = quantity;
@@ -42,27 +45,29 @@ public class LabeledMeasurementValue {
     Double value,
     Quantity quantity
   ) {
-    this(id, label, null, null, when, value, quantity);
+    this(id, label, null, null, null, when, value, quantity);
   }
 
   public static LabeledMeasurementValue of(
     Measurement measurement,
     UUID logicalMeterId
   ) {
-    return of(measurement, logicalMeterId, null, null);
+    return of(measurement, logicalMeterId, null, null, null);
   }
 
   public static LabeledMeasurementValue of(
     Measurement measurement,
     UUID logicalMeterId,
     @Nullable String city,
-    @Nullable String address
+    @Nullable String address,
+    @Nullable String medium
   ) {
     return new LabeledMeasurementValue(
       logicalMeterId.toString(),
       measurement.physicalMeter.externalId,
       city,
       address,
+      medium,
       measurement.created.toInstant(),
       measurement.value,
       measurement.getQuantity()

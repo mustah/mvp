@@ -31,6 +31,7 @@ export interface MeasurementApiResponsePart {
   label: string;
   city: string;
   address: string;
+  medium: string;
   values: Array<{
     when: number;
     value?: number;

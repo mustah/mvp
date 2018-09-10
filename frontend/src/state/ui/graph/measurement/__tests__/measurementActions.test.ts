@@ -41,6 +41,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -55,6 +56,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -81,6 +83,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -95,6 +98,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.forwardTemperature,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -122,6 +126,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -136,6 +141,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.energy,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -150,6 +156,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Västgötagatan 10',
             quantity: Quantity.differenceTemperature,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -180,6 +187,7 @@ describe('measurementActions', () => {
               city: 'Varberg',
               address: 'Drottningatan 1',
               quantity: Quantity.power,
+              medium: 'Electricity',
               values: [
                 {
                   when: firstMeasurement,
@@ -197,6 +205,7 @@ describe('measurementActions', () => {
               city: 'Varberg',
               address: 'Drottningatan 1',
               quantity: Quantity.power,
+              medium: 'Electricity',
               values: [
                 {
                   when: firstMeasurement - 10,
@@ -211,6 +220,7 @@ describe('measurementActions', () => {
               city: 'Varberg',
               address: 'Drottningatan 1',
               quantity: Quantity.power,
+              medium: 'Electricity',
               values: [
                 {
                   when: firstMeasurement + 10,
@@ -391,6 +401,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -405,6 +416,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -424,6 +436,7 @@ describe('measurementActions', () => {
             quantity: Quantity.power,
             unit: 'mW',
             label: 'average',
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -478,6 +491,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -492,6 +506,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -511,6 +526,7 @@ describe('measurementActions', () => {
             quantity: Quantity.power,
             unit: 'mW',
             label: 'average',
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -559,6 +575,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -573,6 +590,7 @@ describe('measurementActions', () => {
             city: 'Varberg',
             address: 'Drottningatan 1',
             quantity: Quantity.power,
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,
@@ -592,6 +610,7 @@ describe('measurementActions', () => {
             quantity: Quantity.power,
             unit: 'mW',
             label: 'average',
+            medium: 'Electricity',
             values: [
               {
                 when: 1516521585107,

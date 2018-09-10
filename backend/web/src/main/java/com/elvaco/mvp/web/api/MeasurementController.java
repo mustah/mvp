@@ -109,7 +109,7 @@ public class MeasurementController {
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
     List<LogicalMeter> logicalMeters = getLogicalMetersByIds(meters).stream().collect(toList());
-    Map<UUID, LogicalMeter> logicalMetersMap = getLogicalMetersByIds(meters).stream()
+    Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, Function.identity()));
 
     if (before == null) {
@@ -141,13 +141,13 @@ public class MeasurementController {
         );
 
         LogicalMeter logicalMeter = logicalMetersMap.get(meter.logicalMeterId);
-
         foundMeasurements.addAll(series.stream()
           .map(measurementValue -> new LabeledMeasurementValue(
             meter.logicalMeterId.toString(),
             meter.externalId,
             logicalMeter.location.getCity(),
             logicalMeter.location.getAddress(),
+            logicalMeter.meterDefinition.medium,
             measurementValue.when,
             measurementValue.value,
             entry.getKey()

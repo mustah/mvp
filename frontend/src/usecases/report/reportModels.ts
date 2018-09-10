@@ -19,6 +19,7 @@ export interface LineProps {
   name: string;
   city: string;
   address: string;
+  medium: string;
   stroke: string;
   strokeWidth?: number;
   yAxisId: string;
@@ -29,6 +30,7 @@ export interface LegendItem {
   address: string;
   city: string;
   color: string;
+  medium: string;
   id: uuid;
 }
 

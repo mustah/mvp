@@ -39,7 +39,8 @@ public class MeasurementDtoMapper {
         quantity,
         measurement.label,
         measurement.address,
-        measurement.city
+        measurement.city,
+        measurement.medium
       );
       if (!quantityMeasurements.containsKey(key)) {
         quantityMeasurements.put(key, new ArrayList<>());
@@ -59,6 +60,7 @@ public class MeasurementDtoMapper {
           key.label,
           key.city,
           key.address,
+          key.medium,
           entry.getValue()
             .stream()
             .map(measurement -> new MeasurementValueDto(
@@ -79,19 +81,22 @@ public class MeasurementDtoMapper {
     String label;
     String city;
     String address;
+    String medium;
 
     private LabeledQuantity(
       String id,
       Quantity quantity,
       String label,
       String address,
-      String city
+      String city,
+      String medium
     ) {
       this.id = id;
       this.quantity = quantity;
       this.label = label;
       this.city = city;
       this.address = address;
+      this.medium = medium;
     }
   }
 }

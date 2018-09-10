@@ -19,6 +19,7 @@ public class MeasurementSeriesDto {
   public String label;
   public String address;
   public String city;
+  public String medium;
   public List<MeasurementValueDto> values;
 
   public MeasurementSeriesDto(
@@ -28,6 +29,7 @@ public class MeasurementSeriesDto {
     String label,
     @Nullable String city,
     @Nullable String address,
+    @Nullable String medium,
     List<MeasurementValueDto> values
   ) {
     Collections.sort(values);
@@ -38,6 +40,18 @@ public class MeasurementSeriesDto {
     this.address = address;
     this.city = city;
     this.values = values;
+    this.medium = medium;
+  }
+
+  public MeasurementSeriesDto(
+    String id,
+    String quantity,
+    String unit,
+    String label,
+    String medium,
+    List<MeasurementValueDto> values
+  ) {
+    this(id, quantity, unit, label, null, null, medium, values);
   }
 
   public MeasurementSeriesDto(
@@ -47,6 +61,6 @@ public class MeasurementSeriesDto {
     String label,
     List<MeasurementValueDto> values
   ) {
-    this(id, quantity, unit, label, null, null, values);
+    this(id, quantity, unit, label, null, null, null, values);
   }
 }

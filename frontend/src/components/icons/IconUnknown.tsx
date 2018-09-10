@@ -1,9 +1,7 @@
 import {SvgIconProps} from 'material-ui';
+import {ActionHelpOutline} from 'material-ui/svg-icons';
 import * as React from 'react';
-import {AvPlaylistAdd} from 'material-ui/svg-icons';
 
-/* tslint:disable */
 export const IconUnknown = (props: SvgIconProps) => (
-  <AvPlaylistAdd/>
+  <ActionHelpOutline color={props.color || 'white'} style={props.style}/>
 );
-/* tslint:enable */
