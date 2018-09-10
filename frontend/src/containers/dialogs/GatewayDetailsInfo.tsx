@@ -77,7 +77,7 @@ class GatewayDetailsInfo extends React.Component<Props> {
           </Column>
           <Info
             label={translate('collection')}
-            value={<Status name={status.name}/>}
+            value={<Status label={status.name}/>}
           />
           <Info
             className="StatusChange"

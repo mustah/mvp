@@ -23,7 +23,7 @@ export const GatewayList = ({
 }: GatewayListProps) => {
 
   const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
-  const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
+  const renderStatusCell = ({status: {name}}: Gateway) => <Status label={name}/>;
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
   const renderActions = ({id, productModel}: Gateway) => (

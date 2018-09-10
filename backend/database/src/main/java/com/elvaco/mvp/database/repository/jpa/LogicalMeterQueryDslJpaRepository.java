@@ -20,8 +20,8 @@ import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
+import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
@@ -315,7 +315,7 @@ class LogicalMeterQueryDslJpaRepository
     Predicate predicate
   ) {
     if ((parameters.hasParam(MIN_VALUE) || parameters.hasParam(MAX_VALUE))
-        && parameters.hasParam(QUANTITY)) {
+      && parameters.hasParam(QUANTITY)) {
 
       String quantity = parameters.getFirst(QUANTITY);
 
@@ -364,7 +364,8 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG);
 
     joinLogicalMeterGateways(query, parameters);
   }

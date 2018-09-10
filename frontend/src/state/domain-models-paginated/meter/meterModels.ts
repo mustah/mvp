@@ -8,9 +8,16 @@ export interface MeterStatusChangelog extends Identifiable {
   start: string;
 }
 
+export interface Alarm {
+  id: uuid;
+  mask: number;
+  description?: string;
+}
+
 export type MetersState = NormalizedPaginatedState<Meter>;
 
 export interface Meter extends Identifiable, LocationHolder {
+  alarm?: Alarm;
   address?: string;
   collectionPercentage?: number;
   readIntervalMinutes?: number;

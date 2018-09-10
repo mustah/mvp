@@ -49,12 +49,12 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
-import com.elvaco.mvp.web.dto.SimpleAlarmDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
@@ -2180,7 +2180,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).alarm)
-      .isEqualTo(new SimpleAlarmDto(alarm.id, alarm.mask));
+      .isEqualTo(new AlarmDto(alarm.id, alarm.mask));
   }
 
   @Test
@@ -2250,7 +2250,90 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).alarm)
-      .isEqualTo(new SimpleAlarmDto(activeAlarm.id, activeAlarm.mask));
+      .isEqualTo(new AlarmDto(activeAlarm.id, activeAlarm.mask));
+  }
+
+  @Test
+  public void findById_ShouldHaveMeterWithAlarm() {
+    LogicalMeter logicalMeter = saveLogicalMeter();
+
+    PhysicalMeter physicalMeter = physicalMeters.save(
+      physicalMeter()
+        .logicalMeterId(logicalMeter.id)
+        .externalId("123123")
+        .build()
+    );
+
+    AlarmLogEntry alarm = meterAlarmLogs.save(AlarmLogEntry.builder()
+      .entityId(physicalMeter.id)
+      .mask(12)
+      .start(start)
+      .description("something is wrong")
+      .build());
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
+      alarm.id,
+      alarm.mask,
+      alarm.description
+    ));
+  }
+
+  @Test
+  public void findById_ShouldHaveMeterWithLatestActiveAlarm() {
+    LogicalMeter logicalMeter = saveLogicalMeter();
+
+    PhysicalMeter physicalMeter = physicalMeters.save(
+      physicalMeter()
+        .logicalMeterId(logicalMeter.id)
+        .externalId("123123")
+        .build()
+    );
+
+    AlarmLogEntry alarm1 = meterAlarmLogs.save(AlarmLogEntry.builder()
+      .entityId(physicalMeter.id)
+      .mask(12)
+      .start(start.plusHours(2))
+      .description("something is wrong")
+      .build());
+
+    meterAlarmLogs.save(AlarmLogEntry.builder()
+      .entityId(physicalMeter.id)
+      .mask(33)
+      .start(start)
+      .description("testing")
+      .build());
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
+      alarm1.id,
+      alarm1.mask,
+      alarm1.description
+    ));
+  }
+
+  @Test
+  public void findById_ShouldNotHaveMeterWithAlarm() {
+    LogicalMeter logicalMeter = saveLogicalMeter();
+
+    physicalMeters.save(
+      physicalMeter()
+        .logicalMeterId(logicalMeter.id)
+        .externalId("123123")
+        .build()
+    );
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(logicalMeterDto.alarm).isNull();
   }
 
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {

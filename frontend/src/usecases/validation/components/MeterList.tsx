@@ -3,7 +3,7 @@ import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActi
 import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
-import {Status} from '../../../components/status/Status';
+import {MeterAlarm} from '../../../components/status/MeterAlarm';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {TableInfoText} from '../../../components/table/TableInfoText';
@@ -29,7 +29,7 @@ export const MeterList = (
 
   const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
   const renderMeterId = ({address}: Meter) => address;
-  const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
+  const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
   const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
   const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
@@ -96,8 +96,8 @@ export const MeterList = (
           renderCell={renderCollectionStatus}
         />
         <TableColumn
-          header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-          renderCell={renderStatusCell}
+          header={<TableHead className="TableHead-status">{translate('alarm')}</TableHead>}
+          renderCell={renderAlarm}
         />
         <TableColumn
           header={<TableHead/>}

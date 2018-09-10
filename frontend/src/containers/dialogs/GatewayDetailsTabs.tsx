@@ -30,7 +30,7 @@ interface TabsState {
   selectedTab: TabName;
 }
 
-const renderStatusCell = (meter: Meter) => <Status name={meter.status.name}/>;
+const renderStatusCell = (meter: Meter) => <Status label={meter.status.name}/>;
 
 const renderFacility = ({facility}: Meter) => facility;
 

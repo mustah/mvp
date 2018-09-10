@@ -10,10 +10,10 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.util.Dates;
+import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
-import com.elvaco.mvp.web.dto.SimpleAlarmDto;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
@@ -45,7 +45,7 @@ public class LogicalMeterDtoMapper {
     meterDto.id = logicalMeter.id;
     meterDto.status = logicalMeter.currentStatus();
     meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
-      .map(alarm -> new SimpleAlarmDto(alarm.id, alarm.mask))
+      .map(alarm -> new AlarmDto(alarm.id, alarm.mask))
       .orElse(null);
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = Optional.ofNullable(logicalMeter.currentStatus)
@@ -83,6 +83,9 @@ public class LogicalMeterDtoMapper {
     meterDto.created = created;
     meterDto.id = logicalMeter.id;
     meterDto.status = logicalMeter.currentStatus();
+    meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
+      .map(alarm -> new AlarmDto(alarm.id, alarm.mask, alarm.description))
+      .orElse(null);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = Dates.formatUtc(Optional.ofNullable(logicalMeter.currentStatus)

@@ -29,5 +29,5 @@ public class PagedLogicalMeterDto {
   @Nullable
   public Long readIntervalMinutes;
   @Nullable
-  public SimpleAlarmDto alarm;
+  public AlarmDto alarm;
 }
