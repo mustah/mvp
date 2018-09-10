@@ -28,6 +28,7 @@ function check_application_startup () {
 		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
 			echo ""
 			docker-compose logs ${APPLICATION}
+			docker inspect mvp_${APPLICATION}_1
 			echo ":: Bailing out after $MAX_WAIT_FOR_MVP_APPLICATION seconds.."
 			exit 1
 		fi
@@ -36,6 +37,7 @@ function check_application_startup () {
 		status=$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)
 	done
 	docker-compose logs ${APPLICATION}
+	docker inspect mvp_${APPLICATION}_1
 	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
 	test "${healthStatus}" = 'healthy' || (echo ${healthStatus} && exit 1)
 }
