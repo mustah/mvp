@@ -1,3 +1,11 @@
+export interface WidgetModel {
+  type: Medium;
+  total: number;
+  pending: number;
+}
+
+export type OnSelectIndicator = (type: Medium) => void;
+
 export const enum Medium {
   coldWater = 'coldWater',
   collection = 'collection',
@@ -9,12 +17,15 @@ export const enum Medium {
   temperatureOutside = 'temperatureOutside',
   hotWater = 'warmWater',
   water = 'water',
+  unknown = 'unknown',
 }
 
-export interface WidgetModel {
-  type: Medium;
-  total: number;
-  pending: number;
-}
+const mediumTypes: {[key: string]: Medium} = {
+  'District heating': Medium.districtHeating,
+  'Gas': Medium.gas,
+  'Water': Medium.water,
+  'Hot water': Medium.hotWater,
+  'Temperature inside': Medium.temperatureInside,
+};
 
-export type OnSelectIndicator = (type: Medium) => void;
+export const getMediumType = (key: string) => mediumTypes[key] || Medium.unknown;

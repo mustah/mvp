@@ -10,6 +10,8 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
@@ -121,6 +123,7 @@ public class LogicalMeterEntityMapper {
       .id(logicalMeter.id)
       .externalId(logicalMeter.externalId)
       .organisationId(logicalMeter.organisationId)
+      .meterDefinition(MeterDefinition.fromMedium(Medium.from(logicalMeter.medium)))
       .location(LocationEntityMapper.toDomainModel(logicalMeter.location))
       .build();
   }

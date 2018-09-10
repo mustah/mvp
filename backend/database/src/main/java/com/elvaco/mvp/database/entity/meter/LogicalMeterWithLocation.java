@@ -8,6 +8,7 @@ public class LogicalMeterWithLocation {
   public final UUID organisationId;
   public final String externalId;
   public final LocationEntity location;
+  public final String medium;
 
   public LogicalMeterWithLocation(
     UUID id,
@@ -15,11 +16,13 @@ public class LogicalMeterWithLocation {
     String externalId,
     String country,
     String city,
-    String address
+    String address,
+    String medium
   ) {
     this.id = id;
     this.organisationId = organisationId;
     this.externalId = externalId;
     this.location = new LocationEntity(id, country, city, address);
+    this.medium = medium;
   }
 }

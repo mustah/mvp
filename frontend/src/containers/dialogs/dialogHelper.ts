@@ -1,5 +1,5 @@
 import {normalize} from 'normalizr';
-import {Medium} from '../../components/indicators/indicatorWidgetModels';
+import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
 import {translate} from '../../services/translationService';
 import {measurement} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
@@ -22,15 +22,8 @@ export const titleOf = (flags: Flag[]): string => {
 };
 
 const orderedQuantities = (medium: string): string[] => {
-  const translationTable: {[key: string]: Medium} = {
-    'District heating': Medium.districtHeating,
-    'Gas': Medium.gas,
-    'Water': Medium.water,
-    'Hot water': Medium.hotWater,
-    'Temperature inside': Medium.temperatureInside,
-  };
-  return medium in translationTable && translationTable[medium] in allQuantities
-    ? allQuantities[translationTable[medium]]
+  return getMediumType(medium) in allQuantities
+    ? allQuantities[getMediumType(medium)]
     : [];
 };
 

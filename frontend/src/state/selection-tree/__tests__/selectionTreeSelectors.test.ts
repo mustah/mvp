@@ -37,11 +37,11 @@ describe('selectionTreeSelectors', () => {
           },
         },
         meters: {
-          1: {id: 1, name: 'extId1'},
-          2: {id: 2, name: 'extId2'},
-          3: {id: 3, name: 'extId3'},
-          4: {id: 4, name: 'extId4'},
-          5: {id: 5, name: 'extId5'},
+          1: {id: 1, name: 'extId1', medium: 'Water'},
+          2: {id: 2, name: 'extId2', medium: 'Water'},
+          3: {id: 3, name: 'extId3', medium: 'Water'},
+          4: {id: 4, name: 'extId4', medium: 'Gas'},
+          5: {id: 5, name: 'extId5', medium: 'Gas'},
         },
       },
       result: {

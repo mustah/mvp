@@ -23,11 +23,7 @@ public class SelectionTree {
     String cityId = country.concat(",").concat(city);
     addCity(cityId, city)
       .addAddress(address)
-      .addMeter(logicalMeter.id, logicalMeter.externalId);
-  }
-
-  private City addCity(String id, String name) {
-    return cities.computeIfAbsent(id, (key) -> new City(key, name));
+      .addMeter(logicalMeter.id, logicalMeter.externalId, logicalMeter.getMedium());
   }
 
   public City getCity(String id) {
@@ -36,6 +32,10 @@ public class SelectionTree {
 
   public List<City> getCities() {
     return new ArrayList<>(cities.values());
+  }
+
+  private City addCity(String id, String name) {
+    return cities.computeIfAbsent(id, (key) -> new City(key, name));
   }
 
   @ToString(exclude = "addresses")
@@ -50,16 +50,16 @@ public class SelectionTree {
       this.name = name;
     }
 
-    private Address addAddress(String name) {
-      return addresses.computeIfAbsent(name, Address::new);
-    }
-
     public Address getAddress(String name) {
       return addresses.get(name);
     }
 
     public List<Address> getAddresses() {
       return new ArrayList<>(addresses.values());
+    }
+
+    private Address addAddress(String name) {
+      return addresses.computeIfAbsent(name, Address::new);
     }
   }
 
@@ -73,12 +73,12 @@ public class SelectionTree {
       this.name = name;
     }
 
-    void addMeter(UUID id, String name) {
-      meters.computeIfAbsent(id, (key) -> new Meter(key, name));
-    }
-
     public List<Meter> getMeters() {
       return new ArrayList<>(meters.values());
+    }
+
+    void addMeter(UUID id, String name, String medium) {
+      meters.computeIfAbsent(id, (key) -> new Meter(key, name, medium));
     }
   }
 
@@ -87,10 +87,12 @@ public class SelectionTree {
   public static class Meter {
     public final String name;
     public final UUID id;
+    public final String medium;
 
-    private Meter(UUID id, String name) {
+    private Meter(UUID id, String name, String medium) {
       this.id = id;
       this.name = name;
+      this.medium = medium;
     }
   }
 }

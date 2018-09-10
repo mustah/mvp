@@ -1,6 +1,13 @@
 import * as React from 'react';
-import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
-import {AddToListButton} from '../../../../components/buttons/AddToListButton';
+import {
+  listItemStyle,
+  listItemStyleWithActions,
+  nestedListItemStyle,
+  sideBarStyles,
+} from '../../../../app/themes';
+import {MediumButton} from '../../../../components/buttons/MediumButton';
+import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
+import '../../../../components/indicators/ReportIndicatorWidget.scss';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
@@ -123,6 +130,7 @@ const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) =
     id,
     selectable: true,
     primaryText: meter.name,
+    medium: meter.medium,
   });
 };
 
@@ -140,6 +148,7 @@ interface Props {
   toggleSingleEntry: OnClickWithId;
   itemOptions: ItemOptions;
   centerMapOnMeter: OnClickWithId;
+  medium?: string;
 }
 
 const labelStyle: React.CSSProperties = {
@@ -161,6 +170,7 @@ const renderSelectableListItem = ({
   nestedItems,
   itemOptions: {zoomable, report},
   centerMapOnMeter,
+  medium = Medium.unknown,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
   const onToggleSelect = nestedItems
@@ -193,18 +203,18 @@ const renderSelectableListItem = ({
         </RowCenter>
         <Row style={iconRowStyle}>
           {zoomable && <ZoomButton onClick={zoomInOn}/>}
-          {report && <AddToListButton onClick={addMeterToReport}/>}
+          {report && <MediumButton onClick={addMeterToReport} medium={medium} />}
         </Row>
       </RowCenter>
     )
     : (
-      <Normal
-        className="first-uppercase"
-        style={listItemStyle.textStyle}
-        title={firstUpper(primaryText)}
-      >
-        {primaryText}
-      </Normal>
+        <Normal
+          className="first-uppercase"
+          style={listItemStyle.textStyle}
+          title={firstUpper(primaryText)}
+        >
+          {primaryText}
+        </Normal>
     );
 
   return (

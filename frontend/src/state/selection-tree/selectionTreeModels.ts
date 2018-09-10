@@ -10,7 +10,7 @@ export interface SelectionTreeState extends NormalizedSelectionTree {
 export interface SelectionTreeEntities {
   cities: ObjectsById<CityWithAddresses>;
   addresses: ObjectsById<AddressWithMeters>;
-  meters: ObjectsById<IdNamed>;
+  meters: ObjectsById<MeterWithMedium>;
 }
 
 export interface SelectionTreeResult {
@@ -20,6 +20,10 @@ export interface SelectionTreeResult {
 export interface NormalizedSelectionTree {
   entities: SelectionTreeEntities;
   result: SelectionTreeResult;
+}
+
+interface MeterWithMedium extends IdNamed {
+  medium: string;
 }
 
 interface CityWithAddresses extends IdNamed {
@@ -43,7 +47,7 @@ export interface SelectionTree {
     cities: ObjectsById<CityWithClusters>;
     clusters: ObjectsById<ClusterWithAddresses>;
     addresses: ObjectsById<AddressWithMeters>;
-    meters: ObjectsById<IdNamed>;
+    meters: ObjectsById<MeterWithMedium>;
   };
   result: {
     cities: uuid[];
