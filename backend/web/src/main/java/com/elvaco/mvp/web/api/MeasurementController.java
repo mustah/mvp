@@ -20,7 +20,6 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.util.ResolutionHelper;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
@@ -95,7 +94,7 @@ public class MeasurementController {
     }
 
     if (resolution == null) {
-      resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
+      resolution = TemporalResolution.defaultResolutionFor(Duration.between(after, before));
     }
 
     Set<Quantity> quantities = maybeQuantities
@@ -187,7 +186,7 @@ public class MeasurementController {
     }
 
     if (resolution == null) {
-      resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
+      resolution = TemporalResolution.defaultResolutionFor(Duration.between(after, before));
     }
 
     Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
