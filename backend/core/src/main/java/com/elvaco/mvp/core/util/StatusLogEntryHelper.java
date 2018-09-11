@@ -16,7 +16,7 @@ public class StatusLogEntryHelper {
   ) {
     List<StatusLogEntry<T>> activeSameStatuses = currentStatuses.stream()
       .filter(StatusLogEntry::isActive)
-      .filter(logEntry -> logEntry.status.equals(newActiveStatus.status))
+      .filter(logEntry -> logEntry.status == newActiveStatus.status)
       .collect(toList());
 
     if (!activeSameStatuses.isEmpty()) {
