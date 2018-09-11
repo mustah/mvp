@@ -55,12 +55,6 @@ export const MeterList = (
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
-  const collectionPercentageHeader = (
-    <TableHead className="number">
-      {translate('collection percentage')}
-    </TableHead>
-  );
-
   const onChangePage = (page: number) => changePage({entityType, componentId, page});
 
   return (
@@ -103,7 +97,7 @@ export const MeterList = (
         />
         <TableColumn
           cellClassName="number"
-          header={collectionPercentageHeader}
+          header={<TableHead className="number">{translate('collection percentage')}</TableHead>}
           renderCell={renderCollectionStatus}
         />
         <TableColumn

@@ -7,10 +7,13 @@ import {Row, RowMiddle} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
 import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
+import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
+import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
+import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
@@ -30,6 +33,7 @@ interface DispatchToProps {
 }
 
 interface StateToProps {
+  collectionPercentage?: number;
   organisation: Maybe<Organisation>;
   user: User;
 }
@@ -52,7 +56,7 @@ class MeterDetailsInfo extends React.Component<Props> {
   }
 
   render() {
-    const {meter, organisation} = this.props;
+    const {collectionPercentage, meter, organisation, user} = this.props;
     const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
 
     const renderReadInterval = () => {
@@ -66,6 +70,11 @@ class MeterDetailsInfo extends React.Component<Props> {
     };
 
     const {city, address} = meter.location;
+    const formattedCollectionPercentage = formatCollectionPercentage(
+      collectionPercentage,
+      meter.readIntervalMinutes,
+      isSuperAdmin(user),
+    );
 
     return (
       <Row>
@@ -90,6 +99,7 @@ class MeterDetailsInfo extends React.Component<Props> {
               </Row>
             </Column>
             <Info label={translate('resolution')} value={renderReadInterval()}/>
+            <Info label={translate('collection percentage')} value={formattedCollectionPercentage}/>
           </Row>
           <Row>
             <Column>
@@ -124,11 +134,14 @@ class MeterDetailsInfo extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {domainModels: {organisations}, auth}: RootState,
+  {domainModels: {organisations}, auth, paginatedDomainModels: {meters}}: RootState,
   {meter}: OwnProps,
 ): StateToProps => ({
   organisation: getDomainModelById<Organisation>(meter.organisationId)(organisations),
   user: getUser(auth),
+  collectionPercentage: getPaginatedDomainModelById<Meter>(meter.id)(meters)
+    .map((meter: Meter) => meter.collectionPercentage)
+    .getOrElseUndefined(),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
