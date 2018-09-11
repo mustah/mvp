@@ -484,10 +484,7 @@ describe('measurementActions', () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
-      const requestedUrls: string[] = [];
-
       mockRestClient.onGet().reply(async (config) => {
-        requestedUrls.push(config.url);
 
         const measurement: MeasurementApiResponse = [
           {
@@ -568,10 +565,7 @@ describe('measurementActions', () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
-      const requestedUrls: string[] = [];
-
       mockRestClient.onGet().reply(async (config) => {
-        requestedUrls.push(config.url);
 
         const measurement: MeasurementApiResponse = [
           {
