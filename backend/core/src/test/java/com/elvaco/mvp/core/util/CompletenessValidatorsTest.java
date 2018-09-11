@@ -1,8 +1,5 @@
 package com.elvaco.mvp.core.util;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -15,7 +12,7 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
-import static java.util.Collections.emptyList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompletenessValidatorsTest {
@@ -28,37 +25,42 @@ public class CompletenessValidatorsTest {
 
   @Test
   public void logicalMeterValidatorLocationUnknownMissingMeterDefinition() {
-    LogicalMeter logicalMeter = newLogicalMeter(
-      Location.UNKNOWN_LOCATION,
-      MeterDefinition.UNKNOWN_METER
-    );
+    LogicalMeter logicalMeter = LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(randomUUID())
+      .build();
     assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
   public void logicalMeterValidatorLocationKnownMissingMeterDefinition() {
-    LogicalMeter logicalMeter = newLogicalMeter(
-      KNOWN_LOCATION,
-      MeterDefinition.UNKNOWN_METER
-    );
+    LogicalMeter logicalMeter = LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(randomUUID())
+      .location(KNOWN_LOCATION)
+      .build();
     assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
   }
 
   @Test
   public void logicalMeterValidatorLocationKnownMeterDefinitionKnown() {
-    LogicalMeter logicalMeter = newLogicalMeter(
-      KNOWN_LOCATION,
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+    LogicalMeter logicalMeter = LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(randomUUID())
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .location(KNOWN_LOCATION)
+      .build();
     assertThat(logicalMeterValidator().isComplete(logicalMeter)).isTrue();
   }
 
   @Test
   public void logicalMeterValidatorLocationUnknownMeterDefinitionKnown() {
-    LogicalMeter logicalMeter = newLogicalMeter(
-      Location.UNKNOWN_LOCATION,
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+    LogicalMeter logicalMeter = LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(randomUUID())
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .location(Location.UNKNOWN_LOCATION)
+      .build();
     assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
   }
 
@@ -115,31 +117,13 @@ public class CompletenessValidatorsTest {
 
   @Test
   public void gatewayValidatorComplete() {
-    Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "CMi2110");
+    Gateway gateway = new Gateway(randomUUID(), randomUUID(), "1234", "CMi2110");
     assertThat(gatewayValidator().isComplete(gateway)).isTrue();
   }
 
   @Test
   public void gatewayValidatorUnknownProductModel() {
-    Gateway gateway = new Gateway(UUID.randomUUID(), UUID.randomUUID(), "1234", "");
+    Gateway gateway = new Gateway(randomUUID(), randomUUID(), "1234", "");
     assertThat(gatewayValidator().isComplete(gateway)).isFalse();
-  }
-
-  private LogicalMeter newLogicalMeter(Location location, MeterDefinition meterDefinition) {
-    return new LogicalMeter(
-      UUID.randomUUID(),
-      "external-id",
-      UUID.randomUUID(),
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      Location.UNKNOWN_LOCATION,
-      null,
-      0L, null
-    )
-      .withLocation(location)
-      .withMeterDefinition(meterDefinition);
   }
 }

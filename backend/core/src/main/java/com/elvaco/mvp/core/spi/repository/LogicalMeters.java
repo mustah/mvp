@@ -21,7 +21,7 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findBy(RequestParameters parameters);
 
-  Page<LogicalMeter> findAllWithStatuses(RequestParameters parameters, Pageable pageable);
+  Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeter> findAllWithStatuses(RequestParameters parameters);
 

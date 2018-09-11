@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
-import {Status} from '../../components/status/Status';
+import {MeterAlarm} from '../../components/status/MeterAlarm';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
@@ -97,8 +97,8 @@ class MeterDetailsInfo extends React.Component<Props> {
               </Row>
             </Column>
             <Info
-              label={translate('status')}
-              value={<Status name={meter.status.name}/>}
+              label={translate('alarm')}
+              value={<MeterAlarm alarm={meter.alarm}/>}
             />
             <Info
               className="StatusChange"

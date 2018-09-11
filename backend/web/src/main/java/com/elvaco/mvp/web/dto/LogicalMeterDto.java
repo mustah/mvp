@@ -27,6 +27,8 @@ public class LogicalMeterDto {
   public String created;
   public StatusType status;
   @Nullable
+  public AlarmDto alarm;
+  @Nullable
   public Double collectionPercentage;
 
   public List<MeasurementDto> measurements;

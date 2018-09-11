@@ -86,7 +86,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<LogicalMeter> findAllWithStatuses(
+  public Page<LogicalMeter> findAll(
     RequestParameters parameters,
     Pageable pageable
   ) {

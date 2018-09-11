@@ -1,10 +1,8 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -16,7 +14,6 @@ import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -191,34 +188,6 @@ public class SelectionTreeDtoMapperTest {
     String country,
     String city,
     String address,
-    UUID id,
-    String extId
-  ) {
-    LocationBuilder locationBuilder = new LocationBuilder();
-    Location location = locationBuilder
-      .country(country)
-      .city(city)
-      .address(address)
-      .build();
-    return new LogicalMeter(
-      id,
-      extId,
-      randomUUID(),
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L, null
-    );
-  }
-
-  private static LogicalMeter newLogicalMeter(
-    String country,
-    String city,
-    String address,
     String extId
   ) {
     return newLogicalMeter(
@@ -228,5 +197,24 @@ public class SelectionTreeDtoMapperTest {
       randomUUID(),
       extId
     );
+  }
+
+  private static LogicalMeter newLogicalMeter(
+    String country,
+    String city,
+    String address,
+    UUID id,
+    String externalId
+  ) {
+    return LogicalMeter.builder()
+      .id(id)
+      .externalId(externalId)
+      .organisationId(randomUUID())
+      .location(new LocationBuilder()
+        .country(country)
+        .city(city)
+        .address(address)
+        .build())
+      .build();
   }
 }

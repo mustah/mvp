@@ -25,12 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantityName;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
-import static java.util.UUID.randomUUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -73,11 +71,9 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .orElseGet(() -> {
         Medium medium = Medium.from(resolveMeterDefinition(measurementMessage.values).medium);
         return LogicalMeter.builder()
-          .id(randomUUID())
           .externalId(facilityId)
           .organisationId(organisation.id)
           .meterDefinition(MeterDefinition.fromMedium(medium))
-          .location(UNKNOWN_LOCATION)
           .build();
       });
 

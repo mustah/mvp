@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -39,7 +38,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -157,8 +155,8 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
-        + "?after=" + date.minusDays(60)
-        + "&before=" + date.minusDays(30),
+          + "?after=" + date.minusDays(60)
+          + "&before=" + date.minusDays(30),
         GatewayDto.class
       );
 
@@ -315,12 +313,13 @@ public class GatewayControllerTest extends IntegrationTest {
 
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-1234",
-      asList(gateway1, gateway2),
-      unknownLocation.build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(asList(gateway1, gateway2))
+      .location(unknownLocation.build())
+      .build());
 
     Page<GatewayDto> content = asTestSuperAdmin()
       .getPage("/gateways?city=unknown,unknown", GatewayDto.class);
@@ -336,25 +335,27 @@ public class GatewayControllerTest extends IntegrationTest {
 
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-1234",
-      asList(gateway1, gateway2),
-      unknownLocation.build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(asList(gateway1, gateway2))
+      .location(unknownLocation.build())
+      .build());
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-1235",
-      singletonList(gateway3),
-      new LocationBuilder()
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1235")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway3))
+      .location(new LocationBuilder()
         .country("sweden")
         .city("kungsbacka")
         .address("kabelgatan 1")
         .longitude(1.3333)
         .latitude(1.12345)
-        .build()
-    ));
+        .build())
+      .build());
 
     Page<GatewayDto> content = asTestSuperAdmin()
       .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
@@ -370,12 +371,13 @@ public class GatewayControllerTest extends IntegrationTest {
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
     UUID meterId1 = randomUUID();
-    logicalMeters.save(newLogicalMeter(
-      meterId1,
-      "external-1234",
-      singletonList(gateway1),
-      unknownLocation.build()
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId1)
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway1))
+      .location(unknownLocation.build())
+      .build());
 
     Location locationWithLowConfidence = new LocationBuilder()
       .country("sweden")
@@ -387,12 +389,13 @@ public class GatewayControllerTest extends IntegrationTest {
       .build();
 
     UUID meterId2 = randomUUID();
-    logicalMeters.save(newLogicalMeter(
-      meterId2,
-      "external-1235",
-      singletonList(gateway2),
-      locationWithLowConfidence
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId2)
+      .externalId("external-1235")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway2))
+      .location(locationWithLowConfidence)
+      .build());
 
     Page<GatewayDto> content = asTestSuperAdmin()
       .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
@@ -444,25 +447,27 @@ public class GatewayControllerTest extends IntegrationTest {
       .latitude(1.12345)
       .build();
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-1234",
-      singletonList(gateway1),
-      unknownAddress
-    ));
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway1))
+      .location(unknownAddress)
+      .build());
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-1235",
-      singletonList(gateway2),
-      new LocationBuilder()
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1235")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway2))
+      .location(new LocationBuilder()
         .country("sweden")
         .city("kungsbacka")
         .address("kabelgatan 1")
         .longitude(1.3333)
         .latitude(1.12345)
-        .build()
-    ));
+        .build())
+      .build());
 
     Page<GatewayDto> content = asTestSuperAdmin()
       .getPage("/gateways?address=unknown,unknown,unknown", GatewayDto.class);
@@ -494,14 +499,15 @@ public class GatewayControllerTest extends IntegrationTest {
       .productModel("product-model")
       .build());
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-id",
-      singletonList(gateway),
-      new LocationBuilder()
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-id")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway))
+      .location(new LocationBuilder()
         .city("kungsbacka")
-        .build()
-    ));
+        .build())
+      .build());
     Page<GatewayDto> page = asTestUser()
       .getPage("/gateways?w=kungsb", GatewayDto.class);
 
@@ -516,15 +522,16 @@ public class GatewayControllerTest extends IntegrationTest {
       .productModel("product-model")
       .build());
 
-    logicalMeters.save(newLogicalMeter(
-      randomUUID(),
-      "external-id",
-      singletonList(gateway),
-      new LocationBuilder()
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-id")
+      .organisationId(dailyPlanet.id)
+      .gateways(singletonList(gateway))
+      .location(new LocationBuilder()
         .city("kungsbacka")
         .address("teknikgatan 2t")
-        .build()
-    ));
+        .build())
+      .build());
     Page<GatewayDto> page = asTestUser()
       .getPage("/gateways?w=tekni", GatewayDto.class);
 
@@ -565,27 +572,6 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(page).hasSize(1);
     GatewayDto gateway = page.getContent().get(0);
     assertThat(gateway.serial).isEqualTo("123456");
-  }
-
-  private LogicalMeter newLogicalMeter(
-    UUID meterId,
-    String externalId,
-    List<Gateway> gateway,
-    Location location
-  ) {
-    return new LogicalMeter(
-      meterId,
-      externalId,
-      dailyPlanet.id,
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      gateway,
-      emptyList(),
-      location,
-      null,
-      0L, null
-    );
   }
 
   private Gateway saveGateway(UUID organisationId) {

@@ -1,12 +1,9 @@
 package com.elvaco.mvp.web;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -17,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -81,24 +77,16 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     UUID id,
     String externalId
   ) {
-    Location location = new LocationBuilder()
-      .country(country)
-      .city(city)
-      .address(address)
+    return LogicalMeter.builder()
+      .id(id)
+      .externalId(externalId)
+      .organisationId(context().organisationId())
+      .location(new LocationBuilder()
+        .country(country)
+        .city(city)
+        .address(address)
+        .build())
       .build();
-    return new LogicalMeter(
-      id,
-      externalId,
-      context().organisationId(),
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      location,
-      null,
-      0L, null
-    );
   }
 
   private LogicalMeter newLogicalMeter(

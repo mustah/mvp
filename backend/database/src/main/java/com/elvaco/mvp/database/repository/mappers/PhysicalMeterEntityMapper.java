@@ -1,7 +1,9 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.Collection;
+import java.util.Set;
 
+import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
@@ -28,13 +30,13 @@ public class PhysicalMeterEntityMapper {
     return physicalMeterBuilderFrom(entity)
       .statuses(statuses.stream()
         .map(MeterStatusLogEntityMapper::toDomainModel).collect(toList()))
+      .alarms(toAlarms(entity))
       .build();
   }
 
   public static PhysicalMeter toDomainModelWithAlarms(PhysicalMeterEntity entity) {
     return physicalMeterBuilderFrom(entity)
-      .alarms(entity.alarms.stream()
-        .map(MeterAlarmLogEntityMapper::toDomainModel).collect(toSet()))
+      .alarms(toAlarms(entity))
       .build();
   }
 
@@ -51,6 +53,11 @@ public class PhysicalMeterEntityMapper {
       domainModel.statuses.stream().map(MeterStatusLogEntityMapper::toEntity).collect(toSet()),
       domainModel.alarms.stream().map(MeterAlarmLogEntityMapper::toEntity).collect(toSet())
     );
+  }
+
+  private static Set<AlarmLogEntry> toAlarms(PhysicalMeterEntity entity) {
+    return entity.alarms.stream()
+      .map(MeterAlarmLogEntityMapper::toDomainModel).collect(toSet());
   }
 
   private static PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilderFrom(

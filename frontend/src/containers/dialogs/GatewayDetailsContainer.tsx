@@ -7,7 +7,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {fetchGateway} from '../../state/domain-models-paginated/gateway/gatewayApiActions';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {getGatewayMeterIdsFrom} from '../../state/domain-models-paginated/gateway/gatewaySelectors';
-import {fetchMeterEntities} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {fetchMeterDetails} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {getMetersByIds} from '../../state/domain-models-paginated/meter/meterSelectors';
 import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
@@ -28,7 +28,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchGateway: CallbackWithId;
-  fetchMeterEntities: (ids: uuid[], size?: number) => void;
+  fetchMeterDetails: (ids: uuid[]) => void;
 }
 
 type Props = StateToProps & DispatchToProps & SelectedId;
@@ -49,13 +49,10 @@ const GatewayDetailsContent = (props: Props) => {
 const GatewayDetailsContentLoader = withLargeLoader<Props>(GatewayDetailsContent);
 
 const fetchGatewayAndItsMeters =
-  ({fetchGateway, gateway, fetchMeterEntities, selectedId}: Props) => {
+  ({fetchGateway, gateway, fetchMeterDetails, selectedId}: Props) => {
     selectedId.do((id: uuid) => fetchGateway(id));
-    gateway
-      .filter(({meterIds}: Gateway) => meterIds.length > 0)
-      .map(({meterIds}: Gateway) => {
-        fetchMeterEntities(meterIds, meterIds.length);
-      });
+    gateway.filter(({meterIds}: Gateway) => meterIds.length > 0)
+      .map(({meterIds}: Gateway) => fetchMeterDetails(meterIds));
   };
 
 class GatewayDetails extends React.Component<Props> {
@@ -90,7 +87,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchGateway,
-  fetchMeterEntities,
+  fetchMeterDetails,
 }, dispatch);
 
 export const GatewayDetailsContainer =

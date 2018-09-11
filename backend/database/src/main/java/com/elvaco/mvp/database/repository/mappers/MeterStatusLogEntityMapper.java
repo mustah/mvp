@@ -10,13 +10,13 @@ import lombok.experimental.UtilityClass;
 public class MeterStatusLogEntityMapper {
 
   public static StatusLogEntry<UUID> toDomainModel(PhysicalMeterStatusLogEntity entity) {
-    return new StatusLogEntry<>(
-      entity.id,
-      entity.physicalMeterId,
-      entity.status,
-      entity.start,
-      entity.stop
-    );
+    return StatusLogEntry.<UUID>builder()
+      .id(entity.id)
+      .entityId(entity.physicalMeterId)
+      .status(entity.status)
+      .start(entity.start)
+      .stop(entity.stop)
+      .build();
   }
 
   public static PhysicalMeterStatusLogEntity toEntity(StatusLogEntry<UUID> statusLog) {

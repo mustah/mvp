@@ -23,19 +23,18 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
       .map(this.physicalMeters::save)
       .collect(toList());
 
-    return super.save(new LogicalMeter(
-      logicalMeter.id,
-      logicalMeter.externalId,
-      logicalMeter.organisationId,
-      logicalMeter.meterDefinition,
-      logicalMeter.created,
-      savedPhysicalMeters,
-      logicalMeter.gateways,
-      logicalMeter.latestReadouts,
-      logicalMeter.location,
-      logicalMeter.expectedMeasurementCount,
-      logicalMeter.missingMeasurementCount,
-      logicalMeter.currentStatus
-    ));
+    return super.save(LogicalMeter.builder()
+      .id(logicalMeter.id)
+      .externalId(logicalMeter.externalId)
+      .organisationId(logicalMeter.organisationId)
+      .meterDefinition(logicalMeter.meterDefinition)
+      .created(logicalMeter.created)
+      .physicalMeters(savedPhysicalMeters)
+      .latestReadouts(logicalMeter.latestReadouts)
+      .location(logicalMeter.location)
+      .expectedMeasurementCount(logicalMeter.expectedMeasurementCount)
+      .missingMeasurementCount(logicalMeter.missingMeasurementCount)
+      .alarm(logicalMeter.alarm)
+      .build());
   }
 }

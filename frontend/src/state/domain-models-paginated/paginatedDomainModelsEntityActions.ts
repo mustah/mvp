@@ -5,22 +5,11 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
-import {
-  Action,
-  emptyActionOf,
-  ErrorResponse,
-  Identifiable,
-  payloadActionOf,
-  uuid,
-} from '../../types/Types';
+import {Action, emptyActionOf, ErrorResponse, Identifiable, payloadActionOf, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
-import {
-  NormalizedPaginatedState,
-  PaginatedDomainModelsState,
-  SingleEntityFailure,
-} from './paginatedDomainModels';
+import {NormalizedPaginatedState, PaginatedDomainModelsState, SingleEntityFailure} from './paginatedDomainModels';
 
 export const domainModelsPaginatedEntityRequest = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_REQUEST${endPoint}`;
@@ -125,21 +114,19 @@ const shouldFetchEntities = (
   return isMissingEntity && !isFetchingSingle;
 };
 
-const idRequestParams = (ids: uuid[]): string => ids.map((id) => `id=${id.toString()}`).join('&');
+const idRequestParams = (ids: uuid[]): string => ids.map((id: uuid) => `id=${id.toString()}`).join('&');
 
-export const fetchEntitiesIfNeeded = <T>(
+export const fetchEntityDetailsIfNeeded = <T>(
   endPoint: EndPoints,
   entityType: keyof PaginatedDomainModelsState,
   formatData: (values: T[]) => any = (identity) => identity,
 ) =>
-  (ids: uuid[], size?: number) =>
+  (ids: uuid[]) =>
     (dispatch, getState: GetState) => {
-      const sizeParam: string = size ? '&size=' + size : '';
       const {paginatedDomainModels} = getState();
 
       if (shouldFetchEntities(ids, paginatedDomainModels[entityType])) {
-        const requestFunc = () =>
-          restClient.get(makeUrl(`${endPoint}`, idRequestParams(ids) + sizeParam));
+        const requestFunc = () => restClient.get(makeUrl(`${endPoint}/details`, idRequestParams(ids)));
         return asyncRequestEntities<T[]>({
           ...makeEntityRequestActionsOf<T[]>(endPoint),
           formatData: (data) => formatData(data.content),

@@ -28,4 +28,6 @@ public class PagedLogicalMeterDto {
   public String gatewaySerial;
   @Nullable
   public Long readIntervalMinutes;
+  @Nullable
+  public AlarmDto alarm;
 }

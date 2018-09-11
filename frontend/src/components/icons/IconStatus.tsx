@@ -5,11 +5,12 @@ import './IconStatus.scss';
 
 interface Props {
   status: Status;
-  name: string;
+  label: string;
+  tooltipText?: string;
 }
 
-export const IconStatus = ({status, name}: Props) => (
-  <div className={classNames('IconStatus', status)}>
-    {name}
+export const IconStatus = ({status, label, tooltipText}: Props) => (
+  <div className={classNames('IconStatus', status)} title={tooltipText}>
+    {label}
   </div>
 );

@@ -35,7 +35,7 @@ public class LogicalMeterUseCases {
     ));
   }
 
-  public List<LogicalMeter> findAll(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
     return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(
       currentUser,
       parameters
@@ -46,7 +46,7 @@ public class LogicalMeterUseCases {
     RequestParameters parameters,
     Pageable pageable
   ) {
-    return logicalMeters.findAllWithStatuses(
+    return logicalMeters.findAll(
       setCurrentUsersOrganisationId(
         currentUser,
         parameters

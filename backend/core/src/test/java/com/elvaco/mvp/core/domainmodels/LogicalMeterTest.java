@@ -3,7 +3,6 @@ package com.elvaco.mvp.core.domainmodels;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import org.junit.Test;
 
@@ -181,27 +180,8 @@ public class LogicalMeterTest {
   }
 
   @Test
-  public void currentStatus_explicitlySetStatusIsPreferred() {
-    LogicalMeter meter = newLogicalMeterWithStatuses(new StatusLogEntry<>(
-      randomUUID(),
-      StatusType.ERROR,
-      ZonedDateTime.now().minusDays(1)
-    ), singletonList(
-      new StatusLogEntry<>(
-        randomUUID(),
-        StatusType.OK,
-        ZonedDateTime.now()
-      )
-    ));
-    assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
-  }
-
-  @Test
   public void currentStatus_unknownIfNoStatusAvailable() {
-    LogicalMeter meter = newLogicalMeterWithStatuses(
-      null,
-      emptyList()
-    );
+    LogicalMeter meter = newLogicalMeterWithStatuses(emptyList());
 
     assertThat(meter.currentStatus()).isEqualTo(StatusType.UNKNOWN);
   }
@@ -209,7 +189,6 @@ public class LogicalMeterTest {
   @Test
   public void currentStatus_statusLogStatusIsUsedIfAvailable() {
     LogicalMeter meter = newLogicalMeterWithStatuses(
-      null,
       singletonList(newStatusLog(StatusType.ERROR, ZonedDateTime.now()))
     );
 
@@ -219,7 +198,6 @@ public class LogicalMeterTest {
   @Test
   public void currentStatus_latestStartedStatusLogUsedIfMultipleConcurrent() {
     LogicalMeter meter = newLogicalMeterWithStatuses(
-      null,
       asList(
         newStatusLog(StatusType.ERROR, ZonedDateTime.now()),
         newStatusLog(StatusType.OK, ZonedDateTime.now().plusHours(2)),
@@ -234,10 +212,9 @@ public class LogicalMeterTest {
   public void currentStatus_stoppedStatusesAreNotConsidered() {
     ZonedDateTime now = ZonedDateTime.now();
     LogicalMeter meter = newLogicalMeterWithStatuses(
-      null,
       asList(
         newStatusLog(StatusType.ERROR, now),
-        newStatusLog(StatusType.OK, now.plusHours(2), now.plusHours(3)),
+        newOkStatusLog(now.plusHours(2), now.plusHours(3)),
         newStatusLog(StatusType.WARNING, now.minusDays(1))
       )
     );
@@ -305,12 +282,8 @@ public class LogicalMeterTest {
     assertThat(collectionStats.missing).isEqualTo(1.0);
   }
 
-  private StatusLogEntry<UUID> newStatusLog(
-    StatusType statusType,
-    ZonedDateTime startTime,
-    ZonedDateTime stopTime
-  ) {
-    return new StatusLogEntry<>(0L, randomUUID(), statusType, startTime, stopTime);
+  private StatusLogEntry<UUID> newOkStatusLog(ZonedDateTime startTime, ZonedDateTime stopTime) {
+    return new StatusLogEntry<>(0L, randomUUID(), StatusType.OK, startTime, stopTime);
   }
 
   private StatusLogEntry<UUID> newStatusLog(StatusType statusType, ZonedDateTime startTime) {
@@ -343,20 +316,13 @@ public class LogicalMeterTest {
     UUID organisationId,
     List<PhysicalMeter> physicalMeterList
   ) {
-    return new LogicalMeter(
-      id,
-      "an-external-id",
-      organisationId,
-      MeterDefinition.HOT_WATER_METER,
-      ZonedDateTime.now(),
-      physicalMeterList,
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      null
-    );
+    return LogicalMeter.builder()
+      .id(id)
+      .externalId("an-external-id")
+      .organisationId(organisationId)
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .physicalMeters(physicalMeterList)
+      .build();
   }
 
   private LogicalMeter newLogicalMeter(
@@ -377,24 +343,15 @@ public class LogicalMeterTest {
     Long expectedMeasurementCount,
     Long missingMeasurementCount
   ) {
-    return new LogicalMeter(
-      randomUUID(),
-      "an-external-id",
-      randomUUID(),
-      MeterDefinition.UNKNOWN_METER,
-      ZonedDateTime.now(),
-      emptyList(),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      null
-    );
+    return LogicalMeter.builder()
+      .externalId("an-external-id")
+      .organisationId(randomUUID())
+      .expectedMeasurementCount(expectedMeasurementCount)
+      .missingMeasurementCount(missingMeasurementCount)
+      .build();
   }
 
   private LogicalMeter newLogicalMeterWithStatuses(
-    @Nullable StatusLogEntry<UUID> explicitStatus,
     List<StatusLogEntry<UUID>> physicalMeterStatuses
   ) {
     UUID organisationId = randomUUID();
@@ -416,19 +373,12 @@ public class LogicalMeterTest {
       .statuses(physicalMeterStatuses)
       .build();
 
-    return new LogicalMeter(
-      logicalMeterId,
-      "an-external-id",
-      randomUUID(),
-      MeterDefinition.DISTRICT_HEATING_METER,
-      ZonedDateTime.now(),
-      singletonList(physicalMeter),
-      emptyList(),
-      emptyList(),
-      UNKNOWN_LOCATION,
-      null,
-      null,
-      explicitStatus
-    );
+    return LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId("an-external-id")
+      .organisationId(organisationId)
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .physicalMeter(physicalMeter)
+      .build();
   }
 }

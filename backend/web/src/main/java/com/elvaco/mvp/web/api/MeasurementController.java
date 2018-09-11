@@ -166,6 +166,6 @@ public class MeasurementController {
       ID,
       meters.stream().map(UUID::toString).collect(toList())
     );
-    return logicalMeterUseCases.findAll(parameters);
+    return logicalMeterUseCases.findAllWithStatuses(parameters);
   }
 }

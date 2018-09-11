@@ -5,11 +5,11 @@ import {IconStatus} from '../icons/IconStatus';
 import {Row} from '../layouts/row/Row';
 
 interface Props {
-  name: string;
+  label: string;
 }
 
-export const Status = ({name}: Props) => (
+export const Status = ({label}: Props) => (
   <Row>
-    <IconStatus status={statusFor(name)} name={statusTranslation(name)}/>
+    <IconStatus status={statusFor(label)} label={statusTranslation(label)}/>
   </Row>
 );

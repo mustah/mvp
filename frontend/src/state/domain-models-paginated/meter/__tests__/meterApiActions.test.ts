@@ -10,13 +10,10 @@ import {ErrorResponse, uuid} from '../../../../types/Types';
 import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
 import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
-import {
-  domainModelPaginatedClearError,
-  makeRequestActionsOf,
-} from '../../paginatedDomainModelsActions';
+import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
 import {makeInitialState} from '../../paginatedDomainModelsReducer';
-import {clearErrorMeters, fetchMeterEntities, fetchMeters} from '../meterApiActions';
+import {clearErrorMeters, fetchMeterDetails, fetchMeters} from '../meterApiActions';
 import {Meter, MetersState} from '../meterModels';
 import {meterDataFormatter} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
@@ -244,7 +241,7 @@ describe('meterApiActions', () => {
 
   });
 
-  describe('fetchMeterEntities', () => {
+  describe('fetchMeterDetails', () => {
     const fetchMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
 
     const meter1: Partial<Meter> = {id: 1};
@@ -260,10 +257,10 @@ describe('meterApiActions', () => {
 
     const fetchMeterEntitiesWithResponseOk = async (ids: uuid[]) => {
       mockRestClient
-        .onGet(`${EndPoints.meters}?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
+        .onGet(`${EndPoints.meters}/details?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
         .reply(201, {content: meters});
 
-      return store.dispatch(fetchMeterEntities(ids));
+      return store.dispatch(fetchMeterDetails(ids));
     };
 
     it('does not normalize data', async () => {
@@ -316,9 +313,9 @@ describe('meterApiActions', () => {
       it('display error message when there is not internet connection', async () => {
         const fetchMetersWhenOffline = async () => {
           mockRestClient
-            .onGet(`${EndPoints.meters}?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
+            .onGet(`${EndPoints.meters}/details?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
             .networkError();
-          return store.dispatch(fetchMeterEntities(meterIds));
+          return store.dispatch(fetchMeterDetails(meterIds));
         };
 
         await fetchMetersWhenOffline();

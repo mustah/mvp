@@ -62,7 +62,7 @@ const renderCreated = ({created}: RenderableMeasurement): Children =>
     ? timestamp(created * 1000)
     : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
-const renderStatusCell = ({name}: MeterStatusChangelog): Children => <Status name={name}/>;
+const renderStatus = ({name}: MeterStatusChangelog): Children => <Status label={name}/>;
 
 const renderDate = ({start}: MeterStatusChangelog): Children =>
   <WrappedDateTime date={start} hasContent={!!start}/>;
@@ -148,7 +148,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
               />
               <TableColumn
                 header={<TableHead>{translate('status')}</TableHead>}
-                renderCell={renderStatusCell}
+                renderCell={renderStatus}
               />
             </Table>
             <TableInfoText/>
