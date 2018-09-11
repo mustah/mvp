@@ -463,7 +463,7 @@ msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 
 msgid "collection percentage"
-msgstr "collection"
+msgstr "collection %"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} meter will soon be synchronized"
