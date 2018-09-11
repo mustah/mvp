@@ -25,6 +25,13 @@
     }
   }
 
+  &:hover {
+    .SearchBox-input {
+      border: 1px solid $blue !important;
+      outline: none;
+    }
+  }
+
   &.SearchBox-list {
     width: 240px;
     margin-left: $lg-space;

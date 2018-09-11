@@ -3,7 +3,9 @@ import ActionSearch from 'material-ui/svg-icons/action/search';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
 import 'SearchBox.scss';
+import {colors} from '../../app/themes';
 import {ClassNamed, OnChange} from '../../types/Types';
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface Props extends ClassNamed {
   onChange: OnChange;
@@ -22,6 +24,12 @@ const style: React.CSSProperties = {
   right: 12,
   top: 6,
   color: '#7b7b7b',
+};
+
+const styles: SvgIconProps = {
+  style,
+  color: colors.lightBlack,
+  hoverColor: colors.iconHover,
 };
 
 export class SearchBox extends React.Component<Props, State> {
@@ -50,7 +58,7 @@ export class SearchBox extends React.Component<Props, State> {
           value={clear ? '' : value}
           onChange={this.onChange}
         />
-        {value ? <ContentClear onClick={this.onClear} style={style}/> : <ActionSearch style={style}/>}
+        {value ? <ContentClear onClick={this.onClear} {...styles}/> : <ActionSearch style={style}/>}
       </div>
     );
   }
