@@ -76,14 +76,15 @@ export const toMeterIdsApiParameters = (ids: uuid[]): string =>
 export const makeApiParametersOf = (
   start: Date,
   selectionInterval: SelectionInterval,
-): EncodedUriParameters => {
-  return toPeriodApiParameters({
+): EncodedUriParameters =>
+  toPeriodApiParameters({
     now: start,
     period: selectionInterval.period,
     customDateRange: Maybe.maybe(selectionInterval.customDateRange),
   }).join('&');
-};
 
 export const makeUrl =
   (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>
-    parameters && parameters.length ? `${endpoint}?${parameters}` : endpoint;
+    parameters && parameters.length
+      ? `${endpoint}?${parameters}`
+      : endpoint;
