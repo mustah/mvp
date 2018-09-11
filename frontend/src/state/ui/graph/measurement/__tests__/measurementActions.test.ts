@@ -275,15 +275,15 @@ describe('measurementActions', () => {
       const fetching: ReportContainerState = {...initialState};
       expect(state).not.toEqual(fetching);
 
-      await fetchMeasurements(
-        [],
-        [],
-        ['123abc'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [],
+        quantities: [],
+        selectedListItems: ['123abc'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
       const expected: ReportContainerState = {...initialState};
       expect(state).toEqual(expected);
     });
@@ -298,15 +298,15 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
-        Period.currentMonth,
-        Maybe.nothing(),
-        (state: ReportContainerState) => void(0),
-        (error?: Unauthorized) => void(0),
-      );
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
+        updateState: (state: ReportContainerState) => void(0),
+        logout: (error?: Unauthorized) => void(0),
+      });
 
       expect(requestedUrls[0]).toMatch(
         /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/);
@@ -317,15 +317,15 @@ describe('measurementActions', () => {
       const fetching: ReportContainerState = {...initialState};
       expect(state).not.toEqual(fetching);
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        [],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: [],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
       const expected: ReportContainerState = {...initialState};
       expect(state).toEqual(expected);
     });
@@ -342,15 +342,15 @@ describe('measurementActions', () => {
           return [200, 'some data'];
         });
 
-        await fetchMeasurements(
-          [Medium.districtHeating],
-          [Quantity.power],
-          ['123abc'],
-          Period.currentMonth,
-          Maybe.nothing(),
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['123abc'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
           updateState,
           logout,
-        );
+        });
         expect(requestedUrls.length).toEqual(1);
         expect(requestedUrls[0]).toMatch(
           /\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
@@ -367,15 +367,15 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
       expect(requestedUrls).toHaveProperty('length', 2);
       requestedUrls.sort();
       expect(requestedUrls[0])
@@ -457,15 +457,15 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
 
       expect(requestedUrls.length).toEqual(2);
 
@@ -546,15 +546,15 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
 
       expect(state.measurementResponse.average[0].values).toHaveLength(1);
       expect(state.measurementResponse.average[0].values[0].value).toBe(0.55);
@@ -631,15 +631,15 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
 
       expect(state.measurementResponse.average[0].values).toHaveLength(2);
       expect(state.measurementResponse.average[0].values[0].value).toBe(0);

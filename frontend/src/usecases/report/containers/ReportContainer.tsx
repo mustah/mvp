@@ -25,17 +25,9 @@ import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {
-  fetchMeasurements,
-  mapApiResponseToGraphData,
-} from '../../../state/ui/graph/measurement/measurementActions';
-import {
-  initialState, MeasurementResponses,
-  Quantity,
-} from '../../../state/ui/graph/measurement/measurementModels';
-import {
-  toggleReportIndicatorWidget,
-} from '../../../state/ui/indicator/indicatorActions';
+import {fetchMeasurements, mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/measurementActions';
+import {initialState, MeasurementResponses, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {ErrorResponse, uuid} from '../../../types/Types';
@@ -80,35 +72,51 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     this.state = {...initialState};
   }
 
+  updateState = (state: ReportContainerState) => this.setState({...state});
+
+  clearError = async () => {
+    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
+    this.setState({error: Maybe.nothing(), isFetching: true});
+    await fetchMeasurements({
+      selectedIndicators,
+      quantities: selectedQuantities,
+      selectedListItems,
+      timePeriod: period,
+      customDateRange,
+      updateState: this.updateState,
+      logout,
+    });
+  }
+
   async componentDidMount() {
     const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
 
     this.setState({isFetching: true});
 
-    await fetchMeasurements(
+    await fetchMeasurements({
       selectedIndicators,
-      selectedQuantities,
+      quantities: selectedQuantities,
       selectedListItems,
-      period,
+      timePeriod: period,
       customDateRange,
-      this.updateState,
+      updateState: this.updateState,
       logout,
-    );
+    });
   }
 
   async componentWillReceiveProps({
     selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
   }: Props) {
     this.setState({isFetching: true});
-    await fetchMeasurements(
+    await fetchMeasurements({
       selectedIndicators,
-      selectedQuantities,
+      quantities: selectedQuantities,
       selectedListItems,
-      period,
+      timePeriod: period,
       customDateRange,
-      this.updateState,
+      updateState: this.updateState,
       logout,
-    );
+    });
   }
 
   render() {
@@ -131,7 +139,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     const indicators = hardcodedIndicators();
 
     const renderLegend = () => graphContents.lines.length > 0 ?
-        <LegendContainer graphContents={graphContents} onToggleLine={onToggleLine}/> : null;
+      <LegendContainer graphContents={graphContents} onToggleLine={onToggleLine}/> : null;
 
     return (
       <MvpPageContainer>
@@ -143,11 +151,11 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
           </Row>
         </Row>
 
-      <ReportIndicatorWidgets
-        indicators={indicators}
-        selectedIndicatorTypes={selectedIndicatorTypes}
-        onClick={toggleReportIndicatorWidget}
-      />
+        <ReportIndicatorWidgets
+          indicators={indicators}
+          selectedIndicatorTypes={selectedIndicatorTypes}
+          onClick={toggleReportIndicatorWidget}
+        />
 
         <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
           <Paper style={contentStyle}>
@@ -163,7 +171,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                   <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenKeys}/>
                 </TabContent>
                 <TabContent tab={TabName.list} selectedTab={selectedTab}>
-                  <MeasurementListContainer measurement={measurementResponse.measurement} />
+                  <MeasurementListContainer measurement={measurementResponse.measurement}/>
                 </TabContent>
               </Tabs>
             </div>
@@ -171,22 +179,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
           </Paper>
         </Loader>
       </MvpPageContainer>
-    );
-  }
-
-  updateState = (state: ReportContainerState) => this.setState({...state});
-
-  clearError = async () => {
-    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
-    this.setState({error: Maybe.nothing(), isFetching: true});
-    await fetchMeasurements(
-      selectedIndicators,
-      selectedQuantities,
-      selectedListItems,
-      period,
-      customDateRange,
-      this.updateState,
-      logout,
     );
   }
 }

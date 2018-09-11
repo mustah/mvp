@@ -206,16 +206,26 @@ interface GraphDataResponse {
 export const isSelectedMeter = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,:]/) || []).length === 0;
 
+interface MeasurementOptions {
+  selectedIndicators: Medium[];
+  quantities: Quantity[];
+  selectedListItems: uuid[];
+  timePeriod: Period;
+  customDateRange: Maybe<DateRange>;
+  updateState: OnUpdateGraph;
+  logout: OnLogout;
+}
+
 export const fetchMeasurements =
-  async (
-    selectedIndicators: Medium[],
-    quantities: Quantity[],
-    selectedListItems: uuid[],
-    timePeriod: Period,
-    customDateRange: Maybe<DateRange>,
-    updateState: OnUpdateGraph,
-    logout: OnLogout,
-  ): Promise<void> => {
+  async ({
+    selectedIndicators,
+    quantities,
+    selectedListItems,
+    timePeriod,
+    customDateRange,
+    updateState,
+    logout,
+}: MeasurementOptions): Promise<void> => {
 
     selectedListItems = selectedListItems.filter(isSelectedMeter);
 
