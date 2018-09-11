@@ -105,7 +105,7 @@ export const mapApiResponseToGraphData =
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
-    measurement.forEach(({id, quantity, label, city, address, values, unit}: MeasurementApiResponsePart) => {
+    measurement.forEach(({id, quantity, label, city, address , medium, values, unit}: MeasurementApiResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
       values.forEach(({when, value}) => {
@@ -138,6 +138,7 @@ export const mapApiResponseToGraphData =
           name: label,
           city,
           address,
+          medium,
           stroke: colorizeMeters(quantity as Quantity),
           strokeWidth: meterStrokeWidth,
           yAxisId,
@@ -146,7 +147,7 @@ export const mapApiResponseToGraphData =
       }
     });
 
-    average.forEach(({id, quantity, values, unit, address, city}: MeasurementApiResponsePart) => {
+    average.forEach(({id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
       if (!yAxisId) {
         return;
@@ -159,6 +160,7 @@ export const mapApiResponseToGraphData =
         name: dataKey,
         city,
         address,
+        medium,
         stroke: colorizeAverage(quantity as Quantity),
         strokeWidth: thickStroke,
         yAxisId,

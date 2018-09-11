@@ -39,6 +39,7 @@ public class MeasurementDtoMapperTest {
         physicalMeterId.toString(),
         "city",
         "address",
+        "medium",
         singletonList(
           new MeasurementValueDto(measurement.created.toInstant(), 3.0)
         )
@@ -46,7 +47,7 @@ public class MeasurementDtoMapperTest {
     );
 
     assertThat(MeasurementDtoMapper.toSeries(singletonList(
-      LabeledMeasurementValue.of(measurement, logicalMeterId, "city", "address")
+      LabeledMeasurementValue.of(measurement, logicalMeterId, "city", "address", "medium")
     ))).isEqualTo(expected);
   }
 
@@ -65,6 +66,7 @@ public class MeasurementDtoMapperTest {
         physicalMeterId.toString(),
         "city",
         "address",
+        "medium",
         asList(
           new MeasurementValueDto(firstMeasurement.created.toInstant(), 3.0),
           new MeasurementValueDto(secondMeasurement.created.toInstant(), 3.0)
@@ -73,8 +75,8 @@ public class MeasurementDtoMapperTest {
     );
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.of(firstMeasurement, logicalMeterId, "city", "address"),
-      LabeledMeasurementValue.of(secondMeasurement, logicalMeterId, "city", "address")
+      LabeledMeasurementValue.of(firstMeasurement, logicalMeterId, "city", "address", "medium"),
+      LabeledMeasurementValue.of(secondMeasurement, logicalMeterId, "city", "address", "medium")
     ))).isEqualTo(expected);
   }
 
@@ -86,8 +88,8 @@ public class MeasurementDtoMapperTest {
     Measurement secondMeasurement = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.of(firstMeasurement, logicalMeterId, "city", "address"),
-      LabeledMeasurementValue.of(secondMeasurement, logicalMeterId, "city", "address")
+      LabeledMeasurementValue.of(firstMeasurement, logicalMeterId, "city", "address", "medium"),
+      LabeledMeasurementValue.of(secondMeasurement, logicalMeterId, "city", "address", "medium")
     ))).isEqualTo(
       asList(
         new MeasurementSeriesDto(
@@ -97,6 +99,7 @@ public class MeasurementDtoMapperTest {
           physicalMeterId.toString(),
           "city",
           "address",
+          "medium",
           singletonList(
             new MeasurementValueDto(firstMeasurement.created.toInstant(), 3.0)
           )
@@ -108,6 +111,7 @@ public class MeasurementDtoMapperTest {
           physicalMeterId.toString(),
           "city",
           "address",
+          "medium",
           singletonList(
             new MeasurementValueDto(secondMeasurement.created.toInstant(), 3.0)
           )
@@ -132,8 +136,20 @@ public class MeasurementDtoMapperTest {
     );
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.of(firstMeasurement, firstLogicalMeterId, "city", "address"),
-      LabeledMeasurementValue.of(secondMeasurement, secondLogicalMeterId, "city", "address")
+      LabeledMeasurementValue.of(
+        firstMeasurement,
+        firstLogicalMeterId,
+        "city",
+        "address",
+        "medium"
+      ),
+      LabeledMeasurementValue.of(
+        secondMeasurement,
+        secondLogicalMeterId,
+        "city",
+        "address",
+        "medium"
+      )
     ))).isEqualTo(
       asList(
         new MeasurementSeriesDto(
@@ -143,6 +159,7 @@ public class MeasurementDtoMapperTest {
           firstPhysicalMeterId.toString(),
           "city",
           "address",
+          "medium",
           singletonList(
             new MeasurementValueDto(firstMeasurement.created.toInstant(), 3.0)
           )
@@ -154,6 +171,7 @@ public class MeasurementDtoMapperTest {
           secondPhysicalMeterId.toString(),
           "city",
           "address",
+          "medium",
           singletonList(
             new MeasurementValueDto(secondMeasurement.created.toInstant(), 3.0)
           )
@@ -170,9 +188,9 @@ public class MeasurementDtoMapperTest {
     Measurement firstMilk = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
     assertThat(MeasurementDtoMapper.toSeries(asList(
-      LabeledMeasurementValue.of(firstCheese, logicalMeterId, "city", "address"),
-      LabeledMeasurementValue.of(secondCheese, logicalMeterId, "city", "address"),
-      LabeledMeasurementValue.of(firstMilk, logicalMeterId, "city", "address")
+      LabeledMeasurementValue.of(firstCheese, logicalMeterId, "city", "address", "medium"),
+      LabeledMeasurementValue.of(secondCheese, logicalMeterId, "city", "address", "medium"),
+      LabeledMeasurementValue.of(firstMilk, logicalMeterId, "city", "address", "medium")
     ))).isEqualTo(
       asList(
         new MeasurementSeriesDto(
@@ -182,6 +200,7 @@ public class MeasurementDtoMapperTest {
           physicalMeterId.toString(),
           "city",
           "address",
+          "medium",
           asList(
             new MeasurementValueDto(firstCheese.created.toInstant(), 3.0),
             new MeasurementValueDto(secondCheese.created.toInstant(), 3.0)
@@ -194,6 +213,7 @@ public class MeasurementDtoMapperTest {
           physicalMeterId.toString(),
           "city",
           "address",
+          "medium",
           singletonList(
             new MeasurementValueDto(firstMilk.created.toInstant(), 3.0)
           )

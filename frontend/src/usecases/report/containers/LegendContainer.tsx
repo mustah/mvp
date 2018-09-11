@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
+import {IconIndicator} from '../../../components/icons/IconIndicator';
 import {Row} from '../../../components/layouts/row/Row';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
@@ -26,9 +27,16 @@ interface DispatchToProps {
 
 type Props = OwnProps & DispatchToProps;
 
+const style: React.CSSProperties = {
+  display: 'table',
+  width: '24px',
+  height: '24px',
+};
+
 const renderName = (line: LegendItem) => orUnknown(line.label);
 const renderAddress = (line: LegendItem) => orUnknown(line.address);
 const renderCity = (line: LegendItem) => orUnknown(line.city);
+const renderMedium = (line: LegendItem) => <IconIndicator medium={line.medium} style={style} />;
 
 class LegendComponent extends React.Component<Props> {
   render() {
@@ -41,6 +49,7 @@ class LegendComponent extends React.Component<Props> {
         label: line.name,
         address: line.address,
         city: line.city,
+        medium: line.medium,
         color: '', // TODO a meters lines, should be identifiable by color.
         id: line.id,
       };
@@ -76,6 +85,11 @@ class LegendComponent extends React.Component<Props> {
             header={<TableHead>{translate('address')}</TableHead>}
             cellClassName={'first-uppercase'}
             renderCell={renderAddress}
+          />
+          <TableColumn
+            header={<TableHead>{translate('medium')}</TableHead>}
+            cellClassName={'icon'}
+            renderCell={renderMedium}
           />
           <TableColumn
             header={<TableHead className="icon"/>}

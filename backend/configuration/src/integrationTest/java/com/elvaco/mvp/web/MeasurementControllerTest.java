@@ -246,6 +246,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Difference temperature",
         "K",
         butterMeter.externalId,
+        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
           new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74)
         )
@@ -255,6 +256,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Energy",
         "kWh",
         butterMeter.externalId,
+        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), null),
           new MeasurementValueDto(date.plusHours(1).toInstant(), null)
@@ -308,6 +310,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Difference temperature",
         "K",
         butterMeter.externalId,
+        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), 558.74),
           new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74)
@@ -318,6 +321,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Energy",
         "kWh",
         butterMeter.externalId,
+        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), null),
           new MeasurementValueDto(date.plusHours(1).toInstant(), null)
@@ -1042,6 +1046,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Volume",
         "m³",
         meter.externalId,
+        consumptionMeter.meterDefinition.medium,
         asList(
           new MeasurementValueDto(when.toInstant(), null),
           new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
@@ -1083,6 +1088,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Volume",
         "m³",
         meter.externalId,
+        consumptionMeter.meterDefinition.medium,
         asList(
           new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
           new MeasurementValueDto(when.plusHours(2).toInstant(), 20.0)
