@@ -8,10 +8,16 @@ import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
-import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
+import {initialState, MeasurementApiResponse, MeasurementResponses, Quantity} from '../measurementModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
+
+  const emptyResponses = (): MeasurementResponses => ({
+    measurement: [],
+    average: [],
+  });
+
   describe('mapApiResponseToGraphData', () => {
     describe('formats data for Rechart\'s LineGraph', () => {
       const emptyGraphContents = (): GraphContents => ({
@@ -25,10 +31,7 @@ describe('measurementActions', () => {
       });
 
       it('handles 0 entities gracefully', () => {
-        const graphDataFromZeroEntities = mapApiResponseToGraphData({
-          measurement: [],
-          average: [],
-        });
+        const graphDataFromZeroEntities = mapApiResponseToGraphData(emptyResponses());
         expect(graphDataFromZeroEntities).toEqual(emptyGraphContents());
       });
     });
@@ -69,8 +72,8 @@ describe('measurementActions', () => {
         ];
 
         const graphContents = mapApiResponseToGraphData({
+          ...emptyResponses(),
           measurement: sameUnit,
-          average: [],
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -111,8 +114,8 @@ describe('measurementActions', () => {
         ];
 
         const graphContents = mapApiResponseToGraphData({
+          ...emptyResponses(),
           measurement: twoDifferentUnits,
-          average: [],
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -169,8 +172,8 @@ describe('measurementActions', () => {
         ];
 
         const graphContents = mapApiResponseToGraphData({
+          ...emptyResponses(),
           measurement: threeDifferentUnits,
-          average: [],
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -233,6 +236,7 @@ describe('measurementActions', () => {
           ];
 
           const graphContents = mapApiResponseToGraphData({
+            ...emptyResponses(),
             measurement: slightlyLaterThanFirstAverage,
             average,
           });
