@@ -147,7 +147,7 @@ msgid "no"
 msgstr "nej"
 
 msgid "meter id"
-msgstr "mätar id"
+msgstr "mätar-id"
 
 msgid "gateway details"
 msgstr "gateway"

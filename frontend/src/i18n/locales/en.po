@@ -147,7 +147,7 @@ msgid "no"
 msgstr "no"
 
 msgid "meter id"
-msgstr "meter id"
+msgstr "meter-id"
 
 msgid "gateway details"
 msgstr "gateway"
