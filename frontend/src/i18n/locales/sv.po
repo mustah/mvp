@@ -153,7 +153,7 @@ msgid "gateway details"
 msgstr "gateway"
 
 msgid "gateway serial"
-msgstr "gateway serienummer"
+msgstr "serienummer"
 
 msgid "product model"
 msgstr "modell"

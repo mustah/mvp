@@ -72,7 +72,7 @@ class GatewayDetailsInfo extends React.Component<Props> {
           </Row>
         </Column>
         <Row>
-          <Column>
+          <Column className="Gateway-image">
             <img src={gatewayImage} width={120}/>
           </Column>
           <Info

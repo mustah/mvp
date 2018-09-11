@@ -4,8 +4,16 @@
 .GatewayDetailsInfo {
   .Overview {
     .Column {
-      margin: 0 $xl-space $lg-space $xl-space;
+      margin: 0 $xl-space $xl-space 0;
     }
+
+    .MainTitle {
+      margin-right: $xl-space;
+    }
+  }
+
+  .Gateway-image {
+    margin-right: 12px;
   }
 
   .Info {

@@ -98,7 +98,7 @@ class MeterDetailsInfo extends React.Component<Props> {
                 <Subtitle>{translate('collection')}</Subtitle>
               </Row>
             </Column>
-            <Info label={translate('resolution')} value={renderReadInterval()}/>
+            <Info className="First-column" label={translate('resolution')} value={renderReadInterval()}/>
             <Info label={translate('collection percentage')} value={formattedCollectionPercentage}/>
           </Row>
           <Row>
@@ -108,11 +108,11 @@ class MeterDetailsInfo extends React.Component<Props> {
               </Row>
             </Column>
             <Info
+              className="First-column"
               label={translate('alarm')}
               value={<MeterAlarm alarm={meter.alarm}/>}
             />
             <Info
-              className="StatusChange"
               label={translate('status change')}
               value={<WrappedDateTime date={meter.statusChanged} hasContent={!!meter.statusChanged}/>}
             />
