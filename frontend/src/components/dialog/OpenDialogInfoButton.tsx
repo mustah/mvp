@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Children} from '../../types/Types';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
+import {ButtonClose} from '../buttons/DialogButtons';
 import {InfoButtonProps} from '../buttons/InfoButton';
 import {Dialog} from './Dialog';
 
@@ -43,6 +44,7 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
 
     return isOpen && (
       <Dialog isOpen={isOpen} close={this.close} autoScrollBodyContent={autoScrollBodyContent}>
+        <ButtonClose onClick={this.close}/>
         {children}
       </Dialog>
     );
