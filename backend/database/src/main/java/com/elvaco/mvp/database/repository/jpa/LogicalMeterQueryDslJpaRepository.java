@@ -27,7 +27,6 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -264,15 +263,6 @@ class LogicalMeterQueryDslJpaRepository
       .execute();
   }
 
-  private Map<UUID, PhysicalMeterStatusLogEntity> findCurrentStatuses(Predicate predicate) {
-    return createQuery(predicate)
-      .select(STATUS_LOG.start.max())
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
-      .transform(groupBy(LOGICAL_METER.id).as(STATUS_LOG));
-  }
-
   private Map<UUID, MeterAlarmLogEntity> findAlarms(Predicate predicate) {
     return createQuery(predicate)
       .select(ALARM_LOG.start.max())
@@ -294,9 +284,6 @@ class LogicalMeterQueryDslJpaRepository
           (oldCount, newCount) -> oldCount + newCount
         ));
 
-    Map<UUID, PhysicalMeterStatusLogEntity> statuses =
-      findCurrentStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
-
     Map<UUID, MeterAlarmLogEntity> alarms =
       findAlarms(new MeterAlarmLogQueryFilters().toExpression(parameters));
 
@@ -304,7 +291,6 @@ class LogicalMeterQueryDslJpaRepository
       .map(pagedLogicalMeter -> pagedLogicalMeter
         .withMetaData(
           readingCounts.getOrDefault(pagedLogicalMeter.id, 0L),
-          statuses.get(pagedLogicalMeter.id),
           alarms.get(pagedLogicalMeter.id)
         )
       ).collect(toList());

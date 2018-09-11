@@ -2,7 +2,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {clearError, fetchIfNeeded} from '../paginatedDomainModelsActions';
-import {fetchEntitiesIfNeeded} from '../paginatedDomainModelsEntityActions';
+import {fetchEntityDetailsIfNeeded} from '../paginatedDomainModelsEntityActions';
 import {Meter} from './meterModels';
 import {meterDataFormatter, meterProcessStrategy} from './meterSchema';
 
@@ -16,7 +16,7 @@ export const fetchMeters = fetchIfNeeded<Meter>(
   },
 );
 
-export const fetchMeterEntities = fetchEntitiesIfNeeded<Meter>(
+export const fetchMeterDetails = fetchEntityDetailsIfNeeded<Meter>(
   EndPoints.meters,
   'meters',
   (data: Meter[]) => data.map(meterProcessStrategy),

@@ -15,6 +15,7 @@ import com.elvaco.mvp.testing.cache.MockCache;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.JsonFileReader.parseJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -103,28 +104,7 @@ public class MeteringMessageListenerTest {
 
   @Test
   public void receiveAlarmMessage() {
-    String message =
-      ("{\n"
-         + "\"alarm\": [\n"
-         + "\t{\n"
-         + "\t\t\"code\": 1308,\n"
-         + "\t\t\"description\": \"Elvaco specialfel 3\",\n"
-         + "\t\t\"timestamp\": \"2018-03-15T09:00:00\"\n"
-         + "\t}\n"
-         + "],\n"
-         + "\"facility\": {\n"
-         + "\t\"id\": \"MVP_alarm_test\"\n"
-         + "},\n"
-         + "\"gateway\": {\n"
-         + "\t\"id\": \"12100016\"\n"
-         + "},\n"
-         + "\"message_type\": \"Elvaco MVP MQ Alarm Message 1.0\",\n"
-         + "\"meter\": {\n"
-         + "\t\"id\": \"67125944\"\n"
-         + "},\n"
-         + "\"organisation_id\": \"Elvaco AB\",\n"
-         + "\"source_system_id\": \"Elvaco Metering\"\n"
-         + "}\n");
+    String message = parseJsonFile("messages/alarm.json");
 
     messageListener.onMessage(message);
 

@@ -47,8 +47,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   @Nullable
   public final Long missingMeasurementCount;
   @Nullable
-  public final StatusLogEntry<UUID> currentStatus;
-  @Nullable
   public final AlarmLogEntry alarm;
 
   private LogicalMeter(
@@ -63,7 +61,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     Location location,
     @Nullable Long expectedMeasurementCount,
     @Nullable Long missingMeasurementCount,
-    @Nullable StatusLogEntry<UUID> currentStatus,
     @Nullable AlarmLogEntry alarm
   ) {
     this.id = id;
@@ -77,7 +74,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     this.location = location;
     this.expectedMeasurementCount = expectedMeasurementCount;
     this.missingMeasurementCount = missingMeasurementCount;
-    this.currentStatus = currentStatus;
     this.alarm = alarm;
   }
 
@@ -87,16 +83,16 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   }
 
   public StatusType currentStatus() {
-    if (currentStatus != null) {
-      return currentStatus.status;
-    }
+    return activeStatusLog()
+      .map(statusLogEntry -> statusLogEntry.status)
+      .orElse(StatusType.UNKNOWN);
+  }
 
+  public Optional<StatusLogEntry<UUID>> activeStatusLog() {
     return physicalMeters.stream()
       .flatMap(physicalMeter -> physicalMeter.statuses.stream())
       .filter(StatusLogEntry::isActive)
-      .max(Comparator.comparing(o -> o.start))
-      .map(statusLogEntry -> statusLogEntry.status)
-      .orElse(StatusType.UNKNOWN);
+      .max(Comparator.comparing(o -> o.start));
   }
 
   public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
@@ -112,7 +108,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      currentStatus,
       alarm
     );
   }
@@ -134,7 +129,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      currentStatus,
       alarm
     );
   }
@@ -152,7 +146,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      currentStatus,
       alarm
     );
   }
@@ -170,7 +163,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      currentStatus,
       alarm
     );
   }
@@ -188,7 +180,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      currentStatus,
       alarm
     );
   }
@@ -206,7 +197,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      currentStatus,
       alarm
     );
   }

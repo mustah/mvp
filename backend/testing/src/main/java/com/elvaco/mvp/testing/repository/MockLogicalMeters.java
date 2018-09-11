@@ -60,7 +60,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<LogicalMeter> findAllWithStatuses(
+  public Page<LogicalMeter> findAll(
     RequestParameters parameters,
     Pageable pageable
   ) {
@@ -126,7 +126,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       .location(logicalMeter.location)
       .expectedMeasurementCount(logicalMeter.expectedMeasurementCount)
       .missingMeasurementCount(logicalMeter.missingMeasurementCount)
-      .currentStatus(logicalMeter.currentStatus)
       .alarm(logicalMeter.alarm)
       .build();
   }

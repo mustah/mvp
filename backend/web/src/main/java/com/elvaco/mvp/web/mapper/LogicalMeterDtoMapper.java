@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -43,14 +44,10 @@ public class LogicalMeterDtoMapper {
     PagedLogicalMeterDto meterDto = new PagedLogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.id = logicalMeter.id;
-    meterDto.status = logicalMeter.currentStatus();
     meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask))
       .orElse(null);
     meterDto.manufacturer = logicalMeter.getManufacturer();
-    meterDto.statusChanged = Optional.ofNullable(logicalMeter.currentStatus)
-      .map(logEntry -> Dates.formatUtc(logEntry.start))
-      .orElse(null);
     meterDto.facility = logicalMeter.externalId;
     meterDto.address = logicalMeter.activePhysicalMeter()
       .map(m -> m.address)
@@ -76,21 +73,30 @@ public class LogicalMeterDtoMapper {
     return meterDto;
   }
 
+  public static PagedLogicalMeterDto toPagedDetailsDto(LogicalMeter logicalMeter) {
+    PagedLogicalMeterDto pagedMeterDto = toPagedDto(logicalMeter);
+    Optional<StatusLogEntry<UUID>> statusLog = logicalMeter.activeStatusLog();
+    pagedMeterDto.status = statusLog.map(entry -> entry.status).orElse(StatusType.UNKNOWN);
+    pagedMeterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
+      .orElse(logicalMeter.created));
+    return pagedMeterDto;
+  }
+
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
     String created = formatUtc(logicalMeter.created);
+    Optional<StatusLogEntry<UUID>> statusLog = logicalMeter.activeStatusLog();
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
     meterDto.id = logicalMeter.id;
-    meterDto.status = logicalMeter.currentStatus();
+    meterDto.status = statusLog.map(entry -> entry.status).orElse(StatusType.UNKNOWN);
+    meterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
+      .orElse(logicalMeter.created));
     meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask, alarm.description))
       .orElse(null);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
-    meterDto.statusChanged = Dates.formatUtc(Optional.ofNullable(logicalMeter.currentStatus)
-      .map(uuidStatusLogEntry -> uuidStatusLogEntry.start)
-      .orElse(logicalMeter.created));
     meterDto.facility = logicalMeter.externalId;
     meterDto.address = logicalMeter.activePhysicalMeter()
       .map(m -> m.address)

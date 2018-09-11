@@ -98,6 +98,18 @@ public class LogicalMeterController {
       .map(LogicalMeterDtoMapper::toPagedDto);
   }
 
+  @GetMapping("/details")
+  public org.springframework.data.domain.Page<PagedLogicalMeterDto> logicalMetersWithDetails(
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable
+  ) {
+    RequestParameters parameters = requestParametersOf(requestParams);
+    List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllWithStatuses(parameters);
+
+    return new PageImpl<>(logicalMeters, pageable, logicalMeters.size())
+      .map(LogicalMeterDtoMapper::toPagedDetailsDto);
+  }
+
   @DeleteMapping("{id}")
   public LogicalMeterDto deleteMeter(@PathVariable UUID id) {
     return LogicalMeterDtoMapper.toDto(

@@ -156,9 +156,6 @@ public class LogicalMeterEntityMapper {
       .location(LocationEntityMapper.toDomainModel(logicalMeter.location))
       .expectedMeasurementCount(expectedReadingCount)
       .missingMeasurementCount(logicalMeter.missingReadingCount)
-      .currentStatus(Optional.ofNullable(logicalMeter.currentStatus)
-        .map(MeterStatusLogEntityMapper::toDomainModel)
-        .orElse(null))
       .alarm(toActiveAlarm(logicalMeter.alarm))
       .build();
   }

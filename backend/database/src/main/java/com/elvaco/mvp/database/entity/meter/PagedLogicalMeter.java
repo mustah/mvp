@@ -18,7 +18,6 @@ public class PagedLogicalMeter {
   public final ZonedDateTime created;
   public final MeterDefinitionEntity meterDefinition;
   public final GatewayEntity gateway;
-  public final PhysicalMeterStatusLogEntity currentStatus;
   public final LocationEntity location;
   public final PhysicalMeterEntity activePhysicalMeter;
   public final Long missingReadingCount;
@@ -45,7 +44,6 @@ public class PagedLogicalMeter {
       new LocationEntity(id, country, city, streetAddress),
       activePhysicalMeter,
       gateway,
-      null,
       0L,
       null
     );
@@ -60,7 +58,6 @@ public class PagedLogicalMeter {
     LocationEntity location,
     @Nullable PhysicalMeterEntity activePhysicalMeter,
     @Nullable GatewayEntity gateway,
-    @Nullable PhysicalMeterStatusLogEntity currentStatus,
     @Nullable Long missingReadingCount,
     @Nullable MeterAlarmLogEntity alarm
   ) {
@@ -72,7 +69,6 @@ public class PagedLogicalMeter {
     this.location = location;
     this.activePhysicalMeter = activePhysicalMeter;
     this.gateway = gateway;
-    this.currentStatus = currentStatus;
     this.missingReadingCount = missingReadingCount;
     this.alarm = alarm;
   }
@@ -85,7 +81,6 @@ public class PagedLogicalMeter {
 
   public PagedLogicalMeter withMetaData(
     @Nullable Long missingReadingCount,
-    PhysicalMeterStatusLogEntity currentStatus,
     @Nullable MeterAlarmLogEntity alarm
   ) {
     return new PagedLogicalMeter(
@@ -97,7 +92,6 @@ public class PagedLogicalMeter {
       location,
       activePhysicalMeter,
       gateway,
-      currentStatus,
       missingReadingCount,
       alarm
     );
