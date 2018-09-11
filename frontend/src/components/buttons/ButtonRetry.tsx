@@ -6,10 +6,12 @@ import {ClassNamed, Clickable} from '../../types/Types';
 
 type Props = ClassNamed & Clickable;
 
+const style: React.CSSProperties = {...buttonStyle, marginBottom: 24};
+
 export const ButtonRetry = (props: Props) => (
   <FlatButton
     {...props}
     label={firstUpperTranslated('retry')}
-    style={buttonStyle}
+    style={style}
   />
 );
