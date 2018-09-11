@@ -16,6 +16,7 @@ describe('measurementActions', () => {
   const emptyResponses = (): MeasurementResponses => ({
     measurement: [],
     average: [],
+    cities: [],
   });
 
   describe('mapApiResponseToGraphData', () => {
@@ -292,7 +293,7 @@ describe('measurementActions', () => {
       expect(state).toEqual(expected);
     });
 
-    it('includes meters and excludes cities/clusters/addreses in request', async () => {
+    it('includes meters and excludes clusters/addreses in request', async () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
@@ -316,6 +317,68 @@ describe('measurementActions', () => {
         /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/);
     });
 
+    describe('cities', () => {
+
+      it('requests cities when no meters are selected', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
+
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs', 'sweden,göteborg'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
+          updateState: (state: ReportContainerState) => void(0),
+          logout: (error?: Unauthorized) => void(0),
+        });
+
+        expect(requestedUrls).toHaveLength(1);
+
+        const expected: RegExp =
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&city=sweden,göteborg&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[0]).toMatch(expected);
+      });
+
+      it('requests cities when meters are selected too', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
+
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
+          updateState: (state: ReportContainerState) => void(0),
+          logout: (error?: Unauthorized) => void(0),
+        });
+
+        expect(requestedUrls).toHaveLength(2);
+
+        const meterUrl: RegExp =
+          /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[0]).toMatch(meterUrl);
+
+        const cityUrl: RegExp =
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[1]).toMatch(cityUrl);
+      });
+
+    });
+
     it('returns empty data if no meter ids are provided', async () => {
       updateState({...initialState, isFetching: true});
       const fetching: ReportContainerState = {...initialState};
@@ -334,9 +397,7 @@ describe('measurementActions', () => {
       expect(state).toEqual(expected);
     });
 
-    it(
-      'does not include average endpoint when asking for measurements for single meter',
-      async () => {
+    it('does not include average endpoint when asking for measurements for single meter', async () => {
         const mockRestClient = new MockAdapter(axios);
         authenticate('test');
 
@@ -355,7 +416,7 @@ describe('measurementActions', () => {
           updateState,
           logout,
         });
-        expect(requestedUrls.length).toEqual(1);
+        expect(requestedUrls).toHaveLength(1);
         expect(requestedUrls[0]).toMatch(
           /\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
       },
@@ -380,7 +441,7 @@ describe('measurementActions', () => {
         updateState,
         logout,
       });
-      expect(requestedUrls).toHaveProperty('length', 2);
+      expect(requestedUrls).toHaveLength(2);
       requestedUrls.sort();
       expect(requestedUrls[0])
         .toMatch(
@@ -471,7 +532,7 @@ describe('measurementActions', () => {
         logout,
       });
 
-      expect(requestedUrls.length).toEqual(2);
+      expect(requestedUrls).toHaveLength(2);
 
       const graphContents: GraphContents = mapApiResponseToGraphData(state.measurementResponse);
 

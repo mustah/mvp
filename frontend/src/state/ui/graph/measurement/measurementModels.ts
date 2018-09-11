@@ -11,9 +11,10 @@ export interface Measurement extends Identifiable {
   unit: string;
 }
 
-const emptyMeasurementResponse = {
+const emptyMeasurementResponse: MeasurementResponses = {
   measurement: [],
   average: [],
+  cities: [],
 };
 
 export const initialState: ReportContainerState = {
@@ -43,6 +44,7 @@ export type MeasurementApiResponse = MeasurementApiResponsePart[];
 export interface MeasurementResponses {
   measurement: MeasurementApiResponse;
   average: MeasurementApiResponse;
+  cities: MeasurementApiResponse;
 }
 
 export const enum Quantity {

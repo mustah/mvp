@@ -1,4 +1,3 @@
-import {AxiosResponse} from 'axios';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
@@ -105,7 +104,7 @@ export const mapApiResponseToGraphData =
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
-    measurement.forEach(({id, quantity, label, city, address , medium, values, unit}: MeasurementApiResponsePart) => {
+    measurement.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementApiResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
       values.forEach(({when, value}) => {
@@ -189,7 +188,7 @@ export const mapApiResponseToGraphData =
     return graphContents;
   };
 
-const measurementUri = (
+const measurementMeterUri = (
   quantities: Quantity[],
   meters: uuid[],
   timePeriod: Period,
@@ -199,12 +198,26 @@ const measurementUri = (
   `&meters=${meters.join(',')}` +
   `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
 
+const measurementCityUri = (
+  quantities: Quantity[],
+  cities: uuid[],
+  timePeriod: Period,
+  customDateRange: Maybe<DateRange>,
+): string =>
+  `quantities=${quantities.join(',')}` +
+  `&${cities.map((city) => `city=${city}`).join('&')}` +
+  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
+
 interface GraphDataResponse {
   data: MeasurementApiResponse;
 }
 
 export const isSelectedMeter = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,:]/) || []).length === 0;
+
+export const isSelectedCity = (listItem: uuid): boolean =>
+  (listItem.toString().match(/[,]/) || []).length === 1 &&
+  (listItem.toString().match(/[:]/) || []).length === 0;
 
 interface MeasurementOptions {
   selectedIndicators: Medium[];
@@ -216,6 +229,8 @@ interface MeasurementOptions {
   logout: OnLogout;
 }
 
+const noopRequest = new Promise<GraphDataResponse>((resolve) => resolve({data: []}));
+
 export const fetchMeasurements =
   async ({
     selectedIndicators,
@@ -225,33 +240,53 @@ export const fetchMeasurements =
     customDateRange,
     updateState,
     logout,
-}: MeasurementOptions): Promise<void> => {
+  }: MeasurementOptions): Promise<void> => {
 
-    selectedListItems = selectedListItems.filter(isSelectedMeter);
+    const selectedMeters = selectedListItems.filter(isSelectedMeter);
+    const selectedCities = selectedListItems.filter(isSelectedCity);
 
-    if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
+    if (
+      selectedIndicators.length === 0 ||
+      (selectedMeters.length + selectedCities.length) === 0 ||
+      quantities.length === 0
+    ) {
       updateState({...initialState});
       return;
     }
 
     const averageUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurements.concat('/average'),
-      measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
+      measurementMeterUri(quantities, selectedMeters, timePeriod, customDateRange),
     );
 
     const averageRequest: () => Promise<GraphDataResponse> =
-      selectedListItems.length > 1
+      selectedMeters.length > 1
         ? () => restClient.get(averageUrl)
-        : () => new Promise<GraphDataResponse>((resolve) => resolve({data: []}));
+        : () => noopRequest;
+
+    const cityUrl: EncodedUriParameters = makeUrl(
+      EndPoints.measurements.concat('/cities'),
+      measurementCityUri(quantities, selectedCities, timePeriod, customDateRange),
+    );
+
+    const cityRequest: () => Promise<GraphDataResponse> =
+      selectedCities.length
+        ? () => restClient.get(cityUrl)
+        : () => noopRequest;
 
     const measurementUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurements,
-      measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
+      measurementMeterUri(quantities, selectedMeters, timePeriod, customDateRange),
     );
 
+    const measurementRequest: () => Promise<GraphDataResponse> =
+      selectedMeters.length
+        ? () => restClient.get(measurementUrl)
+        : () => noopRequest;
+
     try {
-      const response: [AxiosResponse<MeasurementApiResponse>, GraphDataResponse] =
-        await Promise.all([restClient.get(measurementUrl), averageRequest()]);
+      const response: [GraphDataResponse, GraphDataResponse, GraphDataResponse] =
+        await Promise.all([measurementRequest(), averageRequest(), cityRequest()]);
 
       const graphData: MeasurementResponses = {
         measurement: response[0].data,
@@ -259,6 +294,7 @@ export const fetchMeasurements =
           ...averageEntity,
           values: averageEntity.values.filter(({value}) => value !== undefined),
         })),
+        cities: response[2].data,
       };
 
       updateState({
