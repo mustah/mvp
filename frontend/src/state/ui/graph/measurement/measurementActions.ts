@@ -6,10 +6,11 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
+import {firstUpper} from '../../../../services/translationService';
 import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/ReportContainer';
-import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {
   initialState,
@@ -44,6 +45,18 @@ const colorizeMeters = colorize({
   [Quantity.differenceTemperature as string]: '#0084e6',
 });
 
+// these colors are from colorbrewer 2 (diverging, the rightmost color scheme)
+const colorizeCities = colorize({
+// [Quantity.forwardTemperature as string]: '#66c2a5',
+  [Quantity.volume as string]: '#3288bd',
+  [Quantity.flow as string]: '#f46d43',
+  [Quantity.energy as string]: '#fdae61',
+  [Quantity.power as string]: '#fee08b',
+  [Quantity.forwardTemperature as string]: '#d53e4f',
+  [Quantity.returnTemperature as string]: '#e6f598',
+  [Quantity.differenceTemperature as string]: '#abdda4',
+});
+
 const thickStroke: number = 4;
 
 const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
@@ -57,7 +70,7 @@ const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined =
 };
 
 export const mapApiResponseToGraphData =
-  ({measurement, average}: MeasurementResponses): GraphContents => {
+  ({measurement, average, cities}: MeasurementResponses): GraphContents => {
     const graphContents: GraphContents = {
       axes: {
         left: undefined,
@@ -76,7 +89,8 @@ export const mapApiResponseToGraphData =
       prev,
       {quantity},
     ) => (
-      prev[quantity] ? prev
+      prev[quantity]
+        ? prev
         : {
           ...prev,
           [quantity]: {
@@ -90,7 +104,8 @@ export const mapApiResponseToGraphData =
       prev,
       {quantity},
     ) => (
-      prev[quantity] ? prev
+      prev[quantity]
+        ? prev
         : {
           ...prev,
           [`average-${quantity}`]: {
@@ -100,7 +115,24 @@ export const mapApiResponseToGraphData =
           },
         }), {});
 
-    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
+    const legendsCities: Dictionary<ProprietaryLegendProps> = cities.reduce((
+      prev,
+      {quantity, city},
+    ) => (
+      prev[`${quantity}-${city}`]
+        ? prev
+        : {
+          ...prev,
+          [`city-${quantity}-${city}`]: {
+            type: 'line',
+            color: colorizeCities(quantity),
+            value: `${firstUpper(city)} ${quantity}`,
+          },
+        }), {});
+
+    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage, ...legendsCities};
+
+    console.log('legendsCities', legendsCities, 'cities', cities, 'legends', legends);
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
@@ -130,7 +162,7 @@ export const mapApiResponseToGraphData =
       if (!uniqueMeters.has(dataKey) && yAxisId) {
         uniqueMeters.add(dataKey);
 
-        const props: LineProps = {
+        graphContents.lines.push({
           id,
           dataKey,
           key: dataKey,
@@ -141,8 +173,7 @@ export const mapApiResponseToGraphData =
           stroke: colorizeMeters(quantity as Quantity),
           strokeWidth: meterStrokeWidth,
           yAxisId,
-        };
-        graphContents.lines.push(props);
+        });
       }
     });
 
@@ -152,7 +183,7 @@ export const mapApiResponseToGraphData =
         return;
       }
       const dataKey: string = `Average ${quantity}`;
-      const props: LineProps = {
+      graphContents.lines.push({
         id,
         dataKey,
         key: `average-${quantity}`,
@@ -163,8 +194,45 @@ export const mapApiResponseToGraphData =
         stroke: colorizeAverage(quantity as Quantity),
         strokeWidth: thickStroke,
         yAxisId,
-      };
-      graphContents.lines.push(props);
+      });
+
+      values.forEach(({when, value}) => {
+        const created: number = when * 1000;
+        if (created < firstTimestamp) {
+          return;
+        }
+        if (!byDate[created]) {
+          byDate[created] = {};
+        }
+        // we should already have filtered out missing values
+        byDate[created][dataKey] = value!;
+      });
+    });
+
+    cities.forEach(({id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart) => {
+      if (!graphContents.axes.left) {
+        graphContents.axes.left = unit;
+      } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
+        graphContents.axes.right = unit;
+      }
+
+      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+      if (!yAxisId) {
+        return;
+      }
+      const dataKey: string = `${firstUpper(city)} ${quantity}`;
+      graphContents.lines.push({
+        id,
+        dataKey,
+        key: `city-${quantity}-${city}`,
+        name: dataKey,
+        city,
+        address,
+        medium,
+        stroke: colorizeCities(quantity as Quantity),
+        strokeWidth: thickStroke,
+        yAxisId,
+      });
 
       values.forEach(({when, value}) => {
         const created: number = when * 1000;
@@ -215,8 +283,8 @@ interface GraphDataResponse {
 export const isSelectedMeter = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,:]/) || []).length === 0;
 
-export const isSelectedCity = (listItem: uuid): boolean =>
-  (listItem.toString().match(/[,]/) || []).length === 1 &&
+const isSelectedCity = (listItem: uuid): boolean =>
+  (listItem.toString().match(/[,]/g) || []).length === 1 &&
   (listItem.toString().match(/[:]/) || []).length === 0;
 
 interface MeasurementOptions {

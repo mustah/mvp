@@ -377,6 +377,33 @@ describe('measurementActions', () => {
         expect(requestedUrls[1]).toMatch(cityUrl);
       });
 
+      it('does not request addresses against cities endpoint', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
+
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs', 'sweden,höganäs,hasselgatan 4'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
+          updateState: (state: ReportContainerState) => void(0),
+          logout: (error?: Unauthorized) => void(0),
+        });
+
+        expect(requestedUrls).toHaveLength(1);
+
+        const cityUrl: RegExp =
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[0]).toMatch(cityUrl);
+      });
+
     });
 
     it('returns empty data if no meter ids are provided', async () => {
