@@ -22,4 +22,11 @@
       margin-left: $lg-space;
     }
   }
+
+  .Xsmall {
+    &.ErrorLabel {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+  }
 }

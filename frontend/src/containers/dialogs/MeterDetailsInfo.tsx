@@ -3,8 +3,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
-import {Row} from '../../components/layouts/row/Row';
+import {Row, RowMiddle} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
+import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
@@ -106,14 +107,16 @@ class MeterDetailsInfo extends React.Component<Props> {
               value={<WrappedDateTime date={meter.statusChanged} hasContent={!!meter.statusChanged}/>}
             />
           </Row>
-          <Row>
+          <RowMiddle>
             <Column>
               <Row>
                 <Subtitle>{translate('labels')}</Subtitle>
               </Row>
             </Column>
             <Info label={translate('facility id')} value={meter.facility}/>
-          </Row>
+            <Info label={translate('meter id')} value={meter.address}/>
+            <ErrorLabel hasError={meter.isReported}>{translate('reported')}</ErrorLabel>
+          </RowMiddle>
         </Column>
       </Row>
     );

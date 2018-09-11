@@ -459,6 +459,9 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
+msgid "reported"
+msgstr "reported"
+
 msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 

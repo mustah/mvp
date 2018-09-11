@@ -22,6 +22,7 @@ export interface Meter extends Identifiable, LocationHolder {
   collectionPercentage?: number;
   readIntervalMinutes?: number;
   facility: uuid;
+  isReported?: boolean;
   medium: string;
   manufacturer: string;
   statusChanged?: string;
