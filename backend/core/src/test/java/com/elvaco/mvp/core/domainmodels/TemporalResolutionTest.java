@@ -1,15 +1,14 @@
-package com.elvaco.mvp.core.util;
+package com.elvaco.mvp.core.domainmodels;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
-import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.util.ResolutionHelper.defaultResolutionFor;
+import static com.elvaco.mvp.core.domainmodels.TemporalResolution.defaultResolutionFor;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ResolutionHelperTest {
+public class TemporalResolutionTest {
 
   @Test
   public void lessThanADayResolvesToHourResolution() {

@@ -24,6 +24,7 @@ public enum RequestParameter {
   ORGANISATION("organisation"),
   PHYSICAL_METER_ID("physicalMeterId"),
   QUANTITY("quantity"),
+  RESOLUTION("resolution"),
   SECONDARY_ADDRESS("secondaryAddress"),
   SERIAL("serial"),
   SORT("sort"),

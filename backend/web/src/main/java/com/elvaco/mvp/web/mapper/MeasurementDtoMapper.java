@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
 
@@ -32,6 +33,7 @@ public class MeasurementDtoMapper {
   ) {
     Map<LabeledQuantity, List<LabeledMeasurementValue>> quantityMeasurements =
       new LinkedHashMap<>();
+
     for (LabeledMeasurementValue measurement : foundMeasurements) {
       Quantity quantity = measurement.quantity;
       LabeledQuantity key = new LabeledQuantity(
@@ -42,9 +44,7 @@ public class MeasurementDtoMapper {
         measurement.city,
         measurement.medium
       );
-      if (!quantityMeasurements.containsKey(key)) {
-        quantityMeasurements.put(key, new ArrayList<>());
-      }
+      quantityMeasurements.computeIfAbsent(key, (v) -> new ArrayList<>());
       quantityMeasurements.get(key).add(measurement);
     }
 
