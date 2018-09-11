@@ -87,6 +87,10 @@ export const MeterList = (
           renderCell={renderMedium}
         />
         <TableColumn
+          header={<TableHead className="TableHead-status">{translate('alarm')}</TableHead>}
+          renderCell={renderAlarm}
+        />
+        <TableColumn
           header={<TableHead>{translate('gateway')}</TableHead>}
           renderCell={renderGatewaySerial}
         />
@@ -94,10 +98,6 @@ export const MeterList = (
           cellClassName="number"
           header={collectionPercentageHeader}
           renderCell={renderCollectionStatus}
-        />
-        <TableColumn
-          header={<TableHead className="TableHead-status">{translate('alarm')}</TableHead>}
-          renderCell={renderAlarm}
         />
         <TableColumn
           header={<TableHead/>}
