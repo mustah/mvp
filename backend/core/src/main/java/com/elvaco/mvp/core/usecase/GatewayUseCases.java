@@ -11,7 +11,7 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
+import static com.elvaco.mvp.core.security.OrganisationFilter.parametersWithOrganisationId;
 
 public class GatewayUseCases {
 
@@ -24,7 +24,7 @@ public class GatewayUseCases {
   }
 
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
-    return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
+    return gateways.findAll(parametersWithOrganisationId(currentUser, parameters), pageable);
   }
 
   public Gateway save(Gateway gateway) {
@@ -52,7 +52,7 @@ public class GatewayUseCases {
 
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
     return gateways.findSerials(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      parametersWithOrganisationId(currentUser, parameters),
       pageable
     );
   }

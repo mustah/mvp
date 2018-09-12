@@ -51,10 +51,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
-    return findBy(new RequestParametersAdapter().replace(
-      ID,
-      id.toString()
-    ));
+    return findBy(new RequestParametersAdapter().replace(ID, id.toString()));
   }
 
   @Override

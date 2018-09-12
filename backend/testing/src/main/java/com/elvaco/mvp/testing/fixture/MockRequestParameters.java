@@ -66,7 +66,8 @@ public class MockRequestParameters implements RequestParameters {
     return this;
   }
 
-  @Override public RequestParameters transform(RequestParameter from, RequestParameter into) {
+  @Override
+  public RequestParameters transform(RequestParameter from, RequestParameter into) {
     if (!hasParam(from)) {
       return this;
     }

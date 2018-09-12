@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
+import static com.elvaco.mvp.core.security.OrganisationFilter.parametersWithOrganisationId;
 
 @RequiredArgsConstructor
 public class MapUseCases {
@@ -19,7 +19,7 @@ public class MapUseCases {
   public Set<MapMarker> findAllMeterMapMarkers(
     RequestParameters parameters
   ) {
-    return locations.findAllMeterMapMarkers(setCurrentUsersOrganisationId(
+    return locations.findAllMeterMapMarkers(parametersWithOrganisationId(
       currentUser,
       parameters
     ));
@@ -29,7 +29,7 @@ public class MapUseCases {
     RequestParameters parameters
   ) {
     return locations.findAllGatewayMapMarkers(
-      setCurrentUsersOrganisationId(
+      parametersWithOrganisationId(
         currentUser, parameters
       )
     );

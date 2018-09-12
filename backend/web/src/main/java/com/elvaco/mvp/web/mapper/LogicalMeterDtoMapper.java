@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
@@ -49,8 +50,13 @@ public class LogicalMeterDtoMapper {
       .orElse(null);
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.facility = logicalMeter.externalId;
-    meterDto.address = logicalMeter.activePhysicalMeter()
+
+    Optional<PhysicalMeter> physicalMeter = logicalMeter.activePhysicalMeter();
+    meterDto.address = physicalMeter
       .map(m -> m.address)
+      .orElse(null);
+    meterDto.readIntervalMinutes = physicalMeter
+      .map(m -> m.readIntervalMinutes)
       .orElse(null);
 
     meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
@@ -63,10 +69,6 @@ public class LogicalMeterDtoMapper {
         .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
-
-    meterDto.readIntervalMinutes = logicalMeter.activePhysicalMeter()
-      .map(m -> m.readIntervalMinutes)
-      .orElse(null);
 
     meterDto.organisationId = logicalMeter.organisationId;
 
@@ -92,40 +94,39 @@ public class LogicalMeterDtoMapper {
     meterDto.status = statusLog.map(entry -> entry.status).orElse(StatusType.UNKNOWN);
     meterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
       .orElse(logicalMeter.created));
-    meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
-      .map(alarm -> new AlarmDto(alarm.id, alarm.mask, alarm.description))
-      .orElse(null);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.facility = logicalMeter.externalId;
-    meterDto.address = logicalMeter.activePhysicalMeter()
+
+    Optional<PhysicalMeter> physicalMeter = logicalMeter.activePhysicalMeter();
+    meterDto.address = physicalMeter
       .map(m -> m.address)
+      .orElse(null);
+    meterDto.readIntervalMinutes = physicalMeter
+      .map(m -> m.readIntervalMinutes)
       .orElse(null);
 
     meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
 
     meterDto.gateway =
-      logicalMeter.gateways
-        .stream()
+      logicalMeter.gateways.stream()
         .findFirst()
         .map(GatewayDtoMapper::toGatewayMandatory)
         .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
-    meterDto.readIntervalMinutes = logicalMeter.activePhysicalMeter()
-      .map(m -> m.readIntervalMinutes)
-      .orElse(null);
-
-    meterDto.measurements = logicalMeter.latestReadouts
-      .stream()
+    meterDto.measurements = logicalMeter.latestReadouts.stream()
       .map(MeasurementDtoMapper::toDto)
       .collect(toList());
 
-    meterDto.statusChangelog = getMeterStatusLogs(logicalMeter)
-      .stream()
+    meterDto.statusChangelog = getMeterStatusLogs(logicalMeter).stream()
       .map(MeterStatusLogDtoMapper::toDto)
       .collect(toList());
+
+    meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
+      .map(alarm -> new AlarmDto(alarm.id, alarm.mask, alarm.description))
+      .orElse(null);
 
     meterDto.organisationId = logicalMeter.organisationId;
 

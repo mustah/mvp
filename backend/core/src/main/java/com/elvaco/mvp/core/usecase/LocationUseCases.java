@@ -11,7 +11,7 @@ import com.elvaco.mvp.core.spi.repository.Locations;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
+import static com.elvaco.mvp.core.security.OrganisationFilter.parametersWithOrganisationId;
 
 @RequiredArgsConstructor
 public class LocationUseCases {
@@ -24,7 +24,7 @@ public class LocationUseCases {
     Pageable pageable
   ) {
     return locations.findAll(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      parametersWithOrganisationId(currentUser, parameters),
       pageable
     );
   }
@@ -34,7 +34,7 @@ public class LocationUseCases {
     Pageable pageable
   ) {
     return locations.findAllCities(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      parametersWithOrganisationId(currentUser, parameters),
       pageable
     );
   }
@@ -44,7 +44,7 @@ public class LocationUseCases {
     Pageable pageable
   ) {
     return locations.findAllAddresses(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      parametersWithOrganisationId(currentUser, parameters),
       pageable
     );
   }

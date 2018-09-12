@@ -13,7 +13,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
+import static com.elvaco.mvp.core.security.OrganisationFilter.parametersWithOrganisationId;
 
 @RequiredArgsConstructor
 public class PhysicalMeterUseCases {
@@ -70,7 +70,7 @@ public class PhysicalMeterUseCases {
 
   public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return physicalMeters.findAll(
-      setCurrentUsersOrganisationId(
+      parametersWithOrganisationId(
         currentUser,
         parameters
       ),
@@ -83,7 +83,7 @@ public class PhysicalMeterUseCases {
     Pageable pageable
   ) {
     return physicalMeters.findAddresses(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      parametersWithOrganisationId(currentUser, parameters),
       pageable
     );
   }
@@ -93,7 +93,7 @@ public class PhysicalMeterUseCases {
     Pageable pageable
   ) {
     return physicalMeters.findFacilities(
-      setCurrentUsersOrganisationId(currentUser, parameters),
+      parametersWithOrganisationId(currentUser, parameters),
       pageable
     );
   }

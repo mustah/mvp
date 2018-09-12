@@ -1,14 +1,14 @@
 package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 
-public final class OrganisationFilter {
+@UtilityClass
+public class OrganisationFilter {
 
-  private OrganisationFilter() {}
-
-  public static RequestParameters setCurrentUsersOrganisationId(
+  public static RequestParameters parametersWithOrganisationId(
     AuthenticatedUser currentUser,
     RequestParameters parameters
   ) {
