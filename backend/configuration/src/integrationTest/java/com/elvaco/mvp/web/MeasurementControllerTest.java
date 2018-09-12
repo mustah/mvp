@@ -33,7 +33,6 @@ import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-
 import org.assertj.core.data.Offset;
 import org.junit.After;
 import org.junit.Before;
@@ -255,9 +254,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "K",
         butterMeter.externalId,
         MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
-        asList(
-          new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74)
-        )
+        singletonList(new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74))
       ),
       new MeasurementSeriesDto(
         butterMeter.logicalMeterId.toString(),

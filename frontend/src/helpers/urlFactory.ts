@@ -1,7 +1,7 @@
 import {SelectionItem} from '../state/domain-models/domainModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
-import {EncodedUriParameters, Omit} from '../types/Types';
+import {EncodedUriParameters, Omit, uuid} from '../types/Types';
 import {toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
 
@@ -56,8 +56,10 @@ export const toEntityApiParametersGateways =
   (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
     toEntityApiParameters(selectionParameters, gatewayParameterNames);
 
-// TODO: perhaps make sure it could handle if dateRange is included, as it is now the function
-// would most likely fail.
+const makeParameter = (parameterNames: ParameterNames, parameter: string, id: uuid): string =>
+  `${parameterNames[parameter]}=${encodeURIComponent(id.toString())}`;
+
+// TODO: perhaps make sure it could handle if dateRange is included, as it is now the function would most likely fail.
 const toEntityApiParameters = (
   selectionParameters: Omit<SelectedParameters, 'dateRange'>,
   parameterNames: ParameterNames,
@@ -68,8 +70,11 @@ const toEntityApiParameters = (
         ...prev,
         ...selectionParameters[parameter]
           .filter(({id}: SelectionItem) => id !== undefined)
-          .map(({id}: SelectionItem) => `${parameterNames[parameter]}=${encodeURIComponent(id.toString())}`),
+          .map(({id}: SelectionItem) => makeParameter(parameterNames, parameter, id)),
       ], []);
+
+export const toMeterIdsApiParameters = (ids: uuid[]): string =>
+  encodedUriParametersFrom(ids.map((id: uuid) => makeParameter(meterParameterNames, 'meterIds', id)));
 
 export const makeApiParametersOf = (
   start: Date,
@@ -84,4 +89,4 @@ export const makeApiParametersOf = (
 
 export const makeUrl =
   (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>
-    parameters && parameters.length ? endpoint + '?' + parameters : endpoint;
+    parameters && parameters.length ? `${endpoint}?${parameters}` : endpoint;

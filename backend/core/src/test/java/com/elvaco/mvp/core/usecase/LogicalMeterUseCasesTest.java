@@ -72,7 +72,7 @@ public class LogicalMeterUseCasesTest {
       )
     );
 
-    assertThat(useCases.findAllWithStatuses(new MockRequestParameters())).hasSize(3);
+    assertThat(useCases.findAllWithDetails(new MockRequestParameters())).hasSize(3);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class LogicalMeterUseCasesTest {
       )
     );
 
-    assertThat(useCases.findAllWithStatuses(new MockRequestParameters())).hasSize(2);
+    assertThat(useCases.findAllWithDetails(new MockRequestParameters())).hasSize(2);
   }
 
   @Test

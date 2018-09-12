@@ -106,7 +106,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
+  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
     List<LogicalMeterEntity> meters = SortUtil.getSort(parameters)
       .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
       .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));
@@ -117,7 +117,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
     return logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)).stream()
-      .map(LogicalMeterEntityMapper::toDomainModel)
+      .map(LogicalMeterEntityMapper::toSimpleDomainModel)
       .collect(toList());
   }
 

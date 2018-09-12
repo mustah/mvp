@@ -75,15 +75,6 @@ public class LogicalMeterDtoMapper {
     return meterDto;
   }
 
-  public static PagedLogicalMeterDto toPagedDetailsDto(LogicalMeter logicalMeter) {
-    PagedLogicalMeterDto pagedMeterDto = toPagedDto(logicalMeter);
-    Optional<StatusLogEntry<UUID>> statusLog = logicalMeter.activeStatusLog();
-    pagedMeterDto.status = statusLog.map(entry -> entry.status).orElse(StatusType.UNKNOWN);
-    pagedMeterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
-      .orElse(logicalMeter.created));
-    return pagedMeterDto;
-  }
-
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
     String created = formatUtc(logicalMeter.created);
     Optional<StatusLogEntry<UUID>> statusLog = logicalMeter.activeStatusLog();

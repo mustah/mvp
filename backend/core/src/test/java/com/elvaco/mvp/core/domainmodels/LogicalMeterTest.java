@@ -314,14 +314,14 @@ public class LogicalMeterTest {
   private LogicalMeter newLogicalMeter(
     UUID id,
     UUID organisationId,
-    List<PhysicalMeter> physicalMeterList
+    List<PhysicalMeter> physicalMeters
   ) {
     return LogicalMeter.builder()
       .id(id)
       .externalId("an-external-id")
       .organisationId(organisationId)
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .physicalMeters(physicalMeterList)
+      .physicalMeters(physicalMeters)
       .build();
   }
 

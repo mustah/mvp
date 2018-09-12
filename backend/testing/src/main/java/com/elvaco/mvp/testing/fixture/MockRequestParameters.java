@@ -91,7 +91,7 @@ public class MockRequestParameters implements RequestParameters {
   @Override
   public String getFirst(RequestParameter param) {
     List<String> values = map.get(param);
-    return values.isEmpty() ? null : values.get(0);
+    return values == null || values.isEmpty() ? null : values.get(0);
   }
 
   @Override

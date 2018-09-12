@@ -32,8 +32,12 @@ public class LogicalMeterUseCases {
     return logicalMeters.findAllBy(parameters.ensureOrganisation(currentUser));
   }
 
-  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
-    return logicalMeters.findAllWithStatuses(parameters.ensureOrganisation(currentUser));
+  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
+    return logicalMeters.findAllWithDetails(parameters.ensureOrganisation(currentUser)).stream()
+      .map(meter -> parameters.getAsZonedDateTime(BEFORE)
+        .map(beforeTime -> withLatestReadouts(meter, beforeTime))
+        .orElse(meter))
+      .collect(toList());
   }
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {

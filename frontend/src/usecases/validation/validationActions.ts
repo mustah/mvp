@@ -28,7 +28,7 @@ const onError = (dispatch: Dispatcher, error): void => {
 export const syncWithMetering = (logicalMeterId: uuid) =>
   async (dispatch: Dispatcher) => {
     try {
-      await restClient.post(`${EndPoints.meters}/${logicalMeterId}/synchronize`);
+      await restClient.post(`${EndPoints.syncMeters}/${logicalMeterId}`);
       const message = firstUpperTranslated('meter will soon be synchronized');
       dispatch(showSuccessMessage(message));
     } catch (error) {
@@ -40,7 +40,7 @@ export const syncAllMeters = (ids: uuid[]) =>
   async (dispatch: Dispatcher) => {
     try {
       if (ids.length > 0) {
-        await restClient.post(`${EndPoints.meters}/synchronize`, ids);
+        await restClient.post(`${EndPoints.syncMeters}`, ids);
         const count = ids.length;
         const message = firstUpperTranslated('{{count}} meter will soon be synchronized', {count});
         dispatch(showSuccessMessage(message));

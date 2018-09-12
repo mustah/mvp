@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
-public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
+public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Autowired
   private Organisations organisations;
@@ -143,11 +143,8 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
-    ResponseEntity<Void> responseEntity = asTestSuperAdmin().post(
-      "/meters/synchronize",
-      meterIds,
-      Void.class
-    );
+    ResponseEntity<Void> responseEntity = asTestSuperAdmin()
+      .post("/meters/sync", meterIds, Void.class);
 
     List<Property> properties = meterIds.stream()
       .map(this::getUpdateGeolocationWithEntityId)
@@ -167,11 +164,8 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser().post(
-      "/meters/synchronize",
-      meterIds,
-      ErrorMessageDto.class
-    );
+    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
+      .post("/meters/sync", meterIds, ErrorMessageDto.class);
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(responseEntity.getBody().message)
@@ -278,7 +272,7 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
   }
 
   private static String synchronizeUrl(UUID id) {
-    return String.format("/meters/%s/synchronize", id);
+    return String.format("/meters/sync/%s", id);
   }
 
   private static class BrokenConnectionFactory implements ConnectionFactory {

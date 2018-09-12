@@ -5,8 +5,8 @@ import java.util.UUID;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.web.dto.geoservice.GeoResponseDto;
 import com.elvaco.mvp.web.dto.geoservice.GeoResponseErrorDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,15 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestApi("/api/v1/geocodes")
 public class GeocodeController {
 
   private final Locations locations;
-
-  @Autowired
-  public GeocodeController(Locations locations) {
-    this.locations = locations;
-  }
 
   @PostMapping("/callback/{id}")
   public void callback(@PathVariable UUID id, @RequestBody GeoResponseDto geoResponse) {

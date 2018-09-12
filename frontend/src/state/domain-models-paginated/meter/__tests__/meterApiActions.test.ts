@@ -6,15 +6,13 @@ import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
-import {ErrorResponse, uuid} from '../../../../types/Types';
+import {ErrorResponse} from '../../../../types/Types';
 import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
 import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
 import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
-import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
-import {makeInitialState} from '../../paginatedDomainModelsReducer';
-import {clearErrorMeters, fetchMeterDetails, fetchMeters} from '../meterApiActions';
-import {Meter, MetersState} from '../meterModels';
+import {clearErrorMeters, fetchMeters} from '../meterApiActions';
+import {Meter} from '../meterModels';
 import {meterDataFormatter} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -235,94 +233,6 @@ describe('meterApiActions', () => {
         expect(store.getActions()).toEqual([
           requestMeters.request(1),
           requestMeters.failure({...requestTimeout(), page: 1}),
-        ]);
-      });
-    });
-
-  });
-
-  describe('fetchMeterDetails', () => {
-    const fetchMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
-
-    const meter1: Partial<Meter> = {id: 1};
-    const meter2: Partial<Meter> = {id: 2};
-    const meter3: Partial<Meter> = {id: 3};
-    const meters: Array<Partial<Meter>> = [
-      meter1,
-      meter2,
-      meter3,
-    ];
-
-    const meterIds: uuid[] = [1, 2, 3];
-
-    const fetchMeterEntitiesWithResponseOk = async (ids: uuid[]) => {
-      mockRestClient
-        .onGet(`${EndPoints.meters}/details?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
-        .reply(201, {content: meters});
-
-      return store.dispatch(fetchMeterDetails(ids));
-    };
-
-    it('does not normalize data', async () => {
-      await fetchMeterEntitiesWithResponseOk(meterIds);
-
-      expect(store.getActions()).toEqual([
-        fetchMeterEntitiesRequest.request(),
-        fetchMeterEntitiesRequest.success(meters as Meter[]),
-      ]);
-    });
-
-    it('does not fetch if already fetching', async () => {
-      const initialState: MetersState = {...makeInitialState(), isFetchingSingle: true};
-      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
-
-      await fetchMeterEntitiesWithResponseOk(meterIds);
-
-      expect(store.getActions()).toEqual([]);
-    });
-
-    it('fetches even if a fraction of the requested entities already exist in state', async () => {
-      const initialState: MetersState = {
-        ...makeInitialState(),
-        entities: {1: meter1 as Meter, 2: meter2 as Meter},
-      };
-      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
-
-      await fetchMeterEntitiesWithResponseOk(meterIds);
-
-      expect(store.getActions()).toEqual([
-        fetchMeterEntitiesRequest.request(),
-        fetchMeterEntitiesRequest.success(meters as Meter[]),
-      ]);
-    });
-
-    it('does not fetch is all entities already exist in state', async () => {
-      const initialState: MetersState = {
-        ...makeInitialState(),
-        entities: {1: meter1 as Meter, 2: meter2 as Meter, 3: meter3 as Meter},
-      };
-      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
-
-      await fetchMeterEntitiesWithResponseOk(meterIds);
-
-      expect(store.getActions()).toEqual([]);
-    });
-
-    describe('network error', () => {
-
-      it('display error message when there is not internet connection', async () => {
-        const fetchMetersWhenOffline = async () => {
-          mockRestClient
-            .onGet(`${EndPoints.meters}/details?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
-            .networkError();
-          return store.dispatch(fetchMeterDetails(meterIds));
-        };
-
-        await fetchMetersWhenOffline();
-
-        expect(store.getActions()).toEqual([
-          fetchMeterEntitiesRequest.request(),
-          fetchMeterEntitiesRequest.failure({id: -1, ...noInternetConnection()}),
         ]);
       });
     });

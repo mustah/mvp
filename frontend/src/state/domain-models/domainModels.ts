@@ -46,6 +46,7 @@ export interface DomainModelsState {
 export const enum RequestType {
   GET = 'GET',
   GET_ENTITY = 'GET_ENTITY',
+  GET_ENTITIES = 'GET_ENTITIES',
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
