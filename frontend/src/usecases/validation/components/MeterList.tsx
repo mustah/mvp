@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
+import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
@@ -7,6 +8,8 @@ import {MeterAlarm} from '../../../components/status/MeterAlarm';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {TableInfoText} from '../../../components/table/TableInfoText';
+import {ErrorLabel} from '../../../components/texts/ErrorLabel';
+import {Normal} from '../../../components/texts/Texts';
 import {MeterListProps} from '../../../containers/meters/MeterListContainer';
 import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
@@ -28,7 +31,11 @@ export const MeterList = (
   }: MeterListProps) => {
 
   const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-  const renderMeterId = ({address}: Meter) => address;
+  const renderMeterId = ({address, isReported}: Meter) => (
+    <Column>
+      <Normal>{address}</Normal>
+      <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+    </Column>);
   const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
   const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
   const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
@@ -48,16 +55,10 @@ export const MeterList = (
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
-  const collectionPercentageHeader = (
-    <TableHead className="number">
-      {translate('collection percentage')}
-    </TableHead>
-  );
-
   const onChangePage = (page: number) => changePage({entityType, componentId, page});
 
   return (
-    <div>
+    <div className="MeterList">
       <Table result={result} entities={entities}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
@@ -87,17 +88,17 @@ export const MeterList = (
           renderCell={renderMedium}
         />
         <TableColumn
+          header={<TableHead className="TableHead-status">{translate('alarm')}</TableHead>}
+          renderCell={renderAlarm}
+        />
+        <TableColumn
           header={<TableHead>{translate('gateway')}</TableHead>}
           renderCell={renderGatewaySerial}
         />
         <TableColumn
           cellClassName="number"
-          header={collectionPercentageHeader}
+          header={<TableHead className="number">{translate('collection percentage')}</TableHead>}
           renderCell={renderCollectionStatus}
-        />
-        <TableColumn
-          header={<TableHead className="TableHead-status">{translate('alarm')}</TableHead>}
-          renderCell={renderAlarm}
         />
         <TableColumn
           header={<TableHead/>}

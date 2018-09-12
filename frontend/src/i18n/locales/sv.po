@@ -147,13 +147,13 @@ msgid "no"
 msgstr "nej"
 
 msgid "meter id"
-msgstr "mätar id"
+msgstr "mätar-id"
 
 msgid "gateway details"
 msgstr "gateway"
 
 msgid "gateway serial"
-msgstr "gateway serienummer"
+msgstr "serienummer"
 
 msgid "product model"
 msgstr "modell"
@@ -461,11 +461,14 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "reported"
+msgstr "felrapporterad"
+
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
 msgid "collection percentage"
-msgstr "insamling"
+msgstr "insamling %"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"

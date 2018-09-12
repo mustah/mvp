@@ -2,6 +2,7 @@ import * as React from 'react';
 import {GatewayDetailsContainer} from '../../containers/dialogs/GatewayDetailsContainer';
 import {MeterDetailsContainer} from '../../containers/dialogs/MeterDetailsContainer';
 import {SelectedId} from '../../usecases/map/mapModels';
+import {ButtonClose} from '../buttons/DialogButtons';
 import {testOrNull} from '../hoc/hocs';
 import {Dialog, DialogProps} from './Dialog';
 
@@ -13,6 +14,7 @@ const DialogOrNull = testOrNull<DetailsDialogProps>(
 
 const DetailsDialog = (props: DetailsDialogProps) => (
   <DialogOrNull {...props}>
+    <ButtonClose onClick={props.close}/>
     {props.children}
   </DialogOrNull>
 );

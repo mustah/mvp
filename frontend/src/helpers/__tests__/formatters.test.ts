@@ -84,8 +84,8 @@ describe('formatters', () => {
       expect(formatCollectionPercentage(15.88)).toBe('-');
     });
 
-    it('formats 100% collection percentage as 100.0% when interval is non-zero', () => {
-      expect(formatCollectionPercentage(100.0, 15)).toBe('100.0%');
+    it('formats 100% collection percentage as 100% when interval is non-zero', () => {
+      expect(formatCollectionPercentage(100.0, 15)).toBe('100%');
     });
 
     it('formats 99.7% collection percentage as 99.7% when interval is non-zero', () => {
@@ -93,11 +93,11 @@ describe('formatters', () => {
     });
 
     it('user should not see an indicator when percentage > 100', () => {
-      expect(formatCollectionPercentage(104.2, 15, false)).toBe('100.0%');
+      expect(formatCollectionPercentage(104.2, 15, false)).toBe('100%');
     });
 
     it('super admin should see an indicator when percentage > 100', () => {
-      expect(formatCollectionPercentage(104.2, 15, true)).toBe('100.0% *');
+      expect(formatCollectionPercentage(104.2, 15, true)).toBe('100% *');
     });
 
     it('super admin should not see an indicator when percentage <= 100', () => {

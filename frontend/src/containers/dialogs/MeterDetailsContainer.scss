@@ -18,8 +18,15 @@
   }
 
   .Info {
-    &.StatusChange {
-      margin-left: $lg-space;
+    &.First-column {
+      width: 126px;
+    }
+  }
+
+  .Xsmall {
+    &.ErrorLabel {
+      margin-top: 0;
+      margin-bottom: 12px;
     }
   }
 }

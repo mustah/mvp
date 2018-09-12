@@ -2,7 +2,6 @@ import * as classNames from 'classnames';
 import {Dialog as MaterialDialog} from 'material-ui';
 import * as React from 'react';
 import {Children, OnClick} from '../../types/Types';
-import {ButtonClose} from '../buttons/DialogButtons';
 import DialogAction = __MaterialUI.DialogAction;
 
 export interface DialogProps {
@@ -15,18 +14,15 @@ export interface DialogProps {
 }
 
 export const Dialog =
-  ({actions, children, contentClassName, isOpen, close, autoScrollBodyContent}: DialogProps) => {
-    const listOfActions = actions || [(<ButtonClose onClick={close} key="close"/>)];
-    return (
-      <MaterialDialog
-        className="Dialog-root"
-        contentClassName={classNames('Dialog', contentClassName)}
-        actions={listOfActions}
-        autoScrollBodyContent={autoScrollBodyContent}
-        onRequestClose={close}
-        open={isOpen}
-      >
-        {children}
-      </MaterialDialog>
-    );
-  };
+  ({actions, children, contentClassName, isOpen, close, autoScrollBodyContent}: DialogProps) => (
+    <MaterialDialog
+      className="Dialog-root"
+      contentClassName={classNames('Dialog', contentClassName)}
+      actions={actions}
+      autoScrollBodyContent={autoScrollBodyContent}
+      onRequestClose={close}
+      open={isOpen}
+    >
+      {children}
+    </MaterialDialog>
+  );

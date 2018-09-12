@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
@@ -8,8 +9,6 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusLogEntityMapper;
 import lombok.RequiredArgsConstructor;
-
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class MeterStatusLogsRepository implements MeterStatusLogs {
@@ -24,10 +23,9 @@ public class MeterStatusLogsRepository implements MeterStatusLogs {
 
   @Override
   public void save(List<StatusLogEntry<UUID>> meterStatusLogs) {
-    physicalMeterStatusLogJpaRepository.save(
-      meterStatusLogs.stream()
-        .map(MeterStatusLogEntityMapper::toEntity)
-        .collect(toList())
-    );
+    meterStatusLogs.stream()
+      .filter(uuidStatusLogEntry -> Objects.nonNull(uuidStatusLogEntry.start))
+      .map(MeterStatusLogEntityMapper::toEntity)
+      .forEach(physicalMeterStatusLogJpaRepository::save);
   }
 }

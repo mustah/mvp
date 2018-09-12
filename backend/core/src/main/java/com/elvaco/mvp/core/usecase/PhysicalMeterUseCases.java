@@ -31,9 +31,9 @@ public class PhysicalMeterUseCases {
 
   public PhysicalMeter saveWithStatuses(PhysicalMeter physicalMeter) {
     if (hasTenantAccess(physicalMeter.organisation.id)) {
-      PhysicalMeter saved = physicalMeters.save(physicalMeter);
+      physicalMeters.save(physicalMeter);
       meterStatusLogs.save(physicalMeter.statuses);
-      return saved;
+      return physicalMeter;
     }
     throw userIsUnauthorized(physicalMeter.id);
   }
