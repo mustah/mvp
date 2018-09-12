@@ -11,6 +11,9 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 
 public interface RequestParameters {
 
@@ -39,6 +42,13 @@ public interface RequestParameters {
 
   RequestParameters shallowCopy();
 
+  default RequestParameters ensureOrganisation(AuthenticatedUser currentUser) {
+    if (!currentUser.isSuperAdmin()) {
+      replace(ORGANISATION, currentUser.getOrganisationId().toString());
+    }
+    return this;
+  }
+
   default Optional<ZonedDateTime> getAsZonedDateTime(RequestParameter param) {
     try {
       return Optional.ofNullable(getFirst(param)).map(ZonedDateTime::parse);
@@ -61,5 +71,4 @@ public interface RequestParameters {
   default Optional<RequestParameters> has(RequestParameter param) {
     return hasParam(param) ? Optional.of(this) : Optional.empty();
   }
-
 }

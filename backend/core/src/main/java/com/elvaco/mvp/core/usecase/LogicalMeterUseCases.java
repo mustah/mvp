@@ -18,7 +18,6 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.parametersWithOrganisationId;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static java.util.stream.Collectors.toList;
 
@@ -30,21 +29,15 @@ public class LogicalMeterUseCases {
   private final Measurements measurements;
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
-    return logicalMeters.findAllBy(parametersWithOrganisationId(currentUser, parameters));
+    return logicalMeters.findAllBy(parameters.ensureOrganisation(currentUser));
   }
 
   public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
-    return logicalMeters.findAllWithStatuses(parametersWithOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.findAllWithStatuses(parameters.ensureOrganisation(currentUser));
   }
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return logicalMeters.findAll(
-      parametersWithOrganisationId(currentUser, parameters),
-      pageable
-    );
+    return logicalMeters.findAll(parameters.ensureOrganisation(currentUser), pageable);
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -57,10 +50,7 @@ public class LogicalMeterUseCases {
   }
 
   public Optional<LogicalMeter> findBy(RequestParameters parameters) {
-    Optional<LogicalMeter> meter = logicalMeters.findBy(parametersWithOrganisationId(
-      currentUser,
-      parameters
-    ));
+    Optional<LogicalMeter> meter = logicalMeters.findBy(parameters.ensureOrganisation(currentUser));
 
     return parameters.getAsZonedDateTime(BEFORE)
       .map(beforeTime -> meter.map(m -> withLatestReadouts(m, beforeTime)))
@@ -95,17 +85,11 @@ public class LogicalMeterUseCases {
   }
 
   public MeterSummary summary(RequestParameters parameters) {
-    return logicalMeters.summary(parametersWithOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.summary(parameters.ensureOrganisation(currentUser));
   }
 
   public List<LogicalMeter> selectionTree(RequestParameters parameters) {
-    return logicalMeters.findAllForSelectionTree(parametersWithOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisation(currentUser));
   }
 
   private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter, ZonedDateTime before) {
