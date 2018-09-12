@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {config} from '../../config/config';
 import {firstUpperTranslated} from '../../services/translationService';
-import {testOrNull} from '../hoc/hocs';
+import {componentOrNull} from '../hoc/hocs';
 import {RowCenter} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 import './Footer.scss';
@@ -16,4 +16,4 @@ export const FooterComponent = () => (
   </RowCenter>
 );
 
-export const Footer = testOrNull((_) => wasReplaced)(FooterComponent);
+export const Footer = componentOrNull((_) => wasReplaced)(FooterComponent);
