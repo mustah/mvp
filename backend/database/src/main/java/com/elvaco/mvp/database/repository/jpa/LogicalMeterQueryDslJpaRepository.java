@@ -27,6 +27,7 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
@@ -98,6 +99,13 @@ class LogicalMeterQueryDslJpaRepository
   @Override
   public Optional<LogicalMeterEntity> findById(UUID id) {
     return Optional.ofNullable(findOne(id));
+  }
+
+  @Override
+  public Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
+    Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
+      .and(LOGICAL_METER.id.eq(id));
+    return Optional.ofNullable(fetchOne(predicate, new RequestParametersAdapter()));
   }
 
   @Override
@@ -241,9 +249,9 @@ class LogicalMeterQueryDslJpaRepository
     {"SpringDataRepositoryMethodReturnTypeInspection", "SpringDataMethodInconsistencyInspection"}
   )
   public Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
-    Predicate predicate
+    RequestParameters parameters
   ) {
-    return createQuery(predicate)
+    return createQuery(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters))
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())

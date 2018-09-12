@@ -16,7 +16,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +55,8 @@ public class LogicalMeterController {
       defaultValue = "1970-01-01T00:00:00Z"
     ) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after
   ) {
-    RequestParameters parameters = new RequestParametersAdapter().replace(ID, id.toString())
+    RequestParameters parameters = new RequestParametersAdapter()
+      .replace(ID, id.toString())
       .replace(BEFORE, before != null ? before.toString() : ZonedDateTime.now().toString())
       .replace(AFTER, after.toString());
 
@@ -75,11 +75,11 @@ public class LogicalMeterController {
   }
 
   @PostMapping("/synchronize")
-  public ResponseEntity<Void> synchronizeMetersByIds(
-    @RequestBody List<UUID> logicalMetersIds
-  ) {
-    logicalMeterUseCases.findAllBy(new RequestParametersAdapter().setAllIds(ID, logicalMetersIds))
-      .forEach(this::sync);
+  public ResponseEntity<Void> synchronizeMetersByIds(@RequestBody List<UUID> logicalMetersIds) {
+    RequestParameters parameters = new RequestParametersAdapter()
+      .setAllIds(ID, logicalMetersIds);
+
+    logicalMeterUseCases.findAllBy(parameters).forEach(this::sync);
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
@@ -89,10 +89,10 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(
-      requestParametersOf(requestParams),
-      new PageableAdapter(pageable)
-    );
+    RequestParameters parameters = requestParametersOf(requestParams);
+    PageableAdapter adapter = new PageableAdapter(pageable);
+
+    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(LogicalMeterDtoMapper::toPagedDto);
