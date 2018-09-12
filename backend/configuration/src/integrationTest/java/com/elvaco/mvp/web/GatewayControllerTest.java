@@ -115,7 +115,7 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getTotalPages()).isEqualTo(1);
 
     List<IdStatus> gatewayIds = response.getContent().stream()
-      .map(gw -> new IdStatus(gw.id, gw.status))
+      .map(gateway -> new IdStatus(gateway.id, gateway.status))
       .collect(toList());
 
     assertThat(gatewayIds).containsExactlyInAnyOrder(

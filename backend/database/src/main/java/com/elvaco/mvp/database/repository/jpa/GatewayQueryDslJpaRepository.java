@@ -67,7 +67,8 @@ class GatewayQueryDslJpaRepository
       .select(path)
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
       .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
+      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
+      .distinct();
 
     JPQLQuery<PagedGateway> selectQuery = createQuery(predicate)
       .select(Projections.constructor(
@@ -79,7 +80,8 @@ class GatewayQueryDslJpaRepository
       ))
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
       .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
+      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
+      .distinct();
 
     List<PagedGateway> pagedGateways = querydsl.applyPagination(pageable, selectQuery)
       .fetch();

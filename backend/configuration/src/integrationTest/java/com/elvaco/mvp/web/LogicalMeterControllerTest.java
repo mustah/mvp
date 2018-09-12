@@ -1091,13 +1091,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    PagedLogicalMeterDto pagedMeter1 = response.getContent().get(0);
-    PagedLogicalMeterDto pagedMeter2 = response.getContent().get(1);
+    String statusChanged = Dates.formatUtc(start);
 
-    assertThat(pagedMeter1.status).isEqualTo(OK);
-    assertThat(pagedMeter1.statusChanged).isEqualTo(Dates.formatUtc(start));
-    assertThat(pagedMeter2.status).isEqualTo(ERROR);
-    assertThat(pagedMeter2.statusChanged).isEqualTo(Dates.formatUtc(start));
+    assertThat(response.getContent())
+      .extracting("status")
+      .containsExactlyInAnyOrder(OK, ERROR);
+    assertThat(response.getContent())
+      .extracting("statusChanged")
+      .containsExactlyInAnyOrder(statusChanged, statusChanged);
   }
 
   @Test
