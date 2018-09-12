@@ -5,7 +5,7 @@ import * as React from 'react';
  *
  * Only render this component if the user is a super admin. Otherwise return null and do not render.
  */
-export const testOrNull =
+export const componentOrNull =
   <P extends {}>(test: (props: P) => boolean) =>
     (Component: React.ComponentType<P>): React.SFC<P> =>
       (props: P) => test(props) ? <Component {...props} /> : null;

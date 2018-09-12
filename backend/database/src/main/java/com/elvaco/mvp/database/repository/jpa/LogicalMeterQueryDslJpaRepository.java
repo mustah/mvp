@@ -203,9 +203,9 @@ class LogicalMeterQueryDslJpaRepository
       ))
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION);
 
-    joinMeterStatusLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);
     joinGatewayStatusLogs(query, parameters);
 
@@ -354,6 +354,7 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG);
 
     joinLogicalMeterGateways(query, parameters);
+    joinGatewayStatusLogs(query, parameters);
   }
 
   private static <T> JPQLQuery<T> applyJoins(JPQLQuery<T> query, RequestParameters parameters) {

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/SelectionResultActionsDropdown';
-import {testOrNull} from '../../components/hoc/hocs';
+import {componentOrNull} from '../../components/hoc/hocs';
 import {withContent} from '../../components/hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {superAdminOnly} from '../../components/hoc/withRoles';
@@ -14,10 +14,7 @@ import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {isSelectionPage} from '../../selectors/routerSelectors';
 import {firstUpperTranslated} from '../../services/translationService';
-import {
-  clearErrorMeters,
-  fetchMeters,
-} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {
   getPageError,
@@ -77,10 +74,10 @@ export type MeterListProps = StateToProps & DispatchToProps & OwnProps;
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const selectionPage = testOrNull<SelectionPage>(({isSelectionPage}: SelectionPage) => isSelectionPage);
+const selectionPageEnhancer = componentOrNull<SelectionPage>(({isSelectionPage}: SelectionPage) => isSelectionPage);
 
 const enhance = compose<Clickable, Clickable & HasContent & SelectionPage>(
-  selectionPage,
+  selectionPageEnhancer,
   superAdminOnly,
   withContent,
 );

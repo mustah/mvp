@@ -15,9 +15,7 @@ const withLoader =
     Component: React.ComponentType<P>,
   ): React.SFC<P & Fetching> =>
     ({isFetching, ...props}: Fetching) =>
-      isFetching
-        ? <LoadingComponent/>
-        : <Component {...props}/>;
+      isFetching ? <LoadingComponent/> : <Component {...props}/>;
 
 export const withLargeLoader =
   <P extends {}>(Component: React.ComponentType<P>): React.SFC<P & Fetching> =>

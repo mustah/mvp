@@ -23,10 +23,7 @@ public class GatewayUseCases {
     this.currentUser = currentUser;
   }
 
-  public Page<Gateway> findAll(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
     return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
   }
 

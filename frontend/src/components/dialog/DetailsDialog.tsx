@@ -3,12 +3,12 @@ import {GatewayDetailsContainer} from '../../containers/dialogs/GatewayDetailsCo
 import {MeterDetailsContainer} from '../../containers/dialogs/MeterDetailsContainer';
 import {SelectedId} from '../../usecases/map/mapModels';
 import {ButtonClose} from '../buttons/DialogButtons';
-import {testOrNull} from '../hoc/hocs';
+import {componentOrNull} from '../hoc/hocs';
 import {Dialog, DialogProps} from './Dialog';
 
 export type DetailsDialogProps = SelectedId & DialogProps;
 
-const DialogOrNull = testOrNull<DetailsDialogProps>(
+const DialogOrNull = componentOrNull<DetailsDialogProps>(
   ({selectedId}: DetailsDialogProps) => selectedId.isJust(),
 )(Dialog);
 

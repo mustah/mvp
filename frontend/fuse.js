@@ -78,7 +78,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
         }),
         CSSPlugin(),
       ],
-      ReplacePlugin({
+      isProduction && ReplacePlugin({
         'FRONTEND_VERSION': gitVersion(),
       }),
       WebIndexPlugin({template: `${homeDir}/index.html`}),
