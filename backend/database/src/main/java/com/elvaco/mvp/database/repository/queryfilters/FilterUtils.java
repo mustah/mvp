@@ -21,6 +21,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_STATUS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.METER_STATUS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.STATUS;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
@@ -36,13 +37,11 @@ public final class FilterUtils {
     physicalMeterStatusLogEntity;
 
   public static boolean isDateRange(RequestParameters parameters) {
-    return parameters.hasParam(BEFORE)
-           && parameters.hasParam(AFTER);
+    return parameters.hasParam(BEFORE) && parameters.hasParam(AFTER);
   }
 
   public static boolean isGatewayQuery(RequestParameters parameters) {
-    return parameters.hasParam(GATEWAY_SERIAL)
-           || isGatewayStatusQuery(parameters);
+    return parameters.hasParam(GATEWAY_SERIAL) || isGatewayStatusQuery(parameters);
   }
 
   public static boolean isGatewayStatusQuery(RequestParameters parameters) {
@@ -50,8 +49,7 @@ public final class FilterUtils {
   }
 
   public static boolean isMeterStatusQuery(RequestParameters parameters) {
-    return parameters.hasParam(STATUS)
-           || parameters.hasParam(METER_STATUS);
+    return parameters.hasParam(STATUS) || parameters.hasParam(METER_STATUS);
   }
 
   public static boolean isOrganisationQuery(RequestParameters parameters) {
@@ -59,8 +57,11 @@ public final class FilterUtils {
   }
 
   public static boolean isLocationQuery(RequestParameters parameters) {
-    return parameters.hasParam(CITY)
-           || parameters.hasParam(ADDRESS);
+    return parameters.hasParam(CITY) || parameters.hasParam(ADDRESS);
+  }
+
+  public static boolean isPhysicalMeterQuery(RequestParameters parameters) {
+    return parameters.hasParam(SECONDARY_ADDRESS);
   }
 
   static List<StatusType> toStatusTypes(List<String> values) {
