@@ -218,8 +218,8 @@ msgstr "storhet"
 msgid "value"
 msgstr "värde"
 
-msgid "collected at"
-msgstr "insamlades"
+msgid "readout"
+msgstr "avläsning"
 
 msgid "date"
 msgstr "datum"

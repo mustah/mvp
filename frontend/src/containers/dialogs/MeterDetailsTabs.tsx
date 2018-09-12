@@ -135,7 +135,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
                 renderCell={renderValue}
               />
               <TableColumn
-                header={<TableHead>{translate('collected at')}</TableHead>}
+                header={<TableHead>{translate('readout')}</TableHead>}
                 renderCell={renderCreated}
               />
             </Table>

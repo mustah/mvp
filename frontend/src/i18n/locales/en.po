@@ -218,8 +218,8 @@ msgstr "quantity"
 msgid "value"
 msgstr "value"
 
-msgid "collected at"
-msgstr "collected at"
+msgid "readout"
+msgstr "readout"
 
 msgid "date"
 msgstr "date"

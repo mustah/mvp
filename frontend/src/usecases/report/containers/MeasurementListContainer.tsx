@@ -78,7 +78,7 @@ export const MeasurementListContainer = ({measurement}: Props) => {
           renderCell={renderValue}
         />
         <TableColumn
-          header={<TableHead>{translate('collected at')}</TableHead>}
+          header={<TableHead>{translate('readout')}</TableHead>}
           cellClassName={'first-uppercase'}
           renderCell={renderCreated}
         />
