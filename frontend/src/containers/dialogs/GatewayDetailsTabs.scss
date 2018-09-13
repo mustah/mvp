@@ -4,4 +4,9 @@
   td {
     padding: $space $sm-space;
   }
+
+  .ErrorLabel {
+    margin-top: 0;
+    margin-left: $space;
+  }
 }

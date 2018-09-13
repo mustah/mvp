@@ -88,7 +88,7 @@ export const MeterList = (
           renderCell={renderMedium}
         />
         <TableColumn
-          header={<TableHead className="TableHead-status">{translate('alarm')}</TableHead>}
+          header={<TableHead>{translate('alarm')}</TableHead>}
           renderCell={renderAlarm}
         />
         <TableColumn

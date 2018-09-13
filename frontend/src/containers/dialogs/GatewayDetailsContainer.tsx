@@ -16,6 +16,7 @@ import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/p
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
+import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId, CallbackWithIds, uuid} from '../../types/Types';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import './GatewayDetailsContainer.scss';
@@ -23,6 +24,7 @@ import {GatewayDetailsInfoContainer} from './GatewayDetailsInfo';
 import {GatewayDetailsTabs} from './GatewayDetailsTabs';
 
 interface StateToProps {
+  isSuperAdmin: boolean;
   isFetching: boolean;
   gateway: Maybe<Gateway>;
   gatewayMapMarker: Maybe<MapMarker>;
@@ -76,6 +78,7 @@ class GatewayDetails extends React.Component<Props> {
 
 const mapStateToProps = (
   {
+    auth: {user},
     paginatedDomainModels: {gateways},
     domainModels: {gatewayMapMarkers, meters},
   }: RootState,
@@ -89,6 +92,7 @@ const mapStateToProps = (
     gatewayMapMarker: selectedId
       .flatMap((id: uuid) => getDomainModelById<MapMarker>(id)(gatewayMapMarkers)),
     isFetching: gateways.isFetchingSingle || meters.isFetching,
+    isSuperAdmin: isSuperAdmin(user!),
   });
 };
 

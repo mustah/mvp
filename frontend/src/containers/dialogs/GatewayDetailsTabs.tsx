@@ -1,8 +1,8 @@
 import 'GatewayDetailsTabs.scss';
 import * as React from 'react';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
-import {Row} from '../../components/layouts/row/Row';
-import {Status} from '../../components/status/Status';
+import {Row, RowMiddle} from '../../components/layouts/row/Row';
+import {MeterAlarm} from '../../components/status/MeterAlarm';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {Tab} from '../../components/tabs/components/Tab';
@@ -10,6 +10,9 @@ import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {ErrorLabel} from '../../components/texts/ErrorLabel';
+import {Normal} from '../../components/texts/Texts';
+import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -20,7 +23,11 @@ import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
 
-interface Props {
+interface SuperAdmin {
+  isSuperAdmin: boolean;
+}
+
+interface OwnProps {
   gateway: Gateway;
   gatewayMapMarker: Maybe<MapMarker>;
   meters: ObjectsById<Meter>;
@@ -30,9 +37,14 @@ interface TabsState {
   selectedTab: TabName;
 }
 
-const renderStatusCell = ({status}: Meter) => status && <Status label={status.name}/>;
+const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
 
-const renderFacility = ({facility}: Meter) => facility;
+const renderFacilityAndReported = ({facility, isReported}: Meter) => (
+  <RowMiddle>
+    <Normal>{facility}</Normal>
+    <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+  </RowMiddle>
+);
 
 const renderMeterAddress = ({address}: Meter) =>
   address ? address : firstUpperTranslated('unknown');
@@ -41,13 +53,16 @@ const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
 
 const renderMedium = ({medium}: Meter) => medium;
 
-const MapContent = ({gateway, gatewayMapMarker}: Props) => (
+const MapContent = ({gateway, gatewayMapMarker}: OwnProps) => (
   <Map height={400} viewCenter={gateway.location.position}>
     {gatewayMapMarker.isJust() && <ClusterContainer markers={gatewayMapMarker.get()}/>}
   </Map>
 );
 
-const MapContentWrapper = withEmptyContent<Props & WithEmptyContentProps>(MapContent);
+type  MapProps = OwnProps & WithEmptyContentProps;
+type Props = SuperAdmin & OwnProps;
+
+const MapContentWrapper = withEmptyContent<MapProps>(MapContent);
 
 export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
@@ -55,15 +70,18 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
   render() {
     const {selectedTab} = this.state;
-    const {gateway, meters, gatewayMapMarker} = this.props;
+    const {gateway, meters, gatewayMapMarker, isSuperAdmin} = this.props;
 
-    const wrapperProps: Props & WithEmptyContentProps = {
+    const wrapperProps: MapProps = {
       gateway,
       meters,
       gatewayMapMarker,
       hasContent: gatewayMapMarker.isJust(),
       noContentText: firstUpperTranslated('no reliable position'),
     };
+
+    const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
+      formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
     return (
       <Row>
@@ -78,7 +96,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             <Table result={gateway.meterIds} entities={meters} className="GatewayMeters">
               <TableColumn
                 header={<TableHead>{translate('facility id')}</TableHead>}
-                renderCell={renderFacility}
+                renderCell={renderFacilityAndReported}
               />
               <TableColumn
                 header={<TableHead>{translate('meter')}</TableHead>}
@@ -93,8 +111,13 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
                 renderCell={renderMedium}
               />
               <TableColumn
-                header={<TableHead>{translate('status')}</TableHead>}
-                renderCell={renderStatusCell}
+                header={<TableHead>{translate('alarm')}</TableHead>}
+                renderCell={renderAlarm}
+              />
+              <TableColumn
+                cellClassName="number"
+                header={<TableHead className="number">{translate('collection percentage')}</TableHead>}
+                renderCell={renderCollectionStatus}
               />
             </Table>
           </TabContent>
