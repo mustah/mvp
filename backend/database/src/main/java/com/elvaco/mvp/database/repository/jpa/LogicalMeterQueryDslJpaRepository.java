@@ -48,7 +48,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.MAX_VALUE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MIN_VALUE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinGatewayStatusLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMetersStatusLogs;
@@ -211,7 +210,6 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION);
 
     joinLogicalMeterGateways(query, parameters);
-    joinGatewayStatusLogs(query, parameters);
 
     return query.distinct().fetch();
   }
@@ -238,7 +236,6 @@ class LogicalMeterQueryDslJpaRepository
 
     joinLogicalMeterGateways(query, parameters);
     joinLogicalMeterLocation(query, parameters);
-    joinGatewayStatusLogs(query, parameters);
     joinMeterStatusLogs(query, parameters);
 
     return query.fetch();
@@ -274,6 +271,15 @@ class LogicalMeterQueryDslJpaRepository
       .transform(groupBy(LOGICAL_METER.id).as(ALARM_LOG));
   }
 
+  private Map<UUID, PhysicalMeterStatusLogEntity> findStatuses(Predicate predicate) {
+    return createQuery(predicate)
+      .select(STATUS_LOG.start.max())
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
+      .transform(groupBy(LOGICAL_METER.id).as(STATUS_LOG));
+  }
+
   private List<PagedLogicalMeter> fetchAdditionalPagedMeterData(
     RequestParameters parameters,
     List<PagedLogicalMeter> pagedLogicalMeters
@@ -289,11 +295,15 @@ class LogicalMeterQueryDslJpaRepository
     Map<UUID, MeterAlarmLogEntity> alarms =
       findAlarms(new MeterAlarmLogQueryFilters().toExpression(parameters));
 
+    Map<UUID, PhysicalMeterStatusLogEntity> statuses =
+      findStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
+
     return pagedLogicalMeters.stream()
       .map(pagedLogicalMeter -> pagedLogicalMeter
         .withMetaData(
           readingCounts.getOrDefault(pagedLogicalMeter.id, 0L),
-          alarms.get(pagedLogicalMeter.id)
+          alarms.get(pagedLogicalMeter.id),
+          statuses.get(pagedLogicalMeter.id)
         )
       ).collect(toList());
   }
@@ -358,7 +368,6 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG);
 
     joinLogicalMeterGateways(query, parameters);
-    joinGatewayStatusLogs(query, parameters);
   }
 
   private static <T> void applyJoins(JPQLQuery<T> query, RequestParameters parameters) {

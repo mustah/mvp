@@ -10,12 +10,8 @@
   text-transform: uppercase;
   color: $white;
 
-  &.ok, &.active {
+  &.ok {
     background: $green;
-  }
-
-  &.info {
-    background: $dark-blue;
   }
 
   &.warning {
@@ -26,7 +22,7 @@
     background: $lightest-black;
   }
 
-  &.critical, &.error {
+  &.error {
     background: $red;
   }
 }

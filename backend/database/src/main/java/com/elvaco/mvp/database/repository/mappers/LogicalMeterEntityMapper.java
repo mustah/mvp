@@ -173,6 +173,7 @@ public class LogicalMeterEntityMapper {
       .expectedMeasurementCount(expectedReadingCount)
       .missingMeasurementCount(entity.missingReadingCount)
       .alarm(MeterAlarmLogEntityMapper.toActiveAlarm(entity.alarm))
+      .status(Optional.ofNullable(entity.status).map(logEntry -> logEntry.status).orElse(null))
       .build();
   }
 

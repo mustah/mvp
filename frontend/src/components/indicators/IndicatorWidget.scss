@@ -8,18 +8,12 @@
     color: $white;
   }
 
-  .info {
-    background-color: $white;
-    color: $blackest;
-  }
-
   .warning {
     background-color: $orange;
     color: $white;
   }
 
-  .error,
-  .critical {
+  .error {
     background-color: $red;
     color: $white;
   }
@@ -73,10 +67,6 @@
 
       &.warning {
         @extend .warning;
-      }
-
-      &.critical {
-        @extend .critical;
       }
 
       &.error {

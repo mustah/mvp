@@ -5,12 +5,9 @@ import {MapMarker, Marker} from '../mapModels';
 
 const icons = {
   [Status.ok]: imagePathFor('marker-icon-ok.png'),
-  [Status.active]: imagePathFor('marker-icon-ok.png'),
   [Status.warning]: imagePathFor('marker-icon-warning.png'),
-  [Status.info]: imagePathFor('marker-icon-warning.png'),
-  [Status.maintenance_scheduled]: imagePathFor('marker-icon-warning.png'),
-  [Status.alarm]: imagePathFor('marker-icon-error.png'),
-  [Status.critical]: imagePathFor('marker-icon-error.png'),
+  [Status.error]: imagePathFor('marker-icon-error.png'),
+  [Status.unknown]: imagePathFor('marker-icon-error.png'),
 };
 
 const getStatusIcon = (status: Status): string => icons[status] || imagePathFor('marker-icon.png');

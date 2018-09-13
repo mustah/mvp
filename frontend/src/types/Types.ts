@@ -1,11 +1,6 @@
 import * as React from 'react';
 import {Dispatch} from 'react-redux';
-import {
-  createEmptyAction,
-  createPayloadAction,
-  EmptyAction,
-  PayloadAction,
-} from 'react-redux-typescript';
+import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {Maybe} from '../helpers/Maybe';
 import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 
@@ -89,14 +84,9 @@ export interface ErrorResponse {
 
 export const enum Status {
   ok = 'ok',
-  alarm = 'alarm',
-  active = 'active',
-  info = 'info',
   error = 'error',
   warning = 'warning',
-  critical = 'critical',
   unknown = 'unknown',
-  maintenance_scheduled = 'maintenance_scheduled',
 }
 
 export const enum UseCases {
@@ -109,13 +99,9 @@ export const enum UseCases {
 
 const status = {
   ok: Status.ok,
-  active: Status.active,
   error: Status.error,
-  info: Status.info,
   warning: Status.warning,
-  critical: Status.critical,
   unknown: Status.unknown,
-  maintenance_scheduled: Status.info,
 };
 
 export const statusFor = (statusCode: uuid): Status =>

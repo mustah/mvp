@@ -3,7 +3,6 @@ package com.elvaco.mvp.web.dto;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -20,7 +19,7 @@ public class PagedLogicalMeterDto {
   public String manufacturer;
   @Nullable
   public String statusChanged;
-  public StatusType status;
+  public boolean isReported;
   @Nullable
   public Double collectionPercentage;
   public UUID organisationId;

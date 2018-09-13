@@ -12,7 +12,6 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.gatewayStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
@@ -61,13 +60,9 @@ public class LogicalMeterQueryFilters extends QueryFilters {
       case AFTER:
         after = getZonedDateTimeFrom(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case STATUS:
-      case METER_STATUS:
+      case REPORTED:
         statuses = toStatusTypes(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case GATEWAY_STATUS:
-        statuses = toStatusTypes(values);
-        return gatewayStatusQueryFilter(after, before, statuses);
       case GATEWAY_SERIAL:
         return GATEWAY.serial.in(values);
       case MANUFACTURER:

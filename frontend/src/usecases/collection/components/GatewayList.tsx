@@ -23,7 +23,7 @@ export const GatewayList = ({
 }: GatewayListProps) => {
 
   const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
-  const renderStatusCell = ({status: {name}}: Gateway) => <Status label={name}/>;
+  const renderCollectionStatus = ({status: {name}}: Gateway) => <Status label={name}/>;
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
   const renderActions = ({id, productModel}: Gateway) => (
@@ -59,7 +59,7 @@ export const GatewayList = ({
         />
         <TableColumn
           header={<TableHead>{translate('collection')}</TableHead>}
-          renderCell={renderStatusCell}
+          renderCell={renderCollectionStatus}
         />
         <TableColumn
           header={<TableHead/>}

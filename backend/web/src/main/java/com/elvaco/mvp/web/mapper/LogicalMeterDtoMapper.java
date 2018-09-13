@@ -43,11 +43,13 @@ public class LogicalMeterDtoMapper {
 
   public PagedLogicalMeterDto toPagedDto(LogicalMeter logicalMeter) {
     PagedLogicalMeterDto meterDto = new PagedLogicalMeterDto();
-    meterDto.medium = logicalMeter.getMedium();
     meterDto.id = logicalMeter.id;
+    meterDto.medium = logicalMeter.getMedium();
     meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask))
       .orElse(null);
+    meterDto.isReported = Optional.ofNullable(logicalMeter.status).map(StatusType::isReported)
+      .orElse(false);
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.facility = logicalMeter.externalId;
 
@@ -79,10 +81,11 @@ public class LogicalMeterDtoMapper {
     String created = formatUtc(logicalMeter.created);
     Optional<StatusLogEntry<UUID>> statusLog = logicalMeter.activeStatusLog();
     LogicalMeterDto meterDto = new LogicalMeterDto();
+    meterDto.id = logicalMeter.id;
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
-    meterDto.id = logicalMeter.id;
-    meterDto.status = statusLog.map(entry -> entry.status).orElse(StatusType.UNKNOWN);
+    meterDto.isReported = statusLog.map(entry -> entry.status.isReported())
+      .orElse(false);
     meterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
       .orElse(logicalMeter.created));
     meterDto.flags = emptyList();

@@ -69,11 +69,7 @@ public class GatewayQueryFilters extends QueryFilters {
       case AFTER:
         after = getZonedDateTimeFrom(values);
         return gatewayStatusQueryFilter(after, before, statuses);
-      case STATUS:
-      case GATEWAY_STATUS:
-        statuses = toStatusTypes(values);
-        return gatewayStatusQueryFilter(after, before, statuses);
-      case METER_STATUS:
+      case REPORTED:
         statuses = toStatusTypes(values);
         return meterStatusQueryFilter(after, before, statuses);
       case FACILITY:

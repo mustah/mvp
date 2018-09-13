@@ -159,10 +159,8 @@ describe('userSelectionActions', () => {
         addresses: [],
         cities: [],
         facilities: [],
-        gatewayStatuses: [],
         gatewaySerials: [],
         media: [],
-        meterStatuses: [],
         secondaryAddresses: [],
       };
 

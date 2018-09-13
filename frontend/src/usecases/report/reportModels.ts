@@ -1,7 +1,7 @@
 import {LegendPayload} from 'recharts';
 import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {firstUpperTranslated} from '../../services/translationService';
-import {Status, uuid} from '../../types/Types';
+import {uuid} from '../../types/Types';
 
 export interface ReportState {
   selectedListItems: uuid[];
@@ -48,7 +48,7 @@ export interface GraphContents {
 export interface Indicator {
   type: Medium;
   title: string;
-  state: Status;
+  state: string;
   subtitle: string;
   value: number;
   unit: string;
@@ -70,7 +70,7 @@ export const hardcodedIndicators = (): Indicator[] => ([
   {
     type: Medium.electricity,
     title: firstUpperTranslated('electricity'),
-    state: Status.info,
+    state: 'info',
     value: 0,
     unit: 'kWh/m2',
     subtitle: '',
@@ -78,7 +78,7 @@ export const hardcodedIndicators = (): Indicator[] => ([
   {
     type: Medium.hotWater,
     title: firstUpperTranslated('hot water'),
-    state: Status.info,
+    state: 'info',
     value: 0,
     unit: 'l/m2',
     subtitle: '',
@@ -86,7 +86,7 @@ export const hardcodedIndicators = (): Indicator[] => ([
   {
     type: Medium.water,
     title: firstUpperTranslated('water'),
-    state: Status.info,
+    state: 'info',
     value: 0,
     unit: 'l/m2',
     subtitle: '',
@@ -94,7 +94,7 @@ export const hardcodedIndicators = (): Indicator[] => ([
   {
     type: Medium.districtHeating,
     title: firstUpperTranslated('district heating'),
-    state: Status.info,
+    state: 'info',
     value: 1.1,
     unit: 'kWh/m2',
     subtitle: '(-2)',
@@ -102,7 +102,7 @@ export const hardcodedIndicators = (): Indicator[] => ([
   {
     type: Medium.gas,
     title: firstUpperTranslated('gas'),
-    state: Status.info,
+    state: 'info',
     value: 1.1,
     unit: 'kWh/m2',
     subtitle: '(-2)',
@@ -110,7 +110,7 @@ export const hardcodedIndicators = (): Indicator[] => ([
   {
     type: Medium.temperatureInside,
     title: firstUpperTranslated('inside temperature'),
-    state: Status.info,
+    state: 'info',
     value: 0,
     unit: '°C',
     subtitle: '',

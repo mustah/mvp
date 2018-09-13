@@ -15,9 +15,7 @@ const convert = (name: keyof OldSelectionParameters, selectionParameters): IdNam
 export const oldParameterNames: Array<keyof OldSelectionParameters> = [
   'facilities',
   'gatewaySerials',
-  'gatewayStatuses',
   'media',
-  'meterStatuses',
   'secondaryAddresses',
 ];
 

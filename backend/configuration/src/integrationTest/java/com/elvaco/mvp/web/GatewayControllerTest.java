@@ -175,56 +175,6 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void fetchGateways_ByStatus() {
-    Gateway gateway1 = saveGateway(dailyPlanet.id);
-    Gateway gateway2 = saveGateway(dailyPlanet.id);
-
-    ZonedDateTime date = ZonedDateTime.parse("2001-04-01T00:00:00.00Z");
-
-    saveGatewayStatus(
-      gateway1.id,
-      OK,
-      date.minusDays(90),
-      date.minusDays(30)
-    );
-
-    saveGatewayStatus(
-      gateway1.id,
-      WARNING,
-      date.minusDays(30),
-      null
-    );
-
-    saveGatewayStatus(
-      gateway2.id,
-      OK,
-      date.minusDays(90),
-      null
-    );
-
-    String url = String.format(
-      "/gateways?after=%s&before=%s&gatewayStatus=%s",
-      date.minusDays(30),
-      date,
-      WARNING.name
-    );
-
-    Page<GatewayDto> response = asTestSuperAdmin().getPage(url, GatewayDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(1);
-    assertThat(response.getNumberOfElements()).isEqualTo(1);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-
-    List<IdStatus> gatewayIds = response.getContent().stream()
-      .map(gw -> new IdStatus(gw.id, gw.status))
-      .collect(toList());
-
-    assertThat(gatewayIds).containsExactlyInAnyOrder(
-      new IdStatus(gateway1.id, WARNING.name)
-    );
-  }
-
-  @Test
   public void fetchAllGatewaysShouldBeEmptyWhenNoGatewaysExists() {
     Page<GatewayDto> response = asTestUser()
       .getPage("/gateways", GatewayDto.class);

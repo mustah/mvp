@@ -71,7 +71,6 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
-import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -216,7 +215,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
         .entityId(firstMeter.id)
-        .status(INFO)
+        .status(OK)
         .start(start)
         .build()
     );
@@ -745,7 +744,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findById_WithinDefaultPeriodNoStatus() {
+  public void findById_WithinDefaultPeriod_WithUnknownStatus() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T01:00:00.00Z");
@@ -770,11 +769,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
+    assertThat(logicalMeterDto.isReported).isTrue();
   }
 
   @Test
-  public void findById_WithinExplicitPeriodNoStatus() {
+  public void findById_WithinExplicitPeriod_WithUnknownStatus() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T01:00:00.00Z");
@@ -800,11 +799,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
+    assertThat(logicalMeterDto.isReported).isTrue();
   }
 
   @Test
-  public void findById_WithinPeriodOkStatus() {
+  public void findById_WithinPeriod_ShouldBeNotReportedWhenOkStatus() {
     LogicalMeter logicalMeter = saveLogicalMeter();
     UUID physicalMeterId = randomUUID();
 
@@ -830,7 +829,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(OK);
+    assertThat(logicalMeterDto.isReported).isFalse();
   }
 
   @Test
@@ -952,7 +951,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void inactiveStatusesAreNotIncludedInStatusQueryForPeriod() {
+  public void statusesAreNotIncludedInStatusQueryForPeriod() {
     LogicalMeter firstLogicalMeter = saveLogicalMeter();
     LogicalMeter secondLogicalMeter = saveLogicalMeter();
     LogicalMeter thirdLogicalMeter = saveLogicalMeter();
@@ -980,7 +979,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
         .entityId(firstMeter.id)
-        .status(StatusType.ACTIVE)
+        .status(StatusType.ERROR)
         .start(ZonedDateTime.parse("2004-12-25T10:14:00Z"))
         .build()
     );
@@ -989,7 +988,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
         .entityId(secondMeter.id)
-        .status(StatusType.ACTIVE)
+        .status(StatusType.ERROR)
         .start(ZonedDateTime.parse("2002-12-25T10:14:00Z"))
         .stop(ZonedDateTime.parse("2004-09-14T12:12:12Z"))
         .build()
@@ -999,14 +998,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
         .entityId(thirdMeter.id)
-        .status(StatusType.ACTIVE)
+        .status(StatusType.ERROR)
         .start(ZonedDateTime.parse("2015-04-29T10:14:20Z"))
         .build()
     );
 
     Page<PagedLogicalMeterDto> response = asTestUser()
       .getPage(
-        "/meters?after=2005-01-10T01:00:00.00Z&before=2015-01-01T23:00:00.00Z&status=active",
+        "/meters?after=2005-01-10T01:00:00.00Z&before=2015-01-01T23:00:00.00Z&reported=error",
         PagedLogicalMeterDto.class
       );
 
@@ -1018,7 +1017,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void pagedMeterDetailsHaveStatuses() {
+  public void pagedMeterDetailsIsNotReported() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
@@ -1043,7 +1042,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody();
 
     LogicalMeterDto logicalMeterDto = response.get(0);
-    assertThat(logicalMeterDto.status).isEqualTo(OK);
+    assertThat(logicalMeterDto.isReported).isFalse();
     assertThat(logicalMeterDto.statusChanged).isEqualTo(Dates.formatUtc(start));
   }
 
@@ -1090,15 +1089,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     String statusChanged = Dates.formatUtc(start);
 
     assertThat(logicalMetersResponse)
-      .extracting("status")
-      .containsExactlyInAnyOrder(OK, ERROR);
+      .extracting("isReported")
+      .containsExactlyInAnyOrder(false, true);
     assertThat(logicalMetersResponse)
       .extracting("statusChanged")
       .containsExactlyInAnyOrder(statusChanged, statusChanged);
   }
 
   @Test
-  public void getMeterStatusIsUnknownWhenNoActiveStatus() {
+  public void meterIsNotReported_WhenNoReportedStatusExists() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 
     physicalMeters.save(physicalMeter()
@@ -1113,11 +1112,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
+    assertThat(logicalMeterDto.isReported).isFalse();
   }
 
   @Test
-  public void metersHaveStatusSet() {
+  public void metersIsNotReportedWhenStatusOk() {
     LogicalMeter logicalMeter = saveLogicalMeter();
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
@@ -1140,7 +1139,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(OK);
+    assertThat(logicalMeterDto.isReported).isFalse();
     assertThat(logicalMeterDto.statusChanged).isEqualTo(Dates.formatUtc(start));
   }
 
@@ -1176,7 +1175,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(ERROR);
+    assertThat(logicalMeterDto.isReported).isTrue();
   }
 
   @Test
@@ -1219,7 +1218,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.status).isEqualTo(OK);
+    assertThat(logicalMeterDto.isReported).isFalse();
   }
 
   @Test

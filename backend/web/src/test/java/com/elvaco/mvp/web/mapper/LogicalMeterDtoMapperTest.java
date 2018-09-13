@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
+import static com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper.toDto;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -37,19 +38,15 @@ public class LogicalMeterDtoMapperTest {
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .organisation(ELVACO)
-      .logicalMeterId(logicalMeterId)
       .status(StatusLogEntry.<UUID>builder()
-        .status(StatusType.OK)
         .start(ZonedDateTime.now())
+        .status(StatusType.OK)
         .build())
+      .logicalMeterId(logicalMeterId)
       .build();
 
-    LogicalMeter logicalMeter = LogicalMeter.builder()
+    LogicalMeter logicalMeter = logicalMeter()
       .id(logicalMeterId)
-      .externalId("some-external-id")
-      .organisationId(ELVACO.id)
-      .meterDefinition(MeterDefinition.UNKNOWN_METER)
-      .created(ZonedDateTime.now())
       .physicalMeter(physicalMeter)
       .location(new LocationBuilder()
         .latitude(3.1)
@@ -67,14 +64,14 @@ public class LogicalMeterDtoMapperTest {
   }
 
   @Test
-  public void toDto() {
+  public void domainModelToDto() {
     UUID meterId = randomUUID();
     LogicalMeterDto expected = new LogicalMeterDto();
     expected.id = meterId;
     expected.created = CREATED_DATE_STRING;
     expected.statusChanged = CREATED_DATE_STRING;
     expected.medium = "Hot water";
-    expected.status = StatusType.OK;
+    expected.isReported = false;
     expected.location = new LocationDto(
       new IdNamedDto("kungsbacka"),
       new IdNamedDto("kabelgatan 2t"),
@@ -122,30 +119,29 @@ public class LogicalMeterDtoMapperTest {
           statusChanged.plusDays(1)
         )))
       .build());
-    List<PhysicalMeter> physicalMeters = singletonList(
-      PhysicalMeter.builder()
-        .organisation(ELVACO)
-        .address("123123")
-        .externalId("an-external-id")
-        .medium("Gas")
-        .manufacturer("ELV")
-        .logicalMeterId(meterId)
-        .readIntervalMinutes(15)
-        .status(StatusLogEntry.<UUID>builder()
-          .status(StatusType.OK)
-          .start(statusChanged)
-          .build())
-        .build()
-    );
+
     assertThat(
-      LogicalMeterDtoMapper.toDto(
+      toDto(
         LogicalMeter.builder()
           .id(meterId)
           .externalId("an-external-id")
           .organisationId(organisationId)
           .meterDefinition(MeterDefinition.HOT_WATER_METER)
           .created(statusChanged)
-          .physicalMeters(physicalMeters)
+          .physicalMeter(PhysicalMeter.builder()
+            .organisation(ELVACO)
+            .address("123123")
+            .externalId("an-external-id")
+            .medium("Gas")
+            .manufacturer("ELV")
+            .logicalMeterId(meterId)
+            .readIntervalMinutes(15)
+            .status(StatusLogEntry.<UUID>builder()
+              .status(StatusType.OK)
+              .start(statusChanged)
+              .build())
+            .build()
+          )
           .gateways(gateways)
           .location(new LocationBuilder()
             .city("kungsbacka")
@@ -162,27 +158,59 @@ public class LogicalMeterDtoMapperTest {
   }
 
   @Test
+  public void meterIsNotReported() {
+    LogicalMeter logicalMeter = logicalMeter()
+      .physicalMeter(PhysicalMeter.builder().organisation(ELVACO)
+        .status(StatusLogEntry.<UUID>builder()
+          .start(ZonedDateTime.now())
+          .status(StatusType.OK)
+          .build())
+        .build())
+      .build();
+
+    LogicalMeterDto logicalMeterDto = toDto(logicalMeter);
+
+    assertThat(logicalMeterDto.isReported).isFalse();
+  }
+
+  @Test
+  public void meterIsReported() {
+    LogicalMeter logicalMeter = logicalMeter()
+      .physicalMeter(PhysicalMeter.builder().organisation(ELVACO)
+        .status(StatusLogEntry.<UUID>builder()
+          .start(ZonedDateTime.now())
+          .status(StatusType.ERROR)
+          .build())
+        .build())
+      .build();
+
+    LogicalMeterDto logicalMeterDto = toDto(logicalMeter);
+
+    assertThat(logicalMeterDto.isReported).isTrue();
+  }
+
+  @Test
   public void nullCollectionStatusIsMappedToNull() {
-    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(
-      LogicalMeter.builder()
-        .externalId("external-id")
-        .organisationId(ELVACO.id)
-        .created(ZonedDateTime.parse(CREATED_DATE_STRING))
-        .build()
-    );
+    LogicalMeter logicalMeter = logicalMeter().build();
+
+    LogicalMeterDto logicalMeterDto = toDto(logicalMeter);
+
     assertThat(logicalMeterDto.collectionPercentage).isNull();
   }
 
   @Test
   public void dtoCreatedTimeReflectsCallerTimeZone() {
-    LogicalMeterDto logicalMeterDto = LogicalMeterDtoMapper.toDto(
-      LogicalMeter.builder()
-        .externalId("external-id")
-        .organisationId(ELVACO.id)
-        .created(ZonedDateTime.parse(CREATED_DATE_STRING))
-        .build()
-    );
+    LogicalMeter logicalMeter = logicalMeter().build();
+
+    LogicalMeterDto logicalMeterDto = toDto(logicalMeter);
 
     assertThat(logicalMeterDto.created).isEqualTo(CREATED_DATE_STRING);
+  }
+
+  private static LogicalMeter.LogicalMeterBuilder logicalMeter() {
+    return LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(ELVACO.id)
+      .created(ZonedDateTime.parse(CREATED_DATE_STRING));
   }
 }

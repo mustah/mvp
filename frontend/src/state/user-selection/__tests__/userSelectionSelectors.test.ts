@@ -1,7 +1,7 @@
 import {Period} from '../../../components/dates/dateModels';
 import {momentWithTimeZone} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {EncodedUriParameters, IdNamed, Status, toIdNamed} from '../../../types/Types';
+import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
@@ -175,8 +175,8 @@ describe('userSelectionSelectors', () => {
 
     it('has gateway search parameters', () => {
       const payload: SelectionParameter = {
-        item: {...toIdNamed(Status.ok)},
-        parameter: ParameterName.gatewayStatuses,
+        item: {...toIdNamed('123abc')},
+        parameter: ParameterName.gatewaySerials,
       };
       const state: UserSelectionState = userSelection(
         initialState,
@@ -194,7 +194,7 @@ describe('userSelectionSelectors', () => {
         now,
       });
 
-      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&size=20&page=0&w=sto`);
+      expect(uriParameters).toEqual(`gatewaySerial=123abc&${latestUrlParameters}&size=20&page=0&w=sto`);
     });
 
   });
@@ -234,8 +234,8 @@ describe('userSelectionSelectors', () => {
 
     it('has meter search parameters', () => {
       const payload: SelectionParameter = {
-        item: {...toIdNamed(Status.ok)},
-        parameter: ParameterName.meterStatuses,
+        item: {...toIdNamed('112')},
+        parameter: ParameterName.facilities,
       };
       const state: UserSelectionState = userSelection(
         initialState,
@@ -248,7 +248,7 @@ describe('userSelectionSelectors', () => {
         now,
       });
 
-      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`facility=112&${latestUrlParameters}&w=sto`);
     });
 
   });
@@ -288,8 +288,8 @@ describe('userSelectionSelectors', () => {
 
     it('has gateways search parameters', () => {
       const payload: SelectionParameter = {
-        item: {...toIdNamed(Status.ok)},
-        parameter: ParameterName.gatewayStatuses,
+        item: {...toIdNamed('666')},
+        parameter: ParameterName.gatewaySerials,
       };
       const state: UserSelectionState = userSelection(
         initialState,
@@ -302,7 +302,7 @@ describe('userSelectionSelectors', () => {
         now,
       });
 
-      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`gatewaySerial=666&${latestUrlParameters}&w=sto`);
     });
 
   });

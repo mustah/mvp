@@ -13,25 +13,22 @@ const baseParameterNames: ParameterNames = {
   addresses: 'address',
   alarms: 'alarm',
   cities: 'city',
+  facilities: 'facility',
+  gatewaySerials: 'gatewaySerial',
   manufacturers: 'manufacturer',
   media: 'medium',
   productModels: 'productModel',
-  gatewaySerials: 'gatewaySerial',
+  reported: 'reported',
   secondaryAddresses: 'secondaryAddress',
-  facilities: 'facility',
 };
 
 const gatewayParameterNames: ParameterNames = {
   ...baseParameterNames,
-  gatewayStatuses: 'status',
-  meterStatuses: 'meterStatus',
 };
 
 const meterParameterNames: ParameterNames = {
   ...baseParameterNames,
   meterIds: 'id',
-  meterStatuses: 'status',
-  gatewayStatuses: 'gatewayStatus',
 };
 
 export const encodedUriParametersFrom = (
@@ -59,7 +56,6 @@ export const toEntityApiParametersGateways =
 const makeParameter = (parameterNames: ParameterNames, parameter: string, id: uuid): string =>
   `${parameterNames[parameter]}=${encodeURIComponent(id.toString())}`;
 
-// TODO: perhaps make sure it could handle if dateRange is included, as it is now the function would most likely fail.
 const toEntityApiParameters = (
   selectionParameters: Omit<SelectedParameters, 'dateRange'>,
   parameterNames: ParameterNames,
@@ -70,6 +66,7 @@ const toEntityApiParameters = (
         ...prev,
         ...selectionParameters[parameter]
           .filter(({id}: SelectionItem) => id !== undefined)
+          .filter((_) => parameterNames[parameter] !== undefined)
           .map(({id}: SelectionItem) => makeParameter(parameterNames, parameter, id)),
       ], []);
 
