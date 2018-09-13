@@ -39,10 +39,6 @@ describe('translations', () => {
         expect(getTranslationOrName('unknown', ParameterName.period)).toEqual('unknown');
       });
 
-      it('translates gateway statuses', () => {
-        expect(getTranslationOrName('warning', ParameterName.gatewayStatuses)).toEqual('not good');
-      });
-
       it('translates meter statuses', () => {
         expect(getTranslationOrName('ok', ParameterName.meterStatuses)).toEqual('ok status');
       });

@@ -18,7 +18,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_STATUS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.METER_STATUS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
@@ -41,11 +40,7 @@ public final class FilterUtils {
   }
 
   public static boolean isGatewayQuery(RequestParameters parameters) {
-    return parameters.hasParam(GATEWAY_SERIAL) || isGatewayStatusQuery(parameters);
-  }
-
-  public static boolean isGatewayStatusQuery(RequestParameters parameters) {
-    return parameters.hasParam(GATEWAY_STATUS);
+    return parameters.hasParam(GATEWAY_SERIAL);
   }
 
   public static boolean isMeterStatusQuery(RequestParameters parameters) {

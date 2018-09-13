@@ -67,14 +67,13 @@ describe('urlFactory', () => {
     it('returns selected statuses', () => {
       const selection = selectedParameters({
         meterStatuses: [toIdNamed(Status.ok), toIdNamed(Status.warning)],
-        gatewayStatuses: [toIdNamed(Status.ok)],
       });
 
       expect(toEntityApiParametersMeters(selection))
-        .toEqual(['status=ok', 'status=warning', 'gatewayStatus=ok']);
+        .toEqual(['status=ok', 'status=warning']);
 
       expect(toEntityApiParametersGateways(selection))
-        .toEqual(['meterStatus=ok', 'meterStatus=warning', 'status=ok']);
+        .toEqual(['meterStatus=ok', 'meterStatus=warning']);
     });
   });
 
@@ -83,7 +82,6 @@ describe('urlFactory', () => {
       addresses: [toIdNamed('address 2'), toIdNamed('storgatan 5')],
       cities,
       meterStatuses: [toIdNamed(Status.ok), toIdNamed(Status.warning)],
-      gatewayStatuses: [toIdNamed(Status.ok)],
     });
 
     expect(toEntityApiParametersMeters(selection))
@@ -94,7 +92,6 @@ describe('urlFactory', () => {
         'city=mmx',
         'status=ok',
         'status=warning',
-        'gatewayStatus=ok',
       ]);
     expect(toEntityApiParametersGateways(selection))
       .toEqual([
@@ -104,7 +101,6 @@ describe('urlFactory', () => {
         'city=mmx',
         'meterStatus=ok',
         'meterStatus=warning',
-        'status=ok',
       ]);
   });
 

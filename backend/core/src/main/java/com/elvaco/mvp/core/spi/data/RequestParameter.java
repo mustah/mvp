@@ -14,7 +14,6 @@ public enum RequestParameter {
   FACILITY("facility"),
   GATEWAY_ID("gatewayId"),
   GATEWAY_SERIAL("gatewaySerial"),
-  GATEWAY_STATUS("gatewayStatus"),
   ID("id"),
   MANUFACTURER("manufacturer"),
   MAX_VALUE("maxValue"),

@@ -23,7 +23,6 @@ const baseParameterNames: ParameterNames = {
 
 const gatewayParameterNames: ParameterNames = {
   ...baseParameterNames,
-  gatewayStatuses: 'status',
   meterStatuses: 'meterStatus',
 };
 
@@ -31,7 +30,6 @@ const meterParameterNames: ParameterNames = {
   ...baseParameterNames,
   meterIds: 'id',
   meterStatuses: 'status',
-  gatewayStatuses: 'gatewayStatus',
 };
 
 export const encodedUriParametersFrom = (

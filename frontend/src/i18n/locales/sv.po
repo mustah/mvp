@@ -431,9 +431,6 @@ msgstr "urval"
 msgid "meter status"
 msgstr "mätarstatus"
 
-msgid "gateway status"
-msgstr "gatewaystatus"
-
 msgid "secondary address"
 msgstr "sekundäradress"
 

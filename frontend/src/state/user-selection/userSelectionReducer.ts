@@ -32,7 +32,6 @@ export const initialState: UserSelectionState = {
       addresses: [],
       cities: [],
       dateRange: {period: Period.latest},
-      gatewayStatuses: [],
       media: [],
       meterStatuses: [],
       facilities: [],

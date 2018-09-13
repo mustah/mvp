@@ -60,7 +60,7 @@ public class UserSelectionDataLoader implements CommandLineRunner {
   private void createSelections() throws IOException {
     String unknownJson =
       "{\"cities\":[\"unknown,unknown\"],\"addresses\":[],"
-      + "\"meterStatuses\":[],\"gatewayStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
+      + "\"meterStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
       + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
 
     JsonField selectionForUnknownCity = new JsonField(
@@ -69,7 +69,7 @@ public class UserSelectionDataLoader implements CommandLineRunner {
 
     String perstorpJson =
       "{\"cities\":[\"sweden,perstorp\"],\"addresses\":[],"
-      + "\"meterStatuses\":[],\"gatewayStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
+      + "\"meterStatuses\":[],\"alarms\":[],\"manufacturers\":[],"
       + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
 
     JsonField selectionForPerstorp = new JsonField(

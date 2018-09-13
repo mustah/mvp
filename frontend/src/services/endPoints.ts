@@ -3,7 +3,6 @@ export const enum EndPoints {
   cities = '/selections/cities',
   facilities = '/selections/facilities',
   gatewaySerials = '/selections/gateway-serials',
-  gatewayStatuses = '/selections/gateway-statuses',
   meterStatuses = '/selections/meter-statuses',
   media = '/selections/media',
   secondaryAddresses = '/selections/secondary-addresses',

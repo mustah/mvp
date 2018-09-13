@@ -175,8 +175,8 @@ describe('userSelectionSelectors', () => {
 
     it('has gateway search parameters', () => {
       const payload: SelectionParameter = {
-        item: {...toIdNamed(Status.ok)},
-        parameter: ParameterName.gatewayStatuses,
+        item: {...toIdNamed('123abc')},
+        parameter: ParameterName.gatewaySerials,
       };
       const state: UserSelectionState = userSelection(
         initialState,
@@ -194,7 +194,7 @@ describe('userSelectionSelectors', () => {
         now,
       });
 
-      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&size=20&page=0&w=sto`);
+      expect(uriParameters).toEqual(`gatewaySerial=123abc&${latestUrlParameters}&size=20&page=0&w=sto`);
     });
 
   });
@@ -288,8 +288,8 @@ describe('userSelectionSelectors', () => {
 
     it('has gateways search parameters', () => {
       const payload: SelectionParameter = {
-        item: {...toIdNamed(Status.ok)},
-        parameter: ParameterName.gatewayStatuses,
+        item: {...toIdNamed('666')},
+        parameter: ParameterName.gatewaySerials,
       };
       const state: UserSelectionState = userSelection(
         initialState,
@@ -302,7 +302,7 @@ describe('userSelectionSelectors', () => {
         now,
       });
 
-      expect(uriParameters).toEqual(`status=ok&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`gatewaySerial=666&${latestUrlParameters}&w=sto`);
     });
 
   });

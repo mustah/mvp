@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
-import static com.elvaco.mvp.web.dto.SelectionsDto.GATEWAY_STATUSES;
 import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_STATUSES;
@@ -30,11 +29,6 @@ public class SelectionController {
   private final PhysicalMeterUseCases physicalMeterUseCases;
   private final LocationUseCases locationUseCases;
   private final GatewayUseCases gatewayUseCases;
-
-  @GetMapping("gateway-statuses")
-  public org.springframework.data.domain.Page<IdNamedDto> gatewayStatuses() {
-    return new PageImpl<>(GATEWAY_STATUSES);
-  }
 
   @GetMapping("meter-statuses")
   public org.springframework.data.domain.Page<IdNamedDto> meterStatuses() {

@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.util;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
@@ -12,7 +11,6 @@ import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isGatewayQuery;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isGatewayStatusQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isMeterStatusQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isPhysicalMeterQuery;
@@ -33,9 +31,6 @@ public final class JoinIfNeededUtil {
 
   private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-
-  private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG =
-    QGatewayStatusLogEntity.gatewayStatusLogEntity;
 
   public static <T> void joinLogicalMetersPhysicalMetersStatusLogs(
     JPQLQuery<T> query,
@@ -62,15 +57,6 @@ public final class JoinIfNeededUtil {
   ) {
     if (isMeterStatusQuery(parameters) && isDateRange(parameters)) {
       query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
-    }
-  }
-
-  public static <T> void joinGatewayStatusLogs(
-    JPQLQuery<T> query,
-    RequestParameters parameters
-  ) {
-    if (isGatewayStatusQuery(parameters)) {
-      query.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
     }
   }
 

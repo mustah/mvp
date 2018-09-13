@@ -10,7 +10,6 @@ export const orUnknown = (name: string) => name === 'unknown' ? translate('unkno
 export const getTranslationOrName = (name: string, domainModelName: ParameterName): string => {
   switch (domainModelName) {
     case ParameterName.meterStatuses:
-    case ParameterName.gatewayStatuses:
       return statusTranslation(name);
     case ParameterName.cities:
     case ParameterName.addresses:

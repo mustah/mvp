@@ -429,9 +429,6 @@ msgstr "selection"
 msgid "meter status"
 msgstr "meter status"
 
-msgid "gateway status"
-msgstr "gateway status"
-
 msgid "secondary address"
 msgstr "secondary address"
 

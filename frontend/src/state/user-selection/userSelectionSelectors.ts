@@ -54,7 +54,6 @@ const getSelectedItems = (entityType: ParameterName) =>
     selectionCombiner(entityType),
   );
 
-export const getSelectedGatewayStatuses = getSelectedItems(ParameterName.gatewayStatuses);
 export const getSelectedMedia = getSelectedItems(ParameterName.media);
 export const getSelectedMeterStatuses = getSelectedItems(ParameterName.meterStatuses);
 export const getSelectedCities = getSelectedItems(ParameterName.cities);

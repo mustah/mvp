@@ -19,7 +19,6 @@ import {
   fetchCities,
   fetchFacilities,
   fetchGatewaySerials,
-  fetchGatewayStatuses,
   fetchMedia,
   fetchMeterStatuses,
   fetchSecondaryAddresses,
@@ -27,17 +26,12 @@ import {
   mapSelectedIdToCity,
 } from '../../../state/domain-models/selections/selectionsApiActions';
 import {toggleParameter} from '../../../state/user-selection/userSelectionActions';
-import {
-  OnSelectParameter,
-  ParameterName,
-  SelectionListItem,
-} from '../../../state/user-selection/userSelectionModels';
+import {OnSelectParameter, ParameterName, SelectionListItem} from '../../../state/user-selection/userSelectionModels';
 import {
   getSelectedAddresses,
   getSelectedCities,
   getSelectedFacilities,
   getSelectedGatewaySerials,
-  getSelectedGatewayStatuses,
   getSelectedMedia,
   getSelectedMeterStatuses,
   getSelectedSecondaryAddresses,
@@ -49,7 +43,6 @@ interface StateToProps {
   addresses: SelectionListItem[];
   cities: SelectionListItem[];
   facilities: SelectionListItem[];
-  gatewayStatuses: SelectionListItem[];
   gatewaySerials: SelectionListItem[];
   media: SelectionListItem[];
   meterStatuses: SelectionListItem[];
@@ -71,7 +64,6 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       addresses,
       cities,
       facilities,
-      gatewayStatuses,
       gatewaySerials,
       media,
       meterStatuses,
@@ -86,8 +78,6 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       toggleParameter({item, parameter: ParameterName.addresses});
     const selectMeterStatus = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.meterStatuses});
-    const selectGatewayStatus = (item: SelectionListItem) =>
-      toggleParameter({item, parameter: ParameterName.gatewayStatuses});
     const selectMedium = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.media});
     const selectSecondaryAddresses = (item: SelectionListItem) =>
@@ -100,7 +90,6 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
-    const gatewayStatusSelectionText = translate('gateway status') + ': ';
     const mediumSelectionText = translate('medium') + ': ';
     const facilitySelectionText = translate('facility') + ': ';
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
@@ -161,12 +150,6 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             selectionText={gatewaySerialSelectionText}
             select={selectGatewaySerials}
           />
-          <SimpleDropdownSelector
-            fetchItems={fetchGatewayStatuses}
-            selectedItems={gatewayStatuses}
-            selectionText={gatewayStatusSelectionText}
-            select={selectGatewayStatus}
-          />
         </Row>
         <SearchResultList/>
       </Column>
@@ -179,7 +162,6 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   cities: getSelectedCities(userSelection),
   facilities: getSelectedFacilities(userSelection),
   gatewaySerials: getSelectedGatewaySerials(userSelection),
-  gatewayStatuses: getSelectedGatewayStatuses(userSelection),
   media: getSelectedMedia(userSelection),
   meterStatuses: getSelectedMeterStatuses(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),

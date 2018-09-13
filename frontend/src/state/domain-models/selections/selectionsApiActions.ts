@@ -110,9 +110,6 @@ export const fetchGatewaySerials = async (page: number, query?: string): Promise
     requestParameters('serial', page, query),
   );
 
-export const fetchGatewayStatuses = async (): Promise<PagedResponse> =>
-  fetchItems<IdNamed, IdNamed>(EndPoints.gatewayStatuses, identity);
-
 export const fetchMeterStatuses = async (): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(EndPoints.meterStatuses, identity);
 

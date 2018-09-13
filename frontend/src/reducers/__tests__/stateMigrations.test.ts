@@ -8,7 +8,6 @@ describe('rootReducer', () => {
       expect(migrateFromUuidToIdNamed({})).toEqual({
         facilities: [],
         gatewaySerials: [],
-        gatewayStatuses: [],
         media: [],
         meterStatuses: [],
         secondaryAddresses: [],
@@ -19,7 +18,6 @@ describe('rootReducer', () => {
       expect(migrateFromUuidToIdNamed({facilities: [1]})).toEqual({
         facilities: [{id: 1, name: 1}],
         gatewaySerials: [],
-        gatewayStatuses: [],
         media: [],
         meterStatuses: [],
         secondaryAddresses: [],
@@ -30,7 +28,6 @@ describe('rootReducer', () => {
       const actual = migrateFromUuidToIdNamed({
         facilities: [1],
         gatewaySerials: [2, 3],
-        gatewayStatuses: ['ok', 'info'],
         media: ['Gas'],
         meterStatuses: ['critical'],
         secondaryAddresses: ['000123123'],
@@ -39,7 +36,6 @@ describe('rootReducer', () => {
       expect(actual).toEqual({
         facilities: [{id: 1, name: 1}],
         gatewaySerials: [{id: 2, name: 2}, {id: 3, name: 3}],
-        gatewayStatuses: [{id: 'ok', name: 'ok'}, {id: 'info', name: 'info'}],
         media: [{id: 'Gas', name: 'Gas'}],
         meterStatuses: [{id: 'critical', name: 'critical'}],
         secondaryAddresses: [{id: '000123123', name: '000123123'}],
@@ -63,7 +59,6 @@ describe('rootReducer', () => {
         manufacturers: [],
         meterStatuses: [],
         productModels: [],
-        gatewayStatuses: [],
       },
       organisationId: 'org1',
       isChanged: false,
