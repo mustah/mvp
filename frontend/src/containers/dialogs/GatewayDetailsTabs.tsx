@@ -42,6 +42,7 @@ interface TabsState {
 
 const iconStyle: React.CSSProperties = {
   marginLeft: 0,
+  marginRight: 4,
   padding: 0,
   width: 24,
   height: 24,
