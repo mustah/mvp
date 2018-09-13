@@ -1,6 +1,7 @@
 import {makeUrl} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient} from '../../../services/restClient';
+import {translate} from '../../../services/translationService';
 import {EncodedUriParameters, IdNamed, toIdNamed, uuid} from '../../../types/Types';
 import {Query} from '../../../usecases/search/searchModels';
 import {SelectionListItem} from '../../user-selection/userSelectionModels';
@@ -25,6 +26,8 @@ interface AddressResponse {
 }
 
 const identity = <T>(id: T): T => id;
+
+const translateReported = (item: IdNamed): IdNamed => ({...item, name: translate(item.name)});
 
 const toCity = ({name, country}: CityResponse): City => ({
   id: `${country},${name}`,
@@ -110,8 +113,8 @@ export const fetchGatewaySerials = async (page: number, query?: string): Promise
     requestParameters('serial', page, query),
   );
 
-export const fetchMeterStatuses = async (): Promise<PagedResponse> =>
-  fetchItems<IdNamed, IdNamed>(EndPoints.meterStatuses, identity);
+export const fetchReported = async (): Promise<PagedResponse> =>
+  fetchItems<IdNamed, IdNamed>(EndPoints.reported, translateReported);
 
 export const fetchMedia = async (): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(EndPoints.media, identity);

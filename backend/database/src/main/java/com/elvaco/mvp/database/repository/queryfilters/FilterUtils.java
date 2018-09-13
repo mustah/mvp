@@ -18,10 +18,9 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.METER_STATUS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.STATUS;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static java.util.stream.Collectors.toList;
@@ -43,8 +42,8 @@ public final class FilterUtils {
     return parameters.hasParam(GATEWAY_SERIAL);
   }
 
-  public static boolean isMeterStatusQuery(RequestParameters parameters) {
-    return parameters.hasParam(STATUS) || parameters.hasParam(METER_STATUS);
+  public static boolean isReportedQueryQuery(RequestParameters parameters) {
+    return parameters.hasParam(REPORTED);
   }
 
   public static boolean isOrganisationQuery(RequestParameters parameters) {

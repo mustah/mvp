@@ -9,7 +9,6 @@ describe('rootReducer', () => {
         facilities: [],
         gatewaySerials: [],
         media: [],
-        meterStatuses: [],
         secondaryAddresses: [],
       });
     });
@@ -19,7 +18,6 @@ describe('rootReducer', () => {
         facilities: [{id: 1, name: 1}],
         gatewaySerials: [],
         media: [],
-        meterStatuses: [],
         secondaryAddresses: [],
       });
     });
@@ -29,7 +27,6 @@ describe('rootReducer', () => {
         facilities: [1],
         gatewaySerials: [2, 3],
         media: ['Gas'],
-        meterStatuses: ['critical'],
         secondaryAddresses: ['000123123'],
       });
 
@@ -37,7 +34,6 @@ describe('rootReducer', () => {
         facilities: [{id: 1, name: 1}],
         gatewaySerials: [{id: 2, name: 2}, {id: 3, name: 3}],
         media: [{id: 'Gas', name: 'Gas'}],
-        meterStatuses: [{id: 'critical', name: 'critical'}],
         secondaryAddresses: [{id: '000123123', name: '000123123'}],
       });
     });
@@ -57,7 +53,6 @@ describe('rootReducer', () => {
         addresses: [],
         dateRange: {period: 'latest'},
         manufacturers: [],
-        meterStatuses: [],
         productModels: [],
       },
       organisationId: 'org1',

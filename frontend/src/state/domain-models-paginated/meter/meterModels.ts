@@ -1,5 +1,5 @@
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
-import {Identifiable, IdNamed, uuid} from '../../../types/Types';
+import {Identifiable, uuid} from '../../../types/Types';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
@@ -26,7 +26,6 @@ export interface Meter extends Identifiable, LocationHolder {
   medium: string;
   manufacturer: string;
   statusChanged?: string;
-  status: IdNamed;
   gatewaySerial: string;
   organisationId: uuid;
 }

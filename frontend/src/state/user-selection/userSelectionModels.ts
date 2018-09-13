@@ -7,12 +7,12 @@ import {Pagination} from '../ui/pagination/paginationModels';
 export const enum ParameterName {
   addresses = 'addresses',
   cities = 'cities',
-  media = 'media',
-  meterStatuses = 'meterStatuses',
-  period = 'period',
-  secondaryAddresses = 'secondaryAddresses',
   facilities = 'facilities',
   gatewaySerials = 'gatewaySerials',
+  media = 'media',
+  period = 'period',
+  reported = 'reported',
+  secondaryAddresses = 'secondaryAddresses',
 }
 
 export interface SelectionParameter {
@@ -34,7 +34,7 @@ export interface SelectedParameters {
   facilities?: IdNamed[];
   gatewaySerials?: IdNamed[];
   media?: IdNamed[];
-  meterStatuses?: IdNamed[];
+  reported?: IdNamed[];
   secondaryAddresses?: IdNamed[];
 }
 
@@ -44,7 +44,6 @@ export interface OldSelectionParameters {
   facilities: uuid[];
   gatewaySerials: uuid[];
   media: uuid[];
-  meterStatuses: uuid[];
   secondaryAddresses: uuid[];
 }
 

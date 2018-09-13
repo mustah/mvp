@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
-import static com.elvaco.mvp.web.dto.SelectionsDto.METER_STATUSES;
+import static com.elvaco.mvp.web.dto.SelectionsDto.REPORTED;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/selections")
@@ -30,9 +30,9 @@ public class SelectionController {
   private final LocationUseCases locationUseCases;
   private final GatewayUseCases gatewayUseCases;
 
-  @GetMapping("meter-statuses")
-  public org.springframework.data.domain.Page<IdNamedDto> meterStatuses() {
-    return new PageImpl<>(METER_STATUSES);
+  @GetMapping("reported")
+  public org.springframework.data.domain.Page<IdNamedDto> reported() {
+    return new PageImpl<>(REPORTED);
   }
 
   @GetMapping("meter-alarms")

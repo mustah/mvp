@@ -180,7 +180,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
         new PhysicalMeterStatusLogEntity(
           null,
           physicalMeterEntity.id,
-          StatusType.ACTIVE,
+          StatusType.OK,
           startDate,
           null
         )).collect(toList());

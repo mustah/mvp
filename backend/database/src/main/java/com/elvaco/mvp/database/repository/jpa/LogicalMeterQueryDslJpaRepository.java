@@ -271,6 +271,15 @@ class LogicalMeterQueryDslJpaRepository
       .transform(groupBy(LOGICAL_METER.id).as(ALARM_LOG));
   }
 
+  private Map<UUID, PhysicalMeterStatusLogEntity> findStatuses(Predicate predicate) {
+    return createQuery(predicate)
+      .select(STATUS_LOG.start.max())
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
+      .transform(groupBy(LOGICAL_METER.id).as(STATUS_LOG));
+  }
+
   private List<PagedLogicalMeter> fetchAdditionalPagedMeterData(
     RequestParameters parameters,
     List<PagedLogicalMeter> pagedLogicalMeters
@@ -286,11 +295,15 @@ class LogicalMeterQueryDslJpaRepository
     Map<UUID, MeterAlarmLogEntity> alarms =
       findAlarms(new MeterAlarmLogQueryFilters().toExpression(parameters));
 
+    Map<UUID, PhysicalMeterStatusLogEntity> statuses =
+      findStatuses(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters));
+
     return pagedLogicalMeters.stream()
       .map(pagedLogicalMeter -> pagedLogicalMeter
         .withMetaData(
           readingCounts.getOrDefault(pagedLogicalMeter.id, 0L),
-          alarms.get(pagedLogicalMeter.id)
+          alarms.get(pagedLogicalMeter.id),
+          statuses.get(pagedLogicalMeter.id)
         )
       ).collect(toList());
   }

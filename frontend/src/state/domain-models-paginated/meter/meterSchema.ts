@@ -10,16 +10,10 @@ const toGateway = (gateway?: any): Gateway | undefined =>
     ? {...gateway, status: toIdNamed(gateway.status.toLowerCase())}
     : undefined;
 
-export const meterProcessStrategy = (entity: any): schema.StrategyFunction => {
-  if (entity.status) {
-    return {
-      ...entity,
-      status: toIdNamed(entity.status.toLowerCase()),
-      gateway: toGateway(entity.gateway),
-    };
-  }
-  return entity;
-};
+export const meterProcessStrategy = (entity: any): schema.StrategyFunction => ({
+  ...entity,
+  gateway: toGateway(entity.gateway),
+});
 const meter: Schema = new schema.Entity('meters', {}, {processStrategy: meterProcessStrategy});
 const meterSchema: Schema = {content: [meter]};
 

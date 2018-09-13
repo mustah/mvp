@@ -60,8 +60,7 @@ public class LogicalMeterQueryFilters extends QueryFilters {
       case AFTER:
         after = getZonedDateTimeFrom(values);
         return meterStatusQueryFilter(after, before, statuses);
-      case STATUS:
-      case METER_STATUS:
+      case REPORTED:
         statuses = toStatusTypes(values);
         return meterStatusQueryFilter(after, before, statuses);
       case GATEWAY_SERIAL:

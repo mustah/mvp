@@ -29,12 +29,6 @@ describe('dialogHelper', () => {
       expect(titleOf([{title: 'has error'}])).toEqual('has error');
     });
 
-    it('renders all flags and joins them', () => {
-      const flags = [{title: 'has error'}, {title: 'ok'}, {title: 'fixed'}];
-
-      expect(titleOf(flags)).toEqual('has error, ok, fixed');
-    });
-
   });
 
   describe('statusChangelogDataFormatter', () => {
@@ -146,7 +140,7 @@ describe('dialogHelper', () => {
         statusChangelog: [
           {
             id: 1,
-            name: 'active',
+            name: 'ok',
             start: '2018-04-04 12:05:23',
           },
           {
@@ -155,10 +149,6 @@ describe('dialogHelper', () => {
             start: '2018-04-04 12:05:23',
           },
         ],
-        status: {
-          id: 'active',
-          name: 'active',
-        },
         collectionPercentage: 313.04347826086956,
         measurements: [
           {
@@ -230,7 +220,7 @@ describe('dialogHelper', () => {
         statusChangelog: [
           {
             id: 1,
-            name: 'active',
+            name: 'ok',
             start: '2018-04-04 12:05:23',
           },
           {
@@ -239,13 +229,10 @@ describe('dialogHelper', () => {
             start: '2018-04-04 12:05:23',
           },
         ],
-        status: {
-          id: 'active',
-          name: 'active',
-        },
         collectionPercentage: 313.04347826086956,
         measurements: [],
         readIntervalMinutes: 60,
+        isReported: false,
         gateway: {
           id: '29836b65-4682-4526-90b2-9d9b7a31f45c',
           productModel: 'CMi2110',
@@ -292,7 +279,7 @@ describe('dialogHelper', () => {
         statusChangelog: [
           {
             id: 1,
-            name: 'active',
+            name: 'ok',
             start: '2018-04-04 12:05:23',
           },
           {
@@ -301,10 +288,6 @@ describe('dialogHelper', () => {
             start: '2018-04-04 12:05:23',
           },
         ],
-        status: {
-          id: 'active',
-          name: 'active',
-        },
         collectionPercentage: 313.04347826086956,
         measurements: [
           {

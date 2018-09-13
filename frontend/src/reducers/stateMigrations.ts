@@ -16,7 +16,6 @@ export const oldParameterNames: Array<keyof OldSelectionParameters> = [
   'facilities',
   'gatewaySerials',
   'media',
-  'meterStatuses',
   'secondaryAddresses',
 ];
 

@@ -13,16 +13,15 @@ public class StatusTypeTest {
 
   @Test
   public void fromStringValue() {
-    assertThat(StatusType.from("active")).isEqualTo(StatusType.ACTIVE);
     assertThat(StatusType.from("ok")).isEqualTo(StatusType.OK);
-    assertThat(StatusType.from("critical")).isEqualTo(StatusType.CRITICAL);
     assertThat(StatusType.from("warning")).isEqualTo(StatusType.WARNING);
+    assertThat(StatusType.from("error")).isEqualTo(StatusType.ERROR);
+    assertThat(StatusType.from("unknown")).isEqualTo(StatusType.UNKNOWN);
   }
 
   @Test
   public void ignoresCase() {
-    assertThat(StatusType.from("Active")).isEqualTo(StatusType.ACTIVE);
     assertThat(StatusType.from("Ok")).isEqualTo(StatusType.OK);
-    assertThat(StatusType.from("Info")).isEqualTo(StatusType.INFO);
+    assertThat(StatusType.from("warniNG")).isEqualTo(StatusType.WARNING);
   }
 }

@@ -20,7 +20,7 @@ import {
   fetchFacilities,
   fetchGatewaySerials,
   fetchMedia,
-  fetchMeterStatuses,
+  fetchReported,
   fetchSecondaryAddresses,
   mapSelectedIdToAddress,
   mapSelectedIdToCity,
@@ -33,7 +33,7 @@ import {
   getSelectedFacilities,
   getSelectedGatewaySerials,
   getSelectedMedia,
-  getSelectedMeterStatuses,
+  getSelectedReported,
   getSelectedSecondaryAddresses,
 } from '../../../state/user-selection/userSelectionSelectors';
 import {uuid} from '../../../types/Types';
@@ -45,7 +45,7 @@ interface StateToProps {
   facilities: SelectionListItem[];
   gatewaySerials: SelectionListItem[];
   media: SelectionListItem[];
-  meterStatuses: SelectionListItem[];
+  reported: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
   selectionId: uuid;
 }
@@ -66,7 +66,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       facilities,
       gatewaySerials,
       media,
-      meterStatuses,
+      reported,
       secondaryAddresses,
       selectionId,
       toggleParameter,
@@ -76,8 +76,8 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       toggleParameter({item, parameter: ParameterName.cities});
     const selectAddress = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.addresses});
-    const selectMeterStatus = (item: SelectionListItem) =>
-      toggleParameter({item, parameter: ParameterName.meterStatuses});
+    const selectReported = (item: SelectionListItem) =>
+      toggleParameter({item, parameter: ParameterName.reported});
     const selectMedium = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.media});
     const selectSecondaryAddresses = (item: SelectionListItem) =>
@@ -89,7 +89,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
 
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
-    const meterStatusSelectionText = translate('meter status') + ': ';
+    const reportedSelectionText = translate('reported') + ': ';
     const mediumSelectionText = translate('medium') + ': ';
     const facilitySelectionText = translate('facility') + ': ';
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
@@ -130,14 +130,14 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             selectionText={mediumSelectionText}
             select={selectMedium}
           />
-          <SimpleDropdownSelector
-            fetchItems={fetchMeterStatuses}
-            selectedItems={meterStatuses}
-            selectionText={meterStatusSelectionText}
-            select={selectMeterStatus}
-          />
         </Row>
         <Row className="SelectionDropdownOptions">
+          <SimpleDropdownSelector
+            fetchItems={fetchReported}
+            selectedItems={reported}
+            selectionText={reportedSelectionText}
+            select={selectReported}
+          />
           <SearchDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
@@ -163,7 +163,7 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   facilities: getSelectedFacilities(userSelection),
   gatewaySerials: getSelectedGatewaySerials(userSelection),
   media: getSelectedMedia(userSelection),
-  meterStatuses: getSelectedMeterStatuses(userSelection),
+  reported: getSelectedReported(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),
   selectionId: userSelection.userSelection.id,
 });

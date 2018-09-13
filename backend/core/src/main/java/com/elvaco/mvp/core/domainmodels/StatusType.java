@@ -5,18 +5,18 @@ import java.util.stream.Stream;
 public enum StatusType {
 
   OK("ok"),
-  INFO("info"),
-  ACTIVE("active"),
-  CRITICAL("critical"),
+  ERROR("error"),
   WARNING("warning"),
-  UNKNOWN("unknown"),
-  MAINTENANCE_SCHEDULED("maintenance_scheduled"),
-  ERROR("error");
+  UNKNOWN("unknown");
 
   public final String name;
 
   StatusType(String name) {
     this.name = name;
+  }
+
+  public boolean isReported() {
+    return this != OK;
   }
 
   public static StatusType from(String status) {

@@ -11,6 +11,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "yes"
+msgstr "yes"
+
+msgid "no"
+msgstr "no"
+
 msgid "admin"
 msgstr "admin"
 
@@ -228,16 +234,10 @@ msgid "no meters"
 msgstr "no meters"
 
 msgid "ok"
-msgstr "OK"
+msgstr "ok"
 
 msgid "alarm"
 msgstr "alarm"
-
-msgid "active"
-msgstr "active"
-
-msgid "critical"
-msgstr "critical"
 
 msgid "error"
 msgstr "error"
@@ -247,9 +247,6 @@ msgstr "info"
 
 msgid "warning"
 msgstr "warning"
-
-msgid "maintenance scheduled"
-msgstr "maintenance scheduled"
 
 msgid "flagged"
 msgstr "flagged"
@@ -426,14 +423,11 @@ msgstr "give the selection a name"
 msgid "selection"
 msgstr "selection"
 
-msgid "meter status"
-msgstr "meter status"
-
-msgid "secondary address"
-msgstr "secondary address"
 
 msgid "filter"
 msgstr "filter"
+msgid "secondary address"
+msgstr "secondary address"
 
 msgid "delete user selection"
 msgstr "delete selection"

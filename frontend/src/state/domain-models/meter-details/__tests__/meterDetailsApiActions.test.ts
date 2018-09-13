@@ -69,7 +69,6 @@ describe('meterDetailsApiActions', () => {
       manufacturer: 'man123',
       measurements: [],
       statusChangelog: [],
-      status: Status.ok,
       gatewaySerial: 'gatser123',
       gateway: {
         serial: 'ser123',
@@ -107,7 +106,7 @@ describe('meterDetailsApiActions', () => {
       const payload: Normalized<MeterDetails> = {
         entities: {
           meters: {
-            [meter.id]: {...meter, status, gateway: {...meter.gateway, status}},
+            [meter.id]: {...meter, gateway: {...meter.gateway, status}},
           },
         },
         result: [meter.id],
@@ -127,7 +126,7 @@ describe('meterDetailsApiActions', () => {
       const payload: Normalized<MeterDetails> = {
         entities: {
           meters: {
-            [`${meter.id}`]: {...meter, status, gateway: {...meter.gateway, status}},
+            [`${meter.id}`]: {...meter, gateway: {...meter.gateway, status}},
           },
         },
         result: [meter.id],
@@ -144,7 +143,7 @@ describe('meterDetailsApiActions', () => {
         ...initialDomain(),
         result: [meter.id],
         entities: {
-          [meter.id]: {...meter, status, gateway: {...meter.gateway, status}},
+          [meter.id]: {...meter, gateway: {...meter.gateway, status}},
         },
       };
       store = configureMockStoreWith(alreadyFetchedMeter);

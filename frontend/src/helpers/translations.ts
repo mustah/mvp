@@ -9,8 +9,6 @@ export const orUnknown = (name: string) => name === 'unknown' ? translate('unkno
 
 export const getTranslationOrName = (name: string, domainModelName: ParameterName): string => {
   switch (domainModelName) {
-    case ParameterName.meterStatuses:
-      return statusTranslation(name);
     case ParameterName.cities:
     case ParameterName.addresses:
       return orUnknown(name);
@@ -22,14 +20,9 @@ export const getTranslationOrName = (name: string, domainModelName: ParameterNam
 export const statusTranslation = (name: string): string => {
   const statuses = {
     [Status.ok]: translate('ok'),
-    [Status.alarm]: translate('alarm'),
-    [Status.active]: translate('active'),
-    [Status.critical]: translate('critical'),
     [Status.error]: translate('error'),
-    [Status.info]: translate('info'),
     [Status.unknown]: translate('unknown'),
     [Status.warning]: translate('warning'),
-    [Status.maintenance_scheduled]: translate('maintenance scheduled'),
   };
   return statuses[name] || statuses[Status.unknown];
 };

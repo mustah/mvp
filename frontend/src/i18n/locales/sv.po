@@ -11,6 +11,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "yes"
+msgstr "ja"
+
+msgid "no"
+msgstr "nej"
+
 msgid "admin"
 msgstr "admin"
 
@@ -233,12 +239,6 @@ msgstr "ok"
 msgid "alarm"
 msgstr "larm"
 
-msgid "active"
-msgstr "aktiv"
-
-msgid "critical"
-msgstr "kritisk"
-
 msgid "error"
 msgstr "fel"
 
@@ -247,9 +247,6 @@ msgstr "info"
 
 msgid "warning"
 msgstr "varning"
-
-msgid "maintenance scheduled"
-msgstr "underhåll bokat"
 
 msgid "flagged"
 msgstr "flaggad"
@@ -427,9 +424,6 @@ msgstr "namnge ditt urval"
 
 msgid "selection"
 msgstr "urval"
-
-msgid "meter status"
-msgstr "mätarstatus"
 
 msgid "secondary address"
 msgstr "sekundäradress"

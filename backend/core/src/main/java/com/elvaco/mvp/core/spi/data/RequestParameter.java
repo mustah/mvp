@@ -18,7 +18,7 @@ public enum RequestParameter {
   MANUFACTURER("manufacturer"),
   MAX_VALUE("maxValue"),
   MEDIUM("medium"),
-  METER_STATUS("meterStatus"),
+  REPORTED("reported"),
   MIN_VALUE("minValue"),
   ORGANISATION("organisation"),
   PHYSICAL_METER_ID("physicalMeterId"),

@@ -71,7 +71,7 @@ describe('clusterHelper', () => {
     it('is of type MapMarker', () => {
       const markers: MapMarker = {
         id: 1,
-        status: Status.info,
+        status: Status.error,
         latitude: 1,
         longitude: 2,
       };

@@ -1,7 +1,7 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
-import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
+import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
@@ -25,8 +25,6 @@ describe('paginatedDomainModelsReducer', () => {
 
     const page = 0;
 
-    const status: IdNamed = {id: Status.ok, name: Status.ok};
-
     const normalizedMeters: NormalizedPaginated<Meter> = {
       page,
       entities: {
@@ -42,7 +40,6 @@ describe('paginatedDomainModelsReducer', () => {
             medium: 'Electricity',
             manufacturer: 'ABB',
             readIntervalMinutes: 60,
-            status,
             gatewaySerial: '123',
             organisationId: '',
           },
@@ -57,7 +54,6 @@ describe('paginatedDomainModelsReducer', () => {
             medium: 'Electricity',
             manufacturer: 'ABB',
             readIntervalMinutes: 60,
-            status,
             gatewaySerial: '123-123',
             organisationId: '',
           },

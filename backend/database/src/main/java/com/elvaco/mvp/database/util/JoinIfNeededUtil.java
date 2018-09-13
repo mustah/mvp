@@ -12,8 +12,8 @@ import lombok.experimental.UtilityClass;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isGatewayQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isMeterStatusQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isPhysicalMeterQuery;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isReportedQueryQuery;
 
 @UtilityClass
 public final class JoinIfNeededUtil {
@@ -55,7 +55,7 @@ public final class JoinIfNeededUtil {
     JPQLQuery<T> query,
     RequestParameters parameters
   ) {
-    if (isMeterStatusQuery(parameters) && isDateRange(parameters)) {
+    if (isReportedQueryQuery(parameters) && isDateRange(parameters)) {
       query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
     }
   }

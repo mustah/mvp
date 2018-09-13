@@ -94,7 +94,7 @@ public class SummaryControllerTest extends IntegrationTest {
 
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get(
-        "/summary/meters?status=ok&before=2019-01-01T00:00:00Z&after=2018-01-01T00:00:00Z",
+        "/summary/meters?reported=ok&before=2019-01-01T00:00:00Z&after=2018-01-01T00:00:00Z",
         MeterSummaryDto.class
       );
 

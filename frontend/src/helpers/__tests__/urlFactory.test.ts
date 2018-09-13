@@ -1,20 +1,22 @@
 import {Period} from '../../components/dates/dateModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {SelectedParameters} from '../../state/user-selection/userSelectionModels';
-import {IdNamed, Status, toIdNamed} from '../../types/Types';
+import {IdNamed, toIdNamed} from '../../types/Types';
 import {momentWithTimeZone, toPeriodApiParameters} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 import {
   encodedUriParametersFrom,
   toEntityApiParametersGateways,
   toEntityApiParametersMeters,
+  toMeterIdsApiParameters,
   toPaginationApiParameters,
 } from '../urlFactory';
 
 describe('urlFactory', () => {
 
-  const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters =>
-    parameters as SelectedParameters;
+  type SelectedParams = SelectedParameters & {somethingElse: IdNamed[]};
+
+  const selectedParameters = (parameters: Partial<SelectedParams>): SelectedParams => parameters as SelectedParams;
 
   const cities: IdNamed[] = [toIdNamed('got'), toIdNamed('sto'), toIdNamed('mmx')];
 
@@ -64,16 +66,29 @@ describe('urlFactory', () => {
         .toEqual(['address=address%202', 'address=storgatan%205']);
     });
 
-    it('returns selected statuses', () => {
-      const selection = selectedParameters({
-        meterStatuses: [toIdNamed(Status.ok), toIdNamed(Status.warning)],
+    it('filters out unknown parameter names', () => {
+      const selection: SelectedParams = selectedParameters({
+        facilities: [toIdNamed('123')],
+        somethingElse: [toIdNamed('ok')],
       });
 
-      expect(toEntityApiParametersMeters(selection))
-        .toEqual(['status=ok', 'status=warning']);
-
       expect(toEntityApiParametersGateways(selection))
-        .toEqual(['meterStatus=ok', 'meterStatus=warning']);
+        .toEqual(['facility=123']);
+    });
+  });
+
+  describe('toMeterIdsApiParameters', () => {
+
+    it('maps single id', () => {
+      expect(toMeterIdsApiParameters([1])).toEqual('id=1');
+    });
+
+    it('maps no id', () => {
+      expect(toMeterIdsApiParameters([])).toBe('');
+    });
+
+    it('maps several ids', () => {
+      expect(toMeterIdsApiParameters([1, 3])).toBe('id=1&id=3');
     });
   });
 
@@ -81,27 +96,18 @@ describe('urlFactory', () => {
     const selection = selectedParameters({
       addresses: [toIdNamed('address 2'), toIdNamed('storgatan 5')],
       cities,
-      meterStatuses: [toIdNamed(Status.ok), toIdNamed(Status.warning)],
+      reported: [toIdNamed('true')],
     });
 
-    expect(toEntityApiParametersMeters(selection))
-      .toEqual([
-        'address=address%202',
-        'address=storgatan%205',
-        'city=got', 'city=sto',
-        'city=mmx',
-        'status=ok',
-        'status=warning',
-      ]);
-    expect(toEntityApiParametersGateways(selection))
-      .toEqual([
-        'address=address%202',
-        'address=storgatan%205',
-        'city=got', 'city=sto',
-        'city=mmx',
-        'meterStatus=ok',
-        'meterStatus=warning',
-      ]);
+    const expectedParameters = [
+      'address=address%202',
+      'address=storgatan%205',
+      'city=got', 'city=sto',
+      'city=mmx',
+      'reported=true',
+    ];
+    expect(toEntityApiParametersMeters(selection)).toEqual(expectedParameters);
+    expect(toEntityApiParametersGateways(selection)).toEqual(expectedParameters);
   });
 
   describe('toPeriodApiParameters', () => {
@@ -189,13 +195,15 @@ describe('urlFactory', () => {
   });
 
   describe('encodedUriParametersFrom', () => {
+
     it('concat Uri with out pagination', () => {
-      const entityApiParameters = ['city=...', 'address=...'];
-      const periodApiParameters = ['after=...', 'before=...'];
+      const entityApiParameters = ['city=sto', 'address=street'];
+      const periodApiParameters = ['after=today', 'before=now'];
 
       expect(encodedUriParametersFrom([...entityApiParameters, ...periodApiParameters]))
-        .toEqual('city=...&address=...&after=...&before=...');
+        .toEqual('city=sto&address=street&after=today&before=now');
     });
+
     it('concat Uri with pagination', () => {
       const periodApiParameters = ['after=...', 'before=...'];
       const entityApiParameters = ['city=...', 'address=...'];

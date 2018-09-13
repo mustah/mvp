@@ -698,12 +698,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
     );
 
     messageHandler.accept(
-      newMessageWithGatewayStatus(StatusType.CRITICAL)
+      newMessageWithGatewayStatus(StatusType.OK)
         .withMeter(new MeterDto(null, null, null, null, null, null, null))
     );
 
     assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
-      .currentStatus().status).isEqualTo(StatusType.CRITICAL);
+      .currentStatus().status).isEqualTo(StatusType.OK);
     assertThat(logicalMeters.findByOrganisationIdAndExternalId(
       organisation.id,
       EXTERNAL_ID
@@ -715,12 +715,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
     Organisation organisation = saveDefaultOrganisation();
 
     messageHandler.accept(
-      newMessageWithGatewayStatus(StatusType.CRITICAL)
+      newMessageWithGatewayStatus(StatusType.ERROR)
         .withMeter(new MeterDto(null, null, null, null, null, null, null))
     );
 
     assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
-      .currentStatus().status).isEqualTo(StatusType.CRITICAL);
+      .currentStatus().status).isEqualTo(StatusType.ERROR);
     assertThat(logicalMeters.findByOrganisationIdAndExternalId(
       organisation.id,
       EXTERNAL_ID

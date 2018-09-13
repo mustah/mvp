@@ -14,9 +14,9 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class SelectionsDto {
 
-  public static final List<IdNamedDto> METER_STATUSES = unmodifiableList(asList(
-    new IdNamedDto(StatusType.OK.name),
-    new IdNamedDto(StatusType.ERROR.name)
+  public static final List<IdNamedDto> REPORTED = unmodifiableList(asList(
+    new IdNamedDto(StatusType.OK.name, "no"),
+    new IdNamedDto(StatusType.ERROR.name, "yes")
   ));
 
   public static final List<IdNamedDto> METER_ALARMS = unmodifiableList(asList(

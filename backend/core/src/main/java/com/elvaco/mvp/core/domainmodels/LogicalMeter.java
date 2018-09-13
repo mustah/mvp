@@ -48,6 +48,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   public final Long missingMeasurementCount;
   @Nullable
   public final AlarmLogEntry alarm;
+  @Nullable
+  public final StatusType status;
 
   private LogicalMeter(
     UUID id,
@@ -61,7 +63,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     Location location,
     @Nullable Long expectedMeasurementCount,
     @Nullable Long missingMeasurementCount,
-    @Nullable AlarmLogEntry alarm
+    @Nullable AlarmLogEntry alarm,
+    @Nullable StatusType status
   ) {
     this.id = id;
     this.externalId = externalId;
@@ -75,6 +78,7 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     this.expectedMeasurementCount = expectedMeasurementCount;
     this.missingMeasurementCount = missingMeasurementCount;
     this.alarm = alarm;
+    this.status = status;
   }
 
   @Override
@@ -108,7 +112,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      alarm
+      alarm,
+      status
     );
   }
 
@@ -129,7 +134,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      alarm
+      alarm,
+      status
     );
   }
 
@@ -146,7 +152,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      alarm
+      alarm,
+      status
     );
   }
 
@@ -163,7 +170,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      alarm
+      alarm,
+      status
     );
   }
 
@@ -180,7 +188,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      alarm
+      alarm,
+      status
     );
   }
 
@@ -197,7 +206,8 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       location,
       expectedMeasurementCount,
       missingMeasurementCount,
-      alarm
+      alarm,
+      status
     );
   }
 

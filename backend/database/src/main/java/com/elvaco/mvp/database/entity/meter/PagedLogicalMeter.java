@@ -22,6 +22,7 @@ public class PagedLogicalMeter {
   public final PhysicalMeterEntity activePhysicalMeter;
   public final Long missingReadingCount;
   public final MeterAlarmLogEntity alarm;
+  public final PhysicalMeterStatusLogEntity status;
 
   public PagedLogicalMeter(
     UUID id,
@@ -45,6 +46,7 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       0L,
+      null,
       null
     );
   }
@@ -59,7 +61,8 @@ public class PagedLogicalMeter {
     @Nullable PhysicalMeterEntity activePhysicalMeter,
     @Nullable GatewayEntity gateway,
     @Nullable Long missingReadingCount,
-    @Nullable MeterAlarmLogEntity alarm
+    @Nullable MeterAlarmLogEntity alarm,
+    @Nullable PhysicalMeterStatusLogEntity status
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -71,6 +74,7 @@ public class PagedLogicalMeter {
     this.gateway = gateway;
     this.missingReadingCount = missingReadingCount;
     this.alarm = alarm;
+    this.status = status;
   }
 
   public long expectedReadingCount(SelectionPeriod selectionPeriod) {
@@ -81,7 +85,8 @@ public class PagedLogicalMeter {
 
   public PagedLogicalMeter withMetaData(
     @Nullable Long missingReadingCount,
-    @Nullable MeterAlarmLogEntity alarm
+    @Nullable MeterAlarmLogEntity alarm,
+    @Nullable PhysicalMeterStatusLogEntity status
   ) {
     return new PagedLogicalMeter(
       id,
@@ -93,7 +98,8 @@ public class PagedLogicalMeter {
       activePhysicalMeter,
       gateway,
       missingReadingCount,
-      alarm
+      alarm,
+      status
     );
   }
 }
