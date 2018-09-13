@@ -10,7 +10,7 @@ import {getDomainModelById} from '../../state/domain-models/domainModelsSelector
 import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {CallbackWithId, uuid} from '../../types/Types';
+import {CallbackWithId, CallbackWithIds, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
@@ -27,7 +27,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchMeterDetails: CallbackWithId;
+  fetchMeterDetails: CallbackWithIds;
   fetchMeterMapMarker: CallbackWithId;
   selectEntryAdd: CallbackWithId;
   syncWithMetering: CallbackWithId;
@@ -53,7 +53,7 @@ const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 const fetchMeterAndMapMarker =
   ({dateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId}: Props) => {
     selectedId.do((id: uuid) => {
-      fetchMeterDetails(id, makeApiParametersOf(now(), dateRange));
+      fetchMeterDetails([id], makeApiParametersOf(now(), dateRange));
       fetchMeterMapMarker(id);
     });
   };

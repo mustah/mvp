@@ -1,15 +1,21 @@
 import {normalize, Schema, schema} from 'normalizr';
+import {toIdNamed} from '../../../types/Types';
 import {DataFormatter} from '../../domain-models/domainModelsActions';
+import {Gateway} from '../gateway/gatewayModels';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {Meter} from './meterModels';
 
+const toGateway = (gateway?: any): Gateway | undefined =>
+  gateway
+    ? {...gateway, status: toIdNamed(gateway.status.toLowerCase())}
+    : undefined;
+
 export const meterProcessStrategy = (entity: any): schema.StrategyFunction => {
   if (entity.status) {
-    const statusCode = entity.status.toLowerCase();
-    const status = {id: statusCode, name: statusCode};
     return {
       ...entity,
-      status,
+      status: toIdNamed(entity.status.toLowerCase()),
+      gateway: toGateway(entity.gateway),
     };
   }
   return entity;

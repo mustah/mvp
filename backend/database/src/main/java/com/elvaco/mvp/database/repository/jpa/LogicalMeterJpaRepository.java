@@ -22,6 +22,8 @@ public interface LogicalMeterJpaRepository {
 
   Optional<LogicalMeterEntity> findById(UUID id);
 
+  Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
+
   Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
 
   Optional<LogicalMeterEntity> findBy(RequestParameters parameters);
@@ -43,7 +45,7 @@ public interface LogicalMeterJpaRepository {
   List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
 
   Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
-    Predicate predicate
+    RequestParameters parameters
   );
 
   void delete(UUID id, UUID organisationId);

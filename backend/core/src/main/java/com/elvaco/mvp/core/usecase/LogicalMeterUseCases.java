@@ -1,8 +1,8 @@
 package com.elvaco.mvp.core.usecase;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,8 +18,8 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class LogicalMeterUseCases {
@@ -29,30 +29,19 @@ public class LogicalMeterUseCases {
   private final Measurements measurements;
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
-    return logicalMeters.findAllBy(setCurrentUsersOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.findAllBy(parameters.ensureOrganisation(currentUser));
   }
 
-  public List<LogicalMeter> findAllWithStatuses(RequestParameters parameters) {
-    return logicalMeters.findAllWithStatuses(setCurrentUsersOrganisationId(
-      currentUser,
-      parameters
-    ));
+  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
+    return logicalMeters.findAllWithDetails(parameters.ensureOrganisation(currentUser)).stream()
+      .map(meter -> parameters.getAsZonedDateTime(BEFORE)
+        .map(beforeTime -> withLatestReadouts(meter, beforeTime))
+        .orElse(meter))
+      .collect(toList());
   }
 
-  public Page<LogicalMeter> findAll(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    return logicalMeters.findAll(
-      setCurrentUsersOrganisationId(
-        currentUser,
-        parameters
-      ),
-      pageable
-    );
+  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+    return logicalMeters.findAll(parameters.ensureOrganisation(currentUser), pageable);
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -65,10 +54,7 @@ public class LogicalMeterUseCases {
   }
 
   public Optional<LogicalMeter> findBy(RequestParameters parameters) {
-    Optional<LogicalMeter> meter = logicalMeters.findBy(setCurrentUsersOrganisationId(
-      currentUser,
-      parameters
-    ));
+    Optional<LogicalMeter> meter = logicalMeters.findBy(parameters.ensureOrganisation(currentUser));
 
     return parameters.getAsZonedDateTime(BEFORE)
       .map(beforeTime -> meter.map(m -> withLatestReadouts(m, beforeTime)))
@@ -103,32 +89,31 @@ public class LogicalMeterUseCases {
   }
 
   public MeterSummary summary(RequestParameters parameters) {
-    return logicalMeters.summary(setCurrentUsersOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.summary(parameters.ensureOrganisation(currentUser));
   }
 
   public List<LogicalMeter> selectionTree(RequestParameters parameters) {
-    return logicalMeters.findAllForSelectionTree(setCurrentUsersOrganisationId(
-      currentUser,
-      parameters
-    ));
+    return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisation(currentUser));
   }
 
   private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter, ZonedDateTime before) {
-    if (!logicalMeter.activePhysicalMeter().isPresent()) {
-      return logicalMeter;
-    }
+    return logicalMeter.activePhysicalMeter()
+      .map(pm -> pm.id)
+      .map(id -> findLatestMeasurements(logicalMeter, before, id))
+      .map(logicalMeter::withMeasurements)
+      .orElse(logicalMeter);
+  }
 
-    List<Measurement> latestMeasurements = new ArrayList<>();
-    UUID physicalMeterId = logicalMeter.activePhysicalMeter().get().id;
-
-    logicalMeter.getQuantities()
-      .forEach(quantity -> measurements.findLatestReadout(physicalMeterId, before, quantity)
-        .ifPresent(latestMeasurements::add));
-
-    return logicalMeter.withMeasurements(latestMeasurements);
+  private List<Measurement> findLatestMeasurements(
+    LogicalMeter logicalMeter,
+    ZonedDateTime before,
+    UUID physicalMeterId
+  ) {
+    return logicalMeter.getQuantities().stream()
+      .map(quantity -> measurements.findLatestReadout(physicalMeterId, before, quantity)
+        .orElse(null))
+      .filter(Objects::nonNull)
+      .collect(toList());
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

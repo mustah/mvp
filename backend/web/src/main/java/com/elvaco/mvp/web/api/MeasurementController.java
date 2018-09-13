@@ -23,7 +23,6 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,13 +53,12 @@ public class MeasurementController {
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
-    List<LogicalMeter> logicalMeters = getLogicalMetersByIds(meters);
     return getMeasurementSeriesDtos(
       after,
       before,
       resolution,
       quantities,
-      logicalMeters,
+      findLogicalMetersByIds(meters),
       (quantity, measurementValue) -> new LabeledMeasurementValue(
         "average",
         label,
@@ -85,7 +83,7 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    List<LogicalMeter> logicalMeters = getLogicalMetersByIds(meters);
+    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(meters);
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, Function.identity()));
 
@@ -103,10 +101,8 @@ public class MeasurementController {
         .collect(toSet()));
 
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
-    Set<Map.Entry<Quantity, List<PhysicalMeter>>> entries = mapMeterQuantitiesToPhysicalMeters(
-      logicalMeters,
-      quantities
-    ).entrySet();
+    Set<Map.Entry<Quantity, List<PhysicalMeter>>> entries =
+      mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities).entrySet();
 
     for (Map.Entry<Quantity, List<PhysicalMeter>> entry : entries) {
       for (PhysicalMeter meter : entry.getValue()) {
@@ -146,20 +142,17 @@ public class MeasurementController {
   ) {
     return cities.stream()
       .flatMap((city) -> {
-        String label = String.format("%s,%s", city.country, city.name);
-        List<LogicalMeter> meters = logicalMeterUseCases.findAllBy(
-          new RequestParametersAdapter()
-            .add(CITY, label)
-        );
+        String cityId = String.format("%s,%s", city.country, city.name);
+        List<LogicalMeter> logicalMeters = findLogicalMetersByCity(cityId);
         List<MeasurementSeriesDto> measurementSeriesDtos = getMeasurementSeriesDtos(
           after,
           before,
           resolution,
           quantities,
-          meters,
+          logicalMeters,
           (quantity, measurementValue) -> new LabeledMeasurementValue(
             "average",
-            label,
+            cityId,
             city.name,
             null,
             null,
@@ -190,10 +183,7 @@ public class MeasurementController {
     }
 
     Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
-      mapMeterQuantitiesToPhysicalMeters(
-        logicalMeters,
-        quantities
-      );
+      mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities);
 
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
     for (Map.Entry<Quantity, List<PhysicalMeter>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
@@ -205,8 +195,7 @@ public class MeasurementController {
           after,
           before,
           resolution
-        )
-          .stream()
+        ).stream()
           .map((measurementValue) -> valueMapper.apply(quantity, measurementValue))
           .collect(toList())
       );
@@ -215,11 +204,14 @@ public class MeasurementController {
     return toSeries(foundMeasurements);
   }
 
-  private List<LogicalMeter> getLogicalMetersByIds(List<UUID> meters) {
-    RequestParameters parameters = new RequestParametersAdapter().setAll(
-      ID,
-      meters.stream().map(UUID::toString).collect(toList())
-    );
-    return logicalMeterUseCases.findAllWithStatuses(parameters);
+  private List<LogicalMeter> findLogicalMetersByIds(List<UUID> meters) {
+    RequestParameters parameters = new RequestParametersAdapter()
+      .setAll(ID, meters.stream().map(UUID::toString).collect(toList()));
+    return logicalMeterUseCases.findAllBy(parameters);
+  }
+
+  private List<LogicalMeter> findLogicalMetersByCity(String label) {
+    RequestParameters parameters = new RequestParametersAdapter().add(CITY, label);
+    return logicalMeterUseCases.findAllBy(parameters);
   }
 }

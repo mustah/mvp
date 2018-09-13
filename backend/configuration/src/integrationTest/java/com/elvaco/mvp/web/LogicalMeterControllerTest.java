@@ -766,8 +766,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
   }
@@ -793,11 +794,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .build()
     );
 
+    String url = meterDetailsUrl(logicalMeter.id) + "&before=" + NOW + "&after=" + YESTERDAY;
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id
-        + "?before=" + NOW
-        + "&after=" + YESTERDAY, LogicalMeterDto.class)
-      .getBody();
+      .getList(url, LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
   }
@@ -825,8 +826,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .build()
     );
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(OK);
   }
@@ -857,7 +859,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class).getBody();
+      .getList("/meters/details?id=" + logicalMeter.id, LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.statusChangelog).containsExactly(
       new MeterStatusLogDto(
@@ -1034,18 +1038,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .build()
     );
 
-    Page<PagedLogicalMeterDto> response = asTestUser()
-      .getPage("/meters/details/?id=" + logicalMeter.id, PagedLogicalMeterDto.class);
+    List<LogicalMeterDto> response = asTestUser()
+      .getList("/meters/details/?id=" + logicalMeter.id, LogicalMeterDto.class)
+      .getBody();
 
-    PagedLogicalMeterDto pagedMeter = response
-      .getContent()
-      .get(0);
-
-    assertThat(response.getTotalElements()).isEqualTo(1);
-    assertThat(response.getNumberOfElements()).isEqualTo(1);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(pagedMeter.status).isEqualTo(OK);
-    assertThat(pagedMeter.statusChanged).isEqualTo(Dates.formatUtc(start));
+    LogicalMeterDto logicalMeterDto = response.get(0);
+    assertThat(logicalMeterDto.status).isEqualTo(OK);
+    assertThat(logicalMeterDto.statusChanged).isEqualTo(Dates.formatUtc(start));
   }
 
   @Test
@@ -1084,19 +1083,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     String url = "/meters/details/?id=" + logicalMeter1.id + "&id=" + logicalMeter2.id;
-    Page<PagedLogicalMeterDto> response = asTestUser()
-      .getPage(url, PagedLogicalMeterDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(2);
-    assertThat(response.getNumberOfElements()).isEqualTo(2);
-    assertThat(response.getTotalPages()).isEqualTo(1);
+    List<LogicalMeterDto> logicalMetersResponse = asTestUser()
+      .getList(url, LogicalMeterDto.class)
+      .getBody();
 
     String statusChanged = Dates.formatUtc(start);
 
-    assertThat(response.getContent())
+    assertThat(logicalMetersResponse)
       .extracting("status")
       .containsExactlyInAnyOrder(OK, ERROR);
-    assertThat(response.getContent())
+    assertThat(logicalMetersResponse)
       .extracting("statusChanged")
       .containsExactlyInAnyOrder(statusChanged, statusChanged);
   }
@@ -1113,14 +1109,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(StatusType.UNKNOWN);
   }
 
   @Test
-  public void pagedMetersHaveStatusSet() {
+  public void metersHaveStatusSet() {
     LogicalMeter logicalMeter = saveLogicalMeter();
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
@@ -1139,8 +1136,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(OK);
     assertThat(logicalMeterDto.statusChanged).isEqualTo(Dates.formatUtc(start));
@@ -1174,8 +1172,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(ERROR);
   }
@@ -1216,8 +1215,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.status).isEqualTo(OK);
   }
@@ -1297,30 +1297,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void cantAccessOtherOrganisationsMeterById() {
-    LogicalMeter theirMeter = logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
-      .externalId("this-is-not-my-meter")
-      .organisationId(context().organisationId2())
-      .meterDefinition(hotWaterMeterDefinition)
-      .location(UNKNOWN_LOCATION)
-      .build());
-
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
-      .get(
-        "/meters/" + theirMeter.id + "?before=" + NOW + "&after=" + YESTERDAY,
-        ErrorMessageDto.class
-      );
-
-    assertThatStatusIsNotFound(response);
-  }
-
-  @Test
   public void meterNotFound() {
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
-      .get("/meters/" + randomUUID(), ErrorMessageDto.class);
+    ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
+      .getList(meterDetailsUrl(randomUUID()), LogicalMeterDto.class);
 
-    assertThatStatusIsNotFound(response);
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).isEmpty();
   }
 
   @Test
@@ -1653,14 +1635,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findById_MeterContainsLatestMeasurements() {
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
+    LogicalMeter logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(districtHeatingMeter.id)
+      .logicalMeterId(logicalMeter.id)
       .externalId("bowie")
       .readIntervalMinutes(15)
       .build());
-    ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
 
     saveStatusLogForMeter(
       StatusLogEntry.<UUID>builder()
@@ -1682,7 +1663,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     addMeasurementsForMeter(
       physicalMeter,
       quantitiesWithoutDiffTemperature,
-      someDaysAgo,
+      ZonedDateTime.now().minusDays(3),
       Duration.ofDays(1),
       60L,
       1.0
@@ -1697,15 +1678,17 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       2.0
     );
 
-    ResponseEntity<LogicalMeterDto> response = asTestUser()
-      .get("/meters/" + districtHeatingMeter.id, LogicalMeterDto.class);
+    ZonedDateTime start = NOW.minusDays(10);
+    ZonedDateTime stop = NOW.plusHours(1);
+    String url = meterDetailsUrl(logicalMeter.id) + "&after=" + start + "&before=" + stop;
+    ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
+      .getList(url, LogicalMeterDto.class);
 
-    LogicalMeterDto meter = response.getBody();
+    List<LogicalMeterDto> meters = response.getBody();
+    List<MeasurementDto> measurements = meters.get(0).measurements;
 
     assertThatStatusIsOk(response);
-
-    List<MeasurementDto> measurements = meter.measurements;
-
+    assertThat(meters).hasSize(1);
     assertThat(measurements)
       .as("The difference temperature is missing")
       .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
@@ -1716,8 +1699,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .anyMatch(m -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
       .noneMatch(m -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
 
-    List<MeasurementDto> power = measurements
-      .stream()
+    List<MeasurementDto> power = measurements.stream()
       .filter(m -> m.quantity.equals(Quantity.POWER.name))
       .collect(toList());
 
@@ -2249,8 +2231,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
       alarm.id,
@@ -2285,8 +2268,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
       alarm1.id,
@@ -2307,8 +2291,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .get("/meters/" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
 
     assertThat(logicalMeterDto.alarm).isNull();
   }
@@ -2332,16 +2317,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterEntity.gateways = new HashSet<>();
     logicalMeterEntity.gateways.add(gatewayEntity);
     logicalMeterJpaRepository.save(logicalMeterEntity);
-  }
-
-  private GatewayEntity newGatewayEntity(UUID organisationId, String serial) {
-    return new GatewayEntity(
-      randomUUID(),
-      organisationId,
-      serial,
-      "",
-      emptySet()
-    );
   }
 
   private void assertNothingIsRemoved(
@@ -2454,14 +2429,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return meterStatusLogs.save(statusLog);
   }
 
-  private void assertThatStatusIsNotFound(ResponseEntity<ErrorMessageDto> response) {
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-  }
-
-  private void assertThatStatusIsOk(ResponseEntity<?> response) {
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
   private UserBuilder userBuilder() {
     return new UserBuilder()
       .name("Me")
@@ -2496,6 +2463,24 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .manufacturer("ELV1");
   }
 
+  private static GatewayEntity newGatewayEntity(UUID organisationId, String serial) {
+    return new GatewayEntity(
+      randomUUID(),
+      organisationId,
+      serial,
+      "",
+      emptySet()
+    );
+  }
+
+  private static void assertThatStatusIsNotFound(ResponseEntity<ErrorMessageDto> response) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  private static void assertThatStatusIsOk(ResponseEntity<?> response) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
   private static LocationBuilder kungsbacka() {
     return new LocationBuilder()
       .country("sweden")
@@ -2507,6 +2492,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   private static String metersUrl(ZonedDateTime start, ZonedDateTime before) {
-    return "/meters?after=" + start + "&before=" + before;
+    return String.format("/meters?after=%s&before=%s", start, before);
+  }
+
+  private static String meterDetailsUrl(UUID logicalMeterId) {
+    return String.format("/meters/details?id=%s", logicalMeterId);
   }
 }

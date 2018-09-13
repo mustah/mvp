@@ -10,21 +10,20 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-
+@RequiredArgsConstructor
 public class GatewayUseCases {
 
   private final Gateways gateways;
   private final AuthenticatedUser currentUser;
 
-  public GatewayUseCases(Gateways gateways, AuthenticatedUser currentUser) {
-    this.gateways = gateways;
-    this.currentUser = currentUser;
+  public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
+    return gateways.findAll(parameters.ensureOrganisation(currentUser), pageable);
   }
 
-  public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
-    return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
+  public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
+    return gateways.findSerials(parameters.ensureOrganisation(currentUser), pageable);
   }
 
   public Gateway save(Gateway gateway) {
@@ -48,12 +47,5 @@ public class GatewayUseCases {
     } else {
       return gateways.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
     }
-  }
-
-  public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
-    return gateways.findSerials(
-      setCurrentUsersOrganisationId(currentUser, parameters),
-      pageable
-    );
   }
 }

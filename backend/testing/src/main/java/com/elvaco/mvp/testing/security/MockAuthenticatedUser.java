@@ -9,6 +9,8 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
+import static java.util.Collections.singletonList;
+
 public class MockAuthenticatedUser implements AuthenticatedUser {
 
   private static final long serialVersionUID = -4347874617014900239L;
@@ -39,6 +41,18 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   public MockAuthenticatedUser(User user, String token) {
     this.user = user;
     this.token = token;
+  }
+
+  public static MockAuthenticatedUser admin() {
+    return new MockAuthenticatedUser(singletonList(Role.ADMIN));
+  }
+
+  public static MockAuthenticatedUser superAdmin() {
+    return new MockAuthenticatedUser(singletonList(Role.SUPER_ADMIN));
+  }
+
+  public static MockAuthenticatedUser user() {
+    return new MockAuthenticatedUser(singletonList(Role.USER));
   }
 
   @Override
@@ -79,5 +93,4 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   public Organisation getOrganisation() {
     return user.organisation;
   }
-
 }

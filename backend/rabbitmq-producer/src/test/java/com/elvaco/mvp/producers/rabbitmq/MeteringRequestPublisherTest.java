@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
@@ -36,7 +35,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void regularUserCanNotIssueRequest() {
-    MockAuthenticatedUser user = user();
+    MockAuthenticatedUser user = MockAuthenticatedUser.user();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
     assertThatThrownBy(() -> meteringRequestPublisher.request(null))
@@ -48,7 +47,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void adminCanNotIssueRequest() {
-    MockAuthenticatedUser user = admin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.admin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
     assertThatThrownBy(() -> meteringRequestPublisher.request(null))
@@ -60,7 +59,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void superAdminCanIssueRequest() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -75,7 +74,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void meterOrganisationIsUsedInRequest() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -90,7 +89,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void meterOrganisationIsUsedInRequest_DifferentFromUserNativeOrganisation() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     Organisation otherOrganisation = new Organisation(
       UUID.randomUUID(),
       "other-organisation",
@@ -115,7 +114,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void meterExternalIdIsUsedAsFacilityIdInRequest() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -130,7 +129,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void physicalMeterAddressIsUsedAsMeterIdInRequest() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
     LogicalMeter logicalMeter = newLogicalMeter(
@@ -146,7 +145,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void gatewayIdIsNotSet() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
     Gateway gateway = new Gateway(
@@ -169,7 +168,7 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void exceptionFromMessagePublisherTriggersUpstreamServiceUnavailable() {
-    MockAuthenticatedUser user = superAdmin();
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
       new MockOrganisations(singletonList(user.getOrganisation())),
@@ -211,17 +210,5 @@ public class MeteringRequestPublisherTest {
       .gateways(gateways)
       .location(Location.UNKNOWN_LOCATION)
       .build();
-  }
-
-  private static MockAuthenticatedUser admin() {
-    return new MockAuthenticatedUser(singletonList(Role.ADMIN));
-  }
-
-  private static MockAuthenticatedUser superAdmin() {
-    return new MockAuthenticatedUser(singletonList(Role.SUPER_ADMIN));
-  }
-
-  private static MockAuthenticatedUser user() {
-    return new MockAuthenticatedUser(singletonList(Role.USER));
   }
 }

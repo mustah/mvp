@@ -1,7 +1,7 @@
 import {Dispatch} from 'react-redux';
 import {createEmptyAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
-import {makeUrl} from '../../helpers/urlFactory';
+import {makeUrl, toMeterIdsApiParameters} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
@@ -26,6 +26,7 @@ export const domainModelsRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUE
 export const domainModelsFailure = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
 export const domainModelsGetSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET);
 export const domainModelsGetEntitySuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET_ENTITY);
+export const domainModelsGetEntitiesSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.GET_ENTITIES);
 export const domainModelsPostSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.POST);
 export const domainModelsPutSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.PUT);
 export const domainModelsDeleteSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.DELETE);
@@ -111,8 +112,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
 ) =>
   (requestData?: string) =>
     (dispatch, getState: GetState) => {
-      const {domainModels} = getState();
-      if (shouldFetch(domainModels[entityType])) {
+      if (shouldFetch(getState().domainModels[entityType])) {
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, Normalized<T>>({
           ...getRequestOf<Normalized<T>>(endPoint),
@@ -120,6 +120,28 @@ export const fetchIfNeeded = <T extends Identifiable>(
           requestFunc,
           requestData,
           ...requestCallbacks,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
+
+export const fetchEntitiesIfNeeded = <T extends Identifiable>(
+  endPoint: EndPoints,
+  entityType: keyof DomainModelsState,
+  formatData: DataFormatter<Normalized<T>>,
+) =>
+  (ids: uuid[], parameters?: EncodedUriParameters) =>
+    (dispatch, getState: GetState) => {
+      const meterIds: uuid[] = ids.filter((id: uuid) => shouldFetchEntity(id, getState().domainModels[entityType]));
+      if (meterIds.length) {
+        const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
+        return asyncRequest<string, Normalized<T>>({
+          ...getEntitiesRequestOf<Normalized<T>>(endPoint),
+          formatData,
+          requestFunc,
+          requestData: `${toMeterIdsApiParameters(meterIds)}&${parameters}`,
           dispatch,
         });
       } else {
@@ -206,6 +228,9 @@ export const getRequestOf = <T>(endpoint: EndPoints) =>
 
 export const getEntityRequestOf = <T>(endpoint: EndPoints) =>
   makeRequestActionsOf<T>(endpoint, RequestType.GET_ENTITY);
+
+export const getEntitiesRequestOf = <T>(endpoint: EndPoints) =>
+  makeRequestActionsOf<T>(endpoint, RequestType.GET_ENTITIES);
 
 export const postRequestOf = <T>(endpoint: EndPoints) =>
   makeRequestActionsOf<T>(endpoint, RequestType.POST);

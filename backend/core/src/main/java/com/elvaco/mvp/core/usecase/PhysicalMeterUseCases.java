@@ -13,8 +13,6 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-
 @RequiredArgsConstructor
 public class PhysicalMeterUseCases {
 
@@ -69,33 +67,15 @@ public class PhysicalMeterUseCases {
   }
 
   public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return physicalMeters.findAll(
-      setCurrentUsersOrganisationId(
-        currentUser,
-        parameters
-      ),
-      pageable
-    );
+    return physicalMeters.findAll(parameters.ensureOrganisation(currentUser), pageable);
   }
 
-  public Page<String> findAddresses(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    return physicalMeters.findAddresses(
-      setCurrentUsersOrganisationId(currentUser, parameters),
-      pageable
-    );
+  public Page<String> findAddresses(RequestParameters parameters, Pageable pageable) {
+    return physicalMeters.findAddresses(parameters.ensureOrganisation(currentUser), pageable);
   }
 
-  public Page<String> findFacilities(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    return physicalMeters.findFacilities(
-      setCurrentUsersOrganisationId(currentUser, parameters),
-      pageable
-    );
+  public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
+    return physicalMeters.findFacilities(parameters.ensureOrganisation(currentUser), pageable);
   }
 
   private Unauthorized userIsUnauthorized(UUID id) {

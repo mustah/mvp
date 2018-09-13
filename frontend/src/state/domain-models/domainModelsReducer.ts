@@ -20,6 +20,7 @@ import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
   domainModelsFailure,
+  domainModelsGetEntitiesSuccess,
   domainModelsGetEntitySuccess,
   domainModelsGetSuccess,
   domainModelsPostSuccess,
@@ -41,30 +42,34 @@ export const initialDomain = <T extends Identifiable>(): NormalizedState<T> => (
 const setEntities = <T extends Identifiable>(
   entity: string,
   state: NormalizedState<T>,
-  {payload}: Action<Normalized<T>>,
+  payload: Normalized<T>,
 ): NormalizedState<T> => {
   const entities: ObjectsById<T> = entity in payload.entities ? payload.entities[entity] : {};
-  if (Array.isArray(payload.result)) {
-    const {result} = payload;
-    return {
-      ...state,
-      isFetching: false,
-      isSuccessfullyFetched: true,
-      entities,
-      result,
-      total: result.length,
-    };
-  } else {
-    const result = Object.keys(entities);
-    return {
-      ...state,
-      isFetching: false,
-      isSuccessfullyFetched: true,
-      entities,
-      result,
-      total: result.length,
-    };
-  }
+  const result: uuid[] = Array.isArray(payload.result) ? payload.result : Object.keys(entities);
+  return {
+    ...state,
+    isFetching: false,
+    isSuccessfullyFetched: true,
+    entities,
+    result,
+    total: result.length,
+  };
+};
+
+const addEntities = <T extends Identifiable>(
+  entity: string,
+  state: NormalizedState<T>,
+  payload: Normalized<T>,
+): NormalizedState<T> => {
+  const entities: ObjectsById<T> = entity in payload.entities ? payload.entities[entity] : {};
+  const result: uuid[] = [...state.result, ...payload.result];
+  return {
+    ...state,
+    isFetching: false,
+    entities: {...state.entities, ...entities},
+    result,
+    total: result.length,
+  };
 };
 
 const addEntity =
@@ -124,11 +129,9 @@ const resetDomainModel = <T extends Identifiable>(
   entity: keyof DomainModelsState,
   payload: QueryParameter,
 ): NormalizedState<T> => {
-  if (canResetEntities(entity, payload)) {
-    return {...initialDomain<T>()};
-  } else {
-    return state;
-  }
+  return canResetEntities(entity, payload)
+    ? {...initialDomain<T>()}
+    : state;
 };
 
 type ActionTypes<T extends Identifiable> =
@@ -149,12 +152,11 @@ const reducerFor = <T extends Identifiable>(
   ): NormalizedState<T> => {
     switch (action.type) {
       case domainModelsRequest(endPoint):
-        return {
-          ...state,
-          isFetching: true,
-        };
+        return {...state, isFetching: true};
       case domainModelsGetSuccess(endPoint):
-        return setEntities<T>(entity, state, action as Action<Normalized<T>>);
+        return setEntities<T>(entity, state, (action as Action<Normalized<T>>).payload);
+      case domainModelsGetEntitiesSuccess(endPoint):
+        return addEntities<T>(entity, state, (action as Action<Normalized<T>>).payload);
       case domainModelsGetEntitySuccess(endPoint):
         return addEntity<T>(state, action as Action<T>);
       case domainModelsPostSuccess(endPoint):
@@ -203,7 +205,7 @@ export const resetReducer = <S>(
 
 export const meters = reducerFor<MeterDetails>(
   'meters',
-  EndPoints.meters,
+  EndPoints.meterDetails,
   resetStateReducer,
 );
 

@@ -20,7 +20,7 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
   @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
     List<PhysicalMeter> savedPhysicalMeters = logicalMeter.physicalMeters.stream()
-      .map(this.physicalMeters::save)
+      .map(physicalMeters::save)
       .collect(toList());
 
     return super.save(LogicalMeter.builder()

@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
@@ -24,7 +23,6 @@ import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SortUtil;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -51,19 +48,14 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
-    return findBy(new RequestParametersAdapter().replace(
-      ID,
-      id.toString()
-    ));
+    return logicalMeterJpaRepository.findById(id)
+      .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return findBy(
-      new RequestParametersAdapter()
-        .replace(ID, id.toString())
-        .replace(ORGANISATION, organisationId.toString())
-    );
+    return logicalMeterJpaRepository.findByOrganisationIdAndId(organisationId, id)
+      .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
   @Override
@@ -114,20 +106,18 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findAllWithStatuses(
-    RequestParameters parameters
-  ) {
+  public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
     List<LogicalMeterEntity> meters = SortUtil.getSort(parameters)
       .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
       .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));
 
-    return mapAndCollectWithStatuses(meters, parameters);
+    return findAllWithCollectionStatsAndStatuses(meters, parameters);
   }
 
   @Override
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
     return logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)).stream()
-      .map(LogicalMeterEntityMapper::toDomainModel)
+      .map(LogicalMeterEntityMapper::toSimpleDomainModel)
       .collect(toList());
   }
 
@@ -161,15 +151,13 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeasurements(
-    RequestParameters parameters
-  ) {
-    Optional<SelectionPeriod> selectionPeriod =
-      parameters.getAsSelectionPeriod(AFTER, BEFORE);
-
-    return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
-      .map(entry -> LogicalMeterEntityMapper.toDomainModel(entry, selectionPeriod.get()))
-      .collect(toList());
+  public List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters) {
+    return parameters.getAsSelectionPeriod(AFTER, BEFORE)
+      .map(selectionPeriod ->
+        logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
+          .map(entry -> LogicalMeterEntityMapper.toDomainModel(entry, selectionPeriod))
+          .collect(toList()))
+      .orElse(emptyList());
   }
 
   @Transactional
@@ -178,14 +166,12 @@ public class LogicalMeterRepository implements LogicalMeters {
     logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
   }
 
-  private List<LogicalMeter> mapAndCollectWithStatuses(
+  private List<LogicalMeter> findAllWithCollectionStatsAndStatuses(
     List<LogicalMeterEntity> meters,
     RequestParameters parameters
   ) {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
-      logicalMeterJpaRepository.findStatusesGroupedByPhysicalMeterId(
-        new PhysicalMeterStatusLogQueryFilters().toExpression(parameters)
-      );
+      logicalMeterJpaRepository.findStatusesGroupedByPhysicalMeterId(parameters);
 
     return parameters.getAsSelectionPeriod(AFTER, BEFORE)
       .map(selectionPeriod -> withStatusesAndCollectionStats(
@@ -212,26 +198,28 @@ public class LogicalMeterRepository implements LogicalMeters {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
     SelectionPeriod selectionPeriod
   ) {
-    Map<UUID, Long> missingCountForMetersWithinPeriod =
+    Map<UUID, Long> missingMeasurementsCount =
       getMissingCountForMetersWithinPeriod(parameters);
 
     return logicalMeters.stream()
-      .map(logicalMeterEntity -> {
-        Long expectedMeasurementCount = LogicalMeterHelper.calculateExpectedReadOuts(
-          logicalMeterEntity.physicalMeters.stream()
-            .findFirst()
-            .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
-            .orElse(0L),
-          selectionPeriod
-        );
-        return LogicalMeterEntityMapper.toDomainModel(
-          logicalMeterEntity,
-          mappedStatuses,
-          expectedMeasurementCount,
-          missingCountForMetersWithinPeriod.getOrDefault(logicalMeterEntity.id, 0L)
-        );
-      })
+      .map(logicalMeterEntity -> LogicalMeterEntityMapper.toDomainModel(
+        logicalMeterEntity,
+        mappedStatuses,
+        getReadoutCount(selectionPeriod, logicalMeterEntity),
+        missingMeasurementsCount.getOrDefault(logicalMeterEntity.id, 0L)
+      ))
       .collect(toList());
+  }
+
+  private long getReadoutCount(
+    SelectionPeriod selectionPeriod,
+    LogicalMeterEntity logicalMeterEntity
+  ) {
+    Long readIntervalMinutes = logicalMeterEntity.physicalMeters.stream()
+      .findFirst()
+      .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
+      .orElse(0L);
+    return LogicalMeterHelper.calculateExpectedReadOuts(readIntervalMinutes, selectionPeriod);
   }
 
   private Map<UUID, Long> getMissingCountForMetersWithinPeriod(

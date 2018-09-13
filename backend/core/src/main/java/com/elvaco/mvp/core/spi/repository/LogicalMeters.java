@@ -23,7 +23,7 @@ public interface LogicalMeters {
 
   Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
 
-  List<LogicalMeter> findAllWithStatuses(RequestParameters parameters);
+  List<LogicalMeter> findAllWithDetails(RequestParameters parameters);
 
   List<LogicalMeter> findAllBy(RequestParameters parameters);
 

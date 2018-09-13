@@ -19,6 +19,7 @@ export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type CallbackWith<T> = (result: T) => void;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
+export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
 export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;

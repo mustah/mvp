@@ -32,8 +32,8 @@ describe('syncWithMetering', () => {
 
   const logicalMeterId: uuid = 123;
 
-  const url = `${EndPoints.meters}/${logicalMeterId}/synchronize`;
-  const syncAllUrl = `${EndPoints.meters}/synchronize`;
+  const url = `${EndPoints.syncMeters}/${logicalMeterId}`;
+  const syncAllUrl = `${EndPoints.syncMeters}`;
 
   initTranslations({
     code: 'en',
