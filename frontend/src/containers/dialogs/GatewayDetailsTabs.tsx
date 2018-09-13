@@ -1,5 +1,6 @@
 import 'GatewayDetailsTabs.scss';
 import * as React from 'react';
+import {OpenDialogInfoButton} from '../../components/dialog/OpenDialogInfoButton';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row, RowMiddle} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
@@ -19,9 +20,11 @@ import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
+import {uuid} from '../../types/Types';
 import {Map} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {MeterDetailsContainer} from './MeterDetailsContainer';
 
 interface SuperAdmin {
   isSuperAdmin: boolean;
@@ -37,17 +40,37 @@ interface TabsState {
   selectedTab: TabName;
 }
 
+const iconStyle: React.CSSProperties = {
+  marginLeft: 0,
+  padding: 0,
+  width: 24,
+  height: 24,
+};
+
 const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
 
-const renderFacilityAndReported = ({facility, isReported}: Meter) => (
-  <RowMiddle>
-    <Normal>{facility}</Normal>
-    <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
-  </RowMiddle>
-);
+const renderFacility = ({id, facility}: Meter) => {
+  const selectedId: Maybe<uuid> = Maybe.maybe(id);
+  return (
+    <OpenDialogInfoButton
+      label={facility}
+      autoScrollBodyContent={true}
+      iconStyle={iconStyle}
+    >
+      <MeterDetailsContainer selectedId={selectedId}/>
+    </OpenDialogInfoButton>
+  );
+};
 
-const renderMeterAddress = ({address}: Meter) =>
-  address ? address : firstUpperTranslated('unknown');
+const renderMeterAddressAndReported = ({address, isReported}: Meter) => {
+  const label = address ? address : firstUpperTranslated('unknown');
+  return (
+    <RowMiddle>
+      <Normal>{label}</Normal>
+      <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+    </RowMiddle>
+  );
+};
 
 const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
 
@@ -96,11 +119,11 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             <Table result={gateway.meterIds} entities={meters} className="GatewayMeters">
               <TableColumn
                 header={<TableHead>{translate('facility id')}</TableHead>}
-                renderCell={renderFacilityAndReported}
+                renderCell={renderFacility}
               />
               <TableColumn
                 header={<TableHead>{translate('meter')}</TableHead>}
-                renderCell={renderMeterAddress}
+                renderCell={renderMeterAddressAndReported}
               />
               <TableColumn
                 header={<TableHead>{translate('manufacturer')}</TableHead>}
