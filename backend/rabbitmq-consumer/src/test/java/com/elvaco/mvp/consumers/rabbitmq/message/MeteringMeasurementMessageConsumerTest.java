@@ -49,7 +49,7 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer.METERING_TIMEZONE;
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -123,7 +123,7 @@ public class MeteringMeasurementMessageConsumerTest {
         organisations,
         new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
       ),
-      new MeasurementUseCases(authenticatedUser, measurements),
+      new MeasurementUseCases(measurements),
       new GatewayUseCases(gateways, authenticatedUser)
     );
   }

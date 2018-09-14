@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,9 +17,7 @@ public interface Measurements {
 
   Measurement save(Measurement measurement);
 
-  Collection<Measurement> save(Collection<Measurement> measurement);
-
-  void save(
+  void createOrUpdate(
     PhysicalMeter physicalMeter,
     ZonedDateTime created,
     String quantity,

@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -51,21 +49,7 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Collection<Measurement> save(Collection<Measurement> measurements) {
-    List<MeasurementEntity> measurementEntities = measurements.stream()
-      .map(MeasurementEntityMapper::toEntity)
-      .collect(toList());
-    try {
-      return measurementJpaRepository.save(measurementEntities).stream()
-        .map(MeasurementEntityMapper::toDomainModel)
-        .collect(toList());
-    } catch (DataIntegrityViolationException ex) {
-      throw SqlErrorMapper.mapDataIntegrityViolation(ex);
-    }
-  }
-
-  @Override
-  public void save(
+  public void createOrUpdate(
     PhysicalMeter physicalMeter,
     ZonedDateTime created,
     String quantity,
@@ -74,7 +58,7 @@ public class MeasurementRepository implements Measurements {
   ) {
     try {
       MeasurementUnit measurementUnit = new MeasurementUnit(unit, value);
-      measurementJpaRepository.save(
+      measurementJpaRepository.createOrUpdate(
         physicalMeter.id,
         created,
         QuantityAccess.singleton().getByName(quantity).getId(),
@@ -105,7 +89,7 @@ public class MeasurementRepository implements Measurements {
           seriesQuantity.presentationUnit(),
           OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
           OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
-          maxNumberOfDatapointsForResolution(resolution)
+          maxNumberOfDataPointsForResolution(resolution)
         );
         break;
       default:
@@ -145,7 +129,7 @@ public class MeasurementRepository implements Measurements {
             OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
             OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
             resolution.toString(),
-            maxNumberOfDatapointsForResolution(resolution)
+            maxNumberOfDataPointsForResolution(resolution)
           );
           break;
         default:
@@ -191,7 +175,7 @@ public class MeasurementRepository implements Measurements {
     ).map(MeasurementEntityMapper::toDomainModel);
   }
 
-  private int maxNumberOfDatapointsForResolution(TemporalResolution resolution) {
+  private int maxNumberOfDataPointsForResolution(TemporalResolution resolution) {
     switch (resolution) {
       case month:
         return 3;

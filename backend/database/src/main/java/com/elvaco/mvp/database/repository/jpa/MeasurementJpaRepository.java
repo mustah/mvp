@@ -230,7 +230,7 @@ public interface MeasurementJpaRepository
       + "    quantity = :quantity,"
       + "    value = cast(concat(:value, ' ', :unit) as unit)"
   )
-  void save(
+  void createOrUpdate(
     @Param("physical_meter_id") UUID physicalMeterId,
     @Param("created") ZonedDateTime created,
     @Param("quantity") Integer quantity,

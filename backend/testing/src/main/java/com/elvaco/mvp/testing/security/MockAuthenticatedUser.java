@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 
 public class MockAuthenticatedUser implements AuthenticatedUser {
 
@@ -21,13 +22,13 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   public MockAuthenticatedUser(List<Role> roles) {
     this(
       new User(
-        UUID.randomUUID(),
+        randomUUID(),
         "test-user",
         "test@test.test",
         "password",
         Language.en,
         new Organisation(
-          UUID.randomUUID(),
+          randomUUID(),
           "Test Organisation",
           "test-organisation",
           "Test Organisation"
@@ -88,6 +89,10 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   @Override
   public String getUsername() {
     return user.getUsername();
+  }
+
+  public User getUser() {
+    return user;
   }
 
   public Organisation getOrganisation() {
