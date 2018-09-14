@@ -79,6 +79,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterControllerTest extends IntegrationTest {
@@ -1845,8 +1846,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId("abcdef")
       .organisationId(context().organisationId())
-      .meterDefinition(DISTRICT_HEATING_METER)
-      .location(UNKNOWN_LOCATION)
       .build());
 
     Page<PagedLogicalMeterDto> page = asTestUser().getPage(
@@ -1866,7 +1865,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
-      .meterDefinition(DISTRICT_HEATING_METER)
       .location(new LocationBuilder().city("ringhals").build())
       .build());
 
@@ -1875,9 +1873,29 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       PagedLogicalMeterDto.class
     );
 
-    assertThat(page).hasSize(1);
-    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
-    assertThat(logicalMeterDto.location.city.name).isEqualTo("ringhals");
+    assertThat(page)
+      .extracting("location.city.name")
+      .containsExactly("ringhals");
+  }
+
+  @Test
+  public void wildcardSearchMatchesCityStart_caseInsensitive() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .location(new LocationBuilder().city("ringhals").build())
+      .build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=Ring",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page)
+      .extracting("location.city.name")
+      .containsExactly("ringhals");
   }
 
   @Test
@@ -1887,7 +1905,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
-      .meterDefinition(DISTRICT_HEATING_METER)
       .location(new LocationBuilder().city("ringhals").address("storgatan 34").build())
       .build());
 
@@ -1896,9 +1913,29 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       PagedLogicalMeterDto.class
     );
 
-    assertThat(page).hasSize(1);
-    PagedLogicalMeterDto logicalMeterDto = page.getContent().get(0);
-    assertThat(logicalMeterDto.location.address.name).isEqualTo("storgatan 34");
+    assertThat(page)
+      .extracting("location.address.name", "location.city.name")
+      .containsExactly(tuple("storgatan 34", "ringhals"));
+  }
+
+  @Test
+  public void wildcardSearchMatchesAddressStart_caseInsensitive() {
+    UUID meterId = UUID.randomUUID();
+    logicalMeters.save(LogicalMeter.builder()
+      .id(meterId)
+      .externalId(meterId.toString())
+      .organisationId(context().organisationId())
+      .location(new LocationBuilder().city("ringhals").address("storgatan 34").build())
+      .build());
+
+    Page<PagedLogicalMeterDto> page = asTestUser().getPage(
+      "/meters?w=Storgat",
+      PagedLogicalMeterDto.class
+    );
+
+    assertThat(page)
+      .extracting("location.address.name", "location.city.name")
+      .containsExactly(tuple("storgatan 34", "ringhals"));
   }
 
   @Test
@@ -1909,7 +1946,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
-      .meterDefinition(DISTRICT_HEATING_METER)
       .location(UNKNOWN_LOCATION)
       .build());
 
@@ -1940,7 +1976,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .externalId(meterId.toString())
       .meterDefinition(HOT_WATER_METER)
-      .location(UNKNOWN_LOCATION)
       .build());
 
     Page<PagedLogicalMeterDto> page = asTestUser().getPage(
@@ -1961,8 +1996,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(logicalMeterId)
       .externalId("external")
       .organisationId(context().organisationId())
-      .meterDefinition(HOT_WATER_METER)
-      .location(UNKNOWN_LOCATION)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1985,9 +2018,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     UUID meterId = randomUUID();
     LogicalMeter.LogicalMeterBuilder builder = LogicalMeter.builder()
       .id(meterId)
-      .organisationId(context().organisationId())
-      .meterDefinition(HOT_WATER_METER)
-      .location(UNKNOWN_LOCATION);
+      .organisationId(context().organisationId());
 
     logicalMeters.save(builder.externalId("first facility").build());
     logicalMeters.save(builder.externalId("second facility").build());
@@ -2007,7 +2038,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId("street facility")
       .organisationId(context().organisationId())
-      .meterDefinition(HOT_WATER_METER)
       .location(new LocationBuilder().city("city town").address("street road 1").build())
       .build());
 
@@ -2034,7 +2064,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterIdOne)
       .externalId(meterIdOne.toString())
       .organisationId(context().organisationId())
-      .meterDefinition(HOT_WATER_METER)
       .location(new LocationBuilder().address("street 1").build())
       .build());
 
@@ -2050,8 +2079,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterIdTwo)
       .externalId("street facility")
       .organisationId(context().organisationId())
-      .meterDefinition(HOT_WATER_METER)
-      .location(UNKNOWN_LOCATION)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -2077,7 +2104,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
-      .meterDefinition(HOT_WATER_METER)
       .location(new LocationBuilder().address("street 1").build())
       .build());
 

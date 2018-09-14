@@ -73,8 +73,8 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         String str = values.get(0);
         return LOGICAL_METER.externalId.startsWithIgnoreCase(str)
           .or(PHYSICAL_METER.address.startsWithIgnoreCase(str))
-          .or(LOGICAL_METER.location.city.startsWith(str))
-          .or(LOGICAL_METER.location.streetAddress.startsWith(str))
+          .or(LOGICAL_METER.location.city.startsWithIgnoreCase(str))
+          .or(LOGICAL_METER.location.streetAddress.startsWithIgnoreCase(str))
           .or(PHYSICAL_METER.manufacturer.startsWithIgnoreCase(str))
           .or(LOGICAL_METER.meterDefinition.medium.startsWithIgnoreCase(str));
       default:
