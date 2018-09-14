@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.exception.UnknownQuantity;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
@@ -48,12 +48,9 @@ class MeteringMessageMapper {
     return MeterDefinition.UNKNOWN_METER;
   }
 
-  static String mappedQuantityName(String quantityName) {
+  static Optional<String> mappedQuantityName(String quantityName) {
     Quantity quantity = METER_TO_MVP_QUANTITIES.get(quantityName);
-    if (quantity != null) {
-      return quantity.name;
-    }
-    throw new UnknownQuantity(quantityName);
+    return Optional.ofNullable(quantity).map(q -> q.name);
   }
 
   static String mapToEvoMedium(String medium) {

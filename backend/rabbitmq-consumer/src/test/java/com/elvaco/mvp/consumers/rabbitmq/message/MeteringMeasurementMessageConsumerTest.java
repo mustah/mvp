@@ -56,7 +56,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("ConstantConditions")
 public class MeteringMeasurementMessageConsumerTest {
@@ -176,8 +175,18 @@ public class MeteringMeasurementMessageConsumerTest {
       .location(UNKNOWN_LOCATION)
       .build());
 
-    messageConsumer.accept(newMeasurementMessage("Power", "W", 1.0));
-    messageConsumer.accept(newMeasurementMessage("Power", "W", 2.0));
+    messageConsumer.accept(newMeasurementMessage(new ValueDto(
+      MEASUREMENT_TIMESTAMP,
+      1.0,
+      "W",
+      "Power"
+    )));
+    messageConsumer.accept(newMeasurementMessage(new ValueDto(
+      MEASUREMENT_TIMESTAMP,
+      2.0,
+      "W",
+      "Power"
+    )));
 
     List<Measurement> actual = measurements.allMocks();
     assertThat(actual).hasSize(1);
@@ -232,14 +241,24 @@ public class MeteringMeasurementMessageConsumerTest {
       .organisationId(organisation.id)
       .build());
 
-    messageConsumer.accept(newMeasurementMessage("Power", "W", 1.0));
-    messageConsumer.accept(newMeasurementMessage("Flow temp.", "m³/h", 2.0));
+    messageConsumer.accept(newMeasurementMessage(new ValueDto(
+      MEASUREMENT_TIMESTAMP,
+      1.0,
+      "W",
+      "Power"
+    )));
+    messageConsumer.accept(newMeasurementMessage(new ValueDto(
+      MEASUREMENT_TIMESTAMP,
+      2.0,
+      "m³/h",
+      "Flow temp."
+    )));
 
     assertThat(measurements.allMocks()).hasSize(2);
   }
 
   @Test
-  public void unknownQuantityThrowsException() {
+  public void unknownQuantityIsDiscarded_knownQuantitiesAreRetained() {
     Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(
       LogicalMeter.builder()
@@ -250,11 +269,23 @@ public class MeteringMeasurementMessageConsumerTest {
         .location(UNKNOWN_LOCATION)
         .build());
 
-    assertThatThrownBy(() ->
-      messageConsumer.accept(newMeasurementMessage("Half Life 3", "W", 1.0))
-    )
-      .isInstanceOf(RuntimeException.class)
-      .hasMessageContaining("Unknown quantity: Half Life 3");
+    messageConsumer.accept(newMeasurementMessage(
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        1.0,
+        "W",
+        "Half Life 3"
+      ),
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        1.0,
+        "W",
+        "Energy"
+      )
+    ));
+    List<Measurement> createdMeasurements = measurements.allMocks();
+    assertThat(createdMeasurements).hasSize(1);
+    assertThat(createdMeasurements.get(0).quantity).isEqualTo("Energy");
   }
 
   @Test
@@ -565,31 +596,24 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(double value) {
-    return newMeasurementMessage(
-      ORGANISATION_EXTERNAL_ID,
-      QUANTITY,
-      "kWh",
-      value
-    );
+    return newMeasurementMessage(new ValueDto(MEASUREMENT_TIMESTAMP, value, "kWh", QUANTITY));
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(String organisationExternalId) {
-    return newMeasurementMessage(organisationExternalId, QUANTITY, "kWh", 1.0);
+    return newMeasurementMessage(
+      organisationExternalId,
+      new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY)
+    );
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(
-    String quantity,
-    String unit,
-    double value
+    ValueDto... valueDto
   ) {
-    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, quantity, unit, value);
+    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, valueDto);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(
-    String organisationExternalId,
-    String quantity,
-    String unit,
-    double value
+    String organisationExternalId, ValueDto... valueDto
   ) {
     return new MeteringMeasurementMessageDto(
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
@@ -597,12 +621,12 @@ public class MeteringMeasurementMessageConsumerTest {
       new FacilityIdDto(EXTERNAL_ID),
       organisationExternalId,
       "Elvaco Metering",
-      singletonList(new ValueDto(MEASUREMENT_TIMESTAMP, value, unit, quantity))
+      asList(valueDto)
     );
   }
 
   private MeteringMeasurementMessageDto measurementMessageWithUnit(String unit) {
-    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, QUANTITY, unit, 1.0);
+    return newMeasurementMessage(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, unit, QUANTITY));
   }
 
   private Gateway newGateway(UUID organisationId) {
