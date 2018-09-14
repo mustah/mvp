@@ -16,6 +16,10 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
+"@types/chroma-js@^1.3.5":
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/@types/chroma-js/-/chroma-js-1.3.5.tgz#984cc86cb515a1879c9102b21e93325f0f02324c"
+
 "@types/classnames@^2.2.0":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.3.tgz#3f0ff6873da793870e20a260cada55982f38a9e5"
@@ -1023,6 +1027,10 @@ chokidar@^1.6.0, chokidar@^1.6.1:
 chownr@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.0.1.tgz#e2a75042a9551908bebd25b8523d5f9769d79181"
+
+chroma-js@1.3.5:
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-1.3.5.tgz#bdab4a55b688bd79ce71a2901a3e1f897d7a2b7c"
 
 ci-info@^1.0.0:
   version "1.1.3"
