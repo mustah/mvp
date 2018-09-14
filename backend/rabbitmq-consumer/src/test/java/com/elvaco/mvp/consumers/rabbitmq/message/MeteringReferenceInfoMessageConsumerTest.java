@@ -536,6 +536,26 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
+  public void errorReportedStatusIsSetForMeter() {
+    messageHandler.accept(newMessageWithMeterStatus("ErrorReported"));
+
+    assertThat(physicalMeters.findAll())
+      .flatExtracting("statuses")
+      .extracting("status")
+      .containsExactly(StatusType.ERROR);
+  }
+
+  @Test
+  public void errorReportedStatusIsSetForGateway() {
+    messageHandler.accept(newMessageWithGatewayStatus("ErrorReported"));
+
+    assertThat(gateways.findAll(new MockRequestParameters()))
+      .flatExtracting("statusLogs")
+      .extracting("status")
+      .containsExactly(StatusType.ERROR);
+  }
+
+  @Test
   public void newFacilityWithoutGatewayOrMeterIsNotSaved() {
     String externalId = "an external id";
     Location location = Location.UNKNOWN_LOCATION;
@@ -752,6 +772,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private MeteringReferenceInfoMessageDto newMessageWithGatewayStatus(
     StatusType gatewayStatus
   ) {
+    return newMessageWithGatewayStatus(gatewayStatus.name());
+  }
+
+  private MeteringReferenceInfoMessageDto newMessageWithGatewayStatus(
+    String gatewayStatus
+  ) {
     return newMessage(
       HOT_WATER_MEDIUM,
       MANUFACTURER,
@@ -761,13 +787,19 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
-      StatusType.OK,
+      StatusType.OK.name(),
       gatewayStatus
     );
   }
 
   private MeteringReferenceInfoMessageDto newMessageWithMeterStatus(
     StatusType meterStatus
+  ) {
+    return newMessageWithMeterStatus(meterStatus.name());
+  }
+
+  private MeteringReferenceInfoMessageDto newMessageWithMeterStatus(
+    String meterStatus
   ) {
     return newMessage(
       HOT_WATER_MEDIUM,
@@ -779,7 +811,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       meterStatus,
-      StatusType.OK
+      StatusType.OK.name()
     );
   }
 
@@ -905,11 +937,37 @@ public class MeteringReferenceInfoMessageConsumerTest {
     StatusType meterStatus,
     StatusType gatewayStatus
   ) {
+    return newMessage(
+      medium,
+      manufacturer,
+      physicalMeterId,
+      cron,
+      revision,
+      mbusDeviceType,
+      location,
+      externalId,
+      meterStatus.name(),
+      gatewayStatus.name()
+    );
+  }
+
+  private MeteringReferenceInfoMessageDto newMessage(
+    String medium,
+    String manufacturer,
+    String physicalMeterId,
+    @Nullable String cron,
+    @Nullable Integer revision,
+    @Nullable Integer mbusDeviceType,
+    Location location,
+    String externalId,
+    String meterStatus,
+    String gatewayStatus
+  ) {
     return new MeteringReferenceInfoMessageDto(
       new MeterDto(
         physicalMeterId,
         medium,
-        meterStatus.name(),
+        meterStatus,
         manufacturer,
         cron,
         revision,
@@ -926,7 +984,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       new GatewayStatusDto(
         GATEWAY_EXTERNAL_ID,
         PRODUCT_MODEL,
-        gatewayStatus.name()
+        gatewayStatus
       )
     );
   }

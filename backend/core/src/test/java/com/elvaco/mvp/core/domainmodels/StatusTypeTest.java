@@ -24,4 +24,9 @@ public class StatusTypeTest {
     assertThat(StatusType.from("Ok")).isEqualTo(StatusType.OK);
     assertThat(StatusType.from("warniNG")).isEqualTo(StatusType.WARNING);
   }
+
+  @Test
+  public void mapsErrorReportedToError() {
+    assertThat(StatusType.from("ErrorReported")).isEqualTo(StatusType.ERROR);
+  }
 }
