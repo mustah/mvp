@@ -84,8 +84,8 @@ public class GatewayQueryFilters extends QueryFilters {
         String str = values.get(0);
         return GATEWAY.serial.startsWithIgnoreCase(str)
           .or(GATEWAY.productModel.startsWithIgnoreCase(str))
-          .or(LOGICAL_METER.location.city.startsWith(str))
-          .or(LOGICAL_METER.location.streetAddress.startsWith(str));
+          .or(LOGICAL_METER.location.city.startsWithIgnoreCase(str))
+          .or(LOGICAL_METER.location.streetAddress.startsWithIgnoreCase(str));
       default:
         return null;
     }

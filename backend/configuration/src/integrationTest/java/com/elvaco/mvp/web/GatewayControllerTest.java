@@ -42,6 +42,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @SuppressWarnings("rawtypes")
 public class GatewayControllerTest extends IntegrationTest {
@@ -155,8 +156,8 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
-          + "?after=" + date.minusDays(60)
-          + "&before=" + date.minusDays(30),
+        + "?after=" + date.minusDays(60)
+        + "&before=" + date.minusDays(30),
         GatewayDto.class
       );
 
@@ -450,10 +451,9 @@ public class GatewayControllerTest extends IntegrationTest {
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-id")
       .organisationId(dailyPlanet.id)
-      .gateways(singletonList(gateway))
+      .gateway(gateway)
       .location(new LocationBuilder()
         .city("kungsbacka")
         .build())
@@ -461,7 +461,33 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> page = asTestUser()
       .getPage("/gateways?w=kungsb", GatewayDto.class);
 
-    assertThat(page).hasSize(1);
+    assertThat(page)
+      .extracting("location.city.name")
+      .containsExactly("kungsbacka");
+  }
+
+  @Test
+  public void wildcardSearchMatchesCityStart_caseInsensitive() {
+    Gateway gateway = gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("product-model")
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(dailyPlanet.id)
+      .gateway(gateway)
+      .location(new LocationBuilder()
+        .city("kungsbacka")
+        .build())
+      .build());
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=Kungsb", GatewayDto.class);
+
+    assertThat(page)
+      .extracting("location.city.name")
+      .containsExactly("kungsbacka");
   }
 
   @Test
@@ -473,10 +499,9 @@ public class GatewayControllerTest extends IntegrationTest {
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-id")
       .organisationId(dailyPlanet.id)
-      .gateways(singletonList(gateway))
+      .gateway(gateway)
       .location(new LocationBuilder()
         .city("kungsbacka")
         .address("teknikgatan 2t")
@@ -485,7 +510,34 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> page = asTestUser()
       .getPage("/gateways?w=tekni", GatewayDto.class);
 
-    assertThat(page).hasSize(1);
+    assertThat(page)
+      .extracting("location.address.name", "location.city.name")
+      .containsExactly(tuple("teknikgatan 2t", "kungsbacka"));
+  }
+
+  @Test
+  public void wildcardSearchMatchesAddressStart_caseInsensitive() {
+    Gateway gateway = gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("123456")
+      .productModel("product-model")
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(dailyPlanet.id)
+      .gateway(gateway)
+      .location(new LocationBuilder()
+        .city("kungsbacka")
+        .address("teknikgatan 2t")
+        .build())
+      .build());
+    Page<GatewayDto> page = asTestUser()
+      .getPage("/gateways?w=Tekni", GatewayDto.class);
+
+    assertThat(page)
+      .extracting("location.address.name", "location.city.name")
+      .containsExactly(tuple("teknikgatan 2t", "kungsbacka"));
   }
 
   @Test
