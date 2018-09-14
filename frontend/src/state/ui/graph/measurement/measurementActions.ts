@@ -132,8 +132,6 @@ export const mapApiResponseToGraphData =
 
     const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage, ...legendsCities};
 
-    console.log('legendsCities', legendsCities, 'cities', cities, 'legends', legends);
-
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
     measurement.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementApiResponsePart) => {
