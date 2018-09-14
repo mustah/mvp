@@ -72,7 +72,7 @@ class StatusLogsDataLoader {
         new StatusLogEntry<>(
           meter.id,
           nextRandomStatusType(),
-          subtractDays(daySeed)
+          subtractDays(daySeed).plusHours(1)
         )
       );
     }
