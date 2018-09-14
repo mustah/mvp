@@ -115,12 +115,14 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
     existing.shouldSavePhysicalMeter(() -> physicalMeterUseCases.save(physicalMeter));
 
-    measurementMessage.values.stream()
-      .map(value -> createMeasurement(value, physicalMeter))
-      .forEach(measurementUseCases::save);
+    measurementMessage.values
+      .forEach(value -> createMeasurement(
+        value,
+        physicalMeter
+      ).ifPresent(measurementUseCases::save));
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
-      || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
+        || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
       responseBuilder.setFacilityId(facilityId);
       responseBuilder.setMeterExternalId(address);
     }
@@ -128,14 +130,19 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     return responseBuilder.build();
   }
 
-  private Measurement createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
-    return Measurement.builder()
+  private Optional<Measurement> createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
+    Optional<String> quantityName = mappedQuantityName(value.quantity);
+    if (!quantityName.isPresent()) {
+      log.warn("Discarding unknown quantity '{}' for value {}", value.quantity, value);
+      return Optional.empty();
+    }
+    return Optional.of(Measurement.builder()
       .physicalMeter(physicalMeter)
       .created(value.timestamp.atZone(METERING_TIMEZONE))
       .value(value.value)
       .unit(value.unit)
-      .quantity(mappedQuantityName(value.quantity))
-      .build();
+      .quantity(quantityName.get())
+      .build());
   }
 
   private static final class AlreadyCreated {
