@@ -1,3 +1,4 @@
+import * as chroma from 'chroma-js';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
@@ -45,17 +46,7 @@ const colorizeMeters = colorize({
   [Quantity.differenceTemperature as string]: '#0084e6',
 });
 
-// these colors are from colorbrewer 2 (diverging, the rightmost color scheme)
-const colorizeCities = colorize({
-// [Quantity.forwardTemperature as string]: '#66c2a5',
-  [Quantity.volume as string]: '#3288bd',
-  [Quantity.flow as string]: '#f46d43',
-  [Quantity.energy as string]: '#fdae61',
-  [Quantity.power as string]: '#fee08b',
-  [Quantity.forwardTemperature as string]: '#d53e4f',
-  [Quantity.returnTemperature as string]: '#e6f598',
-  [Quantity.differenceTemperature as string]: '#abdda4',
-});
+const cityColors: chroma.Scale = chroma.scale(['#fdae61', '#3288bd']).mode('lch');
 
 const thickStroke: number = 4;
 
@@ -115,6 +106,9 @@ export const mapApiResponseToGraphData =
           },
         }), {});
 
+    const cityColorScale = cityColors.colors(cities.length);
+    let cityIndex = 0;
+
     const legendsCities: Dictionary<ProprietaryLegendProps> = cities.reduce((
       prev,
       {quantity, city},
@@ -125,7 +119,7 @@ export const mapApiResponseToGraphData =
           ...prev,
           [`city-${quantity}-${city}`]: {
             type: 'line',
-            color: colorizeCities(quantity),
+            color: cityColorScale[cityIndex++],
             value: `${firstUpper(city)} ${quantity}`,
           },
         }), {});
@@ -207,43 +201,47 @@ export const mapApiResponseToGraphData =
       });
     });
 
-    cities.forEach(({id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart) => {
-      if (!graphContents.axes.left) {
-        graphContents.axes.left = unit;
-      } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
-        graphContents.axes.right = unit;
-      }
+    cities.forEach(
+      (
+        {id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart,
+        index: number,
+      ) => {
+        if (!graphContents.axes.left) {
+          graphContents.axes.left = unit;
+        } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
+          graphContents.axes.right = unit;
+        }
 
-      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
-      if (!yAxisId) {
-        return;
-      }
-      const dataKey: string = `${firstUpper(city)} ${quantity}`;
-      graphContents.lines.push({
-        id,
-        dataKey,
-        key: `city-${quantity}-${city}`,
-        name: dataKey,
-        city,
-        address,
-        medium,
-        stroke: colorizeCities(quantity as Quantity),
-        strokeWidth: thickStroke,
-        yAxisId,
-      });
-
-      values.forEach(({when, value}) => {
-        const created: number = when * 1000;
-        if (created < firstTimestamp) {
+        const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+        if (!yAxisId) {
           return;
         }
-        if (!byDate[created]) {
-          byDate[created] = {};
-        }
-        // we should already have filtered out missing values
-        byDate[created][dataKey] = value!;
+        const dataKey: string = `${firstUpper(city)} ${quantity}`;
+        graphContents.lines.push({
+          id,
+          dataKey,
+          key: `city-${quantity}-${city}`,
+          name: dataKey,
+          city,
+          address,
+          medium,
+          stroke: cityColorScale[index],
+          strokeWidth: thickStroke,
+          yAxisId,
+        });
+
+        values.forEach(({when, value}) => {
+          const created: number = when * 1000;
+          if (created < firstTimestamp) {
+            return;
+          }
+          if (!byDate[created]) {
+            byDate[created] = {};
+          }
+          // we should already have filtered out missing values
+          byDate[created][dataKey] = value!;
+        });
       });
-    });
 
     graphContents.data = Object.keys(byDate).map((created) => ({
       ...byDate[created],
