@@ -63,6 +63,8 @@ public class MeteringMessageMapper {
   static String mapToEvoMedium(String medium) {
     if ("Cold water".equals(medium)) {
       return Medium.WATER.medium;
+    } else if ("Roomsensor".equals(medium)) {
+      return Medium.ROOM_TEMP.medium;
     } else {
       return medium;
     }
