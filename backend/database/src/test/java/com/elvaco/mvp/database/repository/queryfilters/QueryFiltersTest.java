@@ -29,7 +29,8 @@ public class QueryFiltersTest {
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        RequestParameter parameter, List<String> values
+        RequestParameter parameter, RequestParameters parameters,
+        List<String> values
       ) {
         return Optional.empty();
       }
@@ -45,7 +46,7 @@ public class QueryFiltersTest {
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        RequestParameter parameter,
+        RequestParameter parameter, RequestParameters parameters,
         List<String> values
       ) {
         return Optional.empty();
@@ -60,7 +61,7 @@ public class QueryFiltersTest {
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        RequestParameter parameter,
+        RequestParameter parameter, RequestParameters parameters,
         List<String> values
       ) {
         return Optional.empty();
@@ -79,7 +80,7 @@ public class QueryFiltersTest {
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        RequestParameter parameter,
+        RequestParameter parameter, RequestParameters parameters,
         List<String> values
       ) {
         return Optional.of(
@@ -110,7 +111,7 @@ public class QueryFiltersTest {
     QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
-        RequestParameter parameter,
+        RequestParameter parameter, RequestParameters parameters,
         List<String> values
       ) {
         if (parameter.equals(ID)) {

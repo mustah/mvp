@@ -6,22 +6,36 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
 import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class MeterAlarmLogQueryFilters extends QueryFilters {
 
-  private static final QMeterAlarmLogEntity ALARM_LOG =
-    QMeterAlarmLogEntity.meterAlarmLogEntity;
+  private static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;
+  private static final Predicate[] NO_PREDICATE = new Predicate[0];
 
   private ZonedDateTime start;
   private ZonedDateTime stop;
 
+  public static Predicate[] isWithinPeriod(RequestParameters parameters) {
+    return parameters.getPeriod()
+      .map(selectionPeriod -> new Predicate[] {
+        isAlarmLogIsWithinInterval(selectionPeriod.start, selectionPeriod.stop)
+      })
+      .orElse(NO_PREDICATE);
+  }
+
   @Override
-  public Optional<Predicate> buildPredicateFor(RequestParameter parameter, List<String> values) {
+  public Optional<Predicate> buildPredicateFor(
+    RequestParameter parameter,
+    RequestParameters parameters,
+    List<String> values
+  ) {
     return Optional.ofNullable(nullablePredicate(parameter, values));
   }
 
@@ -46,6 +60,10 @@ public class MeterAlarmLogQueryFilters extends QueryFilters {
     if (start == null || stop == null) {
       return null;
     }
+    return isAlarmLogIsWithinInterval(start, stop);
+  }
+
+  private static Predicate isAlarmLogIsWithinInterval(ZonedDateTime start, ZonedDateTime stop) {
     return ALARM_LOG.start.before(stop)
       .and(ALARM_LOG.stop.isNull().or(ALARM_LOG.stop.after(start)));
   }

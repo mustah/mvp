@@ -7,5 +7,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SelectionPeriod {
   public final ZonedDateTime start;
-  public final ZonedDateTime end;
+  public final ZonedDateTime stop;
 }

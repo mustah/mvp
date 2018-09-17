@@ -251,6 +251,42 @@ describe('userSelectionSelectors', () => {
       expect(uriParameters).toEqual(`facility=112&${latestUrlParameters}&w=sto`);
     });
 
+    it('search meters with alarms', () => {
+      const payload: SelectionParameter = {
+        item: {...toIdNamed('yes')},
+        parameter: ParameterName.alarms,
+      };
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`alarm=yes&${latestUrlParameters}`);
+    });
+
+    it('search meters with no alarms', () => {
+      const payload: SelectionParameter = {
+        item: {...toIdNamed('no')},
+        parameter: ParameterName.alarms,
+      };
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({
+        userSelection: state.userSelection,
+        now,
+      });
+
+      expect(uriParameters).toEqual(`alarm=no&${latestUrlParameters}`);
+    });
+
   });
 
   describe('getGatewayParameters', () => {

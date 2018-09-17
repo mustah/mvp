@@ -13,6 +13,8 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 
 public interface RequestParameters {
@@ -57,13 +59,11 @@ public interface RequestParameters {
     }
   }
 
-  default Optional<SelectionPeriod> getAsSelectionPeriod(
-    RequestParameter startParam, RequestParameter endParam
-  ) {
-    Optional<ZonedDateTime> start = getAsZonedDateTime(startParam);
-    Optional<ZonedDateTime> end = getAsZonedDateTime(endParam);
-    if (start.isPresent() && end.isPresent()) {
-      return Optional.of(new SelectionPeriod(start.get(), end.get()));
+  default Optional<SelectionPeriod> getPeriod() {
+    Optional<ZonedDateTime> start = getAsZonedDateTime(AFTER);
+    Optional<ZonedDateTime> stop = getAsZonedDateTime(BEFORE);
+    if (start.isPresent() && stop.isPresent()) {
+      return Optional.of(new SelectionPeriod(start.get(), stop.get()));
     }
     return Optional.empty();
   }

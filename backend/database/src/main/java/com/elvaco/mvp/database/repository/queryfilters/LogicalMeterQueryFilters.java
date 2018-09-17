@@ -1,18 +1,17 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
@@ -30,17 +29,21 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   private static final QLogicalMeterEntity LOGICAL_METER =
     QLogicalMeterEntity.logicalMeterEntity;
 
-  private ZonedDateTime before;
-  private ZonedDateTime after;
-  private List<StatusType> statuses;
-
   @Override
-  public Optional<Predicate> buildPredicateFor(RequestParameter parameter, List<String> values) {
-    return Optional.ofNullable(buildNullablePredicateFor(parameter, values));
+  public Optional<Predicate> buildPredicateFor(
+    RequestParameter parameter,
+    RequestParameters parameters,
+    List<String> values
+  ) {
+    return Optional.ofNullable(buildNullablePredicateFor(parameter, parameters, values));
   }
 
   @Nullable
-  private Predicate buildNullablePredicateFor(RequestParameter parameter, List<String> values) {
+  private Predicate buildNullablePredicateFor(
+    RequestParameter parameter,
+    RequestParameters parameters,
+    List<String> values
+  ) {
     switch (parameter) {
       case ID:
         return LOGICAL_METER.id.in(toUuids(values));
@@ -54,15 +57,14 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return LocationExpressions.whereCity(toCityParameters(values));
       case ADDRESS:
         return LocationExpressions.whereAddress(toAddressParameters(values));
-      case BEFORE:
-        before = getZonedDateTimeFrom(values);
-        return meterStatusQueryFilter(after, before, statuses);
-      case AFTER:
-        after = getZonedDateTimeFrom(values);
-        return meterStatusQueryFilter(after, before, statuses);
       case REPORTED:
-        statuses = toStatusTypes(values);
-        return meterStatusQueryFilter(after, before, statuses);
+        return parameters.getPeriod()
+          .map(selectionPeriod -> meterStatusQueryFilter(selectionPeriod, toStatusTypes(values)))
+          .orElse(null);
+      case ALARM:
+        return parameters.getPeriod()
+          .map(selectionPeriod -> alarmQueryFilter(values))
+          .orElse(null);
       case GATEWAY_SERIAL:
         return GATEWAY.serial.in(values);
       case MANUFACTURER:

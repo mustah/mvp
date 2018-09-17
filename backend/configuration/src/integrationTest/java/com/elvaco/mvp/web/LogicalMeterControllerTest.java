@@ -25,6 +25,7 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -1223,16 +1224,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void malformedDateParameter() {
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
-      .get("/meters?after=NotAValidTimestamp&before=AndNeitherIsThis", ErrorMessageDto.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getBody().message).isEqualTo(
-      "Failed to construct filter 'after' for value 'NotAValidTimestamp'");
-  }
-
-  @Test
   public void findAllWithPredicates() {
     saveLogicalMeter();
     saveLogicalMeter(MeterDefinition.HOT_WATER_METER);
@@ -2141,6 +2132,83 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void onlyMetersWithAlarms() {
+    LogicalMeter logicalMeter1 = saveLogicalMeter();
+    LogicalMeter logicalMeter2 = saveLogicalMeter();
+    StatusLogEntry.StatusLogEntryBuilder<UUID> statusBuilder = StatusLogEntry.<UUID>builder()
+      .status(StatusType.OK)
+      .start(start);
+
+    PhysicalMeter physicalMeter = physicalMeters.save(
+      physicalMeter().logicalMeterId(logicalMeter1.id).build()
+    );
+
+    saveStatusLogForMeter(statusBuilder.entityId(physicalMeter.id).build());
+
+    PhysicalMeter physicalMeterWithAlarm = physicalMeters.save(
+      physicalMeter().logicalMeterId(logicalMeter2.id).build()
+    );
+
+    saveStatusLogForMeter(statusBuilder.entityId(physicalMeterWithAlarm.id).build());
+
+    meterAlarmLogs.save(AlarmLogEntry.builder()
+      .entityId(physicalMeterWithAlarm.id)
+      .mask(12)
+      .start(start)
+      .build());
+
+    String alarm = String.format("&%s=%s", RequestParameter.ALARM.toString(), "yes");
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
+      .getPage(metersUrl(start, start.plusHours(9)) + alarm, PagedLogicalMeterDto.class);
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+
+    PagedLogicalMeterDto result = paginatedLogicalMeters.getContent().get(0);
+    assertThat(result.id).isEqualTo(logicalMeter2.id);
+    assertThat(result.alarm.mask).isEqualTo(12);
+    assertThat(result.alarm.description).isNull();
+  }
+
+  @Test
+  public void onlyMetersWithNoAlarms() {
+    LogicalMeter logicalMeter1 = saveLogicalMeter();
+    LogicalMeter logicalMeter2 = saveLogicalMeter();
+    StatusLogEntry.StatusLogEntryBuilder<UUID> statusBuilder = StatusLogEntry.<UUID>builder()
+      .status(StatusType.OK)
+      .start(start);
+
+    PhysicalMeter physicalMeter = physicalMeters.save(
+      physicalMeter().logicalMeterId(logicalMeter1.id).build()
+    );
+
+    saveStatusLogForMeter(statusBuilder.entityId(physicalMeter.id).build());
+
+    PhysicalMeter physicalMeterWithAlarm = physicalMeters.save(
+      physicalMeter().logicalMeterId(logicalMeter2.id).build()
+    );
+
+    saveStatusLogForMeter(statusBuilder.entityId(physicalMeterWithAlarm.id).build());
+
+    meterAlarmLogs.save(AlarmLogEntry.builder()
+      .entityId(physicalMeterWithAlarm.id)
+      .mask(12)
+      .start(start)
+      .build());
+
+    String alarm = String.format("&%s=%s", RequestParameter.ALARM.toString(), "no");
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
+      .getPage(metersUrl(start, start.plusHours(9)) + alarm, PagedLogicalMeterDto.class);
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+
+    PagedLogicalMeterDto result = paginatedLogicalMeters.getContent().get(0);
+    assertThat(result.id).isEqualTo(logicalMeter1.id);
+    assertThat(result.alarm).isNull();
+  }
+
+  @Test
   public void meterShouldHaveOneActiveAlarm() {
     LogicalMeter logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
 
@@ -2484,6 +2552,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return PhysicalMeter.builder()
       .organisation(context().organisation())
       .address("111-222-333-444-1")
+      .externalId(randomUUID().toString())
       .medium("Heat")
       .manufacturer("ELV1");
   }

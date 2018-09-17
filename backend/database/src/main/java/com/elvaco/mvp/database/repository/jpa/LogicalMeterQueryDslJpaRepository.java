@@ -51,6 +51,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDate
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMetersStatusLogs;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterStatusLogs;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.Collections.emptyList;
@@ -210,6 +211,7 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION);
 
     joinLogicalMeterGateways(query, parameters);
+    joinMeterAlarmLogs(query, parameters);
 
     return query.distinct().fetch();
   }
@@ -231,14 +233,16 @@ class LogicalMeterQueryDslJpaRepository
       ))
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
-      .on(new MissingMeasurementQueryFilters().toExpression(parameters))
-      .groupBy(LOGICAL_METER.id, PHYSICAL_METER.readIntervalMinutes);
+      .on(new MissingMeasurementQueryFilters().toExpression(parameters));
 
+    joinMeterAlarmLogs(query, parameters);
+    joinMeterStatusLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);
     joinLogicalMeterLocation(query, parameters);
-    joinMeterStatusLogs(query, parameters);
 
-    return query.fetch();
+    return query.groupBy(LOGICAL_METER.id, PHYSICAL_METER.readIntervalMinutes)
+      .distinct()
+      .fetch();
   }
 
   @Override
@@ -364,9 +368,9 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG);
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
+    joinMeterAlarmLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);
   }
 
@@ -377,6 +381,7 @@ class LogicalMeterQueryDslJpaRepository
 
     joinLogicalMetersPhysicalMetersStatusLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);
+    joinMeterAlarmLogs(query, parameters);
   }
 
   private static Predicate predicateFrom(RequestParameters parameters) {

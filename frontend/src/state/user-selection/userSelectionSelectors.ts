@@ -54,6 +54,7 @@ const getSelectedItems = (entityType: ParameterName) =>
     selectionCombiner(entityType),
   );
 
+export const getSelectedAlarms = getSelectedItems(ParameterName.alarms);
 export const getSelectedMedia = getSelectedItems(ParameterName.media);
 export const getSelectedReported = getSelectedItems(ParameterName.reported);
 export const getSelectedCities = getSelectedItems(ParameterName.cities);

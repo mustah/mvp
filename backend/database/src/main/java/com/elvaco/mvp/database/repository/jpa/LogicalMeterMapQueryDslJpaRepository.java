@@ -25,6 +25,7 @@ import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMe
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 
 @Repository
 class LogicalMeterMapQueryDslJpaRepository
@@ -50,7 +51,9 @@ class LogicalMeterMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    JPQLQuery<MapMarker> query = createQuery(toPredicate(parameters))
+    Predicate predicate = new LogicalMeterQueryFilters().toExpression(parameters);
+
+    JPQLQuery<MapMarker> query = createQuery(predicate)
       .select(Projections.constructor(
         MapMarker.class,
         LOCATION.logicalMeterId,
@@ -61,15 +64,11 @@ class LogicalMeterMapQueryDslJpaRepository
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .join(LOGICAL_METER.location, LOCATION)
-      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-      .distinct();
+      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE));
 
+    joinMeterAlarmLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);
 
-    return new HashSet<>(query.fetch());
-  }
-
-  private static Predicate toPredicate(RequestParameters parameters) {
-    return new LogicalMeterQueryFilters().toExpression(parameters);
+    return new HashSet<>(query.distinct().fetch());
   }
 }

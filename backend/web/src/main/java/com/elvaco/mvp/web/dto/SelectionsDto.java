@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;
@@ -13,11 +12,6 @@ import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class SelectionsDto {
-
-  public static final List<IdNamedDto> REPORTED = unmodifiableList(asList(
-    new IdNamedDto(StatusType.OK.name, "no"),
-    new IdNamedDto(StatusType.ERROR.name, "yes")
-  ));
 
   public static final List<IdNamedDto> METER_ALARMS = unmodifiableList(asList(
     new IdNamedDto("no error"),

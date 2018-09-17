@@ -1,12 +1,11 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
@@ -15,8 +14,7 @@ import com.querydsl.core.types.Predicate;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.gatewayStatusQueryFilter;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
@@ -29,21 +27,19 @@ public class GatewayQueryFilters extends QueryFilters {
   private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
   private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
-  private ZonedDateTime before;
-  private ZonedDateTime after;
-  private List<StatusType> statuses;
-
   @Override
   public Optional<Predicate> buildPredicateFor(
     RequestParameter parameter,
+    RequestParameters parameters,
     List<String> values
   ) {
-    return Optional.ofNullable(buildNullablePredicateFor(parameter, values));
+    return Optional.ofNullable(buildNullablePredicateFor(parameter, parameters, values));
   }
 
   @Nullable
   private Predicate buildNullablePredicateFor(
     RequestParameter parameter,
+    RequestParameters parameters,
     List<String> values
   ) {
     switch (parameter) {
@@ -63,15 +59,14 @@ public class GatewayQueryFilters extends QueryFilters {
         return LocationExpressions.whereCity(toCityParameters(values));
       case ADDRESS:
         return LocationExpressions.whereAddress(toAddressParameters(values));
-      case BEFORE:
-        before = getZonedDateTimeFrom(values);
-        return gatewayStatusQueryFilter(after, before, statuses);
-      case AFTER:
-        after = getZonedDateTimeFrom(values);
-        return gatewayStatusQueryFilter(after, before, statuses);
       case REPORTED:
-        statuses = toStatusTypes(values);
-        return meterStatusQueryFilter(after, before, statuses);
+        return parameters.getPeriod()
+          .map(selectionPeriod -> meterStatusQueryFilter(selectionPeriod, toStatusTypes(values)))
+          .orElse(null);
+      case ALARM:
+        return parameters.getPeriod()
+          .map(selectionPeriod -> alarmQueryFilter(values))
+          .orElse(null);
       case FACILITY:
         return LOGICAL_METER.externalId.in(values);
       case MEDIUM:
