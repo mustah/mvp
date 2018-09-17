@@ -27,11 +27,11 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
@@ -104,7 +104,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
   @Autowired
-  private MeasurementUseCases measurementUseCases;
+  private Measurements measurements;
 
   @Autowired
   private MeterDefinitions meterDefinitions;
@@ -1811,7 +1811,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeters.findById(districtHeatingMeter.id)).isEmpty();
     assertThat(physicalMeterJpaRepository.findById(physicalMeter.id)).isEmpty();
-    assertThat(measurementUseCases.findBy(physicalMeter.id, Quantity.VOLUME.name, date)).isEmpty();
+    assertThat(measurements.findBy(physicalMeter.id, date, Quantity.VOLUME.name)).isEmpty();
   }
 
   @Test
@@ -2412,13 +2412,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     double value
   ) {
     for (Quantity quantity : quantities) {
-      measurementUseCases.save(singletonList(Measurement.builder()
+      measurements.save(Measurement.builder()
         .created(when)
         .quantity(quantity.name)
         .value(value)
         .unit(quantity.presentationUnit())
         .physicalMeter(physicalMeter)
-        .build())
+        .build()
       );
     }
   }

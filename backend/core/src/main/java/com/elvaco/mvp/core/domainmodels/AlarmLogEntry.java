@@ -21,9 +21,9 @@ public class AlarmLogEntry implements Identifiable<Long>, Serializable {
   public final Long id;
   public final UUID entityId;
   public final ZonedDateTime start;
+  public final ZonedDateTime lastSeen;
   @Nullable
   public final ZonedDateTime stop;
-  public final ZonedDateTime lastSeen;
   public final int mask;
   @Nullable
   public final String description;

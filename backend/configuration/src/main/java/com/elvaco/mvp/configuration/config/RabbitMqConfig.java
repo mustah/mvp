@@ -1,5 +1,7 @@
 package com.elvaco.mvp.configuration.config;
 
+import java.time.ZonedDateTime;
+
 import com.elvaco.mvp.adapters.spring.AmqpMessagePublisher;
 import com.elvaco.mvp.consumers.rabbitmq.message.AlarmMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
@@ -13,6 +15,7 @@ import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
+import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
@@ -55,6 +58,7 @@ class RabbitMqConfig {
   private final GatewayUseCases gatewayUseCases;
   private final GeocodeService geocodeService;
   private final PropertiesUseCases propertiesUseCases;
+  private final MeterAlarmLogs meterAlarmLogs;
 
   @Bean
   MeasurementMessageConsumer measurementMessageConsumer() {
@@ -81,7 +85,12 @@ class RabbitMqConfig {
 
   @Bean
   AlarmMessageConsumer alarmMessageConsumer() {
-    return new MeteringAlarmMessageConsumer();
+    return new MeteringAlarmMessageConsumer(
+      physicalMeterUseCases,
+      organisationUseCases,
+      meterAlarmLogs,
+      ZonedDateTime::now
+    );
   }
 
   @Bean

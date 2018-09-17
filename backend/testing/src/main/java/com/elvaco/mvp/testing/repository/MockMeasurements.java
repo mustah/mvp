@@ -1,12 +1,10 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
@@ -32,14 +30,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public Collection<Measurement> save(Collection<Measurement> measurements) {
-    return measurements.stream()
-      .map(this::saveMock)
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public void save(
+  public void createOrUpdate(
     PhysicalMeter physicalMeter,
     ZonedDateTime created,
     String quantity,

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +20,13 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
-class MeteringMessageMapper {
+public class MeteringMessageMapper {
+
+  /**
+   * Metering stores and treats all values as CET.
+   * At least it's consistent!
+   */
+  public static final ZoneId METERING_TIMEZONE = ZoneId.of("CET");
 
   static final Map<String, String> METERING_TO_MVP_UNITS = meteringUnitTranslationsMap();
 

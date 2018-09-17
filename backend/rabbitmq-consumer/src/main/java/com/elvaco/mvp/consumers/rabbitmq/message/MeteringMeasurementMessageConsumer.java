@@ -1,6 +1,5 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import java.time.ZoneId;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -23,6 +22,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantityName;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
 import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
@@ -33,12 +33,6 @@ import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValid
 @Slf4j
 @RequiredArgsConstructor
 public class MeteringMeasurementMessageConsumer implements MeasurementMessageConsumer {
-
-  /**
-   * Metering stores and treats all values as CET.
-   * At least it's consistent!
-   */
-  public static final ZoneId METERING_TIMEZONE = ZoneId.of("CET");
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
@@ -119,7 +113,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .forEach(value -> createMeasurement(
         value,
         physicalMeter
-      ).ifPresent(measurementUseCases::save));
+      ).ifPresent(measurementUseCases::createOrUpdate));
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
         || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
