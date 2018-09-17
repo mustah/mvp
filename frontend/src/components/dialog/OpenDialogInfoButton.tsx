@@ -50,7 +50,10 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
     );
   }
 
-  open = (): void => this.setState({isOpen: true});
+  open = (event: React.SyntheticEvent<{}>): void => {
+    event.stopPropagation();
+    this.setState({isOpen: true});
+  }
 
   close = (): void => this.setState({isOpen: false});
 }
