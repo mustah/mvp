@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
-import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
@@ -33,22 +32,14 @@ public class MeteringAlarmMessageConsumer implements AlarmMessageConsumer {
       organisation.id,
       message.facility.id,
       message.meter.id
-    ).ifPresent(physicalMeter -> message.alarm.stream()
-      .map(alarmDto -> AlarmLogEntry.builder()
-        .entityId(physicalMeter.id)
-        .start(alarmDto.timestamp.atZone(METERING_TIMEZONE))
-        .lastSeen(currentTimeSupplier.get())
-        .mask(alarmDto.mask)
-        .description(alarmDto.description)
-        .build())
-      .forEach(alarmLogEntry ->
-        meterAlarmLogs.createOrUpdate(
-          alarmLogEntry.entityId,
-          alarmLogEntry.mask,
-          alarmLogEntry.start,
-          alarmLogEntry.lastSeen,
-          alarmLogEntry.description
-        )));
+    ).ifPresent(physicalMeter -> message.alarm.forEach(alarmDto ->
+      meterAlarmLogs.createOrUpdate(
+        physicalMeter.id,
+        alarmDto.mask,
+        alarmDto.timestamp.atZone(METERING_TIMEZONE),
+        currentTimeSupplier.get(),
+        alarmDto.description
+      )));
 
     return Optional.empty();
   }
