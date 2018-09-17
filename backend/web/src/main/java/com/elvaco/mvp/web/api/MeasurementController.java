@@ -151,7 +151,7 @@ public class MeasurementController {
           quantities,
           logicalMeters,
           (quantity, measurementValue) -> new LabeledMeasurementValue(
-            String.format("city-%s-%s", city.name, quantity.name),
+            String.format("city-%s,%s-%s", city.country, city.name, quantity.name),
             cityId,
             city.name,
             null,
