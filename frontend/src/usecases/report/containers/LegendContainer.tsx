@@ -1,4 +1,3 @@
-import {normalize, schema} from 'normalizr';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -11,9 +10,10 @@ import {TableHead} from '../../../components/table/TableHead';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {graphContentsToLegendTable} from '../../../state/ui/graph/measurement/helpers/graphContentsToLegendTable';
+import {OnClick, OnClickWithId} from '../../../types/Types';
 import {toggleSingleEntry} from '../reportActions';
-import {GraphContents, LegendItem, LineProps} from '../reportModels';
+import {GraphContents, LegendItem} from '../reportModels';
 import './LegendContainer.scss';
 
 interface OwnProps {
@@ -42,21 +42,7 @@ class LegendComponent extends React.Component<Props> {
   render() {
     const {onToggleLine, graphContents, toggleSingleEntry} = this.props;
 
-    const lines: Map<uuid, LegendItem> = new Map<uuid, LegendItem>();
-
-    graphContents.lines.forEach(({name, address, city, medium, dataKey, id}: LineProps) => {
-      lines.set(id, {
-        label: name,
-        address,
-        city,
-        medium,
-        color: '', // TODO a meters lines, should be identifiable by color.
-        id,
-      });
-    });
-
-    const lineSchema = [new schema.Entity('lines', {}, {idAttribute: 'id'})];
-    const {result, entities}: Normalized<LegendItem> = normalize(Array.from(lines.values()), lineSchema);
+    const {result, entities}: Normalized<LegendItem> = graphContentsToLegendTable(graphContents);
 
     const renderVisibilityButton = ({id}: LegendItem) =>
       <ButtonVisibility onClick={onToggleLine} id={id}/>;
