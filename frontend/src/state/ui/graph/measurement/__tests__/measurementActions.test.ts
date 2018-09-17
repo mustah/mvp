@@ -8,10 +8,17 @@ import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
-import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
+import {initialState, MeasurementApiResponse, MeasurementResponses, Quantity} from '../measurementModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
+
+  const emptyResponses = (): MeasurementResponses => ({
+    measurement: [],
+    average: [],
+    cities: [],
+  });
+
   describe('mapApiResponseToGraphData', () => {
     describe('formats data for Rechart\'s LineGraph', () => {
       const emptyGraphContents = (): GraphContents => ({
@@ -25,10 +32,7 @@ describe('measurementActions', () => {
       });
 
       it('handles 0 entities gracefully', () => {
-        const graphDataFromZeroEntities = mapApiResponseToGraphData({
-          measurement: [],
-          average: [],
-        });
+        const graphDataFromZeroEntities = mapApiResponseToGraphData(emptyResponses());
         expect(graphDataFromZeroEntities).toEqual(emptyGraphContents());
       });
     });
@@ -69,8 +73,8 @@ describe('measurementActions', () => {
         ];
 
         const graphContents = mapApiResponseToGraphData({
+          ...emptyResponses(),
           measurement: sameUnit,
-          average: [],
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -111,8 +115,8 @@ describe('measurementActions', () => {
         ];
 
         const graphContents = mapApiResponseToGraphData({
+          ...emptyResponses(),
           measurement: twoDifferentUnits,
-          average: [],
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -169,8 +173,8 @@ describe('measurementActions', () => {
         ];
 
         const graphContents = mapApiResponseToGraphData({
+          ...emptyResponses(),
           measurement: threeDifferentUnits,
-          average: [],
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -233,6 +237,7 @@ describe('measurementActions', () => {
           ];
 
           const graphContents = mapApiResponseToGraphData({
+            ...emptyResponses(),
             measurement: slightlyLaterThanFirstAverage,
             average,
           });
@@ -275,20 +280,20 @@ describe('measurementActions', () => {
       const fetching: ReportContainerState = {...initialState};
       expect(state).not.toEqual(fetching);
 
-      await fetchMeasurements(
-        [],
-        [],
-        ['123abc'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [],
+        quantities: [],
+        selectedListItems: ['123abc'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
       const expected: ReportContainerState = {...initialState};
       expect(state).toEqual(expected);
     });
 
-    it('includes meters and excludes cities/clusters/addreses in request', async () => {
+    it('includes meters and excludes clusters/addreses in request', async () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
@@ -298,41 +303,23 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
-        Period.currentMonth,
-        Maybe.nothing(),
-        (state: ReportContainerState) => void(0),
-        (error?: Unauthorized) => void(0),
-      );
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['sweden,höganäs,hasselgatan 4', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
+        updateState: (state: ReportContainerState) => void(0),
+        logout: (error?: Unauthorized) => void(0),
+      });
 
       expect(requestedUrls[0]).toMatch(
         /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/);
     });
 
-    it('returns empty data if no meter ids are provided', async () => {
-      updateState({...initialState, isFetching: true});
-      const fetching: ReportContainerState = {...initialState};
-      expect(state).not.toEqual(fetching);
+    describe('cities', () => {
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        [],
-        Period.currentMonth,
-        Maybe.nothing(),
-        updateState,
-        logout,
-      );
-      const expected: ReportContainerState = {...initialState};
-      expect(state).toEqual(expected);
-    });
-
-    it(
-      'does not include average endpoint when asking for measurements for single meter',
-      async () => {
+      it('requests cities when no meters are selected', async () => {
         const mockRestClient = new MockAdapter(axios);
         authenticate('test');
 
@@ -342,16 +329,121 @@ describe('measurementActions', () => {
           return [200, 'some data'];
         });
 
-        await fetchMeasurements(
-          [Medium.districtHeating],
-          [Quantity.power],
-          ['123abc'],
-          Period.currentMonth,
-          Maybe.nothing(),
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs', 'sweden,göteborg'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
+          updateState: (state: ReportContainerState) => void(0),
+          logout: (error?: Unauthorized) => void(0),
+        });
+
+        expect(requestedUrls).toHaveLength(1);
+
+        const expected: RegExp =
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&city=sweden,göteborg&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[0]).toMatch(expected);
+      });
+
+      it('requests cities when meters are selected too', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
+
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs', '8c5584ca-eaa3-4199-bf85-871edba8945e'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
+          updateState: (state: ReportContainerState) => void(0),
+          logout: (error?: Unauthorized) => void(0),
+        });
+
+        expect(requestedUrls).toHaveLength(2);
+
+        const meterUrl: RegExp =
+          /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[0]).toMatch(meterUrl);
+
+        const cityUrl: RegExp =
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[1]).toMatch(cityUrl);
+      });
+
+      it('does not request addresses against cities endpoint', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
+
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs', 'sweden,höganäs,hasselgatan 4'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
+          updateState: (state: ReportContainerState) => void(0),
+          logout: (error?: Unauthorized) => void(0),
+        });
+
+        expect(requestedUrls).toHaveLength(1);
+
+        const cityUrl: RegExp =
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&after=20.+Z&before=20.+Z/;
+        expect(requestedUrls[0]).toMatch(cityUrl);
+      });
+
+    });
+
+    it('returns empty data if no meter ids are provided', async () => {
+      updateState({...initialState, isFetching: true});
+      const fetching: ReportContainerState = {...initialState};
+      expect(state).not.toEqual(fetching);
+
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: [],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
+        updateState,
+        logout,
+      });
+      const expected: ReportContainerState = {...initialState};
+      expect(state).toEqual(expected);
+    });
+
+    it('does not include average endpoint when asking for measurements for single meter', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url);
+          return [200, 'some data'];
+        });
+
+        await fetchMeasurements({
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['123abc'],
+          timePeriod: Period.currentMonth,
+          customDateRange: Maybe.nothing(),
           updateState,
           logout,
-        );
-        expect(requestedUrls.length).toEqual(1);
+        });
+        expect(requestedUrls).toHaveLength(1);
         expect(requestedUrls[0]).toMatch(
           /\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
       },
@@ -367,16 +459,16 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
-      expect(requestedUrls).toHaveProperty('length', 2);
+      });
+      expect(requestedUrls).toHaveLength(2);
       requestedUrls.sort();
       expect(requestedUrls[0])
         .toMatch(
@@ -457,17 +549,17 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
 
-      expect(requestedUrls.length).toEqual(2);
+      expect(requestedUrls).toHaveLength(2);
 
       const graphContents: GraphContents = mapApiResponseToGraphData(state.measurementResponse);
 
@@ -480,10 +572,7 @@ describe('measurementActions', () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
-      const requestedUrls: string[] = [];
-
       mockRestClient.onGet().reply(async (config) => {
-        requestedUrls.push(config.url);
 
         const measurement: MeasurementApiResponse = [
           {
@@ -546,15 +635,15 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
 
       expect(state.measurementResponse.average[0].values).toHaveLength(1);
       expect(state.measurementResponse.average[0].values[0].value).toBe(0.55);
@@ -564,10 +653,7 @@ describe('measurementActions', () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
-      const requestedUrls: string[] = [];
-
       mockRestClient.onGet().reply(async (config) => {
-        requestedUrls.push(config.url);
 
         const measurement: MeasurementApiResponse = [
           {
@@ -631,15 +717,15 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements(
-        [Medium.districtHeating],
-        [Quantity.power],
-        ['123abc', '345def', '456ghi'],
-        Period.currentMonth,
-        Maybe.nothing(),
+      await fetchMeasurements({
+        selectedIndicators: [Medium.districtHeating],
+        quantities: [Quantity.power],
+        selectedListItems: ['123abc', '345def', '456ghi'],
+        timePeriod: Period.currentMonth,
+        customDateRange: Maybe.nothing(),
         updateState,
         logout,
-      );
+      });
 
       expect(state.measurementResponse.average[0].values).toHaveLength(2);
       expect(state.measurementResponse.average[0].values[0].value).toBe(0);

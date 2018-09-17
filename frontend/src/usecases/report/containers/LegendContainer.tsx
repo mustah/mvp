@@ -13,7 +13,7 @@ import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {toggleSingleEntry} from '../reportActions';
-import {GraphContents, LegendItem} from '../reportModels';
+import {GraphContents, LegendItem, LineProps} from '../reportModels';
 import './LegendContainer.scss';
 
 interface OwnProps {
@@ -33,10 +33,10 @@ const style: React.CSSProperties = {
   height: '24px',
 };
 
-const renderName = (line: LegendItem) => orUnknown(line.label);
-const renderAddress = (line: LegendItem) => orUnknown(line.address);
-const renderCity = (line: LegendItem) => orUnknown(line.city);
-const renderMedium = (line: LegendItem) => <IconIndicator medium={line.medium} style={style} />;
+const renderName = ({label}: LegendItem) => orUnknown(label);
+const renderAddress = ({address}: LegendItem) => orUnknown(address);
+const renderCity = ({city}: LegendItem) => orUnknown(city);
+const renderMedium = ({medium}: LegendItem) => <IconIndicator medium={medium} style={style}/>;
 
 class LegendComponent extends React.Component<Props> {
   render() {
@@ -44,29 +44,24 @@ class LegendComponent extends React.Component<Props> {
 
     const lines: Map<uuid, LegendItem> = new Map<uuid, LegendItem>();
 
-    for (const line of graphContents.lines) {
-      const legendItem: LegendItem = {
-        label: line.name,
-        address: line.address,
-        city: line.city,
-        medium: line.medium,
+    graphContents.lines.forEach(({name, address, city, medium, dataKey, id}: LineProps) => {
+      lines.set(id, {
+        label: name,
+        address,
+        city,
+        medium,
         color: '', // TODO a meters lines, should be identifiable by color.
-        id: line.id,
-      };
-
-      // TODO averages should be represented in legend
-      if (!lines.has(legendItem.id) && !legendItem.label.toLowerCase().startsWith('average')) {
-        lines.set(legendItem.id, legendItem);
-      }
-    }
+        id,
+      });
+    });
 
     const lineSchema = [new schema.Entity('lines', {}, {idAttribute: 'id'})];
     const {result, entities}: Normalized<LegendItem> = normalize(Array.from(lines.values()), lineSchema);
 
-    const renderVisibilityButton = (line: LegendItem) =>
-      <ButtonVisibility onClick={onToggleLine} id={line.id}/>;
-    const renderDeleteButton = (line: LegendItem) =>
-      <ButtonDelete onClick={toggleSingleEntry} id={line.id}/>;
+    const renderVisibilityButton = ({id}: LegendItem) =>
+      <ButtonVisibility onClick={onToggleLine} id={id}/>;
+    const renderDeleteButton = ({id}: LegendItem) =>
+      <ButtonDelete onClick={toggleSingleEntry} id={id}/>;
 
     return (
       <Row className="LegendContainer">

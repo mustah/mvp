@@ -1,4 +1,4 @@
-import {AxiosResponse} from 'axios';
+import * as chroma from 'chroma-js';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
@@ -7,10 +7,11 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
+import {firstUpper} from '../../../../services/translationService';
 import {Dictionary, EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/ReportContainer';
-import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {
   initialState,
@@ -45,6 +46,8 @@ const colorizeMeters = colorize({
   [Quantity.differenceTemperature as string]: '#0084e6',
 });
 
+const cityColors: chroma.Scale = chroma.scale(['#fdae61', '#3288bd']).mode('lch');
+
 const thickStroke: number = 4;
 
 const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
@@ -58,7 +61,7 @@ const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined =
 };
 
 export const mapApiResponseToGraphData =
-  ({measurement, average}: MeasurementResponses): GraphContents => {
+  ({measurement, average, cities}: MeasurementResponses): GraphContents => {
     const graphContents: GraphContents = {
       axes: {
         left: undefined,
@@ -77,7 +80,8 @@ export const mapApiResponseToGraphData =
       prev,
       {quantity},
     ) => (
-      prev[quantity] ? prev
+      prev[quantity]
+        ? prev
         : {
           ...prev,
           [quantity]: {
@@ -91,7 +95,8 @@ export const mapApiResponseToGraphData =
       prev,
       {quantity},
     ) => (
-      prev[quantity] ? prev
+      prev[quantity]
+        ? prev
         : {
           ...prev,
           [`average-${quantity}`]: {
@@ -101,11 +106,29 @@ export const mapApiResponseToGraphData =
           },
         }), {});
 
-    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
+    const cityColorScale = cityColors.colors(cities.length);
+    let cityIndex = 0;
+
+    const legendsCities: Dictionary<ProprietaryLegendProps> = cities.reduce((
+      prev,
+      {quantity, city},
+    ) => (
+      prev[`${quantity}-${city}`]
+        ? prev
+        : {
+          ...prev,
+          [`city-${quantity}-${city}`]: {
+            type: 'line',
+            color: cityColorScale[cityIndex++],
+            value: `${firstUpper(city)} ${quantity}`,
+          },
+        }), {});
+
+    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage, ...legendsCities};
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
-    measurement.forEach(({id, quantity, label, city, address , medium, values, unit}: MeasurementApiResponsePart) => {
+    measurement.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementApiResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
       values.forEach(({when, value}) => {
@@ -131,7 +154,7 @@ export const mapApiResponseToGraphData =
       if (!uniqueMeters.has(dataKey) && yAxisId) {
         uniqueMeters.add(dataKey);
 
-        const props: LineProps = {
+        graphContents.lines.push({
           id,
           dataKey,
           key: dataKey,
@@ -142,8 +165,7 @@ export const mapApiResponseToGraphData =
           stroke: colorizeMeters(quantity as Quantity),
           strokeWidth: meterStrokeWidth,
           yAxisId,
-        };
-        graphContents.lines.push(props);
+        });
       }
     });
 
@@ -153,7 +175,7 @@ export const mapApiResponseToGraphData =
         return;
       }
       const dataKey: string = `Average ${quantity}`;
-      const props: LineProps = {
+      graphContents.lines.push({
         id,
         dataKey,
         key: `average-${quantity}`,
@@ -164,8 +186,7 @@ export const mapApiResponseToGraphData =
         stroke: colorizeAverage(quantity as Quantity),
         strokeWidth: thickStroke,
         yAxisId,
-      };
-      graphContents.lines.push(props);
+      });
 
       values.forEach(({when, value}) => {
         const created: number = when * 1000;
@@ -180,6 +201,48 @@ export const mapApiResponseToGraphData =
       });
     });
 
+    cities.forEach(
+      (
+        {id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart,
+        index: number,
+      ) => {
+        if (!graphContents.axes.left) {
+          graphContents.axes.left = unit;
+        } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
+          graphContents.axes.right = unit;
+        }
+
+        const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+        if (!yAxisId) {
+          return;
+        }
+        const dataKey: string = `${firstUpper(city)} ${quantity}`;
+        graphContents.lines.push({
+          id,
+          dataKey,
+          key: `city-${quantity}-${city}`,
+          name: dataKey,
+          city,
+          address,
+          medium,
+          stroke: cityColorScale[index],
+          strokeWidth: thickStroke,
+          yAxisId,
+        });
+
+        values.forEach(({when, value}) => {
+          const created: number = when * 1000;
+          if (created < firstTimestamp) {
+            return;
+          }
+          if (!byDate[created]) {
+            byDate[created] = {};
+          }
+          // we should already have filtered out missing values
+          byDate[created][dataKey] = value!;
+        });
+      });
+
     graphContents.data = Object.keys(byDate).map((created) => ({
       ...byDate[created],
       name: Number(created),
@@ -189,7 +252,7 @@ export const mapApiResponseToGraphData =
     return graphContents;
   };
 
-const measurementUri = (
+const measurementMeterUri = (
   quantities: Quantity[],
   meters: uuid[],
   timePeriod: Period,
@@ -199,6 +262,16 @@ const measurementUri = (
   `&meters=${meters.join(',')}` +
   `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
 
+const measurementCityUri = (
+  quantities: Quantity[],
+  cities: uuid[],
+  timePeriod: Period,
+  customDateRange: Maybe<DateRange>,
+): string =>
+  `quantities=${quantities.join(',')}` +
+  `&${cities.map((city) => `city=${city}`).join('&')}` +
+  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
+
 interface GraphDataResponse {
   data: MeasurementApiResponse;
 }
@@ -206,42 +279,78 @@ interface GraphDataResponse {
 export const isSelectedMeter = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,:]/) || []).length === 0;
 
+const isSelectedCity = (listItem: uuid): boolean =>
+  (listItem.toString().match(/[,]/g) || []).length === 1 &&
+  (listItem.toString().match(/[:]/) || []).length === 0;
+
+interface MeasurementOptions {
+  selectedIndicators: Medium[];
+  quantities: Quantity[];
+  selectedListItems: uuid[];
+  timePeriod: Period;
+  customDateRange: Maybe<DateRange>;
+  updateState: OnUpdateGraph;
+  logout: OnLogout;
+}
+
+const noopRequest = new Promise<GraphDataResponse>((resolve) => resolve({data: []}));
+
 export const fetchMeasurements =
-  async (
-    selectedIndicators: Medium[],
-    quantities: Quantity[],
-    selectedListItems: uuid[],
-    timePeriod: Period,
-    customDateRange: Maybe<DateRange>,
-    updateState: OnUpdateGraph,
-    logout: OnLogout,
-  ): Promise<void> => {
+  async ({
+    selectedIndicators,
+    quantities,
+    selectedListItems,
+    timePeriod,
+    customDateRange,
+    updateState,
+    logout,
+  }: MeasurementOptions): Promise<void> => {
 
-    selectedListItems = selectedListItems.filter(isSelectedMeter);
+    const selectedMeters = selectedListItems.filter(isSelectedMeter);
+    const selectedCities = selectedListItems.filter(isSelectedCity);
 
-    if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
+    if (
+      selectedIndicators.length === 0 ||
+      (selectedMeters.length + selectedCities.length) === 0 ||
+      quantities.length === 0
+    ) {
       updateState({...initialState});
       return;
     }
 
     const averageUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurements.concat('/average'),
-      measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
+      measurementMeterUri(quantities, selectedMeters, timePeriod, customDateRange),
     );
 
     const averageRequest: () => Promise<GraphDataResponse> =
-      selectedListItems.length > 1
+      selectedMeters.length > 1
         ? () => restClient.get(averageUrl)
-        : () => new Promise<GraphDataResponse>((resolve) => resolve({data: []}));
+        : () => noopRequest;
+
+    const cityUrl: EncodedUriParameters = makeUrl(
+      EndPoints.measurements.concat('/cities'),
+      measurementCityUri(quantities, selectedCities, timePeriod, customDateRange),
+    );
+
+    const cityRequest: () => Promise<GraphDataResponse> =
+      selectedCities.length
+        ? () => restClient.get(cityUrl)
+        : () => noopRequest;
 
     const measurementUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurements,
-      measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
+      measurementMeterUri(quantities, selectedMeters, timePeriod, customDateRange),
     );
 
+    const measurementRequest: () => Promise<GraphDataResponse> =
+      selectedMeters.length
+        ? () => restClient.get(measurementUrl)
+        : () => noopRequest;
+
     try {
-      const response: [AxiosResponse<MeasurementApiResponse>, GraphDataResponse] =
-        await Promise.all([restClient.get(measurementUrl), averageRequest()]);
+      const response: [GraphDataResponse, GraphDataResponse, GraphDataResponse] =
+        await Promise.all([measurementRequest(), averageRequest(), cityRequest()]);
 
       const graphData: MeasurementResponses = {
         measurement: response[0].data,
@@ -249,6 +358,7 @@ export const fetchMeasurements =
           ...averageEntity,
           values: averageEntity.values.filter(({value}) => value !== undefined),
         })),
+        cities: response[2].data,
       };
 
       updateState({

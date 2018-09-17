@@ -27,6 +27,9 @@ frontend/src/i18n/locales/template.pot
 frontend/src/i18n/locales/*.json
 frontend/src/i18n/locales/*.mo
 
+### yarn ###
+frontend/yarn-error.log
+
 ### IntelliJ IDEA ###
 # User-specific stuff:
 .idea/

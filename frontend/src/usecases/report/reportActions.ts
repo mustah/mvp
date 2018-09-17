@@ -62,13 +62,6 @@ export const toggleIncludingChildren = (id: uuid) =>
     let addresses: uuid[] = [];
     const clusters: uuid[] = [];
 
-    if (level === 'cities') {
-      clustered.entities.cities[id].clusters.forEach((cluster: uuid) => {
-        clusters.push(cluster);
-        addresses = addresses.concat(clustered.entities.clusters[cluster].addresses);
-      });
-    }
-
     if (level === 'clusters') {
       clusters.push(id);
       addresses = addresses.concat(clustered.entities.clusters[id].addresses);

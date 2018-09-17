@@ -33,6 +33,7 @@ import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+
 import org.assertj.core.data.Offset;
 import org.junit.After;
 import org.junit.Before;
@@ -408,6 +409,49 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void averagesForDifferentCitiesHaveUniqueIds() {
+    LocationBuilder locationBuilder = new LocationBuilder();
+    locationBuilder
+      .address("street 1")
+      .city("stockholm");
+
+    LogicalMeterEntity stockholmSweden = newLogicalMeterEntityWithLocation(
+      MeterDefinition.DISTRICT_HEATING_METER,
+      locationBuilder.country("sweden").build()
+    );
+    LogicalMeterEntity stockholmEngland = newLogicalMeterEntityWithLocation(
+      MeterDefinition.DISTRICT_HEATING_METER,
+      locationBuilder.country("england").build()
+    );
+
+    PhysicalMeterEntity swedenMeter = newPhysicalMeterEntity(stockholmSweden.id);
+    newMeasurement(swedenMeter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
+    newMeasurement(swedenMeter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
+    PhysicalMeterEntity englandMeter = newPhysicalMeterEntity(stockholmEngland.id);
+    newMeasurement(englandMeter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
+    newMeasurement(englandMeter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+      "/measurements/cities"
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T06:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&city=sweden,stockholm"
+        + "&city=england,stockholm"
+        + "&resolution=hour",
+      MeasurementSeriesDto.class
+    );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+      .extracting("id")
+      .containsExactlyInAnyOrder(
+        "city-sweden,stockholm-Power",
+        "city-england,stockholm-Power"
+      );
+  }
+
+  @Test
   public void averageOfOneMeterTwoHours() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
 
@@ -429,7 +473,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
       singletonList(new MeasurementSeriesDto(
-        "average",
+        "average-Power",
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
         "average",
@@ -469,7 +513,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average",
+          "average-Power",
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
           "average",
@@ -510,7 +554,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average",
+          "average-Energy",
           Quantity.ENERGY.name,
           Quantity.ENERGY.presentationUnit(),
           "average",
@@ -567,14 +611,14 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "average",
+        "average-Power",
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
         "average",
         singletonList(new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 4.0))
       ),
       new MeasurementSeriesDto(
-        "average",
+        "average-Difference temperature",
         Quantity.DIFFERENCE_TEMPERATURE.name,
         Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
         "average",
@@ -606,7 +650,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average",
+          "average-Power",
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
           "average",
@@ -661,7 +705,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactly(
       new MeasurementSeriesDto(
-        "average",
+        "city-sweden,stockholm-Power",
         Quantity.POWER.name,
         "W",
         "sweden,stockholm",
@@ -683,23 +727,26 @@ public class MeasurementControllerTest extends IntegrationTest {
       .city("stockholm")
       .address("stora gatan 1");
 
-    LogicalMeterEntity meter1 = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
-      locationBuilder.build()
+    PhysicalMeterEntity physical1 = newPhysicalMeterEntity(
+      newLogicalMeterEntityWithLocation(
+        MeterDefinition.DISTRICT_HEATING_METER,
+        locationBuilder.build()
+      ).id
     );
-    PhysicalMeterEntity physical1 = newPhysicalMeterEntity(meter1.id);
 
-    LogicalMeterEntity meter2 = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
-      locationBuilder.address("stora gatan 2").build()
+    PhysicalMeterEntity physical2 = newPhysicalMeterEntity(
+      newLogicalMeterEntityWithLocation(
+        MeterDefinition.DISTRICT_HEATING_METER,
+        locationBuilder.address("stora gatan 2").build()
+      ).id
     );
-    PhysicalMeterEntity physical2 = newPhysicalMeterEntity(meter2.id);
 
-    LogicalMeterEntity meterIrrelevant = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
-      locationBuilder.city("båstad").build()
+    PhysicalMeterEntity physicalIrrelevant = newPhysicalMeterEntity(
+      newLogicalMeterEntityWithLocation(
+        MeterDefinition.DISTRICT_HEATING_METER,
+        locationBuilder.city("båstad").build()
+      ).id
     );
-    PhysicalMeterEntity physicalIrrelevant = newPhysicalMeterEntity(meterIrrelevant.id);
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
@@ -726,21 +773,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertThat(response.getBody()).containsExactly(
-      new MeasurementSeriesDto(
-        "average",
-        Quantity.POWER.name,
-        "W",
-        "sweden,stockholm",
-        "stockholm",
-        null,
-        null,
-        asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 2.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 3.0)
-        )
-      )
-    );
+    assertThat(response.getBody())
+      .extracting("city")
+      .hasSize(1)
+      .allMatch((city) -> "stockholm".equals(city));
   }
 
   @Test
@@ -787,7 +823,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "average",
+        "city-sweden,stockholm-Power",
         Quantity.POWER.name,
         "W",
         "sweden,stockholm",
@@ -800,7 +836,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
       ),
       new MeasurementSeriesDto(
-        "average",
+        "city-sweden,båstad-Power",
         Quantity.POWER.name,
         "W",
         "sweden,båstad",
@@ -848,21 +884,14 @@ public class MeasurementControllerTest extends IntegrationTest {
         ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEqualTo(
-      singletonList(
-        new MeasurementSeriesDto(
-          "average",
-          Quantity.POWER.name,
-          Quantity.POWER.presentationUnit(),
-          "average",
-          singletonList(
-            new MeasurementValueDto(
-              Instant.parse("2018-03-06T05:00:00Z"),
-              3.75
-            )
-          )
+    assertThat(response.getBody())
+      .flatExtracting("values")
+      .containsExactly(
+        new MeasurementValueDto(
+          Instant.parse("2018-03-06T05:00:00Z"),
+          3.75
         )
-      ));
+      );
     assertThat(response.getBody()).isEqualTo(responseForNonZuluRequest.getBody());
   }
 
@@ -933,7 +962,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average",
+          "average-Power",
           Quantity.POWER.name, "W",
           "average",
           singletonList(new MeasurementValueDto(
@@ -963,18 +992,14 @@ public class MeasurementControllerTest extends IntegrationTest {
       ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEqualTo(
-      singletonList(
-        new MeasurementSeriesDto(
-          "average",
-          Quantity.POWER.name,
-          "kW",
-          "average",
-          singletonList(new MeasurementValueDto(
-            Instant.parse("2018-03-06T05:00:00Z"),
-            40.0
-          ))
-        )));
+
+    assertThat(response.getBody())
+      .extracting("quantity")
+      .containsExactly(Quantity.POWER.name);
+
+    assertThat(response.getBody())
+      .extracting("unit")
+      .containsExactly("kW");
   }
 
   @Test
@@ -1003,7 +1028,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average",
+          "average-Power",
           Quantity.POWER.name,
           "W",
           "average",
@@ -1046,7 +1071,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average",
+          "average-Power",
           Quantity.POWER.name,
           "W",
           "average",
@@ -1181,15 +1206,11 @@ public class MeasurementControllerTest extends IntegrationTest {
         logicalMeter.getId()
       ), MeasurementSeriesDto.class).getBody();
 
-    assertThat(response.get(0)).isEqualTo(
-      new MeasurementSeriesDto(
-        "average",
-        Quantity.POWER.name,
-        "W",
-        "average",
-        singletonList(new MeasurementValueDto(now.truncatedTo(ChronoUnit.HOURS).toInstant(), 1.0))
-      )
-    );
+    assertThat(response)
+      .flatExtracting("values")
+      .containsExactly(
+        new MeasurementValueDto(now.truncatedTo(ChronoUnit.HOURS).toInstant(), 1.0)
+      );
   }
 
   @Test

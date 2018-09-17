@@ -60,7 +60,7 @@ public class MeasurementController {
       quantities,
       findLogicalMetersByIds(meters),
       (quantity, measurementValue) -> new LabeledMeasurementValue(
-        "average",
+        String.format("average-%s", quantity.name),
         label,
         measurementValue.when,
         measurementValue.value,
@@ -151,7 +151,7 @@ public class MeasurementController {
           quantities,
           logicalMeters,
           (quantity, measurementValue) -> new LabeledMeasurementValue(
-            "average",
+            String.format("city-%s,%s-%s", city.country, city.name, quantity.name),
             cityId,
             city.name,
             null,
