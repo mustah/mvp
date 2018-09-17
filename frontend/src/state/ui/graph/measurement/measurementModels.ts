@@ -25,7 +25,12 @@ export const initialState: ReportContainerState = {
   measurementResponse: emptyMeasurementResponse,
 };
 
-export interface MeasurementApiResponsePart {
+type MeasurementValues = Array<{
+  when: number;
+  value?: number;
+}>;
+
+export interface MeasurementResponsePart {
   id: string;
   quantity: Quantity;
   unit: string;
@@ -33,18 +38,34 @@ export interface MeasurementApiResponsePart {
   city: string;
   address: string;
   medium: string;
-  values: Array<{
-    when: number;
-    value?: number;
-  }>;
+  values: MeasurementValues;
 }
 
-export type MeasurementApiResponse = MeasurementApiResponsePart[];
+export interface AverageResponsePart {
+  id: string;
+  quantity: Quantity;
+  unit: string;
+  label: string;
+  values: MeasurementValues;
+}
+
+export interface CityResponsePart {
+  id: string;
+  quantity: Quantity;
+  unit: string;
+  label: string;
+  city: string;
+  values: MeasurementValues;
+}
+
+export type MeasurementApiResponse = MeasurementResponsePart[];
+export type AverageApiResponse = AverageResponsePart[];
+export type CityApiResponse = CityResponsePart[];
 
 export interface MeasurementResponses {
   measurement: MeasurementApiResponse;
-  average: MeasurementApiResponse;
-  cities: MeasurementApiResponse;
+  average: AverageApiResponse;
+  cities: CityApiResponse;
 }
 
 export const enum Quantity {

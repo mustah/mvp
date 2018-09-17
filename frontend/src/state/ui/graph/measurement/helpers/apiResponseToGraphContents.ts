@@ -2,7 +2,7 @@ import * as chroma from 'chroma-js';
 import {firstUpper} from '../../../../../services/translationService';
 import {Dictionary} from '../../../../../types/Types';
 import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../../usecases/report/reportModels';
-import {MeasurementApiResponsePart, MeasurementResponses, Quantity} from '../measurementModels';
+import {MeasurementResponsePart, MeasurementResponses, Quantity} from '../measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -111,7 +111,7 @@ export const mapApiResponseToGraphData =
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
-    measurement.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementApiResponsePart) => {
+    measurement.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
       values.forEach(({when, value}) => {
@@ -152,7 +152,7 @@ export const mapApiResponseToGraphData =
       }
     });
 
-    average.forEach(({id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart) => {
+    average.forEach(({id, quantity, values, unit, address, city, medium}: MeasurementResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
       if (!yAxisId) {
         return;
@@ -186,7 +186,7 @@ export const mapApiResponseToGraphData =
 
     cities.forEach(
       (
-        {id, quantity, values, unit, address, city, medium}: MeasurementApiResponsePart,
+        {id, quantity, values, unit, address, city, medium}: MeasurementResponsePart,
         index: number,
       ) => {
         if (!graphContents.axes.left) {
