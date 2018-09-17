@@ -1,15 +1,10 @@
 import * as React from 'react';
-import {
-  listItemStyle,
-  listItemStyleWithActions,
-  nestedListItemStyle,
-  sideBarStyles,
-} from '../../../../app/themes';
+import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import {MediumButton} from '../../../../components/buttons/MediumButton';
-import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
-import '../../../../components/indicators/ReportIndicatorWidget.scss';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
+import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
+import '../../../../components/indicators/ReportIndicatorWidget.scss';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
@@ -128,7 +123,7 @@ const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) =
   return renderSelectableListItem({
     ...other,
     id,
-    selectable: true,
+    selectable: false,
     primaryText: meter.name,
     medium: meter.medium,
   });
@@ -173,9 +168,11 @@ const renderSelectableListItem = ({
   medium = Medium.unknown,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
-  const onToggleSelect = nestedItems
-    ? () => toggleIncludingChildren(id)
-    : () => toggleSingleEntry(id);
+
+  const props: ListItemProps = {};
+  if (nestedItems) {
+    props.onClick = () => toggleIncludingChildren(id);
+  }
 
   const zoomInOn = (ev: React.SyntheticEvent<{}>) => {
     ev.stopPropagation();
@@ -203,22 +200,23 @@ const renderSelectableListItem = ({
         </RowCenter>
         <Row style={iconRowStyle}>
           {zoomable && <ZoomButton onClick={zoomInOn}/>}
-          {report && <MediumButton onClick={addMeterToReport} medium={medium} />}
+          {report && <MediumButton onClick={addMeterToReport} medium={medium}/>}
         </Row>
       </RowCenter>
     )
     : (
-        <Normal
-          className="first-uppercase"
-          style={listItemStyle.textStyle}
-          title={firstUpper(primaryText)}
-        >
-          {primaryText}
-        </Normal>
+      <Normal
+        className="first-uppercase"
+        style={listItemStyle.textStyle}
+        title={firstUpper(primaryText)}
+      >
+        {primaryText}
+      </Normal>
     );
 
   return (
     <SelectableListItem
+      {...props}
       className="TreeListItem first-uppercase"
       primaryText={content}
       key={id}
@@ -227,7 +225,6 @@ const renderSelectableListItem = ({
       nestedListStyle={nestedListItemStyle}
       nestedItems={nestedItems}
       onNestedListToggle={onToggleExpand}
-      onClick={onToggleSelect}
       selectable={selectable}
     />
   );

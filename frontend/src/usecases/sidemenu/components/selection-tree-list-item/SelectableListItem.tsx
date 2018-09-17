@@ -1,6 +1,6 @@
 import {ListItem} from 'material-ui';
 import * as React from 'react';
-import {listItemStyle, sideBarStyles} from '../../../../app/themes';
+import {sideBarStyles} from '../../../../app/themes';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
 interface Selectable {
@@ -9,14 +9,16 @@ interface Selectable {
 
 export const SelectableListItem = (props: ListItemProps & Selectable) => {
   const {selectable, ...listItemProps} = props;
-  const selectableStyle: React.CSSProperties = selectable ? {} : sideBarStyles.notSelectable;
-  const listStyle: React.CSSProperties = {...listItemStyle, ...selectableStyle};
+
+  if (selectable) {
+    listItemProps.hoverColor = sideBarStyles.onHover.color;
+  } else {
+    listItemProps.disabled = true;
+  }
 
   return (
     <ListItem
       {...listItemProps}
-      style={listStyle}
-      hoverColor={sideBarStyles.onHover.color}
     />
   );
 };
