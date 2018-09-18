@@ -53,12 +53,14 @@ public class MeasurementController {
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
-    return getMeasurementSeriesDtos(
+    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(meters);
+    ZonedDateTime stop = beforeOrNow(before);
+    return measurementSeriesOf(
       after,
-      before,
-      resolution,
+      stop,
+      resolutionOrDefault(after, stop, resolution),
       quantities,
-      findLogicalMetersByIds(meters),
+      logicalMeters,
       (quantity, measurementValue) -> new LabeledMeasurementValue(
         String.format("average-%s", quantity.name),
         label,
@@ -74,12 +76,13 @@ public class MeasurementController {
   public List<MeasurementSeriesDto> measurements(
     @RequestParam List<UUID> meters,
     @RequestParam(name = "quantities") Optional<Set<Quantity>> maybeQuantities,
-    @RequestParam(defaultValue = "1970-01-01T00:00:00Z") @DateTimeFormat(iso = DATE_TIME)
-      ZonedDateTime after,
-    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+    @RequestParam(defaultValue = "1970-01-01T00:00:00Z")
+    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(required = false)
+    @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution
   ) {
-    //TODO: We need to limit the amount of measurements here. Even if we're only fetching
+    // TODO: We need to limit the amount of measurements here. Even if we're only fetching
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
@@ -87,13 +90,8 @@ public class MeasurementController {
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, Function.identity()));
 
-    if (before == null) {
-      before = ZonedDateTime.now();
-    }
-
-    if (resolution == null) {
-      resolution = TemporalResolution.defaultResolutionFor(Duration.between(after, before));
-    }
+    ZonedDateTime stop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
 
     Set<Quantity> quantities = maybeQuantities
       .orElseGet(() -> logicalMeters.stream()
@@ -110,8 +108,8 @@ public class MeasurementController {
           meter.id,
           entry.getKey(),
           after,
-          before,
-          resolution
+          stop,
+          temporalResolution
         );
 
         LogicalMeter logicalMeter = logicalMetersMap.get(meter.logicalMeterId);
@@ -142,11 +140,12 @@ public class MeasurementController {
   ) {
     return cities.stream()
       .flatMap((city) -> {
+        ZonedDateTime stop = beforeOrNow(before);
         String cityId = String.format("%s,%s", city.country, city.name);
-        List<LogicalMeter> logicalMeters = findLogicalMetersByCity(cityId);
-        List<MeasurementSeriesDto> measurementSeriesDtos = getMeasurementSeriesDtos(
+        List<LogicalMeter> logicalMeters = findLogicalMetersByCityId(cityId);
+        return measurementSeriesOf(
           after,
-          before,
+          stop,
           resolution,
           quantities,
           logicalMeters,
@@ -160,13 +159,12 @@ public class MeasurementController {
             measurementValue.value,
             quantity
           )
-        );
-        return measurementSeriesDtos.stream();
+        ).stream();
       })
       .collect(toList());
   }
 
-  private List<MeasurementSeriesDto> getMeasurementSeriesDtos(
+  private List<MeasurementSeriesDto> measurementSeriesOf(
     ZonedDateTime after,
     ZonedDateTime before,
     TemporalResolution resolution,
@@ -174,14 +172,6 @@ public class MeasurementController {
     List<LogicalMeter> logicalMeters,
     BiFunction<Quantity, MeasurementValue, LabeledMeasurementValue> valueMapper
   ) {
-    if (before == null) {
-      before = ZonedDateTime.now();
-    }
-
-    if (resolution == null) {
-      resolution = TemporalResolution.defaultResolutionFor(Duration.between(after, before));
-    }
-
     Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
       mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities);
 
@@ -204,14 +194,27 @@ public class MeasurementController {
     return toSeries(foundMeasurements);
   }
 
-  private List<LogicalMeter> findLogicalMetersByIds(List<UUID> meters) {
+  private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {
     RequestParameters parameters = new RequestParametersAdapter()
-      .setAll(ID, meters.stream().map(UUID::toString).collect(toList()));
+      .setAll(ID, logicalMeterIds.stream().map(UUID::toString).collect(toList()));
     return logicalMeterUseCases.findAllBy(parameters);
   }
 
-  private List<LogicalMeter> findLogicalMetersByCity(String label) {
-    RequestParameters parameters = new RequestParametersAdapter().add(CITY, label);
+  private List<LogicalMeter> findLogicalMetersByCityId(String cityId) {
+    RequestParameters parameters = new RequestParametersAdapter().add(CITY, cityId);
     return logicalMeterUseCases.findAllBy(parameters);
+  }
+
+  private static ZonedDateTime beforeOrNow(ZonedDateTime before) {
+    return Optional.ofNullable(before).orElseGet(ZonedDateTime::now);
+  }
+
+  private static TemporalResolution resolutionOrDefault(
+    ZonedDateTime start,
+    ZonedDateTime stop,
+    TemporalResolution resolution
+  ) {
+    return Optional.ofNullable(resolution)
+      .orElseGet(() -> TemporalResolution.defaultResolutionFor(Duration.between(start, stop)));
   }
 }
