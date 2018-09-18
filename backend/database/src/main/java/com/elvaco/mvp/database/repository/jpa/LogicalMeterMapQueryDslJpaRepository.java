@@ -46,7 +46,6 @@ class LogicalMeterMapQueryDslJpaRepository
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .join(LOGICAL_METER.location, LOCATION)
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
       .on(MeterAlarmLogQueryFilters.isWithinPeriod(parameters));
 
