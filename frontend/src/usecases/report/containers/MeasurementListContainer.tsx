@@ -10,7 +10,7 @@ import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {
   MeasurementApiResponse,
-  MeasurementApiResponsePart,
+  MeasurementResponsePart,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
@@ -42,7 +42,7 @@ const renderCreated = (item: MeasurementListItem) => timestamp(item.created * 10
 export const MeasurementListContainer = ({measurement}: Props) => {
   const items: Map<uuid, MeasurementListItem> = new Map<uuid, MeasurementListItem>();
 
-  measurement.forEach(({id, label, city, address, unit, values}: MeasurementApiResponsePart) => {
+  measurement.forEach(({id, label, city, address, unit, values}: MeasurementResponsePart) => {
     values.forEach(({when, value}) => {
       const item: MeasurementListItem = {
         id: id + ';' + when, label, city, address, unit, value, created: when,

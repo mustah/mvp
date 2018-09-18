@@ -12,17 +12,20 @@ export interface Axes {
   right?: string;
 }
 
+type MeasurementOrigin = 'meter' | 'average' | 'city';
+
 export interface LineProps {
   id: string;
   dataKey: string;
   key: string;
   name: string;
-  city: string;
-  address: string;
-  medium: string;
+  city?: string;
+  address?: string;
+  medium?: string;
   stroke: string;
   strokeWidth?: number;
   yAxisId: string;
+  origin: MeasurementOrigin;
 }
 
 export interface LegendItem {
