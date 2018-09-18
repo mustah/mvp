@@ -59,7 +59,9 @@ public final class FilterUtils {
   }
 
   public static boolean isPhysicalMeterQuery(RequestParameters parameters) {
-    return parameters.hasParam(SECONDARY_ADDRESS) || isAlarmQuery(parameters);
+    return parameters.hasParam(SECONDARY_ADDRESS)
+      || isAlarmQuery(parameters)
+      || isReportedQuery(parameters);
   }
 
   static List<StatusType> toStatusTypes(List<String> values) {
@@ -98,6 +100,6 @@ public final class FilterUtils {
   }
 
   private static boolean isYes(String v) {
-    return v.equalsIgnoreCase("yes");
+    return "yes".equalsIgnoreCase(v);
   }
 }

@@ -26,6 +26,7 @@ import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntit
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMeter;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterStatusLogs;
 
 @Repository
 class GatewayMapQueryDslJpaRepository
@@ -59,6 +60,7 @@ class GatewayMapQueryDslJpaRepository
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE));
 
     joinLogicalMetersPhysicalMeter(query, parameters);
+    joinMeterStatusLogs(query, parameters);
     joinMeterAlarmLogs(query, parameters);
 
     return new HashSet<>(query.distinct().fetch());

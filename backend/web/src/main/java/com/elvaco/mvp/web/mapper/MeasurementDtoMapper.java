@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
 
@@ -34,11 +33,10 @@ public class MeasurementDtoMapper {
     Map<LabeledQuantity, List<LabeledMeasurementValue>> quantityMeasurements =
       new LinkedHashMap<>();
 
-    for (LabeledMeasurementValue measurement : foundMeasurements) {
-      Quantity quantity = measurement.quantity;
+    foundMeasurements.forEach(measurement -> {
       LabeledQuantity key = new LabeledQuantity(
         measurement.id,
-        quantity,
+        measurement.quantity,
         measurement.label,
         measurement.address,
         measurement.city,
@@ -46,13 +44,11 @@ public class MeasurementDtoMapper {
       );
       quantityMeasurements.computeIfAbsent(key, (v) -> new ArrayList<>());
       quantityMeasurements.get(key).add(measurement);
-    }
+    });
 
     List<MeasurementSeriesDto> series = new ArrayList<>();
-    for (Map.Entry<LabeledQuantity, List<LabeledMeasurementValue>> entry : quantityMeasurements
-      .entrySet()) {
-      LabeledQuantity key = entry.getKey();
-      series.add(
+    quantityMeasurements
+      .forEach((key, value) -> series.add(
         new MeasurementSeriesDto(
           key.id,
           key.quantity.name,
@@ -61,16 +57,14 @@ public class MeasurementDtoMapper {
           key.city,
           key.address,
           key.medium,
-          entry.getValue()
-            .stream()
+          value.stream()
             .map(measurement -> new MeasurementValueDto(
               measurement.when,
               measurement.value
             ))
             .collect(toList())
         )
-      );
-    }
+      ));
     return series;
   }
 
