@@ -80,7 +80,7 @@ public class MeteringMessageMapper {
     map.put("Volume", Quantity.VOLUME);
     map.put("Energy", Quantity.ENERGY);
     map.put("External temp", Quantity.EXTERNAL_TEMPERATURE);
-    map.put("Relative-humidity", Quantity.TEMPERATURE);
+    map.put("relative-humidity", Quantity.HUMIDITY);
     map.put("Energy return", Quantity.ENERGY_RETURN);
     map.put("Reactive energy", Quantity.REACTIVE_ENERGY);
     return unmodifiableMap(map);

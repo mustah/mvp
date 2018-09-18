@@ -106,7 +106,7 @@ public enum Medium {
   )));
 
   private static final Set<Quantity> ROOM_TEMP_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
-    Quantity.TEMPERATURE,
+    Quantity.EXTERNAL_TEMPERATURE,
     Quantity.HUMIDITY
   )));
 
