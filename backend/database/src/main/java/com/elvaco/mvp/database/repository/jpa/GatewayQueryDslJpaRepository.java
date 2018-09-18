@@ -32,6 +32,7 @@ import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gat
 import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMeter;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
@@ -164,6 +165,7 @@ class GatewayQueryDslJpaRepository
       .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
 
     joinLogicalMetersPhysicalMeter(query, parameters);
+    joinMeterAlarmLogs(query, parameters);
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {

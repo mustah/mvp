@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import static java.util.Collections.emptyList;
+
 public class RestResponsePage<T> extends PageImpl<T> {
 
   private static final long serialVersionUID = 7024191353049604570L;
@@ -137,7 +139,7 @@ public class RestResponsePage<T> extends PageImpl<T> {
 
   public Page<T> newPage() {
     return new PageImpl<>(
-      getContent(),
+      getContent() != null ? getContent() : emptyList(),
       size == 0 ? null : new PageRequest(getNumber(), getSize(), getSort()),
       getTotalElements()
     );

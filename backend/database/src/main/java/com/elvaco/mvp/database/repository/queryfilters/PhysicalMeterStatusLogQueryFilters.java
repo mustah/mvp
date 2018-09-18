@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
@@ -27,7 +28,11 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   private ZonedDateTime stop;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(RequestParameter parameter, List<String> values) {
+  public Optional<Predicate> buildPredicateFor(
+    RequestParameter parameter,
+    RequestParameters parameters,
+    List<String> values
+  ) {
     return Optional.ofNullable(nullablePredicate(parameter, values));
   }
 

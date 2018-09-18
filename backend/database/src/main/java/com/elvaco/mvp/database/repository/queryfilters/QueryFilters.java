@@ -18,7 +18,8 @@ import com.querydsl.core.types.Predicate;
 public abstract class QueryFilters {
 
   public abstract Optional<Predicate> buildPredicateFor(
-    RequestParameter parameterName,
+    RequestParameter parameter,
+    RequestParameters parameters,
     List<String> values
   );
 
@@ -34,7 +35,7 @@ public abstract class QueryFilters {
       if (!values.isEmpty()) {
         RequestParameter parameter = propertyFilter.getKey();
         try {
-          buildPredicateFor(parameter, values).ifPresent(predicates::add);
+          buildPredicateFor(parameter, parameters, values).ifPresent(predicates::add);
         } catch (Exception exception) {
           throw new PredicateConstructionFailure(parameter.toString(), values, exception);
         }

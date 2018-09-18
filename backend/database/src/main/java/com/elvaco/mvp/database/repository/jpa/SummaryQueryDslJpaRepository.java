@@ -24,6 +24,7 @@ import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physical
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 import static com.querydsl.core.types.ExpressionUtils.allOf;
 import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 
@@ -52,7 +53,7 @@ class SummaryQueryDslJpaRepository
    */
   @Override
   public MeterSummary summary(RequestParameters parameters) {
-    Predicate predicate = toPredicate(parameters);
+    Predicate predicate = new LogicalMeterQueryFilters().toExpression(parameters);
 
     long meters = countMeters(parameters, predicate);
     long cities = countCities(parameters, predicate);
@@ -96,6 +97,7 @@ class SummaryQueryDslJpaRepository
       .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
 
     joinLogicalMeterGateways(query, parameters);
+    joinMeterAlarmLogs(query, parameters);
 
     return query;
   }
@@ -115,9 +117,5 @@ class SummaryQueryDslJpaRepository
         isNotNull(LOCATION.city),
         isNotNull(LOCATION.streetAddress)
       );
-  }
-
-  private static Predicate toPredicate(RequestParameters parameters) {
-    return new LogicalMeterQueryFilters().toExpression(parameters);
   }
 }

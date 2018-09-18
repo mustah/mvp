@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum RequestParameter {
   ADDRESS("address"),
   AFTER("after"),
+  ALARM("alarm"),
   BEFORE("before"),
   CITY("city"),
   FACILITY("facility"),

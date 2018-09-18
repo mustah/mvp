@@ -64,7 +64,7 @@ public final class LogicalMeterHelper {
     if (readIntervalMinutes == 0) {
       return 0;
     }
-    return (long) Math.floor((double) Duration.between(selectionPeriod.start, selectionPeriod.end)
+    return (long) Math.floor((double) Duration.between(selectionPeriod.start, selectionPeriod.stop)
       .toMinutes() / readIntervalMinutes);
   }
 

@@ -100,8 +100,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     RequestParameters parameters = makeParametersWithDateRange();
 
-    List<LogicalMeterCollectionStats> missingMeterReadingsCounts = logicalMeterJpaRepository
-      .findMissingMeterReadingsCounts(parameters);
+    List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
+      logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters);
 
     assertThat(missingMeterReadingsCounts.size()).isEqualTo(1);
     assertThat(missingMeterReadingsCounts.get(0).missingReadingCount).isEqualTo(10);

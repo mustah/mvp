@@ -35,7 +35,7 @@ public interface LogicalMeters {
 
   MeterSummary summary(RequestParameters parameters);
 
-  List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters);
+  List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
 
   void delete(LogicalMeter logicalMeter);
 }

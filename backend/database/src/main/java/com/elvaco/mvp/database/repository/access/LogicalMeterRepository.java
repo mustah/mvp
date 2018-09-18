@@ -31,8 +31,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
 import static java.util.Collections.emptyList;
@@ -93,7 +91,7 @@ public class LogicalMeterRepository implements LogicalMeters {
         )
       );
 
-    return parameters.getAsSelectionPeriod(AFTER, BEFORE).map(selectionPeriod ->
+    return parameters.getPeriod().map(selectionPeriod ->
       new PageAdapter<>(
         pagedLogicalMeters.map(source ->
           toDomainModelWithCollectionPercentage(
@@ -151,8 +149,10 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeasurements(RequestParameters parameters) {
-    return parameters.getAsSelectionPeriod(AFTER, BEFORE)
+  public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
+    RequestParameters parameters
+  ) {
+    return parameters.getPeriod()
       .map(selectionPeriod ->
         logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
           .map(entry -> LogicalMeterEntityMapper.toDomainModel(entry, selectionPeriod))
@@ -173,7 +173,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
       logicalMeterJpaRepository.findStatusesGroupedByPhysicalMeterId(parameters);
 
-    return parameters.getAsSelectionPeriod(AFTER, BEFORE)
+    return parameters.getPeriod()
       .map(selectionPeriod -> withStatusesAndCollectionStats(
         meters,
         parameters,
@@ -226,7 +226,11 @@ public class LogicalMeterRepository implements LogicalMeters {
     RequestParameters parameters
   ) {
     return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
-      .collect(toMap(entry -> entry.id, entry -> entry.missingReadingCount));
+      .collect(toMap(
+        entry -> entry.id,
+        entry -> entry.missingReadingCount,
+        (oldCount, newCount) -> oldCount + newCount
+      ));
   }
 
   private static Predicate toPredicate(RequestParameters parameters) {

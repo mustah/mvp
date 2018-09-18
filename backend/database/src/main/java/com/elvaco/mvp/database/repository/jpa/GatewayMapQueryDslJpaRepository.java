@@ -16,6 +16,7 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,8 @@ import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntit
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMeter;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 
 @Repository
 class GatewayMapQueryDslJpaRepository
@@ -41,25 +44,23 @@ class GatewayMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    return new HashSet<>(
-      createQuery(toPredicate(parameters))
-        .select(Projections.constructor(
-          MapMarker.class,
-          GATEWAY.id,
-          GATEWAY_STATUS_LOG.status,
-          LOCATION.latitude,
-          LOCATION.longitude
-        ))
-        .join(GATEWAY.meters, LOGICAL_METER)
-        .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
-        .join(LOGICAL_METER.location, LOCATION)
-        .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-        .distinct()
-        .fetch()
-    );
-  }
+    Predicate predicate = new GatewayQueryFilters().toExpression(parameters);
+    JPQLQuery<MapMarker> query = createQuery(predicate)
+      .select(Projections.constructor(
+        MapMarker.class,
+        GATEWAY.id,
+        GATEWAY_STATUS_LOG.status,
+        LOCATION.latitude,
+        LOCATION.longitude
+      ))
+      .join(GATEWAY.meters, LOGICAL_METER)
+      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
+      .join(LOGICAL_METER.location, LOCATION)
+      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE));
 
-  private static Predicate toPredicate(RequestParameters parameters) {
-    return new GatewayQueryFilters().toExpression(parameters);
+    joinLogicalMetersPhysicalMeter(query, parameters);
+    joinMeterAlarmLogs(query, parameters);
+
+    return new HashSet<>(query.distinct().fetch());
   }
 }

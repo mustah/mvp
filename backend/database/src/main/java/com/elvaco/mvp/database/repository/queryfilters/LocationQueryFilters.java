@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
@@ -17,7 +18,11 @@ public class LocationQueryFilters extends QueryFilters {
   private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(RequestParameter parameter, List<String> values) {
+  public Optional<Predicate> buildPredicateFor(
+    RequestParameter parameter,
+    RequestParameters parameters,
+    List<String> values
+  ) {
     return Optional.ofNullable(buildNullablePredicateFor(parameter, values));
   }
 

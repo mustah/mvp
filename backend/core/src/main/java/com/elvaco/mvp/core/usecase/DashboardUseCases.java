@@ -29,9 +29,10 @@ public class DashboardUseCases {
       return Optional.empty();
     }
 
-    List<CollectionStats> meterStats = logicalMeters.findMissingMeasurements(parameters).stream()
-      .map(entry -> new CollectionStats(entry.missingReadingCount, entry.readInterval))
-      .collect(toList());
+    List<CollectionStats> meterStats =
+      logicalMeters.findMissingMeterReadingsCounts(parameters).stream()
+        .map(entry -> new CollectionStats(entry.missingReadingCount, entry.readInterval))
+        .collect(toList());
 
     return sumCollectionStats(meterStats);
   }

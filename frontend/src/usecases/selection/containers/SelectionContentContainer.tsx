@@ -16,6 +16,7 @@ import {translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
 import {
   fetchAddresses,
+  fetchAlarms,
   fetchCities,
   fetchFacilities,
   fetchGatewaySerials,
@@ -29,6 +30,7 @@ import {toggleParameter} from '../../../state/user-selection/userSelectionAction
 import {OnSelectParameter, ParameterName, SelectionListItem} from '../../../state/user-selection/userSelectionModels';
 import {
   getSelectedAddresses,
+  getSelectedAlarms,
   getSelectedCities,
   getSelectedFacilities,
   getSelectedGatewaySerials,
@@ -41,6 +43,7 @@ import {SearchResultList} from '../components/SelectionResultList';
 
 interface StateToProps {
   addresses: SelectionListItem[];
+  alarms: SelectionListItem[];
   cities: SelectionListItem[];
   facilities: SelectionListItem[];
   gatewaySerials: SelectionListItem[];
@@ -62,6 +65,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
   render() {
     const {
       addresses,
+      alarms,
       cities,
       facilities,
       gatewaySerials,
@@ -78,6 +82,8 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       toggleParameter({item, parameter: ParameterName.addresses});
     const selectReported = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.reported});
+    const selectAlarm = (item: SelectionListItem) =>
+      toggleParameter({item, parameter: ParameterName.alarms});
     const selectMedium = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.media});
     const selectSecondaryAddresses = (item: SelectionListItem) =>
@@ -87,6 +93,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
     const selectGatewaySerials = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.gatewaySerials});
 
+    const alarmSelectionText = translate('alarm') + ': ';
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
     const reportedSelectionText = translate('reported') + ': ';
@@ -138,6 +145,12 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             selectionText={reportedSelectionText}
             select={selectReported}
           />
+          <SimpleDropdownSelector
+            fetchItems={fetchAlarms}
+            selectedItems={alarms}
+            selectionText={alarmSelectionText}
+            select={selectAlarm}
+          />
           <SearchDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
@@ -158,6 +171,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
 }
 
 const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
+  alarms: getSelectedAlarms(userSelection),
   addresses: getSelectedAddresses(userSelection),
   cities: getSelectedCities(userSelection),
   facilities: getSelectedFacilities(userSelection),

@@ -6,6 +6,7 @@ import {Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
   addresses = 'addresses',
+  alarms = 'alarms',
   cities = 'cities',
   facilities = 'facilities',
   gatewaySerials = 'gatewaySerials',
