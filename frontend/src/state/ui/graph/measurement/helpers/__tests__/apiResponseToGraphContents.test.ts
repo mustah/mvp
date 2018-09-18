@@ -247,5 +247,4 @@ describe('apiResponseToGraphContents', () => {
 
   });
 
-
 });

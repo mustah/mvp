@@ -2,7 +2,13 @@ import * as chroma from 'chroma-js';
 import {firstUpper} from '../../../../../services/translationService';
 import {Dictionary} from '../../../../../types/Types';
 import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../../usecases/report/reportModels';
-import {MeasurementResponsePart, MeasurementResponses, Quantity} from '../measurementModels';
+import {
+  AverageResponsePart,
+  CityResponsePart,
+  MeasurementResponsePart,
+  MeasurementResponses,
+  Quantity,
+} from '../measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -148,11 +154,18 @@ export const mapApiResponseToGraphData =
           stroke: colorizeMeters(quantity as Quantity),
           strokeWidth: meterStrokeWidth,
           yAxisId,
+          origin: 'meter',
         });
       }
     });
 
-    average.forEach(({id, quantity, values, unit, address, city, medium}: MeasurementResponsePart) => {
+    average.forEach(({id, quantity, values, unit}: AverageResponsePart) => {
+      if (!graphContents.axes.left) {
+        graphContents.axes.left = unit;
+      } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
+        graphContents.axes.right = unit;
+      }
+
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
       if (!yAxisId) {
         return;
@@ -163,12 +176,10 @@ export const mapApiResponseToGraphData =
         dataKey,
         key: `average-${quantity}`,
         name: dataKey,
-        city,
-        address,
-        medium,
         stroke: colorizeAverage(quantity as Quantity),
         strokeWidth: thickStroke,
         yAxisId,
+        origin: 'average',
       });
 
       values.forEach(({when, value}) => {
@@ -186,7 +197,7 @@ export const mapApiResponseToGraphData =
 
     cities.forEach(
       (
-        {id, quantity, values, unit, address, city, medium}: MeasurementResponsePart,
+        {id, quantity, values, unit, city}: CityResponsePart,
         index: number,
       ) => {
         if (!graphContents.axes.left) {
@@ -206,11 +217,10 @@ export const mapApiResponseToGraphData =
           key: `city-${quantity}-${city}`,
           name: dataKey,
           city,
-          address,
-          medium,
           stroke: cityColorScale[index],
           strokeWidth: thickStroke,
           yAxisId,
+          origin: 'city',
         });
 
         values.forEach(({when, value}) => {
