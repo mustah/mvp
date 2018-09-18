@@ -20,6 +20,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 import com.elvaco.mvp.testdata.TestRabbitConsumer;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
+import com.elvaco.mvp.web.dto.SyncRequestResponseDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -149,6 +150,26 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   }
 
   @Test
+  public void meterIdsAndJobIdsArePresentInResponseBody() {
+    assumeTrue(isRabbitConnected());
+
+    List<UUID> meterIds = Stream.of(
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId()))
+    ).map(logicalMeter -> logicalMeter.id)
+      .collect(toList());
+
+    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asTestSuperAdmin()
+      .postList("/meters/sync", meterIds, SyncRequestResponseDto.class);
+
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    assertThat(responseEntity.getBody()).extracting("meterId")
+      .containsExactlyInAnyOrder(meterIds.toArray());
+    assertThat(responseEntity.getBody()).extracting("jobId").hasSameSizeAs(meterIds);
+  }
+
+  @Test
   public void userMustBeSuperUserToSyncMetersWithIds() {
     assumeTrue(isRabbitConnected());
 
@@ -197,10 +218,10 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
     LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestSuperAdmin().post(
+    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asTestSuperAdmin().postList(
       synchronizeUrl(logicalMeter.id),
       null,
-      ErrorMessageDto.class
+      SyncRequestResponseDto.class
     );
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);

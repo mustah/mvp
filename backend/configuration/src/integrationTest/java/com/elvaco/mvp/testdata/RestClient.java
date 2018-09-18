@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -45,6 +46,33 @@ public final class RestClient {
 
   public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
     return template.postForEntity(apiUrlOf(url), request, responseType);
+  }
+
+  public <T> ResponseEntity<List<T>> postList(
+    String url,
+    Object requestBody,
+    Class<T> listedClass
+  ) {
+    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
+      @Override
+      public Type getType() {
+        return new ParameterizedTypeReferenceImpl(
+          (ParameterizedType) super.getType(),
+          new Type[] {listedClass}
+        );
+      }
+    };
+
+    HttpEntity<?> requestEntity;
+    if (requestBody instanceof HttpEntity) {
+      requestEntity = (HttpEntity<?>) requestBody;
+    } else if (requestBody != null) {
+      requestEntity = new HttpEntity<Object>(requestBody);
+    } else {
+      requestEntity = HttpEntity.EMPTY;
+    }
+
+    return template.exchange(baseUrl + url, HttpMethod.POST, requestEntity, responseType);
   }
 
   public void put(String url, Object request) {

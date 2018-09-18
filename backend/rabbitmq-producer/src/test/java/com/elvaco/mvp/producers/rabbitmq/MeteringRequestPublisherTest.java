@@ -141,6 +141,23 @@ public class MeteringRequestPublisherTest {
   }
 
   @Test
+  public void jobIdIsReturnedAndSetInRequest() {
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
+    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
+    LogicalMeter logicalMeter = newLogicalMeter(
+      user.getOrganisationId(),
+      emptyList(),
+      emptyList()
+    );
+
+    String jobId = meteringRequestPublisher.request(logicalMeter);
+
+    String actual = spy.deserialize(0).jobId;
+    assertThat(actual).isNotEmpty();
+    assertThat(actual).isEqualTo(jobId);
+  }
+
+  @Test
   public void gatewayIdIsNotSet() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);

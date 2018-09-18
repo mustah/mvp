@@ -1,5 +1,7 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
+import java.util.UUID;
+
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.exception.Unauthorized;
@@ -19,7 +21,7 @@ public class MeteringRequestPublisher {
   private final Organisations organisations;
   private final MessagePublisher messagePublisher;
 
-  public void request(LogicalMeter logicalMeter) {
+  public String request(LogicalMeter logicalMeter) {
     if (!authenticatedUser.isSuperAdmin()) {
       throw new Unauthorized(String.format(
         "User '%s' is not allowed to publish synchronization requests",
@@ -37,6 +39,7 @@ public class MeteringRequestPublisher {
       );
 
     GetReferenceInfoDto getReferenceInfoDto = GetReferenceInfoDto.builder()
+      .jobId(UUID.randomUUID().toString())
       .organisationId(meterOrganisation.externalId)
       .facility(new FacilityIdDto(logicalMeter.externalId))
       .meter(logicalMeter.activePhysicalMeter()
@@ -49,5 +52,6 @@ public class MeteringRequestPublisher {
     } catch (Exception exception) {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
+    return getReferenceInfoDto.jobId;
   }
 }
