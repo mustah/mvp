@@ -7,7 +7,6 @@ export interface WidgetModel {
 export type OnSelectIndicator = (type: Medium) => void;
 
 export const enum Medium {
-  coldWater = 'coldWater',
   collection = 'collection',
   electricity = 'current',
   districtHeating = 'districtHeating',
