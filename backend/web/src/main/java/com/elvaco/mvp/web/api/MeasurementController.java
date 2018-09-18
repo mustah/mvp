@@ -143,7 +143,7 @@ public class MeasurementController {
         return measurementSeriesOf(
           after,
           stop,
-          resolution,
+          resolutionOrDefault(after, stop, resolution),
           quantities,
           findLogicalMetersByCityId(cityId),
           (quantity, measurementValue) -> new LabeledMeasurementValue(
