@@ -1,11 +1,9 @@
 import {firstUpperTranslated, translate} from '../services/translationService';
-import {GatewayDataSummaryKey} from '../state/domain-models-paginated/gateway/gatewayModels';
-import {MeterDataSummaryKey} from '../state/domain-models-paginated/meter/meterModels';
 import {ParameterName} from '../state/user-selection/userSelectionModels';
 import {Status} from '../types/Types';
 import {texts} from './texts';
 
-export const orUnknown = (name: string) => name === 'unknown' ? translate('unknown') : name;
+export const orUnknown = (name: string) => name.toLowerCase() === 'unknown' ? translate('unknown') : name;
 
 export const getTranslationOrName = (name: string, domainModelName: ParameterName): string => {
   switch (domainModelName) {
@@ -27,14 +25,6 @@ export const statusTranslation = (name: string): string => {
   return statuses[name] || statuses[Status.unknown];
 };
 
-const flaggedTranslation = (text: string): string => {
-  const texts = {
-    flagged: translate('flagged'),
-    unFlagged: translate('unFlagged'),
-  };
-  return texts[text] || text;
-};
-
 export const translatedErrorMessage = (message: string): string => {
   if (message === texts.invalidToken) {
     return firstUpperTranslated('token missing or invalid');
@@ -42,18 +32,5 @@ export const translatedErrorMessage = (message: string): string => {
     return firstUpperTranslated('bad credentials');
   } else {
     return message;
-  }
-};
-
-type FieldKey = MeterDataSummaryKey | GatewayDataSummaryKey;
-
-export const pieChartTranslation = (fieldKey: FieldKey, name: string): string => {
-  switch (fieldKey) {
-    case 'flagged':
-      return flaggedTranslation(name);
-    case 'status':
-      return statusTranslation(name);
-    default:
-      return name;
   }
 };

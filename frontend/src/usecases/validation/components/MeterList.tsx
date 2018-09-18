@@ -40,7 +40,7 @@ export const MeterList = (
   const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
   const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
-  const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
+  const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
   const renderActions = ({id, manufacturer}: Meter) => (
     <RowRight className="ActionsDropdown-list">
       <ListActionsDropdown

@@ -1,4 +1,3 @@
-import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Identifiable, uuid} from '../../../types/Types';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
@@ -29,14 +28,3 @@ export interface Meter extends Identifiable, LocationHolder {
   gatewaySerial: string;
   organisationId: uuid;
 }
-
-export interface MeterDataSummary {
-  flagged: PieData;
-  location: PieData;
-  manufacturer: PieData;
-  medium: PieData;
-  status: PieData;
-  alarm: PieData;
-}
-
-export type MeterDataSummaryKey = keyof MeterDataSummary;
