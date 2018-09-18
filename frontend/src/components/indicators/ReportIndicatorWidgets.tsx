@@ -1,9 +1,7 @@
 import * as React from 'react';
-import {Children} from '../../types/Types';
-import {Indicator} from '../../usecases/report/reportModels';
 import {RowCenter} from '../layouts/row/Row';
 import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
-import {ReportIndicatorWidget} from './ReportIndicatorWidget';
+import {ClickableReportIndicatorProps, ReportIndicatorProps, ReportIndicatorWidget} from './ReportIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
   selectedIndicatorTypes: Medium[];
@@ -14,26 +12,26 @@ export interface IndicatorWidgetsDispatchProps {
 }
 
 export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, IndicatorWidgetsDispatchProps {
-  indicators: Indicator[];
-  children?: Children;
-  className?: string;
+  indicators: ReportIndicatorProps[];
+  enabledIndicatorTypes: Set<Medium>;
 }
 
 export const ReportIndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {className, children, indicators, selectedIndicatorTypes, onClick} = props;
+  const {indicators, selectedIndicatorTypes, enabledIndicatorTypes, onClick} = props;
 
-  const indicatorWidgets = indicators.map((indicator: Indicator) => (
+  const indicatorWidgets = indicators.map((props: ClickableReportIndicatorProps) => (
     <ReportIndicatorWidget
-      key={indicator.type}
-      indicator={indicator}
-      isSelected={selectedIndicatorTypes.includes(indicator.type)}
+      {...props}
+      key={props.type}
+      isSelected={selectedIndicatorTypes.includes(props.type)}
+      enabled={enabledIndicatorTypes.has(props.type)}
       onClick={onClick}
     />
   ));
 
   return (
-    <RowCenter className={className}>
+    <RowCenter>
       {indicatorWidgets}
-      {children}
-    </RowCenter>);
+    </RowCenter>
+  );
 };

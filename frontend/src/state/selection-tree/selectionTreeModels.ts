@@ -28,6 +28,7 @@ interface MeterWithMedium extends IdNamed {
 
 interface CityWithAddresses extends IdNamed {
   addresses: uuid[];
+  medium: string[];
 }
 
 export interface AddressWithMeters extends IdNamed {

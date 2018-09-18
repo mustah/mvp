@@ -93,6 +93,7 @@ describe('reportActions', () => {
           cities: {
             'sweden,höganäs': {
               id: 'sweden,höganäs',
+              medium: ['Gas', 'Water'],
               name: 'höganäs',
               addresses: [
                 'sweden,höganäs,hasselgatan 4',

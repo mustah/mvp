@@ -1,5 +1,6 @@
 import {LegendPayload} from 'recharts';
 import {Medium} from '../../components/indicators/indicatorWidgetModels';
+import {ReportIndicatorProps} from '../../components/indicators/ReportIndicatorWidget';
 import {firstUpperTranslated} from '../../services/translationService';
 import {uuid} from '../../types/Types';
 
@@ -48,15 +49,6 @@ export interface GraphContents {
   lines: LineProps[];
 }
 
-export interface Indicator {
-  type: Medium;
-  title: string;
-  state: string;
-  subtitle: string;
-  value: number;
-  unit: string;
-}
-
 export interface ActiveDataPoint {
   color: any;
   dataKey: uuid;
@@ -69,53 +61,29 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-export const hardcodedIndicators = (): Indicator[] => ([
+export const hardcodedIndicators = (): ReportIndicatorProps[] => ([
   {
     type: Medium.electricity,
     title: firstUpperTranslated('electricity'),
-    state: 'info',
-    value: 0,
-    unit: 'kWh/m2',
-    subtitle: '',
   },
   {
     type: Medium.hotWater,
     title: firstUpperTranslated('hot water'),
-    state: 'info',
-    value: 0,
-    unit: 'l/m2',
-    subtitle: '',
   },
   {
     type: Medium.water,
     title: firstUpperTranslated('water'),
-    state: 'info',
-    value: 0,
-    unit: 'l/m2',
-    subtitle: '',
   },
   {
     type: Medium.districtHeating,
     title: firstUpperTranslated('district heating'),
-    state: 'info',
-    value: 1.1,
-    unit: 'kWh/m2',
-    subtitle: '(-2)',
   },
   {
     type: Medium.gas,
     title: firstUpperTranslated('gas'),
-    state: 'info',
-    value: 1.1,
-    unit: 'kWh/m2',
-    subtitle: '(-2)',
   },
   {
     type: Medium.temperatureInside,
     title: firstUpperTranslated('inside temperature'),
-    state: 'info',
-    value: 0,
-    unit: '°C',
-    subtitle: '',
   },
 ]);

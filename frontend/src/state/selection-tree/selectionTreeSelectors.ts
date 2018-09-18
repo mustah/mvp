@@ -1,8 +1,11 @@
 import {createSelector} from 'reselect';
+import {getMediumType, Medium} from '../../components/indicators/indicatorWidgetModels';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
+import {ReportState} from '../../usecases/report/reportModels';
 import {Query} from '../../usecases/search/searchModels';
 import {ObjectsById} from '../domain-models/domainModels';
+import {isSelectedCity, isSelectedMeter} from '../ui/graph/measurement/measurementActions';
 import {
   AddressWithMeters,
   CityWithClusters,
@@ -37,7 +40,7 @@ const addOrInitialCluster = (
   };
 };
 
-export type SelectionTreeQueried = SelectionTreeState & Query;
+type SelectionTreeQueried = SelectionTreeState & Query;
 
 const matches = (query: string | undefined) => {
   if (!query || query.trim().length < 3) {
@@ -125,3 +128,21 @@ export const getSelectionTree =
       };
     },
   );
+
+export type MediaInSelectionTree = Pick<ReportState, 'selectedListItems'> & Pick<SelectionTreeState, 'entities'>;
+export const getMedia = createSelector<MediaInSelectionTree, uuid[], SelectionTreeEntities, Set<Medium>>(
+  ({selectedListItems}) => selectedListItems,
+  ({entities}) => entities,
+  (ids: uuid[], {cities, meters}: SelectionTreeEntities) => {
+    const meterMedia: Medium[] = ids
+      .filter(isSelectedMeter)
+      .map((id: uuid) => getMediumType(meters[id].medium));
+
+    const cityMedia: Medium[] = ids
+      .filter(isSelectedCity)
+      .map((id: uuid): Medium[] => cities[id].medium.map(getMediumType))
+      .reduce((acc: Medium[], current: Medium[]): Medium[] => acc.concat(current), []);
+
+    return new Set([...meterMedia, ...cityMedia]);
+  },
+);

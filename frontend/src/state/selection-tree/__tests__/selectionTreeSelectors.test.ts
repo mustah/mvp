@@ -1,53 +1,57 @@
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {uuid} from '../../../types/Types';
 import {SelectionTree, SelectionTreeState} from '../selectionTreeModels';
-import {getSelectionTree} from '../selectionTreeSelectors';
+import {getMedia, getSelectionTree, MediaInSelectionTree} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
-  describe('getSelectionTree', () => {
+  const selectionTreeState: SelectionTreeState = {
+    isFetching: false,
+    isSuccessfullyFetched: true,
+    entities: {
+      cities: {
+        'sweden,kungsbacka': {
+          id: 'sweden,kungsbacka',
+          medium: ['Water'],
+          name: 'kungsbacka',
+          addresses: ['sweden,kungsbacka,kabelgatan 2', 'sweden,kungsbacka,kabelgatan 3'],
+        },
+        'sweden,gothenburg': {
+          id: 'sweden,gothenburg',
+          medium: ['Water', 'Gas'],
+          name: 'gothenburg',
+          addresses: [
+            'sweden,gothenburg,kungsgatan 2',
+            'sweden,gothenburg,kungsgatan 1',
+            'sweden,gothenburg,drottninggatan 1',
+          ],
+        },
+      },
+      addresses: {
+        'sweden,kungsbacka,kabelgatan 2': {id: 'sweden,kungsbacka,kabelgatan 2', name: 'kabelgatan 2', meters: [1]},
+        'sweden,kungsbacka,kabelgatan 3': {id: 'sweden,kungsbacka,kabelgatan 3', name: 'kabelgatan 3', meters: [2]},
+        'sweden,gothenburg,kungsgatan 2': {id: 'sweden,gothenburg,kungsgatan 2', name: 'kungsgatan 2', meters: [3]},
+        'sweden,gothenburg,kungsgatan 1': {id: 'sweden,gothenburg,kungsgatan 1', name: 'kungsgatan 1', meters: [4]},
+        'sweden,gothenburg,drottninggatan 1': {
+          id: 'sweden,gothenburg,drottninggatan 1',
+          name: 'drottninggatan 1',
+          meters: [5],
+        },
+      },
+      meters: {
+        1: {id: 1, name: 'extId1', medium: 'Water'},
+        2: {id: 2, name: 'extId2', medium: 'Water'},
+        3: {id: 3, name: 'extId3', medium: 'Water'},
+        4: {id: 4, name: 'extId4', medium: 'Gas'},
+        5: {id: 5, name: 'extId5', medium: 'Gas'},
+      },
+    },
+    result: {
+      cities: ['sweden,kungsbacka', 'sweden,gothenburg'],
+    },
+  };
 
-    const selectionTreeState: SelectionTreeState = {
-      isFetching: false,
-      isSuccessfullyFetched: true,
-      entities: {
-        cities: {
-          'sweden,kungsbacka': {
-            id: 'sweden,kungsbacka',
-            name: 'kungsbacka',
-            addresses: ['sweden,kungsbacka,kabelgatan 2', 'sweden,kungsbacka,kabelgatan 3'],
-          },
-          'sweden,gothenburg': {
-            id: 'sweden,gothenburg',
-            name: 'gothenburg',
-            addresses: [
-              'sweden,gothenburg,kungsgatan 2',
-              'sweden,gothenburg,kungsgatan 1',
-              'sweden,gothenburg,drottninggatan 1',
-            ],
-          },
-        },
-        addresses: {
-          'sweden,kungsbacka,kabelgatan 2': {id: 'sweden,kungsbacka,kabelgatan 2', name: 'kabelgatan 2', meters: [1]},
-          'sweden,kungsbacka,kabelgatan 3': {id: 'sweden,kungsbacka,kabelgatan 3', name: 'kabelgatan 3', meters: [2]},
-          'sweden,gothenburg,kungsgatan 2': {id: 'sweden,gothenburg,kungsgatan 2', name: 'kungsgatan 2', meters: [3]},
-          'sweden,gothenburg,kungsgatan 1': {id: 'sweden,gothenburg,kungsgatan 1', name: 'kungsgatan 1', meters: [4]},
-          'sweden,gothenburg,drottninggatan 1': {
-            id: 'sweden,gothenburg,drottninggatan 1',
-            name: 'drottninggatan 1',
-            meters: [5],
-          },
-        },
-        meters: {
-          1: {id: 1, name: 'extId1', medium: 'Water'},
-          2: {id: 2, name: 'extId2', medium: 'Water'},
-          3: {id: 3, name: 'extId3', medium: 'Water'},
-          4: {id: 4, name: 'extId4', medium: 'Gas'},
-          5: {id: 5, name: 'extId5', medium: 'Gas'},
-        },
-      },
-      result: {
-        cities: ['sweden,kungsbacka', 'sweden,gothenburg'],
-      },
-    };
+  describe('getSelectionTree', () => {
 
     it('regroups selectionTreeState into selectionTree', () => {
       const expected: SelectionTree = {
@@ -142,6 +146,34 @@ describe('selectionTreeSelectors', () => {
 
       });
 
+    });
+
+  });
+
+  describe('getMedia', () => {
+
+    it('gets media from cities', () => {
+      const selectedListItems: uuid[] = ['sweden,kungsbacka', 'sweden,gothenburg'];
+      const expected: Set<Medium> = new Set([Medium.gas, Medium.water]);
+
+      const state: MediaInSelectionTree = {
+        selectedListItems,
+        entities: {...selectionTreeState.entities},
+      };
+
+      expect(getMedia(state)).toEqual(expected);
+    });
+
+    it('gets media from meters and cities', () => {
+      const selectedListItems: uuid[] = ['sweden,kungsbacka', '4'];
+      const expected: Set<Medium> = new Set([Medium.gas, Medium.water]);
+
+      const state: MediaInSelectionTree = {
+        selectedListItems,
+        entities: {...selectionTreeState.entities},
+      };
+
+      expect(getMedia(state)).toEqual(expected);
     });
 
   });
