@@ -9,21 +9,12 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
-import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.entity.meter.QLocationEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
-import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFilters;
@@ -63,33 +54,6 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
-
-  private static final QLocationEntity LOCATION =
-    QLocationEntity.locationEntity;
-
-  private static final QLogicalMeterEntity LOGICAL_METER =
-    QLogicalMeterEntity.logicalMeterEntity;
-
-  private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
-    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-
-  private static final QMeterAlarmLogEntity ALARM_LOG =
-    QMeterAlarmLogEntity.meterAlarmLogEntity;
-
-  private static final QPhysicalMeterEntity PHYSICAL_METER =
-    QPhysicalMeterEntity.physicalMeterEntity;
-
-  private static final QGatewayEntity GATEWAY =
-    QGatewayEntity.gatewayEntity;
-
-  private static final QMeasurementEntity MEASUREMENT =
-    QMeasurementEntity.measurementEntity;
-
-  private static final QMissingMeasurementEntity MISSING_MEASUREMENT =
-    QMissingMeasurementEntity.missingMeasurementEntity;
-
-  private static final QMeterDefinitionEntity METER_DEFINITION =
-    QMeterDefinitionEntity.meterDefinitionEntity;
 
   @Autowired
   LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
@@ -207,7 +171,7 @@ class LogicalMeterQueryDslJpaRepository
       ))
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION);
 
     joinLogicalMeterGateways(query, parameters);
@@ -254,9 +218,9 @@ class LogicalMeterQueryDslJpaRepository
   ) {
     return createQuery(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters))
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
-      .transform(groupBy(STATUS_LOG.physicalMeterId).as(GroupBy.list(STATUS_LOG)));
+      .join(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
+      .orderBy(METER_STATUS_LOG.start.desc(), METER_STATUS_LOG.stop.desc())
+      .transform(groupBy(METER_STATUS_LOG.physicalMeterId).as(GroupBy.list(METER_STATUS_LOG)));
   }
 
   @Override
@@ -277,11 +241,11 @@ class LogicalMeterQueryDslJpaRepository
 
   private Map<UUID, PhysicalMeterStatusLogEntity> findStatuses(Predicate predicate) {
     return createQuery(predicate)
-      .select(STATUS_LOG.start.max())
+      .select(METER_STATUS_LOG.start.max())
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .join(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .orderBy(STATUS_LOG.start.desc(), STATUS_LOG.stop.desc())
-      .transform(groupBy(LOGICAL_METER.id).as(STATUS_LOG));
+      .join(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
+      .orderBy(METER_STATUS_LOG.start.desc(), METER_STATUS_LOG.stop.desc())
+      .transform(groupBy(LOGICAL_METER.id).as(METER_STATUS_LOG));
   }
 
   private List<PagedLogicalMeter> fetchAdditionalPagedMeterData(
@@ -368,7 +332,7 @@ class LogicalMeterQueryDslJpaRepository
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG);
 
     joinMeterAlarmLogs(query, parameters);
     joinLogicalMeterGateways(query, parameters);

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
@@ -33,18 +34,16 @@ public class MapMarkerController {
   public MapMarkersDto meterMapMarkers(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return toMapMarkersDto(mapUseCases.findAllMeterMapMarkers(
-      requestParametersOf(requestParams))
-    );
+    RequestParameters parameters = requestParametersOf(requestParams);
+    return toMapMarkersDto(mapUseCases.findAllMeterMapMarkers(parameters));
   }
 
   @GetMapping("/gateways")
   public MapMarkersDto gatewayMapMarkers(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return toMapMarkersDto(
-      mapUseCases.findAllGatewayMapMarkers(requestParametersOf(requestParams))
-    );
+    RequestParameters parameters = requestParametersOf(requestParams);
+    return toMapMarkersDto(mapUseCases.findAllGatewayMapMarkers(parameters));
   }
 
   @GetMapping("/meters/{logicalMeterId}")
@@ -62,8 +61,7 @@ public class MapMarkerController {
 
   private static MapMarkersDto toMapMarkersDto(Set<MapMarker> mapMarkers) {
     return new MapMarkersDto(
-      mapMarkers
-        .stream()
+      mapMarkers.stream()
         .map(MapMarkerDtoMapper::toDto)
         .collect(groupingBy(m -> m.status))
     );

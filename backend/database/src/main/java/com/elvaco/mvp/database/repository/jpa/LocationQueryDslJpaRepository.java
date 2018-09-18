@@ -8,8 +8,6 @@ import com.elvaco.mvp.core.domainmodels.Address;
 import com.elvaco.mvp.core.domainmodels.City;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
-import com.elvaco.mvp.database.entity.meter.QLocationEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SortUtil;
 import com.querydsl.core.types.Predicate;
@@ -27,9 +25,6 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 class LocationQueryDslJpaRepository
   extends BaseQueryDslRepository<LocationEntity, UUID>
   implements LocationJpaRepository {
-
-  private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
-  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   @Autowired
   LocationQueryDslJpaRepository(EntityManager entityManager) {
