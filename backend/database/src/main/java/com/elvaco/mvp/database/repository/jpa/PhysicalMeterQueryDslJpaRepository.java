@@ -6,7 +6,6 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ import org.springframework.stereotype.Repository;
 class PhysicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<PhysicalMeterEntity, UUID>
   implements PhysicalMeterJpaRepository {
-
-  private static final QPhysicalMeterEntity PHYSICAL_METER =
-    QPhysicalMeterEntity.physicalMeterEntity;
 
   @Autowired
   PhysicalMeterQueryDslJpaRepository(EntityManager entityManager) {

@@ -9,10 +9,6 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QLocationEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
@@ -20,10 +16,6 @@ import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.database.entity.meter.QLocationEntity.locationEntity;
-import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 
@@ -31,18 +23,6 @@ import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
 class LogicalMeterMapQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements MapMarkerJpaRepository {
-
-  private static final QLocationEntity LOCATION =
-    locationEntity;
-
-  private static final QLogicalMeterEntity LOGICAL_METER =
-    logicalMeterEntity;
-
-  private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
-    physicalMeterStatusLogEntity;
-
-  private static final QPhysicalMeterEntity PHYSICAL_METER =
-    physicalMeterEntity;
 
   @Autowired
   LogicalMeterMapQueryDslJpaRepository(EntityManager entityManager) {
