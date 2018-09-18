@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.dto;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.EqualsAndHashCode;
@@ -20,19 +21,22 @@ public class SelectionTreeDto {
   @EqualsAndHashCode(exclude = "addresses")
   @ToString(exclude = "addresses")
   public static class CityDto {
+    public Set<String> medium;
     public String id;
     public String name;
     public List<AddressDto> addresses;
 
-    public CityDto(String id, String name, List<AddressDto> addresses) {
+    public CityDto(String id, String name, Set<String> medium, List<AddressDto> addresses) {
       this.id = id;
       this.name = name;
+      this.medium = medium;
       this.addresses = addresses;
     }
 
-    public CityDto(String id, String name) {
+    public CityDto(String id, String name, Set<String> medium) {
       this.id = id;
       this.name = name;
+      this.medium = medium;
     }
   }
 

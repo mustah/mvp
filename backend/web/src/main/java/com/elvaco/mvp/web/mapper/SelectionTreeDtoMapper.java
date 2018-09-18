@@ -23,7 +23,7 @@ public class SelectionTreeDtoMapper {
   }
 
   private static CityDto toCityDto(City city) {
-    return new CityDto(city.id, city.name, city.getAddresses()
+    return new CityDto(city.id, city.name, city.medium, city.getAddresses()
       .stream()
       .map(SelectionTreeDtoMapper::toAddressDto)
       .collect(toList()));

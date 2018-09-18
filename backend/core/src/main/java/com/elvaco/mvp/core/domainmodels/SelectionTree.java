@@ -2,8 +2,10 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.EqualsAndHashCode;
@@ -22,6 +24,7 @@ public class SelectionTree {
 
     String cityId = country.concat(",").concat(city);
     addCity(cityId, city)
+      .addMedium(logicalMeter.getMedium())
       .addAddress(address)
       .addMeter(logicalMeter.id, logicalMeter.externalId, logicalMeter.getMedium());
   }
@@ -43,6 +46,7 @@ public class SelectionTree {
   public static class City {
     public final String name;
     public final String id;
+    public final Set<String> medium = new HashSet<>();
     private final Map<String, Address> addresses = new HashMap<>();
 
     private City(String id, String name) {
@@ -56,6 +60,11 @@ public class SelectionTree {
 
     public List<Address> getAddresses() {
       return new ArrayList<>(addresses.values());
+    }
+
+    public City addMedium(String medium) {
+      this.medium.add(medium);
+      return this;
     }
 
     private Address addAddress(String name) {

@@ -1,19 +1,23 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.SelectionTree;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.AddressDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.CityDto;
 import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -146,8 +150,16 @@ public class SelectionTreeDtoMapperTest {
     SelectionTreeDto selectionTreeDto = SelectionTreeDtoMapper.toDto(selectionTree);
 
     assertThat(selectionTreeDto.cities).containsOnly(
-      new CityDto("sweden,gothenburg", "gothenburg"),
-      new CityDto("sweden,kungsbacka", "kungsbacka")
+      new CityDto(
+        "sweden,gothenburg",
+        "gothenburg",
+        new HashSet<>(asList(Medium.UNKNOWN_MEDIUM.medium))
+      ),
+      new CityDto(
+        "sweden,kungsbacka",
+        "kungsbacka",
+        new HashSet<>(asList(Medium.UNKNOWN_MEDIUM.medium))
+      )
     );
   }
 
