@@ -26,7 +26,6 @@ const mediumTypes: {[key: string]: Medium} = {
   'Hot water': Medium.hotWater,
   'Temperature inside': Medium.temperatureInside,
   'Electricity': Medium.electricity,
-
 };
 
-export const getMediumType = (key: string) => mediumTypes[key] || Medium.unknown;
+export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
