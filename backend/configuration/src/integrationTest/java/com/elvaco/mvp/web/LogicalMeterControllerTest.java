@@ -2585,8 +2585,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .confidence(0.75);
   }
 
-  private static String metersUrl(ZonedDateTime start, ZonedDateTime before) {
-    return String.format("/meters?after=%s&before=%s", start, before);
+  private static String metersUrl(ZonedDateTime start, ZonedDateTime stop) {
+    return String.format("/meters?after=%s&before=%s", start, stop);
   }
 
   private static String meterDetailsUrl(UUID logicalMeterId) {

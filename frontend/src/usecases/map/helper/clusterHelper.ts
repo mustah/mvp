@@ -8,17 +8,28 @@ const icons = {
   [Status.warning]: imagePathFor('marker-icon-warning.png'),
   [Status.error]: imagePathFor('marker-icon-error.png'),
   [Status.unknown]: imagePathFor('marker-icon-error.png'),
+  alarm: imagePathFor('marker-icon-alarm.png'),
 };
 
-const getStatusIcon = (status: Status): string => icons[status] || imagePathFor('marker-icon.png');
+const markerIcon = imagePathFor('marker-icon.png');
+const alarmMarkerIcon = icons.alarm;
+const errorMarkerIcon = icons[Status.error];
+const warningMarkerIcon = icons[Status.warning];
+
+const getStatusIconUrl = ({alarm, status}: MapMarker): string =>
+  alarm !== undefined ? alarmMarkerIcon : (icons[status] || markerIcon);
 
 const makeMarker = (marker: MapMarker): Marker => ({
   position: [marker.latitude, marker.longitude],
   options: {
-    icon: Leaflet.icon({iconUrl: getStatusIcon(marker.status)}),
+    icon: Leaflet.icon({iconUrl: getStatusIconUrl(marker)}),
     mapMarkerItem: marker.id,
   },
 });
+
+export const isAlarmIconUrl = (iconUrl?: string): boolean => iconUrl === alarmMarkerIcon;
+export const isErrorIconUrl = (iconUrl?: string): boolean => iconUrl === errorMarkerIcon;
+export const isWarningIconUrl = (iconUrl?: string): boolean => iconUrl === warningMarkerIcon;
 
 export const isMapMarker = (markers: Dictionary<MapMarker> | MapMarker): markers is MapMarker =>
   (markers as MapMarker).status !== undefined &&

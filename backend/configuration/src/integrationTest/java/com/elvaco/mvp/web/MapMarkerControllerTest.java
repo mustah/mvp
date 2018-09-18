@@ -3,6 +3,7 @@ package com.elvaco.mvp.web;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -14,11 +15,13 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -57,6 +60,9 @@ public class MapMarkerControllerTest extends IntegrationTest {
   private GatewayJpaRepository gatewayJpaRepository;
 
   @Autowired
+  private MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
+
+  @Autowired
   private Gateways gateways;
 
   @Autowired
@@ -71,11 +77,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
   @Autowired
   private GatewayStatusLogs gatewayStatusLogs;
 
+  @Autowired
+  private MeterAlarmLogs meterAlarmLogs;
+
   @After
   public void tearDown() {
     logicalMeterJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     physicalMeterStatusLogJpaRepository.deleteAll();
+    meterAlarmLogJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
   }
@@ -105,7 +115,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findLogicalMeterWithLocation() {
-    UUID logicalMeterId = saveLogicalMeterWith(newLocation(), context().user).id;
+    UUID logicalMeterId = saveLogicalMeter().id;
 
     ResponseEntity<MapMarkerWithStatusDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerWithStatusDto.class);
@@ -121,7 +131,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findMeterMapMarker_ChecksOrganisation() {
-    UUID logicalMeterId = saveLogicalMeterWith(newLocation(), context().user).id;
+    UUID logicalMeterId = saveLogicalMeter().id;
 
     ResponseEntity<ErrorMessageDto> missing = restAsUser(context().user2)
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
@@ -164,7 +174,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void meterMapMarkers_FindsMapMarkers() {
-    LogicalMeter logicalMeter = saveLogicalMeterWith(newLocation(), context().user);
+    LogicalMeter logicalMeter = saveLogicalMeter();
 
     savePhysicalMeterWith(logicalMeter, StatusType.OK);
 
@@ -181,8 +191,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
   @Test
   public void meterMapMarkers_FindsMapMarkersWithParameters() {
     LogicalMeter meter1 = saveLogicalMeterWith(UNKNOWN_LOCATION, context().user);
-    LogicalMeter meter2 = saveLogicalMeterWith(newLocation(), context().user);
-    LogicalMeter meter3 = saveLogicalMeterWith(newLocation(), context().user);
+    LogicalMeter meter2 = saveLogicalMeter();
+    LogicalMeter meter3 = saveLogicalMeter();
 
     savePhysicalMeterWith(meter1, StatusType.WARNING);
     savePhysicalMeterWith(meter2, StatusType.WARNING);
@@ -201,10 +211,93 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void meterMapMarkers_WithAlarms() {
+    LogicalMeter meter1 = saveLogicalMeter();
+    LogicalMeter meter2 = saveLogicalMeter();
+    LogicalMeter meter3 = saveLogicalMeter();
+
+    savePhysicalMeterWith(meter1, StatusType.WARNING);
+    PhysicalMeter physicalMeter2 = savePhysicalMeterWith(meter2, StatusType.OK);
+    PhysicalMeter physicalMeter3 = savePhysicalMeterWith(meter3, StatusType.ERROR);
+
+    AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
+      .start(ZonedDateTime.now());
+
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
+
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get(mapMarkerAlarmUrl("yes"), MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).hasSize(2);
+    assertThat(response.getBody().markers.get(StatusType.OK))
+      .containsExactlyInAnyOrder(new MapMarkerDto(meter2.id, 2.1222, 1.2212, 55));
+    assertThat(response.getBody().markers.get(StatusType.ERROR))
+      .containsExactlyInAnyOrder(new MapMarkerDto(meter3.id, 2.1222, 1.2212, 99));
+  }
+
+  @Test
+  public void gatewayMapMarkers_WithAlarms() {
+    Gateway gateway1 = saveGatewayWith(context().organisationId(), StatusType.WARNING);
+    Gateway gateway2 = saveGatewayWith(context().organisationId(), StatusType.OK);
+    Gateway gateway3 = saveGatewayWith(context().organisationId(), StatusType.ERROR);
+
+    LogicalMeter meter1 = saveLogicalMeterWith(newLocation(), gateway1);
+    LogicalMeter meter2 = saveLogicalMeterWith(newLocation(), gateway2);
+    LogicalMeter meter3 = saveLogicalMeterWith(newLocation(), gateway3);
+
+    savePhysicalMeterWith(meter1, StatusType.WARNING);
+    PhysicalMeter physicalMeter2 = savePhysicalMeterWith(meter2, StatusType.OK);
+    PhysicalMeter physicalMeter3 = savePhysicalMeterWith(meter3, StatusType.ERROR);
+
+    AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
+      .start(ZonedDateTime.now());
+
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
+
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get(gatewayMapMarkerAlarmUrl("yes"), MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).hasSize(2);
+    assertThat(response.getBody().markers.get(StatusType.OK))
+      .containsExactlyInAnyOrder(new MapMarkerDto(gateway2.id, 2.1222, 1.2212, 55));
+    assertThat(response.getBody().markers.get(StatusType.ERROR))
+      .containsExactlyInAnyOrder(new MapMarkerDto(gateway3.id, 2.1222, 1.2212, 99));
+  }
+
+  @Test
+  public void meterMapMarkers_WithoutAlarms() {
+    LogicalMeter meter1 = saveLogicalMeter();
+    LogicalMeter meter2 = saveLogicalMeter();
+    LogicalMeter meter3 = saveLogicalMeter();
+
+    savePhysicalMeterWith(meter1, StatusType.WARNING);
+    PhysicalMeter physicalMeter2 = savePhysicalMeterWith(meter2, StatusType.OK);
+    PhysicalMeter physicalMeter3 = savePhysicalMeterWith(meter3, StatusType.ERROR);
+
+    AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
+      .start(ZonedDateTime.now());
+
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
+
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get(mapMarkerAlarmUrl("no"), MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).hasSize(1);
+    assertThat(response.getBody().markers.get(StatusType.WARNING))
+      .containsExactlyInAnyOrder(new MapMarkerDto(meter1.id, 2.1222, 1.2212));
+  }
+
+  @Test
   public void gatewayMapMarkers_ChecksOrganisation() {
-    Gateway gateway1 = saveGatewayWith(context().user.organisation.id, StatusType.WARNING);
-    Gateway gateway2 = saveGatewayWith(context().user.organisation.id, StatusType.WARNING);
-    Gateway gateway3 = saveGatewayWith(context().user.organisation.id, StatusType.WARNING);
+    Gateway gateway1 = saveGatewayWith(context().organisationId(), StatusType.WARNING);
+    Gateway gateway2 = saveGatewayWith(context().organisationId(), StatusType.WARNING);
+    Gateway gateway3 = saveGatewayWith(context().organisationId(), StatusType.WARNING);
 
     saveLogicalMeterWith(UNKNOWN_LOCATION, gateway1);
     saveLogicalMeterWith(newLocation(), gateway2);
@@ -337,6 +430,10 @@ public class MapMarkerControllerTest extends IntegrationTest {
     assertThat(response.getBody().markers).isEmpty();
   }
 
+  private LogicalMeter saveLogicalMeter() {
+    return saveLogicalMeterWith(newLocation(), context().user);
+  }
+
   private PhysicalMeter savePhysicalMeterWith(LogicalMeter logicalMeter, StatusType status) {
     PhysicalMeter physicalMeter = physicalMeters.save(
       PhysicalMeter.builder()
@@ -407,6 +504,25 @@ public class MapMarkerControllerTest extends IntegrationTest {
         .build()
     );
     return gateway;
+  }
+
+  private static String mapMarkerAlarmUrl(String alarm) {
+    return urlOf("meters", alarm);
+  }
+
+  private static String gatewayMapMarkerAlarmUrl(String alarm) {
+    return urlOf("gateways", alarm);
+  }
+
+  private static String urlOf(String entity, String alarm) {
+    ZonedDateTime now = ZonedDateTime.now();
+    return String.format(
+      "/map-markers/%s?alarm=%s&after=%s&before=%s",
+      entity,
+      alarm,
+      now.minusDays(1),
+      now.plusDays(1)
+    );
   }
 
   private static Location lowConfidenceLocation() {

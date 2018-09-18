@@ -3,10 +3,14 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {imagePathFor} from '../../../app/routes';
 import {statusClassName} from '../../../helpers/thresholds';
 import {Dictionary} from '../../../types/Types';
-import {makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
+import {
+  isAlarmIconUrl,
+  isErrorIconUrl,
+  isWarningIconUrl,
+  makeLeafletCompatibleMarkersFrom,
+} from '../helper/clusterHelper';
 import {maxZoom} from '../helper/mapHelper';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
@@ -42,27 +46,18 @@ const getClusterDimensions = (clusterCount: number): number => {
 };
 
 const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
-  // TODO Test performance!
-  // TODO Find status of the marker instead of guessing by checking iconUrl
-  // Set cluster css class depending on underlying marker icons
+  const faults = cluster.getAllChildMarkers()
+    .map(({options: {icon}}: Leaflet.Marker) => icon)
+    .filter((icon) => !!icon)
+    .filter((icon) => isErrorIconUrl(icon.options.iconUrl)
+                      || isAlarmIconUrl(icon.options.iconUrl)
+                      || isWarningIconUrl(icon.options.iconUrl))
+    .length;
 
-  let errorCount = 0;
-  let warningCount = 0;
+  const children = cluster.getChildCount();
+  const percent = Math.floor((children - faults) / children * 100);
 
-  cluster.getAllChildMarkers().forEach(({options: {icon}}: Leaflet.Marker) => {
-    if (icon) {
-      if (icon.options.iconUrl === imagePathFor('marker-icon-error.png')) {
-        errorCount++;
-      } else if (icon.options.iconUrl === imagePathFor('marker-icon-warning.png')) {
-        warningCount++;
-      }
-    }
-  });
-
-  let percent = (cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100;
-  percent = Math.floor(percent);
-
-  return 'marker-cluster ' + statusClassName(percent);
+  return `marker-cluster ${statusClassName(percent)}`;
 };
 
 interface DispatchToProps {

@@ -3,14 +3,7 @@ import {Maybe} from '../../helpers/Maybe';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {GeoPosition} from '../../state/domain-models/location/locationModels';
 import {SelectedTab} from '../../state/ui/tabs/tabsModels';
-import {
-  Dictionary,
-  EncodedUriParameters,
-  Fetch,
-  Identifiable,
-  Status,
-  uuid,
-} from '../../types/Types';
+import {Dictionary, EncodedUriParameters, Fetch, Identifiable, Status, uuid} from '../../types/Types';
 
 export type IdentifiablePosition = Identifiable & GeoPosition;
 
@@ -20,6 +13,7 @@ export interface MapMarkerApiResponse {
 
 export interface MapMarker extends Identifiable {
   status: Status;
+  alarm?: number;
   latitude: number;
   longitude: number;
 }

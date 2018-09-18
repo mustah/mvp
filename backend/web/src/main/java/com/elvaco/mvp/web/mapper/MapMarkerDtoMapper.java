@@ -13,6 +13,7 @@ public class MapMarkerDtoMapper {
       marker.id,
       marker.latitude,
       marker.longitude,
+      marker.alarm,
       marker.status != null ? marker.status : StatusType.UNKNOWN
     );
   }
