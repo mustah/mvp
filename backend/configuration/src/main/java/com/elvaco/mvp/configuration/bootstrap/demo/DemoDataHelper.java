@@ -160,8 +160,11 @@ public class DemoDataHelper {
       new MeasurementEntity(
         created,
         QuantityEntityMapper.toEntity(
-          QuantityAccess.singleton().getByName(Quantity.TEMPERATURE.name)),
-        new MeasurementUnit(Quantity.TEMPERATURE.presentationUnit(), RANDOM.nextDouble(15, 40)),
+          QuantityAccess.singleton().getByName(Quantity.EXTERNAL_TEMPERATURE.name)),
+        new MeasurementUnit(
+          Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
+          RANDOM.nextDouble(15, 40)
+        ),
         meter
       ),
       new MeasurementEntity(

@@ -92,7 +92,7 @@ public class LogicalMeterTest {
     );
 
     assertThat(meter.getQuantities()).containsOnly(
-      Quantity.TEMPERATURE,
+      Quantity.EXTERNAL_TEMPERATURE,
       Quantity.HUMIDITY
     );
   }
