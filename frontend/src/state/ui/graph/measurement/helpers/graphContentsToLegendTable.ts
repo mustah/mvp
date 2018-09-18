@@ -14,9 +14,9 @@ export const graphContentsToLegendTable = ({lines}: GraphContents): Normalized<L
     if (origin !== 'average') {
       legendLines.set(id, {
         label: name,
-        address: address ? address : '',
-        city: city ? city : '',
-        medium: medium ? medium : Medium.unknown,
+        address: address || '',
+        city: city || '',
+        medium: medium || Medium.unknown,
         color: '', // TODO a meters lines, should be identifiable by color.
         id,
       });
