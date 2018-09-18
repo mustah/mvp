@@ -11,7 +11,7 @@ export const graphContentsToLegendTable = ({lines}: GraphContents): Normalized<L
 
   lines.forEach((props: LineProps) => {
     const {name, address, city, medium, id, origin} = props;
-    if (origin !== 'average') {
+    if (origin === 'meter' || origin === 'city') {
       legendLines.set(id, {
         label: name,
         address: address || '',
