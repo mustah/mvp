@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
-import {statusClassName} from '../../helpers/thresholds';
+import {thresholdClassName} from '../../helpers/thresholds';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Children} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
@@ -48,7 +48,7 @@ export const IndicatorWidget =
     }
     const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
     const value = collectionPercent.toFixed(1);
-    const statusCss = statusClassName(collectionPercent);
+    const statusCss = thresholdClassName(collectionPercent);
 
     return (
       <Column className={classNames('Indicator-wrapper', className)}>
