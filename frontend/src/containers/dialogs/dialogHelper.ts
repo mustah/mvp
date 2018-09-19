@@ -1,25 +1,11 @@
 import {normalize} from 'normalizr';
 import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
-import {translate} from '../../services/translationService';
 import {measurement} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
-import {Flag} from '../../state/domain-models/flag/flagModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {
-  allQuantities,
-  Measurement,
-  Quantity,
-} from '../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Measurement, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
-
-export const titleOf = (flags: Flag[]): string => {
-  if (flags.length) {
-    return flags.map((flag) => flag.title).join(', ');
-  } else {
-    return translate('no');
-  }
-};
 
 const orderedQuantities = (medium: string): string[] => {
   return getMediumType(medium) in allQuantities

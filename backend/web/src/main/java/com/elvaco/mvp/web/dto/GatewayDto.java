@@ -7,8 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
-
 @ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -16,7 +14,6 @@ public class GatewayDto extends GatewayMandatoryDto {
 
   public LocationDto location;
   public List<UUID> meterIds;
-  public List<FlagDto> flags;
   public UUID organisationId;
 
   public GatewayDto(
@@ -32,7 +29,6 @@ public class GatewayDto extends GatewayMandatoryDto {
     super(id, productModel, serial, status, statusChanged);
     this.location = location;
     this.meterIds = meterIds;
-    this.flags = emptyList();
     this.organisationId = organisationId;
   }
 }
