@@ -57,6 +57,16 @@ const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
 
 export type DropdownSelectorProps = Props & Required<OptionalProps>;
 
+const listItems = (
+  selectedItems: SelectionListItem[],
+  items: SelectionListItem[],
+): SelectionListItem[] => {
+  const selectedIds = selectedItems.map(getId);
+  const unselected = items.map((item: SelectionListItem) => ({...item, selected: false}))
+    .filter((item: SelectionListItem) => !selectedIds.includes(item.id));
+  return [...selectedItems, ...unselected];
+};
+
 class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, State> {
 
   constructor(props: DropdownSelectorProps) {
@@ -78,13 +88,9 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
 
   componentWillReceiveProps({selectedItems}: DropdownSelectorProps) {
     if (!this.state.isOpen && this.props.selectedItems.length !== selectedItems.length) {
-      const selectedItemIds = selectedItems.map(getId);
-      this.setState((prevState: State) => {
-        const items = prevState.items.map((item: SelectionListItem) => ({
-          ...item,
-          selected: selectedItemIds.includes(item.id),
-        }));
-        return ({items, cache: {items, totalElements: prevState.cache.totalElements}});
+      this.setState(({items: prevItems, cache: {totalElements}}: State) => {
+        const items = listItems(selectedItems, prevItems);
+        return ({items, cache: {items, totalElements}});
       });
     }
   }
@@ -147,11 +153,11 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
 
   openMenu = (event: any): void => {
     event.preventDefault();
-    this.setState(
-      {
+    const {selectedItems} = this.props;
+    this.setState({
         isOpen: true,
         anchorElement: event.currentTarget,
-        items: [...this.state.cache.items].sort(selectedFirstThenUnknownByNameAsc),
+        items: listItems(selectedItems, this.state.cache.items).sort(selectedFirstThenUnknownByNameAsc),
       },
     );
   }
@@ -183,11 +189,12 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
   }
 
   onClear = () => {
-    this.setState((prevState: State) => ({
-      items: [...prevState.cache.items],
+    const {selectedItems} = this.props;
+    this.setState(({cache: {items, totalElements}}: State) => ({
+      items: listItems(selectedItems, items).sort(selectedFirstThenUnknownByNameAsc),
       isSearching: false,
       page: 0,
-      totalElements: prevState.cache.totalElements,
+      totalElements,
       query: undefined,
     }));
   }
@@ -247,24 +254,19 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
 
   loadMoreRows = async (): Promise<SelectionListItem[] | {}> => {
     const {selectedItems, fetchItems} = this.props;
-    const {items, totalElements} = await fetchItems(this.state.page);
+    const {items: responseItems, totalElements} = await fetchItems(this.state.page);
 
     return new Promise((resolve) => {
-      const selectedIds = selectedItems.map(getId);
-      const unselected = items
-        .map((item: SelectionListItem) => ({...item, selected: false}))
-        .filter((item: SelectionListItem) => !selectedIds.includes(item.id));
-
-      this.setState((prevState: State) => {
-        const items = [...prevState.items, ...unselected];
+      this.setState(({items: prevItems, page}: State) => {
+        const items = listItems(selectedItems, [...prevItems, ...responseItems]);
         return ({
           items,
           cache: {items, totalElements},
           totalElements,
-          page: this.state.page + 1,
+          page: page + 1,
         });
       });
-      return resolve(items);
+      return resolve(responseItems);
     });
   }
 
