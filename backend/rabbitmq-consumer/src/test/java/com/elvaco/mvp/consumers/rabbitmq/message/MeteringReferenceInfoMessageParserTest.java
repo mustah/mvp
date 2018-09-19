@@ -225,6 +225,24 @@ public class MeteringReferenceInfoMessageParserTest {
   }
 
   @Test
+  public void jobIdSet() {
+    String jsonFile = parseJsonFile("messages/reference-info-job-id-set.json");
+    MeteringReferenceInfoMessageDto messageDto = messageParser.parseReferenceInfoMessage(jsonFile)
+      .get();
+
+    assertThat(messageDto.jobId).isEqualTo("job-id");
+  }
+
+  @Test
+  public void jobIdMissing() {
+    String jsonFile = parseJsonFile("messages/reference-info-job-id-missing.json");
+    MeteringReferenceInfoMessageDto messageDto = messageParser.parseReferenceInfoMessage(jsonFile)
+      .get();
+
+    assertThat(messageDto.jobId).isNull();
+  }
+
+  @Test
   public void readIntervalCanBeNull() {
     String message = parseJsonFile("messages/reference-info-message-no-cron.json");
 

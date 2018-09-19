@@ -50,7 +50,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     FacilityDto facility = referenceInfoMessage.facility;
 
     String jobId = referenceInfoMessage.jobId;
-    if (!jobId.isEmpty() && jobIdCache.containsKey(jobId)) {
+    if (jobId != null && !jobId.isEmpty() && jobIdCache.containsKey(jobId)) {
       jobIdCache.put(jobId, referenceInfoMessage);
     }
 

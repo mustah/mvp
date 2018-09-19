@@ -771,9 +771,18 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
-  public void jobIdCache_NotUpdatedWhenJobIdIsNotSet() {
+  public void jobIdCache_NotUpdatedWhenJobIdIsEmpty() {
     messageHandler.accept(
       messageBuilder().jobId("").build()
+    );
+
+    assertThat(jobIdCache.keySet()).isEmpty();
+  }
+
+  @Test
+  public void jobIdCache_NotUpdatedWhenJobIdIsNull() {
+    messageHandler.accept(
+      messageBuilder().jobId(null).build()
     );
 
     assertThat(jobIdCache.keySet()).isEmpty();
