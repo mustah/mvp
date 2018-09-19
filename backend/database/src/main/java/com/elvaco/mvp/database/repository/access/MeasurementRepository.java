@@ -6,23 +6,31 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.MeasurementSortingMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
+import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,6 +38,7 @@ import static java.util.stream.Collectors.toList;
 public class MeasurementRepository implements Measurements {
 
   private final MeasurementJpaRepository measurementJpaRepository;
+  private final MeasurementSortingMapper sortingMapper;
 
   @Override
   public Optional<Measurement> findById(Measurement.Id id) {
@@ -159,6 +168,21 @@ public class MeasurementRepository implements Measurements {
   ) {
     return measurementJpaRepository.findBy(physicalMeterId, quantity, created)
       .map(MeasurementEntityMapper::toDomainModel);
+  }
+
+  @Override
+  public Page<Measurement> findAll(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    org.springframework.data.domain.Page<MeasurementEntity> all = measurementJpaRepository.findAll(
+      new MeasurementQueryFilters().toExpression(parameters),
+      new PageRequest(
+        pageable.getPageNumber(),
+        pageable.getPageSize(),
+        sortingMapper.getAsSpringSort(pageable.getSort())
+      )
+    );
+    return new PageAdapter<>(all.map(MeasurementEntityMapper::toDomainModel));
   }
 
   @Override

@@ -9,8 +9,23 @@ import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../servic
 import {EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/ReportContainer';
-import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
-import {initialState, MeasurementApiResponse, MeasurementResponses, Quantity} from './measurementModels';
+import {
+  noInternetConnection,
+  requestTimeout,
+  responseMessageOrFallback,
+} from '../../../api/apiActions';
+import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
+import {MeterDetails} from '../../../domain-models/meter-details/meterDetailsModels';
+import {
+  initialMeterMeasurementsState,
+  initialState,
+  Measurement,
+  MeasurementApiResponse,
+  MeasurementResponses, MeterMeasurementsState,
+  Quantity,
+  Reading,
+} from './measurementModels';
+import {measurementDataFormatter} from './measurementSchema';
 
 const measurementMeterUri = (
   quantities: Quantity[],
@@ -143,3 +158,66 @@ export const fetchMeasurements =
     }
 
   };
+
+export type OnUpdate = (state: MeterMeasurementsState) => void;
+
+interface MeasurementPagedApiResponse {
+  data: NormalizedPaginated<Measurement>;
+}
+
+export const fetchMeasurementsPaged =
+  async (
+    meter: MeterDetails,
+    updateState: OnUpdate,
+    logout: OnLogout,
+  ): Promise<void> => {
+
+    // TODO use medium to calculate number of quantities
+    const measurementUrl: EncodedUriParameters = makeUrl(
+      EndPoints.measurementsPaged,
+      'sort=created,desc&sort=quantity,asc&logicalMeterId=' + meter.id + '&size=' + (50 * meter.measurements.length),
+    );
+
+    try {
+      const response: MeasurementPagedApiResponse =
+        await restClient.get(measurementUrl);
+
+      updateState({
+        ...initialMeterMeasurementsState,
+        measurementPages: measurementDataFormatter(response.data),
+      });
+    } catch (error) {
+      if (error instanceof InvalidToken) {
+        await logout(error);
+      } else if (wasRequestCanceled(error)) {
+        return;
+      } else if (isTimeoutError(error)) {
+        updateState({...initialMeterMeasurementsState, error: Maybe.maybe(requestTimeout())});
+      } else if (!error.response) {
+        updateState({...initialMeterMeasurementsState, error: Maybe.maybe(noInternetConnection())});
+      } else {
+        updateState({
+          ...initialMeterMeasurementsState,
+          error: Maybe.maybe(responseMessageOrFallback(error.response)),
+        });
+      }
+    }
+  };
+
+export const groupMeasurementsByDate = (measurementPage: NormalizedPaginated<Measurement>): Map<number, Reading> => {
+  const readings: Map<number, Reading> = new Map<number, Reading>();
+
+  if (measurementPage) {
+    measurementPage.result.content.map((id: uuid) => {
+      const measurement: Measurement = measurementPage.entities.measurements[id];
+
+      const reading: Reading =
+        readings.get(measurement.created) || {id: measurement.created, measurements: []};
+
+      reading.measurements.push(measurement);
+      readings.set(measurement.created, reading);
+    });
+  }
+
+  return readings;
+};

@@ -11,6 +11,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "Volume short"
+msgstr "Volume"
+
+msgid "Flow short"
+msgstr "Flow"
+
+msgid "Energy short"
+msgstr "Energy"
+
+msgid "Power short"
+msgstr "Power"
+
+msgid "Forward temperature short"
+msgstr "F temp."
+
+msgid "Return temperature short"
+msgstr "R temp."
+
+msgid "Difference temperature short"
+msgstr "Diff temp."
+
+msgid "Temperature short"
+msgstr "Temp."
+
+msgid "Relative humidity short"
+msgstr "RH"
+
+msgid "Energy return short"
+msgstr "Energy return"
+
+msgid "Reactive energy short"
+msgstr "Reactive energy"
+
 msgid "yes"
 msgstr "ja"
 

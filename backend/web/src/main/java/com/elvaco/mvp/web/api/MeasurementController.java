@@ -11,23 +11,32 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
+import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
+import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
@@ -161,6 +170,21 @@ public class MeasurementController {
         ).stream();
       })
       .collect(toList());
+  }
+
+  @GetMapping("/paged")
+  public org.springframework.data.domain.Page<MeasurementDto> pagedMeasurements(
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable
+  ) {
+    RequestParameters parameters = requestParametersOf(
+      requestParams
+    );
+    PageableAdapter adapter = new PageableAdapter(pageable);
+    Page<Measurement> page = measurementUseCases.findAll(parameters, adapter);
+
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
+      .map(MeasurementDtoMapper::toDto);
   }
 
   private List<MeasurementSeriesDto> measurementSeriesOf(
