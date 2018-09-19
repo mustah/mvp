@@ -30,11 +30,10 @@ export interface LineProps {
 }
 
 export interface LegendItem {
-  label: string;
-  address: string;
+  facility?: string;
+  address?: string;
   city: string;
-  color: string;
-  medium: string;
+  medium: string | string[];
   id: uuid;
 }
 

@@ -25,6 +25,7 @@ import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
@@ -47,6 +48,7 @@ interface StateToProps {
   selectedIndicators: Medium[];
   selectedListItems: uuid[];
   selectedQuantities: Quantity[];
+  selectionTreeEntities: SelectionTreeEntities;
 }
 
 export interface ReportContainerState {
@@ -123,7 +125,13 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   }
 
   render() {
-    const {selectedIndicatorTypes, toggleReportIndicatorWidget, enabledIndicatorTypes} = this.props;
+    const {
+      selectedIndicatorTypes,
+      toggleReportIndicatorWidget,
+      enabledIndicatorTypes,
+      selectedListItems,
+      selectionTreeEntities,
+    } = this.props;
     const {isFetching, error, hiddenKeys, selectedTab, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
@@ -141,8 +149,16 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
     const indicators = hardcodedIndicators();
 
-    const renderLegend = () => graphContents.lines.length > 0 ?
-      <LegendContainer graphContents={graphContents} onToggleLine={onToggleLine}/> : null;
+    const renderLegend = () => selectedListItems.length > 0
+      ? (
+        <LegendContainer
+          selectedListItems={selectedListItems}
+          graphContents={graphContents}
+          onToggleLine={onToggleLine}
+          selectionTreeEntities={selectionTreeEntities}
+        />
+      )
+      : null;
 
     return (
       <MvpPageContainer>
@@ -201,6 +217,7 @@ const mapStateToProps =
       selectedQuantities,
       selectedIndicators: report,
       selectedIndicatorTypes: report,
+      selectionTreeEntities: entities,
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

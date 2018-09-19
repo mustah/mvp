@@ -2,27 +2,28 @@ import {createSelector} from 'reselect';
 import {getMediumType, Medium} from '../../components/indicators/indicatorWidgetModels';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
-import {ReportState} from '../../usecases/report/reportModels';
 import {Query} from '../../usecases/search/searchModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {isSelectedCity, isSelectedMeter} from '../ui/graph/measurement/measurementActions';
 import {
-  AddressWithMeters,
   CityWithClusters,
   ClusterWithAddresses,
+  SelectedTreeEntities,
   SelectionTree,
+  SelectionTreeAddress,
   SelectionTreeEntities,
   SelectionTreeResult,
   SelectionTreeState,
 } from './selectionTreeModels';
 
 const addOrInitialCluster = (
-  address: AddressWithMeters,
+  address: SelectionTreeAddress,
   cityId: uuid,
   cityClusters: ObjectsById<ClusterWithAddresses>,
 ): ObjectsById<ClusterWithAddresses> => {
+  const {name, id} = address;
 
-  const translatedName = orUnknown(address.name);
+  const translatedName = orUnknown(name);
   const firstLetter = translatedName[0];
   const clusterId = `${cityId}:${firstLetter}`;
   const cityClusterName = `${firstLetter.toUpperCase()}...`;
@@ -34,9 +35,13 @@ const addOrInitialCluster = (
       ? {
         ...cityCluster,
         name: `${cityClusterName}(${cityCluster.addresses.length + 1})`,
-        addresses: [...cityCluster.addresses, address.id],
+        addresses: [...cityCluster.addresses, id],
       }
-      : {id: clusterId, name: `${cityClusterName}(1)`, addresses: [address.id]},
+      : {
+        id: clusterId,
+        name: `${cityClusterName}(1)`,
+        addresses: [id],
+      },
   };
 };
 
@@ -52,9 +57,9 @@ const matches = (query: string | undefined) => {
 
 export const getSelectionTree =
   createSelector<SelectionTreeQueried, SelectionTreeResult, SelectionTreeEntities, string | undefined, SelectionTree>(
-    (state) => state.result,
-    (state) => state.entities,
-    (state) => state.query,
+    ({result}) => result,
+    ({entities}) => entities,
+    ({query}) => query,
     ({cities: cityIds}: SelectionTreeResult, {cities, addresses, meters}: SelectionTreeEntities, query) => {
 
       const shouldBeInTree = matches(query);
@@ -96,14 +101,15 @@ export const getSelectionTree =
 
       const createClustersByCity = (cityId: uuid): ObjectsById<ClusterWithAddresses> => {
         const city = cities[cityId];
+        const {name, id} = city;
         const cityClusters: ObjectsById<ClusterWithAddresses> = city.addresses
           .filter(onlyMatches)
-          .map((id) => addresses[id])
-          .reduce((clusters, address) => addOrInitialCluster(address, city.id, clusters), {});
+          .map((id): SelectionTreeAddress => addresses[id])
+          .reduce((clusters, address) => addOrInitialCluster(address, id, clusters), {});
 
         citiesWithClusters[cityId] = {
-          id: city.id,
-          name: city.name,
+          id,
+          name,
           clusters: Object.keys(cityClusters),
         };
 
@@ -129,8 +135,7 @@ export const getSelectionTree =
     },
   );
 
-export type MediaInSelectionTree = Pick<ReportState, 'selectedListItems'> & Pick<SelectionTreeState, 'entities'>;
-export const getMedia = createSelector<MediaInSelectionTree, uuid[], SelectionTreeEntities, Set<Medium>>(
+export const getMedia = createSelector<SelectedTreeEntities, uuid[], SelectionTreeEntities, Set<Medium>>(
   ({selectedListItems}) => selectedListItems,
   ({entities}) => entities,
   (ids: uuid[], {cities, meters}: SelectionTreeEntities) => {

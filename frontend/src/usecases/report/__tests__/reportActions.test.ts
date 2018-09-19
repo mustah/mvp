@@ -79,7 +79,7 @@ describe('reportActions', () => {
 
   describe('toggleIncludingChildren', () => {
 
-    const initialState: Partial<RootState> = {
+    const initialState: Pick<RootState, 'report' | 'selectionTree'> = {
       report: {
         selectedListItems: [
           '905a785e-f215-4eb8-b31c-0a00a365a124',
@@ -93,6 +93,7 @@ describe('reportActions', () => {
           cities: {
             'sweden,höganäs': {
               id: 'sweden,höganäs',
+              city: 'sweden,höganäs',
               medium: ['Gas', 'Water'],
               name: 'höganäs',
               addresses: [
@@ -104,6 +105,8 @@ describe('reportActions', () => {
           },
           addresses: {
             'sweden,höganäs,hasselgatan 4': {
+              address: 'hasselgatan 4',
+              city: 'sweden,höganäs',
               name: 'hasselgatan 4',
               meters: [
                 '905a785e-f215-4eb8-b31c-0a00a365a124',
@@ -111,6 +114,8 @@ describe('reportActions', () => {
               id: 'sweden,höganäs,hasselgatan 4',
             },
             'sweden,höganäs,storgatan 5': {
+              address: 'storgatan 5',
+              city: 'sweden,höganäs',
               name: 'storgatan 5',
               meters: [
                 '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
@@ -118,6 +123,8 @@ describe('reportActions', () => {
               id: 'sweden,höganäs,storgatan 5',
             },
             'sweden,höganäs,väpnaregatan 10': {
+              address: 'väpnaregatan 10',
+              city: 'sweden,höganäs',
               name: 'väpnaregatan 10',
               meters: [
                 '54c58358-9631-4de3-b76c-f018fbf0fc8b',
@@ -127,16 +134,22 @@ describe('reportActions', () => {
           },
           meters: {
             '905a785e-f215-4eb8-b31c-0a00a365a124': {
+              address: 'hasselgatan 4',
+              city: 'sweden,höganäs',
               id: '905a785e-f215-4eb8-b31c-0a00a365a124',
               name: '3000',
               medium: 'Gas',
             },
             '22b8fd17-fd83-469e-b0ca-4ab3808beebb': {
+              address: 'storgatan 5',
+              city: 'sweden,höganäs',
               id: '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
               name: '3001',
               medium: 'Gas',
             },
             '54c58358-9631-4de3-b76c-f018fbf0fc8b': {
+              address: 'väpnaregatan 10',
+              city: 'sweden,höganäs',
               id: '54c58358-9631-4de3-b76c-f018fbf0fc8b',
               name: '3002',
               medium: 'Water',
@@ -220,21 +233,34 @@ describe('reportActions', () => {
         },
       };
       initTranslations(translations);
-      const address = 'sweden,höganäs,storgatan 5';
+      const address = 'storgatan 5';
+      const city = 'sweden,höganäs';
+      const addressId = `${city},${address}`;
+
       const state = {...initialState};
+      state.selectionTree.entities.addresses[addressId] = {
+        address,
+        city,
+        meters: [],
+        name: address,
+        id: addressId,
+      };
+
       for (let i = 0; i < 30; i++) {
         const id = idGenerator.uuid();
-        state.selectionTree!.entities.meters[id] = {
+        state.selectionTree.entities.meters[id] = {
+          address,
+          city,
           id,
           name: `meter-${i}`,
           medium: 'Gas',
         };
 
-        state.selectionTree!.entities.addresses[address].meters.push(id);
+        state.selectionTree.entities.addresses[addressId].meters.push(id);
       }
 
       const store = configureMockStore(state);
-      store.dispatch(toggleIncludingChildren(address));
+      store.dispatch(toggleIncludingChildren(addressId));
 
       expect(store.getActions()).toEqual([{
         type: SHOW_FAIL_MESSAGE,

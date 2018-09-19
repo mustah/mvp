@@ -89,73 +89,87 @@ describe('selectionTreeApiActions', () => {
   };
 
   it('normalizes data', () => {
-    expect(normalizedResponse).toEqual(
-      {
-        entities: {
-          addresses: {
-            'sweden,kungsbacka,kabelgatan 1': {
-              id: 'sweden,kungsbacka,kabelgatan 1',
-              name: 'kabelgatan 1',
-              meters: [1, 2],
-            },
-            'sweden,kungsbacka,kungsgatan 42': {
-              id: 'sweden,kungsbacka,kungsgatan 42',
-              name: 'kungsgatan 42',
-              meters: [5, 6],
-            },
-            'sweden,gothenburg,kungsgatan 42': {
-              id: 'sweden,gothenburg,kungsgatan 42',
-              name: 'kungsgatan 42',
-              meters: [3, 4],
-            },
+    const expected = {
+      entities: {
+        addresses: {
+          'sweden,kungsbacka,kabelgatan 1': {
+            city: 'sweden,kungsbacka',
+            id: 'sweden,kungsbacka,kabelgatan 1',
+            name: 'kabelgatan 1',
+            meters: [1, 2],
           },
-          cities: {
-            'sweden,gothenburg': {
-              id: 'sweden,gothenburg',
-              name: 'gothenburg',
-              addresses: ['sweden,gothenburg,kungsgatan 42'],
-            },
-            'sweden,kungsbacka': {
-              id: 'sweden,kungsbacka',
-              name: 'kungsbacka',
-              addresses: ['sweden,kungsbacka,kabelgatan 1', 'sweden,kungsbacka,kungsgatan 42'],
-            },
+          'sweden,kungsbacka,kungsgatan 42': {
+            city: 'sweden,kungsbacka',
+            id: 'sweden,kungsbacka,kungsgatan 42',
+            name: 'kungsgatan 42',
+            meters: [5, 6],
           },
-          meters: {
-            1: {
-              id: 1,
-              name: 'extId1',
-            },
-            2: {
-              id: 2,
-              name: 'extId2',
-            },
-            3: {
-              id: 3,
-              name: 'extId3',
-            },
-            4: {
-              id: 4,
-              name: 'extId4',
-            },
-            5: {
-              id: 5,
-              name: 'extId5',
-            },
-            6: {
-              id: 6,
-              name: 'extId6',
-            },
+          'sweden,gothenburg,kungsgatan 42': {
+            city: 'sweden,gothenburg',
+            id: 'sweden,gothenburg,kungsgatan 42',
+            name: 'kungsgatan 42',
+            meters: [3, 4],
           },
         },
-        result: {
-          cities: [
-            'sweden,kungsbacka',
-            'sweden,gothenburg',
-          ],
+        cities: {
+          'sweden,gothenburg': {
+            id: 'sweden,gothenburg',
+            name: 'gothenburg',
+            addresses: ['sweden,gothenburg,kungsgatan 42'],
+          },
+          'sweden,kungsbacka': {
+            id: 'sweden,kungsbacka',
+            name: 'kungsbacka',
+            addresses: ['sweden,kungsbacka,kabelgatan 1', 'sweden,kungsbacka,kungsgatan 42'],
+          },
+        },
+        meters: {
+          1: {
+            address: 'kabelgatan 1',
+            city: 'sweden,kungsbacka',
+            id: 1,
+            name: 'extId1',
+          },
+          2: {
+            address: 'kabelgatan 1',
+            city: 'sweden,kungsbacka',
+            id: 2,
+            name: 'extId2',
+          },
+          3: {
+            address: 'kungsgatan 42',
+            city: 'sweden,gothenburg',
+            id: 3,
+            name: 'extId3',
+          },
+          4: {
+            address: 'kungsgatan 42',
+            city: 'sweden,gothenburg',
+            id: 4,
+            name: 'extId4',
+          },
+          5: {
+            address: 'kungsgatan 42',
+            city: 'sweden,kungsbacka',
+            id: 5,
+            name: 'extId5',
+          },
+          6: {
+            address: 'kungsgatan 42',
+            city: 'sweden,kungsbacka',
+            id: 6,
+            name: 'extId6',
+          },
         },
       },
-    );
+      result: {
+        cities: [
+          'sweden,kungsbacka',
+          'sweden,gothenburg',
+        ],
+      },
+    };
+    expect(normalizedResponse).toEqual(expected);
   });
 
   it('fetches data from /selection-tree', async () => {
