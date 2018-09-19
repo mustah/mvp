@@ -42,11 +42,7 @@ public class PhysicalMeterUseCases {
     String address
   ) {
     if (hasTenantAccess(organisationId)) {
-      return physicalMeters.findByWithStatuses(
-        organisationId,
-        externalId,
-        address
-      );
+      return physicalMeters.findByWithStatuses(organisationId, externalId, address);
     }
     return Optional.empty();
   }
@@ -57,11 +53,7 @@ public class PhysicalMeterUseCases {
     String address
   ) {
     if (hasTenantAccess(organisationId)) {
-      return physicalMeters.findBy(
-        organisationId,
-        externalId,
-        address
-      );
+      return physicalMeters.findBy(organisationId, externalId, address);
     }
     return Optional.empty();
   }
@@ -86,7 +78,7 @@ public class PhysicalMeterUseCases {
     ));
   }
 
-  private boolean hasTenantAccess(UUID id) {
-    return currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(id);
+  private boolean hasTenantAccess(UUID organisationId) {
+    return currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(organisationId);
   }
 }

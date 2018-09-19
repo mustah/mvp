@@ -87,8 +87,10 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public Page<Measurement> findAll(
-    RequestParameters parameters, Pageable pageable
+  public Page<Measurement> findAllBy(
+    UUID physicalMeterId,
+    RequestParameters parameters,
+    Pageable pageable
   ) {
     throw new NotImplementedYet();
   }

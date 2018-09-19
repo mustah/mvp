@@ -14,12 +14,11 @@ import java.util.function.Function;
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -41,6 +40,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -177,13 +177,16 @@ public class MeasurementController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(
-      requestParams
-    );
-    PageableAdapter adapter = new PageableAdapter(pageable);
-    Page<Measurement> page = measurementUseCases.findAll(parameters, adapter);
+    RequestParameters parameters = requestParametersOf(requestParams);
 
-    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
+    return Optional.ofNullable(parameters.getFirst(RequestParameter.LOGICAL_METER_ID))
+      .map(UUID::fromString)
+      .flatMap(logicalMeterUseCases::findById)
+      .flatMap(LogicalMeter::activePhysicalMeter)
+      .map(physicalMeter ->
+        measurementUseCases.findAllBy(physicalMeter.id, parameters, new PageableAdapter(pageable)))
+      .map(page -> new PageImpl<>(page.getContent(), pageable, page.getTotalElements()))
+      .orElseGet(() -> new PageImpl<>(emptyList()))
       .map(MeasurementDtoMapper::toDto);
   }
 

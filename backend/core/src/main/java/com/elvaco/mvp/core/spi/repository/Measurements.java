@@ -50,7 +50,11 @@ public interface Measurements {
     String quantity
   );
 
-  Page<Measurement> findAll(RequestParameters parameters, Pageable pageable);
+  Page<Measurement> findAllBy(
+    UUID physicalMeterId,
+    RequestParameters parameters,
+    Pageable pageable
+  );
 
   Optional<Measurement> findLatestReadout(
     UUID physicalMeterId,
