@@ -3,12 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Language;
@@ -34,6 +29,11 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+import com.elvaco.mvp.testing.cache.MockCache;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
@@ -86,6 +86,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private MockGeocodeService geocodeService;
   private PropertiesUseCases propertiesUseCases;
   private MockMeterStatusLogs meterStatusLogs;
+  private MockCache<String, MeteringReferenceInfoMessageDto> jobIdCache;
 
   @Before
   public void setUp() {
@@ -113,6 +114,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
 
     meterStatusLogs = new MockMeterStatusLogs();
+    jobIdCache = new MockCache<>();
     messageHandler = new MeteringReferenceInfoMessageConsumer(
       new LogicalMeterUseCases(
         authenticatedUser,
@@ -136,13 +138,17 @@ public class MeteringReferenceInfoMessageConsumerTest {
       ),
       new GatewayUseCases(gateways, authenticatedUser),
       geocodeService,
-      propertiesUseCases
+      propertiesUseCases,
+      jobIdCache
     );
   }
 
   @Test
   public void createsMeterAndOrganisation() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().productModel(PRODUCT_MODEL)
+      .gatewayExternalId(GATEWAY_EXTERNAL_ID)
+      .medium(HOT_WATER_MEDIUM)
+      .build());
 
     Organisation organisation = findOrganisation();
 
@@ -193,7 +199,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .productModel("OldValue")
       .build());
 
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().gatewayExternalId(GATEWAY_EXTERNAL_ID)
+      .productModel(PRODUCT_MODEL)
+      .build());
 
     Gateway gateway = gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get();
     assertThat(gateway.id).isEqualTo(gatewayId);
@@ -216,14 +224,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .city("Växjö")
       .address("Gatvägen 41")
       .build();
-    messageHandler.accept(newMessageWithLocation(newLocation));
+    messageHandler.accept(messageBuilder().location(newLocation).build());
 
     assertThat(logicalMeters.findById(meterId).get().location).isEqualTo(newLocation);
   }
 
   @Test
   public void createsOrganisationWithSameNameAsExternalId() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder()
+      .organisationExternalId(ORGANISATION_EXTERNAL_ID)
+      .build());
 
     Organisation organisation = findOrganisation();
 
@@ -232,7 +242,11 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void createsMeterAndGatewayForExistingOrganisation() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder()
+      .medium(HOT_WATER_MEDIUM)
+      .productModel(PRODUCT_MODEL)
+      .gatewayExternalId(GATEWAY_EXTERNAL_ID)
+      .build());
 
     Organisation organisation = findOrganisation();
 
@@ -251,7 +265,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void addsPhysicalMeterToExistingLogicalMeter() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().build());
 
     LogicalMeter saved = findLogicalMeter();
 
@@ -262,19 +276,19 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void resendingSameMessageShouldNotUpdateExistingGateways() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     List<Gateway> allAfterFirstMessage = gateways.findAll(new MockRequestParameters());
     assertThat(allAfterFirstMessage).hasSize(1);
 
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     assertThat(gateways.findAll(new MockRequestParameters())).isEqualTo(allAfterFirstMessage);
   }
 
   @Test
   public void gatewaysAreConnectedToMeters() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     List<Gateway> all = gateways.findAll(new MockRequestParameters());
     assertThat(all.stream().anyMatch(gateway -> gateway.meters.isEmpty())).isFalse();
@@ -282,7 +296,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void setsNoMeterDefinitionForUnmappableMedium() {
-    messageHandler.accept(newMessageWithMedium("Unmappable medium"));
+    messageHandler.accept(messageBuilder().medium("Unmappable medium").build());
 
     List<LogicalMeter> meters = logicalMeters.findAllWithDetails(new MockRequestParameters());
     assertThat(meters).hasSize(1);
@@ -291,12 +305,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void updatesMeterDefinitionForExistingLogicalMeter() {
-    messageHandler.accept(newMessageWithMedium("Unknown medium"));
+    messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
     assertThat(meter.getMedium()).isEqualTo("Unknown medium");
 
-    messageHandler.accept(newMessageWithMedium("Heat, Return temp"));
+    messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
@@ -304,12 +318,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void doesNotUpdateMeterDefinitionWithUnmappableMedium() {
-    messageHandler.accept(newMessageWithMedium("Unknown medium"));
+    messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
     assertThat(meter.getMedium()).isEqualTo("Unknown medium");
 
-    messageHandler.accept(newMessageWithMedium("I don't even know what this is?"));
+    messageHandler.accept(messageBuilder().medium("I don't even know what this is?").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.UNKNOWN_METER.type);
@@ -317,7 +331,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void updatesManufacturerForExistingMeter() {
-    messageHandler.accept(newMessageWithManufacturer("ELV"));
+    messageHandler.accept(messageBuilder().manufacturer("ELV").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
 
@@ -328,7 +342,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .containsExactly(meter.id);
 
     // Add same message with different manufacturer
-    messageHandler.accept(newMessageWithManufacturer("KAM"));
+    messageHandler.accept(messageBuilder().manufacturer("KAM").build());
 
     assertThat(physicalMeters.findAll().get(0).manufacturer).isEqualTo("KAM");
     assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
@@ -336,7 +350,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void callsGeocodeService() {
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     LocationWithId expectedLocationWithId = new LocationBuilder()
       .country("Sweden")
@@ -353,7 +367,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void forceUpdateGeolocation_WhenFlagIsEnabledAndClearFlag() {
     UUID organisationId = saveDefaultOrganisation().getId();
 
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     LocationBuilder builder = new LocationBuilder()
       .country("Sweden")
@@ -365,7 +379,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     propertiesUseCases.forceUpdateGeolocation(geocodeService.requestId, organisationId);
 
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     Property.Id id = Property.idOf(
       geocodeService.requestId,
@@ -399,7 +413,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .location(UNKNOWN_LOCATION)
       .build());
 
-    messageHandler.accept(newMessageWithMediumAndPhysicalMeterId());
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM)
+      .physicalMeterId("4321")
+      .build());
 
     assertThat(logicalMeters.findAllByOrganisationId(organisation.id)).hasSize(1);
     assertThat(physicalMeters.findAll().stream().map(pm -> pm.logicalMeterId))
@@ -411,7 +427,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
     physicalMeters.save(physicalMeter().organisation(organisation).build());
 
-    messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
+    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
     assertThat(organisations.findAll()).hasSize(2);
     assertThat(physicalMeters.findAll()).hasSize(2);
@@ -419,7 +435,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void expectedIntervalIsSetForCreatedPhysicalMeter() {
-    MeteringReferenceInfoMessageDto message = newMessageWithCron(HOUR_CRON);
+    MeteringReferenceInfoMessageDto message = messageBuilder()
+      .cron(HOUR_CRON).build();
 
     messageHandler.accept(message);
 
@@ -429,8 +446,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void expectedIntervalIsUpdatedForCreatedPhysicalMeter() {
-    messageHandler.accept(newMessageWithCron(FIFTEEN_MINUTE_CRON));
-    messageHandler.accept(newMessageWithCron(HOUR_CRON));
+    messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
+    messageHandler.accept(messageBuilder().cron(HOUR_CRON).build());
 
     List<PhysicalMeter> all = physicalMeters.findAll();
     assertThat(all).hasSize(1);
@@ -439,14 +456,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void emptyExternalIdIsRejected() {
-    MeteringReferenceInfoMessageDto message = newMessage(
-      "medium",
-      "manufacturer",
-      "meter-id",
-      FIFTEEN_MINUTE_CRON,
-      UNKNOWN_LOCATION,
-      ""
-    );
+    MeteringReferenceInfoMessageDto message = messageBuilder().medium("medium")
+      .manufacturer("manufacturer")
+      .physicalMeterId("meter-id")
+      .cron(FIFTEEN_MINUTE_CRON)
+      .revision(REVISION_ONE)
+      .mbusDeviceType(MBUS_METER_TYPE_ONE)
+      .location(UNKNOWN_LOCATION)
+      .externalId("")
+      .build();
 
     messageHandler.accept(message);
 
@@ -460,7 +478,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       new FacilityDto(null, null, null, null),
       "Test source system",
       "organisation id",
-      null
+      null,
+      ""
     );
 
     messageHandler.accept(message);
@@ -475,7 +494,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       new FacilityDto("valid facility id", null, null, null),
       "Test source system",
       "organisation id",
-      null
+      null,
+      ""
     );
 
     messageHandler.accept(message);
@@ -486,7 +506,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void meterStatusIsSetForNewMeter() {
-    messageHandler.accept(newMessageWithMeterStatus(StatusType.OK));
+    messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
 
     List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
@@ -497,8 +517,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void sameMeterStatusIsUnchangedForMeter() {
-    messageHandler.accept(newMessageWithMeterStatus(StatusType.OK));
-    messageHandler.accept(newMessageWithMeterStatus(StatusType.OK));
+    messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
+    messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
 
     List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
@@ -509,8 +529,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void newMeterStatusChangesStatus() {
-    messageHandler.accept(newMessageWithMeterStatus(StatusType.OK));
-    messageHandler.accept(newMessageWithMeterStatus(StatusType.ERROR));
+    messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
+    messageHandler.accept(messageBuilder().meterStatus(StatusType.ERROR.name()).build());
 
     List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(2);
@@ -523,7 +543,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void newStatusIsSetForGateway() {
-    messageHandler.accept(newMessageWithGatewayStatus(StatusType.OK));
+    messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
 
     List<StatusLogEntry<UUID>> statuses = gateways.findAll(new MockRequestParameters())
       .get(0).statusLogs;
@@ -535,7 +555,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void errorReportedStatusIsSetForMeter() {
-    messageHandler.accept(newMessageWithMeterStatus("ErrorReported"));
+    messageHandler.accept(messageBuilder().meterStatus("ErrorReported").build());
 
     assertThat(physicalMeters.findAll())
       .flatExtracting("statuses")
@@ -545,7 +565,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void errorReportedStatusIsSetForGateway() {
-    messageHandler.accept(newMessageWithGatewayStatus("ErrorReported"));
+    messageHandler.accept(messageBuilder().gatewayStatus("ErrorReported").build());
 
     assertThat(gateways.findAll(new MockRequestParameters()))
       .flatExtracting("statusLogs")
@@ -567,7 +587,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       ),
       "Test source system",
       "an organisation",
-      null
+      null,
+      ""
     );
 
     messageHandler.accept(message);
@@ -577,8 +598,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void sameGatewayStatusIsUnchangedForGateway() {
-    messageHandler.accept(newMessageWithGatewayStatus(StatusType.OK));
-    messageHandler.accept(newMessageWithGatewayStatus(StatusType.OK));
+    messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
+    messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
 
     List<StatusLogEntry<UUID>> statuses = gateways.findAll(new MockRequestParameters())
       .get(0).statusLogs;
@@ -589,8 +610,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void newGatewayStatusChangesStatus() {
-    messageHandler.accept(newMessageWithGatewayStatus(StatusType.OK));
-    messageHandler.accept(newMessageWithGatewayStatus(StatusType.ERROR));
+    messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
+    messageHandler.accept(messageBuilder().gatewayStatus(StatusType.ERROR.name()).build());
 
     List<StatusLogEntry<UUID>> statuses = gateways.findAll(new MockRequestParameters())
       .get(0).statusLogs;
@@ -605,7 +626,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void createMeterWithoutCron_UseFallback() {
-    messageHandler.accept(newMessageWithCron(null));
+    messageHandler.accept(messageBuilder().cron(null).build());
 
     Organisation organisation = findOrganisation();
 
@@ -616,8 +637,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void readIntervalShouldNotBeReset_WhenSecondMessageHasNoCron() {
-    messageHandler.accept(newMessageWithCron(FIFTEEN_MINUTE_CRON));
-    messageHandler.accept(newMessageWithCron(null));
+    messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
+    messageHandler.accept(messageBuilder().cron(null).build());
 
     Organisation organisation = findOrganisation();
 
@@ -628,8 +649,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void readIntervalShouldNotBeReset_WhenSecondMessageHasEmptyCron() {
-    messageHandler.accept(newMessageWithCron(FIFTEEN_MINUTE_CRON));
-    messageHandler.accept(newMessageWithCron(""));
+    messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
+    messageHandler.accept(messageBuilder().cron("").build());
 
     Organisation organisation = findOrganisation();
 
@@ -640,7 +661,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void readIntervalShouldBeUpdated_WhenSecondMessageHasCron() {
-    messageHandler.accept(newMessageWithCron(null));
+    messageHandler.accept(messageBuilder().cron(null).build());
 
     Organisation organisation = findOrganisation();
 
@@ -648,7 +669,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
 
-    messageHandler.accept(newMessageWithCron(HOUR_CRON));
+    messageHandler.accept(messageBuilder().cron(HOUR_CRON).build());
 
     physicalMeter = findPhysicalMeterByOrganisationId(organisation);
 
@@ -657,7 +678,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void readIntervalShouldUseFallback_WhenConsecutiveReadIntervalsAreMissing() {
-    messageHandler.accept(newMessageWithCron(null));
+    messageHandler.accept(messageBuilder().cron(null).build());
 
     Organisation organisation = findOrganisation();
 
@@ -665,7 +686,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
 
-    messageHandler.accept(newMessageWithCron(null));
+    messageHandler.accept(messageBuilder().cron(null).build());
 
     physicalMeter = findPhysicalMeterByOrganisationId(organisation);
 
@@ -683,7 +704,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .build());
 
     messageHandler.accept(
-      newMessageWithLocation(new LocationBuilder().city("Borås").build())
+      messageBuilder().location(new LocationBuilder().city("Borås").build()).build()
         .withGatewayStatus(new GatewayStatusDto(null, null, null))
     );
 
@@ -696,7 +717,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     Organisation organisation = saveDefaultOrganisation();
 
     messageHandler.accept(
-      newMessageWithLocation(new LocationBuilder().city("Borås").build())
+      messageBuilder().location(new LocationBuilder().city("Borås").build()).build()
         .withGatewayStatus(new GatewayStatusDto(null, null, null))
     );
 
@@ -720,7 +741,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .build());
 
     messageHandler.accept(
-      newMessageWithGatewayStatus(StatusType.OK)
+      messageBuilder().gatewayStatus(StatusType.OK.name()).build()
         .withMeter(new MeterDto(null, null, null, null, null, null, null))
     );
 
@@ -737,7 +758,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     Organisation organisation = saveDefaultOrganisation();
 
     messageHandler.accept(
-      newMessageWithGatewayStatus(StatusType.ERROR)
+      messageBuilder().gatewayStatus(StatusType.ERROR.name()).build()
         .withMeter(new MeterDto(null, null, null, null, null, null, null))
     );
 
@@ -747,6 +768,33 @@ public class MeteringReferenceInfoMessageConsumerTest {
       organisation.id,
       EXTERNAL_ID
     )).isPresent();
+  }
+
+  @Test
+  public void jobIdCache_NotUpdatedWhenJobIdIsNotSet() {
+    messageHandler.accept(
+      messageBuilder().jobId("").build()
+    );
+
+    assertThat(jobIdCache.keySet()).isEmpty();
+  }
+
+  @Test
+  public void jobIdCache_NotUpdatedWhenJobIdNotAlreadyPresentInCache() {
+    messageHandler.accept(
+      messageBuilder().jobId("job-id").build()
+    );
+
+    assertThat(jobIdCache.keySet()).isEmpty();
+  }
+
+  @Test
+  public void jobIdCache_isUpdatedWhenJobIdPresentInCache() {
+    jobIdCache.put("job-id", null);
+    MeteringReferenceInfoMessageDto messageDto = messageBuilder().jobId("job-id").build();
+    messageHandler.accept(messageDto);
+
+    assertThat(jobIdCache.get("job-id")).isEqualTo(messageDto);
   }
 
   private PhysicalMeter findPhysicalMeterByOrganisationId(Organisation organisation) {
@@ -771,179 +819,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
     return organisations.findBySlug(ORGANISATION_SLUG).get();
   }
 
-  private MeteringReferenceInfoMessageDto newMessageWithGatewayStatus(
-    StatusType gatewayStatus
-  ) {
-    return newMessageWithGatewayStatus(gatewayStatus.name());
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithGatewayStatus(
-    String gatewayStatus
-  ) {
-    return newMessage(
-      HOT_WATER_MEDIUM,
-      MANUFACTURER,
-      ADDRESS,
-      FIFTEEN_MINUTE_CRON,
-      LOCATION_KUNGSBACKA,
-      EXTERNAL_ID,
-      StatusType.OK.name(),
-      gatewayStatus
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithMeterStatus(
-    StatusType meterStatus
-  ) {
-    return newMessageWithMeterStatus(meterStatus.name());
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithMeterStatus(
-    String meterStatus
-  ) {
-    return newMessage(
-      HOT_WATER_MEDIUM,
-      MANUFACTURER,
-      ADDRESS,
-      FIFTEEN_MINUTE_CRON,
-      LOCATION_KUNGSBACKA,
-      EXTERNAL_ID,
-      meterStatus,
-      StatusType.OK.name()
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithMediumAndPhysicalMeterId() {
-    return newMessage(
-      HOT_WATER_MEDIUM,
-      "KAM",
-      "4321",
-      FIFTEEN_MINUTE_CRON,
-      LOCATION_KUNGSBACKA
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithLocation(Location location) {
-    return newMessage(
-      HOT_WATER_MEDIUM,
-      MANUFACTURER,
-      ADDRESS,
-      FIFTEEN_MINUTE_CRON,
-      location
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithManufacturer(String manufacturer) {
-    return newMessage(
-      HOT_WATER_MEDIUM,
-      manufacturer,
-      ADDRESS,
-      FIFTEEN_MINUTE_CRON,
-      LOCATION_KUNGSBACKA
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithMedium(
-    String medium
-  ) {
-    return newMessage(
-      medium,
-      MANUFACTURER,
-      ADDRESS,
-      FIFTEEN_MINUTE_CRON,
-      LOCATION_KUNGSBACKA
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessageWithCron(@Nullable String cron) {
-    return newMessage(
-      HOT_WATER_MEDIUM,
-      MANUFACTURER,
-      ADDRESS,
-      cron,
-      LOCATION_KUNGSBACKA
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessage(
-    String medium,
-    String manufacturer,
-    String physicalMeterId,
-    @Nullable String cron,
-    Location location
-  ) {
-    return newMessage(
-      medium,
-      manufacturer,
-      physicalMeterId,
-      cron,
-      location,
-      EXTERNAL_ID
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessage(
-    String medium,
-    String manufacturer,
-    String physicalMeterId,
-    @Nullable String cron,
-    Location location,
-    String externalId
-  ) {
-    return newMessage(
-      medium,
-      manufacturer,
-      physicalMeterId,
-      cron,
-      location,
-      externalId,
-      StatusType.OK.name(),
-      StatusType.OK.name()
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessage(
-    String medium,
-    String manufacturer,
-    String physicalMeterId,
-    @Nullable String cron,
-    Location location,
-    String externalId,
-    String meterStatus,
-    String gatewayStatus
-  ) {
-    return new MeteringReferenceInfoMessageDto(
-      new MeterDto(
-        physicalMeterId,
-        medium,
-        meterStatus,
-        manufacturer,
-        cron,
-        REVISION_ONE,
-        MBUS_METER_TYPE_ONE
-      ),
-      new FacilityDto(
-        externalId,
-        location.getCountry(),
-        location.getCity(),
-        location.getAddress()
-      ),
-      "Test source system",
-      ORGANISATION_EXTERNAL_ID,
-      new GatewayStatusDto(
-        GATEWAY_EXTERNAL_ID,
-        PRODUCT_MODEL,
-        gatewayStatus
-      )
-    );
-  }
-
   private Organisation newOrganisation(String code) {
     return newOrganisation("", code);
   }
 
   private Organisation newOrganisation(String name, String code) {
     return new Organisation(randomUUID(), name, code, name);
+  }
+
+  private MeteringReferenceInfoMessageDtoBuilder messageBuilder() {
+    return new MeteringReferenceInfoMessageDtoBuilder();
   }
 
   private static PhysicalMeterBuilder physicalMeter() {
@@ -953,5 +838,122 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .medium(HOT_WATER_MEDIUM)
       .manufacturer(MANUFACTURER)
       .readIntervalMinutes(READ_INTERVAL_IN_MINUTES);
+  }
+
+  private static class MeteringReferenceInfoMessageDtoBuilder {
+
+    private String physicalMeterId = ADDRESS;
+    private String medium = HOT_WATER_MEDIUM;
+    private Integer mbusDeviceType = MBUS_METER_TYPE_ONE;
+    private String manufacturer = MANUFACTURER;
+    private String cron = FIFTEEN_MINUTE_CRON;
+    private Integer revision = REVISION_ONE;
+    private String externalId = EXTERNAL_ID;
+    private Location location = LOCATION_KUNGSBACKA;
+    private String gatewayStatus = StatusType.OK.name();
+    private String meterStatus = StatusType.OK.name();
+    private String gatewayExternalId = GATEWAY_EXTERNAL_ID;
+    private String productModel = PRODUCT_MODEL;
+    private String organisationExternalId = ORGANISATION_EXTERNAL_ID;
+    private String jobId = "";
+
+    MeteringReferenceInfoMessageDtoBuilder physicalMeterId(String physicalMeterId) {
+      this.physicalMeterId = physicalMeterId;
+      return this;
+    }
+
+    public MeteringReferenceInfoMessageDtoBuilder medium(String medium) {
+      this.medium = medium;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder mbusDeviceType(Integer mbusDeviceType) {
+      this.mbusDeviceType = mbusDeviceType;
+      return this;
+    }
+
+    public MeteringReferenceInfoMessageDtoBuilder manufacturer(String manufacturer) {
+      this.manufacturer = manufacturer;
+      return this;
+    }
+
+    public MeteringReferenceInfoMessageDtoBuilder cron(String cron) {
+      this.cron = cron;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder revision(Integer revision) {
+      this.revision = revision;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder externalId(String externalId) {
+      this.externalId = externalId;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder location(Location location) {
+      this.location = location;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder gatewayStatus(String gatewayStatus) {
+      this.gatewayStatus = gatewayStatus;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder meterStatus(String meterStatus) {
+      this.meterStatus = meterStatus;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder gatewayExternalId(String gatewayExternalId) {
+      this.gatewayExternalId = gatewayExternalId;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder productModel(String productModel) {
+      this.productModel = productModel;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder organisationExternalId(String organisationExternalId) {
+      this.organisationExternalId = organisationExternalId;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDtoBuilder jobId(String jobId) {
+      this.jobId = jobId;
+      return this;
+    }
+
+    MeteringReferenceInfoMessageDto build() {
+      return new MeteringReferenceInfoMessageDto(
+        new MeterDto(
+          physicalMeterId,
+          medium,
+          meterStatus,
+          manufacturer,
+          cron,
+          revision,
+          mbusDeviceType
+        ),
+        new FacilityDto(
+          externalId,
+          location.getCountry(),
+          location.getCity(),
+          location.getAddress()
+        ),
+        "Test source system",
+        organisationExternalId,
+        new GatewayStatusDto(
+          gatewayExternalId,
+          productModel,
+          gatewayStatus
+        ),
+        jobId
+      );
+    }
+
   }
 }

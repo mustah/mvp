@@ -67,7 +67,7 @@ public final class RestClient {
     if (requestBody instanceof HttpEntity) {
       requestEntity = (HttpEntity<?>) requestBody;
     } else if (requestBody != null) {
-      requestEntity = new HttpEntity<Object>(requestBody);
+      requestEntity = new HttpEntity<>(requestBody);
     } else {
       requestEntity = HttpEntity.EMPTY;
     }

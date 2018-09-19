@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
+import com.elvaco.mvp.testing.cache.MockCache;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeteringRequestPublisherTest {
 
+  private static final String JOB_ID = "test";
   private SpyMessagePublisher spy;
 
   @Before
@@ -96,7 +98,8 @@ public class MeteringRequestPublisherTest {
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
       new MockOrganisations(asList(user.getOrganisation(), otherOrganisation)),
-      spy
+      spy,
+      new MockCache<>()
     );
     LogicalMeter logicalMeter = newLogicalMeter(
       otherOrganisation.id,
@@ -153,8 +156,8 @@ public class MeteringRequestPublisherTest {
     String jobId = meteringRequestPublisher.request(logicalMeter);
 
     String actual = spy.deserialize(0).jobId;
-    assertThat(actual).isNotEmpty();
-    assertThat(actual).isEqualTo(jobId);
+    assertThat(jobId).isNotEmpty();
+    assertThat(actual).isEqualTo(jobId).isEqualTo(jobId);
   }
 
   @Test
@@ -188,7 +191,8 @@ public class MeteringRequestPublisherTest {
       new MockOrganisations(singletonList(user.getOrganisation())),
       messageBody -> {
         throw new RuntimeException("Something went horribly wrong!");
-      }
+      },
+      new MockCache<>()
     );
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -204,7 +208,8 @@ public class MeteringRequestPublisherTest {
     return new MeteringRequestPublisher(
       user,
       new MockOrganisations(singletonList(user.getOrganisation())),
-      spy
+      spy,
+      new MockCache<>()
     );
   }
 

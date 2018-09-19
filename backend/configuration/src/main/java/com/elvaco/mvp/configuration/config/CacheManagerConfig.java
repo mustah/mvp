@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
+import static com.elvaco.mvp.configuration.config.CacheConfig.JOB_ID_CACHE_NAME;
 import static com.elvaco.mvp.configuration.config.CacheConfig.METERING_MESSAGE_CACHE_NAME;
 import static java.util.Arrays.asList;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
@@ -35,18 +37,24 @@ class CacheManagerConfig {
   private final int tokenIdleTime;
   private final int meteringMessageIdleTime;
   private final int meteringMessageHeapEntries;
+  private final int jobIdIdleTime;
+  private final int jobIdHeapEntries;
 
   @Autowired
   CacheManagerConfig(
     @Value("${ehcache.token.heap-entries}") int tokenHeapEntries,
     @Value("${ehcache.token.idle-time}") int tokenIdleTime,
     @Value("${ehcache.metering.idle-time}") int meteringMessageIdleTime,
-    @Value("${ehcache.metering.heap-entries}") int meteringMessageHeapEntries
+    @Value("${ehcache.metering.heap-entries}") int meteringMessageHeapEntries,
+    @Value("${ehcache.job-id.idle-time}") int jobIdIdleTime,
+    @Value("${ehcache.job-id.heap-entries}") int jobIdHeapEntries
   ) {
     this.heapEntries = tokenHeapEntries;
     this.tokenIdleTime = tokenIdleTime;
     this.meteringMessageIdleTime = meteringMessageIdleTime;
     this.meteringMessageHeapEntries = meteringMessageHeapEntries;
+    this.jobIdIdleTime = jobIdIdleTime;
+    this.jobIdHeapEntries = jobIdHeapEntries;
   }
 
   @Bean
@@ -69,6 +77,15 @@ class CacheManagerConfig {
           ResourcePoolsBuilder.heap(meteringMessageHeapEntries)
         ).add(cacheEventListenerConfiguration())
           .withExpiry(timeToLiveExpiration(Duration.ofMinutes(meteringMessageIdleTime)))
+      )
+      .withCache(
+        JOB_ID_CACHE_NAME,
+        newCacheConfigurationBuilder(
+          String.class,
+          MeteringReferenceInfoMessageDto.class,
+          ResourcePoolsBuilder.heap(jobIdHeapEntries)
+        ).add(cacheEventListenerConfiguration())
+          .withExpiry(timeToLiveExpiration(Duration.ofMinutes(jobIdIdleTime)))
       )
       .build(true);
   }

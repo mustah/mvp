@@ -14,6 +14,7 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MeteringReferenceInfoMessageCon
 import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
+import com.elvaco.mvp.core.spi.cache.Cache;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -26,6 +27,7 @@ import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
@@ -72,14 +74,17 @@ class RabbitMqConfig {
   }
 
   @Bean
-  ReferenceInfoMessageConsumer referenceInfoMessageConsumer() {
+  ReferenceInfoMessageConsumer referenceInfoMessageConsumer(
+    Cache<String, MeteringReferenceInfoMessageDto> jobIdCache
+  ) {
     return new MeteringReferenceInfoMessageConsumer(
       logicalMeterUseCases,
       physicalMeterUseCases,
       organisationUseCases,
       gatewayUseCases,
       geocodeService,
-      propertiesUseCases
+      propertiesUseCases,
+      jobIdCache
     );
   }
 
@@ -131,12 +136,14 @@ class RabbitMqConfig {
   MeteringRequestPublisher meteringRequestPublisher(
     AuthenticatedUser currentUser,
     Organisations organisations,
-    MessagePublisher messagePublisher
+    MessagePublisher messagePublisher,
+    Cache<String, MeteringReferenceInfoMessageDto> jobIdCache
   ) {
     return new MeteringRequestPublisher(
       currentUser,
       organisations,
-      messagePublisher
+      messagePublisher,
+      jobIdCache
     );
   }
 

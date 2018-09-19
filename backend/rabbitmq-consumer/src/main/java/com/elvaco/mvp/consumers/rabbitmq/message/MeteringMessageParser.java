@@ -5,9 +5,8 @@ import java.util.function.Predicate;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
-
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,7 +40,7 @@ public class MeteringMessageParser implements MessageParser {
           );
       default:
         throw new RuntimeException("Unsupported Metering message type: "
-          + meteringMessageDto.messageType.toString());
+                                   + meteringMessageDto.messageType.toString());
     }
   }
 

@@ -1,6 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 
 @FunctionalInterface
 public interface ReferenceInfoMessageConsumer {

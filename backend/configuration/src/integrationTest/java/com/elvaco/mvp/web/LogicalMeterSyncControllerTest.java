@@ -238,10 +238,10 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     TestRabbitConsumer consumer = newResponseConsumer();
     LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
-    ResponseEntity<Void> responseEntity = asTestSuperAdmin().post(
+    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asTestSuperAdmin().postList(
       synchronizeUrl(logicalMeter.id),
       null,
-      Void.class
+      SyncRequestResponseDto.class
     );
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);

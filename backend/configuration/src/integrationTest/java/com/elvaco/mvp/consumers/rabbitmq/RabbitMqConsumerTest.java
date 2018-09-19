@@ -2,20 +2,20 @@ package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.util.UUID;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -157,7 +157,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   }
 
   private MeterDto newMeterDto(String manufacturer, String medium) {
-    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *",1,1);
+    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *", 1, 1);
   }
 
   private void deleteAllTestData() {
@@ -183,7 +183,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",
       "Some organisation",
-      new GatewayStatusDto("123987", "Gateway 2000", "OK")
+      new GatewayStatusDto("123987", "Gateway 2000", "OK"),
+      ""
     );
   }
 
@@ -237,8 +238,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     return logicalMeterJpaRepository.findBy(organisationId, externalId)
       .filter(meter ->
         meter.location.country.equalsIgnoreCase(country)
-          && meter.location.city.equalsIgnoreCase(city)
-          && meter.location.streetAddress.equalsIgnoreCase(address))
+        && meter.location.city.equalsIgnoreCase(city)
+        && meter.location.streetAddress.equalsIgnoreCase(address))
       .isPresent();
   }
 

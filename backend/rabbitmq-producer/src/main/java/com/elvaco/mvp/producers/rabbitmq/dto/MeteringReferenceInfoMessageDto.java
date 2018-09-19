@@ -1,9 +1,7 @@
-package com.elvaco.mvp.consumers.rabbitmq.dto;
+package com.elvaco.mvp.producers.rabbitmq.dto;
 
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -13,6 +11,8 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
 
   @Nullable
   public final MeterDto meter;
+
+  public final String jobId;
 
   @Nullable
   public final FacilityDto facility;
@@ -28,7 +28,8 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
     @Nullable FacilityDto facility,
     String sourceSystemId,
     String organisationId,
-    @Nullable GatewayStatusDto gateway
+    @Nullable GatewayStatusDto gateway,
+    String jobId
   ) {
     super(MessageType.METERING_REFERENCE_INFO_V_1_0);
     this.meter = meter;
@@ -36,6 +37,7 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
     this.sourceSystemId = sourceSystemId;
     this.organisationId = organisationId;
     this.gateway = gateway;
+    this.jobId = jobId;
   }
 
   public MeteringReferenceInfoMessageDto withFacility(FacilityDto facilityDto) {
@@ -44,7 +46,8 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
       facilityDto,
       sourceSystemId,
       organisationId,
-      gateway
+      gateway,
+      jobId
     );
   }
 
@@ -54,7 +57,8 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
       facility,
       sourceSystemId,
       organisationId,
-      gateway
+      gateway,
+      jobId
     );
   }
 
@@ -66,7 +70,8 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
       facility,
       sourceSystemId,
       organisationId,
-      gatewayStatusDto
+      gatewayStatusDto,
+      jobId
     );
   }
 }

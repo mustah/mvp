@@ -43,6 +43,9 @@ ehcache:
   metering:
     heap-entries: 20000
     idle-time: 60
+  job-id:
+    heap-entries: 20000
+    idle-time: 10
 
 liquibase:
   enabled: true

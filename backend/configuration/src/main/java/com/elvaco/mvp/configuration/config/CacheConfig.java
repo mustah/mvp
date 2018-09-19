@@ -5,10 +5,12 @@ import javax.annotation.PreDestroy;
 import com.elvaco.mvp.adapters.ehcache.CacheAdapter;
 import com.elvaco.mvp.cache.EhTokenServiceCache;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.cache.Cache;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
@@ -24,6 +26,7 @@ import static java.util.UUID.randomUUID;
 class CacheConfig {
 
   static final String METERING_MESSAGE_CACHE_NAME = "meteringMessageThrottleCache";
+  static final String JOB_ID_CACHE_NAME = "meteringRequestJobIdCache";
 
   private final CacheManager ehCacheManager;
 
@@ -45,6 +48,15 @@ class CacheConfig {
         GetReferenceInfoDto.class
       ));
     return new MessageThrottler<>(cacheAdapter, String::valueOf);
+  }
+
+  @Bean
+  Cache<String, MeteringReferenceInfoMessageDto> jobIdCache() {
+    return new CacheAdapter<>(ehCacheManager.getCache(
+      JOB_ID_CACHE_NAME,
+      String.class,
+      MeteringReferenceInfoMessageDto.class
+    ));
   }
 
   @Bean

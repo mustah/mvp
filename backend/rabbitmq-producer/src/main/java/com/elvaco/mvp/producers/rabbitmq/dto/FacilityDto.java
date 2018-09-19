@@ -1,4 +1,4 @@
-package com.elvaco.mvp.consumers.rabbitmq.dto;
+package com.elvaco.mvp.producers.rabbitmq.dto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
