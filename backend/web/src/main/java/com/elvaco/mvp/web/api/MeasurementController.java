@@ -53,14 +53,13 @@ public class MeasurementController {
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
-    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(meters);
     ZonedDateTime stop = beforeOrNow(before);
     return measurementSeriesOf(
       after,
       stop,
       resolutionOrDefault(after, stop, resolution),
       quantities,
-      logicalMeters,
+      findLogicalMetersByIds(meters),
       (quantity, measurementValue) -> new LabeledMeasurementValue(
         String.format("average-%s", quantity.name),
         label,
@@ -90,9 +89,6 @@ public class MeasurementController {
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, Function.identity()));
 
-    ZonedDateTime stop = beforeOrNow(before);
-    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
-
     Set<Quantity> quantities = maybeQuantities
       .orElseGet(() -> logicalMeters.stream()
         .flatMap(logicalMeter -> logicalMeter.getQuantities().stream())
@@ -101,6 +97,9 @@ public class MeasurementController {
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
     Set<Map.Entry<Quantity, List<PhysicalMeter>>> entries =
       mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities).entrySet();
+
+    ZonedDateTime stop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
 
     for (Map.Entry<Quantity, List<PhysicalMeter>> entry : entries) {
       for (PhysicalMeter meter : entry.getValue()) {
@@ -138,17 +137,17 @@ public class MeasurementController {
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution
   ) {
+    ZonedDateTime stop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
     return cities.stream()
       .flatMap((city) -> {
-        ZonedDateTime stop = beforeOrNow(before);
         String cityId = String.format("%s,%s", city.country, city.name);
-        List<LogicalMeter> logicalMeters = findLogicalMetersByCityId(cityId);
         return measurementSeriesOf(
           after,
           stop,
-          resolution,
+          temporalResolution,
           quantities,
-          logicalMeters,
+          findLogicalMetersByCityId(cityId),
           (quantity, measurementValue) -> new LabeledMeasurementValue(
             String.format("city-%s,%s-%s", city.country, city.name, quantity.name),
             cityId,

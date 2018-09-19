@@ -39,7 +39,7 @@ interface GraphDataResponse {
 export const isSelectedMeter = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,:]/) || []).length === 0;
 
-const isSelectedCity = (listItem: uuid): boolean =>
+export const isSelectedCity = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,]/g) || []).length === 1 &&
   (listItem.toString().match(/[:]/) || []).length === 0;
 

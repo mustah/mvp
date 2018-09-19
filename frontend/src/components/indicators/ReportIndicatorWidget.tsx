@@ -3,15 +3,14 @@ import * as React from 'react';
 import 'ReportIndicatorWidget.scss';
 import {colors} from '../../app/themes';
 import {OnClick} from '../../types/Types';
-import {Indicator} from '../../usecases/report/reportModels';
-import {IconUnknown} from '../icons/IconUnknown';
-import {IconWater} from '../icons/IconWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
 import {IconGas} from '../icons/IconGas';
 import {IconTemperature} from '../icons/IconTemperature';
+import {IconUnknown} from '../icons/IconUnknown';
 import {IconValidation} from '../icons/IconValidation';
+import {IconWater} from '../icons/IconWater';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {RowCenter} from '../layouts/row/Row';
 import {Small} from '../texts/Texts';
@@ -43,24 +42,33 @@ const style: React.CSSProperties = {
   height: '24px',
 };
 
-interface IndicatorProps {
-  indicator: Indicator;
-  onClick: OnSelectIndicator;
+export interface ReportIndicatorProps {
+  enabled?: boolean;
+  type: Medium;
+  title: string;
   isSelected?: boolean;
 }
 
+export interface ClickableReportIndicatorProps extends ReportIndicatorProps {
+  onClick: OnSelectIndicator;
+}
+
 export const ReportIndicatorWidget =
-  ({onClick, indicator: {state, title, type}, isSelected}: IndicatorProps) => {
+  ({enabled, onClick, title, type, isSelected}: ClickableReportIndicatorProps) => {
 
     const selectWidget: OnClick = () => onClick(type);
 
     const IndicatorIcon = iconComponentFor(type);
 
+    const state = enabled
+      ? 'enabled'
+      : 'disabled';
+
     return (
       <Column className="ReportIndicatorWidget" onClick={selectWidget}>
-        <ColumnCenter className={classNames('Indicator', state)}>
+        <ColumnCenter className="Indicator">
           <RowCenter className="Indicator-icon-wrapper">
-            <RowCenter className="Indicator-icon-bg">
+            <RowCenter className={classNames('Indicator-icon-bg', state)}>
               <IndicatorIcon style={style} className="Indicator-icon" color={colors.white}/>
             </RowCenter>
           </RowCenter>

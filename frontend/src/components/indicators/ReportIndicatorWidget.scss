@@ -17,15 +17,29 @@
       margin-bottom: $sm-space;
 
       .Indicator-icon-bg {
-        background-color: rgba($blue, 0.85);
         box-shadow: $box-shadow;
         border-radius: 22px;
         width: 44px;
         height: 44px;
 
         &:hover {
-          background-color: rgba($blue, 1);
           box-shadow: $box-shadow-hover;
+        }
+
+        &.enabled {
+          background-color: rgba($blue, 0.85);
+
+          &:hover {
+            background-color: rgba($blue, 1);
+          }
+        }
+
+        &.disabled {
+          background-color: rgba($darkest-grey, 0.85);
+
+          &:hover {
+            background-color: rgba($darkest-grey, 1);
+          }
         }
       }
     }
@@ -39,7 +53,13 @@
     margin-top: $xs-space;
 
     &.isSelected {
-      background-color: $blue;
+      &.enabled {
+        background-color: $blue;
+      }
+
+      &.disabled {
+        background-color: $darkest-grey;
+      }
     }
   }
 }

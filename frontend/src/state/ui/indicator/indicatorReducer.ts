@@ -20,6 +20,8 @@ export const initialState: IndicatorState = {
 type ActionTypes = Action<Medium[]> | Action<Quantity[]>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
+  // TODO listen in on SET_SELECTED_ENTRIES and auto toggle some indicators/quantities if needed..
+  //   modify the payload to include what's needed to select indicators
   switch (action.type) {
     case SET_REPORT_INDICATOR_WIDGETS:
       return {

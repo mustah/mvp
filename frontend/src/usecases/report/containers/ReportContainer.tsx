@@ -25,9 +25,10 @@ import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
+import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
 import {initialState, MeasurementResponses, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
@@ -41,6 +42,7 @@ import {MeasurementListContainer} from './MeasurementListContainer';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
+  enabledIndicatorTypes: Set<Medium>;
   period: Period;
   selectedIndicators: Medium[];
   selectedListItems: uuid[];
@@ -121,7 +123,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   }
 
   render() {
-    const {selectedIndicatorTypes, toggleReportIndicatorWidget} = this.props;
+    const {selectedIndicatorTypes, toggleReportIndicatorWidget, enabledIndicatorTypes} = this.props;
     const {isFetching, error, hiddenKeys, selectedTab, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
@@ -156,6 +158,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
           indicators={indicators}
           selectedIndicatorTypes={selectedIndicatorTypes}
           onClick={toggleReportIndicatorWidget}
+          enabledIndicatorTypes={enabledIndicatorTypes}
         />
 
         <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
@@ -189,9 +192,11 @@ const mapStateToProps =
     report: {selectedListItems},
     userSelection: {userSelection},
     ui: {indicator: {selectedIndicators: {report}, selectedQuantities}},
+    selectionTree: {entities},
   }: RootState): StateToProps & SelectedIndicatorWidgetProps =>
     ({
       ...getSelectedPeriod(userSelection),
+      enabledIndicatorTypes: getMedia({selectedListItems, entities}),
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
