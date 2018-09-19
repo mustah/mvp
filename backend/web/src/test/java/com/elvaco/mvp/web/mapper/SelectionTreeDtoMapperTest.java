@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -17,7 +16,7 @@ import com.elvaco.mvp.web.dto.SelectionTreeDto.MeterDto;
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -153,12 +152,12 @@ public class SelectionTreeDtoMapperTest {
       new CityDto(
         "sweden,gothenburg",
         "gothenburg",
-        new HashSet<>(asList(Medium.UNKNOWN_MEDIUM.medium))
+        singleton(Medium.UNKNOWN_MEDIUM.medium)
       ),
       new CityDto(
         "sweden,kungsbacka",
         "kungsbacka",
-        new HashSet<>(asList(Medium.UNKNOWN_MEDIUM.medium))
+        singleton(Medium.UNKNOWN_MEDIUM.medium)
       )
     );
   }

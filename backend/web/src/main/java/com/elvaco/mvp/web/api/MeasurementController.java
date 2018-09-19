@@ -99,6 +99,7 @@ public class MeasurementController {
       mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities).entrySet();
 
     ZonedDateTime stop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
 
     for (Map.Entry<Quantity, List<PhysicalMeter>> entry : entries) {
       for (PhysicalMeter meter : entry.getValue()) {
@@ -107,7 +108,7 @@ public class MeasurementController {
           entry.getKey(),
           after,
           stop,
-          resolutionOrDefault(after, stop, resolution)
+          temporalResolution
         );
 
         LogicalMeter logicalMeter = logicalMetersMap.get(meter.logicalMeterId);
@@ -136,14 +137,15 @@ public class MeasurementController {
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution
   ) {
+    ZonedDateTime stop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
     return cities.stream()
       .flatMap((city) -> {
-        ZonedDateTime stop = beforeOrNow(before);
         String cityId = String.format("%s,%s", city.country, city.name);
         return measurementSeriesOf(
           after,
           stop,
-          resolutionOrDefault(after, stop, resolution),
+          temporalResolution,
           quantities,
           findLogicalMetersByCityId(cityId),
           (quantity, measurementValue) -> new LabeledMeasurementValue(

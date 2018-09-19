@@ -62,7 +62,7 @@ public class SelectionTree {
       return new ArrayList<>(addresses.values());
     }
 
-    public City addMedium(String medium) {
+    private City addMedium(String medium) {
       this.medium.add(medium);
       return this;
     }
