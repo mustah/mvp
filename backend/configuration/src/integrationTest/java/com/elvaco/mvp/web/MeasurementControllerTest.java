@@ -33,7 +33,6 @@ import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-
 import org.assertj.core.data.Offset;
 import org.junit.After;
 import org.junit.Before;
@@ -42,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -433,12 +433,12 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       "/measurements/cities"
-        + "?after=2018-03-06T05:00:00.000Z"
-        + "&before=2018-03-06T06:59:59.999Z"
-        + "&quantities=" + Quantity.POWER.name
-        + "&city=sweden,stockholm"
-        + "&city=england,stockholm"
-        + "&resolution=hour",
+      + "?after=2018-03-06T05:00:00.000Z"
+      + "&before=2018-03-06T06:59:59.999Z"
+      + "&quantities=" + Quantity.POWER.name
+      + "&city=sweden,stockholm"
+      + "&city=england,stockholm"
+      + "&resolution=hour",
       MeasurementSeriesDto.class
     );
 
@@ -1327,7 +1327,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:00:00Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
+      GAS_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
@@ -1368,7 +1368,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:00:00Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
+      GAS_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
@@ -1413,7 +1413,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
+      GAS_METER
     );
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
@@ -1433,7 +1433,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
+      GAS_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
@@ -1459,7 +1459,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
+      GAS_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
@@ -1483,10 +1483,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void pagedMeasurements() {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T06:00:00Z[UTC]");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
-    );
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
+
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
     newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
@@ -1495,13 +1494,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
       .getPage(String.format(
-        "/measurements/paged/"
-        + "?after=" + after
-        + "&before=" + before
-        + "&meters=%s"
-        + "&size=2"
-        + "&sort=created,desc",
-        meter.getId()
+        "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s&size=2&sort=created,desc",
+        after, before, logicalMeter.getId()
       ), MeasurementDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(5);
@@ -1529,9 +1523,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void pagedMeasurementsFiltered() {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T06:00:00Z[UTC]");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
-    );
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
 
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
@@ -1539,9 +1531,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
     newMeasurement(meter, after.plusHours(3), "Volume", 6.0, "m^3");
 
-    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(
-      MeterDefinition.GAS_METER
-    );
+    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(GAS_METER);
 
     PhysicalMeterEntity meter2 = newPhysicalMeterEntity(logicalMeter2.id);
 
@@ -1549,46 +1539,45 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
       .getPage(String.format(
-        "/measurements/paged/"
-        + "?after=" + after
-        + "&before=" + before
-        + "&meters=%s"
-        + "&size=2"
-        + "&sort=created,desc",
-        meter.getId()
+        "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s&size=2&sort=created,desc",
+        after, before, logicalMeter.getId()
       ), MeasurementDto.class);
 
-    assertThat(response.getTotalElements()).isEqualTo(5);
-    assertThat(response.getTotalPages()).isEqualTo(3);
+    assertThat(response.getTotalElements()).isEqualTo(4);
+    assertThat(response.getTotalPages()).isEqualTo(2);
 
     List<MeasurementDto> content = response.getContent();
     assertThat(content.size()).isEqualTo(2);
 
-    assertThat(content.get(1)).isEqualTo(new MeasurementDto(
+    assertThat(content.get(0)).isEqualTo(new MeasurementDto(
       "Volume",
       6.0,
       "m³",
       after.plusHours(3)
     ));
+
+    assertThat(content.get(1)).isEqualTo(new MeasurementDto(
+      "Volume",
+      5.0,
+      "m³",
+      after.plusHours(2)
+    ));
   }
 
   @Test
-  public void pagedMeasurementsUnableToAccessOtherOrganisationsMeasurments() {
-    ZonedDateTime date = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
-    PhysicalMeterEntity otherOrganisationsMeter = newButterMeterBelongingTo(
+  public void pagedMeasurementsUnableToAccessOtherOrganisationsMeasurements() {
+    ZonedDateTime created = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
+    PhysicalMeterEntity physicalMeter = newButterMeterBelongingTo(
       otherOrganisation,
-      date
+      created
     );
 
-    newButterTemperatureMeasurement(otherOrganisationsMeter, date);
+    newButterTemperatureMeasurement(physicalMeter, created);
 
     org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
       .getPage(String.format(
-        "/measurements/paged/"
-        + "?meters=%s"
-        + "&size=2"
-        + "&sort=created,desc",
-        otherOrganisationsMeter.logicalMeterId
+        "/measurements/paged/?logicalMeterId=%s&size=2&sort=created,desc",
+        physicalMeter.logicalMeterId
       ), MeasurementDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
@@ -1681,7 +1670,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity(
-    OrganisationEntity organisationEntity, ZonedDateTime created
+    OrganisationEntity organisationEntity,
+    ZonedDateTime created
   ) {
     UUID logicalMeterId = randomUUID();
     logicalMeterJpaRepository.save(new LogicalMeterEntity(
