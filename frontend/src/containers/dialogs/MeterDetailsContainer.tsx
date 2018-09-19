@@ -17,7 +17,7 @@ import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfo';
-import {MeterDetailsTabs} from './MeterDetailsTabs';
+import {MeterDetailsTabsContainer} from './MeterDetailsTabs';
 
 interface StateToProps {
   isFetching: boolean;
@@ -43,7 +43,7 @@ const MeterDetailsContent = (props: Props) => {
   return (
     <div>
       <MeterDetailsInfoContainer {...newProps}/>
-      <MeterDetailsTabs {...newProps}/>
+      <MeterDetailsTabsContainer {...newProps}/>
     </div>
   );
 };

@@ -21,6 +21,7 @@ public enum RequestParameter {
   MEDIUM("medium"),
   REPORTED("reported"),
   MIN_VALUE("minValue"),
+  LOGICAL_METER_ID("logicalMeterId"),
   ORGANISATION("organisation"),
   PHYSICAL_METER_ID("physicalMeterId"),
   QUANTITY("quantity"),

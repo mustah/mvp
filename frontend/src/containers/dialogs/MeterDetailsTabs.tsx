@@ -1,10 +1,13 @@
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
+import '../../components/table/Table.scss';
 import {TableHead} from '../../components/table/TableHead';
 import {TableInfoText} from '../../components/table/TableInfoText';
 import {Tab} from '../../components/tabs/components/Tab';
@@ -13,9 +16,6 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {Normal} from '../../components/texts/Texts';
-import {timestamp} from '../../helpers/dateHelpers';
-import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -26,12 +26,14 @@ import {MeterDetails} from '../../state/domain-models/meter-details/meterDetails
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Children, Identifiable, OnClickWithId} from '../../types/Types';
-import {Map} from '../../usecases/map/components/Map';
+import {logout} from '../../usecases/auth/authActions';
+import {OnLogout} from '../../usecases/auth/authModels';
+import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {meterMeasurementsForTable} from './dialogHelper';
+import {MeterMeasurementsContainer} from './MeterMeasurements';
 
-interface State {
+export interface MeterDetailsState {
   selectedTab: TabName;
 }
 
@@ -40,10 +42,16 @@ interface MapProps {
   meterMapMarker: Maybe<MapMarker>;
 }
 
-interface Props extends MapProps {
+interface OwnProps extends MapProps {
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
 }
+
+interface DispatchToProps {
+  logout: OnLogout;
+}
+
+type Props = OwnProps & DispatchToProps;
 
 export interface RenderableMeasurement extends Identifiable {
   quantity: Quantity;
@@ -51,16 +59,6 @@ export interface RenderableMeasurement extends Identifiable {
   unit?: string;
   created?: number;
 }
-
-const renderQuantity = ({quantity}: RenderableMeasurement): string => quantity as string;
-
-const renderValue = ({value = null, unit}: RenderableMeasurement): string =>
-  value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
-
-const renderCreated = ({created}: RenderableMeasurement): Children =>
-  created
-    ? timestamp(created * 1000)
-    : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
 const renderStatus = ({name}: MeterStatusChangelog): Children => <Status label={name}/>;
 
@@ -70,16 +68,22 @@ const renderDate = ({start}: MeterStatusChangelog): Children =>
 const renderSerial = ({serial}: Gateway): string => serial;
 
 const MapContent = ({meter, meterMapMarker}: MapProps) => (
-  <Map height={400} viewCenter={meter.location.position}>
+  <MapComponent height={400} viewCenter={meter.location.position}>
     {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
-  </Map>
+  </MapComponent>
 );
+
+export const initialMeterDetailsState: MeterDetailsState = {
+  selectedTab: TabName.values,
+};
 
 const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
-export class MeterDetailsTabs extends React.Component<Props, State> {
-
-  state: State = {selectedTab: TabName.values};
+class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
+  constructor(props) {
+    super(props);
+    this.state = {...initialMeterDetailsState};
+  }
 
   render() {
     const {selectedTab} = this.state;
@@ -93,7 +97,6 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     };
 
     const statusChangelog = statusChangelogDataFormatter(meter);
-    const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
 
     const hasContent: boolean = meterMapMarker
       .filter(({status}: MapMarker) => status !== undefined)
@@ -125,20 +128,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <Table {...measurements} className="Measurements">
-              <TableColumn
-                header={<TableHead className="first">{translate('quantity')}</TableHead>}
-                renderCell={renderQuantity}
-              />
-              <TableColumn
-                header={<TableHead>{translate('value')}</TableHead>}
-                renderCell={renderValue}
-              />
-              <TableColumn
-                header={<TableHead>{translate('readout')}</TableHead>}
-                renderCell={renderCreated}
-              />
-            </Table>
+            <MeterMeasurementsContainer meter={meter} />
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Table {...statusChangelog}>
@@ -172,5 +162,12 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
   }
 
   changeTab = (selectedTab: TabName) => this.setState({selectedTab});
-
 }
+
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  logout,
+}, dispatch);
+
+export const MeterDetailsTabsContainer = connect<{}, DispatchToProps, OwnProps>(
+  mapDispatchToProps,
+)(MeterDetailsTabs);

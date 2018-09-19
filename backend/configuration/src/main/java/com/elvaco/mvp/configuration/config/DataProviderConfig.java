@@ -56,6 +56,7 @@ import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.MeasurementSortingMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -118,7 +119,7 @@ class DataProviderConfig {
 
   @Bean
   Measurements measurements() {
-    return new MeasurementRepository(measurementJpaRepository);
+    return new MeasurementRepository(measurementJpaRepository, new MeasurementSortingMapper());
   }
 
   @Bean

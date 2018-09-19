@@ -1,7 +1,8 @@
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../../helpers/Maybe';
-import {Identifiable} from '../../../../types/Types';
+import {ErrorResponse, Identifiable, uuid} from '../../../../types/Types';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
+import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {TabName} from '../../tabs/tabsModels';
 
 export interface Measurement extends Identifiable {
@@ -9,6 +10,11 @@ export interface Measurement extends Identifiable {
   value: number;
   quantity: Quantity;
   unit: string;
+}
+
+export interface Reading {
+  id: uuid;
+  measurements: Measurement[];
 }
 
 const emptyMeasurementResponse: MeasurementResponses = {
@@ -124,3 +130,31 @@ export const allQuantities = {
 };
 
 export const defaultQuantityForMedium = (medium: Medium): Quantity => allQuantities[medium][0];
+
+export interface MeterMeasurementsState {
+  isFetching: boolean;
+  page: number;
+  error: Maybe<ErrorResponse>;
+  measurementPages: NormalizedPaginated<Measurement>;
+}
+
+export const initialMeterMeasurementsState: MeterMeasurementsState = {
+  isFetching: false,
+  page: 0,
+  error: Maybe.nothing(),
+  measurementPages: {
+    page: 0,
+    result: {
+      content: [],
+      first: true,
+      last: false,
+      number: 0,
+      numberOfElements: 0,
+      size: 20,
+      totalElements: 0,
+      totalPages: 0,
+      sort: null,
+    },
+    entities: {},
+  },
+};
