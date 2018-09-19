@@ -3,7 +3,6 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {statusClassName} from '../../../helpers/thresholds';
 import {Dictionary} from '../../../types/Types';
 import {
   isAlarmIconUrl,
@@ -54,10 +53,10 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
                       || isWarningIconUrl(icon.options.iconUrl))
     .length;
 
-  const children = cluster.getChildCount();
-  const percent = Math.floor((children - faults) / children * 100);
+  const numChildren = cluster.getChildCount();
+  const className = numChildren === faults ? 'error' : faults ? 'warning' : 'ok';
 
-  return `marker-cluster ${statusClassName(percent)}`;
+  return `marker-cluster ${className}`;
 };
 
 interface DispatchToProps {

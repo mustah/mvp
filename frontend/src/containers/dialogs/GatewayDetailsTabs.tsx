@@ -15,6 +15,7 @@ import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {Normal} from '../../components/texts/Texts';
 import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
+import {orUnknown} from '../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
@@ -73,7 +74,7 @@ const renderMeterAddressAndReported = ({address, isReported}: Meter) => {
   );
 };
 
-const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
+const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
 
 const renderMedium = ({medium}: Meter) => medium;
 

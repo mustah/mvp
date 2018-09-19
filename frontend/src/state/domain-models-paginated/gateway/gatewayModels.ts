@@ -1,6 +1,4 @@
-import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Identifiable, IdNamed, uuid} from '../../../types/Types';
-import {Flag} from '../../domain-models/flag/flagModels';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
@@ -17,8 +15,6 @@ export interface GatewayMandatory extends Identifiable {
 }
 
 export interface Gateway extends LocationHolder, GatewayMandatory {
-  flags: Flag[];
-  flagged: boolean;
   statusChanged?: string;
   signalToNoiseRatio?: number;
   statusChangelog: GatewayStatusChangelog[];
@@ -27,12 +23,3 @@ export interface Gateway extends LocationHolder, GatewayMandatory {
 }
 
 export type GatewaysState = NormalizedPaginatedState<Gateway>;
-
-export interface GatewayDataSummary {
-  status: PieData;
-  flagged: PieData;
-  location: PieData;
-  productModel: PieData;
-}
-
-export type GatewayDataSummaryKey = keyof GatewayDataSummary;

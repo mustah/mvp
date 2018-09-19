@@ -1,35 +1,13 @@
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {meterMeasurementsForTable, titleOf} from '../dialogHelper';
+import {meterMeasurementsForTable} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';
 
 describe('dialogHelper', () => {
-
-  describe('titleOf', () => {
-
-    beforeEach(() => {
-      initTranslations({
-        code: 'en',
-        translation: {
-          test: 'no translations will default to key',
-        },
-      });
-    });
-
-    it('prints out default message when no flags are available', () => {
-      expect(titleOf([])).toEqual('no');
-    });
-
-    it('renders flags with one item', () => {
-      expect(titleOf([{title: 'has error'}])).toEqual('has error');
-    });
-
-  });
 
   describe('statusChangelogDataFormatter', () => {
 
@@ -41,8 +19,6 @@ describe('dialogHelper', () => {
         city: {id: 'Perstorp', name: 'Perstorp'},
         position: {longitude: 14.205929, latitude: 59.666749},
       },
-      flags: [],
-      flagged: false,
       productModel: 'CMi2110',
       status: {name: 'OK', id: 0},
       statusChangelog: [{

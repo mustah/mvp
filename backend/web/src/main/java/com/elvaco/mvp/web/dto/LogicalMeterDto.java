@@ -17,8 +17,6 @@ public class LogicalMeterDto {
   @Nullable
   public String address;
   public LocationDto location;
-  public List<FlagDto> flags;
-  public boolean flagged;
   public String medium;
   public String manufacturer;
   public String statusChanged;

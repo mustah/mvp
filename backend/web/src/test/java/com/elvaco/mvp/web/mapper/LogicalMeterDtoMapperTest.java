@@ -78,7 +78,6 @@ public class LogicalMeterDtoMapperTest {
       new GeoPositionDto(57.5052592, 56.123, 1.0)
     );
     expected.manufacturer = "ELV";
-    expected.flags = emptyList();
     expected.facility = "an-external-id";
     expected.address = "123123";
     expected.statusChangelog = singletonList(

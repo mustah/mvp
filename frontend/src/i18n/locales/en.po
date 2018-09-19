@@ -248,12 +248,6 @@ msgstr "info"
 msgid "warning"
 msgstr "warning"
 
-msgid "flagged"
-msgstr "flagged"
-
-msgid "unFlagged"
-msgstr "no flag"
-
 msgid "token missing or invalid"
 msgstr ""
 "you've been logged out - session has expired, please log in again to "
@@ -501,9 +495,6 @@ msgstr "{{count}} gateways of your selection, are not displayed in the map"
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} meters will soon be synchronized"
-
-#~ msgid "flagged for action"
-#~ msgstr "flagged for action"
 
 #~ msgid "cities"
 #~ msgstr "cities"

@@ -248,12 +248,6 @@ msgstr "info"
 msgid "warning"
 msgstr "varning"
 
-msgid "flagged"
-msgstr "flaggad"
-
-msgid "unFlagged"
-msgstr "ej flaggad"
-
 msgid "token missing or invalid"
 msgstr ""
 "du är utloggad, för att du har varit inaktiv för länge. Logga in igen för "
@@ -507,9 +501,6 @@ msgstr ""
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} mätare kommer snart att uppdateras"
-
-#~ msgid "flagged for action"
-#~ msgstr "flaggad för åtgärd"
 
 #~ msgid "cities"
 #~ msgstr "städer"

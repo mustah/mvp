@@ -20,7 +20,6 @@ import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -88,7 +87,6 @@ public class LogicalMeterDtoMapper {
       .orElse(false);
     meterDto.statusChanged = Dates.formatUtc(statusLog.map(status -> status.start)
       .orElse(logicalMeter.created));
-    meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.facility = logicalMeter.externalId;
 

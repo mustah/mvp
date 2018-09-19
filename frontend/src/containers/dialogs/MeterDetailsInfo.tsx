@@ -83,7 +83,7 @@ class MeterDetailsInfo extends React.Component<Props> {
                 <MainTitle>{translate('meter')}</MainTitle>
               </Row>
             </Column>
-            <Info label={translate('product model')} value={meter.manufacturer}/>
+            <Info label={translate('product model')} value={orUnknown(meter.manufacturer)}/>
             <Info label={translate('medium')} value={meter.medium}/>
             <Info label={translate('city')} value={orUnknown(city.name)}/>
             <Info label={translate('address')} value={orUnknown(address.name)}/>
