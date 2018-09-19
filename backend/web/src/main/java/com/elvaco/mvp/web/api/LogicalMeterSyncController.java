@@ -11,12 +11,15 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.web.dto.SyncRequestResponseDto;
+import com.elvaco.mvp.web.dto.SyncRequestStatusDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
@@ -49,6 +52,16 @@ public class LogicalMeterSyncController {
     return logicalMeterUseCases.findAllBy(parameters)
       .stream()
       .map(this::sync)
+      .collect(Collectors.toList());
+  }
+
+  @GetMapping
+  public List<SyncRequestStatusDto> syncStatus(
+    @RequestParam List<String> jobIds
+  ) {
+
+    return jobIds.stream()
+      .map(jobId -> SyncRequestStatusDto.from(jobId, meteringRequestPublisher.status(jobId)))
       .collect(Collectors.toList());
   }
 

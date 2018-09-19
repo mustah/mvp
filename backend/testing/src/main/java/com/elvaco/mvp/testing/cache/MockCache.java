@@ -25,6 +25,11 @@ public class MockCache<K, V> implements Cache<K, V> {
     return map.getOrDefault(key, null);
   }
 
+  @Override
+  public void clear() {
+    map.clear();
+  }
+
   public void remove(K key) {
     map.remove(key);
   }

@@ -24,4 +24,9 @@ public class CacheAdapter<K, V> implements Cache<K, V> {
   public V get(K key) {
     return delegate.get(key);
   }
+
+  @Override
+  public void clear() {
+    delegate.clear();
+  }
 }

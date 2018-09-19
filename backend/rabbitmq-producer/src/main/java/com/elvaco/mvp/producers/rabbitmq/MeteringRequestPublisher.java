@@ -1,6 +1,7 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -27,12 +28,7 @@ public class MeteringRequestPublisher {
   private final Cache<String, MeteringReferenceInfoMessageDto> jobIdCache;
 
   public String request(LogicalMeter logicalMeter) {
-    if (!authenticatedUser.isSuperAdmin()) {
-      throw new Unauthorized(String.format(
-        "User '%s' is not allowed to publish synchronization requests",
-        authenticatedUser.getUsername()
-      ));
-    }
+    ensureSuperAdmin();
 
     Organisation meterOrganisation = organisations.findById(logicalMeter.organisationId)
       .orElseThrow(
@@ -60,5 +56,20 @@ public class MeteringRequestPublisher {
     }
     jobIdCache.put(jobId, NULL_METERING_REFERENCE_INFO_MESSAGE_DTO);
     return getReferenceInfoDto.jobId;
+  }
+
+  @Nullable
+  public MeteringReferenceInfoMessageDto status(String jobId) {
+    ensureSuperAdmin();
+    return jobIdCache.get(jobId);
+  }
+
+  private void ensureSuperAdmin() {
+    if (!authenticatedUser.isSuperAdmin()) {
+      throw new Unauthorized(String.format(
+        "User '%s' is not allowed to publish synchronization requests",
+        authenticatedUser.getUsername()
+      ));
+    }
   }
 }
