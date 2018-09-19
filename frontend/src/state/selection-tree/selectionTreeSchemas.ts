@@ -1,20 +1,31 @@
 import {Schema, schema} from 'normalizr';
 
-const createId: schema.SchemaFunction = (
+const idOfAddress: schema.SchemaFunction = (
   {name: entityName},
   {id: parentId},
   key,
-): string => (`${parentId.toLowerCase()},${entityName.toLowerCase()}`);
+): string => `${parentId.toLowerCase()},${entityName.toLowerCase()}`;
 
-const processStrategyAddress: schema.StrategyFunction = (entity, parent, key) => {
-  const id = createId(entity, parent, key);
-  const {name} = entity;
-  return {...entity, id, name};
-};
+const processStrategyAddress: schema.StrategyFunction = (entity, parent, key) => ({
+  ...entity,
+  id: idOfAddress(entity, parent, key),
+  name: entity.name,
+  city: parent.id,
+});
 
-const meter = new schema.Entity('meters');
+const processStrategyMeter: schema.StrategyFunction = (entity, parent, key) => ({
+  ...entity,
+  id: entity.id,
+  name: entity.name,
+  city: parent.city,
+  address: parent.name,
+});
+
+const meter = new schema.Entity('meters', {}, {
+  processStrategy: processStrategyMeter,
+});
 const address = new schema.Entity('addresses', {meters: [meter]}, {
-  idAttribute: createId,
+  idAttribute: idOfAddress,
   processStrategy: processStrategyAddress,
 });
 const city = new schema.Entity('cities', {addresses: [address]});

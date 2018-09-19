@@ -10,8 +10,9 @@ import {TableHead} from '../../../components/table/TableHead';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {graphContentsToLegendTable} from '../../../state/ui/graph/measurement/helpers/graphContentsToLegendTable';
-import {OnClick, OnClickWithId} from '../../../types/Types';
+import {SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
+import {selectedListItemsToLegendTable} from '../../../state/ui/graph/measurement/helpers/graphContentsToLegendTable';
+import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {toggleSingleEntry} from '../reportActions';
 import {GraphContents, LegendItem} from '../reportModels';
 import './LegendContainer.scss';
@@ -19,6 +20,8 @@ import './LegendContainer.scss';
 interface OwnProps {
   graphContents: GraphContents;
   onToggleLine: OnClick;
+  selectedListItems: uuid[];
+  selectionTreeEntities: SelectionTreeEntities;
 }
 
 interface DispatchToProps {
@@ -33,16 +36,36 @@ const style: React.CSSProperties = {
   height: '24px',
 };
 
-const renderName = ({label}: LegendItem) => orUnknown(label);
-const renderAddress = ({address}: LegendItem) => orUnknown(address);
-const renderCity = ({city}: LegendItem) => orUnknown(city);
-const renderMedium = ({medium}: LegendItem) => <IconIndicator medium={medium} style={style}/>;
+const renderFacility = ({facility}: LegendItem) => facility ? orUnknown(facility) : '';
+const renderAddress = ({address}: LegendItem) => address ? orUnknown(address) : '';
+const renderCity = ({city}: LegendItem) => city ? orUnknown(city) : '';
+const renderMedium = ({medium}: LegendItem) =>
+  Array.isArray(medium)
+    ? medium.map((singleMedium) => (
+      <IconIndicator
+        key={singleMedium}
+        medium={singleMedium}
+        style={style}
+      />
+    ))
+    : <IconIndicator medium={medium} style={style}/>;
 
 class LegendComponent extends React.Component<Props> {
   render() {
-    const {onToggleLine, graphContents, toggleSingleEntry} = this.props;
+    const {
+      onToggleLine,
+      // graphContents,
+      toggleSingleEntry,
+      selectedListItems,
+      selectionTreeEntities,
+    } = this.props;
 
-    const {result, entities}: Normalized<LegendItem> = graphContentsToLegendTable(graphContents);
+    // const {result, entities}: Normalized<LegendItem> = graphContentsToLegendTable(graphContents);
+    // TODO do we want to construct the legend in a selector instead?
+    const {result, entities}: Normalized<LegendItem> = selectedListItemsToLegendTable({
+      selectedListItems,
+      entities: selectionTreeEntities,
+    });
 
     const renderVisibilityButton = ({id}: LegendItem) =>
       <ButtonVisibility onClick={onToggleLine} id={id}/>;
@@ -55,7 +78,7 @@ class LegendComponent extends React.Component<Props> {
           <TableColumn
             header={<TableHead className="first">{translate('facility')}</TableHead>}
             cellClassName={'first first-uppercase'}
-            renderCell={renderName}
+            renderCell={renderFacility}
           />
           <TableColumn
             header={<TableHead>{translate('city')}</TableHead>}

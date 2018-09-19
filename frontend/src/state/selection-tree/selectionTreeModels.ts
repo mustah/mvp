@@ -1,4 +1,5 @@
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
+import {ReportState} from '../../usecases/report/reportModels';
 import {ObjectsById} from '../domain-models/domainModels';
 
 export interface SelectionTreeState extends NormalizedSelectionTree {
@@ -8,9 +9,9 @@ export interface SelectionTreeState extends NormalizedSelectionTree {
 }
 
 export interface SelectionTreeEntities {
-  cities: ObjectsById<CityWithAddresses>;
-  addresses: ObjectsById<AddressWithMeters>;
-  meters: ObjectsById<MeterWithMedium>;
+  cities: ObjectsById<SelectionTreeCity>;
+  addresses: ObjectsById<SelectionTreeAddress>;
+  meters: ObjectsById<SelectionTreeMeter>;
 }
 
 export interface SelectionTreeResult {
@@ -22,16 +23,21 @@ export interface NormalizedSelectionTree {
   result: SelectionTreeResult;
 }
 
-interface MeterWithMedium extends IdNamed {
+export interface SelectionTreeMeter extends IdNamed {
+  address: string;
+  city: string;
   medium: string;
 }
 
-interface CityWithAddresses extends IdNamed {
+export interface SelectionTreeCity extends IdNamed {
   addresses: uuid[];
+  city: string;
   medium: string[];
 }
 
-export interface AddressWithMeters extends IdNamed {
+export interface SelectionTreeAddress extends IdNamed {
+  address: string;
+  city: string;
   meters: uuid[];
 }
 
@@ -47,10 +53,12 @@ export interface SelectionTree {
   entities: {
     cities: ObjectsById<CityWithClusters>;
     clusters: ObjectsById<ClusterWithAddresses>;
-    addresses: ObjectsById<AddressWithMeters>;
-    meters: ObjectsById<MeterWithMedium>;
+    addresses: ObjectsById<SelectionTreeAddress>;
+    meters: ObjectsById<SelectionTreeMeter>;
   };
   result: {
     cities: uuid[];
   };
 }
+
+export type SelectedTreeEntities = Pick<ReportState, 'selectedListItems'> & Pick<SelectionTreeState, 'entities'>;
