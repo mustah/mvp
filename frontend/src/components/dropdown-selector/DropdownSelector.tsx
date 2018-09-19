@@ -97,7 +97,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
 
     const numSelectedItems: number = selectedItems.length;
     const numItems: number = items.length;
-    const offset: number = isSearching ? 0 : 1;
+    const offset: number = isSearching || !fetchItemsByQuery ? 0 : 1;
 
     const rowCount = (numItems - numSelectedItems + offset) < totalElements
       ? numItems + offset
@@ -220,7 +220,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
         onClick={onClick}
         key={`${index}-${id}`}
         style={style}
-        className={classNames('first-uppercase', {Bold: selected})}
+        className={classNames('first-uppercase')}
         checked={selected}
       />
     );
