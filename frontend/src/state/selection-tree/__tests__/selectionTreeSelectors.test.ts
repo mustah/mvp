@@ -28,6 +28,13 @@ describe('selectionTreeSelectors', () => {
             'sweden,gothenburg,drottninggatan 1',
           ],
         },
+        'denmark,copenhagen': {
+          id: 'denmark,copenhagen',
+          city: 'denmark,copenhagen',
+          medium: [],
+          name: 'copenhagen',
+          addresses: ['denmark,copenhagen,kabelgatan 2'],
+        },
       },
       addresses: {
         'sweden,kungsbacka,kabelgatan 2': {
@@ -101,6 +108,13 @@ describe('selectionTreeSelectors', () => {
           id: 5,
           name: 'extId5',
           medium: 'Gas',
+        },
+        6: {
+          id: 6,
+          address: 'kabelgatan 2',
+          city: 'denmark,copenhagen',
+          medium: '',
+          name: 'ext6',
         },
       },
     },
@@ -225,6 +239,18 @@ describe('selectionTreeSelectors', () => {
     it('gets media from meters and cities', () => {
       const selectedListItems: uuid[] = ['sweden,kungsbacka', '4'];
       const expected: Set<Medium> = new Set([Medium.gas, Medium.water]);
+
+      const state: SelectedTreeEntities = {
+        selectedListItems,
+        entities: {...selectionTreeState.entities},
+      };
+
+      expect(getMedia(state)).toEqual(expected);
+    });
+
+    it('gracefully ignores missing medium', () => {
+      const selectedListItems: uuid[] = ['denmark,copenhagen', '4'];
+      const expected: Set<Medium> = new Set([Medium.gas]);
 
       const state: SelectedTreeEntities = {
         selectedListItems,
