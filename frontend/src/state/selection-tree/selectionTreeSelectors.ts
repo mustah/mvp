@@ -141,10 +141,12 @@ export const getMedia = createSelector<SelectedTreeEntities, uuid[], SelectionTr
   (ids: uuid[], {cities, meters}: SelectionTreeEntities) => {
     const meterMedia: Medium[] = ids
       .filter(isSelectedMeter)
+      .filter((id: uuid) => meters[id] !== undefined)
       .map((id: uuid) => getMediumType(meters[id].medium));
 
     const cityMedia: Medium[] = ids
       .filter(isSelectedCity)
+      .filter((id: uuid) => cities[id] !== undefined)
       .map((id: uuid): Medium[] => cities[id].medium.map(getMediumType))
       .reduce((acc: Medium[], current: Medium[]): Medium[] => acc.concat(current), []);
 
