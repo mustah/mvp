@@ -1,10 +1,7 @@
 import * as React from 'react';
+import {Fetching} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {LoadingLarge, LoadingSmall} from '../loading/Loading';
-
-interface Fetching {
-  isFetching: boolean;
-}
 
 const LargeLoader = () => <RowCenter><LoadingLarge/></RowCenter>;
 const SmallLoader = () => <RowCenter><LoadingSmall/></RowCenter>;

@@ -31,11 +31,13 @@ public class MeasurementUseCases {
     );
   }
 
-  public Page<Measurement> findAll(
+  public Page<Measurement> findAllBy(
+    UUID physicalMeterId,
     RequestParameters parameters,
     Pageable pageable
   ) {
-    return measurements.findAll(
+    return measurements.findAllBy(
+      physicalMeterId,
       parameters.ensureOrganisation(currentUser),
       pageable
     );

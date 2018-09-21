@@ -6,11 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.AbstractJPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,8 +38,7 @@ public class MeasurementJpaRepositoryImpl
       .and(MEASUREMENT.id.created.eq(created));
 
     return Optional.ofNullable(
-      createQuery(predicate)
-        .select(path)
+      createQuery(predicate).select(path)
         .join(MEASUREMENT.id.physicalMeter, PHYSICAL_METER)
         .fetchJoin()
         .fetchOne()
@@ -48,29 +46,18 @@ public class MeasurementJpaRepositoryImpl
   }
 
   @Override
-  public Page<MeasurementEntity> findAll(Predicate predicate, Pageable pageable) {
-    JPQLQuery<MeasurementEntity> countQuery = getFindAllQuery(
-      createCountQuery(querydsl.createQuery(LOGICAL_METER).where(predicate)));
+  public Page<MeasurementEntity> findAllBy(
+    UUID physicalMeterId,
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    Predicate predicate = MEASUREMENT.id.physicalMeter.id.eq(physicalMeterId);
 
-    JPQLQuery<MeasurementEntity> query =
-      getFindAllQuery(querydsl.createQuery(LOGICAL_METER).where(predicate));
-
+    JPQLQuery<?> countQuery = createCountQuery(predicate).select(path);
+    JPQLQuery<MeasurementEntity> query = createQuery(predicate).select(path);
     List<MeasurementEntity> all = querydsl.applyPagination(pageable, query).fetch();
 
     return getPage(all, pageable, countQuery::fetchCount);
-  }
-
-  private JPQLQuery<MeasurementEntity> getFindAllQuery(AbstractJPAQuery<?, ?> query) {
-    return query.select(Projections.constructor(
-      MeasurementEntity.class,
-      MEASUREMENT.id.created,
-      MEASUREMENT.id.quantity,
-      MEASUREMENT.value,
-      MEASUREMENT.id.physicalMeter
-      )
-    )
-      .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .innerJoin(PHYSICAL_METER.measurements, MEASUREMENT);
   }
 }
 

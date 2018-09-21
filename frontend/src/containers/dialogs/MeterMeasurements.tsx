@@ -1,36 +1,25 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
-import {Row} from '../../components/layouts/row/Row';
+import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
+import {withLargeLoader} from '../../components/hoc/withLoaders';
 import '../../components/table/Table.scss';
 import {Normal} from '../../components/texts/Texts';
 import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {
-  fetchMeasurementsPaged,
-  groupMeasurementsByDate,
-} from '../../state/ui/graph/measurement/measurementActions';
+import {fetchMeasurementsPaged, groupMeasurementsByDate} from '../../state/ui/graph/measurement/measurementActions';
 import {
   initialMeterMeasurementsState,
   Measurement,
   MeterMeasurementsState,
   Reading,
 } from '../../state/ui/graph/measurement/measurementModels';
-import {Children} from '../../types/Types';
+import {Children, Fetching} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
-
-interface OwnProps {
-  meter: MeterDetails;
-}
-
-interface DispatchToProps {
-  logout: OnLogout;
-}
-
-type Props = OwnProps & DispatchToProps;
 
 const renderQuantityHeader = ({quantity}: Measurement): string => translate(quantity + ' short');
 
@@ -86,27 +75,41 @@ const renderHeaders = (measurements: Measurement[]): Array<React.ReactElement<HT
   return cols;
 };
 
-const renderReadings = (readings: Map<number, Reading>): JSX.Element[] => {
-  const result: JSX.Element[] = [];
+interface ReadingsProps {
+  readings: Map<number, Reading>;
+}
 
-  if (readings.size) {
-    result.push(
-      <table key="1" className="Table" cellPadding="0" cellSpacing="0">
-        <thead>
-          <tr>
-            {renderHeaders(readings.values().next().value.measurements)}
-          </tr>
-        </thead>
-        <tbody>
-          {renderReadingRows(readings)}
-        </tbody>
-      </table>,
-    );
-  }
-  return result;
-};
+interface OwnProps {
+  meter: MeterDetails;
+}
+
+interface DispatchToProps {
+  logout: OnLogout;
+}
+
+const MeasurementsTable = ({readings}: ReadingsProps) => (
+  <table key="1" className="Table" cellPadding="0" cellSpacing="0">
+    <thead>
+    <tr>
+      {renderHeaders(readings.values().next().value.measurements)}
+    </tr>
+    </thead>
+    <tbody>
+    {renderReadingRows(readings)}
+    </tbody>
+  </table>
+);
+
+type WrapperProps = Fetching & WithEmptyContentProps & ReadingsProps;
+
+const enhance = compose<ReadingsProps, WrapperProps>(withLargeLoader, withEmptyContent);
+
+const MeasurementsTableComponent = enhance(MeasurementsTable);
+
+type Props = OwnProps & DispatchToProps;
 
 class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
+
   constructor(props) {
     super(props);
     this.state = {...initialMeterMeasurementsState};
@@ -117,35 +120,28 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
 
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(
-      meter,
-      this.updateState,
-      logout,
-    );
+    await fetchMeasurementsPaged(meter, this.updateState, logout);
   }
 
-  async componentWillReceiveProps({
-    meter, logout,
-  }: Props) {
+  async componentWillReceiveProps({meter, logout}: Props) {
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(
-      meter,
-      this.updateState,
-      logout,
-    );
+    await fetchMeasurementsPaged(meter, this.updateState, logout);
   }
 
   render() {
-    const {measurementPages} = this.state;
+    const {isFetching, measurementPages} = this.state;
 
     const readings: Map<number, Reading> = groupMeasurementsByDate(measurementPages);
 
-    return (
-      <Row>
-        {renderReadings(readings)}
-      </Row>
-    );
+    const wrapperProps: WrapperProps = {
+      isFetching,
+      hasContent: readings.size > 0,
+      noContentText: firstUpperTranslated('measurement', {count: 2}),
+      readings,
+    };
+
+    return <MeasurementsTableComponent {...wrapperProps}/>;
   }
 
   updateState = (state: MeterMeasurementsState) => this.setState({...state});

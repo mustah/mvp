@@ -63,6 +63,10 @@ export interface HasContent {
   hasContent: boolean;
 }
 
+export interface Fetching {
+  isFetching: boolean;
+}
+
 export interface Clickable {
   onClick: OnClick;
 }

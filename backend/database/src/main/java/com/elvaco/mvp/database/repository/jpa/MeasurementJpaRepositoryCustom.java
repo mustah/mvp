@@ -4,8 +4,8 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
@@ -19,6 +19,9 @@ public interface MeasurementJpaRepositoryCustom
     ZonedDateTime created
   );
 
-  @Override
-  Page<MeasurementEntity> findAll(Predicate predicate, Pageable pageable);
+  Page<MeasurementEntity> findAllBy(
+    UUID physicalMeterId,
+    RequestParameters parameters,
+    Pageable pageable
+  );
 }

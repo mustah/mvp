@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,7 +54,6 @@ class PhysicalMeterQueryDslJpaRepository
   }
 
   private PhysicalMeterEntity fetchOne(Predicate predicate) {
-    JPQLQuery<PhysicalMeterEntity> query = createQuery(predicate).select(path);
-    return query.fetchOne();
+    return createQuery(predicate).select(path).fetchOne();
   }
 }

@@ -17,7 +17,6 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -26,7 +25,6 @@ import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementSortingMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
-import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -171,18 +169,22 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Page<Measurement> findAll(
-    RequestParameters parameters, Pageable pageable
+  public Page<Measurement> findAllBy(
+    UUID physicalMeterId,
+    RequestParameters parameters,
+    Pageable pageable
   ) {
-    org.springframework.data.domain.Page<MeasurementEntity> all = measurementJpaRepository.findAll(
-      new MeasurementQueryFilters().toExpression(parameters),
-      new PageRequest(
-        pageable.getPageNumber(),
-        pageable.getPageSize(),
-        sortingMapper.getAsSpringSort(pageable.getSort())
-      )
+    return new PageAdapter<>(
+      measurementJpaRepository.findAllBy(
+        physicalMeterId,
+        parameters,
+        new PageRequest(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          sortingMapper.getAsSpringSort(pageable.getSort())
+        )
+      ).map(MeasurementEntityMapper::toDomainModel)
     );
-    return new PageAdapter<>(all.map(MeasurementEntityMapper::toDomainModel));
   }
 
   @Override

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../../app/routes';
-import {withSmallLoader} from '../../../../components/hoc/withLargeLoader';
+import {withSmallLoader} from '../../../../components/hoc/withLoaders';
 import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget';
 import {Medium, WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
 import {Column, ColumnCenter} from '../../../../components/layouts/column/Column';

@@ -80,6 +80,7 @@ export const initialMeterDetailsState: MeterDetailsState = {
 const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
 class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
+
   constructor(props) {
     super(props);
     this.state = {...initialMeterDetailsState};

@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map.Entry;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
@@ -20,10 +19,8 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.AbstractJPAQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
 import org.springframework.data.jpa.repository.support.Querydsl;
@@ -83,19 +80,5 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
     JPQLQuery<String> countQuery = createCountQuery(predicate).select(propertyPath).distinct();
     List<String> all = querydsl.applyPagination(pageable, query).fetch();
     return getPage(all, pageable, countQuery::fetchCount);
-  }
-
-  protected AbstractJPAQuery<?, ?> createCountQuery(AbstractJPAQuery<?, ?> query) {
-    CrudMethodMetadata metadata = getRepositoryMethodMetadata();
-
-    if (metadata == null) {
-      return query;
-    }
-
-    for (Entry<String, Object> hint : metadata.getQueryHints().entrySet()) {
-      query.setHint(hint.getKey(), hint.getValue());
-    }
-
-    return query;
   }
 }
