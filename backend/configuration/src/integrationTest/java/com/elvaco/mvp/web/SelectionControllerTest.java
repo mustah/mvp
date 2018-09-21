@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -778,8 +777,6 @@ public class SelectionControllerTest extends IntegrationTest {
     return logicalMeters.save(LogicalMeter.builder()
       .externalId(externalId)
       .organisationId(organisationId)
-      .meterDefinition(MeterDefinition.UNKNOWN_METER)
-      .created(ZonedDateTime.now())
       .location(new LocationBuilder()
         .country(country)
         .city(city)

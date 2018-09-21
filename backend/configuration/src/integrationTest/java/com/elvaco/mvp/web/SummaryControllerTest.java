@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -235,13 +234,9 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   private LogicalMeter newLogicalMeterWithLocation(@Nullable Location location) {
-    UUID meterId = randomUUID();
     return LogicalMeter.builder()
-      .id(meterId)
-      .externalId("externalId-" + meterId)
+      .externalId("externalId-" + randomUUID())
       .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.UNKNOWN_METER)
-      .created(ZonedDateTime.now())
       .location(location)
       .build();
   }
