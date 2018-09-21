@@ -197,14 +197,14 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
     };
 
     return (
-      <div>
+      <React.Fragment>
         <QuantityDropdown
           selectedIndicators={selectedIndicators}
           selectedQuantities={selectedQuantities}
           selectQuantities={selectQuantities}
         />
         <GraphContentWrapper {...wrapperProps}/>
-      </div>
+      </React.Fragment>
     );
   }
 

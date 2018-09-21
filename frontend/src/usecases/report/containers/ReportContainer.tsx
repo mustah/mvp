@@ -81,7 +81,6 @@ const Legend = componentOrNull<LegendOuterProps>(hasSelectedItems)(LegendContain
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
-const style: React.CSSProperties = {width: '100%', height: '100%'};
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16};
 
 class ReportComponent extends React.Component<Props, ReportContainerState> {
@@ -182,26 +181,24 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
         <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
           <Paper style={contentStyle}>
-            <div style={style}>
-              <Tabs>
-                <TabTopBar>
-                  <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-                    <Tab tab={TabName.graph} title={translate('graph')}/>
-                    <Tab tab={TabName.list} title={translate('list')}/>
-                  </TabHeaders>
-                </TabTopBar>
-                <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-                  <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenKeys}/>
-                </TabContent>
-                <TabContent tab={TabName.list} selectedTab={selectedTab}>
-                  <Measurements
-                    hasContent={measurementResponse.measurements.length > 0}
-                    measurements={measurementResponse.measurements}
-                    noContentText={firstUpperTranslated('select meters')}
-                  />
-                </TabContent>
-              </Tabs>
-            </div>
+            <Tabs>
+              <TabTopBar>
+                <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+                  <Tab tab={TabName.graph} title={translate('graph')}/>
+                  <Tab tab={TabName.list} title={translate('list')}/>
+                </TabHeaders>
+              </TabTopBar>
+              <TabContent tab={TabName.graph} selectedTab={selectedTab}>
+                <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenKeys}/>
+              </TabContent>
+              <TabContent tab={TabName.list} selectedTab={selectedTab}>
+                <Measurements
+                  hasContent={measurementResponse.measurements.length > 0}
+                  measurements={measurementResponse.measurements}
+                  noContentText={firstUpperTranslated('select meters')}
+                />
+              </TabContent>
+            </Tabs>
             <Legend
               selectedListItems={selectedListItems}
               graphContents={graphContents}
