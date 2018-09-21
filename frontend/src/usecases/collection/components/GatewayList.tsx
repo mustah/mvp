@@ -1,6 +1,4 @@
 import * as React from 'react';
-import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
-import {RowRight} from '../../../components/layouts/row/Row';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
@@ -25,11 +23,6 @@ export const GatewayList = ({
   const renderCollectionStatus = ({status: {name}}: Gateway) => <Status label={name}/>;
   const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
   const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
-  const renderActions = ({id, productModel}: Gateway) => (
-    <RowRight className="ActionsDropdown-list">
-      <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>
-    </RowRight>
-  );
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
   const onChangePage = (page: number) => changePage({entityType, componentId, page});
@@ -59,10 +52,6 @@ export const GatewayList = ({
         <TableColumn
           header={<TableHead>{translate('collection')}</TableHead>}
           renderCell={renderCollectionStatus}
-        />
-        <TableColumn
-          header={<TableHead/>}
-          renderCell={renderActions}
         />
       </Table>
       <PaginationControl pagination={pagination} changePage={onChangePage}/>
