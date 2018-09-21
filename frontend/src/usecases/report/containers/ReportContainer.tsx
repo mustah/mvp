@@ -5,6 +5,8 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {DateRange, Period} from '../../../components/dates/dateModels';
+import {componentOrNull} from '../../../components/hoc/hocs';
+import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Medium, OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {
   ReportIndicatorWidgets,
@@ -24,22 +26,27 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
-import {initialState, MeasurementResponses, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  initialState,
+  MeasurementResponses,
+  Measurements,
+  Quantity,
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
-import {ErrorResponse, uuid} from '../../../types/Types';
+import {ErrorResponse, Omit, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
+import {MeasurementList} from '../components/MeasurementList';
 import {GraphContents, hardcodedIndicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
-import {LegendContainer} from './LegendContainer';
-import {MeasurementListContainer} from './MeasurementListContainer';
+import {LegendContainer, LegendProps} from './LegendContainer';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
@@ -66,12 +73,19 @@ interface DispatchToProps {
 
 type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
+type LegendOuterProps = Omit<LegendProps, 'toggleSingleEntry'>;
+
+const hasSelectedItems = ({selectedListItems}: LegendOuterProps): boolean => selectedListItems.length > 0;
+
+const Legend = componentOrNull<LegendOuterProps>(hasSelectedItems)(LegendContainer);
+
+const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
+
 const style: React.CSSProperties = {width: '100%', height: '100%'};
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16};
 
-export type OnUpdateGraph = (state: ReportContainerState) => void;
-
 class ReportComponent extends React.Component<Props, ReportContainerState> {
+
   constructor(props) {
     super(props);
     this.state = {...initialState};
@@ -149,17 +163,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
     const indicators = hardcodedIndicators();
 
-    const renderLegend = () => selectedListItems.length > 0
-      ? (
-        <LegendContainer
-          selectedListItems={selectedListItems}
-          graphContents={graphContents}
-          onToggleLine={onToggleLine}
-          selectionTreeEntities={selectionTreeEntities}
-        />
-      )
-      : null;
-
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -191,11 +194,20 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                   <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenKeys}/>
                 </TabContent>
                 <TabContent tab={TabName.list} selectedTab={selectedTab}>
-                  <MeasurementListContainer measurement={measurementResponse.measurement}/>
+                  <Measurements
+                    hasContent={measurementResponse.measurements.length > 0}
+                    measurements={measurementResponse.measurements}
+                    noContentText={firstUpperTranslated('select meters')}
+                  />
                 </TabContent>
               </Tabs>
             </div>
-            {renderLegend()}
+            <Legend
+              selectedListItems={selectedListItems}
+              graphContents={graphContents}
+              onToggleLine={onToggleLine}
+              selectionTreeEntities={selectionTreeEntities}
+            />
           </Paper>
         </Loader>
       </MvpPageContainer>

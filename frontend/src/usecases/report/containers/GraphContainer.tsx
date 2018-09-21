@@ -17,7 +17,8 @@ import {bindActionCreators} from 'redux';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {Row} from '../../../components/layouts/row/Row';
+import {Column} from '../../../components/layouts/column/Column';
+import {TableInfoText} from '../../../components/table/TableInfoText';
 import {toggle} from '../../../helpers/collections';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
@@ -117,8 +118,8 @@ const renderGraphContents = (
 
 const GraphContent =
   ({data, setTooltipPayload, legendClick, content, lines, legend}: GraphContentProps) => (
-    <Row className="GraphContainer">
-      <Row className="Graph">
+    <Column className="GraphContainer">
+      <Column>
         <ResponsiveContainer aspect={2.5}>
           <LineChart
             width={10}
@@ -140,8 +141,9 @@ const GraphContent =
             {lines}
           </LineChart>
         </ResponsiveContainer>
-      </Row>
-    </Row>
+      </Column>
+      <TableInfoText/>
+    </Column>
   );
 
 const GraphContentWrapper = withEmptyContent<GraphContentWrapperProps>(GraphContent);
@@ -201,8 +203,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
           selectedQuantities={selectedQuantities}
           selectQuantities={selectQuantities}
         />
-
-          <GraphContentWrapper {...wrapperProps}/>
+        <GraphContentWrapper {...wrapperProps}/>
       </div>
     );
   }

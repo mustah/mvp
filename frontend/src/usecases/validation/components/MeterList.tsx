@@ -7,7 +7,6 @@ import {PaginationControl} from '../../../components/pagination-control/Paginati
 import {MeterAlarm} from '../../../components/status/MeterAlarm';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
-import {TableInfoText} from '../../../components/table/TableInfoText';
 import {ErrorLabel} from '../../../components/texts/ErrorLabel';
 import {Normal} from '../../../components/texts/Texts';
 import {MeterListProps} from '../../../containers/meters/MeterListContainer';
@@ -105,7 +104,6 @@ export const MeterList = (
           renderCell={renderActions}
         />
       </Table>
-      <TableInfoText/>
       <PaginationControl pagination={pagination} changePage={onChangePage}/>
     </div>
   );

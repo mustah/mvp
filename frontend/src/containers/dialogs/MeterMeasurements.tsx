@@ -4,7 +4,9 @@ import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
+import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
+import {TableInfoText} from '../../components/table/TableInfoText';
 import {Normal} from '../../components/texts/Texts';
 import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
@@ -88,16 +90,19 @@ interface DispatchToProps {
 }
 
 const MeasurementsTable = ({readings}: ReadingsProps) => (
-  <table key="1" className="Table" cellPadding="0" cellSpacing="0">
-    <thead>
-    <tr>
-      {renderHeaders(readings.values().next().value.measurements)}
-    </tr>
-    </thead>
-    <tbody>
-    {renderReadingRows(readings)}
-    </tbody>
-  </table>
+  <Column>
+    <table key="1" className="Table" cellPadding="0" cellSpacing="0">
+      <thead>
+      <tr>
+        {renderHeaders(readings.values().next().value.measurements)}
+      </tr>
+      </thead>
+      <tbody>
+      {renderReadingRows(readings)}
+      </tbody>
+    </table>
+    <TableInfoText/>
+  </Column>
 );
 
 type WrapperProps = Fetching & WithEmptyContentProps & ReadingsProps;

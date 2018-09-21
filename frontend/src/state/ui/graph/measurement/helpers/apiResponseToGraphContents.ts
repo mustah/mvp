@@ -50,7 +50,7 @@ const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined =
 };
 
 export const mapApiResponseToGraphData =
-  ({measurement, average, cities}: MeasurementResponses): GraphContents => {
+  ({measurements, average, cities}: MeasurementResponses): GraphContents => {
     const graphContents: GraphContents = {
       axes: {
         left: undefined,
@@ -65,7 +65,7 @@ export const mapApiResponseToGraphData =
     const uniqueMeters = new Set<string>();
     let firstTimestamp;
 
-    const legendsMeters: Dictionary<ProprietaryLegendProps> = measurement.reduce((
+    const legendsMeters: Dictionary<ProprietaryLegendProps> = measurements.reduce((
       prev,
       {quantity},
     ) => (
@@ -117,7 +117,7 @@ export const mapApiResponseToGraphData =
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
-    measurement.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
+    measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
       values.forEach(({when, value}) => {

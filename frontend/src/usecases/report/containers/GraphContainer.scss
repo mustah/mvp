@@ -1,12 +1,5 @@
 @import "../../../app/variables";
 
 .GraphContainer {
-  display: flex;
   padding: 0 $xl-space 0 0;
-}
-
-.Graph {
-  flex-grow: 1;
-  width: 0;
-  display: flex;
 }
