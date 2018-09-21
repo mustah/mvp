@@ -1,13 +1,10 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
@@ -148,12 +145,12 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
-    Gateway gateway = new Gateway(
-      randomUUID(),
-      user.getOrganisationId(),
-      "gateway-serial",
-      "gateway-product-model"
-    );
+
+    Gateway gateway = Gateway.builder()
+      .organisationId(user.getOrganisationId())
+      .serial("gateway-serial")
+      .productModel("gateway-product-model")
+      .build();
 
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -199,16 +196,11 @@ public class MeteringRequestPublisherTest {
     List<PhysicalMeter> physicalMeters,
     List<Gateway> gateways
   ) {
-    UUID logicalMeterId = randomUUID();
     return LogicalMeter.builder()
-      .id(logicalMeterId)
-      .externalId(logicalMeterId.toString())
+      .externalId(randomUUID().toString())
       .organisationId(organisationId)
-      .meterDefinition(MeterDefinition.UNKNOWN_METER)
-      .created(ZonedDateTime.now())
       .physicalMeters(physicalMeters)
       .gateways(gateways)
-      .location(Location.UNKNOWN_LOCATION)
       .build();
   }
 }

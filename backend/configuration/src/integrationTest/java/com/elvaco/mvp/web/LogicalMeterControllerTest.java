@@ -488,21 +488,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void gatewayIsSetOnPagedMeter() {
-    Gateway gateway = gateways.save(new Gateway(
-      randomUUID(),
-      context().organisationId(),
-      "gateway-serial",
-      "gateway-product"
-    ));
+    Gateway gateway = gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("gateway-serial")
+      .productModel("gateway-product")
+      .build());
 
-    LogicalMeter districtHeatingMeter = logicalMeters.save(
-      LogicalMeter.builder()
-        .externalId("external-id")
-        .organisationId(context().organisation().id)
-        .meterDefinition(DISTRICT_HEATING_METER)
-        .created(start)
-        .gateway(gateway)
-        .build()
+    LogicalMeter districtHeatingMeter = logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-id")
+      .organisationId(context().organisation().id)
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .created(start)
+      .gateway(gateway)
+      .build()
     );
 
     physicalMeters.save(physicalMeter()
