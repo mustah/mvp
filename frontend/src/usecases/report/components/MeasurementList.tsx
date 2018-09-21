@@ -60,7 +60,7 @@ export const MeasurementList = ({measurements}: Measurements) => {
   const normalized: Normalized<LegendItem> = normalize(getMeasurementItems(measurements), lineSchema);
 
   return (
-    <Column className="measurement-list">
+    <Column>
       <Table result={normalized.result} entities={normalized.entities.items}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
