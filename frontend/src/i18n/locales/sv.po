@@ -219,7 +219,7 @@ msgid "manufacturer"
 msgstr "tillverkare"
 
 msgid "medium"
-msgstr "typ"
+msgstr "medium"
 
 msgid "status"
 msgstr "status"
@@ -402,7 +402,7 @@ msgid "{{count}} gateway of your selection, are not displayed in the map"
 msgstr "{{count}} gateway of your selection, are not displayed in the map"
 
 msgid "select medium"
-msgstr "välj mätartyp"
+msgstr "välj medium ovan"
 
 msgid "select quantities"
 msgstr "välj storheter"
