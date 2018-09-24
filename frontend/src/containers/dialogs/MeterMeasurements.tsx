@@ -4,6 +4,7 @@ import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
+import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
 import {TableInfoText} from '../../components/table/TableInfoText';
@@ -17,13 +18,13 @@ import {
   initialMeterMeasurementsState,
   Measurement,
   MeterMeasurementsState,
+  Quantity,
   Reading,
 } from '../../state/ui/graph/measurement/measurementModels';
 import {Children, Fetching} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
-
-const renderQuantityHeader = ({quantity}: Measurement): string => translate(quantity + ' short');
+import {orderedQuantities} from './dialogHelper';
 
 const renderValue = ({value = null, unit}: Measurement): string =>
   value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
@@ -33,52 +34,35 @@ const renderCreated = (created: number): Children =>
     ? timestamp(created * 1000)
     : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
-const renderMeasurements = (
-  id: number,
-  measurements: Measurement[],
-): Array<React.ReactElement<HTMLTableCellElement>> => {
-  const cols: Array<React.ReactElement<HTMLTableCellElement>> = [];
+const renderReadingRows =
+  (quantities: Quantity[]) =>
+    (readings: Map<number, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
+      const rows: Array<React.ReactElement<any>> = [];
 
-  cols.push(<td key={`${id}-created`}>{renderCreated(id)}</td>);
+      readings.forEach((reading: Reading, timestamp: number) => {
+        const measurements = quantities
+          .map((quantity: Quantity) => reading.measurements[quantity]!)
+          .map((measurement: Measurement, index: number) =>
+            <td key={index}>{renderValue(measurement)}</td>);
 
-  measurements.forEach((measurement: Measurement) => {
-    cols.push(<td key={id + measurement.quantity}>{renderValue(measurement)}</td>);
-  });
+        rows.push((
+          <tr key={timestamp}>
+            <td key="created">{renderCreated(timestamp)}</td>
+            {measurements}
+          </tr>
+        ));
+      });
 
-  return cols;
-};
+      return rows;
+    };
 
-const renderReadingRows = (readings: Map<number, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
-  const rows: Array<React.ReactElement<any>> = [];
-
-  readings.forEach((reading: Reading, id: number) => {
-    const row: React.ReactElement<HTMLTableRowElement> = (
-      <tr key={id}>{renderMeasurements(id, reading.measurements)}</tr>
-    );
-    rows.push(row);
-  });
-
-  return rows;
-};
-
-const style: React.CSSProperties = {
+const readoutColumnStyle: React.CSSProperties = {
   width: 80,
-};
-
-const renderHeaders = (measurements: Measurement[]): Array<React.ReactElement<HTMLTableHeaderCellElement>> => {
-  const cols: Array<React.ReactElement<HTMLTableHeaderCellElement>> = [];
-
-  cols.push(<th style={style} className="first" key="readout">{translate('readout')}</th>);
-
-  measurements.forEach((measurement: Measurement) => {
-    cols.push(<th key={measurement.quantity}>{renderQuantityHeader(measurement)}</th>);
-  });
-
-  return cols;
 };
 
 interface ReadingsProps {
   readings: Map<number, Reading>;
+  orderedQuantities: Quantity[];
 }
 
 interface OwnProps {
@@ -89,16 +73,21 @@ interface DispatchToProps {
   logout: OnLogout;
 }
 
-const MeasurementsTable = ({readings}: ReadingsProps) => (
+const renderQuantity =
+  (quantity: Quantity) =>
+    <th key={quantity}>{translate(quantity + ' short')}</th>;
+
+const MeasurementsTable = ({readings, orderedQuantities}: ReadingsProps) => (
   <Column>
     <table key="1" className="Table" cellPadding="0" cellSpacing="0">
       <thead>
       <tr>
-        {renderHeaders(readings.values().next().value.measurements)}
+        <th style={readoutColumnStyle} className="first" key="readout">{translate('readout')}</th>
+        {orderedQuantities.map(renderQuantity)}
       </tr>
       </thead>
       <tbody>
-      {renderReadingRows(readings)}
+      {renderReadingRows(orderedQuantities)(readings)}
       </tbody>
     </table>
     <TableInfoText/>
@@ -120,6 +109,8 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
     this.state = {...initialMeterMeasurementsState};
   }
 
+  updateState = (state: MeterMeasurementsState) => this.setState({...state});
+
   async componentDidMount() {
     const {meter, logout} = this.props;
 
@@ -136,6 +127,7 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
 
   render() {
     const {isFetching, measurementPages} = this.state;
+    const {meter: {medium}} = this.props;
 
     const readings: Map<number, Reading> = groupMeasurementsByDate(measurementPages);
 
@@ -144,12 +136,11 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
       hasContent: readings.size > 0,
       noContentText: firstUpperTranslated('measurement', {count: 2}),
       readings,
+      orderedQuantities: orderedQuantities(getMediumType(medium)),
     };
 
     return <MeasurementsTableComponent {...wrapperProps}/>;
   }
-
-  updateState = (state: MeterMeasurementsState) => this.setState({...state});
 }
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

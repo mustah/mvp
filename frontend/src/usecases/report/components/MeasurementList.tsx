@@ -16,7 +16,6 @@ import {
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
-import './MeasurementList.scss';
 
 interface MeasurementListItem {
   id: uuid;
