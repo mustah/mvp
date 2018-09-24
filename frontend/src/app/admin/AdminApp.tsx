@@ -1,6 +1,5 @@
 import 'AdminApp.scss';
 import * as classNames from 'classnames';
-import AppBar from 'material-ui/AppBar';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -9,7 +8,6 @@ import {Layout} from '../../components/layouts/layout/Layout';
 import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
-import {translate} from '../../services/translationService';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
@@ -32,13 +30,7 @@ const AdminApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
   <Row className="AdminApp">
     <AdminMainMenuContainer/>
     <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
-      <SideMenuContainer>
-        <AppBar
-          className="AppTitle"
-          title={translate('admin')}
-          showMenuIconButton={false}
-        />
-      </SideMenuContainer>
+      <SideMenuContainer/>
     </Layout>
     <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
     <AdminPages/>

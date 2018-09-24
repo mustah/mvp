@@ -5,10 +5,9 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
-import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
-import {MainTitle} from '../../../components/texts/Titles';
-import {PageComponent} from '../../../containers/PageComponent';
+import {PageTitle} from '../../../components/texts/Titles';
+import {AdminPageComponent} from '../../../containers/PageComponent';
 import {translate} from '../../../services/translationService';
 import {addOrganisation} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {OnClick} from '../../../types/Types';
@@ -20,23 +19,19 @@ interface DispatchToProps {
 type OwnProps = InjectedAuthRouterProps;
 type Props = OwnProps & DispatchToProps;
 
-const OrganisationAdd = ({addOrganisation}: Props) => {
-  return (
-    <PageComponent isSideMenuOpen={false}>
-      <Row className="space-between">
-        <MainTitle>
-          {translate('add organisation')}
-        </MainTitle>
-      </Row>
+const OrganisationAdd = ({addOrganisation}: Props) => (
+  <AdminPageComponent>
+    <PageTitle>
+      {translate('add organisation')}
+    </PageTitle>
 
-      <Paper style={paperStyle}>
-        <WrapperIndent>
-          <OrganisationEditForm onSubmit={addOrganisation}/>
-        </WrapperIndent>
-      </Paper>
-    </PageComponent>
-  );
-};
+    <Paper style={paperStyle}>
+      <WrapperIndent>
+        <OrganisationEditForm onSubmit={addOrganisation}/>
+      </WrapperIndent>
+    </Paper>
+  </AdminPageComponent>
+);
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addOrganisation,

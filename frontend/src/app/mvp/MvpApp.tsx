@@ -1,5 +1,4 @@
 import * as classNames from 'classnames';
-import AppBar from 'material-ui/AppBar';
 import 'MvpApp.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
@@ -10,7 +9,6 @@ import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {isSelectionPage} from '../../selectors/routerSelectors';
-import {translate} from '../../services/translationService';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
@@ -40,11 +38,6 @@ const MvpApp = ({isSideMenuOpen, isSelectionPage, toggleShowHideSideMenu}: Props
 
     <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
       <SideMenuContainer>
-        <AppBar
-          className="AppTitle"
-          title={translate('metering')}
-          showMenuIconButton={false}
-        />
         <SavedSelectionsContainer/>
         {!isSelectionPage && <SelectionTreeContainer/>}
       </SideMenuContainer>

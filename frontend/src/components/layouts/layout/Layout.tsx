@@ -1,25 +1,12 @@
 import * as classNames from 'classnames';
 import 'Layout.scss';
 import * as React from 'react';
-import {Children, OnClick} from '../../../types/Types';
+import {ClassNamed, Clickable, Styled, WithChildren} from '../../../types/Types';
 
-interface AllLayoutProps {
-  hide: boolean;
-  className: string;
-  style: React.CSSProperties;
-  children: Children;
-  onClick: OnClick;
-}
+export type LayoutProps = Partial<WithChildren & Clickable & ClassNamed & Styled>;
 
-export type LayoutProps = Partial<AllLayoutProps>;
-
-export const Layout = ({hide = false, children, className, style}: LayoutProps) => {
-  if (hide) {
-    return null;
-  }
-  return (
-    <div className={classNames('Layout', className)} style={style}>
-      {children}
-    </div>
-  );
-};
+export const Layout = ({children, className, style}: LayoutProps) => (
+  <div className={classNames('Layout', className)} style={style}>
+    {children}
+  </div>
+);

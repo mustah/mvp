@@ -46,6 +46,10 @@
   }
 }
 
-.MissingDataTitle{
-  padding: $lg;
+.AppTitle {
+  color: $white;
+  font-size: $xl;
+  text-transform: uppercase;
+  text-align: left;
+  width: $side-menu-container-width;
 }

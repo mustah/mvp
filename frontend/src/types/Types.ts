@@ -51,6 +51,14 @@ export interface ClassNamed {
   className?: string;
 }
 
+export interface WithChildren {
+  children?: Children;
+}
+
+export interface Styled {
+  style?: React.CSSProperties;
+}
+
 export interface Selectable {
   isSelected?: boolean;
 }
