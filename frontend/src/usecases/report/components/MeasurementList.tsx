@@ -1,8 +1,9 @@
 import {normalize, schema} from 'normalizr';
 import * as React from 'react';
-import {Row} from '../../../components/layouts/row/Row';
+import {Column} from '../../../components/layouts/column/Column';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
+import {TableInfoText} from '../../../components/table/TableInfoText';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
@@ -11,14 +12,11 @@ import {Normalized} from '../../../state/domain-models/domainModels';
 import {
   MeasurementApiResponse,
   MeasurementResponsePart,
+  Measurements,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
-import './MeasurementListContainer.scss';
-
-interface OwnProps {
-  measurement: MeasurementApiResponse;
-}
+import './MeasurementList.scss';
 
 interface MeasurementListItem {
   id: uuid;
@@ -30,8 +28,6 @@ interface MeasurementListItem {
   created: number;
 }
 
-type Props = OwnProps;
-
 const renderName = (item: MeasurementListItem) => orUnknown(item.label);
 const renderCity = (item: MeasurementListItem) => orUnknown(item.city);
 const renderAddress = (item: MeasurementListItem) => orUnknown(item.address);
@@ -39,23 +35,32 @@ const renderValue = ({value = null, unit}: MeasurementListItem): string =>
   value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
 const renderCreated = (item: MeasurementListItem) => timestamp(item.created * 1000);
 
-export const MeasurementListContainer = ({measurement}: Props) => {
+const lineSchema = [new schema.Entity('items', {}, {idAttribute: 'id'})];
+
+const getMeasurementItems = (measurements: MeasurementApiResponse): MeasurementListItem[] => {
   const items: Map<uuid, MeasurementListItem> = new Map<uuid, MeasurementListItem>();
 
-  measurement.forEach(({id, label, city, address, unit, values}: MeasurementResponsePart) => {
+  measurements.forEach(({id, label, city, address, unit, values}: MeasurementResponsePart) =>
     values.forEach(({when, value}) => {
       const item: MeasurementListItem = {
-        id: id + ';' + when, label, city, address, unit, value, created: when,
+        id: id + ';' + when,
+        label,
+        city,
+        address,
+        unit,
+        value,
+        created: when,
       };
       items.set(item.id, item);
-    });
-  });
+    }));
+  return Array.from(items.values());
+};
 
-  const lineSchema = [new schema.Entity('items', {}, {idAttribute: 'id'})];
-  const normalized: Normalized<LegendItem> = normalize(Array.from(items.values()), lineSchema);
+export const MeasurementList = ({measurements}: Measurements) => {
+  const normalized: Normalized<LegendItem> = normalize(getMeasurementItems(measurements), lineSchema);
 
   return (
-    <Row className="measurement-list">
+    <Column>
       <Table result={normalized.result} entities={normalized.entities.items}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
@@ -83,6 +88,7 @@ export const MeasurementListContainer = ({measurement}: Props) => {
           renderCell={renderCreated}
         />
       </Table>
-    </Row>
+      <TableInfoText/>
+    </Column>
   );
 };

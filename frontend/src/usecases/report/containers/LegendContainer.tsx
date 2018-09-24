@@ -28,7 +28,7 @@ interface DispatchToProps {
   toggleSingleEntry: OnClickWithId;
 }
 
-type Props = OwnProps & DispatchToProps;
+export type LegendProps = OwnProps & DispatchToProps;
 
 const style: React.CSSProperties = {
   display: 'table',
@@ -50,7 +50,8 @@ const renderMedium = ({medium}: LegendItem) =>
     ))
     : <IconIndicator medium={medium} style={style}/>;
 
-class LegendComponent extends React.Component<Props> {
+class LegendComponent extends React.Component<LegendProps> {
+
   render() {
     const {
       onToggleLine,
@@ -69,6 +70,7 @@ class LegendComponent extends React.Component<Props> {
 
     const renderVisibilityButton = ({id}: LegendItem) =>
       <ButtonVisibility onClick={onToggleLine} id={id}/>;
+
     const renderDeleteButton = ({id}: LegendItem) =>
       <ButtonDelete onClick={toggleSingleEntry} id={id}/>;
 
@@ -115,5 +117,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleSingleEntry,
 }, dispatch);
 
-export const LegendContainer = connect<{}, DispatchToProps, OwnProps>(null, mapDispatchToProps)(
-  LegendComponent);
+export const LegendContainer = connect<{}, DispatchToProps, OwnProps>(null, mapDispatchToProps)(LegendComponent);

@@ -5,7 +5,7 @@ import {mapApiResponseToGraphData} from '../apiResponseToGraphContents';
 describe('apiResponseToGraphContents', () => {
 
   const emptyResponses = (): MeasurementResponses => ({
-    measurement: [],
+    measurements: [],
     average: [],
     cities: [],
   });
@@ -65,7 +65,7 @@ describe('apiResponseToGraphContents', () => {
 
         const graphContents = mapApiResponseToGraphData({
           ...emptyResponses(),
-          measurement: sameUnit,
+          measurements: sameUnit,
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -107,7 +107,7 @@ describe('apiResponseToGraphContents', () => {
 
         const graphContents = mapApiResponseToGraphData({
           ...emptyResponses(),
-          measurement: twoDifferentUnits,
+          measurements: twoDifferentUnits,
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -165,7 +165,7 @@ describe('apiResponseToGraphContents', () => {
 
         const graphContents = mapApiResponseToGraphData({
           ...emptyResponses(),
-          measurement: threeDifferentUnits,
+          measurements: threeDifferentUnits,
         });
 
         expect(graphContents.axes.left).toEqual('mW');
@@ -229,7 +229,7 @@ describe('apiResponseToGraphContents', () => {
 
           const graphContents = mapApiResponseToGraphData({
             ...emptyResponses(),
-            measurement: slightlyLaterThanFirstAverage,
+            measurements: slightlyLaterThanFirstAverage,
             average,
           });
 

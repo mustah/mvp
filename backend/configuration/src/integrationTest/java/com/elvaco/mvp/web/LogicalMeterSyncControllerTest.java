@@ -1,17 +1,13 @@
 package com.elvaco.mvp.web;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.FeatureType;
-import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.exception.PropertyNotFound;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -36,8 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -241,34 +235,19 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     )).isTrue();
   }
 
-  private static LogicalMeter newLogicalMeter(UUID organisationId) {
-    return newLogicalMeter(organisationId, emptyList(), emptyList());
-  }
-
-  private static LogicalMeter newLogicalMeter(
-    UUID organisationId,
-    List<PhysicalMeter> physicalMeters,
-    List<Gateway> gateways
-  ) {
-    UUID logicalMeterId = randomUUID();
-    return LogicalMeter.builder()
-      .id(logicalMeterId)
-      .externalId(logicalMeterId.toString())
-      .organisationId(organisationId)
-      .meterDefinition(MeterDefinition.UNKNOWN_METER)
-      .created(ZonedDateTime.now())
-      .physicalMeters(physicalMeters)
-      .gateways(gateways)
-      .location(UNKNOWN_LOCATION)
-      .build();
-  }
-
   private Property getUpdateGeolocationWithEntityId(UUID id) {
     return propertiesUseCases.findBy(
       FeatureType.UPDATE_GEOLOCATION,
       id,
       context().organisationId()
     ).orElseThrow(() -> new PropertyNotFound(FeatureType.UPDATE_GEOLOCATION, id));
+  }
+
+  private static LogicalMeter newLogicalMeter(UUID organisationId) {
+    return LogicalMeter.builder()
+      .externalId(randomUUID().toString())
+      .organisationId(organisationId)
+      .build();
   }
 
   private static String synchronizeUrl(UUID id) {

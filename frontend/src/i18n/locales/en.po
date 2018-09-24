@@ -375,6 +375,9 @@ msgstr "select quantities"
 msgid "select meters to include in graph"
 msgstr "select meters to include in graph"
 
+msgid "select meters"
+msgstr "select meters"
+
 msgid "facility"
 msgstr "facility"
 

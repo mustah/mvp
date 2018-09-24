@@ -12,7 +12,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
@@ -32,22 +31,6 @@ public class Gateway implements Identifiable<UUID>, Serializable {
   public List<LogicalMeter> meters;
   @Singular
   public List<StatusLogEntry<UUID>> statusLogs;
-
-  public Gateway(
-    UUID id,
-    UUID organisationId,
-    String serial,
-    String productModel
-  ) {
-    this(
-      id,
-      organisationId,
-      serial,
-      productModel,
-      emptyList(),
-      emptyList()
-    );
-  }
 
   private Gateway(
     UUID id,

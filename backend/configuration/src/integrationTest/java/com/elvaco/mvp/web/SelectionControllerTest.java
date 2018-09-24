@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -364,7 +363,11 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsGatewaySerials() {
     prepareGateways();
-    createGateway(context().organisationId2(), "6666");
+    gateways.save(Gateway.builder()
+      .organisationId(context().organisationId2())
+      .serial("6666")
+      .productModel("3100")
+      .build());
 
     Page<IdNamedDto> response = asOtherUser()
       .getPage("/selections/gateway-serials", IdNamedDto.class);
@@ -448,7 +451,12 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void gatewaySerialWildcardSearch() {
-    createGateway(context().organisationId(), "1234567");
+    gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .serial("1234567")
+      .productModel("3100")
+      .build());
+
     Page<IdNamedDto> response = asTestUser().getPage(
       "/selections/gateway-serials?q=3456",
       IdNamedDto.class
@@ -695,22 +703,24 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getGatewaySerials_duplicatesAreNotIncluded() {
-    gateways.save(new Gateway(randomUUID(), context().organisationId(), "1", "3100"));
-    gateways.save(new Gateway(randomUUID(), context().organisationId(), "1", "2100"));
-    gateways.save(new Gateway(randomUUID(), context().organisationId(), "2", "3100"));
+    Gateway.GatewayBuilder gateway = Gateway.builder().organisationId(context().organisationId());
+    gateways.save(gateway.serial("1").productModel("3100").build());
+    gateways.save(gateway.serial("1").productModel("2100").build());
+    gateways.save(gateway.serial("2").productModel("3100").build());
 
-    Page<IdNamedDto> response = asTestUser().getPage(
-      "/selections/gateway-serials",
-      IdNamedDto.class
-    );
+    Page<IdNamedDto> response = asTestUser()
+      .getPage("/selections/gateway-serials", IdNamedDto.class);
 
     assertThat(response).extracting("name").containsExactlyInAnyOrder("1", "2");
   }
 
   private void prepareGateways() {
-    createGateway(context().organisationId(), "1122");
-    createGateway(context().organisationId(), "3344");
-    createGateway(context().organisationId(), "5566");
+    Gateway.GatewayBuilder gatewayBuilder = Gateway.builder()
+      .organisationId(context().organisationId())
+      .productModel("3100");
+    gateways.save(gatewayBuilder.serial("1122").build());
+    gateways.save(gatewayBuilder.serial("3344").build());
+    gateways.save(gatewayBuilder.serial("5566").build());
   }
 
   private void prepareMeters() {
@@ -730,10 +740,6 @@ public class SelectionControllerTest extends IntegrationTest {
 
     logicalMeter = createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
     createPhysicalMeter(context().organisation(), "444", logicalMeter);
-  }
-
-  private Gateway createGateway(UUID organisationId, String serial) {
-    return gateways.save(new Gateway(randomUUID(), organisationId, serial, "3100"));
   }
 
   private PhysicalMeter createPhysicalMeter(
@@ -771,8 +777,6 @@ public class SelectionControllerTest extends IntegrationTest {
     return logicalMeters.save(LogicalMeter.builder()
       .externalId(externalId)
       .organisationId(organisationId)
-      .meterDefinition(MeterDefinition.UNKNOWN_METER)
-      .created(ZonedDateTime.now())
       .location(new LocationBuilder()
         .country(country)
         .city(city)

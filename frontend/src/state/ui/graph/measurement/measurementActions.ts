@@ -8,7 +8,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
-import {OnUpdateGraph} from '../../../../usecases/report/containers/ReportContainer';
+import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {MeterDetails} from '../../../domain-models/meter-details/meterDetailsModels';
@@ -54,6 +54,8 @@ export const isSelectedMeter = (listItem: uuid): boolean =>
 export const isSelectedCity = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,]/g) || []).length === 1 &&
   (listItem.toString().match(/[:]/) || []).length === 0;
+
+type OnUpdateGraph = (state: ReportContainerState) => void;
 
 interface MeasurementOptions {
   selectedIndicators: Medium[];
@@ -125,7 +127,7 @@ export const fetchMeasurements =
         await Promise.all([measurementRequest(), averageRequest(), cityRequest()]);
 
       const graphData: MeasurementResponses = {
-        measurement: response[0].data,
+        measurements: response[0].data,
         average: response[1].data.map((averageEntity) => ({
           ...averageEntity,
           values: averageEntity.values.filter(({value}) => value !== undefined),

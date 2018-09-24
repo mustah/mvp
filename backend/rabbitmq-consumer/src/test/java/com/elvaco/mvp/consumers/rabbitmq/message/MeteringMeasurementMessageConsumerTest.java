@@ -15,7 +15,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
@@ -50,7 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -172,7 +171,6 @@ public class MeteringMeasurementMessageConsumerTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .location(UNKNOWN_LOCATION)
       .build());
 
     messageConsumer.accept(newMeasurementMessage(new ValueDto(
@@ -264,9 +262,6 @@ public class MeteringMeasurementMessageConsumerTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(MeterDefinition.UNKNOWN_METER)
-        .created(ZonedDateTime.now())
-        .location(UNKNOWN_LOCATION)
         .build());
 
     messageConsumer.accept(newMeasurementMessage(
@@ -433,6 +428,19 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   @Test
+  public void measurementValue_WithOnTimeQuantityIsIgnored() {
+    messageConsumer.accept(newMeasurementMessage(
+      new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "W", "Power"),
+      new ValueDto(MEASUREMENT_TIMESTAMP.plusHours(1), 2.0, "W", "Power"),
+      new ValueDto(MEASUREMENT_TIMESTAMP.plusHours(2), 1235.0, "h", "On time"),
+      new ValueDto(MEASUREMENT_TIMESTAMP.plusHours(3), 3.0, "W", "Power")
+    ));
+
+    assertThat(measurements.allMocks()).extracting("value")
+      .containsExactlyInAnyOrder(1.0, 2.0, 3.0);
+  }
+
+  @Test
   public void measurementValueFor_MissingLogicalMeter_CreatesNewLogicalMeter() {
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
 
@@ -445,11 +453,9 @@ public class MeteringMeasurementMessageConsumerTest {
     Organisation organisation = saveDefaultOrganisation();
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(UNKNOWN_LOCATION)
+      .meterDefinition(HOT_WATER_METER)
       .build());
 
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
@@ -490,10 +496,9 @@ public class MeteringMeasurementMessageConsumerTest {
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .meterDefinition(HOT_WATER_METER)
         .location(new LocationBuilder()
           .country("Sweden")
           .city("Kungsbacka")
@@ -515,10 +520,9 @@ public class MeteringMeasurementMessageConsumerTest {
     physicalMeters.save(physicalMeter().organisation(organisation).build());
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .meterDefinition(HOT_WATER_METER)
         .location(new LocationBuilder()
           .country("Sweden")
           .city("Kungsbacka")
@@ -542,11 +546,9 @@ public class MeteringMeasurementMessageConsumerTest {
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
-        .location(UNKNOWN_LOCATION)
+        .meterDefinition(HOT_WATER_METER)
         .build()
     );
 
@@ -561,20 +563,18 @@ public class MeteringMeasurementMessageConsumerTest {
   @Test
   public void measurementValueFor_ExistingEntities_CreateNewGateway() {
     Organisation organisation = saveDefaultOrganisation();
-    gateways.save(new Gateway(
-      randomUUID(),
-      organisation.id,
-      GATEWAY_EXTERNAL_ID,
-      ""
-    ));
+    gateways.save(Gateway.builder()
+      .organisationId(organisation.id)
+      .serial(GATEWAY_EXTERNAL_ID)
+      .productModel("")
+      .build());
 
     physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .meterDefinition(HOT_WATER_METER)
         .location(new LocationBuilder()
           .country("Sweden")
           .city("Kungsbacka")
@@ -606,14 +606,13 @@ public class MeteringMeasurementMessageConsumerTest {
     );
   }
 
-  private MeteringMeasurementMessageDto newMeasurementMessage(
-    ValueDto... valueDto
-  ) {
+  private MeteringMeasurementMessageDto newMeasurementMessage(ValueDto... valueDto) {
     return newMeasurementMessage(ORGANISATION_EXTERNAL_ID, valueDto);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(
-    String organisationExternalId, ValueDto... valueDto
+    String organisationExternalId,
+    ValueDto... valueDto
   ) {
     return new MeteringMeasurementMessageDto(
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
@@ -630,12 +629,11 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   private Gateway newGateway(UUID organisationId) {
-    return new Gateway(
-      randomUUID(),
-      organisationId,
-      GATEWAY_EXTERNAL_ID,
-      "CMi2110"
-    );
+    return Gateway.builder()
+      .organisationId(organisationId)
+      .serial(GATEWAY_EXTERNAL_ID)
+      .productModel("CMi2110")
+      .build();
   }
 
   private Organisation newOrganisation() {

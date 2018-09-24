@@ -117,13 +117,21 @@ public class CompletenessValidatorsTest {
 
   @Test
   public void gatewayValidatorComplete() {
-    Gateway gateway = new Gateway(randomUUID(), randomUUID(), "1234", "CMi2110");
+    Gateway gateway = Gateway.builder()
+      .organisationId(randomUUID())
+      .serial("1234")
+      .productModel("CMi2110")
+      .build();
     assertThat(gatewayValidator().isComplete(gateway)).isTrue();
   }
 
   @Test
   public void gatewayValidatorUnknownProductModel() {
-    Gateway gateway = new Gateway(randomUUID(), randomUUID(), "1234", "");
+    Gateway gateway = Gateway.builder()
+      .organisationId(randomUUID())
+      .serial("1234")
+      .productModel("")
+      .build();
     assertThat(gatewayValidator().isComplete(gateway)).isFalse();
   }
 }

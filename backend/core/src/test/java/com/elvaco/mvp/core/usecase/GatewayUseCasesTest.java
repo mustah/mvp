@@ -20,24 +20,14 @@ public class GatewayUseCasesTest {
   public void saveGateway() {
     GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
 
-    assertThat(useCases.save(new Gateway(
-      null,
-      DAILY_PLANET.id,
-      "1",
-      "t"
-    )).id).isNotNull();
+    assertThat(useCases.save(gatewayBuilder().build()).id).isNotNull();
   }
 
   @Test
   public void canOnlySaveGatewaysForSameOrganisationWhenNotSuperAdmin() {
     GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
 
-    assertThatThrownBy(() -> useCases.save(new Gateway(
-      null,
-      MARVEL.id,
-      "1",
-      "t"
-    )))
+    assertThatThrownBy(() -> useCases.save(gatewayBuilder().organisationId(MARVEL.id).build()))
       .isInstanceOf(Unauthorized.class)
       .hasMessage("User is not authorized to save this entity");
   }
@@ -46,18 +36,8 @@ public class GatewayUseCasesTest {
   public void superAdminCanSaveAllGateways() {
     GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
 
-    assertThat(useCases.save(new Gateway(
-      null,
-      DAILY_PLANET.id,
-      "1",
-      "t"
-    )).id).isNotNull();
-    assertThat(useCases.save(new Gateway(
-      null,
-      DAILY_PLANET.id,
-      "1",
-      "t"
-    )).id).isNotNull();
+    assertThat(useCases.save(gatewayBuilder().organisationId(MARVEL.id).build()).id).isNotNull();
+    assertThat(useCases.save(gatewayBuilder().build()).id).isNotNull();
   }
 
   @Test
@@ -71,15 +51,9 @@ public class GatewayUseCasesTest {
   public void findGatewayByOrganisationSerialAndProductModel() {
     GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
 
-    useCases.save(new Gateway(
-      null,
-      DAILY_PLANET.id,
-      "4567",
-      "someModel"
-    ));
-    useCases.save(new Gateway(null, DAILY_PLANET.id, "123", "test"));
+    useCases.save(gatewayBuilder().build());
 
-    assertThat(useCases.findBy(DAILY_PLANET.id, "test", "123").isPresent()).isTrue();
+    assertThat(useCases.findBy(DAILY_PLANET.id, "t", "1").isPresent()).isTrue();
   }
 
   private GatewayUseCases useCasesWithCurrentUser(User currentUser) {
@@ -87,5 +61,12 @@ public class GatewayUseCasesTest {
       new MockGateways(),
       new MockAuthenticatedUser(currentUser, "token123")
     );
+  }
+
+  private static Gateway.GatewayBuilder gatewayBuilder() {
+    return Gateway.builder()
+      .organisationId(DAILY_PLANET.id)
+      .serial("1")
+      .productModel("t");
   }
 }

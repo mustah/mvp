@@ -18,7 +18,7 @@ export interface Reading {
 }
 
 const emptyMeasurementResponse: MeasurementResponses = {
-  measurement: [],
+  measurements: [],
   average: [],
   cities: [],
 };
@@ -68,8 +68,11 @@ export type MeasurementApiResponse = MeasurementResponsePart[];
 export type AverageApiResponse = AverageResponsePart[];
 export type CityApiResponse = CityResponsePart[];
 
-export interface MeasurementResponses {
-  measurement: MeasurementApiResponse;
+export interface Measurements {
+  measurements: MeasurementApiResponse;
+}
+
+export interface MeasurementResponses extends Measurements {
   average: AverageApiResponse;
   cities: CityApiResponse;
 }

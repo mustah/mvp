@@ -56,7 +56,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
 public class MeteringReferenceInfoMessageConsumerTest {
 
   private static final String MANUFACTURER = "ELV";
@@ -186,12 +186,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void updatesExistingGatewayWithNewProductModel() {
     UUID gatewayId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
-    gateways.save(new Gateway(
-      gatewayId,
-      organisation.id,
-      GATEWAY_EXTERNAL_ID,
-      "OldValue"
-    ));
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(organisation.id)
+      .serial(GATEWAY_EXTERNAL_ID)
+      .productModel("OldValue")
+      .build());
 
     messageHandler.accept(newMessageWithMedium(HOT_WATER_MEDIUM));
 
@@ -399,7 +399,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .location(UNKNOWN_LOCATION)
       .build());
 
-    messageHandler.accept(newMessageWithMediumAndPhysicalMeterId(HOT_WATER_MEDIUM, "4321"));
+    messageHandler.accept(newMessageWithMediumAndPhysicalMeterId());
 
     assertThat(logicalMeters.findAllByOrganisationId(organisation.id)).hasSize(1);
     assertThat(physicalMeters.findAll().stream().map(pm -> pm.logicalMeterId))
@@ -444,8 +444,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       "manufacturer",
       "meter-id",
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       UNKNOWN_LOCATION,
       ""
     );
@@ -713,9 +711,13 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void emptyMeterField_GatewayIsUpdatedAndMeterIsCreated() {
     Organisation organisation = saveDefaultOrganisation();
     UUID gatewayId = randomUUID();
-    gateways.save(
-      new Gateway(gatewayId, organisation.id, GATEWAY_EXTERNAL_ID, PRODUCT_MODEL)
-    );
+
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(organisation.id)
+      .serial(GATEWAY_EXTERNAL_ID)
+      .productModel(PRODUCT_MODEL)
+      .build());
 
     messageHandler.accept(
       newMessageWithGatewayStatus(StatusType.OK)
@@ -783,8 +785,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       StatusType.OK.name(),
@@ -806,8 +806,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       meterStatus,
@@ -815,17 +813,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
     );
   }
 
-  private MeteringReferenceInfoMessageDto newMessageWithMediumAndPhysicalMeterId(
-    String medium,
-    String physicalMeterId
-  ) {
+  private MeteringReferenceInfoMessageDto newMessageWithMediumAndPhysicalMeterId() {
     return newMessage(
-      medium,
+      HOT_WATER_MEDIUM,
       "KAM",
-      physicalMeterId,
+      "4321",
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -836,8 +829,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       location
     );
   }
@@ -848,8 +839,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       manufacturer,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -862,8 +851,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       FIFTEEN_MINUTE_CRON,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -874,8 +861,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       MANUFACTURER,
       ADDRESS,
       cron,
-      REVISION_ONE,
-      MBUS_METER_TYPE_ONE,
       LOCATION_KUNGSBACKA
     );
   }
@@ -885,8 +870,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
     String manufacturer,
     String physicalMeterId,
     @Nullable String cron,
-    @Nullable Integer revision,
-    @Nullable Integer mbusDeviceType,
     Location location
   ) {
     return newMessage(
@@ -894,8 +877,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
       manufacturer,
       physicalMeterId,
       cron,
-      revision,
-      mbusDeviceType,
       location,
       EXTERNAL_ID
     );
@@ -906,8 +887,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
     String manufacturer,
     String physicalMeterId,
     @Nullable String cron,
-    @Nullable Integer revision,
-    @Nullable Integer mbusDeviceType,
     Location location,
     String externalId
   ) {
@@ -916,12 +895,10 @@ public class MeteringReferenceInfoMessageConsumerTest {
       manufacturer,
       physicalMeterId,
       cron,
-      revision,
-      mbusDeviceType,
       location,
       externalId,
-      StatusType.OK,
-      StatusType.OK
+      StatusType.OK.name(),
+      StatusType.OK.name()
     );
   }
 
@@ -930,34 +907,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
     String manufacturer,
     String physicalMeterId,
     @Nullable String cron,
-    @Nullable Integer revision,
-    @Nullable Integer mbusDeviceType,
-    Location location,
-    String externalId,
-    StatusType meterStatus,
-    StatusType gatewayStatus
-  ) {
-    return newMessage(
-      medium,
-      manufacturer,
-      physicalMeterId,
-      cron,
-      revision,
-      mbusDeviceType,
-      location,
-      externalId,
-      meterStatus.name(),
-      gatewayStatus.name()
-    );
-  }
-
-  private MeteringReferenceInfoMessageDto newMessage(
-    String medium,
-    String manufacturer,
-    String physicalMeterId,
-    @Nullable String cron,
-    @Nullable Integer revision,
-    @Nullable Integer mbusDeviceType,
     Location location,
     String externalId,
     String meterStatus,
@@ -970,8 +919,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
         meterStatus,
         manufacturer,
         cron,
-        revision,
-        mbusDeviceType
+        REVISION_ONE,
+        MBUS_METER_TYPE_ONE
       ),
       new FacilityDto(
         externalId,

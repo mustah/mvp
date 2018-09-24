@@ -5,10 +5,8 @@ import {withEmptyContentComponent} from '../../../components/hoc/withEmptyConten
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Normal} from '../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {
-  allQuantities,
-  Quantity,
-} from '../../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
 import {Children, HasContent} from '../../../types/Types';
 
 interface Props {
@@ -16,7 +14,6 @@ interface Props {
   changeQuantities: (event, index, values) => void;
   children?: Children;
 }
-import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
 
 interface QuantitySelectorProps {
   selectedQuantities: Quantity[];

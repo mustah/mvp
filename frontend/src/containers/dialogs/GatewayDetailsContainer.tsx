@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Period} from '../../components/dates/dateModels';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
+import {Column} from '../../components/layouts/column/Column';
+import {TableInfoText} from '../../components/table/TableInfoText';
 import {now} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {makeApiParametersOf} from '../../helpers/urlFactory';
@@ -44,10 +46,11 @@ const GatewayDetailsContent = (props: Props) => {
     return null;
   }
   return (
-    <div>
+    <Column>
       <GatewayDetailsInfoContainer gateway={gateway.get()}/>
       <GatewayDetailsTabs {...props} gateway={gateway.get()} meters={meters.get()}/>
-    </div>
+      <TableInfoText/>
+    </Column>
   );
 };
 

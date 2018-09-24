@@ -129,7 +129,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             </TabSettings>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <MeterMeasurementsContainer meter={meter} />
+            <MeterMeasurementsContainer meter={meter}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Table {...statusChangelog}>
