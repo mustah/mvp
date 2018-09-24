@@ -4,7 +4,7 @@ import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
-import {getMediumType, Medium} from '../../components/indicators/indicatorWidgetModels';
+import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
 import {TableInfoText} from '../../components/table/TableInfoText';
@@ -34,33 +34,27 @@ const renderCreated = (created: number): Children =>
     ? timestamp(created * 1000)
     : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
-const renderMeasurements = (
-  id: number,
-  measurements: Measurement[],
-): Array<React.ReactElement<HTMLTableCellElement>> => {
-  const cols: Array<React.ReactElement<HTMLTableCellElement>> = [];
+const renderReadingRows =
+  (quantities: Quantity[]) =>
+    (readings: Map<number, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
+      const rows: Array<React.ReactElement<any>> = [];
 
-  cols.push(<td key={`${id}-created`}>{renderCreated(id)}</td>);
+      readings.forEach((reading: Reading, timestamp: number) => {
+        const measurements = quantities
+          .map((quantity: Quantity) => reading.measurements[quantity]!)
+          .map((measurement: Measurement, index: number) =>
+            <td key={index}>{renderValue(measurement)}</td>);
 
-  measurements.forEach((measurement: Measurement) => {
-    cols.push(<td key={id + measurement.quantity}>{renderValue(measurement)}</td>);
-  });
+        rows.push((
+          <tr key={timestamp}>
+            <td key="created">{renderCreated(timestamp)}</td>
+            {measurements}
+          </tr>
+        ));
+      });
 
-  return cols;
-};
-
-const renderReadingRows = (readings: Map<number, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
-  const rows: Array<React.ReactElement<any>> = [];
-
-  readings.forEach((reading: Reading, id: number) => {
-    const row: React.ReactElement<HTMLTableRowElement> = (
-      <tr key={id}>{renderMeasurements(id, reading.measurements)}</tr>
-    );
-    rows.push(row);
-  });
-
-  return rows;
-};
+      return rows;
+    };
 
 const readoutColumnStyle: React.CSSProperties = {
   width: 80,
@@ -68,7 +62,7 @@ const readoutColumnStyle: React.CSSProperties = {
 
 interface ReadingsProps {
   readings: Map<number, Reading>;
-  medium: Medium;
+  orderedQuantities: Quantity[];
 }
 
 interface OwnProps {
@@ -83,17 +77,17 @@ const renderQuantity =
   (quantity: Quantity) =>
     <th key={quantity}>{translate(quantity + ' short')}</th>;
 
-const MeasurementsTable = ({readings, medium}: ReadingsProps) => (
+const MeasurementsTable = ({readings, orderedQuantities}: ReadingsProps) => (
   <Column>
     <table key="1" className="Table" cellPadding="0" cellSpacing="0">
       <thead>
       <tr>
         <th style={readoutColumnStyle} className="first" key="readout">{translate('readout')}</th>
-        {orderedQuantities(medium).map(renderQuantity)}
+        {orderedQuantities.map(renderQuantity)}
       </tr>
       </thead>
       <tbody>
-      {renderReadingRows(readings)}
+      {renderReadingRows(orderedQuantities)(readings)}
       </tbody>
     </table>
     <TableInfoText/>
@@ -142,7 +136,7 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
       hasContent: readings.size > 0,
       noContentText: firstUpperTranslated('measurement', {count: 2}),
       readings,
-      medium: getMediumType(medium),
+      orderedQuantities: orderedQuantities(getMediumType(medium)),
     };
 
     return <MeasurementsTableComponent {...wrapperProps}/>;

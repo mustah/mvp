@@ -7,7 +7,7 @@ import {allQuantities, Measurement, Quantity} from '../../state/ui/graph/measure
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
 
-export const orderedQuantities = (medium: Medium): string[] => {
+export const orderedQuantities = (medium: Medium): Quantity[] => {
   return medium in allQuantities
     ? allQuantities[medium]
     : [];

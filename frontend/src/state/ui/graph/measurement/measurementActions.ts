@@ -171,7 +171,6 @@ export const fetchMeasurementsPaged =
     logout: OnLogout,
   ): Promise<void> => {
     try {
-      // TODO use medium to calculate number of quantities
       const measurementUrl: EncodedUriParameters = makeUrl(
         EndPoints.measurementsPaged,
         `sort=created,desc&sort=quantity,asc&logicalMeterId=${meter.id}&size=${(50 * meter.measurements.length)}`,
@@ -204,13 +203,17 @@ export const groupMeasurementsByDate = (measurementPage: NormalizedPaginated<Mea
   const readings: Map<number, Reading> = new Map<number, Reading>();
 
   if (measurementPage) {
-    measurementPage.result.content.map((id: uuid) => {
+    measurementPage.result.content.forEach((id: uuid) => {
       const measurement: Measurement = measurementPage.entities.measurements[id];
 
       const reading: Reading =
-        readings.get(measurement.created) || {id: measurement.created, measurements: []};
+        readings.get(measurement.created)
+        || {
+          id: measurement.created,
+          measurements: {},
+        };
 
-      reading.measurements.push(measurement);
+      reading.measurements[measurement.quantity] = measurement;
       readings.set(measurement.created, reading);
     });
   }

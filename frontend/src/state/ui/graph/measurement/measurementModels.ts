@@ -12,9 +12,11 @@ export interface Measurement extends Identifiable {
   unit: string;
 }
 
+export type MeasurementsByQuantity = Partial<{[key in Quantity]: Measurement}>;
+
 export interface Reading {
   id: uuid;
-  measurements: Measurement[];
+  measurements: MeasurementsByQuantity;
 }
 
 const emptyMeasurementResponse: MeasurementResponses = {
