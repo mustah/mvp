@@ -18,6 +18,7 @@ import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface IndicatorComponentType {
+  // TODO make 'type' Medium
   [type: string]: React.ComponentType<SvgIconProps>;
 }
 

@@ -91,6 +91,7 @@ export const enum Quantity {
   energyReactive = 'Reactive energy',
 }
 
+// TODO type, and fill in missing values for, {[q in Quantity]: string}
 export const quantityUnits = {
   [Quantity.energy]: 'kWh',
   [Quantity.volume]: 'm',
@@ -101,6 +102,7 @@ export const quantityUnits = {
   [Quantity.differenceTemperature]: 'K',
 };
 
+// TODO type and correct erronous usages
 export const allQuantities = {
   [Medium.districtHeating]: [
     Quantity.energy,
