@@ -2,7 +2,6 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
@@ -24,13 +23,14 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeasurementDto;
-import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -62,20 +62,9 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   @Autowired
   private MeterDefinitions meterDefinitions;
 
-  private OrganisationEntity otherOrganisation;
-
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
-
-    otherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Wayne Industries",
-        "wayne-industries",
-        "wayne-industries"
-      )
-    );
   }
 
   @After
@@ -87,21 +76,19 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
-    organisationJpaRepository.delete(otherOrganisation);
   }
 
-
   @Test
-  public void pagedMeasurementsFiltered() {
+  public void isPageable() {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T06:00:00Z[UTC]");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
+    LogicalMeterEntity logicalGasMeter = newLogicalMeterEntity(GAS_METER);
 
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
-    newMeasurement(meter, after.plusHours(3), "Volume", 6.0, "m^3");
+    PhysicalMeterEntity gasMeter = newPhysicalMeterEntity(logicalGasMeter.id);
+    newMeasurement(gasMeter, after, "Volume", 1.0, "m^3");
+    newMeasurement(gasMeter, after.plusHours(1), "Volume", 2.0, "m^3");
+    newMeasurement(gasMeter, after.plusHours(2), "Volume", 5.0, "m^3");
+    newMeasurement(gasMeter, after.plusHours(3), "Volume", 6.0, "m^3");
 
     LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(GAS_METER);
 
@@ -109,71 +96,93 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     newMeasurement(meter2, after.plusHours(4), "Volume", 7.0, "m^3");
 
-    org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
+    org.springframework.data.domain.Page<MeasurementDto> firstPage = asTestUser()
       .getPage(String.format(
-        "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s&size=2&sort=created,desc",
-        after, before, logicalMeter.getId()
+        "/measurements/paged?after=%s&before=%s&logicalMeterId=%s&size=2",
+        after, before, logicalGasMeter.getId()
       ), MeasurementDto.class);
 
-    assertThat(response.getTotalElements()).isEqualTo(4);
-    assertThat(response.getTotalPages()).isEqualTo(2);
+    assertThat(firstPage.getTotalElements()).isEqualTo(4);
+    assertThat(firstPage.getTotalPages()).isEqualTo(2);
 
-    List<MeasurementDto> content = response.getContent();
-    assertThat(content.size()).isEqualTo(2);
-
-    assertThat(content.get(0)).isEqualTo(new MeasurementDto(
-      "Volume",
-      6.0,
-      "m³",
-      after.plusHours(3)
-    ));
-
-    assertThat(content.get(1)).isEqualTo(new MeasurementDto(
-      "Volume",
-      5.0,
-      "m³",
-      after.plusHours(2)
-    ));
+    assertThat(firstPage.getContent())
+      .hasSize(2)
+      .containsExactlyInAnyOrder(
+        new MeasurementDto(
+          "Volume",
+          6.0,
+          "m³",
+          after.plusHours(3)
+        ),
+        new MeasurementDto(
+          "Volume",
+          5.0,
+          "m³",
+          after.plusHours(2)
+        )
+      );
   }
 
   @Test
-  public void pagedMeasurementsUnableToAccessOtherOrganisationsMeasurements() {
+  public void unableToAccessOtherOrganisation() {
     ZonedDateTime created = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
-    PhysicalMeterEntity physicalMeter = newButterMeterBelongingTo(
-      otherOrganisation,
+    PhysicalMeterEntity physicalMeter = newPhysicalMeterEntity(
+      context().organisationEntity2,
       created
     );
 
-    newButterTemperatureMeasurement(physicalMeter, created);
+    newMeasurement(physicalMeter, created, "Difference temperature", 285.59, "°C");
 
-    org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
+    Page<MeasurementDto> wrongUserResponse = asTestUser()
       .getPage(String.format(
-        "/measurements/paged/?logicalMeterId=%s&size=2&sort=created,desc",
+        "/measurements/paged?logicalMeterId=%s",
         physicalMeter.logicalMeterId
       ), MeasurementDto.class);
 
-    assertThat(response.getTotalElements()).isEqualTo(0);
+    assertThat(wrongUserResponse).hasSize(0);
+
+    Page<MeasurementDto> correctUserResponse = asOtherUser()
+      .getPage(String.format(
+        "/measurements/paged?logicalMeterId=%s",
+        physicalMeter.logicalMeterId
+      ), MeasurementDto.class);
+
+    assertThat(correctUserResponse).hasSize(1);
+  }
+
+  @Test
+  public void defaultsToDecidedUponUnits() {
+    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
+    ZonedDateTime before = after.plusHours(1);
+    LogicalMeterEntity districtHeatingMeter = newLogicalMeterEntity(DISTRICT_HEATING_METER);
+
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(districtHeatingMeter.id);
+    newMeasurement(meter, after, "Energy", 1.0, "GJ");
+
+    org.springframework.data.domain.Page<MeasurementDto> firstPage = asTestUser()
+      .getPage(String.format(
+        "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s",
+        after, before, districtHeatingMeter.getId()
+      ), MeasurementDto.class);
+
+    assertThat(firstPage.getContent())
+      .hasSize(1)
+      .extracting("unit")
+      .containsExactly("kWh");
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
     return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
-  private MeasurementEntity newButterTemperatureMeasurement(
-    PhysicalMeterEntity meter,
-    ZonedDateTime created
-  ) {
-    return newMeasurement(meter, created, "Difference temperature", 285.59, "°C");
-  }
-
-  private MeasurementEntity newMeasurement(
+  private void newMeasurement(
     PhysicalMeterEntity meter,
     ZonedDateTime created,
     String quantity,
     double value,
     String unit
   ) {
-    return measurementJpaRepository.save(new MeasurementEntity(
+    measurementJpaRepository.save(new MeasurementEntity(
       created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
       new MeasurementUnit(unit, value),
@@ -191,13 +200,6 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       ZonedDateTime.now(),
       meterDefinitionEntity
     ));
-  }
-
-  private PhysicalMeterEntity newButterMeterBelongingTo(
-    OrganisationEntity organisationEntity,
-    ZonedDateTime created
-  ) {
-    return newPhysicalMeterEntity(organisationEntity, created);
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity(
@@ -244,7 +246,4 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     ));
   }
 
-  private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {
-    return asSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
-  }
 }

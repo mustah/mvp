@@ -45,6 +45,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -122,7 +123,7 @@ public class MeteringMeasurementMessageConsumerTest {
         organisations,
         new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
       ),
-      new MeasurementUseCases(authenticatedUser, measurements),
+      new MeasurementUseCases(measurements),
       new GatewayUseCases(gateways, authenticatedUser)
     );
   }
