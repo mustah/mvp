@@ -70,7 +70,7 @@ $map-width: 800px;
 $main-menu-height: 60px;
 $main-menu-width: 84px; // need to change drawerWidth in themes.ts when changing this value
 $main-menu-z-index: 1400; // slightly larger than material design's app bar
-$selection-header-z-index: 1100;
+$selection-header-z-index: $main-menu-z-index + 100;
 
 $side-menu-container-width: 256px;
 $side-menu-tab: 5px;

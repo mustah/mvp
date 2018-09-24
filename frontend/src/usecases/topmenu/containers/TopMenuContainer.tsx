@@ -7,20 +7,15 @@ import {Row, RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
 import {User} from '../../../state/domain-models/user/userModels';
-import {ClassNamed} from '../../../types/Types';
+import {ClassNamed, WithChildren} from '../../../types/Types';
 import {getUser} from '../../auth/authSelectors';
-import './TopMenuWrapperContainer.scss';
+import './TopMenuContainer.scss';
 
-interface StateToProps extends ClassNamed {
+interface StateToProps extends ClassNamed, WithChildren {
   user: User;
-  children?: React.ReactNode;
 }
 
-interface OwnProps {
-  className: string;
-}
-
-const TopMenuWrapper = ({children, className, user: {organisation}}: StateToProps) => (
+const TopMenu = ({children, className, user: {organisation}}: StateToProps) => (
   <Row className={classNames('SelectionMenuWrapper space-between', className)}>
     <Row className="SelectionMenu">
       {children}
@@ -37,5 +32,5 @@ const mapStateToProps = ({auth}: RootState): StateToProps => ({
   user: getUser(auth),
 });
 
-export const TopMenuWrapperContainer =
-  connect<StateToProps, {}, OwnProps>(mapStateToProps)(TopMenuWrapper);
+export const TopMenuContainer =
+  connect<StateToProps, {}>(mapStateToProps)(TopMenu);

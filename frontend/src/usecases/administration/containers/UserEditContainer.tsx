@@ -5,39 +5,24 @@ import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
-import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {Loader} from '../../../components/loading/Loader';
-import {MainTitle} from '../../../components/texts/Titles';
-import {PageComponent} from '../../../containers/PageComponent';
+import {PageTitle} from '../../../components/texts/Titles';
+import {AdminPageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {
-  getEntitiesDomainModels,
-  getError,
-} from '../../../state/domain-models/domainModelsSelectors';
+import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {
-  clearUserError,
-  fetchUser,
-  modifyUser,
-} from '../../../state/domain-models/user/userApiActions';
+import {clearUserError, fetchUser, modifyUser} from '../../../state/domain-models/user/userApiActions';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {
-  CallbackWithId,
-  ClearError,
-  ErrorResponse,
-  Fetch,
-  OnClick,
-  uuid,
-} from '../../../types/Types';
+import {CallbackWithId, ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
@@ -87,12 +72,10 @@ class UserEdit extends React.Component<Props, {}> {
     } = this.props;
 
     return (
-      <PageComponent isSideMenuOpen={false}>
-        <Row className="space-between">
-          <MainTitle>
-            {translate('edit user')}
-          </MainTitle>
-        </Row>
+      <AdminPageComponent>
+        <PageTitle>
+          {translate('edit user')}
+        </PageTitle>
 
         <Paper style={paperStyle}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
@@ -108,7 +91,7 @@ class UserEdit extends React.Component<Props, {}> {
             </WrapperIndent>
           </Loader>
         </Paper>
-      </PageComponent>
+      </AdminPageComponent>
     );
   }
 }

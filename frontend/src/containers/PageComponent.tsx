@@ -1,25 +1,40 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
 import {Footer} from '../components/footer/Footer';
 import {Column} from '../components/layouts/column/Column';
 import {Layout} from '../components/layouts/layout/Layout';
-import {TopMenuWrapperContainer} from '../usecases/topmenu/containers/TopMenuWrapperContainer';
+import {AppTitle} from '../components/texts/Titles';
+import {translate} from '../services/translationService';
+import {WithChildren} from '../types/Types';
+import {TopMenuContainer} from '../usecases/topmenu/containers/TopMenuContainer';
 
-interface Props {
-  isSideMenuOpen: boolean;
-  children?: React.ReactNode;
-  renderTopMenuSearch?: JSX.Element;
+interface Props extends WithChildren {
+  topMenuSearch: JSX.Element;
 }
 
-export const PageComponent = ({children, isSideMenuOpen, renderTopMenuSearch = null}: Props) => (
-  <Layout className="flex-1">
-    <TopMenuWrapperContainer className={classNames({isSideMenuOpen})}>
-      {renderTopMenuSearch}
-    </TopMenuWrapperContainer>
+const Content = ({children}: WithChildren) => (
+  <Column className="PageContent flex-1">
+    {children}
+    <Footer/>
+  </Column>
+);
 
-    <Column className="PageContent flex-1">
-      {children}
-      <Footer/>
-    </Column>
+export const PageComponent = (props: Props) => (
+  <Layout className="flex-1">
+    <TopMenuContainer>
+      <AppTitle>{translate('metering')}</AppTitle>
+      {props.topMenuSearch}
+    </TopMenuContainer>
+
+    <Content {...props}/>
+  </Layout>
+);
+
+export const AdminPageComponent = (props: WithChildren) => (
+  <Layout className="flex-1">
+    <TopMenuContainer>
+      <AppTitle>{translate('admin')}</AppTitle>
+    </TopMenuContainer>
+
+    <Content {...props}/>
   </Layout>
 );

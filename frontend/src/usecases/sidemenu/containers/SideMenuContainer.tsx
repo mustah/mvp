@@ -1,7 +1,7 @@
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {drawerWidth} from '../../../app/themes';
+import {drawerWidth, mvpTheme} from '../../../app/themes';
 import {RootState} from '../../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {Children} from '../../../types/Types';
@@ -15,7 +15,7 @@ interface OwnProps {
   children?: Children;
 }
 
-const containerStyle: React.CSSProperties = {left: drawerWidth};
+const containerStyle: React.CSSProperties = {left: drawerWidth, top: mvpTheme.appBar!.height};
 
 const SideMenu = ({isSideMenuOpen, children}: StateToProps & OwnProps) => (
   <Drawer
