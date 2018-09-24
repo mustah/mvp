@@ -1,5 +1,5 @@
 import {normalize} from 'normalizr';
-import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
+import {getMediumType, Medium} from '../../components/indicators/indicatorWidgetModels';
 import {measurement} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -7,9 +7,9 @@ import {allQuantities, Measurement, Quantity} from '../../state/ui/graph/measure
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
 
-const orderedQuantities = (medium: string): string[] => {
-  return getMediumType(medium) in allQuantities
-    ? allQuantities[getMediumType(medium)]
+export const orderedQuantities = (medium: Medium): string[] => {
+  return medium in allQuantities
+    ? allQuantities[medium]
     : [];
 };
 
@@ -20,7 +20,7 @@ export const meterMeasurementsForTable = (meter: MeterDetails): DomainModel<Rend
   const result: uuid[] = normalized.result;
   const orderedResult: uuid[] = [];
 
-  orderedQuantities(meter.medium).forEach((quantity) => {
+  orderedQuantities(getMediumType(meter.medium)).forEach((quantity) => {
     if (!result.includes(quantity)) {
       entities[quantity] = {
         id: quantity,
