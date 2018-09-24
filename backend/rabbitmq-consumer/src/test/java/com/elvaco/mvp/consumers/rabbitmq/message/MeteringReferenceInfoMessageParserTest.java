@@ -1,7 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -222,6 +222,24 @@ public class MeteringReferenceInfoMessageParserTest {
   public void emptyMeter() {
     String emptyMeter = parseJsonFile("messages/reference-info-empty-meter.json");
     assertThat(messageParser.parseReferenceInfoMessage(emptyMeter)).isPresent();
+  }
+
+  @Test
+  public void jobIdSet() {
+    String jsonFile = parseJsonFile("messages/reference-info-job-id-set.json");
+    MeteringReferenceInfoMessageDto messageDto = messageParser.parseReferenceInfoMessage(jsonFile)
+      .get();
+
+    assertThat(messageDto.jobId).isEqualTo("job-id");
+  }
+
+  @Test
+  public void jobIdMissing() {
+    String jsonFile = parseJsonFile("messages/reference-info-job-id-missing.json");
+    MeteringReferenceInfoMessageDto messageDto = messageParser.parseReferenceInfoMessage(jsonFile)
+      .get();
+
+    assertThat(messageDto.jobId).isNull();
   }
 
   @Test
