@@ -12,9 +12,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
@@ -28,15 +25,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectionControllerTest extends IntegrationTest {
-
-  @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Autowired
   private LogicalMeters logicalMeters;

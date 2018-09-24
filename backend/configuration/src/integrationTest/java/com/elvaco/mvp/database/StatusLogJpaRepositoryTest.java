@@ -8,32 +8,15 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 
 public class StatusLogJpaRepositoryTest extends IntegrationTest {
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
 
   @After
   public void tearDown() {

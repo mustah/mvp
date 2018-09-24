@@ -3,12 +3,6 @@ package com.elvaco.mvp.consumers.rabbitmq;
 import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
@@ -31,24 +25,6 @@ import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("SameParameterValue")
 public class RabbitMqConsumerTest extends RabbitIntegrationTest {
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
-
-  @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
 
   @Autowired
   private CacheManager cacheManager;
@@ -238,8 +214,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     return logicalMeterJpaRepository.findBy(organisationId, externalId)
       .filter(meter ->
         meter.location.country.equalsIgnoreCase(country)
-        && meter.location.city.equalsIgnoreCase(city)
-        && meter.location.streetAddress.equalsIgnoreCase(address))
+          && meter.location.city.equalsIgnoreCase(city)
+          && meter.location.streetAddress.equalsIgnoreCase(address))
       .isPresent();
   }
 

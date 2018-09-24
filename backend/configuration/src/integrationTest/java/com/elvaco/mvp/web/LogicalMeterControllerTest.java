@@ -37,14 +37,6 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
@@ -90,15 +82,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private LogicalMeters logicalMeters;
 
   @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private MeasurementJpaRepositoryImpl measurementJpaRepository;
-
-  @Autowired
   private Measurements measurements;
 
   @Autowired
@@ -111,25 +94,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private Gateways gateways;
 
   @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
-
-  @Autowired
   private MeterStatusLogs meterStatusLogs;
 
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
-
-  @Autowired
-  private MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
-  private MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
   private ZonedDateTime start;
 

@@ -8,8 +8,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -32,12 +30,6 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Autowired
   private MeterStatusLogs meterStatusLogs;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
   @Before
   public void setUp() {

@@ -6,8 +6,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Test;
@@ -23,12 +21,6 @@ public class GatewaysTest extends IntegrationTest {
 
   @Autowired
   private Gateways gateways;
-
-  @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
 
   @After
   public void tearDown() {

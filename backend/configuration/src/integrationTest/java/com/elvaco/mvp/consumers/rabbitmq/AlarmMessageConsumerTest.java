@@ -14,8 +14,6 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
-import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
@@ -38,9 +36,6 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
   private static final ZonedDateTime NOW = ZonedDateTime.now();
 
   @Autowired
-  private MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
-
-  @Autowired
   private MeterAlarmLogs meterAlarmLogs;
 
   @Autowired
@@ -48,9 +43,6 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
 
   @Autowired
   private OrganisationUseCases organisationUseCases;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   private AlarmMessageConsumer meteringAlarmMessageConsumer;
 

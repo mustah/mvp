@@ -24,11 +24,6 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.util.Dates;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -56,21 +51,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   private static final ZonedDateTime YESTERDAY = ZonedDateTime.now()
     .minusDays(1)
     .truncatedTo(ChronoUnit.DAYS);
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private MeasurementJpaRepositoryImpl measurementJpaRepository;
-
-  @Autowired
-  private MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
   @Autowired
   private LogicalMeters logicalMeters;

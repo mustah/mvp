@@ -4,21 +4,16 @@ import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.property.PropertyEntity;
 import com.elvaco.mvp.database.entity.property.PropertyPk;
-import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PropertiesJpaRepositoryTest extends IntegrationTest {
-
-  @Autowired
-  private PropertiesJpaRepository propertiesJpaRepository;
 
   private UUID organisationId;
 

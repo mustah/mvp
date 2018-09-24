@@ -18,12 +18,6 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
@@ -43,24 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MapMarkerControllerTest extends IntegrationTest {
 
   private static final ZonedDateTime NOW = ZonedDateTime.parse("2018-02-01T00:11:22Z");
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
-
-  @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
 
   @Autowired
   private Gateways gateways;

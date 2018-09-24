@@ -16,9 +16,6 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
@@ -48,15 +45,6 @@ import static org.assertj.core.api.Assertions.tuple;
 public class GatewayControllerTest extends IntegrationTest {
 
   @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository statusLogJpaRepository;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
   private Gateways gateways;
 
   @Autowired
@@ -74,7 +62,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    statusLogJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     organisations.deleteById(dailyPlanet.id);
@@ -156,8 +144,8 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
-        + "?after=" + date.minusDays(60)
-        + "&before=" + date.minusDays(30),
+          + "?after=" + date.minusDays(60)
+          + "&before=" + date.minusDays(30),
         GatewayDto.class
       );
 
@@ -590,7 +578,7 @@ public class GatewayControllerTest extends IntegrationTest {
     ZonedDateTime start,
     @Nullable ZonedDateTime stop
   ) {
-    statusLogJpaRepository.save(
+    gatewayStatusLogJpaRepository.save(
       new GatewayStatusLogEntity(
         null,
         gatewayId,

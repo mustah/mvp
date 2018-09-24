@@ -15,11 +15,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.DashboardDto;
@@ -29,7 +24,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -49,21 +43,6 @@ public class DashboardControllerTest extends IntegrationTest {
 
   private double readingCount = 0.0;
   private double readingFailedCount = 0.0;
-
-  @Autowired
-  private MeasurementJpaRepositoryImpl measurementJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
-  private MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
   @Before
   public void setUp() {
