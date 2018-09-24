@@ -10,14 +10,13 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.exception.PropertyNotFound;
-import com.elvaco.mvp.core.spi.cache.Cache;
+import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.SyncRequestStatusType;
-import com.elvaco.mvp.producers.rabbitmq.dto.Constants;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
@@ -63,7 +62,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   private PropertiesUseCases propertiesUseCases;
 
   @Autowired
-  private Cache<String, MeteringReferenceInfoMessageDto> jobIdCache;
+  private JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
 
   @Autowired
   private RabbitTemplate rabbitTemplate;
@@ -72,7 +71,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Before
   public void setUp() {
-    jobIdCache.clear();
+    meterSyncJobService.removeAllJobs();
     otherOrganisation = organisations.save(new Organisation(
       randomUUID(),
       "Other Organisation",
@@ -204,7 +203,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void sync_PendingStatusForPendingJob() {
-    jobIdCache.put("12345", Constants.NULL_METERING_REFERENCE_INFO_MESSAGE_DTO);
+    meterSyncJobService.newPendingJob("12345");
 
     List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
       .getList("/meters/sync?jobIds=12345", SyncRequestStatusDto.class)
@@ -219,7 +218,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void sync_CompletedStatusForCompletedJob() {
     MeteringReferenceInfoMessageDto response = newMeteringReferenceInfoMessageDto("12345");
 
-    jobIdCache.put("12345", response);
+    meterSyncJobService.update("12345", response);
     List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
       .getList("/meters/sync?jobIds=12345", SyncRequestStatusDto.class)
       .getBody();
@@ -235,8 +234,8 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
     MeteringReferenceInfoMessageDto response1 = newMeteringReferenceInfoMessageDto("12345");
     MeteringReferenceInfoMessageDto response2 = newMeteringReferenceInfoMessageDto("54321");
-    jobIdCache.put("12345", response1);
-    jobIdCache.put("54321", response2);
+    meterSyncJobService.update("12345", response1);
+    meterSyncJobService.update("54321", response2);
     List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
       .getList("/meters/sync?jobIds=12345,54321,99999", SyncRequestStatusDto.class)
       .getBody();

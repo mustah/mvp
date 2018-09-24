@@ -1,15 +1,14 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
-import com.elvaco.mvp.core.spi.cache.Cache;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
@@ -17,18 +16,21 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.producers.rabbitmq.dto.Constants.NULL_METERING_REFERENCE_INFO_MESSAGE_DTO;
-
 @RequiredArgsConstructor
 public class MeteringRequestPublisher {
 
   private final AuthenticatedUser authenticatedUser;
   private final Organisations organisations;
   private final MessagePublisher messagePublisher;
-  private final Cache<String, MeteringReferenceInfoMessageDto> jobIdCache;
+  private final JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
 
   public String request(LogicalMeter logicalMeter) {
-    ensureSuperAdmin();
+    if (!authenticatedUser.isSuperAdmin()) {
+      throw new Unauthorized(String.format(
+        "User '%s' is not allowed to publish synchronization requests",
+        authenticatedUser.getUsername()
+      ));
+    }
 
     Organisation meterOrganisation = organisations.findById(logicalMeter.organisationId)
       .orElseThrow(
@@ -54,22 +56,7 @@ public class MeteringRequestPublisher {
     } catch (Exception exception) {
       throw new UpstreamServiceUnavailable(exception.getMessage());
     }
-    jobIdCache.put(jobId, NULL_METERING_REFERENCE_INFO_MESSAGE_DTO);
+    meterSyncJobService.newPendingJob(jobId);
     return getReferenceInfoDto.jobId;
-  }
-
-  @Nullable
-  public MeteringReferenceInfoMessageDto status(String jobId) {
-    ensureSuperAdmin();
-    return jobIdCache.get(jobId);
-  }
-
-  private void ensureSuperAdmin() {
-    if (!authenticatedUser.isSuperAdmin()) {
-      throw new Unauthorized(String.format(
-        "User '%s' is not allowed to publish synchronization requests",
-        authenticatedUser.getUsername()
-      ));
-    }
   }
 }

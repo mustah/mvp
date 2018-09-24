@@ -33,7 +33,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
-import com.elvaco.mvp.testing.cache.MockCache;
+import com.elvaco.mvp.testing.amqp.MockJobService;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
@@ -56,7 +56,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
+@SuppressWarnings("ConstantConditions")
 public class MeteringReferenceInfoMessageConsumerTest {
 
   private static final String MANUFACTURER = "ELV";
@@ -86,7 +86,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private MockGeocodeService geocodeService;
   private PropertiesUseCases propertiesUseCases;
   private MockMeterStatusLogs meterStatusLogs;
-  private MockCache<String, MeteringReferenceInfoMessageDto> jobIdCache;
+  private MockJobService<MeteringReferenceInfoMessageDto> jobService;
 
   @Before
   public void setUp() {
@@ -114,7 +114,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
 
     meterStatusLogs = new MockMeterStatusLogs();
-    jobIdCache = new MockCache<>();
+    jobService = new MockJobService<>();
     messageHandler = new MeteringReferenceInfoMessageConsumer(
       new LogicalMeterUseCases(
         authenticatedUser,
@@ -139,7 +139,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       new GatewayUseCases(gateways, authenticatedUser),
       geocodeService,
       propertiesUseCases,
-      jobIdCache
+      jobService
     );
   }
 
@@ -776,7 +776,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       messageBuilder().jobId("").build()
     );
 
-    assertThat(jobIdCache.keySet()).isEmpty();
+    assertThat(jobService.getAll()).isEmpty();
   }
 
   @Test
@@ -785,7 +785,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       messageBuilder().jobId(null).build()
     );
 
-    assertThat(jobIdCache.keySet()).isEmpty();
+    assertThat(jobService.getAll()).isEmpty();
   }
 
   @Test
@@ -794,16 +794,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
       messageBuilder().jobId("job-id").build()
     );
 
-    assertThat(jobIdCache.keySet()).isEmpty();
+    assertThat(jobService.getAll()).isEmpty();
   }
 
   @Test
   public void jobIdCache_isUpdatedWhenJobIdPresentInCache() {
-    jobIdCache.put("job-id", null);
+    jobService.newPendingJob("job-id");
     MeteringReferenceInfoMessageDto messageDto = messageBuilder().jobId("job-id").build();
     messageHandler.accept(messageDto);
 
-    assertThat(jobIdCache.get("job-id")).isEqualTo(messageDto);
+    assertThat(jobService.getJob("job-id")).isEqualTo(messageDto);
   }
 
   private PhysicalMeter findPhysicalMeterByOrganisationId(Organisation organisation) {

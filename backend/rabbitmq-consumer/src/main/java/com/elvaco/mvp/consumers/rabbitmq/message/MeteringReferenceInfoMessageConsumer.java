@@ -17,7 +17,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.spi.cache.Cache;
+import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
@@ -43,15 +43,15 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private final GatewayUseCases gatewayUseCases;
   private final GeocodeService geocodeService;
   private final PropertiesUseCases propertiesUseCases;
-  private final Cache<String, MeteringReferenceInfoMessageDto> jobIdCache;
+  private final JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
 
   @Override
   public void accept(MeteringReferenceInfoMessageDto referenceInfoMessage) {
     FacilityDto facility = referenceInfoMessage.facility;
 
     String jobId = referenceInfoMessage.jobId;
-    if (jobId != null && !jobId.isEmpty() && jobIdCache.containsKey(jobId)) {
-      jobIdCache.put(jobId, referenceInfoMessage);
+    if (meterSyncJobService.isActive(jobId)) {
+      meterSyncJobService.update(jobId, referenceInfoMessage);
     }
 
     if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {

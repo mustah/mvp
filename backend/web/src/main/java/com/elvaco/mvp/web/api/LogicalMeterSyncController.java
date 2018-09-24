@@ -6,10 +6,14 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.exception.Unauthorized;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.web.dto.SyncRequestResponseDto;
 import com.elvaco.mvp.web.dto.SyncRequestStatusDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
@@ -32,6 +36,8 @@ public class LogicalMeterSyncController {
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final MeteringRequestPublisher meteringRequestPublisher;
   private final PropertiesUseCases propertiesUseCases;
+  private final JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
+  private final AuthenticatedUser authenticatedUser;
 
   @ResponseStatus(HttpStatus.ACCEPTED)
   @PostMapping("{id}")
@@ -59,9 +65,15 @@ public class LogicalMeterSyncController {
   public List<SyncRequestStatusDto> syncStatus(
     @RequestParam List<String> jobIds
   ) {
+    if (!authenticatedUser.isSuperAdmin()) {
+      throw new Unauthorized(String.format(
+        "User '%s' is not allowed to view synchronization requests",
+        authenticatedUser.getUsername()
+      ));
+    }
 
     return jobIds.stream()
-      .map(jobId -> SyncRequestStatusDto.from(jobId, meteringRequestPublisher.status(jobId)))
+      .map(jobId -> SyncRequestStatusDto.from(jobId, meterSyncJobService.getJob(jobId)))
       .collect(Collectors.toList());
   }
 

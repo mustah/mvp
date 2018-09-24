@@ -9,7 +9,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
-import com.elvaco.mvp.testing.cache.MockCache;
+import com.elvaco.mvp.testing.amqp.MockJobService;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
@@ -99,7 +99,7 @@ public class MeteringRequestPublisherTest {
       user,
       new MockOrganisations(asList(user.getOrganisation(), otherOrganisation)),
       spy,
-      new MockCache<>()
+      new MockJobService()
     );
     LogicalMeter logicalMeter = newLogicalMeter(
       otherOrganisation.id,
@@ -192,7 +192,7 @@ public class MeteringRequestPublisherTest {
       messageBody -> {
         throw new RuntimeException("Something went horribly wrong!");
       },
-      new MockCache<>()
+      new MockJobService()
     );
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -209,7 +209,7 @@ public class MeteringRequestPublisherTest {
       user,
       new MockOrganisations(singletonList(user.getOrganisation())),
       spy,
-      new MockCache<>()
+      new MockJobService()
     );
   }
 
@@ -225,4 +225,5 @@ public class MeteringRequestPublisherTest {
       .gateways(gateways)
       .build();
   }
+
 }
