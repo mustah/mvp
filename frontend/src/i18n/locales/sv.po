@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-09-05T08:22:16.572Z\n"
+"POT-Creation-Date: 2018-09-25 16:32+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,46 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
-
-msgid "Volume short"
-msgstr "Volume"
-
-msgid "Flow short"
-msgstr "Flow"
-
-msgid "Energy short"
-msgstr "Energy"
-
-msgid "Power short"
-msgstr "Power"
-
-msgid "Forward temperature short"
-msgstr "F temp."
-
-msgid "Return temperature short"
-msgstr "R temp."
-
-msgid "Difference temperature short"
-msgstr "Diff temp."
-
-msgid "Temperature short"
-msgstr "Temp."
-
-msgid "Relative humidity short"
-msgstr "RH"
-
-msgid "Energy return short"
-msgstr "Energy return"
-
-msgid "Reactive energy short"
-msgstr "Reactive energy"
-
-msgid "yes"
-msgstr "ja"
-
-msgid "no"
-msgstr "nej"
+"X-Generator: Poedit 1.8.9\n"
 
 msgid "admin"
 msgstr "admin"
@@ -88,9 +49,6 @@ msgstr "försök igen"
 
 msgid "save"
 msgstr "spara"
-
-msgid "close"
-msgstr "stäng"
 
 msgid "confirm"
 msgstr "bekräfta"
@@ -173,6 +131,9 @@ msgstr "mätvärde saknas"
 msgid "other"
 msgstr "övriga"
 
+msgid "ok"
+msgstr "ok"
+
 msgid "all timestamps are displayed in UTC+1"
 msgstr "alla tider visas i UTC+1"
 
@@ -181,12 +142,6 @@ msgstr "lista"
 
 msgid "map"
 msgstr "karta"
-
-msgid "no"
-msgstr "nej"
-
-msgid "meter id"
-msgstr "mätar-id"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -206,6 +161,12 @@ msgstr "adress"
 msgid "collection"
 msgstr "insamling"
 
+msgid "status change"
+msgstr "statusförändring"
+
+msgid "reported"
+msgstr "felrapporterad"
+
 msgid "no reliable position"
 msgstr "ingen tillförlitlig position"
 
@@ -221,8 +182,11 @@ msgstr "tillverkare"
 msgid "medium"
 msgstr "medium"
 
-msgid "status"
-msgstr "status"
+msgid "alarm"
+msgstr "larm"
+
+msgid "collection percentage"
+msgstr "insamling %"
 
 msgid "hour in short"
 msgstr "h"
@@ -239,8 +203,8 @@ msgstr "validering"
 msgid "labels"
 msgstr "etiketter"
 
-msgid "never collected"
-msgstr "ej insamlad"
+msgid "meter id"
+msgstr "mätar-id"
 
 msgid "latest value"
 msgstr "senaste"
@@ -251,32 +215,59 @@ msgstr "statuslogg"
 msgid "gateways"
 msgstr "gateways"
 
-msgid "quantity"
-msgstr "storhet"
+msgid "date"
+msgstr "datum"
 
-msgid "value"
-msgstr "värde"
+msgid "status"
+msgstr "status"
+
+msgid "never collected"
+msgstr "ej insamlad"
 
 msgid "readout"
 msgstr "avläsning"
 
-msgid "date"
-msgstr "datum"
-
 msgid "no meters"
 msgstr "inga mätare"
 
-msgid "ok"
-msgstr "ok"
+msgid "Volume short"
+msgstr "Volume"
 
-msgid "alarm"
-msgstr "larm"
+msgid "Flow short"
+msgstr "Flow"
+
+msgid "Energy short"
+msgstr "Energy"
+
+msgid "Power short"
+msgstr "Power"
+
+msgid "Forward temperature short"
+msgstr "F temp."
+
+msgid "Return temperature short"
+msgstr "R temp."
+
+msgid "Difference temperature short"
+msgstr "Diff temp."
+
+msgid "External temperature short"
+msgstr "Temp."
+
+msgid "Temperature short"
+msgstr "Temp."
+
+msgid "Relative humidity short"
+msgstr "RH"
+
+msgid "Energy return short"
+msgstr "Energy return"
+
+msgid "Reactive energy short"
+msgstr "Reactive energy"
 
 msgid "error"
 msgstr "fel"
-
-msgid "info"
-msgstr "info"
 
 msgid "warning"
 msgstr "varning"
@@ -350,11 +341,11 @@ msgstr "kunde inte uppdatera urval: {{error}}"
 msgid "failed to delete selection: {{error}}"
 msgstr "kunde inte ta bort urval: {{error}}"
 
-msgid "users"
-msgstr "användare"
-
 msgid "organisations"
 msgstr "organisationer"
+
+msgid "users"
+msgstr "användare"
 
 msgid "slug"
 msgstr "kod"
@@ -371,9 +362,6 @@ msgstr "ditt lösenord"
 msgid "gateway"
 msgstr "gateway"
 
-msgid "status change"
-msgstr "statusförändring"
-
 msgid "no gateways"
 msgstr "inga gateways"
 
@@ -386,20 +374,24 @@ msgstr "alla mätare i urvalet"
 msgid "report"
 msgstr "rapport"
 
+msgid "{{count}} meter of your selection, are not displayed in the map"
+msgstr "{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
+
 msgid "{{count}} meter are not displayed in the map due to low accuracy"
 msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
-msgid "{{count}} meter of your selection, are not displayed in the map"
-msgstr ""
-"{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
-
-msgid "{{count}} gateway are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
-
 msgid "{{count}} gateway of your selection, are not displayed in the map"
 msgstr "{{count}} gateway of your selection, are not displayed in the map"
+
+msgid "{{count}} gateway are not displayed in the map due to low accuracy"
+msgstr "{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
+
+msgid "facility"
+msgstr "anläggning"
+
+msgid "value"
+msgstr "värde"
 
 msgid "select medium"
 msgstr "välj medium ovan"
@@ -410,14 +402,11 @@ msgstr "välj storheter"
 msgid "select meters to include in graph"
 msgstr "välj mätare för att inkludera dem i grafen"
 
-msgid "select meters"
-msgstr "välj mätare"
-
-msgid "facility"
-msgstr "anläggning"
-
 msgid "graph"
 msgstr "graf"
+
+msgid "select meters"
+msgstr "välj mätare"
 
 msgid "only {{limit}} meters can be selected at the same time"
 msgstr "endast {{limit}} mätare kan väljas samtidigt"
@@ -464,9 +453,6 @@ msgstr "filtrera"
 msgid "delete user selection"
 msgstr "ta bort urval"
 
-msgid "show on map"
-msgstr "visa på karta"
-
 msgid "no saved selections"
 msgstr "inga sparade urval"
 
@@ -482,14 +468,8 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
-msgid "reported"
-msgstr "felrapporterad"
-
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
-
-msgid "collection percentage"
-msgstr "insamling %"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
@@ -515,14 +495,17 @@ msgid "meter°"
 msgstr "mätare"
 
 msgctxt "°plural"
+msgid "{{count}} meter of your selection, are not displayed in the map°"
+msgstr "{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
+
+msgctxt "°plural"
 msgid "{{count}} meter are not displayed in the map due to low accuracy°"
 msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
-msgid "{{count}} meter of your selection, are not displayed in the map°"
-msgstr ""
-"{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
+msgid "{{count}} gateway of your selection, are not displayed in the map°"
+msgstr "{{count}} gateways av ditt ursprungliga urval, visas inte på kartan"
 
 msgctxt "°plural"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
@@ -530,13 +513,26 @@ msgstr ""
 "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
-msgid "{{count}} gateway of your selection, are not displayed in the map°"
-msgstr ""
-"{{count}} gateways av ditt ursprungliga urval, visas inte på kartan"
-
-msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} mätare kommer snart att uppdateras"
+
+#~ msgid "yes"
+#~ msgstr "ja"
+
+#~ msgid "no"
+#~ msgstr "nej"
+
+#~ msgid "close"
+#~ msgstr "stäng"
+
+#~ msgid "quantity"
+#~ msgstr "storhet"
+
+#~ msgid "info"
+#~ msgstr "info"
+
+#~ msgid "show on map"
+#~ msgstr "visa på karta"
 
 #~ msgid "cities"
 #~ msgstr "städer"

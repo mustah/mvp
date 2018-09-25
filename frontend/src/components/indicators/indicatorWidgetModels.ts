@@ -15,6 +15,7 @@ export const enum Medium {
   temperatureInside = 'temperatureInside',
   temperatureOutside = 'temperatureOutside',
   hotWater = 'warmWater',
+  roomSensor = 'roomSensor',
   water = 'water',
   unknown = 'unknown',
 }
@@ -26,6 +27,7 @@ const mediumTypes: {[key: string]: Medium} = {
   'Hot water': Medium.hotWater,
   'Temperature inside': Medium.temperatureInside,
   'Electricity': Medium.electricity,
+  'Room sensor': Medium.roomSensor,
 };
 
 export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;

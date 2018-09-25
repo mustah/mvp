@@ -1,4 +1,5 @@
 import {initTranslations} from '../../i18n/__tests__/i18nMock';
+import {translate} from '../../services/translationService';
 import {ParameterName} from '../../state/user-selection/userSelectionModels';
 import {getTranslationOrName, statusTranslation, translatedErrorMessage} from '../translations';
 
@@ -81,6 +82,27 @@ describe('translations', () => {
       expect(getTranslationOrName('stockholm', ParameterName.cities)).toEqual('stockholm');
       expect(getTranslationOrName('drottninggatan 1', ParameterName.addresses)).toEqual('drottninggatan 1');
     });
+  });
+
+  describe('translations of backend provided units', () => {
+
+    it('translates units', () => {
+      // by adding these to the source code, they are included in the POT file
+      // and thus required in the PO files for each language
+      translate('Volume short');
+      translate('Flow short');
+      translate('Energy short');
+      translate('Power short');
+      translate('Forward temperature short');
+      translate('Return temperature short');
+      translate('Difference temperature short');
+      translate('External temperature short');
+      translate('Temperature short');
+      translate('Relative humidity short');
+      translate('Energy return short');
+      translate('Reactive energy short');
+    });
+
   });
 
 });

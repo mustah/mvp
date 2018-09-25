@@ -91,6 +91,7 @@ export const enum Quantity {
   relativeHumidity = 'Relative humidity',
   energyReturn = 'Energy return',
   energyReactive = 'Reactive energy',
+  externalTemperature = 'External temperature',
 }
 
 // TODO type, and fill in missing values for, {[q in Quantity]: string}
@@ -133,6 +134,10 @@ export const allQuantities = {
     Quantity.energyReactive,
     Quantity.energyReturn,
     Quantity.power,
+  ],
+  [Medium.roomSensor]: [
+    Quantity.externalTemperature,
+    Quantity.relativeHumidity,
   ],
 };
 
