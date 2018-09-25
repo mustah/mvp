@@ -9,7 +9,16 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
+import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.hibernate.SessionFactory;
@@ -35,7 +44,34 @@ public abstract class IntegrationTest {
   private static final long MAX_WAIT_TIME = TimeUnit.SECONDS.toNanos(15);
 
   @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
+  protected OrganisationJpaRepository organisationJpaRepository;
+
+  @Autowired
+  protected LogicalMeterJpaRepository logicalMeterJpaRepository;
+
+  @Autowired
+  protected PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
+  @Autowired
+  protected PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+
+  @Autowired
+  protected GatewayJpaRepository gatewayJpaRepository;
+
+  @Autowired
+  protected GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
+
+  @Autowired
+  protected MeasurementJpaRepositoryImpl measurementJpaRepository;
+
+  @Autowired
+  protected MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
+
+  @Autowired
+  protected MissingMeasurementJpaRepository missingMeasurementJpaRepository;
+
+  @Autowired
+  protected PropertiesJpaRepository propertiesJpaRepository;
 
   @Autowired
   private Users users;

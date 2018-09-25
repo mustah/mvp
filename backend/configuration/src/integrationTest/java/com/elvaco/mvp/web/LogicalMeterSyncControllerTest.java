@@ -14,8 +14,6 @@ import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.SyncRequestStatusType;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
@@ -51,12 +49,6 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Autowired
   private LogicalMeters logicalMeters;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PropertiesJpaRepository propertiesJpaRepository;
 
   @Autowired
   private PropertiesUseCases propertiesUseCases;

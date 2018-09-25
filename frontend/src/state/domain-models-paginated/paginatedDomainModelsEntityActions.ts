@@ -105,35 +105,3 @@ export const fetchEntityIfNeeded = <T>(
         return null;
       }
     };
-
-const shouldFetchEntities = (
-  ids: uuid[],
-  {entities, isFetchingSingle}: NormalizedPaginatedState<Identifiable>,
-): boolean => {
-  const isMissingEntity = ids.reduce((prev, id) => prev || !entities[id], false);
-  return isMissingEntity && !isFetchingSingle;
-};
-
-const idRequestParams = (ids: uuid[]): string => ids.map((id: uuid) => `id=${id.toString()}`).join('&');
-
-export const fetchEntityDetailsIfNeeded = <T>(
-  endPoint: EndPoints,
-  entityType: keyof PaginatedDomainModelsState,
-  formatData: (values: T[]) => any = (identity) => identity,
-) =>
-  (ids: uuid[]) =>
-    (dispatch, getState: GetState) => {
-      const {paginatedDomainModels} = getState();
-
-      if (shouldFetchEntities(ids, paginatedDomainModels[entityType])) {
-        const requestFunc = () => restClient.get(makeUrl(`${endPoint}/details`, idRequestParams(ids)));
-        return asyncRequestEntities<T[]>({
-          ...makeEntityRequestActionsOf<T[]>(endPoint),
-          formatData: (data) => formatData(data.content),
-          requestFunc,
-          dispatch,
-        });
-      } else {
-        return null;
-      }
-    };

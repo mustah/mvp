@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -34,15 +33,14 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   public List<PhysicalMeter> findByMedium(String medium) {
-    return physicalMeterJpaRepository.findByMedium(medium)
-      .stream()
+    return physicalMeterJpaRepository.findByMedium(medium).stream()
       .map(PhysicalMeterEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public List<PhysicalMeter> findAll() {
-    return StreamSupport.stream(physicalMeterJpaRepository.findAll().spliterator(), false)
+    return physicalMeterJpaRepository.findAll().stream()
       .map(PhysicalMeterEntityMapper::toDomainModel)
       .collect(toList());
   }

@@ -5,7 +5,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import org.junit.After;
@@ -18,9 +17,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectionTreeControllerTest extends IntegrationTest {
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
   private LogicalMeters logicalMeters;

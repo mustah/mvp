@@ -33,27 +33,16 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-import com.elvaco.mvp.web.dto.MeasurementDto;
-import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.assertj.core.util.DoubleComparator;
@@ -71,21 +60,18 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
-import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.Assume.assumeTrue;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class LogicalMeterControllerTest extends IntegrationTest {
 
-  private static final ZonedDateTime NOW = ZonedDateTime.now();
   private static final ZonedDateTime YESTERDAY = ZonedDateTime.now()
     .minusDays(1)
     .truncatedTo(ChronoUnit.DAYS);
@@ -94,15 +80,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Autowired
   private LogicalMeters logicalMeters;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
   @Autowired
   private Measurements measurements;
@@ -117,25 +94,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private Gateways gateways;
 
   @Autowired
-  private GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
-
-  @Autowired
   private MeterStatusLogs meterStatusLogs;
 
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
-
-  @Autowired
-  private MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
-
-  @Autowired
-  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
-  private MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
   private ZonedDateTime start;
 
@@ -541,8 +503,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       districtHeatingMeter.getQuantities(),
       start,
       Duration.ofHours(1),
-      firstMeter.readIntervalMinutes,
-      1.0
+      firstMeter.readIntervalMinutes
     );
 
     addMeasurementsForMeter(
@@ -550,8 +511,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       districtHeatingMeter.getQuantities(),
       start.plusHours(1),
       Duration.ofHours(2),
-      secondMeter.readIntervalMinutes,
-      1.0
+      secondMeter.readIntervalMinutes
     );
 
     PagedLogicalMeterDto logicalMeterDto = asTestUser()
@@ -685,8 +645,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       districtHeatingMeter.getQuantities(),
       YESTERDAY.plusHours(1),
       Duration.ofDays(1),
-      physicalMeter2.readIntervalMinutes,
-      1.0
+      physicalMeter2.readIntervalMinutes
     );
 
     missingMeasurementJpaRepository.refreshLocked();
@@ -729,8 +688,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       districtHeatingMeter.getQuantities(),
       start,
       Duration.ofDays(1),
-      60L,
-      1.0
+      60L
     );
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
@@ -740,135 +698,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent()).hasSize(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).collectionPercentage).isEqualTo(100.0);
-  }
-
-  @Test
-  public void findById_WithinDefaultPeriod_WithUnknownStatus() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T01:00:00.00Z");
-
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId(randomUUID().toString())
-      .readIntervalMinutes(60)
-      .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(StatusType.UNKNOWN)
-        .start(start)
-        .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isTrue();
-  }
-
-  @Test
-  public void findById_WithinExplicitPeriod_WithUnknownStatus() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T01:00:00.00Z");
-
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId(randomUUID().toString())
-      .readIntervalMinutes(60)
-      .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(StatusType.UNKNOWN)
-        .start(start)
-        .build()
-    );
-
-    String url = meterDetailsUrl(logicalMeter.id) + "&before=" + NOW + "&after=" + YESTERDAY;
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(url, LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isTrue();
-  }
-
-  @Test
-  public void findById_WithinPeriod_ShouldBeNotReportedWhenOkStatus() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-    UUID physicalMeterId = randomUUID();
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .id(physicalMeterId)
-      .organisation(context().organisation())
-      .address("address")
-      .externalId("external-id")
-      .medium("medium")
-      .manufacturer("manufacturer")
-      .logicalMeterId(logicalMeter.id)
-      .build());
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeterId)
-        .status(OK)
-        .start(YESTERDAY)
-        .build()
-    );
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isFalse();
-  }
-
-  @Test
-  public void findById_MeterIncludesStatusChangeLog() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    UUID physicalMeterId = randomUUID();
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .id(physicalMeterId)
-      .organisation(context().organisation())
-      .address("address")
-      .externalId("external-id")
-      .medium("medium")
-      .manufacturer("manufacturer")
-      .logicalMeterId(logicalMeter.id)
-      .build());
-
-    StatusLogEntry<UUID> logEntry = saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeterId)
-        .status(OK)
-        .start(ZonedDateTime.parse("2001-01-01T10:14:00Z"))
-        .stop(ZonedDateTime.parse("2001-01-06T10:14:00Z"))
-        .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList("/meters/details?id=" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.statusChangelog).containsExactly(
-      new MeterStatusLogDto(
-        logEntry.id,
-        "ok",
-        "2001-01-01T10:14:00Z",
-        "2001-01-06T10:14:00Z"
-      )
-    );
   }
 
   @Test
@@ -1016,211 +845,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void pagedMeterDetailsIsNotReported() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(OK)
-        .start(start)
-        .build()
-    );
-
-    List<LogicalMeterDto> response = asTestUser()
-      .getList("/meters/details/?id=" + logicalMeter.id, LogicalMeterDto.class)
-      .getBody();
-
-    LogicalMeterDto logicalMeterDto = response.get(0);
-    assertThat(logicalMeterDto.isReported).isFalse();
-    assertThat(logicalMeterDto.statusChanged).isEqualTo(Dates.formatUtc(start));
-  }
-
-  @Test
-  public void twoPagedMeterDetailsHaveStatuses() {
-    LogicalMeter logicalMeter1 = saveLogicalMeter();
-    LogicalMeter logicalMeter2 = saveLogicalMeter();
-
-    PhysicalMeter physicalMeter1 = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter1.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-    PhysicalMeter physicalMeter2 = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter2.id)
-      .externalId("meter-two")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter1.id)
-        .status(OK)
-        .start(start)
-        .build()
-    );
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter2.id)
-        .status(ERROR)
-        .start(start)
-        .build()
-    );
-
-    String url = "/meters/details/?id=" + logicalMeter1.id + "&id=" + logicalMeter2.id;
-    List<LogicalMeterDto> logicalMetersResponse = asTestUser()
-      .getList(url, LogicalMeterDto.class)
-      .getBody();
-
-    String statusChanged = Dates.formatUtc(start);
-
-    assertThat(logicalMetersResponse)
-      .extracting("isReported")
-      .containsExactlyInAnyOrder(false, true);
-    assertThat(logicalMetersResponse)
-      .extracting("statusChanged")
-      .containsExactlyInAnyOrder(statusChanged, statusChanged);
-  }
-
-  @Test
-  public void meterIsNotReported_WhenNoReportedStatusExists() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isFalse();
-  }
-
-  @Test
-  public void metersIsNotReportedWhenStatusOk() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(OK)
-        .start(start)
-        .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isFalse();
-    assertThat(logicalMeterDto.statusChanged).isEqualTo(Dates.formatUtc(start));
-  }
-
-  @Test
-  public void latestStartedStatusIsSetWhenMeterHasMultipleActiveStatuses() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(firstMeter.id)
-        .status(OK)
-        .start(start)
-        .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(firstMeter.id)
-        .status(ERROR)
-        .start(start.plusMinutes(1))
-        .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isTrue();
-  }
-
-  @Test
-  public void latestStartedStatusIsSetWhenMeterHasMultipleActiveStatusesOnMultiplePhysicalMeters() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-two")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(firstMeter.id)
-        .status(OK)
-        .start(start.plusSeconds(1))
-        .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(secondMeter.id)
-        .status(ERROR)
-        .start(start)
-        .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.isReported).isFalse();
-  }
-
-  @Test
   public void findAllWithPredicates() {
     saveLogicalMeter();
     saveLogicalMeter(HOT_WATER_METER);
@@ -1282,15 +906,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getTotalElements()).isEqualTo(1L);
     assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);
-  }
-
-  @Test
-  public void meterNotFound() {
-    ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
-      .getList(meterDetailsUrl(randomUUID()), LogicalMeterDto.class);
-
-    assertThatStatusIsOk(response);
-    assertThat(response.getBody()).isEmpty();
   }
 
   @Test
@@ -1577,85 +1192,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findById_MeterContainsLatestMeasurements() {
-    LogicalMeter logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
-
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("bowie")
-      .readIntervalMinutes(15)
-      .build());
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(StatusType.OK)
-        .start(start)
-        .build()
-    );
-
-    Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
-      Quantity.ENERGY,
-      Quantity.VOLUME,
-      Quantity.VOLUME_FLOW,
-      Quantity.POWER,
-      Quantity.FORWARD_TEMPERATURE,
-      Quantity.RETURN_TEMPERATURE
-    ));
-
-    addMeasurementsForMeter(
-      physicalMeter,
-      quantitiesWithoutDiffTemperature,
-      ZonedDateTime.now().minusDays(3),
-      Duration.ofDays(1),
-      60L,
-      1.0
-    );
-
-    addMeasurementsForMeter(
-      physicalMeter,
-      Collections.singleton(Quantity.POWER),
-      ZonedDateTime.now(),
-      Duration.ofDays(1),
-      60L,
-      2.0
-    );
-
-    ZonedDateTime start = NOW.minusDays(10);
-    ZonedDateTime stop = NOW.plusHours(1);
-    String url = meterDetailsUrl(logicalMeter.id) + "&after=" + start + "&before=" + stop;
-    ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
-      .getList(url, LogicalMeterDto.class);
-
-    List<LogicalMeterDto> meters = response.getBody();
-    List<MeasurementDto> measurements = meters.get(0).measurements;
-
-    assertThatStatusIsOk(response);
-    assertThat(meters).hasSize(1);
-    assertThat(measurements)
-      .as("The difference temperature is missing")
-      .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
-      .anyMatch(m -> m.quantity.equals(Quantity.ENERGY.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.VOLUME.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.POWER.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
-      .noneMatch(m -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
-
-    List<MeasurementDto> power = measurements.stream()
-      .filter(m -> m.quantity.equals(Quantity.POWER.name))
-      .collect(toList());
-
-    assertThat(power)
-      .as("Not showing duplicate values for a quantity")
-      .hasSize(1);
-
-    assertThat(power.get(0).value)
-      .as("Only showing the latest value for a quantity")
-      .isEqualTo(2.0);
-  }
-
-  @Test
   public void userCanNotRemoveLogicalMeter() {
     LogicalMeter districtHeatingMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
     PhysicalMeter physicalMeter = physicalMeters.save(
@@ -1673,8 +1209,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new HashSet<>(singletonList(Quantity.VOLUME)),
       date,
       Duration.ofHours(1),
-      60L,
-      1.0
+      60L
     );
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
@@ -1713,8 +1248,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       singleton(Quantity.VOLUME),
       date,
       Duration.ofHours(1),
-      60L,
-      1.0
+      60L
     );
 
     ResponseEntity<Unauthorized> response = asTestAdmin()
@@ -1743,8 +1277,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       singleton(Quantity.VOLUME),
       date,
       Duration.ofDays(1),
-      60L,
-      1.0
+      60L
     );
 
     ResponseEntity<LogicalMeterDto> response = asTestSuperAdmin()
@@ -2257,92 +1790,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .isEqualTo(new AlarmDto(activeAlarm.id, activeAlarm.mask));
   }
 
-  @Test
-  public void findById_ShouldHaveMeterWithAlarm() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    PhysicalMeter physicalMeter = physicalMeters.save(
-      physicalMeter()
-        .logicalMeterId(logicalMeter.id)
-        .externalId("123123")
-        .build()
-    );
-
-    AlarmLogEntry alarm = meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
-      .mask(12)
-      .start(start)
-      .description("something is wrong")
-      .build());
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
-      alarm.id,
-      alarm.mask,
-      alarm.description
-    ));
-  }
-
-  @Test
-  public void findById_ShouldHaveMeterWithLatestActiveAlarm() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    PhysicalMeter physicalMeter = physicalMeters.save(
-      physicalMeter()
-        .logicalMeterId(logicalMeter.id)
-        .externalId("123123")
-        .build()
-    );
-
-    AlarmLogEntry alarm1 = meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
-      .mask(12)
-      .start(start.plusHours(2))
-      .description("something is wrong")
-      .build());
-
-    meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
-      .mask(33)
-      .start(start)
-      .description("testing")
-      .build());
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
-      alarm1.id,
-      alarm1.mask,
-      alarm1.description
-    ));
-  }
-
-  @Test
-  public void findById_ShouldNotHaveMeterWithAlarm() {
-    LogicalMeter logicalMeter = saveLogicalMeter();
-
-    physicalMeters.save(
-      physicalMeter()
-        .logicalMeterId(logicalMeter.id)
-        .externalId("123123")
-        .build()
-    );
-
-    LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
-      .getBody()
-      .get(0);
-
-    assertThat(logicalMeterDto.alarm).isNull();
-  }
-
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       randomUUID(),
@@ -2393,8 +1840,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Set<Quantity> quantities,
     ZonedDateTime start,
     Duration periodDuration,
-    Long minuteInterval,
-    double value
+    Long minuteInterval
   ) {
     addMeasurementsForMeter(
       physicalMeter,
@@ -2402,7 +1848,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       start,
       periodDuration,
       minuteInterval,
-      value,
+      1.0,
       0
     );
   }
@@ -2523,10 +1969,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
-  private static void assertThatStatusIsOk(ResponseEntity<?> response) {
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
   private static LocationBuilder kungsbacka() {
     return new LocationBuilder()
       .country("sweden")
@@ -2539,9 +1981,5 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private static String metersUrl(ZonedDateTime start, ZonedDateTime stop) {
     return String.format("/meters?after=%s&before=%s", start, stop);
-  }
-
-  private static String meterDetailsUrl(UUID logicalMeterId) {
-    return String.format("/meters/details?id=%s", logicalMeterId);
   }
 }

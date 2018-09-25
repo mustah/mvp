@@ -22,10 +22,6 @@ import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -61,18 +57,6 @@ public class MeasurementControllerTest extends IntegrationTest {
     false
   );
   private static final Offset<Double> OFFSET = within(0.000_000_000_000_1);
-
-  @Autowired
-  private MeasurementJpaRepositoryImpl measurementJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
-  @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
-
-  @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
   private LocationJpaRepository locationJpaRepository;
@@ -433,12 +417,12 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       "/measurements/cities"
-      + "?after=2018-03-06T05:00:00.000Z"
-      + "&before=2018-03-06T06:59:59.999Z"
-      + "&quantities=" + Quantity.POWER.name
-      + "&city=sweden,stockholm"
-      + "&city=england,stockholm"
-      + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T06:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&city=sweden,stockholm"
+        + "&city=england,stockholm"
+        + "&resolution=hour",
       MeasurementSeriesDto.class
     );
 

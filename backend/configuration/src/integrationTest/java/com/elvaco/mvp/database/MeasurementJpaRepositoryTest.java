@@ -15,7 +15,6 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
-import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
@@ -40,9 +39,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
-
-  @Autowired
-  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Before
   public void setUp() {
@@ -430,7 +426,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Test
   @Ignore("The transaction is commited after testmethod has returned, hence we get the "
-          + "exception too late")
+    + "exception too late")
   public void mixedDimensionsAreRejected() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 1.0, "m³", "Volume");
