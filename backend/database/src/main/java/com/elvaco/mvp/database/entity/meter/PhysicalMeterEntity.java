@@ -77,6 +77,10 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   public long readIntervalMinutes;
 
+  public Integer revision;
+
+  public Integer mbusDeviceType;
+
   public PhysicalMeterEntity(
     UUID id,
     OrganisationEntity organisation,
@@ -86,6 +90,8 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
     @Nullable String manufacturer,
     @Nullable UUID logicalMeterId,
     long readIntervalMinutes,
+    @Nullable Integer revsion,
+    @Nullable Integer mbusDeviceType,
     Set<PhysicalMeterStatusLogEntity> statusLogs,
     Set<MeterAlarmLogEntity> alarms
   ) {
@@ -97,6 +103,8 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.readIntervalMinutes = readIntervalMinutes;
+    this.revision = revsion;
+    this.mbusDeviceType = mbusDeviceType;
     this.statusLogs = unmodifiableSet(statusLogs);
     this.alarms = unmodifiableSet(alarms);
   }

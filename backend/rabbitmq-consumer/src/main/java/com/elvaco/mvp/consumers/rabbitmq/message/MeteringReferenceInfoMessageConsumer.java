@@ -169,7 +169,9 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .replaceActiveStatus(StatusType.from(meterDto.status))
       .withReadIntervalMinutes(CronHelper.toReportInterval(meterDto.cron)
         .map(Duration::toMinutes)
-        .orElse(null));
+        .orElse(null))
+      .withRevision(meterDto.revision)
+      .withMbusDeviceType(meterDto.mbusDeviceType);
 
     if (logicalMeter != null) {
       physicalMeter = physicalMeter.withLogicalMeterId(logicalMeter.id);

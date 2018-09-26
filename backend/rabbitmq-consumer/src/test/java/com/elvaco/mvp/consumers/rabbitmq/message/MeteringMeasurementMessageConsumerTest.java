@@ -494,7 +494,10 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueFor_ExistingEntities_CreateNoNewEntities() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
-    physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
+    physicalMeters.save(physicalMeter().organisation(organisation)
+      .medium("Hot water")
+      .revision(1)
+      .build());
     logicalMeters.save(
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)

@@ -59,6 +59,8 @@ public class PhysicalMeterEntityMapper {
       domainModel.manufacturer,
       domainModel.logicalMeterId,
       domainModel.readIntervalMinutes,
+      domainModel.revision,
+      domainModel.mbusDeviceType,
       domainModel.statuses.stream().map(MeterStatusLogEntityMapper::toEntity).collect(toSet()),
       domainModel.alarms.stream().map(MeterAlarmLogEntityMapper::toEntity).collect(toSet())
     );
@@ -86,6 +88,8 @@ public class PhysicalMeterEntityMapper {
       .medium(entity.medium)
       .manufacturer(entity.manufacturer)
       .logicalMeterId(entity.logicalMeterId)
-      .readIntervalMinutes(entity.readIntervalMinutes);
+      .readIntervalMinutes(entity.readIntervalMinutes)
+      .revision(entity.revision)
+      .mbusDeviceType(entity.mbusDeviceType);
   }
 }

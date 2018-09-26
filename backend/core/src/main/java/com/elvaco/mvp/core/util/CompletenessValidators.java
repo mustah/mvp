@@ -21,7 +21,8 @@ public class CompletenessValidators {
       physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM.medium),
       physicalMeter -> physicalMeter.manufacturer != null
         && !physicalMeter.manufacturer.equals("UNKNOWN"),
-      physicalMeter -> physicalMeter.readIntervalMinutes != 0
+      physicalMeter -> physicalMeter.readIntervalMinutes != 0,
+      physicalMeter -> physicalMeter.revision != null
     );
 
   private static final CompletenessValidator<Gateway> GATEWAY_COMPLETENESS_VALIDATOR =
