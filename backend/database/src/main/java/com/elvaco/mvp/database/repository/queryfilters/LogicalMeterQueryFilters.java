@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
@@ -65,6 +66,8 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return parameters.getPeriod()
           .map(selectionPeriod -> alarmQueryFilter(values))
           .orElse(null);
+      case GATEWAY_ID:
+        return GATEWAY.id.eq(UUID.fromString(values.get(0)));
       case GATEWAY_SERIAL:
         return GATEWAY.serial.in(values);
       case MANUFACTURER:
@@ -74,11 +77,11 @@ public class LogicalMeterQueryFilters extends QueryFilters {
       case WILDCARD:
         String str = values.get(0);
         return LOGICAL_METER.externalId.startsWithIgnoreCase(str)
-          .or(PHYSICAL_METER.address.startsWithIgnoreCase(str))
+          .or(LOGICAL_METER.meterDefinition.medium.startsWithIgnoreCase(str))
           .or(LOGICAL_METER.location.city.startsWithIgnoreCase(str))
           .or(LOGICAL_METER.location.streetAddress.startsWithIgnoreCase(str))
           .or(PHYSICAL_METER.manufacturer.startsWithIgnoreCase(str))
-          .or(LOGICAL_METER.meterDefinition.medium.startsWithIgnoreCase(str));
+          .or(PHYSICAL_METER.address.startsWithIgnoreCase(str));
       default:
         return null;
     }

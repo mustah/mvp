@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -40,7 +41,7 @@ public class MeterDefinitionEntity extends IdentifiableType<MeterDefinitionType>
     joinColumns = @JoinColumn(name = "meter_definition_type", referencedColumnName = "type"),
     inverseJoinColumns = @JoinColumn(name = "quantity_id", referencedColumnName = "id")
   )
-  public Set<QuantityEntity> quantities;
+  public Set<QuantityEntity> quantities = new HashSet<>();
 
   public String medium;
 

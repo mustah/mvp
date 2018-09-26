@@ -11,7 +11,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,15 +29,11 @@ public interface LogicalMeterJpaRepository {
 
   List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 
-  List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate);
+  List<LogicalMeterEntity> findAll(RequestParameters parameters);
 
-  List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate, Sort sort);
+  List<LogicalMeterEntity> findAll(RequestParameters parameters, Sort sort);
 
-  Page<PagedLogicalMeter> findAll(
-    RequestParameters parameters,
-    Predicate predicate,
-    Pageable pageable
-  );
+  Page<PagedLogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 

@@ -18,8 +18,12 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.MAX_VALUE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.MIN_VALUE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;
@@ -39,7 +43,7 @@ public final class FilterUtils {
   }
 
   public static boolean isGatewayQuery(RequestParameters parameters) {
-    return parameters.hasParam(GATEWAY_SERIAL);
+    return parameters.hasParam(GATEWAY_SERIAL) || parameters.hasParam(GATEWAY_ID);
   }
 
   public static boolean isReportedQuery(RequestParameters parameters) {
@@ -62,6 +66,11 @@ public final class FilterUtils {
     return parameters.hasParam(SECONDARY_ADDRESS)
       || isAlarmQuery(parameters)
       || isReportedQuery(parameters);
+  }
+
+  public static boolean isMeasurementsQuery(RequestParameters parameters) {
+    return (parameters.hasParam(MIN_VALUE) || parameters.hasParam(MAX_VALUE))
+      && parameters.hasParam(QUANTITY);
   }
 
   static List<StatusType> toStatusTypes(List<String> values) {

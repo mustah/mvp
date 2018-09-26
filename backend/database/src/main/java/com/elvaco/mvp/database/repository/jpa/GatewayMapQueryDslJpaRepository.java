@@ -17,7 +17,7 @@ import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterStatusLogs;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinReportedMeters;
 
 @Repository
 class GatewayMapQueryDslJpaRepository
@@ -50,7 +50,7 @@ class GatewayMapQueryDslJpaRepository
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
       .on(MeterAlarmLogQueryFilters.isWithinPeriod(parameters));
 
-    joinMeterStatusLogs(query, parameters);
+    joinReportedMeters(query, parameters);
 
     return new HashSet<>(query.distinct().fetch());
   }

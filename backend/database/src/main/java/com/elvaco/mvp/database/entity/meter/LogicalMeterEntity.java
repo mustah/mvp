@@ -30,7 +30,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 
-import static java.util.Collections.emptySet;
 import static javax.persistence.CascadeType.ALL;
 
 @NoArgsConstructor
@@ -60,7 +59,7 @@ public class LogicalMeterEntity extends IdentifiableType<UUID> {
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   @Fetch(FetchMode.SUBSELECT)
-  public Set<GatewayEntity> gateways;
+  public Set<GatewayEntity> gateways = new HashSet<>();
 
   @ManyToOne(optional = false)
   public MeterDefinitionEntity meterDefinition;
@@ -90,8 +89,6 @@ public class LogicalMeterEntity extends IdentifiableType<UUID> {
     this.externalId = externalId;
     this.organisationId = organisationId;
     this.created = created;
-    this.physicalMeters = emptySet();
-    this.gateways = emptySet();
     this.meterDefinition = meterDefinition;
     this.location = new LocationEntity(id);
   }

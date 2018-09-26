@@ -22,9 +22,7 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
-import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SortUtil;
-import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -83,7 +81,6 @@ public class LogicalMeterRepository implements LogicalMeters {
     org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
       logicalMeterJpaRepository.findAll(
         parameters,
-        toPredicate(parameters),
         new PageRequest(
           pageable.getPageNumber(),
           pageable.getPageSize(),
@@ -106,15 +103,15 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
     List<LogicalMeterEntity> meters = SortUtil.getSort(parameters)
-      .map(sort -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters), sort))
-      .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)));
+      .map(sort -> logicalMeterJpaRepository.findAll(parameters, sort))
+      .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters));
 
     return findAllWithCollectionStatsAndStatuses(meters, parameters);
   }
 
   @Override
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
-    return logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters)).stream()
+    return logicalMeterJpaRepository.findAll(parameters).stream()
       .map(LogicalMeterEntityMapper::toSimpleDomainModel)
       .collect(toList());
   }
@@ -231,9 +228,5 @@ public class LogicalMeterRepository implements LogicalMeters {
         entry -> entry.missingReadingCount,
         (oldCount, newCount) -> oldCount + newCount
       ));
-  }
-
-  private static Predicate toPredicate(RequestParameters parameters) {
-    return new LogicalMeterQueryFilters().toExpression(parameters);
   }
 }
