@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+
 import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
@@ -94,6 +95,15 @@ public class LogicalMeterUseCases {
 
   public List<LogicalMeter> selectionTree(RequestParameters parameters) {
     return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisation(currentUser));
+  }
+
+  public Optional<UUID> effectiveOrganisationId(UUID logicalMeterId) {
+    if (!currentUser.isSuperAdmin()) {
+      return Optional.of(currentUser.getOrganisationId());
+    }
+    return logicalMeters
+      .findById(logicalMeterId)
+      .map(lm -> lm.organisationId);
   }
 
   private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter, ZonedDateTime before) {

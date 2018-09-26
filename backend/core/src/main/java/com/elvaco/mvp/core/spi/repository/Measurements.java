@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Measurements {
 
@@ -51,8 +50,8 @@ public interface Measurements {
   );
 
   Page<Measurement> findAllBy(
-    UUID physicalMeterId,
-    RequestParameters parameters,
+    UUID organisationId,
+    UUID logicalMeterId,
     Pageable pageable
   );
 

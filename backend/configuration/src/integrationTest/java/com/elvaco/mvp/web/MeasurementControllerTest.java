@@ -29,6 +29,7 @@ import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+
 import org.assertj.core.data.Offset;
 import org.junit.After;
 import org.junit.Before;
@@ -400,11 +401,9 @@ public class MeasurementControllerTest extends IntegrationTest {
       .city("stockholm");
 
     LogicalMeterEntity stockholmSweden = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
       locationBuilder.country("sweden").build()
     );
     LogicalMeterEntity stockholmEngland = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
       locationBuilder.country("england").build()
     );
 
@@ -654,13 +653,11 @@ public class MeasurementControllerTest extends IntegrationTest {
     Location storaGatan2 = locationBuilder.address("stora gatan 2").build();
 
     LogicalMeterEntity meter1 = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
       storaGatan1
     );
     PhysicalMeterEntity physical1 = newPhysicalMeterEntity(meter1.id);
 
     LogicalMeterEntity meter2 = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
       storaGatan2
     );
     PhysicalMeterEntity physical2 = newPhysicalMeterEntity(meter2.id);
@@ -713,21 +710,18 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     PhysicalMeterEntity physical1 = newPhysicalMeterEntity(
       newLogicalMeterEntityWithLocation(
-        MeterDefinition.DISTRICT_HEATING_METER,
         locationBuilder.build()
       ).id
     );
 
     PhysicalMeterEntity physical2 = newPhysicalMeterEntity(
       newLogicalMeterEntityWithLocation(
-        MeterDefinition.DISTRICT_HEATING_METER,
         locationBuilder.address("stora gatan 2").build()
       ).id
     );
 
     PhysicalMeterEntity physicalIrrelevant = newPhysicalMeterEntity(
       newLogicalMeterEntityWithLocation(
-        MeterDefinition.DISTRICT_HEATING_METER,
         locationBuilder.city("båstad").build()
       ).id
     );
@@ -760,7 +754,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(response.getBody())
       .extracting("city")
       .hasSize(1)
-      .allMatch((city) -> "stockholm".equals(city));
+      .allMatch("stockholm"::equals);
   }
 
   @Test
@@ -771,13 +765,11 @@ public class MeasurementControllerTest extends IntegrationTest {
       .address("stora gatan 1");
 
     LogicalMeterEntity meter1 = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
       locationBuilder.build()
     );
     PhysicalMeterEntity physical1 = newPhysicalMeterEntity(meter1.id);
 
     LogicalMeterEntity meter3 = newLogicalMeterEntityWithLocation(
-      MeterDefinition.DISTRICT_HEATING_METER,
       locationBuilder.city("båstad").build()
     );
     PhysicalMeterEntity physical3 = newPhysicalMeterEntity(meter3.id);
@@ -1463,136 +1455,32 @@ public class MeasurementControllerTest extends IntegrationTest {
       .contains("Invalid quantity 'Flarbb' for Gas meter");
   }
 
-  @Test
-  public void pagedMeasurements() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
-    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T06:00:00Z[UTC]");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
-    newMeasurement(meter, after.plusHours(3), "Volume", 6.0, "m^3");
-    newMeasurement(meter, after.plusHours(4), "Volume", 7.0, "m^3");
-
-    org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
-      .getPage(String.format(
-        "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s&size=2&sort=created,desc",
-        after, before, logicalMeter.getId()
-      ), MeasurementDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(5);
-    assertThat(response.getTotalPages()).isEqualTo(3);
-
-    List<MeasurementDto> content = response.getContent();
-    assertThat(content.size()).isEqualTo(2);
-
-    assertThat(content.get(0)).isEqualTo(new MeasurementDto(
-      "Volume",
-      7.0,
-      "m³",
-      after.plusHours(4)
-    ));
-
-    assertThat(content.get(1)).isEqualTo(new MeasurementDto(
-      "Volume",
-      6.0,
-      "m³",
-      after.plusHours(3)
-    ));
-  }
-
-  @Test
-  public void pagedMeasurementsFiltered() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
-    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T06:00:00Z[UTC]");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
-
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
-    newMeasurement(meter, after.plusHours(3), "Volume", 6.0, "m^3");
-
-    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(GAS_METER);
-
-    PhysicalMeterEntity meter2 = newPhysicalMeterEntity(logicalMeter2.id);
-
-    newMeasurement(meter2, after.plusHours(4), "Volume", 7.0, "m^3");
-
-    org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
-      .getPage(String.format(
-        "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s&size=2&sort=created,desc",
-        after, before, logicalMeter.getId()
-      ), MeasurementDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(4);
-    assertThat(response.getTotalPages()).isEqualTo(2);
-
-    List<MeasurementDto> content = response.getContent();
-    assertThat(content.size()).isEqualTo(2);
-
-    assertThat(content.get(0)).isEqualTo(new MeasurementDto(
-      "Volume",
-      6.0,
-      "m³",
-      after.plusHours(3)
-    ));
-
-    assertThat(content.get(1)).isEqualTo(new MeasurementDto(
-      "Volume",
-      5.0,
-      "m³",
-      after.plusHours(2)
-    ));
-  }
-
-  @Test
-  public void pagedMeasurementsUnableToAccessOtherOrganisationsMeasurements() {
-    ZonedDateTime created = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
-    PhysicalMeterEntity physicalMeter = newButterMeterBelongingTo(
-      otherOrganisation,
-      created
-    );
-
-    newButterTemperatureMeasurement(physicalMeter, created);
-
-    org.springframework.data.domain.Page<MeasurementDto> response = asTestUser()
-      .getPage(String.format(
-        "/measurements/paged/?logicalMeterId=%s&size=2&sort=created,desc",
-        physicalMeter.logicalMeterId
-      ), MeasurementDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(0);
-  }
-
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
     return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
-  private MeasurementEntity newButterEnergyMeasurement(
+  private void newButterEnergyMeasurement(
     PhysicalMeterEntity meter,
     ZonedDateTime created
   ) {
-    return newMeasurement(meter, created, "Energy", 9999, "J");
+    newMeasurement(meter, created, "Energy", 9999, "J");
   }
 
-  private MeasurementEntity newButterTemperatureMeasurement(
+  private void newButterTemperatureMeasurement(
     PhysicalMeterEntity meter,
     ZonedDateTime created
   ) {
-    return newMeasurement(meter, created, "Difference temperature", 285.59, "°C");
+    newMeasurement(meter, created, "Difference temperature", 285.59, "°C");
   }
 
-  private MeasurementEntity newMeasurement(
+  private void newMeasurement(
     PhysicalMeterEntity meter,
     ZonedDateTime created,
     String quantity,
     double value,
     String unit
   ) {
-    return measurementJpaRepository.save(new MeasurementEntity(
+    measurementJpaRepository.save(new MeasurementEntity(
       created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
       new MeasurementUnit(unit, value),
@@ -1613,12 +1501,13 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private LogicalMeterEntity newLogicalMeterEntityWithLocation(
-    MeterDefinition meterDefinition,
     Location location
   ) {
     UUID uuid = randomUUID();
 
-    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
+    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(
+      MeterDefinition.DISTRICT_HEATING_METER
+    );
 
     LogicalMeterEntity meter = logicalMeterJpaRepository.save(new LogicalMeterEntity(
       uuid,

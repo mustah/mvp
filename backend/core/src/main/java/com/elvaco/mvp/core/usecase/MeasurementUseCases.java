@@ -8,17 +8,15 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class MeasurementUseCases {
 
-  private final AuthenticatedUser currentUser;
   private final Measurements measurements;
 
   public void createOrUpdate(Measurement m) {
@@ -31,14 +29,10 @@ public class MeasurementUseCases {
     );
   }
 
-  public Page<Measurement> findAllBy(
-    UUID physicalMeterId,
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public Page<Measurement> findAllBy(UUID organisationId, UUID logicalMeterId, Pageable pageable) {
     return measurements.findAllBy(
-      physicalMeterId,
-      parameters.ensureOrganisation(currentUser),
+      organisationId,
+      logicalMeterId,
       pageable
     );
   }

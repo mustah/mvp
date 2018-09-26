@@ -18,7 +18,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -27,15 +27,14 @@ import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
@@ -174,20 +173,27 @@ public class MeasurementController {
 
   @GetMapping("/paged")
   public org.springframework.data.domain.Page<MeasurementDto> pagedMeasurements(
-    @RequestParam MultiValueMap<String, String> requestParams,
+    @RequestParam UUID logicalMeterId,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    Optional<UUID> organisationId = logicalMeterUseCases
+      .effectiveOrganisationId(logicalMeterId);
 
-    return Optional.ofNullable(parameters.getFirst(RequestParameter.LOGICAL_METER_ID))
-      .map(UUID::fromString)
-      .flatMap(logicalMeterUseCases::findById)
-      .flatMap(LogicalMeter::activePhysicalMeter)
-      .map(physicalMeter ->
-        measurementUseCases.findAllBy(physicalMeter.id, parameters, new PageableAdapter(pageable)))
-      .map(page -> new PageImpl<>(page.getContent(), pageable, page.getTotalElements()))
-      .orElseGet(() -> new PageImpl<>(emptyList()))
-      .map(MeasurementDtoMapper::toDto);
+    if (!organisationId.isPresent()) {
+      return new PageImpl<>(emptyList());
+    }
+
+    Page<MeasurementDto> page = measurementUseCases.findAllBy(
+      organisationId.get(),
+      logicalMeterId,
+      new PageableAdapter(pageable)
+    ).map(MeasurementDtoMapper::toDto);
+
+    return new PageImpl<>(
+      page.getContent(),
+      pageable,
+      page.getTotalElements()
+    );
   }
 
   private List<MeasurementSeriesDto> measurementSeriesOf(

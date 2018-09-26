@@ -13,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
@@ -88,8 +87,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
 
   @Override
   public Page<Measurement> findAllBy(
-    UUID physicalMeterId,
-    RequestParameters parameters,
+    UUID organisationId, UUID logicalMeterId,
     Pageable pageable
   ) {
     throw new NotImplementedYet();

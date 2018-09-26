@@ -6,12 +6,12 @@ import java.util.UUID;
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +35,10 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
-    PageableAdapter adapter = new PageableAdapter(pageable);
-
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
+    Page<LogicalMeter> page = logicalMeterUseCases.findAll(
+      requestParametersOf(requestParams),
+      new PageableAdapter(pageable)
+    );
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(LogicalMeterDtoMapper::toPagedDto);
@@ -48,9 +48,9 @@ public class LogicalMeterController {
   public List<LogicalMeterDto> logicalMetersWithDetails(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
-
-    return logicalMeterUseCases.findAllWithDetails(parameters).stream()
+    return logicalMeterUseCases
+      .findAllWithDetails(requestParametersOf(requestParams))
+      .stream()
       .map(LogicalMeterDtoMapper::toDto)
       .collect(toList());
   }
@@ -58,7 +58,8 @@ public class LogicalMeterController {
   @DeleteMapping("{id}")
   public LogicalMeterDto deleteMeter(@PathVariable UUID id) {
     return LogicalMeterDtoMapper.toDto(
-      logicalMeterUseCases.deleteById(id)
+      logicalMeterUseCases
+        .deleteById(id)
         .orElseThrow(() -> new MeterNotFound(id))
     );
   }
