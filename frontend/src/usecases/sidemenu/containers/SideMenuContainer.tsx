@@ -15,7 +15,13 @@ interface OwnProps {
   children?: Children;
 }
 
-const containerStyle: React.CSSProperties = {left: drawerWidth, top: mvpTheme.appBar!.height};
+const appBarHeight: number = mvpTheme.appBar!.height!;
+
+const containerStyle: React.CSSProperties = {
+  left: drawerWidth,
+  top: appBarHeight,
+  paddingBottom: appBarHeight + 24,
+};
 
 const SideMenu = ({isSideMenuOpen, children}: StateToProps & OwnProps) => (
   <Drawer
