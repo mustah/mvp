@@ -1,3 +1,4 @@
+import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {ReportState} from '../../usecases/report/reportModels';
 import {ObjectsById} from '../domain-models/domainModels';
@@ -26,13 +27,13 @@ export interface NormalizedSelectionTree {
 export interface SelectionTreeMeter extends IdNamed {
   address: string;
   city: string;
-  medium: string;
+  medium: Medium;
 }
 
 export interface SelectionTreeCity extends IdNamed {
   addresses: uuid[];
   city: string;
-  medium: string[];
+  medium: Medium[];
 }
 
 export interface SelectionTreeAddress extends IdNamed {

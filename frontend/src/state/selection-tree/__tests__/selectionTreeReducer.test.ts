@@ -1,5 +1,7 @@
 import {normalize} from 'normalizr';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {EndPoints} from '../../../services/endPoints';
+import {uuid} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {
@@ -18,34 +20,67 @@ describe('selectionTreeReducer', () => {
   const responseFromApi = {
     cities: [
       {
-        id: 'sweden,kungsbacka', name: 'kungsbacka', addresses: [
+        id: 'sweden,kungsbacka',
+        name: 'kungsbacka',
+        medium: ['District heating'],
+        addresses: [
           {
-            name: 'kabelgatan 1', meters: [
-              {id: 1, name: 'extId1'},
-              {id: 2, name: 'extId2'},
+            name: 'kabelgatan 1',
+            meters: [
+              {
+                id: 1,
+                medium: 'District heating',
+                name: 'extId1',
+              },
+              {
+                id: 2,
+                medium: 'District heating',
+                name: 'extId2',
+              },
             ],
           },
           {
-            name: 'kungsgatan 42', meters: [
-              {id: 5, name: 'extId5'},
-              {id: 6, name: 'extId6'},
+            name: 'kungsgatan 42',
+            meters: [
+              {
+                id: 5,
+                medium: 'District heating',
+                name: 'extId5',
+              },
+              {
+                id: 6,
+                medium: 'District heating',
+                name: 'extId6',
+              },
             ],
           },
         ],
       },
       {
-        id: 'sweden,gothenburg', name: 'gothenburg', addresses: [
+        id: 'sweden,gothenburg',
+        name: 'gothenburg',
+        medium: ['District heating'],
+        addresses: [
           {
-            name: 'kungsgatan 42', meters: [
-              {id: 3, name: 'extId3'},
-              {id: 4, name: 'extId4'},
+            name: 'kungsgatan 42',
+            meters: [
+              {
+                id: 3,
+                medium: 'District heating',
+                name: 'extId3',
+              },
+              {
+                id: 4,
+                medium: 'District heating',
+                name: 'extId4',
+              },
             ],
           },
         ],
       },
     ],
   };
-  const normalizedResponse = normalize(responseFromApi, selectionTreeSchema);
+  const normalizedResponse: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
 
   const actions: RequestHandler<NormalizedSelectionTree> =
     makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
@@ -58,24 +93,20 @@ describe('selectionTreeReducer', () => {
 
     it('returns the previous state', () => {
       const prevState: SelectionTreeState = {...initialState, isFetching: true};
-      expect(selectionTree(prevState, {type: 'unknown', payload: 'nothing'})).toEqual(
-        {
-          ...initialState,
-          isFetching: true,
-        });
+      expect(selectionTree(prevState, {type: 'unknown', payload: 'nothing'})).toEqual(prevState);
     });
   });
 
   describe('request action type', () => {
 
     it('returns selectionTree for request action ', () => {
-      expect(selectionTree(initialState, actions.request())).toEqual(
-        {
-          isFetching: true,
-          isSuccessfullyFetched: false,
-          entities: {...initialState.entities},
-          result: {...initialState.result},
-        });
+      const expected: SelectionTreeState = {
+        isFetching: true,
+        isSuccessfullyFetched: false,
+        entities: {...initialState.entities},
+        result: {...initialState.result},
+      };
+      expect(selectionTree(initialState, actions.request())).toEqual(expected);
     });
 
   });
@@ -85,13 +116,70 @@ describe('selectionTreeReducer', () => {
     it('has payload', () => {
       const payload: NormalizedSelectionTree = normalizedResponse;
 
-      expect(selectionTree(initialState, actions.success(payload))).toEqual(
-        {
-          isFetching: false,
-          isSuccessfullyFetched: true,
-          ...payload,
-        });
+      const expected: SelectionTreeState = {
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        ...payload,
+      };
+      expect(selectionTree(initialState, actions.success(payload))).toEqual(expected);
     });
+
+    describe('missing or empty medium', () => {
+
+      it('handles missing medium for meters', () => {
+        const missingMeterMedium = {...responseFromApi};
+        delete missingMeterMedium.cities[0].addresses[0].meters[0].medium;
+        const firstMetersId: uuid = missingMeterMedium.cities[0].addresses[0].meters[0].id;
+
+        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+
+        const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
+        const {id, medium} = stateAfterSuccess.entities.meters[firstMetersId];
+        expect(id).toEqual(firstMetersId);
+        expect(medium).toEqual(Medium.unknown);
+      });
+
+      it('handles empty medium for meters', () => {
+        const missingMeterMedium = {...responseFromApi};
+        missingMeterMedium.cities[0].addresses[0].meters[0].medium = '';
+        const firstMetersId: uuid = missingMeterMedium.cities[0].addresses[0].meters[0].id;
+
+        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+
+        const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
+        const {id, medium} = stateAfterSuccess.entities.meters[firstMetersId];
+        expect(id).toEqual(firstMetersId);
+        expect(medium).toEqual(Medium.unknown);
+      });
+
+      it('handles missing medium for cities', () => {
+        const missingMeterMedium = {...responseFromApi};
+        delete missingMeterMedium.cities[0].medium;
+        const firstCitysId: uuid = missingMeterMedium.cities[0].id;
+
+        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+
+        const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
+        const {id, medium} = stateAfterSuccess.entities.cities[firstCitysId];
+        expect(id).toEqual(firstCitysId);
+        expect(medium).toEqual([]);
+      });
+
+      it('handles empty medium for cities', () => {
+        const missingMeterMedium = {...responseFromApi};
+        missingMeterMedium.cities[0].medium = [];
+        const firstCitysId: uuid = missingMeterMedium.cities[0].id;
+
+        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+
+        const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
+        const {id, medium} = stateAfterSuccess.entities.cities[firstCitysId];
+        expect(id).toEqual(firstCitysId);
+        expect(medium).toEqual([]);
+      });
+
+    });
+
   });
 
   describe('failure action type', () => {
@@ -104,14 +192,13 @@ describe('selectionTreeReducer', () => {
         ...payload,
       };
 
-      expect(selectionTree(state, actions.failure({message: 'failed'}))).toEqual(
-        {
-          isFetching: false,
-          isSuccessfullyFetched: false,
-          ...payload,
-          error: {message: 'failed'},
-        },
-      );
+      const expected: SelectionTreeState = {
+        isFetching: false,
+        isSuccessfullyFetched: false,
+        ...payload,
+        error: {message: 'failed'},
+      };
+      expect(selectionTree(state, actions.failure({message: 'failed'}))).toEqual(expected);
     });
   });
 
@@ -137,43 +224,43 @@ describe('selectionTreeReducer', () => {
     it('reduces normal fetch successfully action', () => {
       const payload: NormalizedSelectionTree = normalizedResponse;
 
-      let state: SelectionTreeState = selectionTree(initialState, actions.request());
-      state = selectionTree(state, actions.success(payload));
+      const state: SelectionTreeState = selectionTree(initialState, actions.request());
+      const afterSuccess: SelectionTreeState = selectionTree(state, actions.success(payload));
 
-      expect(state).toEqual(
-        {
-          isFetching: false,
-          isSuccessfullyFetched: true,
-          ...payload,
-        });
+      const expected: SelectionTreeState = {
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        ...payload,
+      };
+      expect(afterSuccess).toEqual(expected);
     });
 
     it('reduces from success to failure', () => {
       const payload: NormalizedSelectionTree = normalizedResponse;
       const error = {message: 'failed for some reason'};
 
-      let state: SelectionTreeState = selectionTree(initialState, actions.request());
-      state = selectionTree(state, actions.success(payload));
-      state = selectionTree(state, actions.failure(error));
+      const state: SelectionTreeState = selectionTree(initialState, actions.request());
+      const success: SelectionTreeState = selectionTree(state, actions.success(payload));
+      const failure: SelectionTreeState = selectionTree(success, actions.failure(error));
 
-      expect(state).toEqual(
-        {
-          isFetching: false,
-          isSuccessfullyFetched: false,
-          ...payload,
-          error,
-        });
+      const expected: SelectionTreeState = {
+        isFetching: false,
+        isSuccessfullyFetched: false,
+        ...payload,
+        error,
+      };
+      expect(failure).toEqual(expected);
     });
   });
 
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
-      let state: SelectionTreeState = selectionTree(initialState, actions.request());
+      const state: SelectionTreeState = selectionTree(initialState, actions.request());
 
-      state = selectionTree(state, {type: LOGOUT_USER});
+      const loggedOut = selectionTree(state, {type: LOGOUT_USER});
 
-      expect(state).toEqual(initialState);
+      expect(loggedOut).toEqual(initialState);
     });
   });
 

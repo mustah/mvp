@@ -4,6 +4,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
@@ -47,34 +48,68 @@ describe('selectionTreeApiActions', () => {
   const responseFromApi = {
     cities: [
       {
-        id: 'sweden,kungsbacka', name: 'kungsbacka', addresses: [
+        id: 'sweden,kungsbacka',
+        name: 'kungsbacka',
+        medium: ['District heating'],
+        addresses: [
           {
-            name: 'kabelgatan 1', meters: [
-              {id: 1, name: 'extId1'},
-              {id: 2, name: 'extId2'},
+            name: 'kabelgatan 1',
+            meters: [
+              {
+                id: 1,
+                medium: 'District heating',
+                name: 'extId1',
+              },
+              {
+                id: 2,
+                medium: 'District heating',
+                name: 'extId2',
+              },
             ],
           },
           {
-            name: 'kungsgatan 42', meters: [
-              {id: 5, name: 'extId5'},
-              {id: 6, name: 'extId6'},
+            name: 'kungsgatan 42',
+            meters: [
+              {
+                id: 5,
+                medium: 'District heating',
+                name: 'extId5',
+              },
+              {
+                id: 6,
+                medium: 'District heating',
+                name: 'extId6',
+              },
             ],
           },
         ],
       },
       {
-        id: 'sweden,gothenburg', name: 'gothenburg', addresses: [
+        id: 'sweden,gothenburg',
+        name: 'gothenburg',
+        medium: ['District heating'],
+        addresses: [
           {
-            name: 'kungsgatan 42', meters: [
-              {id: 3, name: 'extId3'},
-              {id: 4, name: 'extId4'},
+            name: 'kungsgatan 42',
+            meters: [
+              {
+                id: 3,
+                medium: 'District heating',
+                name: 'extId3',
+              },
+              {
+                id: 4,
+                medium: 'District heating',
+                name: 'extId4',
+              },
             ],
           },
         ],
       },
     ],
   };
-  const normalizedResponse = normalize(responseFromApi, selectionTreeSchema);
+
+  const normalizedResponse: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
 
   const actions = makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
 
@@ -114,11 +149,13 @@ describe('selectionTreeApiActions', () => {
         cities: {
           'sweden,gothenburg': {
             id: 'sweden,gothenburg',
+            medium: [Medium.districtHeating],
             name: 'gothenburg',
             addresses: ['sweden,gothenburg,kungsgatan 42'],
           },
           'sweden,kungsbacka': {
             id: 'sweden,kungsbacka',
+            medium: [Medium.districtHeating],
             name: 'kungsbacka',
             addresses: ['sweden,kungsbacka,kabelgatan 1', 'sweden,kungsbacka,kungsgatan 42'],
           },
@@ -128,36 +165,42 @@ describe('selectionTreeApiActions', () => {
             address: 'kabelgatan 1',
             city: 'sweden,kungsbacka',
             id: 1,
+            medium: Medium.districtHeating,
             name: 'extId1',
           },
           2: {
             address: 'kabelgatan 1',
             city: 'sweden,kungsbacka',
             id: 2,
+            medium: Medium.districtHeating,
             name: 'extId2',
           },
           3: {
             address: 'kungsgatan 42',
             city: 'sweden,gothenburg',
             id: 3,
+            medium: Medium.districtHeating,
             name: 'extId3',
           },
           4: {
             address: 'kungsgatan 42',
             city: 'sweden,gothenburg',
             id: 4,
+            medium: Medium.districtHeating,
             name: 'extId4',
           },
           5: {
             address: 'kungsgatan 42',
             city: 'sweden,kungsbacka',
             id: 5,
+            medium: Medium.districtHeating,
             name: 'extId5',
           },
           6: {
             address: 'kungsgatan 42',
             city: 'sweden,kungsbacka',
             id: 6,
+            medium: Medium.districtHeating,
             name: 'extId6',
           },
         },

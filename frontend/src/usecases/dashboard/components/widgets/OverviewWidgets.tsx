@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {routes} from '../../../../app/routes';
 import {withSmallLoader} from '../../../../components/hoc/withLoaders';
 import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget';
-import {Medium, WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
+import {WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
 import {Column, ColumnCenter} from '../../../../components/layouts/column/Column';
 import {translate} from '../../../../services/translationService';
 import './OverviewWidgets.scss';
@@ -18,8 +18,7 @@ interface WidgetProps {
   widget: WidgetModel;
 }
 
-const emptyWidget = {
-  type: Medium.collection,
+const emptyWidget: WidgetModel = {
   total: 0,
   pending: 0,
 };

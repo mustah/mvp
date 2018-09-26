@@ -1,4 +1,4 @@
-import {Medium, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
+import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {EndPoints} from '../../../services/endPoints';
 import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
 import {LOGOUT_USER} from '../../auth/authActions';
@@ -13,17 +13,14 @@ describe('dashboardReducer', () => {
   it('extracts valid widgets from JSON response', () => {
     const widgets: WidgetModel[] = [
       {
-        type: Medium.water,
         total: 1000,
         pending: 20,
       },
       {
-        type: Medium.electricity,
         total: 3000,
         pending: 17,
       },
       {
-        type: Medium.districtHeating,
         total: 1000,
         pending: 122,
       },

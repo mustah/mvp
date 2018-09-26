@@ -133,10 +133,10 @@ describe('indicatorActions', () => {
           ],
         });
 
-        store.dispatch(toggleReportIndicatorWidget(Medium.temperatureInside));
+        store.dispatch(toggleReportIndicatorWidget(Medium.roomSensor));
 
         const expected = [
-          setReportIndicatorWidgets([Medium.gas, Medium.districtHeating, Medium.temperatureInside]),
+          setReportIndicatorWidgets([Medium.gas, Medium.districtHeating, Medium.roomSensor]),
         ];
 
         expect(store.getActions()).toEqual(expected);

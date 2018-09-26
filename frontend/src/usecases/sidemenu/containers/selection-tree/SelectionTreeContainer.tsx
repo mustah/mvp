@@ -85,7 +85,7 @@ class SelectionTreeComponent extends React.Component<Props> {
         centerMapOnMeter,
       });
 
-    const cityIds = selectionTree.result.cities;
+    const cityIds: uuid[] = selectionTree.result.cities;
     const nestedItems = cityIds.length
       ? [...cityIds].sort().map(renderSelectionOverview)
       : [(
