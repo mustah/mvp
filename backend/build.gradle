@@ -2,8 +2,8 @@ buildscript {
   ext {
     springBootVersion = '1.5.12.RELEASE'
     ehcacheVersion = '3.5.2'
-    lombokVersion = '1.16.20'
-    assertjVersion = '3.10.0'
+    lombokVersion = '1.18.2'
+    assertjVersion = '3.11.1'
     junitVersion = '4.12'
     set('hibernate.version', '5.2.16.Final')
   }
