@@ -1,7 +1,7 @@
 buildscript {
   ext {
     springBootVersion = '1.5.12.RELEASE'
-    ehcacheVersion = '3.5.2'
+    ehcacheVersion = '3.6.1'
     lombokVersion = '1.18.2'
     assertjVersion = '3.11.1'
     junitVersion = '4.12'
