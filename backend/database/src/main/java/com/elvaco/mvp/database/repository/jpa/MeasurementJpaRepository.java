@@ -32,9 +32,12 @@ public interface MeasurementJpaRepository
       + "LEFT JOIN ( "
       + "  SELECT "
       //Diff against previous value with the selected interval.
-      + "        value - coalesce( "
-      + "          (lag(value) OVER (PARTITION BY physical_meter_id ORDER BY created )), "
+      + "        value - ("
+      + "        CASE WHEN (lag(value) OVER (PARTITION BY physical_meter_id ORDER BY created )) "
+      + "          IS NOT NULL OR date_serie2.date <= :from THEN "
+      + "            (lag(value) OVER (PARTITION BY physical_meter_id ORDER BY created )) "
       //Fallback, use first value within last X values matching interval
+      + "        ELSE "
       + "          ( "
       + "            SELECT  "
       + "              value "
@@ -57,6 +60,7 @@ public interface MeasurementJpaRepository
       + "            ORDER BY inner_date_serie.date DESC "
       + "            LIMIT 1 "
       + "          ) "
+      + "          END "
       + "        ) AS value, "
       + "    date_trunc(:resolution, created AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' AS "
       + "interval_start"
