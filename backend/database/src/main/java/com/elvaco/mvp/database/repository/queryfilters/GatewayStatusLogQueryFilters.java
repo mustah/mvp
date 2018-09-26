@@ -7,22 +7,12 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
-import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class GatewayStatusLogQueryFilters extends QueryFilters {
-
-  private static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG =
-    gatewayStatusLogEntity;
-
-  private static final QGatewayEntity GATEWAY =
-    gatewayEntity;
 
   private ZonedDateTime start;
   private ZonedDateTime stop;

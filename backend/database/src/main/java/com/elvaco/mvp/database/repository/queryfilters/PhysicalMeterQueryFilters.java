@@ -6,15 +6,11 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class PhysicalMeterQueryFilters extends QueryFilters {
-
-  private static final QPhysicalMeterEntity PHYSICAL_METER =
-    QPhysicalMeterEntity.physicalMeterEntity;
 
   @Override
   public Optional<Predicate> buildPredicateFor(
