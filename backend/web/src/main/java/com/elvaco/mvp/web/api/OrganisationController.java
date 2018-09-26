@@ -30,8 +30,7 @@ public class OrganisationController {
 
   @GetMapping
   public List<OrganisationDto> allOrganisations() {
-    return organisationUseCases.findAll()
-      .stream()
+    return organisationUseCases.findAll().stream()
       .map(OrganisationDtoMapper::toDto)
       .collect(toList());
   }

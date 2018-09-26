@@ -25,8 +25,7 @@ public class GatewayEntityMapper {
       .organisationId(entity.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
-      .statusLogs(entity.statusLogs
-        .stream()
+      .statusLogs(entity.statusLogs.stream()
         .map(GatewayStatusLogEntityMapper::toDomainModel)
         .collect(toList()))
       .build();

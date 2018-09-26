@@ -57,7 +57,7 @@ class MeterDetailsInfo extends React.Component<Props> {
     const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
 
     const renderReadInterval = () => {
-      if (meter.readIntervalMinutes === 0 || meter.readIntervalMinutes === undefined) {
+      if (!meter.readIntervalMinutes) {
         return translate('unknown');
       } else if (meter.readIntervalMinutes >= 60) {
         return (meter.readIntervalMinutes / 60) + translate('hour in short');

@@ -29,8 +29,7 @@ public class UserRepository implements Users {
 
   @Override
   public List<User> findAll() {
-    return userJpaRepository.findAllByOrderByOrganisationNameAscNameAsc()
-      .stream()
+    return userJpaRepository.findAllByOrderByOrganisationNameAscNameAsc().stream()
       .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }
@@ -78,17 +77,14 @@ public class UserRepository implements Users {
 
   @Override
   public List<User> findByRole(Role role) {
-    return userJpaRepository.findByRoles_Role(role.role)
-      .stream()
+    return userJpaRepository.findByRoles_Role(role.role).stream()
       .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public List<User> findByOrganisationId(UUID organisationId) {
-    return userJpaRepository
-      .findByOrganisationId(organisationId)
-      .stream()
+    return userJpaRepository.findByOrganisationId(organisationId).stream()
       .map(UserEntityMapper::toDomainModel)
       .collect(toList());
   }

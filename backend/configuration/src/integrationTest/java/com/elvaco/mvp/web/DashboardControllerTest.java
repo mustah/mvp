@@ -153,19 +153,15 @@ public class DashboardControllerTest extends IntegrationTest {
     List<PhysicalMeterEntity> physicalMeters,
     ZonedDateTime startDate
   ) {
-    List<PhysicalMeterStatusLogEntity> statuses = physicalMeters
-      .stream()
-      .map(physicalMeterEntity ->
-        new PhysicalMeterStatusLogEntity(
-          null,
-          physicalMeterEntity.id,
-          StatusType.OK,
-          startDate,
-          null
-        )).collect(
-        toList());
-
-    physicalMeterStatusLogJpaRepository.save(statuses);
+    physicalMeterStatusLogJpaRepository.save(physicalMeters.stream()
+      .map(physicalMeterEntity -> new PhysicalMeterStatusLogEntity(
+        null,
+        physicalMeterEntity.id,
+        StatusType.OK,
+        startDate,
+        null
+      ))
+      .collect(toList()));
   }
 
   private void createMeasurementMockData(

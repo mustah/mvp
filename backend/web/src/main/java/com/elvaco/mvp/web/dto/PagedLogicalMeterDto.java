@@ -17,8 +17,6 @@ public class PagedLogicalMeterDto {
   public LocationDto location;
   public String medium;
   public String manufacturer;
-  @Nullable
-  public String statusChanged;
   public boolean isReported;
   @Nullable
   public Double collectionPercentage;

@@ -39,8 +39,7 @@ public class UserSelectionRepository implements UserSelections {
     return userSelectionJpaRepository.findByOwnerUserIdAndOrganisationId(
       ownerUserId,
       organisationId
-    )
-      .stream()
+    ).stream()
       .map(UserSelectionEntityMapper::toDomainModel)
       .collect(toList());
   }

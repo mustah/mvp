@@ -24,8 +24,7 @@ public class OrganisationRepository implements Organisations {
 
   @Override
   public List<Organisation> findAll() {
-    return organisationJpaRepository.findAllByOrderByNameAsc()
-      .stream()
+    return organisationJpaRepository.findAllByOrderByNameAsc().stream()
       .map(OrganisationEntityMapper::toDomainModel)
       .collect(toList());
   }

@@ -125,8 +125,7 @@ public class GeoRequestTest {
   }
 
   private List<String> validate(GeoRequest request) {
-    return validator.validate(request)
-      .stream()
+    return validator.validate(request).stream()
       .map(ConstraintViolation::getMessage)
       .collect(toList());
   }

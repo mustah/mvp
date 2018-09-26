@@ -43,7 +43,7 @@ export const renderSelectionTreeCities = ({
   if (city.clusters) {
     if (openListItems.has(id)) {
       nestedItems = [...city.clusters].sort()
-        .map((id) => renderSelectionTreeClusters({
+        .map((id: uuid) => renderSelectionTreeClusters({
           ...other,
           openListItems,
           toggleSingleEntry,

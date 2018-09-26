@@ -55,8 +55,7 @@ public class LogicalMeterSyncController {
     RequestParameters parameters = new RequestParametersAdapter()
       .setAllIds(ID, logicalMetersIds);
 
-    return logicalMeterUseCases.findAllBy(parameters)
-      .stream()
+    return logicalMeterUseCases.findAllBy(parameters).stream()
       .map(this::sync)
       .collect(Collectors.toList());
   }

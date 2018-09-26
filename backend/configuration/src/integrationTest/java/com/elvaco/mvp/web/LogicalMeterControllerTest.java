@@ -57,7 +57,6 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
@@ -155,41 +154,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent()).hasSize(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).collectionPercentage).isNull();
-  }
-
-  @Test
-  public void shouldNotHaveStatusChangedSetWhenMeterCreatedAfterPeriodEnd() {
-    ZonedDateTime start = ZonedDateTime.now();
-
-    LogicalMeter logicalMeter = logicalMeters.save(LogicalMeter.builder()
-      .externalId("externalId")
-      .organisationId(context().organisationId())
-      .meterDefinition(GAS_METER)
-      .created(start)
-      .build()
-    );
-
-    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(firstMeter.id)
-        .status(OK)
-        .start(start)
-        .build()
-    );
-
-    List<PagedLogicalMeterDto> content = asTestUser()
-      .getPage(metersUrl(start, start.minusDays(7)), PagedLogicalMeterDto.class)
-      .getContent();
-
-    assertThat(content).extracting("statusChanged")
-      .containsExactlyElementsOf(singletonList(null));
   }
 
   @Test

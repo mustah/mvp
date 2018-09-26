@@ -61,8 +61,7 @@ public class MeteringMessageParser implements MessageParser {
     MeteringMeasurementMessageDto messageDto
   ) {
     return messageDto.withValues(
-      messageDto.values
-        .stream()
+      messageDto.values.stream()
         .map(value -> value.withUnit(METERING_TO_MVP_UNITS.getOrDefault(value.unit, value.unit)))
         .collect(toList()));
   }

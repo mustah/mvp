@@ -31,8 +31,7 @@ public class UserController {
 
   @GetMapping
   public List<UserDto> allUsers() {
-    return userUseCases.findAll()
-      .stream()
+    return userUseCases.findAll().stream()
       .map(UserDtoMapper::toDto)
       .collect(toList());
   }
