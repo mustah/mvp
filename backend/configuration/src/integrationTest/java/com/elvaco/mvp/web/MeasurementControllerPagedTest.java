@@ -225,6 +225,8 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       "",
       logicalMeterId,
       0,
+      1,
+      1,
       emptySet(),
       emptySet()
     ));
@@ -241,6 +243,8 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       "",
       logicalMeterId,
       0,
+      1,
+      1,
       emptySet(),
       emptySet()
     ));

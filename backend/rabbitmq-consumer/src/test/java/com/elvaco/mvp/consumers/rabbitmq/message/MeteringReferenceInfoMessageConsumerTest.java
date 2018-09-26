@@ -183,6 +183,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .manufacturer(MANUFACTURER)
       .logicalMeterId(logicalMeter.id)
       .readIntervalMinutes(READ_INTERVAL_IN_MINUTES)
+      .revision(REVISION_ONE)
+      .mbusDeviceType(MBUS_METER_TYPE_ONE)
       .statuses(savedPhysicalMeter.statuses)
       .build());
     assertThat(gateway.meters).extracting("id").containsExactly(logicalMeter.id);

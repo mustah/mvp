@@ -34,6 +34,9 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
   @Nullable
   public final UUID logicalMeterId;
   public long readIntervalMinutes;
+  public Integer revision;
+  @Nullable
+  public Integer mbusDeviceType;
   @Singular
   public List<StatusLogEntry<UUID>> statuses;
   @Singular
@@ -48,6 +51,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
     @Nullable String manufacturer,
     @Nullable UUID logicalMeterId,
     long readIntervalMinutes,
+    Integer revision,
+    @Nullable Integer mbusDeviceType,
     List<StatusLogEntry<UUID>> statuses,
     List<AlarmLogEntry> alarms
   ) {
@@ -59,6 +64,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.readIntervalMinutes = readIntervalMinutes;
+    this.revision = revision;
+    this.mbusDeviceType = mbusDeviceType;
     this.statuses = statuses;
     this.alarms = alarms;
   }
@@ -78,6 +85,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
+      revision,
+      mbusDeviceType,
       unmodifiableList(statuses),
       unmodifiableList(alarms)
     );
@@ -93,6 +102,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
+      revision,
+      mbusDeviceType,
       unmodifiableList(statuses),
       unmodifiableList(alarms)
     );
@@ -108,6 +119,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
+      revision,
+      mbusDeviceType,
       unmodifiableList(statuses),
       unmodifiableList(alarms)
     );
@@ -123,6 +136,42 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes != null ? readIntervalMinutes : this.readIntervalMinutes,
+      revision,
+      mbusDeviceType,
+      unmodifiableList(statuses),
+      unmodifiableList(alarms)
+    );
+  }
+
+  public PhysicalMeter withRevision(@Nullable Integer revision) {
+    return new PhysicalMeter(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      readIntervalMinutes,
+      revision,
+      mbusDeviceType,
+      unmodifiableList(statuses),
+      unmodifiableList(alarms)
+    );
+  }
+
+  public PhysicalMeter withMbusDeviceType(@Nullable Integer mbusDeviceType) {
+    return new PhysicalMeter(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      readIntervalMinutes,
+      revision,
+      mbusDeviceType,
       unmodifiableList(statuses),
       unmodifiableList(alarms)
     );
@@ -151,6 +200,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
+      revision,
+      mbusDeviceType,
       unmodifiableList(newStatuses),
       unmodifiableList(alarms)
     );

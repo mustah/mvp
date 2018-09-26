@@ -68,6 +68,8 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       "ELV",
       logicalMeterId,
       15,
+      1,
+      1,
       emptySet(),
       emptySet()
     );

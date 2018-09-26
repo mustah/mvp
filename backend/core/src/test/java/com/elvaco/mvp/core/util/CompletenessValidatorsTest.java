@@ -80,6 +80,7 @@ public class CompletenessValidatorsTest {
       .medium(Medium.DISTRICT_HEATING.medium)
       .manufacturer("ELV")
       .readIntervalMinutes(15)
+      .revision(1)
       .build();
     assertThat(physicalMeterValidator().isComplete(
       physicalMeter)).isTrue();
@@ -91,6 +92,7 @@ public class CompletenessValidatorsTest {
       .medium(Medium.DISTRICT_HEATING.medium)
       .manufacturer(null)
       .readIntervalMinutes(15)
+      .revision(1)
       .build();
     assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
   }
@@ -101,6 +103,7 @@ public class CompletenessValidatorsTest {
       .medium(Medium.DISTRICT_HEATING.medium)
       .manufacturer("UNKNOWN")
       .readIntervalMinutes(15)
+      .revision(1)
       .build();
     assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
   }
@@ -111,6 +114,18 @@ public class CompletenessValidatorsTest {
       .medium(Medium.DISTRICT_HEATING.medium)
       .manufacturer("ELV")
       .readIntervalMinutes(0)
+      .revision(1)
+      .build();
+    assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
+  }
+
+  @Test
+  public void physicalMeterValidatorRevisionNullIsIncomplete() {
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .medium(Medium.DISTRICT_HEATING.medium)
+      .manufacturer("ELV")
+      .readIntervalMinutes(0)
+      .revision(null)
       .build();
     assertThat(physicalMeterValidator().isComplete(physicalMeter)).isFalse();
   }

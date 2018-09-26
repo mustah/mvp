@@ -26,6 +26,8 @@ public class PhysicalMeterEntityMapperTest {
     assertThat(entity.externalId).isEqualTo("external-id");
     assertThat(entity.medium).isEqualTo("My Medium");
     assertThat(entity.manufacturer).isEqualTo("ELV");
+    assertThat(entity.revision).isEqualTo(5);
+    assertThat(entity.mbusDeviceType).isEqualTo(9);
   }
 
   @Test
@@ -47,6 +49,8 @@ public class PhysicalMeterEntityMapperTest {
       "ELV",
       UUID.randomUUID(),
       0,
+      1,
+      1,
       emptySet(),
       emptySet()
     );
@@ -71,6 +75,8 @@ public class PhysicalMeterEntityMapperTest {
       "ELV",
       logicalMeterId,
       0,
+      1,
+      1,
       emptySet(),
       singleton(MeterAlarmLogEntity.builder()
         .physicalMeterId(physicalMeterId)
@@ -101,6 +107,8 @@ public class PhysicalMeterEntityMapperTest {
       .manufacturer("ELV")
       .organisation(ELVACO)
       .readIntervalMinutes(15)
+      .revision(5)
+      .mbusDeviceType(9)
       .build();
   }
 }
