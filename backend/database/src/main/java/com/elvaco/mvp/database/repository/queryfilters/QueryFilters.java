@@ -9,13 +9,39 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
+import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
+import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.QLocationEntity;
+import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
+import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+
+import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
+import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
+import static com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity.missingMeasurementEntity;
+import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
+import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
 /**
  * A mapper of property filters to QueryDsl predicates.
  */
 public abstract class QueryFilters {
+
+  protected static final QMissingMeasurementEntity MISSING_MEASUREMENT = missingMeasurementEntity;
+  protected static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
+  protected static final QGatewayEntity GATEWAY = gatewayEntity;
+  protected static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
+  protected static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
+  protected static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;
+  protected static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
+  protected static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
+    physicalMeterStatusLogEntity;
 
   public abstract Optional<Predicate> buildPredicateFor(
     RequestParameter parameter,

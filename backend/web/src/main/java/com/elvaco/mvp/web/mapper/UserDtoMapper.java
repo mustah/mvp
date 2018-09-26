@@ -50,8 +50,7 @@ public class UserDtoMapper {
   }
 
   private static List<String> toRoles(List<Role> roles) {
-    return roles
-      .stream()
+    return roles.stream()
       .map(r -> r.role)
       .collect(toList());
   }

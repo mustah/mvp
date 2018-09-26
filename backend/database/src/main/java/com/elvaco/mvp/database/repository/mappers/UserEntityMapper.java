@@ -39,15 +39,13 @@ public class UserEntityMapper {
   }
 
   private static List<RoleEntity> rolesOf(List<Role> roles) {
-    return roles
-      .stream()
+    return roles.stream()
       .map(r -> new RoleEntity(r.role))
       .collect(toList());
   }
 
   private static List<Role> rolesOf(Collection<RoleEntity> roles) {
-    return roles
-      .stream()
+    return roles.stream()
       .map(r -> new Role(r.role))
       .collect(toList());
   }

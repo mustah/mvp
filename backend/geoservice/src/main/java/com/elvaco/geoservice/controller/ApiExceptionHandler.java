@@ -20,8 +20,7 @@ public class ApiExceptionHandler {
     return ResponseEntity.badRequest()
       .body(new FieldErrorsDto(
         HttpStatus.BAD_REQUEST.value(),
-        exception.getFieldErrors()
-          .stream()
+        exception.getFieldErrors().stream()
           .map(DefaultMessageSourceResolvable::getDefaultMessage)
           .collect(toList())
       ));

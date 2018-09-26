@@ -6,17 +6,11 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
 
 public class MissingMeasurementQueryFilters extends QueryFilters {
-
-  private static final QMissingMeasurementEntity MISSING_MEASUREMENT =
-    QMissingMeasurementEntity.missingMeasurementEntity;
-  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   @Override
   public Optional<Predicate> buildPredicateFor(

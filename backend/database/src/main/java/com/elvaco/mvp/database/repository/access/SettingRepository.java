@@ -18,13 +18,15 @@ public class SettingRepository implements Settings {
 
   @Override
   public List<Setting> findAll() {
-    return settingJpaRepository.findAll().stream().map(SettingEntityMapper::toDomainModel)
+    return settingJpaRepository.findAll().stream()
+      .map(SettingEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Optional<Setting> findByName(String name) {
-    return settingJpaRepository.findByName(name).map(SettingEntityMapper::toDomainModel);
+    return settingJpaRepository.findByName(name)
+      .map(SettingEntityMapper::toDomainModel);
   }
 
   @Override

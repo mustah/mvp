@@ -124,9 +124,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
   }
 
   private static Map<String, Location> mapAddressToLocation() throws IOException {
-    return loadGeodata()
-      .entrySet()
-      .stream()
+    return loadGeodata().entrySet().stream()
       .map(entry -> parseKeyToLocation(entry.getKey())
         .coordinate(toGeoCoordinate(entry.getValue()))
         .build())

@@ -7,22 +7,12 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.getZonedDateTimeFrom;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
-
-  private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
-    physicalMeterStatusLogEntity;
-
-  private static final QLogicalMeterEntity LOGICAL_METER =
-    logicalMeterEntity;
 
   private ZonedDateTime start;
   private ZonedDateTime stop;

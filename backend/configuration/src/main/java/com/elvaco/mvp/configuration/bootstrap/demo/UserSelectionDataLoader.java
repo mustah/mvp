@@ -76,9 +76,7 @@ public class UserSelectionDataLoader implements CommandLineRunner {
       (ObjectNode) OBJECT_MAPPER.readTree(perstorpJson)
     );
 
-    List<UserSelectionEntity> selectionEntities = userJpaRepository
-      .findAll()
-      .stream()
+    List<UserSelectionEntity> selectionEntities = userJpaRepository.findAll().stream()
       .flatMap((user) -> Stream.of(
         new UserSelectionEntity(
           randomUUID(),

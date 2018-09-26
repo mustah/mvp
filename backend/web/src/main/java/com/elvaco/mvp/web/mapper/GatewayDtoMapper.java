@@ -51,8 +51,7 @@ public class GatewayDtoMapper {
   }
 
   private static List<UUID> connectedMeterIds(Gateway gateway) {
-    return gateway.meters
-      .stream()
+    return gateway.meters.stream()
       .map(meter -> meter.id)
       .collect(toList());
   }

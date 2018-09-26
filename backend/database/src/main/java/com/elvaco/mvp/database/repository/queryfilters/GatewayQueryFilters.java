@@ -6,14 +6,8 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
-import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
@@ -22,10 +16,6 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
 public class GatewayQueryFilters extends QueryFilters {
-
-  private static final QGatewayEntity GATEWAY = gatewayEntity;
-  private static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
-  private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   @Override
   public Optional<Predicate> buildPredicateFor(

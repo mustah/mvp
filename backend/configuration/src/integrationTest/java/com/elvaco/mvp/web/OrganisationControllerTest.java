@@ -54,8 +54,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    organisations.findAll()
-      .stream()
+    organisations.findAll().stream()
       .filter(organisation -> !organisation.id.equals(ELVACO.id))
       .forEach(organisation -> organisations.deleteById(organisation.id));
   }

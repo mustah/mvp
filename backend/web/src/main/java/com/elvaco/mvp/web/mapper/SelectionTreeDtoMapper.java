@@ -16,15 +16,13 @@ import static java.util.stream.Collectors.toList;
 public class SelectionTreeDtoMapper {
 
   public static SelectionTreeDto toDto(SelectionTree selectionTree) {
-    return new SelectionTreeDto(selectionTree.getCities()
-      .stream()
+    return new SelectionTreeDto(selectionTree.getCities().stream()
       .map(SelectionTreeDtoMapper::toCityDto)
       .collect(toList()));
   }
 
   private static CityDto toCityDto(City city) {
-    return new CityDto(city.id, city.name, city.medium, city.getAddresses()
-      .stream()
+    return new CityDto(city.id, city.name, city.medium, city.getAddresses().stream()
       .map(SelectionTreeDtoMapper::toAddressDto)
       .collect(toList()));
   }

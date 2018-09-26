@@ -17,8 +17,7 @@ public class RoleRepository implements Roles {
 
   @Override
   public List<Role> save(List<Role> roles) {
-    return roles
-      .stream()
+    return roles.stream()
       .map(this::toEntity)
       .map(roleJpaRepository::save)
       .map(this::toDomainModel)

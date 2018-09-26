@@ -7,9 +7,6 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
@@ -20,15 +17,6 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
-
-  private static final QGatewayEntity GATEWAY =
-    QGatewayEntity.gatewayEntity;
-
-  private static final QPhysicalMeterEntity PHYSICAL_METER =
-    QPhysicalMeterEntity.physicalMeterEntity;
-
-  private static final QLogicalMeterEntity LOGICAL_METER =
-    QLogicalMeterEntity.logicalMeterEntity;
 
   @Override
   public Optional<Predicate> buildPredicateFor(

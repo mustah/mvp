@@ -6,16 +6,11 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.meter.QLocationEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
 public class LocationQueryFilters extends QueryFilters {
-
-  private static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
-  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
   @Override
   public Optional<Predicate> buildPredicateFor(

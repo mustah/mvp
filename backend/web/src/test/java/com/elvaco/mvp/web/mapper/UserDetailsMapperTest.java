@@ -39,9 +39,7 @@ public class UserDetailsMapperTest {
 
   @Test
   public void hasSpringPrefixedRoles() {
-    Stream<String> roles = mvpUserDetails()
-      .getAuthorities()
-      .stream()
+    Stream<String> roles = mvpUserDetails().getAuthorities().stream()
       .map(GrantedAuthority::getAuthority);
 
     assertThat(roles).containsExactly("ROLE_" + ADMIN.role, "ROLE_" + USER.role);

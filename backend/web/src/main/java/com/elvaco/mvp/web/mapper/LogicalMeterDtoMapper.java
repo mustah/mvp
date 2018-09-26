@@ -62,12 +62,10 @@ public class LogicalMeterDtoMapper {
 
     meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
 
-    meterDto.gatewaySerial =
-      logicalMeter.gateways
-        .stream()
-        .findFirst()
-        .map(gateway -> gateway.serial)
-        .orElse(null);
+    meterDto.gatewaySerial = logicalMeter.gateways.stream()
+      .findFirst()
+      .map(gateway -> gateway.serial)
+      .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
@@ -100,11 +98,10 @@ public class LogicalMeterDtoMapper {
 
     meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
 
-    meterDto.gateway =
-      logicalMeter.gateways.stream()
-        .findFirst()
-        .map(GatewayDtoMapper::toGatewayMandatory)
-        .orElse(null);
+    meterDto.gateway = logicalMeter.gateways.stream()
+      .findFirst()
+      .map(GatewayDtoMapper::toGatewayMandatory)
+      .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
