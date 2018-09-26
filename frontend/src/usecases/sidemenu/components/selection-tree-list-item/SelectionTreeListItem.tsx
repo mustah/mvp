@@ -119,13 +119,13 @@ const renderSelectionTreeAddresses = ({id, openListItems, selectionTree, ...othe
 };
 
 const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) => {
-  const meter = selectionTree.entities.meters[id];
+  const {name, medium} = selectionTree.entities.meters[id];
   return renderSelectableListItem({
     ...other,
     id,
     selectable: false,
-    primaryText: meter.name,
-    medium: meter.medium,
+    primaryText: name,
+    medium,
   });
 };
 
@@ -143,7 +143,7 @@ interface Props {
   toggleSingleEntry: OnClickWithId;
   itemOptions: ItemOptions;
   centerMapOnMeter: OnClickWithId;
-  medium?: string;
+  medium?: Medium;
 }
 
 const labelStyle: React.CSSProperties = {
@@ -200,7 +200,7 @@ const renderSelectableListItem = ({
         </RowCenter>
         <Row style={iconRowStyle}>
           {zoomable && <ZoomButton onClick={zoomInOn}/>}
-          {report && <MediumButton onClick={addMeterToReport} medium={medium}/>}
+          {report && medium && <MediumButton onClick={addMeterToReport} medium={medium}/>}
         </Row>
       </RowCenter>
     )

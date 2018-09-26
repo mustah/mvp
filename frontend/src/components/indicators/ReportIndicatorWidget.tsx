@@ -3,13 +3,11 @@ import * as React from 'react';
 import 'ReportIndicatorWidget.scss';
 import {colors} from '../../app/themes';
 import {OnClick} from '../../types/Types';
-import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
 import {IconGas} from '../icons/IconGas';
 import {IconTemperature} from '../icons/IconTemperature';
 import {IconUnknown} from '../icons/IconUnknown';
-import {IconValidation} from '../icons/IconValidation';
 import {IconWater} from '../icons/IconWater';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {RowCenter} from '../layouts/row/Row';
@@ -17,26 +15,19 @@ import {Small} from '../texts/Texts';
 import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
-interface IndicatorComponentType {
-  // TODO make 'type' Medium
-  [type: string]: React.ComponentType<SvgIconProps>;
-}
-
+type IndicatorComponentType = {[type in Medium]: React.ComponentType<SvgIconProps>};
 const indicatorIconFor: IndicatorComponentType = {
-  [Medium.collection]: IconCollection,
-  [Medium.measurementQuality]: IconValidation,
   [Medium.electricity]: IconCurrent,
   [Medium.water]: IconWater,
   [Medium.hotWater]: IconWater,
   [Medium.districtHeating]: IconDistrictHeating,
   [Medium.gas]: IconGas,
-  [Medium.temperatureInside]: IconTemperature,
-  [Medium.temperatureOutside]: IconTemperature,
+  [Medium.roomSensor]: IconTemperature,
   [Medium.unknown]: IconUnknown,
 };
 
 export const iconComponentFor =
-  (type: Medium): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
+  (type: Medium): React.ComponentType<SvgIconProps> => indicatorIconFor[type] || IconUnknown;
 
 const style: React.CSSProperties = {
   width: '24px',

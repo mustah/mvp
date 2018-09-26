@@ -33,7 +33,7 @@ export interface LegendItem {
   facility?: string;
   address?: string;
   city: string;
-  medium: string | string[];
+  medium: Medium | Medium[];
   id: uuid;
 }
 
@@ -82,7 +82,7 @@ export const hardcodedIndicators = (): ReportIndicatorProps[] => ([
     title: firstUpperTranslated('gas'),
   },
   {
-    type: Medium.temperatureInside,
-    title: firstUpperTranslated('inside temperature'),
+    type: Medium.roomSensor,
+    title: firstUpperTranslated('room sensor'),
   },
 ]);

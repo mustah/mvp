@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {getMediumType, Medium} from '../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
@@ -142,12 +142,12 @@ export const getMedia = createSelector<SelectedTreeEntities, uuid[], SelectionTr
     const meterMedia: Medium[] = ids
       .filter(isSelectedMeter)
       .filter((id: uuid) => meters[id] !== undefined)
-      .map((id: uuid) => getMediumType(meters[id].medium));
+      .map((id: uuid) => meters[id].medium);
 
     const cityMedia: Medium[] = ids
       .filter(isSelectedCity)
       .filter((id: uuid) => cities[id] !== undefined)
-      .map((id: uuid): Medium[] => cities[id].medium.map(getMediumType))
+      .map((id: uuid): Medium[] => cities[id].medium)
       .reduce((acc: Medium[], current: Medium[]): Medium[] => acc.concat(current), []);
 
     return new Set([...meterMedia, ...cityMedia]);

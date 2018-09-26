@@ -94,19 +94,22 @@ export const enum Quantity {
   externalTemperature = 'External temperature',
 }
 
-// TODO type, and fill in missing values for, {[q in Quantity]: string}
-export const quantityUnits = {
+export const quantityUnits: {[q in Quantity]: string} = {
   [Quantity.energy]: 'kWh',
+  [Quantity.energyReturn]: 'kWh',
+  [Quantity.energyReactive]: 'kWh',
+  [Quantity.externalTemperature]: '°C',
   [Quantity.volume]: 'm',
   [Quantity.power]: 'W',
   [Quantity.flow]: 'm³/h',
   [Quantity.forwardTemperature]: '°C',
   [Quantity.returnTemperature]: '°C',
+  [Quantity.temperature]: '°C',
+  [Quantity.relativeHumidity]: '%',
   [Quantity.differenceTemperature]: 'K',
 };
 
-// TODO type and correct erronous usages
-export const allQuantities = {
+export const allQuantities: {[m in Medium]: Quantity[]} = {
   [Medium.districtHeating]: [
     Quantity.energy,
     Quantity.volume,
@@ -125,10 +128,6 @@ export const allQuantities = {
   [Medium.hotWater]: [
     Quantity.volume,
   ],
-  [Medium.temperatureInside]: [
-    Quantity.temperature,
-    Quantity.relativeHumidity,
-  ],
   [Medium.electricity]: [
     Quantity.energy,
     Quantity.energyReactive,
@@ -139,6 +138,7 @@ export const allQuantities = {
     Quantity.externalTemperature,
     Quantity.relativeHumidity,
   ],
+  [Medium.unknown]: [],
 };
 
 export const defaultQuantityForMedium = (medium: Medium): Quantity => allQuantities[medium][0];

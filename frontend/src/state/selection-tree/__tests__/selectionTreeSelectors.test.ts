@@ -13,14 +13,14 @@ describe('selectionTreeSelectors', () => {
         'sweden,kungsbacka': {
           id: 'sweden,kungsbacka',
           city: 'sweden,kungsbacka',
-          medium: ['Water'],
+          medium: [Medium.water],
           name: 'kungsbacka',
           addresses: ['sweden,kungsbacka,kabelgatan 2', 'sweden,kungsbacka,kabelgatan 3'],
         },
         'sweden,gothenburg': {
           id: 'sweden,gothenburg',
           city: 'sweden,gothenburg',
-          medium: ['Water', 'Gas'],
+          medium: [Medium.water, Medium.gas],
           name: 'gothenburg',
           addresses: [
             'sweden,gothenburg,kungsgatan 2',
@@ -79,41 +79,41 @@ describe('selectionTreeSelectors', () => {
           city: 'sweden,kungsbacka',
           id: 1,
           name: 'extId1',
-          medium: 'Water',
+          medium: Medium.water,
         },
         2: {
           address: 'kabelgatan 3',
           city: 'sweden,kungsbacka',
           id: 2,
           name: 'extId2',
-          medium: 'Water',
+          medium: Medium.water,
         },
         3: {
           address: 'kungsgatan 2',
           city: 'sweden,gothenburg',
           id: 3,
           name: 'extId3',
-          medium: 'Water',
+          medium: Medium.water,
         },
         4: {
           address: 'kungsgatan 1',
           city: 'sweden,gothenburg',
           id: 4,
           name: 'extId4',
-          medium: 'Gas',
+          medium: Medium.gas,
         },
         5: {
           address: 'drottninggatan 1',
           city: 'sweden,gothenburg',
           id: 5,
           name: 'extId5',
-          medium: 'Gas',
+          medium: Medium.gas,
         },
         6: {
           id: 6,
           address: 'kabelgatan 2',
           city: 'denmark,copenhagen',
-          medium: '',
+          medium: Medium.unknown,
           name: 'ext6',
         },
       },
@@ -239,18 +239,6 @@ describe('selectionTreeSelectors', () => {
     it('gets media from meters and cities', () => {
       const selectedListItems: uuid[] = ['sweden,kungsbacka', '4'];
       const expected: Set<Medium> = new Set([Medium.gas, Medium.water]);
-
-      const state: SelectedTreeEntities = {
-        selectedListItems,
-        entities: {...selectionTreeState.entities},
-      };
-
-      expect(getMedia(state)).toEqual(expected);
-    });
-
-    it('gracefully ignores missing medium', () => {
-      const selectedListItems: uuid[] = ['denmark,copenhagen', '4'];
-      const expected: Set<Medium> = new Set([Medium.gas]);
 
       const state: SelectedTreeEntities = {
         selectedListItems,

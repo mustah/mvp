@@ -1,5 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
@@ -94,7 +95,7 @@ describe('reportActions', () => {
             'sweden,höganäs': {
               id: 'sweden,höganäs',
               city: 'sweden,höganäs',
-              medium: ['Gas', 'Water'],
+              medium: [Medium.gas, Medium.water],
               name: 'höganäs',
               addresses: [
                 'sweden,höganäs,hasselgatan 4',
@@ -138,21 +139,21 @@ describe('reportActions', () => {
               city: 'sweden,höganäs',
               id: '905a785e-f215-4eb8-b31c-0a00a365a124',
               name: '3000',
-              medium: 'Gas',
+              medium: Medium.gas,
             },
             '22b8fd17-fd83-469e-b0ca-4ab3808beebb': {
               address: 'storgatan 5',
               city: 'sweden,höganäs',
               id: '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
               name: '3001',
-              medium: 'Gas',
+              medium: Medium.gas,
             },
             '54c58358-9631-4de3-b76c-f018fbf0fc8b': {
               address: 'väpnaregatan 10',
               city: 'sweden,höganäs',
               id: '54c58358-9631-4de3-b76c-f018fbf0fc8b',
               name: '3002',
-              medium: 'Water',
+              medium: Medium.water,
             },
           },
         },
@@ -253,7 +254,7 @@ describe('reportActions', () => {
           city,
           id,
           name: `meter-${i}`,
-          medium: 'Gas',
+          medium: Medium.gas,
         };
 
         state.selectionTree.entities.addresses[addressId].meters.push(id);
