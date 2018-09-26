@@ -8,6 +8,7 @@ import {
   encodedUriParametersFrom,
   toEntityApiParametersGateways,
   toEntityApiParametersMeters,
+  toGatewayIdsApiParameters,
   toMeterIdsApiParameters,
   toPaginationApiParameters,
 } from '../urlFactory';
@@ -89,6 +90,19 @@ describe('urlFactory', () => {
 
     it('maps several ids', () => {
       expect(toMeterIdsApiParameters([1, 3])).toBe('id=1&id=3');
+    });
+  });
+
+  describe('toGatewayIdsApiParameters', () => {
+
+    it('creates parameter with the gateway id', () => {
+      const meterIds = [1];
+      expect(toGatewayIdsApiParameters(meterIds, 12)).toEqual('gatewayId=12');
+    });
+
+    it('ignores meter ids now', () => {
+      const meterIds = [1, 3];
+      expect(toGatewayIdsApiParameters(meterIds, 32)).toBe('gatewayId=32');
     });
   });
 
