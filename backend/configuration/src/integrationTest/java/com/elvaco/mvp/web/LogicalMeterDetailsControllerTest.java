@@ -3,6 +3,7 @@ package com.elvaco.mvp.web;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -10,14 +11,17 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
@@ -56,6 +60,9 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   private LogicalMeters logicalMeters;
 
   @Autowired
+  private Gateways gateways;
+
+  @Autowired
   private MeterAlarmLogs meterAlarmLogs;
 
   @Autowired
@@ -80,6 +87,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     meterAlarmLogJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
   }
 
@@ -91,7 +99,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId(randomUUID().toString())
       .readIntervalMinutes(60)
       .build()
     );
@@ -120,17 +127,15 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId(randomUUID().toString())
       .readIntervalMinutes(60)
       .build()
     );
 
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(StatusType.UNKNOWN)
-        .start(start)
-        .build()
+    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
+      .entityId(physicalMeter.id)
+      .status(StatusType.UNKNOWN)
+      .start(start)
+      .build()
     );
 
     String url = meterDetailsUrl(logicalMeter.id) + "&before=" + NOW + "&after=" + YESTERDAY;
@@ -147,22 +152,16 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter = saveLogicalMeter();
     UUID physicalMeterId = randomUUID();
 
-    physicalMeters.save(PhysicalMeter.builder()
+    physicalMeters.save(physicalMeter()
       .id(physicalMeterId)
-      .organisation(context().organisation())
-      .address("address")
-      .externalId("external-id")
-      .medium("medium")
-      .manufacturer("manufacturer")
       .logicalMeterId(logicalMeter.id)
       .build());
 
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeterId)
-        .status(OK)
-        .start(YESTERDAY)
-        .build()
+    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
+      .entityId(physicalMeterId)
+      .status(OK)
+      .start(YESTERDAY)
+      .build()
     );
     LogicalMeterDto logicalMeterDto = asTestUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
@@ -178,38 +177,28 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     UUID physicalMeterId = randomUUID();
 
-    physicalMeters.save(PhysicalMeter.builder()
+    physicalMeters.save(physicalMeter()
       .id(physicalMeterId)
-      .organisation(context().organisation())
-      .address("address")
-      .externalId("external-id")
-      .medium("medium")
-      .manufacturer("manufacturer")
       .logicalMeterId(logicalMeter.id)
       .build());
 
-    StatusLogEntry<UUID> logEntry = saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeterId)
-        .status(OK)
-        .start(ZonedDateTime.parse("2001-01-01T10:14:00Z"))
-        .stop(ZonedDateTime.parse("2001-01-06T10:14:00Z"))
-        .build()
-    );
+    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
+      .entityId(physicalMeterId)
+      .status(OK)
+      .start(ZonedDateTime.parse("2001-01-01T10:14:00Z"))
+      .stop(ZonedDateTime.parse("2001-01-06T10:14:00Z"))
+      .build());
 
     LogicalMeterDto logicalMeterDto = asTestUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.statusChangelog).containsExactly(
-      new MeterStatusLogDto(
-        logEntry.id,
-        "ok",
-        "2001-01-01T10:14:00Z",
-        "2001-01-06T10:14:00Z"
-      )
-    );
+    MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
+    assertThat(meterStatusLogDto.id).isNotNull();
+    assertThat(meterStatusLogDto.name).isEqualTo("ok");
+    assertThat(meterStatusLogDto.start).isEqualTo("2001-01-01T10:14:00Z");
+    assertThat(meterStatusLogDto.stop).isEqualTo("2001-01-06T10:14:00Z");
   }
 
   @Test
@@ -218,19 +207,17 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
       .readIntervalMinutes(15)
       .build()
     );
 
     ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
 
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(OK)
-        .start(start)
-        .build()
+    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
+      .entityId(physicalMeter.id)
+      .status(OK)
+      .start(start)
+      .build()
     );
 
     List<LogicalMeterDto> response = asTestUser()
@@ -267,9 +254,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .entityId(physicalMeter1.id)
         .status(OK)
         .start(start)
-        .build()
-    );
-    saveStatusLogForMeter(
+        .build(),
       StatusLogEntry.<UUID>builder()
         .entityId(physicalMeter2.id)
         .status(ERROR)
@@ -293,12 +278,70 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findOnlyMetersConnectedToGateway() {
+    Gateway gateway = gateways.save(Gateway.builder()
+      .organisationId(context().organisationId())
+      .productModel("ELV")
+      .serial("123123")
+      .build());
+
+    LogicalMeter logicalMeter1 = logicalMeters.save(logicalMeter()
+      .gateway(gateway)
+      .build());
+    LogicalMeter logicalMeter2 = logicalMeters.save(logicalMeter()
+      .gateway(gateway)
+      .build());
+    LogicalMeter logicalMeter3 = logicalMeters.save(logicalMeter().build());
+
+    PhysicalMeter physicalMeter1 = physicalMeters.save(physicalMeter()
+      .logicalMeterId(logicalMeter1.id)
+      .externalId("meter-one")
+      .build()
+    );
+    PhysicalMeter physicalMeter2 = physicalMeters.save(physicalMeter()
+      .logicalMeterId(logicalMeter2.id)
+      .externalId("meter-two")
+      .build()
+    );
+    PhysicalMeter physicalMeter3 = physicalMeters.save(physicalMeter()
+      .logicalMeterId(logicalMeter3.id)
+      .externalId("meter-three")
+      .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter1.id)
+        .status(OK)
+        .start(NOW)
+        .build(),
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter2.id)
+        .status(OK)
+        .start(NOW.plusMinutes(15))
+        .build(),
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter3.id)
+        .status(ERROR)
+        .start(NOW.plusMinutes(60))
+        .build()
+    );
+
+    List<LogicalMeterDto> logicalMetersResponse = asTestUser()
+      .getList(gatewayMeterDetailsUrl(gateway.id), LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(logicalMetersResponse)
+      .extracting("id")
+      .containsExactlyInAnyOrder(logicalMeter1.id, logicalMeter2.id);
+  }
+
+  @Test
   public void meterIsNotReported_WhenNoReportedStatusExists() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 
     physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
       .readIntervalMinutes(15)
       .build()
     );
@@ -316,18 +359,16 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter = saveLogicalMeter();
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
       .readIntervalMinutes(15)
       .build()
     );
 
     ZonedDateTime start = ZonedDateTime.parse("2018-04-03T08:00:00Z");
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(OK)
-        .start(start)
-        .build()
+    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
+      .entityId(physicalMeter.id)
+      .status(OK)
+      .start(start)
+      .build()
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
@@ -345,7 +386,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId("meter-one")
       .readIntervalMinutes(15)
       .build()
     );
@@ -355,10 +395,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .entityId(firstMeter.id)
         .status(OK)
         .start(start)
-        .build()
-    );
-
-    saveStatusLogForMeter(
+        .build(),
       StatusLogEntry.<UUID>builder()
         .entityId(firstMeter.id)
         .status(ERROR)
@@ -398,17 +435,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .entityId(firstMeter.id)
         .status(OK)
         .start(start.plusSeconds(1))
-        .build()
-    );
-
-    saveStatusLogForMeter(
+        .build(),
       StatusLogEntry.<UUID>builder()
         .entityId(secondMeter.id)
         .status(ERROR)
         .start(start)
         .build()
     );
-
     LogicalMeterDto logicalMeterDto = asTestUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
@@ -433,7 +466,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = physicalMeters.save(
       physicalMeter()
         .logicalMeterId(logicalMeter.id)
-        .externalId("123123")
         .build()
     );
 
@@ -462,16 +494,14 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
-      .externalId("bowie")
       .readIntervalMinutes(15)
       .build());
 
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(StatusType.OK)
-        .start(start)
-        .build()
+    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
+      .entityId(physicalMeter.id)
+      .status(StatusType.OK)
+      .start(start)
+      .build()
     );
 
     Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
@@ -540,7 +570,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = physicalMeters.save(
       physicalMeter()
         .logicalMeterId(logicalMeter.id)
-        .externalId("123123")
         .build()
     );
 
@@ -577,7 +606,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     physicalMeters.save(
       physicalMeter()
         .logicalMeterId(logicalMeter.id)
-        .externalId("123123")
         .build()
     );
 
@@ -628,32 +656,30 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   private LogicalMeter saveLogicalMeter(MeterDefinition meterDefinition) {
-    return logicalMeters.save(buildLogicalMeter(meterDefinition));
+    return logicalMeters.save(logicalMeter()
+      .meterDefinition(meterDefinition)
+      .build());
   }
 
-  private LogicalMeter buildLogicalMeter(MeterDefinition meterDefinition) {
-    return logicalMeterBuilder(meterDefinition).build();
-  }
-
-  private LogicalMeter.LogicalMeterBuilder logicalMeterBuilder(MeterDefinition meterDefinition) {
+  private LogicalMeter.LogicalMeterBuilder logicalMeter() {
     UUID meterId = randomUUID();
     return LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
-      .organisationId(context().organisationId())
-      .meterDefinition(meterDefinition);
+      .organisationId(context().organisationId());
   }
 
-  private StatusLogEntry<UUID> saveStatusLogForMeter(StatusLogEntry<UUID> statusLog) {
-    return meterStatusLogs.save(statusLog);
+  @SafeVarargs
+  private final void saveStatusLogForMeter(StatusLogEntry<UUID>... statusLogs) {
+    Arrays.asList(statusLogs).forEach(meterStatusLogs::save);
   }
 
   private PhysicalMeterBuilder physicalMeter() {
     return PhysicalMeter.builder()
       .organisation(context().organisation())
-      .address("111-222-333-444-1")
+      .address("address-123")
       .externalId(randomUUID().toString())
-      .medium("Heat")
+      .medium(Medium.HOT_WATER.medium)
       .manufacturer("ELV1");
   }
 
@@ -663,5 +689,9 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   private static String meterDetailsUrl(UUID logicalMeterId) {
     return String.format("/meters/details?id=%s", logicalMeterId);
+  }
+
+  private static String gatewayMeterDetailsUrl(UUID gatewayId) {
+    return String.format("/meters/details?gatewayId=%s", gatewayId);
   }
 }

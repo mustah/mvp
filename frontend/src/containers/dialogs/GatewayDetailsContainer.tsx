@@ -17,9 +17,9 @@ import {getMeterDetailsByIds} from '../../state/domain-models-paginated/meter/me
 import {getPaginatedDomainModelById} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
-import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
+import {fetchGatewayMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
-import {CallbackWithId, CallbackWithIds, uuid} from '../../types/Types';
+import {CallbackWithId, EncodedUriParameters, uuid} from '../../types/Types';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import './GatewayDetailsContainer.scss';
 import {GatewayDetailsInfoContainer} from './GatewayDetailsInfo';
@@ -35,7 +35,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchGateway: CallbackWithId;
-  fetchMeterDetails: CallbackWithIds;
+  fetchGatewayMeterDetails: (meterIds: uuid[], parameters: EncodedUriParameters, gatewayId?: uuid) => void;
 }
 
 type Props = StateToProps & DispatchToProps & SelectedId;
@@ -57,11 +57,11 @@ const GatewayDetailsContent = (props: Props) => {
 const GatewayDetailsContentLoader = withLargeLoader<Props>(GatewayDetailsContent);
 
 const fetchGatewayAndItsMeters =
-  ({fetchGateway, gateway, fetchMeterDetails, selectedId}: Props) => {
+  ({fetchGateway, gateway, fetchGatewayMeterDetails, selectedId}: Props) => {
     selectedId.do((id: uuid) => fetchGateway(id));
     gateway.filter(({meterIds}: Gateway) => meterIds.length > 0)
-      .map(({meterIds}: Gateway) =>
-        fetchMeterDetails(meterIds, makeApiParametersOf(now(), {period: Period.latest})));
+      .map(({id, meterIds}: Gateway) =>
+        fetchGatewayMeterDetails(meterIds, makeApiParametersOf(now(), {period: Period.latest}), id));
   };
 
 class GatewayDetails extends React.Component<Props> {
@@ -101,7 +101,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchGateway,
-  fetchMeterDetails,
+  fetchGatewayMeterDetails,
 }, dispatch);
 
 export const GatewayDetailsContainer =

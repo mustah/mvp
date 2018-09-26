@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMeter;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterStatusLogs;
+import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinReportedMeters;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
@@ -147,13 +147,12 @@ class GatewayQueryDslJpaRepository
   }
 
   private static void applyDefaultJoins(JPQLQuery<?> query, RequestParameters parameters) {
-    query
-      .leftJoin(GATEWAY.meters, LOGICAL_METER)
+    query.leftJoin(GATEWAY.meters, LOGICAL_METER)
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
 
     joinLogicalMetersPhysicalMeter(query, parameters);
-    joinMeterStatusLogs(query, parameters);
+    joinReportedMeters(query, parameters);
     joinMeterAlarmLogs(query, parameters);
   }
 

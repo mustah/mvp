@@ -49,8 +49,7 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
     return logicalMeterUseCases
-      .findAllWithDetails(requestParametersOf(requestParams))
-      .stream()
+      .findAllWithDetails(requestParametersOf(requestParams)).stream()
       .map(LogicalMeterDtoMapper::toDto)
       .collect(toList());
   }

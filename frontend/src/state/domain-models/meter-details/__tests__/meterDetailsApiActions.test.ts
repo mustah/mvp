@@ -95,13 +95,13 @@ describe('meterDetailsApiActions', () => {
 
     const status: IdNamed = toIdNamed(Status.ok);
 
-    const fetchMeterWithResponseOk = async (ids: uuid[], parameters?: EncodedUriParameters) => {
+    const fetchMeterWithResponseOk = async (ids: uuid[], parameters: EncodedUriParameters) => {
       mockRestClient.onGet().reply(200, [meter]);
       return store.dispatch(fetchMeterDetails(ids, parameters));
     };
 
     it('does not normalize response', async () => {
-      await fetchMeterWithResponseOk([meter.id]);
+      await fetchMeterWithResponseOk([meter.id], '');
 
       const payload: Normalized<MeterDetails> = {
         entities: {
@@ -168,7 +168,7 @@ describe('meterDetailsApiActions', () => {
       };
       store = configureMockStoreWith(metersFetchingState);
 
-      await fetchMeterWithResponseOk([meter.id]);
+      await fetchMeterWithResponseOk([meter.id], '');
 
       expect(store.getActions()).toEqual([]);
     });

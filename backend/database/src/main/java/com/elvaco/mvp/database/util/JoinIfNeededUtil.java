@@ -38,12 +38,14 @@ public final class JoinIfNeededUtil {
 
   private static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;
 
-  public static <T> void joinLogicalMetersPhysicalMetersStatusLogs(
-    JPQLQuery<T> query,
-    RequestParameters parameters
-  ) {
+  public static <T> void joinMetersStatusLogs(JPQLQuery<T> query, RequestParameters parameters) {
     if (isDateRange(parameters)) {
-      query.join(LOGICAL_METER.physicalMeters, PHYSICAL_METER);
+      query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+    }
+  }
+
+  public static <T> void joinReportedMeters(JPQLQuery<T> query, RequestParameters parameters) {
+    if (isReportedQuery(parameters) && isDateRange(parameters)) {
       query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
     }
   }
@@ -54,12 +56,6 @@ public final class JoinIfNeededUtil {
   ) {
     if (isGatewayQuery(parameters)) {
       query.leftJoin(LOGICAL_METER.gateways, GATEWAY);
-    }
-  }
-
-  public static <T> void joinMeterStatusLogs(JPQLQuery<T> query, RequestParameters parameters) {
-    if (isReportedQuery(parameters) && isDateRange(parameters)) {
-      query.leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
     }
   }
 

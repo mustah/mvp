@@ -1,7 +1,7 @@
 import {Dispatch} from 'react-redux';
 import {createEmptyAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
-import {makeUrl, toMeterIdsApiParameters} from '../../helpers/urlFactory';
+import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
@@ -131,17 +131,19 @@ export const fetchEntitiesIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
   entityType: keyof DomainModelsState,
   formatData: DataFormatter<Normalized<T>>,
+  requestDataFactory: (meterIds: uuid[], gatewayId?: uuid) => string,
 ) =>
-  (ids: uuid[], parameters?: EncodedUriParameters) =>
+  (meterIds: uuid[], parameters: EncodedUriParameters, gatewayId?: uuid) =>
     (dispatch, getState: GetState) => {
-      const meterIds: uuid[] = ids.filter((id: uuid) => shouldFetchEntity(id, getState().domainModels[entityType]));
-      if (meterIds.length) {
+      const idsToFetch: uuid[] = meterIds
+        .filter((id: uuid) => shouldFetchEntity(id, getState().domainModels[entityType]));
+      if (idsToFetch.length) {
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, Normalized<T>>({
           ...getEntitiesRequestOf<Normalized<T>>(endPoint),
           formatData,
           requestFunc,
-          requestData: `${toMeterIdsApiParameters(meterIds)}&${parameters}`,
+          requestData: `${requestDataFactory(idsToFetch, gatewayId)}&${parameters}`,
           dispatch,
         });
       } else {

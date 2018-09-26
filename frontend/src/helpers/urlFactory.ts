@@ -14,6 +14,7 @@ const baseParameterNames: ParameterNames = {
   alarms: 'alarm',
   cities: 'city',
   facilities: 'facility',
+  gatewayIds: 'gatewayId',
   gatewaySerials: 'gatewaySerial',
   manufacturers: 'manufacturer',
   media: 'medium',
@@ -70,8 +71,13 @@ const toEntityApiParameters = (
           .map(({id}: SelectionItem) => makeParameter(parameterNames, parameter, id)),
       ], []);
 
+const toMeterIdParameters = (id: uuid) => makeParameter(meterParameterNames, 'meterIds', id);
+
 export const toMeterIdsApiParameters = (ids: uuid[]): string =>
-  encodedUriParametersFrom(ids.map((id: uuid) => makeParameter(meterParameterNames, 'meterIds', id)));
+  encodedUriParametersFrom(ids.map(toMeterIdParameters));
+
+export const toGatewayIdsApiParameters = (ids: uuid[], gatewayId: uuid): string =>
+  encodedUriParametersFrom([makeParameter(meterParameterNames, 'gatewayIds', gatewayId)]);
 
 export const makeApiParametersOf = (
   start: Date,
