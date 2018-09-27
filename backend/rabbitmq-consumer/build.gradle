@@ -5,7 +5,6 @@ dependencies {
   compile project(':backend:rabbitmq-producer')
 
   compile 'com.google.code.gson:gson:2.8.2'
-  compile 'ch.qos.logback:logback-classic:1.1.11'
   compile 'com.cronutils:cron-utils:7.0.1'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
