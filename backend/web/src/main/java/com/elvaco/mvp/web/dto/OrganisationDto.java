@@ -2,11 +2,13 @@ package com.elvaco.mvp.web.dto;
 
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class OrganisationDto {
@@ -17,11 +19,5 @@ public class OrganisationDto {
 
   public OrganisationDto(String name, String slug) {
     this(null, name, slug);
-  }
-
-  public OrganisationDto(UUID id, String name, String slug) {
-    this.id = id;
-    this.name = name;
-    this.slug = slug;
   }
 }

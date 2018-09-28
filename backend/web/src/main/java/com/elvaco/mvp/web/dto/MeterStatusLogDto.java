@@ -1,10 +1,12 @@
 package com.elvaco.mvp.web.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class MeterStatusLogDto {
@@ -13,11 +15,4 @@ public class MeterStatusLogDto {
   public String name;
   public String start;
   public String stop;
-
-  public MeterStatusLogDto(Long id, String name, String start, String stop) {
-    this.id = id;
-    this.name = name;
-    this.start = start;
-    this.stop = stop;
-  }
 }

@@ -1,11 +1,13 @@
 package com.elvaco.mvp.web.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class GeoPositionDto {
 
@@ -13,9 +15,4 @@ public class GeoPositionDto {
   public Double longitude;
   public Double confidence;
 
-  public GeoPositionDto(Double latitude, Double longitude, Double confidence) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.confidence = confidence;
-  }
 }
