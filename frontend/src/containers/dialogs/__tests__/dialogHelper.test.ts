@@ -1,10 +1,12 @@
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
+import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
-import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {meterMeasurementsForTable} from '../dialogHelper';
+import {allQuantities, Measurement, Quantity, Reading} from '../../../state/ui/graph/measurement/measurementModels';
+import {measurementDataFormatter} from '../../../state/ui/graph/measurement/measurementSchema';
+import {groupMeasurementsByDate, MeasurementTableData, meterMeasurementsForTable} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';
 
 describe('dialogHelper', () => {
@@ -341,6 +343,108 @@ describe('dialogHelper', () => {
         Quantity.returnTemperature,
         Quantity.differenceTemperature,
       ]);
+    });
+
+  });
+
+  describe('groupMeasurementsByDate', () => {
+
+    it('can handle empty input', () => {
+      const normalizedMeasurements: NormalizedPaginated<Measurement> = {
+        entities: {},
+        result: {
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+        },
+        page: 0,
+      };
+
+      const actual: MeasurementTableData = groupMeasurementsByDate(normalizedMeasurements, Medium.unknown);
+      const expected: MeasurementTableData = {
+        readings: new Map<number, Reading>(),
+        quantities: [],
+      };
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('gracefully handles measurements not including all quantities', () => {
+      const apiResponse = {
+        content: [
+          {
+            id: 'Difference temperature_2018-09-28T06:00:00Z',
+            quantity: 'Difference temperature',
+            value: 4.71,
+            unit: 'K',
+            created: 1538114400.000000000,
+          },
+        ],
+        totalElements: 350,
+        totalPages: 1,
+      };
+
+      const normalizedMeasurements: NormalizedPaginated<Measurement> = measurementDataFormatter(apiResponse);
+
+      const actual: MeasurementTableData = groupMeasurementsByDate(normalizedMeasurements, Medium.districtHeating);
+      const readings = new Map<number, Reading>();
+      readings.set(1538114400, {
+        id: 1538114400,
+        measurements: {
+          ['Difference temperature' as Quantity]: {
+            created: 1538114400,
+            id: 'Difference temperature_2018-09-28T06:00:00Z',
+            quantity: 'Difference temperature',
+            unit: 'K',
+            value: 4.71,
+          },
+        },
+      });
+      const expected: MeasurementTableData = {
+        readings,
+        quantities: [
+          Quantity.differenceTemperature,
+        ],
+      };
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('extracts ordered list of quantities for found measurements', () => {
+      const apiResponse = {
+        content: [
+          {
+            id: 'Difference temperature_2018-09-28T06:00:00Z',
+            quantity: 'Difference temperature',
+            value: 4.71,
+            unit: 'K',
+            created: 1538114400.000000000,
+          },
+          {
+            id: 'Power_2018-09-28T06:00:00Z',
+            quantity: 'Power',
+            value: 1200.0,
+            unit: 'W',
+            created: 1538114400.000000000,
+          },
+        ],
+        totalElements: 350,
+        totalPages: 1,
+      };
+
+      const normalizedMeasurements: NormalizedPaginated<Measurement> = measurementDataFormatter(apiResponse);
+
+      const {quantities}: MeasurementTableData = groupMeasurementsByDate(
+        normalizedMeasurements,
+        Medium.districtHeating,
+      );
+
+      const orderedQuantities: Quantity[] = [
+        Quantity.power,
+        Quantity.differenceTemperature,
+      ];
+
+      expect(quantities).toEqual(orderedQuantities);
     });
 
   });

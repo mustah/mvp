@@ -20,7 +20,6 @@ import {
   MeasurementResponses,
   MeterMeasurementsState,
   Quantity,
-  Reading,
 } from './measurementModels';
 import {measurementDataFormatter} from './measurementSchema';
 
@@ -198,25 +197,3 @@ export const fetchMeasurementsPaged =
       }
     }
   };
-
-export const groupMeasurementsByDate = (measurementPage: NormalizedPaginated<Measurement>): Map<number, Reading> => {
-  const readings: Map<number, Reading> = new Map<number, Reading>();
-
-  if (measurementPage) {
-    measurementPage.result.content.forEach((id: uuid) => {
-      const measurement: Measurement = measurementPage.entities.measurements[id];
-
-      const reading: Reading =
-        readings.get(measurement.created)
-        || {
-          id: measurement.created,
-          measurements: {},
-        };
-
-      reading.measurements[measurement.quantity] = measurement;
-      readings.set(measurement.created, reading);
-    });
-  }
-
-  return readings;
-};

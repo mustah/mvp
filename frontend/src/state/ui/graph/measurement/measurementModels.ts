@@ -7,7 +7,7 @@ import {TabName} from '../../tabs/tabsModels';
 
 export interface Measurement extends Identifiable {
   created: number;
-  value: number;
+  value?: number;
   quantity: Quantity;
   unit: string;
 }

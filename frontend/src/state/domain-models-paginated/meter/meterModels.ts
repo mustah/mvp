@@ -22,7 +22,7 @@ export interface Meter extends Identifiable, LocationHolder {
   readIntervalMinutes?: number;
   facility: uuid;
   isReported?: boolean;
-  medium: string;
+  medium: string; // TODO type as Medium
   manufacturer: string;
   statusChanged?: string;
   gatewaySerial: string;
