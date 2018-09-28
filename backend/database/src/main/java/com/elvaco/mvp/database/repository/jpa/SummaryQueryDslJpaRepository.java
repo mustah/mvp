@@ -75,8 +75,7 @@ class SummaryQueryDslJpaRepository
   }
 
   private static JPQLQuery<?> applyJoins(JPQLQuery<?> query, RequestParameters parameters) {
-    query
-      .leftJoin(LOGICAL_METER.location, LOCATION)
+    query.leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG);
 
