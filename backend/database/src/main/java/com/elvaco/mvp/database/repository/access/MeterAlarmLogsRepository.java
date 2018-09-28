@@ -20,15 +20,13 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
   public void createOrUpdate(
     UUID physicalMeterId,
     int mask,
-    ZonedDateTime start,
-    ZonedDateTime lastSeen,
+    ZonedDateTime timestamp,
     String description
   ) {
     meterAlarmLogJpaRepository.createOrUpdate(
       physicalMeterId,
       mask,
-      start,
-      lastSeen,
+      timestamp,
       description
     );
   }

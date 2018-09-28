@@ -18,14 +18,13 @@ public class MockMeterAlarmLogs
     UUID physicalMeterId,
     int mask,
     ZonedDateTime start,
-    ZonedDateTime lastSeen,
     String description
   ) {
     saveMock(AlarmLogEntry.builder()
       .entityId(physicalMeterId)
       .mask(mask)
       .start(start)
-      .lastSeen(lastSeen)
+      .lastSeen(start)
       .description(description)
       .build()
     );

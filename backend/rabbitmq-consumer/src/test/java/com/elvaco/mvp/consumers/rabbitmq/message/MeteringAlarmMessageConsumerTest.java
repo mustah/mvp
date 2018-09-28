@@ -55,8 +55,7 @@ public class MeteringAlarmMessageConsumerTest {
         new MockOrganisations(singletonList(organisation)),
         new OrganisationPermissions(new MockUsers(singletonList(authenticatedUser.getUser())))
       ),
-      meterAlarmLogs,
-      () -> NOW
+      meterAlarmLogs
     );
   }
 
@@ -80,7 +79,7 @@ public class MeteringAlarmMessageConsumerTest {
       .entityId(physicalMeter.id)
       .mask(42)
       .start(toZonedDateTime())
-      .lastSeen(NOW)
+      .lastSeen(toZonedDateTime())
       .description("Low battery")
       .build());
   }

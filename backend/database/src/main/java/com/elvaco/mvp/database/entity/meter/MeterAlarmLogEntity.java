@@ -26,7 +26,7 @@ import lombok.ToString;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "meter_alarm_log",
-  uniqueConstraints = @UniqueConstraint(columnNames = {"physicalMeterId", "mask", "start"})
+  uniqueConstraints = @UniqueConstraint(columnNames = {"physicalMeterId", "mask"})
 )
 public class MeterAlarmLogEntity extends IdentifiableType<Long> {
 

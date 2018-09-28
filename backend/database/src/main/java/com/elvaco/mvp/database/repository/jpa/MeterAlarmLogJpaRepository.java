@@ -11,24 +11,28 @@ import org.springframework.data.repository.query.Param;
 
 public interface MeterAlarmLogJpaRepository extends JpaRepository<MeterAlarmLogEntity, Long> {
 
+  String UPDATE_START = "CASE WHEN EXCLUDED.start < meter_alarm_log.start THEN "
+    + ":timestamp ELSE meter_alarm_log.start END";
+
+  String UPDATE_LAST_SEEN = "CASE WHEN EXCLUDED.last_seen > meter_alarm_log.last_seen THEN"
+    + " :timestamp ELSE meter_alarm_log.last_seen END";
+
   @Modifying
   @Query(nativeQuery = true, value =
     "INSERT INTO meter_alarm_log (physical_meter_id, mask, start, last_seen, description)"
       + " VALUES "
-      + "(:physical_meter_id, :mask, :start, :last_seen, :description)"
-      + " ON CONFLICT (physical_meter_id, mask, start)"
+      + "(:physical_meter_id, :mask, :timestamp, :timestamp, :description)"
+      + " ON CONFLICT (physical_meter_id, mask)"
       + "  DO UPDATE SET"
-      + "    physical_meter_id = :physical_meter_id,"
-      + "    mask = :mask,"
-      + "    start = :start,"
-      + "    last_seen = :last_seen,"
+      + "    START = " + UPDATE_START + ", "
+      + "    last_seen = " + UPDATE_LAST_SEEN + ", "
       + "    description = :description"
+      + "  WHERE meter_alarm_log.stop IS NULL"
   )
   void createOrUpdate(
     @Param("physical_meter_id") UUID physicalMeterId,
     @Param("mask") int mask,
-    @Param("start") ZonedDateTime start,
-    @Param("last_seen") ZonedDateTime lastSeen,
+    @Param("timestamp") ZonedDateTime timestamp,
     @Param("description") String description
   );
 }
