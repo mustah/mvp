@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import org.junit.Test;
 
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -229,12 +229,7 @@ public class MeasurementDtoMapperTest {
       .value(3.0)
       .physicalMeter(PhysicalMeter.builder()
         .id(physicalMeterId)
-        .organisation(new Organisation(
-          randomUUID(),
-          "An organisation",
-          "an-organisation",
-          "An organisation"
-        ))
+        .organisation(OTHER_ORGANISATION)
         .externalId(physicalMeterId.toString())
         .address("1234")
         .medium("Heat")

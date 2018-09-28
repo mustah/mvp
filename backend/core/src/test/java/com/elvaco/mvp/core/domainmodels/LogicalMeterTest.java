@@ -13,6 +13,8 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.SECRET_SERVICE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -132,7 +134,7 @@ public class LogicalMeterTest {
       .id(logicalMeterId)
       .organisationId(organisationId)
       .meterDefinition(HOT_WATER_METER)
-      .physicalMeter(newPhysicalMeter(organisationId, logicalMeterId, null))
+      .physicalMeter(newPhysicalMeter(logicalMeterId, null))
       .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
   }
@@ -145,7 +147,7 @@ public class LogicalMeterTest {
       .id(logicalMeterId)
       .organisationId(organisationId)
       .meterDefinition(HOT_WATER_METER)
-      .physicalMeter(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
+      .physicalMeter(newPhysicalMeter(logicalMeterId, "KAM"))
       .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("KAM");
   }
@@ -158,8 +160,8 @@ public class LogicalMeterTest {
       .id(logicalMeterId)
       .organisationId(organisationId)
       .meterDefinition(HOT_WATER_METER)
-      .physicalMeter(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
-      .physicalMeter(newPhysicalMeter(organisationId, logicalMeterId, "ELV"))
+      .physicalMeter(newPhysicalMeter(logicalMeterId, "KAM"))
+      .physicalMeter(newPhysicalMeter(logicalMeterId, "ELV"))
       .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("ELV");
   }
@@ -290,12 +292,7 @@ public class LogicalMeterTest {
     UUID logicalMeterId = randomUUID();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .organisation(new Organisation(
-        organisationId,
-        "Organisation, Inc.",
-        "organisation-inc",
-        "Organisation, Inc."
-      ))
+      .organisation(OTHER_ORGANISATION)
       .address("250")
       .externalId("an-external-id")
       .medium("Heat, Return temp.")
@@ -334,19 +331,10 @@ public class LogicalMeterTest {
       .build();
   }
 
-  private static PhysicalMeter newPhysicalMeter(
-    UUID organisationId,
-    UUID logicalMeterId,
-    String manufacturer
-  ) {
+  private static PhysicalMeter newPhysicalMeter(UUID logicalMeterId, String manufacturer) {
     return PhysicalMeter.builder()
       .logicalMeterId(logicalMeterId)
-      .organisation(new Organisation(
-        organisationId,
-        "an-organisation",
-        "an-organisation",
-        "an-organisation"
-      ))
+      .organisation(SECRET_SERVICE)
       .address("12341234")
       .externalId("an-external-id")
       .medium("Hot water")

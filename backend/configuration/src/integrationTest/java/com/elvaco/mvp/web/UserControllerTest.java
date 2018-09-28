@@ -7,7 +7,6 @@ import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
@@ -311,8 +310,10 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void invalidateUserWhenSuperAdminUpdatedThatUsersCredentials() {
-    UserWithPasswordDto userWithPassword = createUserDto("batman@batty.com",
-      context().organisation2());
+    UserWithPasswordDto userWithPassword = createUserDto(
+      "batman@batty.com",
+      context().organisation2()
+    );
 
     ResponseEntity<UserDto> postResponse = asSuperAdmin()
       .post("/users", userWithPassword, UserDto.class);

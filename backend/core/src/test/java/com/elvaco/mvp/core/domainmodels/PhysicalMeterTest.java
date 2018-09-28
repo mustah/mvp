@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -32,18 +33,20 @@ public class PhysicalMeterTest {
 
   @Test
   public void replacesDifferentStatus() {
+    ZonedDateTime now = ZonedDateTime.now();
     UUID meterId = randomUUID();
     StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
       .entityId(meterId)
+      .start(now)
       .status(OK)
       .build();
 
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
-    ZonedDateTime now = ZonedDateTime.now();
+
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(ERROR, now).statuses;
 
-    assertThat(statuses).containsExactly(
+    assertThat(statuses).containsExactlyInAnyOrder(
       previousStatus.toBuilder().stop(now).build(),
       StatusLogEntry.<UUID>builder()
         .entityId(meterId)
@@ -72,12 +75,7 @@ public class PhysicalMeterTest {
   ) {
     return PhysicalMeter.builder()
       .id(meterId)
-      .organisation(new Organisation(
-        randomUUID(),
-        "an-organisation",
-        "an-organisation",
-        "an-organisation"
-      ))
+      .organisation(OTHER_ORGANISATION)
       .address("12341234")
       .externalId("an-external-id")
       .medium("Hot water")

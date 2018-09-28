@@ -7,6 +7,8 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import lombok.experimental.UtilityClass;
 
+import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs;
+
 @UtilityClass
 public class MeasurementEntityMapper {
 
@@ -16,7 +18,7 @@ public class MeasurementEntityMapper {
       .quantity(entity.id.quantity.name)
       .value(entity.value.getValue())
       .unit(entity.value.getUnit())
-      .physicalMeter(PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs(entity.id.physicalMeter))
+      .physicalMeter(toDomainModelWithoutStatusLogs(entity.id.physicalMeter))
       .build();
   }
 
