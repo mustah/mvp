@@ -22,7 +22,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   private static final OffsetDateTime START_TIME =
     OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
 
-  @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
 
   @Before

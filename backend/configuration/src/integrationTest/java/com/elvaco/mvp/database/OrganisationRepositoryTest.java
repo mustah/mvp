@@ -4,7 +4,6 @@ import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Test;
@@ -18,9 +17,6 @@ public class OrganisationRepositoryTest extends IntegrationTest {
 
   @Autowired
   private UserJpaRepository userJpaRepository;
-
-  @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
 
   @Test
   public void deletingOrganisationDeletesUsers() {

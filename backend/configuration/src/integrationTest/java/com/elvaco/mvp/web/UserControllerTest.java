@@ -39,9 +39,6 @@ public class UserControllerTest extends IntegrationTest {
   @Autowired
   private Users users;
 
-  @Autowired
-  private Organisations organisations;
-
   @Test
   public void findUserById() {
     UUID id = ELVACO_SUPER_ADMIN_USER.getId();

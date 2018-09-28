@@ -11,7 +11,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
@@ -25,9 +24,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
-
-  @Autowired
-  private OrganisationJpaRepository organisationRepository;
 
   @Autowired
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
@@ -61,7 +57,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       randomUUID(),
-      organisationRepository.findOne(context().organisationId()),
+      organisationJpaRepository.findOne(context().organisationId()),
       "123123",
       "Some external ID",
       "Some medium",
