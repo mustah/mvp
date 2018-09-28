@@ -102,7 +102,6 @@ public class PhysicalMetersTest extends IntegrationTest {
       .id(1L)
       .entityId(meterId)
       .status(OK)
-      .start(ZonedDateTime.now())
       .build();
 
     physicalMeters.save(physicalMeter()
@@ -204,7 +203,6 @@ public class PhysicalMetersTest extends IntegrationTest {
     StatusLogEntry<UUID> status = StatusLogEntry.<UUID>builder()
       .entityId(meterId)
       .status(OK)
-      .start(ZonedDateTime.now())
       .build();
 
     meterStatusLogs.save(status);

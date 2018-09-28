@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,19 +31,21 @@ public class GatewaysTest extends IntegrationTest {
   public void savingGatewaySavesLogs() {
     UUID gatewayId = randomUUID();
     ZonedDateTime start = ZonedDateTime.now();
-    gateways.save(
-      Gateway.builder()
-        .id(gatewayId)
-        .organisationId(context().organisationId())
-        .serial("")
-        .productModel("")
-        .statusLogs(singletonList(new StatusLogEntry<>(gatewayId, StatusType.ERROR, start)))
-        .build()
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(context().organisationId())
+      .serial("")
+      .productModel("")
+      .statusLog(StatusLogEntry.<UUID>builder().entityId(gatewayId)
+        .status(StatusType.ERROR)
+        .start(start)
+        .build())
+      .build()
     );
 
     Gateway found = gateways.findById(gatewayId).get();
     assertThat(found.statusLogs).hasSize(1);
-    assertThat(found.statusLogs.get(0).start).isEqualTo(start);
-    assertThat(found.statusLogs.get(0).status).isEqualTo(StatusType.ERROR);
+    assertThat(found.statusLogs).extracting("start").containsOnly(start);
+    assertThat(found.statusLogs).extracting("status").containsOnly(StatusType.ERROR);
   }
 }

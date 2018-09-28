@@ -89,22 +89,23 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     LogicalMeter connectedLogicalMeter = measurementMessage.gateway()
       .map(gatewayIdDto -> gatewayIdDto.id)
       .map(serial -> gatewayUseCases.findBy(organisation.id, serial)
-        .orElseGet(() -> gatewayUseCases.save(
-          Gateway.builder()
-            .organisationId(organisation.id)
-            .serial(serial)
-            .productModel("")
-            .meter(logicalMeter)
-            .build()
+        .orElseGet(() -> gatewayUseCases.save(Gateway.builder()
+          .organisationId(organisation.id)
+          .serial(serial)
+          .productModel("")
+          .meter(logicalMeter)
+          .build()
         )))
       .map(gateway -> {
         if (gatewayValidator().isIncomplete(gateway)) {
           responseBuilder.setGatewayExternalId(gateway.serial);
           responseBuilder.setFacilityId(facilityId);
         }
-        return logicalMeter.withGateway(gateway).withPhysicalMeter(physicalMeter);
+        return logicalMeter.toBuilder()
+          .gateway(gateway).build()
+          .addPhysicalMeter(physicalMeter);
       })
-      .orElseGet(() -> logicalMeter.withPhysicalMeter(physicalMeter));
+      .orElseGet(() -> logicalMeter.addPhysicalMeter(physicalMeter));
 
     existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
     existing.shouldSavePhysicalMeter(() -> physicalMeterUseCases.save(physicalMeter));
@@ -116,7 +117,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       ).ifPresent(measurementUseCases::createOrUpdate));
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
-        || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
+      || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
       responseBuilder.setFacilityId(facilityId);
       responseBuilder.setMeterExternalId(address);
     }

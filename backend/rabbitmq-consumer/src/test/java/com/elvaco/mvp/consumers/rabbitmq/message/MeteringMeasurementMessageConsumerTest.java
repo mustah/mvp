@@ -45,7 +45,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -297,13 +296,13 @@ public class MeteringMeasurementMessageConsumerTest {
 
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
-    Measurement expectedMeasurement = new Measurement(
-      CREATED_DATE_TIME,
-      QUANTITY,
-      1.0,
-      "kWh",
-      expectedPhysicalMeter
-    );
+    Measurement expectedMeasurement = Measurement.builder()
+      .created(CREATED_DATE_TIME)
+      .quantity(QUANTITY)
+      .value(1.0)
+      .unit("kWh")
+      .physicalMeter(expectedPhysicalMeter)
+      .build();
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
@@ -339,12 +338,12 @@ public class MeteringMeasurementMessageConsumerTest {
 
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0)).isEqualTo(new Measurement(
-      CREATED_DATE_TIME,
-      QUANTITY,
-      1.0,
-      "kWh",
-      PhysicalMeter.builder()
+    assertThat(createdMeasurements.get(0)).isEqualTo(Measurement.builder()
+      .created(CREATED_DATE_TIME)
+      .quantity(QUANTITY)
+      .value(1.0)
+      .unit("kWh")
+      .physicalMeter(PhysicalMeter.builder()
         .id(physicalMeter.id)
         .organisation(organisation)
         .address(ADDRESS)
@@ -353,7 +352,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .logicalMeterId(logicalMeter.id)
         .readIntervalMinutes(0)
         .build()
-    ));
+      ).build());
   }
 
   @Test

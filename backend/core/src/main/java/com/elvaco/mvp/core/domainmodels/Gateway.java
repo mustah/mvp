@@ -2,22 +2,25 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
-import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Gateway implements Identifiable<UUID>, Serializable {
 
   private static final long serialVersionUID = 7972281400092648431L;
@@ -32,36 +35,9 @@ public class Gateway implements Identifiable<UUID>, Serializable {
   @Singular
   public List<StatusLogEntry<UUID>> statusLogs;
 
-  private Gateway(
-    UUID id,
-    UUID organisationId,
-    String serial,
-    String productModel,
-    List<LogicalMeter> meters,
-    List<StatusLogEntry<UUID>> statusLogs
-  ) {
-    this.id = id;
-    this.organisationId = organisationId;
-    this.serial = serial;
-    this.productModel = productModel;
-    this.meters = unmodifiableList(meters);
-    this.statusLogs = unmodifiableList(statusLogs);
-  }
-
   @Override
   public UUID getId() {
     return id;
-  }
-
-  public Gateway withProductModel(String productModel) {
-    return new Gateway(
-      id,
-      organisationId,
-      serial,
-      productModel,
-      meters,
-      statusLogs
-    );
   }
 
   public StatusLogEntry<UUID> currentStatus() {
@@ -71,22 +47,11 @@ public class Gateway implements Identifiable<UUID>, Serializable {
   }
 
   public Gateway replaceActiveStatus(StatusType status) {
-    return replaceActiveStatus(status, ZonedDateTime.now());
-  }
-
-  private Gateway replaceActiveStatus(StatusType status, ZonedDateTime when) {
     List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statusLogs,
-      new StatusLogEntry<>(id, status, when)
+      StatusLogEntry.<UUID>builder().entityId(id).status(status).start(ZonedDateTime.now()).build()
     );
-
-    return new Gateway(
-      id,
-      organisationId,
-      serial,
-      productModel,
-      meters,
-      newStatuses
-    );
+    this.statusLogs = new ArrayList<>();
+    return toBuilder().statusLogs(newStatuses).build();
   }
 }

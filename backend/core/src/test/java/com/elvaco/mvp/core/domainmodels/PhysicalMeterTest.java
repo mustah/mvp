@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -19,46 +21,49 @@ public class PhysicalMeterTest {
 
     PhysicalMeter meter = newPhysicalMeterWithStatuses(randomUUID(), emptyList());
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(StatusType.OK, now).statuses;
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
 
-    assertThat(statuses).containsExactly(new StatusLogEntry<>(meter.id, StatusType.OK, now));
+    assertThat(statuses).containsExactly(StatusLogEntry.<UUID>builder()
+      .entityId(meter.id)
+      .status(OK)
+      .start(now)
+      .build());
   }
 
   @Test
   public void replacesDifferentStatus() {
     UUID meterId = randomUUID();
-    StatusLogEntry<UUID> previousStatus = new StatusLogEntry<>(
-      meterId,
-      StatusType.OK,
-      ZonedDateTime.now()
-    );
+    StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
+      .entityId(meterId)
+      .status(OK)
+      .build();
+
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
     ZonedDateTime now = ZonedDateTime.now();
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(StatusType.ERROR, now).statuses;
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(ERROR, now).statuses;
 
     assertThat(statuses).containsExactly(
-      previousStatus.withStop(now),
-      new StatusLogEntry<>(meterId, StatusType.ERROR, now)
+      previousStatus.toBuilder().stop(now).build(),
+      StatusLogEntry.<UUID>builder()
+        .entityId(meterId)
+        .status(ERROR)
+        .build()
     );
   }
 
   @Test
   public void doesNotReplaceSameStatus() {
     UUID meterId = randomUUID();
-    StatusLogEntry<UUID> previousStatus = new StatusLogEntry<>(
-      meterId,
-      StatusType.OK,
-      ZonedDateTime.now()
-    );
+    StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
+      .entityId(meterId)
+      .status(OK)
+      .build();
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(
-      StatusType.OK,
-      ZonedDateTime.now()
-    ).statuses;
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK).statuses;
 
-    assertThat(statuses).containsExactly(previousStatus);
+    assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
   }
 
   private PhysicalMeter newPhysicalMeterWithStatuses(

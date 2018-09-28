@@ -1,11 +1,13 @@
 package com.elvaco.mvp.core.util;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.util.StatusLogEntryHelper.replaceActiveStatus;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -16,25 +18,24 @@ public class StatusLogEntryHelperTest {
   @Test
   public void firstStatus() {
     ZonedDateTime now = ZonedDateTime.now();
-    assertThat(replaceActiveStatus(
+
+    List<StatusLogEntry<Long>> statuses = replaceActiveStatus(
       emptyList(),
-      new StatusLogEntry<>(0L, 0, StatusType.OK, now, null)
-    )).containsExactly(
-      new StatusLogEntry<>(0L, 0, StatusType.OK, now, null)
+      statusBuilder().start(now).build()
     );
+
+    assertThat(statuses).containsExactly(statusBuilder().start(now).build());
   }
 
   @Test
   public void replacesDifferentStatus() {
     ZonedDateTime now = ZonedDateTime.now();
     assertThat(replaceActiveStatus(
-      singletonList(
-        new StatusLogEntry<>(0L, 0, StatusType.OK, now, null)
-      ),
-      new StatusLogEntry<>(1L, 0, StatusType.ERROR, now.plusMinutes(1), null)
+      singletonList(statusBuilder().start(now).build()),
+      statusBuilder().id(1L).status(ERROR).start(now.plusMinutes(1)).build()
     )).containsExactly(
-      new StatusLogEntry<>(0L, 0, StatusType.OK, now, now.plusMinutes(1)),
-      new StatusLogEntry<>(1L, 0, StatusType.ERROR, now.plusMinutes(1), null)
+      statusBuilder().start(now).stop(now.plusMinutes(1)).build(),
+      statusBuilder().id(1L).status(ERROR).start(now.plusMinutes(1)).build()
     );
   }
 
@@ -42,12 +43,12 @@ public class StatusLogEntryHelperTest {
   public void doesNotReplaceSameStatus() {
     ZonedDateTime now = ZonedDateTime.now();
     assertThat(replaceActiveStatus(
-      singletonList(
-        new StatusLogEntry<>(0L, 0, StatusType.OK, now, null)
-      ),
-      new StatusLogEntry<>(1L, 0, StatusType.OK, now.plusMinutes(1), null)
-    )).containsExactly(
-      new StatusLogEntry<>(0L, 0, StatusType.OK, now, null)
-    );
+      singletonList(statusBuilder().start(now).build()),
+      statusBuilder().id(1L).status(OK).start(now.plusMinutes(1)).build()
+    )).containsExactly(statusBuilder().start(now).build());
+  }
+
+  private static StatusLogEntry.StatusLogEntryBuilder<Long> statusBuilder() {
+    return StatusLogEntry.<Long>builder().id(0L).entityId(0L).status(OK);
   }
 }

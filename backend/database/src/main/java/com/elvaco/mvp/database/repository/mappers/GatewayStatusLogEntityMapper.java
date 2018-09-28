@@ -10,13 +10,14 @@ import lombok.experimental.UtilityClass;
 public class GatewayStatusLogEntityMapper {
 
   public static StatusLogEntry<UUID> toDomainModel(GatewayStatusLogEntity entity) {
-    return new StatusLogEntry<>(
-      entity.id,
-      entity.gatewayId,
-      entity.status,
-      entity.start,
-      entity.stop
-    );
+    return StatusLogEntry.<UUID>builder()
+      .id(entity.id)
+      .entityId(entity.gatewayId)
+      .status(entity.status)
+      .start(entity.start)
+      .stop(entity.stop)
+      .build();
+
   }
 
   public static GatewayStatusLogEntity toEntity(StatusLogEntry<UUID> statusLog) {

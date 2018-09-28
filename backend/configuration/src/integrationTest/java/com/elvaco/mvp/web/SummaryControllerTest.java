@@ -192,7 +192,6 @@ public class SummaryControllerTest extends IntegrationTest {
       StatusLogEntry.<UUID>builder()
         .entityId(physicalMeter.id)
         .status(StatusType.OK)
-        .start(ZonedDateTime.now())
         .build()
     );
 

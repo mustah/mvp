@@ -11,13 +11,13 @@ import lombok.experimental.UtilityClass;
 public class MeasurementEntityMapper {
 
   public static Measurement toDomainModel(MeasurementEntity entity) {
-    return new Measurement(
-      entity.id.created,
-      entity.id.quantity.name,
-      entity.value.getValue(),
-      entity.value.getUnit(),
-      PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs(entity.id.physicalMeter)
-    );
+    return Measurement.builder()
+      .created(entity.id.created)
+      .quantity(entity.id.quantity.name)
+      .value(entity.value.getValue())
+      .unit(entity.value.getUnit())
+      .physicalMeter(PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs(entity.id.physicalMeter))
+      .build();
   }
 
   public static MeasurementEntity toEntity(Measurement domainModel) {
@@ -29,6 +29,5 @@ public class MeasurementEntityMapper {
       ),
       new MeasurementUnit(domainModel.unit, domainModel.value)
     );
-
   }
 }
