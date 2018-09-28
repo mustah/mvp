@@ -1,8 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -22,7 +20,6 @@ public class MeteringAlarmMessageConsumer implements AlarmMessageConsumer {
   private final PhysicalMeterUseCases physicalMeterUseCases;
   private final OrganisationUseCases organisationUseCases;
   private final MeterAlarmLogs meterAlarmLogs;
-  private final Supplier<ZonedDateTime> currentTimeSupplier;
 
   @Override
   public Optional<GetReferenceInfoDto> accept(MeteringAlarmMessageDto message) {
@@ -37,7 +34,6 @@ public class MeteringAlarmMessageConsumer implements AlarmMessageConsumer {
         physicalMeter.id,
         alarmDto.mask,
         alarmDto.timestamp.atZone(METERING_TIMEZONE),
-        currentTimeSupplier.get(),
         alarmDto.description
       )));
 

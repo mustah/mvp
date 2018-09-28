@@ -33,7 +33,6 @@ import static org.junit.Assume.assumeTrue;
 public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
 
   private static final LocalDateTime START = LocalDateTime.parse("2018-03-07T16:13:09");
-  private static final ZonedDateTime NOW = ZonedDateTime.now();
 
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
@@ -59,8 +58,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
     meteringAlarmMessageConsumer = new MeteringAlarmMessageConsumer(
       physicalMeterUseCases,
       organisationUseCases,
-      meterAlarmLogs,
-      () -> NOW
+      meterAlarmLogs
     );
   }
 
@@ -90,33 +88,53 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
       .id(entity.id)
       .physicalMeterId(physicalMeter.id)
       .mask(1)
-      .start(toZonedDateTime(actualZoneId))
-      .lastSeen(toZonedDateTime(actualZoneId))
+      .start(zonedDateTimeOf(START, actualZoneId))
+      .lastSeen(zonedDateTimeOf(START, actualZoneId))
       .description("Test")
       .build());
   }
 
   @Transactional
   @Test
-  public void lastReceivedDuplicateMeasurementIsUsed() {
+  public void lastReceivedDuplicateAlarmIsUsed() {
     PhysicalMeter physicalMeter = savePhysicalMeter();
-    AlarmDto alarm = new AlarmDto(START, 42, "Low battery");
+    AlarmDto alarm1 = new AlarmDto(START, 42, "Low battery");
+    AlarmDto alarm2 = new AlarmDto(START.plusHours(1), 42, "Low battery");
 
-    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm));
-    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm));
+    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm1));
+    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm2));
 
     List<MeterAlarmLogEntity> alarms = meterAlarmLogJpaRepository.findAll();
 
     MeterAlarmLogEntity entity = alarms.get(0);
     ZoneId actualZoneId = entity.start.getZone();
-    assertThat(alarms).containsExactly(MeterAlarmLogEntity.builder()
-      .id(entity.id)
-      .physicalMeterId(physicalMeter.id)
-      .mask(42)
-      .start(toZonedDateTime(actualZoneId))
-      .lastSeen(toZonedDateTime(actualZoneId))
-      .description("Low battery")
-      .build());
+    assertThat(alarms).extracting("physicalMeterId").containsExactly(physicalMeter.id);
+    assertThat(alarms).extracting("start").containsExactly(zonedDateTimeOf(START, actualZoneId));
+  }
+
+  @Transactional
+  @Test
+  public void useTheLastSeenTimestamp_InsteadOfUpdatingItWithTheLatest() {
+    PhysicalMeter physicalMeter = savePhysicalMeter();
+    AlarmDto alarm1 = new AlarmDto(START, 42, "Low battery");
+    AlarmDto alarm2 = new AlarmDto(START.plusHours(1), 42, "Low battery");
+    AlarmDto alarm3 = new AlarmDto(START.minusHours(1), 42, "Low battery");
+
+    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm1));
+    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm2));
+    meteringAlarmMessageConsumer.accept(newAlarmMessage(alarm3));
+
+    List<MeterAlarmLogEntity> alarms = meterAlarmLogJpaRepository.findAll();
+    MeterAlarmLogEntity entity = alarms.get(0);
+    ZoneId actualZoneId = entity.start.getZone();
+
+    assertThat(alarms).extracting("physicalMeterId").containsExactly(physicalMeter.id);
+
+    assertThat(alarms).extracting("start")
+      .containsExactly(zonedDateTimeOf(alarm3.timestamp, actualZoneId));
+
+    assertThat(alarms).extracting("lastSeen")
+      .containsExactly(zonedDateTimeOf(alarm2.timestamp, actualZoneId));
   }
 
   @Transactional
@@ -142,12 +160,13 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
       .containsExactlyInAnyOrder(42, 12);
 
     assertThat(alarms).extracting("start").containsExactlyInAnyOrder(
-      toZonedDateTime(actualZoneId),
-      toZonedDateTime(actualZoneId).plusMinutes(5)
+      zonedDateTimeOf(alarm1.timestamp, actualZoneId),
+      zonedDateTimeOf(alarm2.timestamp, actualZoneId)
     );
-
-    assertThat(alarms).extracting("lastSeen")
-      .containsExactlyInAnyOrder(NOW, NOW);
+    assertThat(alarms).extracting("lastSeen").containsExactlyInAnyOrder(
+      zonedDateTimeOf(alarm1.timestamp, actualZoneId),
+      zonedDateTimeOf(alarm2.timestamp, actualZoneId)
+    );
   }
 
   private MeteringAlarmMessageDto newAlarmMessage(AlarmDto... alarms) {
@@ -168,7 +187,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
       .build());
   }
 
-  private ZonedDateTime toZonedDateTime(ZoneId actualZone) {
-    return ZonedDateTime.of(START, METERING_TIMEZONE).withZoneSameInstant(actualZone);
+  private static ZonedDateTime zonedDateTimeOf(LocalDateTime timestamp, ZoneId actualZoneId) {
+    return ZonedDateTime.of(timestamp, METERING_TIMEZONE).withZoneSameInstant(actualZoneId);
   }
 }

@@ -45,4 +45,25 @@
 
   </changeSet>
 
+  <changeSet id="Update unique constraint on meter alarms" author="Must Tahir" dbms="postgresql">
+    <sqlFile
+      path="../sql/postgresql/delete_duplicate_meter_alarm_logs.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+      dbms="postgresql"
+    />
+    <dropUniqueConstraint
+      tableName="meter_alarm_log"
+      constraintName="meter_alarm_log_physical_meter_id_mask_start_key"
+      schemaName="public"
+    />
+    <addUniqueConstraint
+      tableName="meter_alarm_log"
+      columnNames="physical_meter_id, mask"
+      constraintName="meter_alarm_log_physical_meter_id_mask"
+      schemaName="public"
+    />
+  </changeSet>
+
 </databaseChangeLog>

@@ -16,7 +16,6 @@ public interface MeterAlarmLogs {
     UUID physicalMeterId,
     int mask,
     ZonedDateTime start,
-    ZonedDateTime lastSeen,
     String description
   );
 }

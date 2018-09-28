@@ -1,7 +1,5 @@
 package com.elvaco.mvp.configuration.config;
 
-import java.time.ZonedDateTime;
-
 import com.elvaco.mvp.adapters.spring.AmqpMessagePublisher;
 import com.elvaco.mvp.consumers.rabbitmq.message.AlarmMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
@@ -93,8 +91,7 @@ class RabbitMqConfig {
     return new MeteringAlarmMessageConsumer(
       physicalMeterUseCases,
       organisationUseCases,
-      meterAlarmLogs,
-      ZonedDateTime::now
+      meterAlarmLogs
     );
   }
 
