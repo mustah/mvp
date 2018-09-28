@@ -13,7 +13,7 @@ import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {fetchMeasurementsPaged, groupMeasurementsByDate} from '../../state/ui/graph/measurement/measurementActions';
+import {fetchMeasurementsPaged} from '../../state/ui/graph/measurement/measurementActions';
 import {
   initialMeterMeasurementsState,
   Measurement,
@@ -24,10 +24,10 @@ import {
 import {Children, Fetching} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
-import {orderedQuantities} from './dialogHelper';
+import {groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
 
-const renderValue = ({value = null, unit}: Measurement): string =>
-  value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
+const renderValue = ({value, unit}: Measurement): string =>
+  value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
 
 const renderCreated = (created: number): Children =>
   created
@@ -62,7 +62,7 @@ const readoutColumnStyle: React.CSSProperties = {
 
 interface ReadingsProps {
   readings: Map<number, Reading>;
-  orderedQuantities: Quantity[];
+  quantities: Quantity[];
 }
 
 interface OwnProps {
@@ -77,17 +77,17 @@ const renderQuantity =
   (quantity: Quantity) =>
     <th key={quantity}>{translate(quantity + ' short')}</th>;
 
-const MeasurementsTable = ({readings, orderedQuantities}: ReadingsProps) => (
+const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
   <Column>
     <table key="1" className="Table" cellPadding="0" cellSpacing="0">
       <thead>
       <tr>
         <th style={readoutColumnStyle} className="first" key="readout">{translate('readout')}</th>
-        {orderedQuantities.map(renderQuantity)}
+        {quantities.map(renderQuantity)}
       </tr>
       </thead>
       <tbody>
-      {renderReadingRows(orderedQuantities)(readings)}
+      {renderReadingRows(quantities)(readings)}
       </tbody>
     </table>
     <TableInfoText/>
@@ -129,14 +129,17 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
     const {isFetching, measurementPages} = this.state;
     const {meter: {medium}} = this.props;
 
-    const readings: Map<number, Reading> = groupMeasurementsByDate(measurementPages);
+    const {readings, quantities}: MeasurementTableData = groupMeasurementsByDate(
+      measurementPages,
+      getMediumType(medium),
+    );
 
     const wrapperProps: WrapperProps = {
       isFetching,
       hasContent: readings.size > 0,
       noContentText: firstUpperTranslated('measurement', {count: 2}),
       readings,
-      orderedQuantities: orderedQuantities(getMediumType(medium)),
+      quantities,
     };
 
     return <MeasurementsTableComponent {...wrapperProps}/>;
