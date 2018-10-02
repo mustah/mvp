@@ -75,8 +75,8 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   @After
   public void tearDown() {
     logicalMeterJpaRepository.deleteAll();
-    organisations.deleteById(otherOrganisation.id);
     propertiesJpaRepository.deleteAll();
+    organisations.deleteById(otherOrganisation.id);
   }
 
   @Test
@@ -218,7 +218,6 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     assertThat(syncDtos).containsExactly(
       new SyncRequestStatusDto("12345", response.toString(), SyncRequestStatusType.COMPLETED)
     );
-
   }
 
   @Test

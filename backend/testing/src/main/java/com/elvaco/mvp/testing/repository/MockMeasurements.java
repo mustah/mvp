@@ -104,13 +104,13 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
 
   @Override
   protected Measurement copyWithId(Measurement.Id id, Measurement entity) {
-    return new Measurement(
-      entity.created,
-      entity.quantity,
-      entity.value,
-      entity.unit,
-      entity.physicalMeter
-    );
+    return Measurement.builder()
+      .created(entity.created)
+      .quantity(entity.quantity)
+      .value(entity.value)
+      .unit(entity.unit)
+      .physicalMeter(entity.physicalMeter)
+      .build();
   }
 
   @Override

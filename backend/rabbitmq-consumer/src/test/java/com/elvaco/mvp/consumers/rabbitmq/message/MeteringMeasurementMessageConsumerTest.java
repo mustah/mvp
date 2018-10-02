@@ -45,7 +45,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,6 +64,14 @@ public class MeteringMeasurementMessageConsumerTest {
   private static final String ADDRESS = "1234";
   private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   private static final String ORGANISATION_SLUG = "some-organisation";
+
+  private static final Organisation ORGANISATION = new Organisation(
+    randomUUID(),
+    ORGANISATION_EXTERNAL_ID,
+    ORGANISATION_SLUG,
+    ORGANISATION_EXTERNAL_ID
+  );
+
   private static final String EXTERNAL_ID = "ABC-123";
   private static final ZonedDateTime CREATED_DATE_TIME =
     ZonedDateTime.of(LocalDateTime.parse("2018-03-07T16:13:09"), METERING_TIMEZONE);
@@ -94,12 +101,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
         .language(Language.en)
-        .organisation(new Organisation(
-          randomUUID(),
-          ORGANISATION_EXTERNAL_ID,
-          ORGANISATION_SLUG,
-          ORGANISATION_EXTERNAL_ID
-        ))
+        .organisation(ORGANISATION)
         .asSuperAdmin()
         .build(),
       randomUUID().toString()
@@ -297,13 +299,13 @@ public class MeteringMeasurementMessageConsumerTest {
 
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
-    Measurement expectedMeasurement = new Measurement(
-      CREATED_DATE_TIME,
-      QUANTITY,
-      1.0,
-      "kWh",
-      expectedPhysicalMeter
-    );
+    Measurement expectedMeasurement = Measurement.builder()
+      .created(CREATED_DATE_TIME)
+      .quantity(QUANTITY)
+      .value(1.0)
+      .unit("kWh")
+      .physicalMeter(expectedPhysicalMeter)
+      .build();
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
@@ -339,12 +341,12 @@ public class MeteringMeasurementMessageConsumerTest {
 
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0)).isEqualTo(new Measurement(
-      CREATED_DATE_TIME,
-      QUANTITY,
-      1.0,
-      "kWh",
-      PhysicalMeter.builder()
+    assertThat(createdMeasurements.get(0)).isEqualTo(Measurement.builder()
+      .created(CREATED_DATE_TIME)
+      .quantity(QUANTITY)
+      .value(1.0)
+      .unit("kWh")
+      .physicalMeter(PhysicalMeter.builder()
         .id(physicalMeter.id)
         .organisation(organisation)
         .address(ADDRESS)
@@ -353,24 +355,17 @@ public class MeteringMeasurementMessageConsumerTest {
         .logicalMeterId(logicalMeter.id)
         .readIntervalMinutes(0)
         .build()
-    ));
+      ).build());
   }
 
   @Test
   public void usesOrganisationExternalIdForMeasurementMessage() {
-    Organisation existingOrganisation = new Organisation(
-      randomUUID(),
-      "An organisation",
-      "an-organisation",
-      "An external organisation ID"
-    );
-    organisations.save(existingOrganisation);
+    saveDefaultOrganisation();
 
-    messageConsumer.accept(newMeasurementMessage("An external organisation ID"));
+    messageConsumer.accept(newMeasurementMessage(ORGANISATION_EXTERNAL_ID));
 
     List<Measurement> createdMeasurements = measurements.allMocks();
-    assertThat(createdMeasurements.get(0).physicalMeter.organisation)
-      .isEqualTo(existingOrganisation);
+    assertThat(createdMeasurements.get(0).physicalMeter.organisation).isEqualTo(ORGANISATION);
   }
 
   @Test
@@ -596,7 +591,7 @@ public class MeteringMeasurementMessageConsumerTest {
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(newOrganisation());
+    return organisations.save(ORGANISATION);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(double value) {
@@ -638,15 +633,6 @@ public class MeteringMeasurementMessageConsumerTest {
       .serial(GATEWAY_EXTERNAL_ID)
       .productModel("CMi2110")
       .build();
-  }
-
-  private Organisation newOrganisation() {
-    return new Organisation(
-      randomUUID(),
-      ORGANISATION_EXTERNAL_ID,
-      ORGANISATION_SLUG,
-      ORGANISATION_EXTERNAL_ID
-    );
   }
 
   private static PhysicalMeterBuilder physicalMeter() {

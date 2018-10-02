@@ -17,12 +17,10 @@ public class GatewayTest {
       .productModel("productModel")
       .build();
 
-    assertThat(gateway.currentStatus()).isEqualTo(
-      new StatusLogEntry<>(
-        gateway.id,
-        StatusType.UNKNOWN,
-        ZonedDateTime.parse("1970-01-01T00:00:00Z[UTC]")
-      )
-    );
+    assertThat(gateway.currentStatus()).isEqualTo(StatusLogEntry.<UUID>builder()
+      .entityId(gateway.id)
+      .status(StatusType.UNKNOWN)
+      .start(ZonedDateTime.parse("1970-01-01T00:00:00Z[UTC]"))
+      .build());
   }
 }

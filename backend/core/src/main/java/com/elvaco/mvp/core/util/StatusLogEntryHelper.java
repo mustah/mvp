@@ -24,7 +24,9 @@ public class StatusLogEntryHelper {
     }
 
     List<StatusLogEntry<T>> newStatuses = currentStatuses.stream()
-      .map(entry -> entry.isActive() ? entry.withStop(newActiveStatus.start) : entry)
+      .map(entry -> entry.isActive()
+        ? entry.toBuilder().stop(newActiveStatus.start).build()
+        : entry)
       .collect(toList());
 
     newStatuses.add(newActiveStatus);

@@ -127,21 +127,24 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     UUID organisationId,
     String facilityId
   ) {
-    MeterDefinition meterDefinition = Optional.ofNullable(meterDto)
+    Optional<MeterDto> meter = Optional.ofNullable(meterDto);
+
+    MeterDefinition meterDefinition = meter
       .map(dto -> MeterDefinition.fromMedium(Medium.from(mapToEvoMedium(dto.medium))))
       .orElse(MeterDefinition.UNKNOWN_METER);
 
     return logicalMeterUseCases.findBy(organisationId, facilityId)
-      .map(logicalMeter -> logicalMeter.withLocation(location).withMeterDefinition(meterDefinition))
-      .orElseGet(() ->
-        Optional.ofNullable(meterDto)
-          .map(dto -> LogicalMeter.builder()
-            .externalId(facilityId)
-            .organisationId(organisationId)
-            .meterDefinition(meterDefinition)
-            .location(location)
-            .build())
-          .orElse(null));
+      .map(logicalMeter -> logicalMeter.toBuilder()
+        .location(location)
+        .meterDefinition(meterDefinition)
+        .build())
+      .orElseGet(() -> meter.map(dto -> LogicalMeter.builder()
+        .externalId(facilityId)
+        .organisationId(organisationId)
+        .meterDefinition(meterDefinition)
+        .location(location)
+        .build())
+        .orElse(null));
   }
 
   private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
@@ -157,27 +160,27 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
       .findByWithStatuses(organisation.id, facility.id, address)
-      .orElseGet(() ->
-        PhysicalMeter.builder()
-          .organisation(organisation)
-          .address(address)
-          .externalId(facility.id)
-          .build());
+      .orElseGet(() -> PhysicalMeter.builder()
+        .organisation(organisation)
+        .address(address)
+        .externalId(facility.id)
+        .build());
 
-    physicalMeter = physicalMeter.withMedium(mapToEvoMedium(meterDto.medium))
-      .withManufacturer(meterDto.manufacturer)
-      .replaceActiveStatus(StatusType.from(meterDto.status))
-      .withReadIntervalMinutes(CronHelper.toReportInterval(meterDto.cron)
-        .map(Duration::toMinutes)
-        .orElse(null))
-      .withRevision(meterDto.revision)
-      .withMbusDeviceType(meterDto.mbusDeviceType);
-
-    if (logicalMeter != null) {
-      physicalMeter = physicalMeter.withLogicalMeterId(logicalMeter.id);
-    }
-
-    return Optional.of(physicalMeter);
+    return Optional.of(
+      physicalMeter.toBuilder()
+        .medium(mapToEvoMedium(meterDto.medium))
+        .manufacturer(meterDto.manufacturer)
+        .revision(meterDto.revision)
+        .mbusDeviceType(meterDto.mbusDeviceType)
+        .readIntervalMinutes(CronHelper.toReportInterval(meterDto.cron)
+          .map(Duration::toMinutes)
+          .orElse(physicalMeter.readIntervalMinutes))
+        .logicalMeterId(Optional.ofNullable(logicalMeter)
+          .map(LogicalMeter::getId)
+          .orElse(physicalMeter.logicalMeterId))
+        .build()
+        .replaceActiveStatus(StatusType.from(meterDto.status))
+    );
   }
 
   @Nullable
@@ -202,7 +205,9 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
               .build()
           )
       )
-        .withProductModel(gatewayStatusDto.productModel)
+        .toBuilder()
+        .productModel(gatewayStatusDto.productModel)
+        .build()
         .replaceActiveStatus(StatusType.from(gatewayStatusDto.status));
     } else {
       return null;

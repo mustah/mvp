@@ -132,8 +132,9 @@ class GatewayQueryDslJpaRepository
       Map<UUID, Set<LogicalMeterEntity>> gatewayMeters = findGatewayMeters(parameters);
 
       return pagedGateways.stream()
-        .map(pagedGateway ->
-          pagedGateway.withMeters(gatewayMeters.getOrDefault(pagedGateway.id, emptySet())))
+        .map(pagedGateway -> pagedGateway.toBuilder()
+          .meters(gatewayMeters.getOrDefault(pagedGateway.id, emptySet()))
+          .build())
         .collect(toList());
     }
 

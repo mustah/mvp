@@ -11,7 +11,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +47,7 @@ public class LogicalMeterController {
   public List<LogicalMeterDto> logicalMetersWithDetails(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return logicalMeterUseCases
-      .findAllWithDetails(requestParametersOf(requestParams)).stream()
+    return logicalMeterUseCases.findAllWithDetails(requestParametersOf(requestParams)).stream()
       .map(LogicalMeterDtoMapper::toDto)
       .collect(toList());
   }
@@ -57,8 +55,7 @@ public class LogicalMeterController {
   @DeleteMapping("{id}")
   public LogicalMeterDto deleteMeter(@PathVariable UUID id) {
     return LogicalMeterDtoMapper.toDto(
-      logicalMeterUseCases
-        .deleteById(id)
+      logicalMeterUseCases.deleteById(id)
         .orElseThrow(() -> new MeterNotFound(id))
     );
   }

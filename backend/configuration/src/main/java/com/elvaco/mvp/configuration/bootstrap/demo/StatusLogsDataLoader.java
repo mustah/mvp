@@ -46,11 +46,11 @@ class StatusLogsDataLoader {
 
   private void createGatewayLogMockData() {
     gateways.findAll(new RequestParametersAdapter()).stream()
-      .map(gateway -> new StatusLogEntry<>(
-        gateway.id,
-        nextRandomStatusType(),
-        subtractDays(90)
-      ))
+      .map(gateway -> StatusLogEntry.<UUID>builder()
+        .entityId(gateway.id)
+        .status(nextRandomStatusType())
+        .start(subtractDays(90))
+        .build())
       .forEach(gatewayStatusLogs::save);
   }
 
@@ -60,20 +60,17 @@ class StatusLogsDataLoader {
     List<StatusLogEntry<UUID>> statusLogs = new ArrayList<>();
     for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
-      statusLogs.add(
-        new StatusLogEntry<>(
-          meter.id,
-          OK,
-          subtractDays(daySeed)
-        )
+      statusLogs.add(StatusLogEntry.<UUID>builder()
+        .entityId(meter.id)
+        .status(OK)
+        .start(subtractDays(daySeed))
+        .build()
       );
-
-      statusLogs.add(
-        new StatusLogEntry<>(
-          meter.id,
-          nextRandomStatusType(),
-          subtractDays(daySeed).plusHours(1)
-        )
+      statusLogs.add(StatusLogEntry.<UUID>builder()
+        .entityId(meter.id)
+        .status(nextRandomStatusType())
+        .start(subtractDays(daySeed).plusHours(1))
+        .build()
       );
     }
     meterStatusLogs.save(statusLogs);

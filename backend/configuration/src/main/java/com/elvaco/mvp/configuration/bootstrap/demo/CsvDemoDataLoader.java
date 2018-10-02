@@ -113,9 +113,9 @@ class CsvDemoDataLoader implements CommandLineRunner {
           })
       )
       .forEach(p -> {
-        Gateway gateway = gateways.save(p.gateway);
-        LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter.withGateway(gateway));
-        physicalMeters.save(p.physicalMeter.withLogicalMeterId(logicalMeter.id));
+        gateways.save(p.gateway);
+        logicalMeters.save(p.logicalMeter.toBuilder().gateway(p.gateway).build());
+        physicalMeters.save(p.physicalMeter.toBuilder().logicalMeterId(p.logicalMeter.id).build());
       });
   }
 

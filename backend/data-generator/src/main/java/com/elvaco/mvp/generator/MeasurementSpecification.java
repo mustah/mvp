@@ -37,13 +37,13 @@ class MeasurementSpecification {
     while (t.isBefore(end)) {
       value = new MeasurementValue(seriesGenerator.next(value.value), t.toInstant());
       if (random.nextDouble() > lossFactor) {
-        generatedMeasurements.add(new Measurement(
-          value.when.atZone(start.getZone()),
-          quantity.name,
-          value.value,
-          quantity.presentationUnit(),
-          physicalMeter
-        ));
+        generatedMeasurements.add(Measurement.builder()
+          .created(value.when.atZone(start.getZone()))
+          .quantity(quantity.name)
+          .value(value.value)
+          .unit(quantity.presentationUnit())
+          .physicalMeter(physicalMeter)
+          .build());
       }
       t = t.plusMinutes(intervalDuration.toMinutes());
     }

@@ -10,18 +10,20 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LogicalMeter implements Identifiable<UUID>, Serializable {
 
   private static final long serialVersionUID = -7467562865583613538L;
@@ -51,36 +53,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   @Nullable
   public final StatusType status;
 
-  private LogicalMeter(
-    UUID id,
-    String externalId,
-    UUID organisationId,
-    MeterDefinition meterDefinition,
-    ZonedDateTime created,
-    List<PhysicalMeter> physicalMeters,
-    List<Gateway> gateways,
-    List<Measurement> latestReadouts,
-    Location location,
-    @Nullable Long expectedMeasurementCount,
-    @Nullable Long missingMeasurementCount,
-    @Nullable AlarmLogEntry alarm,
-    @Nullable StatusType status
-  ) {
-    this.id = id;
-    this.externalId = externalId;
-    this.organisationId = organisationId;
-    this.meterDefinition = meterDefinition;
-    this.created = created;
-    this.physicalMeters = unmodifiableList(physicalMeters);
-    this.gateways = unmodifiableList(gateways);
-    this.latestReadouts = unmodifiableList(latestReadouts);
-    this.location = location;
-    this.expectedMeasurementCount = expectedMeasurementCount;
-    this.missingMeasurementCount = missingMeasurementCount;
-    this.alarm = alarm;
-    this.status = status;
-  }
-
   @Override
   public UUID getId() {
     return id;
@@ -99,116 +71,17 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
       .max(Comparator.comparing(o -> o.start));
   }
 
-  public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      created,
-      physicalMeters,
-      gateways,
-      latestReadouts,
-      location,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      alarm,
-      status
-    );
-  }
-
-  public LogicalMeter withPhysicalMeter(PhysicalMeter physicalMeter) {
-    List<PhysicalMeter> newPhysicalMeters = new ArrayList<>(physicalMeters);
-    newPhysicalMeters.removeIf(physicalMeter1 -> physicalMeter1.id.equals(physicalMeter.id));
+  public LogicalMeter addPhysicalMeter(PhysicalMeter physicalMeter) {
+    List<PhysicalMeter> newPhysicalMeters = new ArrayList<>(physicalMeters).stream()
+      .filter(meter -> meter.id.equals(physicalMeter.id))
+      .collect(toList());
     newPhysicalMeters.add(physicalMeter);
 
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      created,
-      newPhysicalMeters,
-      gateways,
-      latestReadouts,
-      location,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      alarm,
-      status
-    );
-  }
-
-  public LogicalMeter withGateway(Gateway gateway) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      created,
-      physicalMeters,
-      singletonList(gateway),
-      latestReadouts,
-      location,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      alarm,
-      status
-    );
+    return toBuilder().physicalMeters(newPhysicalMeters).build();
   }
 
   public LogicalMeter withMeasurements(List<Measurement> measurements) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      created,
-      physicalMeters,
-      gateways,
-      measurements,
-      location,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      alarm,
-      status
-    );
-  }
-
-  public LogicalMeter withLocation(Location location) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      created,
-      physicalMeters,
-      gateways,
-      latestReadouts,
-      location,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      alarm,
-      status
-    );
-  }
-
-  public LogicalMeter createdAt(ZonedDateTime creationTime) {
-    return new LogicalMeter(
-      id,
-      externalId,
-      organisationId,
-      meterDefinition,
-      creationTime,
-      physicalMeters,
-      gateways,
-      latestReadouts,
-      location,
-      expectedMeasurementCount,
-      missingMeasurementCount,
-      alarm,
-      status
-    );
+    return toBuilder().latestReadouts(measurements).build();
   }
 
   @Nullable

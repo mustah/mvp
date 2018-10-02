@@ -2,7 +2,6 @@ package com.elvaco.mvp.configuration.bootstrap.production;
 
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.assertj.core.api.Assertions;
@@ -21,9 +20,6 @@ public class ProductionDataLoaderTest extends IntegrationTest {
 
   @Autowired
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
-
-  @Autowired
-  private OrganisationJpaRepository organisationJpaRepository;
 
   @Autowired
   private Users users;

@@ -3,13 +3,16 @@ package com.elvaco.mvp.core.domainmodels;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Builder
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Measurement implements Identifiable<Measurement.Id>, Serializable {
 
   private static final long serialVersionUID = 7241986426136993573L;
@@ -20,52 +23,8 @@ public class Measurement implements Identifiable<Measurement.Id>, Serializable {
   public final String unit;
   public final PhysicalMeter physicalMeter;
 
-  public Measurement(
-    ZonedDateTime created,
-    String quantity,
-    double value,
-    String unit,
-    PhysicalMeter physicalMeter
-  ) {
-    this.created = created;
-    this.quantity = quantity;
-    this.value = value;
-    this.unit = unit;
-    this.physicalMeter = physicalMeter;
-  }
-
   public Quantity getQuantity() {
     return new Quantity(quantity, unit);
-  }
-
-  public Measurement withValue(double value) {
-    return new Measurement(
-      created,
-      quantity,
-      value,
-      unit,
-      physicalMeter
-    );
-  }
-
-  public Measurement withUnit(String unit) {
-    return new Measurement(
-      created,
-      quantity,
-      value,
-      unit,
-      physicalMeter
-    );
-  }
-
-  public Measurement withQuantity(String quantity) {
-    return new Measurement(
-      created,
-      quantity,
-      value,
-      unit,
-      physicalMeter
-    );
   }
 
   @Override

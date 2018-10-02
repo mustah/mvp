@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -39,7 +38,6 @@ public class LogicalMeterDtoMapperTest {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .organisation(ELVACO)
       .status(StatusLogEntry.<UUID>builder()
-        .start(ZonedDateTime.now())
         .status(StatusType.OK)
         .build())
       .logicalMeterId(logicalMeterId)
@@ -104,21 +102,6 @@ public class LogicalMeterDtoMapperTest {
 
     UUID organisationId = ELVACO.id;
 
-    List<Gateway> gateways = singletonList(Gateway.builder()
-      .id(expected.gateway.id)
-      .organisationId(organisationId)
-      .serial(expected.gateway.serial)
-      .productModel(expected.gateway.productModel)
-      .statusLogs(singletonList(
-        new StatusLogEntry<>(
-          1L,
-          randomUUID(),
-          StatusType.OK,
-          statusChanged,
-          statusChanged.plusDays(1)
-        )))
-      .build());
-
     assertThat(
       toDto(
         LogicalMeter.builder()
@@ -141,7 +124,19 @@ public class LogicalMeterDtoMapperTest {
               .build())
             .build()
           )
-          .gateways(gateways)
+          .gateway(Gateway.builder()
+            .id(expected.gateway.id)
+            .organisationId(organisationId)
+            .serial(expected.gateway.serial)
+            .productModel(expected.gateway.productModel)
+            .statusLog(StatusLogEntry.<UUID>builder()
+              .id(1L)
+              .entityId(randomUUID())
+              .status(StatusType.OK)
+              .start(statusChanged)
+              .stop(statusChanged.plusDays(1))
+              .build())
+            .build())
           .location(new LocationBuilder()
             .city("kungsbacka")
             .address("kabelgatan 2t")
@@ -161,7 +156,6 @@ public class LogicalMeterDtoMapperTest {
     LogicalMeter logicalMeter = logicalMeter()
       .physicalMeter(PhysicalMeter.builder().organisation(ELVACO)
         .status(StatusLogEntry.<UUID>builder()
-          .start(ZonedDateTime.now())
           .status(StatusType.OK)
           .build())
         .build())
@@ -177,7 +171,6 @@ public class LogicalMeterDtoMapperTest {
     LogicalMeter logicalMeter = logicalMeter()
       .physicalMeter(PhysicalMeter.builder().organisation(ELVACO)
         .status(StatusLogEntry.<UUID>builder()
-          .start(ZonedDateTime.now())
           .status(StatusType.ERROR)
           .build())
         .build())

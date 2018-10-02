@@ -6,7 +6,15 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_COOLING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.SECRET_SERVICE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -17,26 +25,22 @@ public class LogicalMeterTest {
 
   @Test
   public void medium() {
-    LogicalMeter heatingMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+    LogicalMeter heatingMeter = logicalMeterBuilder()
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .build();
     assertThat(heatingMeter.getMedium()).isEqualTo("District heating");
 
-    LogicalMeter coolingMeter = heatingMeter.withMeterDefinition(
-      MeterDefinition.DISTRICT_COOLING_METER
-    );
+    LogicalMeter coolingMeter = heatingMeter.toBuilder()
+      .meterDefinition(DISTRICT_COOLING_METER)
+      .build();
     assertThat(coolingMeter.getMedium()).isEqualTo("District cooling");
   }
 
   @Test
   public void quantitiesDistrictHeatingMeter() {
-    LogicalMeter heatingMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+    LogicalMeter heatingMeter = logicalMeterBuilder()
+      .meterDefinition(DISTRICT_HEATING_METER)
+      .build();
 
     assertThat(heatingMeter.getQuantities()).containsOnly(
       Quantity.ENERGY,
@@ -51,29 +55,18 @@ public class LogicalMeterTest {
 
   @Test
   public void quantitiesWaterMeters() {
-    LogicalMeter waterMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.WATER_METER
-    );
+    LogicalMeter waterMeter = logicalMeterBuilder()
+      .meterDefinition(WATER_METER)
+      .build();
 
     assertThat(waterMeter.getQuantities()).containsOnly(Quantity.VOLUME);
-
-    LogicalMeter hotWaterMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.HOT_WATER_METER
-    );
-    assertThat(hotWaterMeter.getQuantities()).containsOnly(Quantity.VOLUME);
   }
 
   @Test
   public void quantitiesElectricityMeter() {
-    LogicalMeter meter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.ELECTRICITY_METER
-    );
+    LogicalMeter meter = logicalMeterBuilder()
+      .meterDefinition(ELECTRICITY_METER)
+      .build();
 
     assertThat(meter.getQuantities()).containsOnly(
       Quantity.ENERGY,
@@ -85,11 +78,9 @@ public class LogicalMeterTest {
 
   @Test
   public void quantitiesRoomTempMeter() {
-    LogicalMeter meter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.ROOM_TEMP_METER
-    );
+    LogicalMeter meter = logicalMeterBuilder()
+      .meterDefinition(ROOM_TEMP_METER)
+      .build();
 
     assertThat(meter.getQuantities()).containsOnly(
       Quantity.EXTERNAL_TEMPERATURE,
@@ -103,28 +94,26 @@ public class LogicalMeterTest {
     UUID meterId = randomUUID();
     ZonedDateTime now = ZonedDateTime.now();
 
-    LogicalMeter logicalMeter = newLogicalMeter(
-      meterId,
-      organisationId,
-      MeterDefinition.HOT_WATER_METER
-    ).createdAt(now);
+    LogicalMeter logicalMeter = logicalMeterBuilder()
+      .id(meterId)
+      .organisationId(organisationId)
+      .meterDefinition(HOT_WATER_METER)
+      .created(now)
+      .build();
 
-    LogicalMeter otherLogicalMeter = newLogicalMeter(
-      meterId,
-      organisationId,
-      MeterDefinition.HOT_WATER_METER
-    ).createdAt(now);
+    LogicalMeter otherLogicalMeter = logicalMeterBuilder()
+      .id(meterId)
+      .organisationId(organisationId)
+      .meterDefinition(HOT_WATER_METER)
+      .created(now)
+      .build();
 
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
 
   @Test
   public void getQuantity() {
-    LogicalMeter logicalMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.HOT_WATER_METER
-    );
+    LogicalMeter logicalMeter = logicalMeterBuilder().meterDefinition(HOT_WATER_METER).build();
 
     assertThat(logicalMeter.getQuantity(Quantity.VOLUME.name)).isNotEmpty();
     assertThat(logicalMeter.getQuantity("Bildäck")).isEmpty();
@@ -132,11 +121,8 @@ public class LogicalMeterTest {
 
   @Test
   public void getManufacturerNoPhysicalMeter() {
-    LogicalMeter logicalMeter = newLogicalMeter(
-      randomUUID(),
-      randomUUID(),
-      MeterDefinition.HOT_WATER_METER
-    );
+    LogicalMeter logicalMeter = logicalMeterBuilder().meterDefinition(HOT_WATER_METER).build();
+
     assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
   }
 
@@ -144,11 +130,12 @@ public class LogicalMeterTest {
   public void getManufacturerUnknown() {
     UUID organisationId = randomUUID();
     UUID logicalMeterId = randomUUID();
-    LogicalMeter logicalMeter = newLogicalMeter(
-      logicalMeterId,
-      organisationId,
-      singletonList(newPhysicalMeter(organisationId, logicalMeterId, null))
-    );
+    LogicalMeter logicalMeter = logicalMeterBuilder()
+      .id(logicalMeterId)
+      .organisationId(organisationId)
+      .meterDefinition(HOT_WATER_METER)
+      .physicalMeter(newPhysicalMeter(logicalMeterId, null))
+      .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
   }
 
@@ -156,11 +143,12 @@ public class LogicalMeterTest {
   public void getManufacturerOnePhysicalMeter() {
     UUID organisationId = randomUUID();
     UUID logicalMeterId = randomUUID();
-    LogicalMeter logicalMeter = newLogicalMeter(
-      logicalMeterId,
-      organisationId,
-      singletonList(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
-    );
+    LogicalMeter logicalMeter = logicalMeterBuilder()
+      .id(logicalMeterId)
+      .organisationId(organisationId)
+      .meterDefinition(HOT_WATER_METER)
+      .physicalMeter(newPhysicalMeter(logicalMeterId, "KAM"))
+      .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("KAM");
   }
 
@@ -168,14 +156,13 @@ public class LogicalMeterTest {
   public void getManufacturerTwoPhysicalMeters() {
     UUID organisationId = randomUUID();
     UUID logicalMeterId = randomUUID();
-    LogicalMeter logicalMeter = newLogicalMeter(
-      logicalMeterId,
-      organisationId,
-      asList(
-        newPhysicalMeter(organisationId, logicalMeterId, "KAM"),
-        newPhysicalMeter(organisationId, logicalMeterId, "ELV")
-      )
-    );
+    LogicalMeter logicalMeter = logicalMeterBuilder()
+      .id(logicalMeterId)
+      .organisationId(organisationId)
+      .meterDefinition(HOT_WATER_METER)
+      .physicalMeter(newPhysicalMeter(logicalMeterId, "KAM"))
+      .physicalMeter(newPhysicalMeter(logicalMeterId, "ELV"))
+      .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("ELV");
   }
 
@@ -200,12 +187,12 @@ public class LogicalMeterTest {
     LogicalMeter meter = newLogicalMeterWithStatuses(
       asList(
         newStatusLog(StatusType.ERROR, ZonedDateTime.now()),
-        newStatusLog(StatusType.OK, ZonedDateTime.now().plusHours(2)),
+        newStatusLog(OK, ZonedDateTime.now().plusHours(2)),
         newStatusLog(StatusType.WARNING, ZonedDateTime.now().minusDays(1))
       )
     );
 
-    assertThat(meter.currentStatus()).isEqualTo(StatusType.OK);
+    assertThat(meter.currentStatus()).isEqualTo(OK);
   }
 
   @Test
@@ -282,88 +269,30 @@ public class LogicalMeterTest {
     assertThat(collectionStats.missing).isEqualTo(1.0);
   }
 
-  private StatusLogEntry<UUID> newOkStatusLog(ZonedDateTime startTime, ZonedDateTime stopTime) {
-    return new StatusLogEntry<>(0L, randomUUID(), StatusType.OK, startTime, stopTime);
-  }
-
-  private StatusLogEntry<UUID> newStatusLog(StatusType statusType, ZonedDateTime startTime) {
-    return new StatusLogEntry<>(randomUUID(), statusType, startTime);
-  }
-
-  private PhysicalMeter newPhysicalMeter(
-    UUID organisationId,
-    UUID logicalMeterId,
-    String manufacturer
-  ) {
-    return PhysicalMeter.builder()
-      .logicalMeterId(logicalMeterId)
-      .organisation(new Organisation(
-        organisationId,
-        "an-organisation",
-        "an-organisation",
-        "an-organisation"
-      ))
-      .address("12341234")
-      .externalId("an-external-id")
-      .medium("Hot water")
-      .manufacturer(manufacturer)
-      .statuses(emptyList())
-      .build();
-  }
-
-  private LogicalMeter newLogicalMeter(
-    UUID id,
-    UUID organisationId,
-    List<PhysicalMeter> physicalMeters
-  ) {
+  private static LogicalMeter.LogicalMeterBuilder logicalMeterBuilder() {
     return LogicalMeter.builder()
-      .id(id)
-      .externalId("an-external-id")
-      .organisationId(organisationId)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .physicalMeters(physicalMeters)
-      .build();
+      .organisationId(randomUUID())
+      .externalId("an-external-id");
   }
 
-  private LogicalMeter newLogicalMeter(
-    UUID id,
-    UUID organisationId,
-    MeterDefinition meterDefinition
-  ) {
-    return LogicalMeter.builder()
-      .id(id)
-      .externalId("an-external-id")
-      .organisationId(organisationId)
-      .meterDefinition(meterDefinition)
-      .location(UNKNOWN_LOCATION)
-      .build();
-  }
-
-  private LogicalMeter newLogicalMeterWithExpectedAndMissing(
+  private static LogicalMeter newLogicalMeterWithExpectedAndMissing(
     Long expectedMeasurementCount,
     Long missingMeasurementCount
   ) {
-    return LogicalMeter.builder()
-      .externalId("an-external-id")
-      .organisationId(randomUUID())
+    return logicalMeterBuilder()
       .expectedMeasurementCount(expectedMeasurementCount)
       .missingMeasurementCount(missingMeasurementCount)
       .build();
   }
 
-  private LogicalMeter newLogicalMeterWithStatuses(
+  private static LogicalMeter newLogicalMeterWithStatuses(
     List<StatusLogEntry<UUID>> physicalMeterStatuses
   ) {
     UUID organisationId = randomUUID();
     UUID logicalMeterId = randomUUID();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .organisation(new Organisation(
-        organisationId,
-        "Organisation, Inc.",
-        "organisation-inc",
-        "Organisation, Inc."
-      ))
+      .organisation(OTHER_ORGANISATION)
       .address("250")
       .externalId("an-external-id")
       .medium("Heat, Return temp.")
@@ -373,12 +302,43 @@ public class LogicalMeterTest {
       .statuses(physicalMeterStatuses)
       .build();
 
-    return LogicalMeter.builder()
+    return logicalMeterBuilder()
       .id(logicalMeterId)
-      .externalId("an-external-id")
       .organisationId(organisationId)
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(DISTRICT_HEATING_METER)
       .physicalMeter(physicalMeter)
+      .build();
+  }
+
+  private static StatusLogEntry<UUID> newOkStatusLog(
+    ZonedDateTime startTime,
+    ZonedDateTime stopTime
+  ) {
+    return StatusLogEntry.<UUID>builder()
+      .id(0L)
+      .entityId(randomUUID())
+      .status(OK)
+      .start(startTime)
+      .stop(stopTime)
+      .build();
+  }
+
+  private static StatusLogEntry<UUID> newStatusLog(StatusType statusType, ZonedDateTime startTime) {
+    return StatusLogEntry.<UUID>builder()
+      .entityId(randomUUID())
+      .status(statusType)
+      .start(startTime)
+      .build();
+  }
+
+  private static PhysicalMeter newPhysicalMeter(UUID logicalMeterId, String manufacturer) {
+    return PhysicalMeter.builder()
+      .logicalMeterId(logicalMeterId)
+      .organisation(SECRET_SERVICE)
+      .address("12341234")
+      .externalId("an-external-id")
+      .medium("Hot water")
+      .manufacturer(manufacturer)
       .build();
   }
 }
