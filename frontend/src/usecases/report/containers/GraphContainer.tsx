@@ -78,7 +78,7 @@ type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = (
-  {lines, axes}: GraphContents,
+  {lines, axes: {left, right}}: GraphContents,
   outerHiddenKeys,
   hiddenKeys,
   renderDot: (props) => React.ReactNode,
@@ -102,13 +102,13 @@ const renderGraphContents = (
       );
     });
 
-  if (axes.left) {
-    components.push(<YAxis key="leftYAxis" label={axes.left} yAxisId="left"/>);
+  if (left) {
+    components.push(<YAxis key="leftYAxis" label={left} yAxisId="left"/>);
   }
 
-  if (axes.right) {
+  if (right) {
     components.push((
-      <YAxis key="rightYAxis" label={axes.right} yAxisId="right" orientation="right"/>
+      <YAxis key="rightYAxis" label={right} yAxisId="right" orientation="right"/>
     ));
   }
 
