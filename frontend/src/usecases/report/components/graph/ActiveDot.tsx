@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {uuid} from '../../../types/Types';
+import {uuid} from '../../../../types/Types';
 
 export interface ActiveDotReChartProps {
   dataKey: uuid;
