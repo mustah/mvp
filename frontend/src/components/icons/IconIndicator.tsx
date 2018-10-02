@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {Medium} from '../indicators/indicatorWidgetModels';
-import {iconComponentFor} from '../indicators/ReportIndicatorWidget';
+import {iconComponentFor} from '../../usecases/report/components/indicators/ReportIndicatorWidget';
 
 interface OwnProps {
   medium: Medium;

@@ -11,7 +11,7 @@ import {Medium, OnSelectIndicator} from '../../../components/indicators/indicato
 import {
   ReportIndicatorWidgets,
   SelectedIndicatorWidgetProps,
-} from '../../../components/indicators/ReportIndicatorWidgets';
+} from '../components/indicators/ReportIndicatorWidgets';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
