@@ -10,7 +10,7 @@ import {uuid} from '../../types/Types';
 
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 
-const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTRIES);
+export const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTRIES);
 
 const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
   const limit: number = 20;

@@ -28,6 +28,7 @@ export const toggleReportIndicatorWidget =
         !quantities.includes(quantityForMedium) &&
         canToggleMedia(quantities, quantityForMedium)
       ) {
+        // TODO *never* dispatch twice, be more clever with reducers & payload
         dispatch(setSelectedQuantities([...quantities, quantityForMedium]));
       }
     };
