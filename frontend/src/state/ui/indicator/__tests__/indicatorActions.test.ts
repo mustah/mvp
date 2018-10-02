@@ -1,14 +1,14 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {Quantity} from '../graph/measurement/measurementModels';
+import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
+import {Quantity} from '../../graph/measurement/measurementModels';
 import {
   canToggleMedia,
   selectQuantities,
   setReportIndicatorWidgets,
   toggleReportIndicatorWidget,
-} from '../indicator/indicatorActions';
-import {IndicatorState, initialState} from '../indicator/indicatorReducer';
+} from '../indicatorActions';
+import {IndicatorState, initialState} from '../indicatorReducer';
 
 describe('indicatorActions', () => {
 
