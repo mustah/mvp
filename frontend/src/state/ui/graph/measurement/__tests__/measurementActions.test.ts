@@ -10,7 +10,7 @@ import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {mapApiResponseToGraphData} from '../helpers/apiResponseToGraphContents';
 import {fetchMeasurements} from '../measurementActions';
 import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
-import MockAdapter = require('axios-mock-adapter');
+import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('measurementActions', () => {
 

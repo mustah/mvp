@@ -1,6 +1,5 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
-import 'ReportIndicatorWidget.scss';
 import {colors} from '../../app/themes';
 import {OnClick} from '../../types/Types';
 import {IconCurrent} from '../icons/IconCurrent';
@@ -13,9 +12,11 @@ import {Column, ColumnCenter} from '../layouts/column/Column';
 import {RowCenter} from '../layouts/row/Row';
 import {Small} from '../texts/Texts';
 import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
+import './ReportIndicatorWidget.scss';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
-type IndicatorComponentType = {[type in Medium]: React.ComponentType<SvgIconProps>};
+type IndicatorComponentType = { [type in Medium]: React.ComponentType<SvgIconProps> };
+
 const indicatorIconFor: IndicatorComponentType = {
   [Medium.electricity]: IconCurrent,
   [Medium.water]: IconWater,

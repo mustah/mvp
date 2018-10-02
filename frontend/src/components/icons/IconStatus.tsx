@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {Status} from '../../types/Types';
 import './IconStatus.scss';

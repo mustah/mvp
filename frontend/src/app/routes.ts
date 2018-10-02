@@ -1,3 +1,6 @@
+import evoBetaLogo from '../assets/images/evo_beta_logo.svg';
+import evoBetaLogoBlue from '../assets/images/evo_beta_logo_blue.svg';
+import wayneIndustries from '../assets/images/wayne-industries.png';
 import {uuid} from '../types/Types';
 
 export const routes = {
@@ -20,14 +23,12 @@ export const routes = {
   adminOrganisationsAdd: '/admin/organisations/add',
 };
 
-export const imagePathFor = (image: string): string => `assets/images/${image}`;
-
 const organisationLogo = {
-  'wayne-industries': imagePathFor('wayne-industries.png'),
+  'wayne-industries': wayneIndustries,
 };
 
 export const getLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || imagePathFor('evo_beta_logo.svg');
+  organisationLogo[organisationId] || evoBetaLogo;
 
 export const getLoginLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || imagePathFor('evo_beta_logo_blue.svg');
+  organisationLogo[organisationId] || evoBetaLogoBlue;

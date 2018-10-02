@@ -3,7 +3,7 @@ import {getLanguages} from '../languageSelectors';
 
 describe('languageSelectors', () => {
 
-  it('returnes supported languages in english', () => {
+  it('returns supported languages in english', () => {
     initTranslations({
       code: 'en',
       translation: {
@@ -18,7 +18,7 @@ describe('languageSelectors', () => {
     ]);
   });
 
-  it('returnes supported languages in swedish', () => {
+  it('returns supported languages in swedish', () => {
     initTranslations({
       code: 'sv',
       translation: {

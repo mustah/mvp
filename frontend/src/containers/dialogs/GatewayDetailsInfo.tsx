@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {imagePathFor} from '../../app/routes';
+import cme2110 from '../../assets/images/cme2110.jpg';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
@@ -56,7 +56,6 @@ class GatewayDetailsInfo extends React.Component<Props> {
       gateway: {location: {city, address}, serial, productModel, status, statusChanged},
       organisation,
     } = this.props;
-    const gatewayImage = imagePathFor('cme2110.jpg');
     const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
 
     return (
@@ -73,7 +72,7 @@ class GatewayDetailsInfo extends React.Component<Props> {
         </Column>
         <Row>
           <Column className="Gateway-image">
-            <img src={gatewayImage} width={120}/>
+            <img src={cme2110} width={120}/>
           </Column>
           <Info
             label={translate('collection')}

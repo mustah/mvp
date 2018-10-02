@@ -1,9 +1,9 @@
-import 'EmptyContent.scss';
 import ActionFace from 'material-ui/svg-icons/action/face';
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {ColumnCenter} from '../layouts/column/Column';
 import {Large} from '../texts/Texts';
+import './EmptyContent.scss';
 
 export interface EmptyContentProps {
   noContentText: string;

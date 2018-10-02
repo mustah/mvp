@@ -1,5 +1,4 @@
-import 'AdminApp.scss';
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -14,6 +13,7 @@ import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/
 import {AdminMainMenuContainer} from '../../usecases/main-menu/containers/AdminMainMenuContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
+import './AdminApp.scss';
 import {AdminPages} from './AdminPages';
 
 interface StateToProps {

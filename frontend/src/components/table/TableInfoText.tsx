@@ -1,5 +1,5 @@
 import * as React from 'react';
-import 'TableInfoText.scss';
+import './TableInfoText.scss';
 import {translate} from '../../services/translationService';
 import {RowRight} from '../layouts/row/Row';
 import {Small} from '../texts/Texts';

@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import Card from 'material-ui/Card/Card';
 import * as React from 'react';
 import {cardStyle} from '../../../../app/themes';

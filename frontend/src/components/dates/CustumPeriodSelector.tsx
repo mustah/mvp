@@ -1,8 +1,8 @@
-import 'CustomPeriodSelector.scss';
 import * as React from 'react';
 import {DateRangePicker, DateRangePickerShape} from 'react-dates';
 import {yyyymmdd} from '../../helpers/dateHelpers';
 import {firstUpperTranslated} from '../../services/translationService';
+import './CustomPeriodSelector.scss';
 
 type MappedProps = 'startDate' | 'endDate' | 'focusedInput';
 type MappedEventListeners = 'onDatesChange' | 'onFocusChange';

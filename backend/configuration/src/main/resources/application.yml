@@ -56,7 +56,6 @@ liquibase:
     application_user: appuser
     application_password: 'RWZ8tKUzDdbncg2J'
 
-
 mvp:
   url: http://localhost:8080
   consumers:

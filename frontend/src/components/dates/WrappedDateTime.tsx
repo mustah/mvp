@@ -1,4 +1,4 @@
-import 'CustomPeriodSelector.scss';
+import './CustomPeriodSelector.scss';
 import * as React from 'react';
 import {displayDate} from '../../helpers/dateHelpers';
 import {HasContent} from '../../types/Types';

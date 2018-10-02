@@ -15,7 +15,7 @@ import {User} from '../../domain-models/user/userModels';
 import {fetchSummary} from '../summaryApiActions';
 import {SelectionSummary} from '../summaryModels';
 import {initialState} from '../summaryReducer';
-import MockAdapter = require('axios-mock-adapter');
+import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('summaryApiActions', () => {
 

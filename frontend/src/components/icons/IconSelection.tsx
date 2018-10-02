@@ -1,7 +1,7 @@
 import IconButton from 'material-ui/IconButton';
 import * as React from 'react';
-import {imagePathFor} from '../../app/routes';
 import {iconSizeLarge, iconStyle} from '../../app/themes';
+import selectionIcon from '../../assets/images/selection-icon.svg';
 import './Icons.scss';
 
 export const selectionIconStyle: React.CSSProperties = {
@@ -17,6 +17,6 @@ export const IconSelection = () => (
     style={selectionIconStyle}
     iconStyle={iconSizeLarge}
   >
-    <img src={imagePathFor('selection-icon.svg')}/>
+    <img src={selectionIcon}/>
   </IconButton>
 );

@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {Children, ClassNamed, Clickable, uuid} from '../../types/Types';
 import {RowMiddle} from '../layouts/row/Row';

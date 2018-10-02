@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {ColumnCenter} from '../../../../components/layouts/column/Column';
 import {Small} from '../../../../components/texts/Texts';

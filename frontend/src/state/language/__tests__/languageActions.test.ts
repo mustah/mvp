@@ -1,11 +1,11 @@
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {i18nMock, initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../services/restClient';
 import {CHANGE_LANGUAGE, changeLanguage} from '../languageActions';
 import {languages, LanguageState} from '../languageModels';
-import MockAdapter = require('axios-mock-adapter');
 
 describe('languageActions', () => {
   const configureMockStore = configureStore([thunk]);

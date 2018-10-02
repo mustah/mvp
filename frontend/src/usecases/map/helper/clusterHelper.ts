@@ -1,17 +1,20 @@
 import * as Leaflet from 'leaflet';
-import {imagePathFor} from '../../../app/routes';
+import markerIconAlarm from '../../../assets/images/marker-icon-alarm.png';
+import markerIconError from '../../../assets/images/marker-icon-error.png';
+import markerIconOk from '../../../assets/images/marker-icon-ok.png';
+import markerIconWarning from '../../../assets/images/marker-icon-warning.png';
+import markerIcon from '../../../assets/images/marker-icon.png';
 import {Dictionary, Status} from '../../../types/Types';
 import {MapMarker, Marker} from '../mapModels';
 
 const icons = {
-  [Status.ok]: imagePathFor('marker-icon-ok.png'),
-  [Status.warning]: imagePathFor('marker-icon-warning.png'),
-  [Status.error]: imagePathFor('marker-icon-error.png'),
-  [Status.unknown]: imagePathFor('marker-icon-error.png'),
-  alarm: imagePathFor('marker-icon-alarm.png'),
+  [Status.ok]: markerIconOk,
+  [Status.warning]: markerIconWarning,
+  [Status.error]: markerIconError,
+  [Status.unknown]: markerIconError,
+  alarm: markerIconAlarm,
 };
 
-const markerIcon = imagePathFor('marker-icon.png');
 const alarmMarkerIcon = icons.alarm;
 const errorMarkerIcon = icons[Status.error];
 const warningMarkerIcon = icons[Status.warning];
@@ -24,6 +27,7 @@ const makeMarker = (marker: MapMarker): Marker => ({
   options: {
     icon: Leaflet.icon({iconUrl: getStatusIconUrl(marker)}),
     mapMarkerItem: marker.id,
+    status: marker.status,
   },
 });
 

@@ -14,6 +14,7 @@
   "rules": {
     "no-submodule-imports": [
       true,
+      "assets",
       "redux-auth-wrapper",
       "history",
       "material-ui",

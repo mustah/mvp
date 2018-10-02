@@ -1,4 +1,4 @@
-import classNames = require('classnames');
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {Children, ClassNamed} from '../../types/Types';
 

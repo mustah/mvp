@@ -1,5 +1,5 @@
-import MockAdapter = require('axios-mock-adapter');
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';

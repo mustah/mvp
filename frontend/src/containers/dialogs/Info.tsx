@@ -1,5 +1,5 @@
-import * as classNames from 'classnames';
-import 'Info.scss';
+import {default as classNames} from 'classnames';
+import './Info.scss';
 import * as React from 'react';
 import {componentOrNull} from '../../components/hoc/hocs';
 import {superAdminOnly} from '../../components/hoc/withRoles';

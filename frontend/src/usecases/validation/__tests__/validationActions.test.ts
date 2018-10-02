@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -15,7 +16,6 @@ import {showFailMessage, showSuccessMessage} from '../../../state/ui/message/mes
 import {Callback, ErrorResponse, uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
 import {syncAllMeters, syncWithMetering} from '../validationActions';
-import MockAdapter = require('axios-mock-adapter');
 
 describe('syncWithMetering', () => {
 

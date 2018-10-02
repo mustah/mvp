@@ -31,10 +31,11 @@ describe('clusterHelper', () => {
         position: [57.505402, 12.069364],
         options: {
           icon: {
-            options: {iconUrl: 'assets/images/marker-icon-ok.png'},
+            options: {iconUrl: {}},
             _initHooksCalled: true,
           },
           mapMarkerItem: 1,
+          status: Status.ok,
         },
       }]);
     });
@@ -47,9 +48,10 @@ describe('clusterHelper', () => {
           options: {
             icon: {
               _initHooksCalled: true,
-              options: {iconUrl: 'assets/images/marker-icon-ok.png'},
+              options: {iconUrl: {}},
             },
             mapMarkerItem: 1,
+            status: Status.ok,
           },
           position: [57.505402, 12.069364],
         },
@@ -57,9 +59,10 @@ describe('clusterHelper', () => {
           options: {
             icon: {
               _initHooksCalled: true,
-              options: {iconUrl: 'assets/images/marker-icon-warning.png'},
+              options: {iconUrl: {}},
             },
             mapMarkerItem: 2,
+            status: Status.warning,
           },
           position: [57.505412, 12.069374],
         },

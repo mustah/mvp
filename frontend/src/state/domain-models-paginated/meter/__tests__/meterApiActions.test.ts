@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {makeMeterDto, MeterDto} from '../../../../__tests__/testDataFactory';
@@ -14,7 +15,6 @@ import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../pagina
 import {clearErrorMeters, fetchMeters} from '../meterApiActions';
 import {Meter} from '../meterModels';
 import {meterDataFormatter} from '../meterSchema';
-import MockAdapter = require('axios-mock-adapter');
 
 describe('meterApiActions', () => {
 

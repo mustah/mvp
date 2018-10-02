@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
@@ -9,16 +10,12 @@ import {uuid} from '../../../../types/Types';
 import {requestTimeout} from '../../../api/apiActions';
 import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PaginatedDomainModelsState} from '../../paginatedDomainModels';
-import {
-  domainModelPaginatedClearError,
-  makeRequestActionsOf,
-} from '../../paginatedDomainModelsActions';
+import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
 import {makeInitialState} from '../../paginatedDomainModelsReducer';
 import {clearErrorGateways, fetchGateway, fetchGateways} from '../gatewayApiActions';
 import {Gateway, GatewaysState} from '../gatewayModels';
 import {gatewayDataFormatter} from '../gatewaySchema';
-import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
 

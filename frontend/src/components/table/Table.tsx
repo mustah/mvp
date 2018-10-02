@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Children, ClassNamed, uuid} from '../../types/Types';

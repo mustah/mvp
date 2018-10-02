@@ -18,7 +18,7 @@ import {
 import {initialDomain} from '../../domainModelsReducer';
 import {addUser, deleteUser, fetchUser, modifyProfile, modifyUser} from '../userApiActions';
 import {Role, User} from '../userModels';
-import MockAdapter = require('axios-mock-adapter');
+import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('userApiActions', () => {
 
