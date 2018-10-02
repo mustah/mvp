@@ -23,28 +23,10 @@ $ yarn install
 Run the server in development mode, featuring:
 - live reload on source code change
 - configuration based on the config.dev.ts file
+- see package.json for more ways to run and build the front end application
 
 ```bash
 $ yarn start
-```
-
-Or,
-Run the server in production mode, featuring:
-- live reload on source code change
-- configuration based on the config.prod.ts file
-
-```bash
-$ yarn dist-server
-```
-
-### Run Fake REST API
-We use [json-server](https://github.com/typicode/json-server) to fake our API.
-
-**Note** the JSON server runs in the foreground, which means that you should leave it up and running in a terminal
-as long as you need it, or run it in the background by suffixing the JSON server call with `&` (i.e. `... --port 4000 &`).
-
-```bash
-$ yarn json-server
 ```
 
 ## Tests
@@ -52,6 +34,9 @@ $ yarn json-server
 ```bash
 # single run
 $ yarn test 
+
+# run type checker and then the tests
+$ yarn verify
 
 # TDD style
 $ yarn test-watch
@@ -84,19 +69,12 @@ So far we have not mapped Material Icons and will try to avoid this as long as p
 This will hopefully make the icon handling easy although we at some point most likely will have to decide
 how to handle the Elvaco proprietary icons.
 
-# Fonts
-
-We are using *PT Sans* as the font of choice for most text in the application. More specifically, we are using both the regular and the bold versions.
-
-The font is available in [Google Fonts](https://fonts.google.com/specimen/PT+Sans?selection.family=PT+Sans:400,700).
-
-For easier local hosting, we use [Google Webfonts Helper](https://google-webfonts-helper.herokuapp.com/fonts/pt-sans?subsets=latin) which has copy & paste instructions for when you want to host the font files together with the application.
-
 # Resources
 
 ### Bundlers and module loaders
 
-* [Fusebox](http://fuse-box.org/) - FuseBox is a next generation bundler and module loader.
+* [Parcel](https://parceljs.org/) - "Blazing fast, zero configuration web application bundler"
+* [Fusebox](http://fuse-box.org/) - FuseBox "A bundler that does it right"
 
 ### React
 * [Presentational and Container Components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) - By Dan Abramov
@@ -107,6 +85,7 @@ For easier local hosting, we use [Google Webfonts Helper](https://google-webfont
 * [React Router](https://reacttraining.com/react-router/web/guides/philosophy) - Connects application to browser window's URL
 * [Redux Auth Wrapper](https://mjrussell.github.io/redux-auth-wrapper/) - Decouple your Authentication and Authorization from your components
 * [Reselect](https://github.com/reactjs/reselect) - Simple “selector” library for Redux
+* [Recompose](https://github.com/acdlite/recompose) - Recompose is a React utility belt for function components and higher-order components. Think of it like lodash for React.
 * [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) - React Developer Tools is a Chrome DevTools extension for the open-source React JavaScript library. 
 * [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) - Redux DevTools for debugging application's state changes.
 
@@ -116,4 +95,5 @@ For easier local hosting, we use [Google Webfonts Helper](https://google-webfont
 * [normalizer](https://tonyhb.gitbooks.io/redux-without-profanity/content/normalizer.html) - API response that has nested resources and flatten them
 * [classnames](https://github.com/JedWatson/classnames) - A simple JavaScript utility for conditionally joining classNames together.
 * [Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) - A Complete Guide to Flexbox.
+* [Lodash](https://lodash.com/docs/4.17.10) - A modern JavaScript utility library delivering modularity, performance & extras. 
 
