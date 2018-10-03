@@ -71,15 +71,13 @@ export const toggleIncludingChildren = (id: uuid) =>
       addresses.push(id);
     }
 
-    clusters.forEach((clusterId: uuid) => {
-      shouldShow ? listItems.add(clusterId) : listItems.delete(clusterId);
-    });
+    clusters.forEach((clusterId: uuid) =>
+      shouldShow ? listItems.add(clusterId) : listItems.delete(clusterId));
 
-    addresses.map((address: uuid) => {
+    addresses.forEach((address: uuid) => {
       shouldShow ? listItems.add(address) : listItems.delete(address);
-      clustered.entities.addresses[address].meters.map((meterId: uuid) => {
-        shouldShow ? listItems.add(meterId) : listItems.delete(meterId);
-      });
+      clustered.entities.addresses[address].meters.forEach((meterId: uuid) =>
+        shouldShow ? listItems.add(meterId) : listItems.delete(meterId));
     });
 
     dispatchIfWithinLimits(dispatch, Array.from(listItems));
