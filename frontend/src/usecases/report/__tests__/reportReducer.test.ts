@@ -1,7 +1,9 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
-import {Action, uuid} from '../../../types/Types';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {uuid} from '../../../types/Types';
 import {LOGOUT_USER} from '../../auth/authActions';
-import {SET_SELECTED_ENTRIES} from '../reportActions';
+import {SelectedEntriesPayload, setSelectedEntries} from '../reportActions';
 import {ReportState} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 
@@ -9,24 +11,25 @@ describe('reportReducer', () => {
 
   it('makes sure the selectedListItems is set to payload', () => {
     const state: ReportState = {selectedListItems: [4, 5]};
-    const payload: uuid[] = [1, 2, 3];
-    const action: Action<uuid[]> = {type: SET_SELECTED_ENTRIES, payload};
-
-    const expectedState: ReportState = {
-      ...state,
-      selectedListItems: payload,
+    const ids: uuid[] = [1];
+    const payload: SelectedEntriesPayload = {
+      ids,
+      quantitiesToSelect: [Quantity.energy],
+      indicatorsToSelect: [Medium.districtHeating],
     };
-    expect(report(state, action)).toEqual(expectedState);
+    const action = setSelectedEntries(payload);
+    const {selectedListItems} = report(state, action);
+
+    expect(selectedListItems).toContain(1);
+    expect(selectedListItems).not.toContain(4);
   });
 
   it('deselects all selected list items when the main selection is changed', () => {
     const state: ReportState = {selectedListItems: [1, 2, 3]};
     const selectionRelatedAction = {...mockSelectionAction};
 
-    const expectedState: ReportState = {
-      ...initialState,
-    };
-    expect(report(state, selectionRelatedAction)).toEqual(expectedState);
+    const {selectedListItems} = report(state, selectionRelatedAction);
+    expect(selectedListItems).toHaveLength(0);
   });
 
   describe('logout user', () => {

@@ -12,6 +12,7 @@ import {Column, ColumnCenter} from '../../../../components/layouts/column/Column
 import {RowCenter} from '../../../../components/layouts/row/Row';
 import {Small} from '../../../../components/texts/Texts';
 import {OnClick} from '../../../../types/Types';
+import './ReportIndicatorWidget.scss';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 type IndicatorComponentType = { [type in Medium]: React.ComponentType<SvgIconProps> };

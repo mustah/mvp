@@ -1,10 +1,16 @@
 import {createPayloadAction} from 'react-redux-typescript';
+import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {toggle} from '../../helpers/collections';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
-import {SelectionTree} from '../../state/selection-tree/selectionTreeModels';
+import {SelectionTree, SelectionTreeState} from '../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../state/selection-tree/selectionTreeSelectors';
-import {isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
+import {isSelectedCity, isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
+import {
+  allQuantities,
+  defaultQuantityForMedium,
+  Quantity,
+} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {OnPayloadAction, uuid} from '../../types/Types';
 
@@ -12,12 +18,32 @@ export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 
 export interface SelectedEntriesPayload {
   ids: uuid[];
+  indicatorsToSelect: Medium[];
+  quantitiesToSelect: Quantity[];
 }
 
 export const setSelectedEntries: OnPayloadAction<SelectedEntriesPayload> =
   createPayloadAction<string, SelectedEntriesPayload>(SET_SELECTED_ENTRIES);
 
-const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
+const mediaForSelection = (ids: uuid[], selectionTree: SelectionTreeState): Set<Medium> => {
+  const {entities: {meters, cities}}: SelectionTreeState = selectionTree;
+
+  const cityMedia: Medium[] = ids.filter(isSelectedCity)
+    .map((cityId) => cities[cityId].medium)
+    .reduce((all, current) => all.concat(current), []);
+
+  const meterMedia: Medium[] = ids.filter(isSelectedMeter)
+    .map((meterId) => meters[meterId].medium);
+
+  return new Set([...cityMedia, ...meterMedia]);
+};
+
+const dispatchIfWithinLimits = ({
+  dispatch,
+  selectionTree,
+  previouslySelected,
+  ids,
+}) => {
   const limit: number = 20;
   const newAmount: number = ids.filter(isSelectedMeter).length;
 
@@ -25,21 +51,63 @@ const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'only {{limit}} meters can be selected at the same time', {limit},
     )));
-  } else {
-    // TODO this should also toggle media/quantites, if needed. adjust the payload accordingly
-    dispatch(setSelectedEntries({ids}));
+    return;
   }
+
+  const orderedMedia: Medium[] = Object.keys(allQuantities) as Medium[];
+  const previousMedia: Set<Medium> = mediaForSelection(
+    previouslySelected,
+    selectionTree,
+  );
+
+  const currentlyActiveMedia: Set<Medium> = mediaForSelection(ids, selectionTree);
+
+  const activeIndicators: Medium[] =
+    orderedMedia.filter((medium: Medium) => previousMedia.has(medium) && currentlyActiveMedia.has(medium));
+
+  const maxSelectedIndicators = 2;
+  orderedMedia
+    .filter((medium: Medium) => currentlyActiveMedia.has(medium))
+    .forEach((activeMedium: Medium) => {
+      if (activeIndicators.length < maxSelectedIndicators) {
+        activeIndicators.push(activeMedium);
+      }
+    });
+
+  const orderedActiveIndicators: Medium[] = orderedMedia.filter(
+    (medium: Medium) => activeIndicators.includes(medium),
+  );
+
+  const uniqueQuantities: Quantity[] = Array.from(new Set(orderedActiveIndicators.map(defaultQuantityForMedium)));
+
+  dispatch(setSelectedEntries({
+    ids,
+    quantitiesToSelect: uniqueQuantities,
+    indicatorsToSelect: orderedActiveIndicators,
+  }));
 };
 
 export const toggleSingleEntry = (id: uuid) =>
-  (dispatch, getState: GetState) =>
-    dispatchIfWithinLimits(dispatch, toggle(id, getState().report.selectedListItems));
+  (dispatch, getState: GetState) => {
+    const {selectionTree, report: {selectedListItems}} = getState();
+    return dispatchIfWithinLimits({
+      dispatch,
+      selectionTree,
+      previouslySelected: selectedListItems,
+      ids: toggle(id, selectedListItems),
+    });
+  };
 
 export const addToReport = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const alreadyInReport: uuid[] = getState().report.selectedListItems;
-    if (!alreadyInReport.includes(id)) {
-      dispatch(setSelectedEntries({ids: [...alreadyInReport, id]}));
+    const {selectionTree, report: {selectedListItems}} = getState();
+    if (!selectedListItems.includes(id)) {
+      dispatchIfWithinLimits({
+        dispatch,
+        ids: [...selectedListItems, id],
+        selectionTree,
+        previouslySelected: selectedListItems,
+      });
     }
   };
 
@@ -86,16 +154,26 @@ export const toggleIncludingChildren = (id: uuid) =>
         shouldShow ? listItems.add(meterId) : listItems.delete(meterId));
     });
 
-    dispatchIfWithinLimits(dispatch, Array.from(listItems));
+    dispatchIfWithinLimits({
+      dispatch,
+      selectionTree,
+      previouslySelected: selectedListItems,
+      ids: Array.from(listItems),
+    });
   };
 
 export const selectEntryAdd = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {selectedListItems} = getState().report;
+    const {report: {selectedListItems}, selectionTree} = getState();
     const newSelectedListItems = new Set<uuid>(selectedListItems);
     const originalLength = newSelectedListItems.size;
     newSelectedListItems.add(id);
     if (newSelectedListItems.size > originalLength) {
-      dispatchIfWithinLimits(dispatch, Array.from(newSelectedListItems));
+      dispatchIfWithinLimits({
+        dispatch,
+        selectionTree,
+        previouslySelected: selectedListItems,
+        ids: Array.from(newSelectedListItems),
+      });
     }
   };

@@ -8,7 +8,7 @@ import {allQuantities, Measurement, Quantity, Reading} from '../../state/ui/grap
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
 
-export const orderedQuantities = (medium: Medium): Quantity[] => {
+const orderedQuantities = (medium: Medium): Quantity[] => {
   return medium in allQuantities
     ? allQuantities[medium]
     : [];

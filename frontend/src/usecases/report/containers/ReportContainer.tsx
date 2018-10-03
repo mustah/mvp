@@ -34,8 +34,7 @@ import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurement
 import {
   initialState,
   MeasurementResponses,
-  Measurements,
-  Quantity,
+  Measurements, Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';

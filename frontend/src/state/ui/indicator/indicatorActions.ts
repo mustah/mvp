@@ -16,10 +16,10 @@ export const setReportIndicatorWidgets = createPayloadAction<string, Medium[]>(S
 export const toggleReportIndicatorWidget =
   (medium: Medium) =>
     (dispatch, getState: GetState) => {
-      const indicatorState: IndicatorState = getState().ui.indicator;
-      const newTypes: Medium[] = toggle(medium, indicatorState.selectedIndicators.report);
-      const wasActivated: boolean = newTypes.length > indicatorState.selectedIndicators.report.length;
-      const quantities: Quantity[] = indicatorState.selectedQuantities;
+      const {selectedQuantities, selectedIndicators: {report}}: IndicatorState = getState().ui.indicator;
+      const newTypes: Medium[] = toggle(medium, report);
+      const wasActivated: boolean = newTypes.length > report.length;
+      const quantities: Quantity[] = selectedQuantities;
 
       dispatch(setReportIndicatorWidgets(newTypes));
 
