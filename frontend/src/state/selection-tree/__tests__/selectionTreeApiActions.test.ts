@@ -18,7 +18,7 @@ import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';
 import {initialState as initialSelectionTreeState} from '../selectionTreeReducer';
 import {selectionTreeSchema} from '../selectionTreeSchemas';
-import MockAdapter = require('axios-mock-adapter');
+import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('selectionTreeApiActions', () => {
   initTranslations({

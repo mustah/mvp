@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as MockAdapter from 'axios-mock-adapter';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';

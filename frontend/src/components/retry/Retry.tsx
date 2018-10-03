@@ -4,7 +4,7 @@ import {ErrorResponse, OnClick} from '../../types/Types';
 import {ButtonRetry} from '../buttons/ButtonRetry';
 import {ColumnCenter} from '../layouts/column/Column';
 import {RowCenter} from '../layouts/row/Row';
-import 'Retry.scss';
+import './Retry.scss';
 
 export interface RetryProps {
   clearError: OnClick;

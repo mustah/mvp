@@ -1,22 +1,20 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const converter = require('i18next-conv');
-const mkdirp = require('mkdirp');
-const {Sparky} = require('fuse-box');
+const {readFileSync, writeFileSync} = require('fs');
+const {gettextToI18next} = require('i18next-conv');
+const {sync} = require('mkdirp');
+const {src} = require('fuse-box/sparky');
 
 const utf8 = 'utf-8';
 const extractLangFromFileName = (file) => file.name.split('.', 1);
 
-const convertPoToJson = async ({base, templateFile, outputDir}) => {
-
-  return Sparky.src('i18n/locales/*.po', {base})
-    .completed(async (files) => {
-      const templatePot = fs.readFileSync(templateFile, utf8);
-      const templatePotJson = JSON.parse(await converter.gettextToI18next('en', templatePot, {quiet: true}));
+const convertPoToJson = async ({base, templateFile, outputDir}) =>
+  await src('i18n/locales/*.po', {base}).completed(async (files) => {
+      const templatePot = readFileSync(templateFile, utf8);
+      const templatePotJson = JSON.parse(await gettextToI18next('en', templatePot, {quiet: true}));
       files.map(async (file) => {
         const language = extractLangFromFileName(file);
         const content = file.read().contents.toString(utf8);
-        const data = await converter.gettextToI18next(language, content, {quiet: true});
+        const data = await gettextToI18next(language, content, {quiet: true});
         const dataJson = JSON.parse(data);
 
         const poTemplateTranslationsKeys = Object.keys(templatePotJson);
@@ -38,11 +36,10 @@ const convertPoToJson = async ({base, templateFile, outputDir}) => {
           }
         });
 
-        mkdirp.sync(outputDir);
-        fs.writeFileSync(`${outputDir}/${language}.json`, data, utf8);
+        sync(outputDir);
+        writeFileSync(`${outputDir}/${language}.json`, data, utf8);
       });
     })
     .exec();
-};
 
 module.exports = {convertPoToJson};

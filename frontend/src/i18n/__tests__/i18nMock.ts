@@ -1,4 +1,4 @@
-import * as i18n from 'i18next';
+import {default as i18n} from 'i18next';
 import {Dictionary} from '../../types/Types';
 
 const {i18nextConfig} = require('../i18nextConfig');
@@ -8,7 +8,7 @@ export interface Translations {
   translation: Dictionary<string>;
 }
 
-export const initTranslations = ({code, translation}: Translations) => {
+export const initTranslations = ({code, translation}: Translations) =>
   i18n
     .init({
       lng: code,
@@ -19,6 +19,5 @@ export const initTranslations = ({code, translation}: Translations) => {
         },
       },
     });
-};
 
 export const i18nMock = i18n;

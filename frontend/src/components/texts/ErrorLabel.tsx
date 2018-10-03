@@ -1,4 +1,4 @@
-import 'ErrorLabel.scss';
+import './ErrorLabel.scss';
 import * as React from 'react';
 import {Children, ClassNamed} from '../../types/Types';
 import {Xsmall} from './Texts';

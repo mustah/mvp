@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {Column} from '../../layouts/column/Column';
 import {TabContentProps} from './TabContent';

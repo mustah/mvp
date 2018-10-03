@@ -1,8 +1,8 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
-import 'SearchBox.scss';
+import './SearchBox.scss';
 import {colors} from '../../app/themes';
 import {ClassNamed, OnChange} from '../../types/Types';
 import SvgIconProps = __MaterialUI.SvgIconProps;

@@ -1,4 +1,4 @@
-import * as numeral from 'numeral';
+import {default as numeral} from 'numeral';
 import {momentWithTimeZone} from './dateHelpers';
 
 const isGreaterThan100 = (collectionPercentage: number): boolean =>

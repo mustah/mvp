@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../../components/dates/dateModels';
@@ -15,7 +16,6 @@ import {domainModelsGetEntitiesSuccess, domainModelsRequest} from '../../domainM
 import {initialDomain} from '../../domainModelsReducer';
 import {fetchMeterDetails} from '../meterDetailsApiActions';
 import {MeterDetails} from '../meterDetailsModels';
-import MockAdapter = require('axios-mock-adapter');
 
 describe('meterDetailsApiActions', () => {
 

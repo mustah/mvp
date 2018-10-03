@@ -1,4 +1,4 @@
-import 'LowConfidenceInfo.scss';
+import './LowConfidenceInfo.scss';
 import * as React from 'react';
 import Control from 'react-leaflet-control';
 import {Children} from '../../../types/Types';

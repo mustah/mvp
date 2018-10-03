@@ -1,5 +1,4 @@
-import * as classNames from 'classnames';
-import 'MvpApp.scss';
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -17,6 +16,7 @@ import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/saved
 import {SelectionTreeContainer} from '../../usecases/sidemenu/containers/selection-tree/SelectionTreeContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
+import './MvpApp.scss';
 import {MvpPages} from './MvpPages';
 
 interface StateToProps {

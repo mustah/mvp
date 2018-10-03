@@ -23,6 +23,7 @@ export interface Marker {
   options: MarkerOptions & {
     icon: Icon;
     mapMarkerItem: uuid;
+    status?: Status;
   };
 }
 

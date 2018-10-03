@@ -1,4 +1,5 @@
-import * as classNames from 'classnames';
+// import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import {Paper} from 'material-ui';
 import * as React from 'react';
 import {connect} from 'react-redux';

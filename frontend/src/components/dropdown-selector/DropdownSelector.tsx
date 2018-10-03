@@ -1,4 +1,4 @@
-import * as classNames from 'classnames';
+import {default as classNames} from 'classnames';
 import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';

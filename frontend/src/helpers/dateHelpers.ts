@@ -1,4 +1,5 @@
-import * as moment from 'moment-timezone';
+// import {default as momentInstance} from 'moment';
+import {default as moment} from 'moment-timezone';
 import 'moment/locale/en-gb';
 import 'moment/locale/sv';
 import {DateRange, Period} from '../components/dates/dateModels';
@@ -16,6 +17,8 @@ const timezoneUtc = 'UTC';
 export const momentWithTimeZone =
   (input: moment.MomentInput, timezone: string = timezoneUtc): moment.Moment =>
     moment(input).tz(timezone);
+
+export const now = (): Date => momentWithTimeZone(undefined, timezoneUtc).toDate();
 
 export const changeLocale = (language: string): string => moment.locale(language);
 
@@ -60,8 +63,6 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
       };
   }
 };
-
-export const now = (): Date => moment().tz(timezoneUtc).toDate();
 
 const currentDateRange = (
   start: Date,

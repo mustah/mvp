@@ -1,9 +1,9 @@
+import {default as classNames} from 'classnames';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
 import {ClassNamed, IdNamed, ItemOrArray, OnChange, uuid} from '../../types/Types';
-import classNames = require('classnames');
 import SelectFieldProps = __MaterialUI.SelectFieldProps;
 
 interface SelectFieldInputProps extends ClassNamed {

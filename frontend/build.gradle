@@ -17,7 +17,7 @@ node {
 task bundle(type: YarnTask) {
   inputs.dir(new File('src'))
   outputs.dir(distsDirName)
-  args  = ['dist']
+  args = ['dist']
 }
 
 task start(type: YarnTask) {
@@ -26,7 +26,7 @@ task start(type: YarnTask) {
 
 task yarn_test(type: YarnTask) {
   inputs.dir(new File('src'))
-  outputs.upToDateWhen { true }
+  outputs.upToDateWhen {true}
   args = ['test']
 }
 
@@ -35,5 +35,6 @@ task yarn_install(type: YarnTask) {
   outputs.dir('node_modules')
   args = ['install']
 }
+
 check.dependsOn([yarn_install, yarn_test])
 bundle.dependsOn(yarn_install)

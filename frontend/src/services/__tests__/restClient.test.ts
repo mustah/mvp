@@ -1,7 +1,7 @@
+import {default as MockAdapter} from 'axios-mock-adapter';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {EndPoints} from '../endPoints';
 import {authenticate, restClient, restClientWith, wasRequestCanceled} from '../restClient';
-import MockAdapter = require('axios-mock-adapter');
 
 describe('restClient', () => {
 

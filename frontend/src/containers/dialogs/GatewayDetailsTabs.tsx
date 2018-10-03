@@ -1,4 +1,4 @@
-import 'GatewayDetailsTabs.scss';
+import './GatewayDetailsTabs.scss';
 import * as React from 'react';
 import {OpenDialogInfoButton} from '../../components/dialog/OpenDialogInfoButton';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';

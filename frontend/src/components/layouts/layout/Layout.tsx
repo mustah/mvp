@@ -1,5 +1,5 @@
-import * as classNames from 'classnames';
-import 'Layout.scss';
+import {default as classNames} from 'classnames';
+import './Layout.scss';
 import * as React from 'react';
 import {ClassNamed, Clickable, Styled, WithChildren} from '../../../types/Types';
 
