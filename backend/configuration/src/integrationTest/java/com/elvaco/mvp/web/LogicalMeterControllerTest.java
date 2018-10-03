@@ -173,8 +173,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent().get(0);
 
-    assertThat(logicalMeterDto.location.city.name).isEqualTo("kungsbacka");
-    assertThat(logicalMeterDto.location.address.name).isEqualTo("kabelgatan 2t");
+    assertThat(logicalMeterDto.location.city).isEqualTo("kungsbacka");
+    assertThat(logicalMeterDto.location.address).isEqualTo("kabelgatan 2t");
   }
 
   @Test
@@ -699,7 +699,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     testSorting(
       "/meters?size=20&page=0&sort=address,asc",
       "Unexpected address, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.address.name,
+      (PagedLogicalMeterDto meter) -> meter.location.address,
       "Drottninggatan 2"
     );
 
@@ -707,7 +707,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     testSorting(
       "/meters?size=20&page=0&sort=address,desc",
       "Unexpected address, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.address.name,
+      (PagedLogicalMeterDto meter) -> meter.location.address,
       "Kungsgatan 55"
     );
 
@@ -730,14 +730,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     testSorting(
       "/meters?size=20&page=0&sort=city,asc",
       "Unexpected city, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.city.name,
+      (PagedLogicalMeterDto meter) -> meter.location.city,
       "Varberg"
     );
 
     testSorting(
       "/meters?size=20&page=0&sort=city,desc",
       "Unexpected city, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.city.name,
+      (PagedLogicalMeterDto meter) -> meter.location.city,
       "Östersund"
     );
   }
@@ -1314,7 +1314,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     assertThat(page)
-      .extracting("location.city.name")
+      .extracting("location.city")
       .containsExactly("ringhals");
   }
 
@@ -1334,7 +1334,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     assertThat(page)
-      .extracting("location.city.name")
+      .extracting("location.city")
       .containsExactly("ringhals");
   }
 
@@ -1354,7 +1354,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     assertThat(page)
-      .extracting("location.address.name", "location.city.name")
+      .extracting("location.address", "location.city")
       .containsExactly(tuple("storgatan 34", "ringhals"));
   }
 
@@ -1374,7 +1374,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     assertThat(page)
-      .extracting("location.address.name", "location.city.name")
+      .extracting("location.address", "location.city")
       .containsExactly(tuple("storgatan 34", "ringhals"));
   }
 

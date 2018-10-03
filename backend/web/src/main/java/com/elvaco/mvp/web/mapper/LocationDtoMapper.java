@@ -38,10 +38,22 @@ public class LocationDtoMapper {
   }
 
   public static LocationDto toLocationDto(Location location) {
-    return new LocationDto(toCity(location), toAddress(location), toGeoPositionDto(location));
+    return new LocationDto(
+      toCountry(location).name,
+      toCity(location).name,
+      toAddress(location).name,
+      toGeoPositionDto(location)
+    );
   }
 
-  public static IdNamedDto toCity(Location location) {
+  static IdNamedDto toCountry(Location location) {
+    return Optional.ofNullable(location)
+      .filter(l -> nonNull(l.getCountry()))
+      .map(l -> new IdNamedDto(l.getCountry()))
+      .orElse(UNKNOWN_LOCATION);
+  }
+
+  static IdNamedDto toCity(Location location) {
     return Optional.ofNullable(location)
       .filter(l -> nonNull(l.getCity()))
       .map(l -> new IdNamedDto(l.getCity()))

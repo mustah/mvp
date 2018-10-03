@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
-import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import lombok.experimental.UtilityClass;
 
@@ -33,7 +32,12 @@ public class GatewayDtoMapper {
       formatProductModel(gateway.productModel),
       gatewayStatusLog.status.name,
       formatUtc(gatewayStatusLog.start),
-      new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
+      new LocationDto(
+        toCountry(logicalMeter),
+        toCity(logicalMeter),
+        toAddress(logicalMeter),
+        toGeoPosition(logicalMeter)
+      ),
       connectedMeterIds(gateway),
       gateway.organisationId
     );
@@ -56,16 +60,25 @@ public class GatewayDtoMapper {
       .collect(toList());
   }
 
-  private static IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
+  private static String toCountry(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .map(LocationDtoMapper::toCity)
-      .orElse(UNKNOWN_LOCATION);
+      .map(LocationDtoMapper::toCountry)
+      .orElse(UNKNOWN_LOCATION)
+      .name;
   }
 
-  private static IdNamedDto toAddress(Optional<LogicalMeter> logicalMeter) {
+  private static String toCity(Optional<LogicalMeter> logicalMeter) {
+    return logicalMeter.map(meter -> meter.location)
+      .map(LocationDtoMapper::toCity)
+      .orElse(UNKNOWN_LOCATION)
+      .name;
+  }
+
+  private static String toAddress(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
       .map(LocationDtoMapper::toAddress)
-      .orElse(UNKNOWN_LOCATION);
+      .orElse(UNKNOWN_LOCATION)
+      .name;
   }
 
   private static GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {

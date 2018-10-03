@@ -36,8 +36,8 @@ export const MeterList = (
       <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
     </Column>);
   const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
-  const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
-  const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
+  const renderCityName = ({location: {city}}: Meter) => orUnknown(city);
+  const renderAddressName = ({location: {address}}: Meter) => orUnknown(address);
   const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
   const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
   const renderActions = ({id, manufacturer}: Meter) => (

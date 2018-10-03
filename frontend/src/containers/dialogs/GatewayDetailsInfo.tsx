@@ -6,6 +6,8 @@ import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
+import {CityInfo} from '../../components/texts/Labels';
+import {BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
@@ -53,7 +55,7 @@ class GatewayDetailsInfo extends React.Component<Props> {
 
   render() {
     const {
-      gateway: {location: {city, address}, serial, productModel, status, statusChanged},
+      gateway: {location: {city, country, address}, serial, productModel, status, statusChanged},
       organisation,
     } = this.props;
     const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
@@ -63,26 +65,33 @@ class GatewayDetailsInfo extends React.Component<Props> {
         <Column className="Overview">
           <Row>
             <MainTitle>{translate('gateway details')}</MainTitle>
-            <Info label={translate('gateway serial')} value={serial}/>
-            <Info label={translate('product model')} value={productModel}/>
-            <Info label={translate('city')} value={orUnknown(city.name)}/>
-            <Info label={translate('address')} value={orUnknown(address.name)}/>
-            <SuperAdminInfo label={translate('organisation')} value={organisationName}/>
+            <Info label={translate('gateway serial')}>
+              <BoldFirstUpper>{serial}</BoldFirstUpper>
+            </Info>
+            <Info label={translate('product model')}>
+              <BoldFirstUpper>{productModel}</BoldFirstUpper>
+            </Info>
+            <Info label={translate('city')}>
+              <CityInfo name={orUnknown(city)} subTitle={orUnknown(country)}/>
+            </Info>
+            <Info label={translate('address')}>
+              <BoldFirstUpper>{orUnknown(address)}</BoldFirstUpper>
+            </Info>
+            <SuperAdminInfo label={translate('organisation')}>
+              <BoldFirstUpper>{organisationName}</BoldFirstUpper>
+            </SuperAdminInfo>
           </Row>
         </Column>
         <Row>
           <Column className="Gateway-image">
             <img src={cme2110} width={120}/>
           </Column>
-          <Info
-            label={translate('collection')}
-            value={<Status label={status.name}/>}
-          />
-          <Info
-            className="StatusChange"
-            label={translate('status change')}
-            value={<WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>}
-          />
+          <Info label={translate('collection')}>
+            <Status label={status.name}/>
+          </Info>
+          <Info className="StatusChange" label={translate('status change')}>
+            <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+          </Info>
         </Row>
       </Column>
     );

@@ -6,7 +6,7 @@ import {Index, InfiniteLoader, List, ListRowProps} from 'react-virtualized';
 import {dropDownStyle} from '../../app/themes';
 import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
-import {translate} from '../../services/translationService';
+import {orUnknown} from '../../helpers/translations';
 import {Address, City} from '../../state/domain-models/location/locationModels';
 import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsApiActions';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
@@ -15,7 +15,8 @@ import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
 import {SearchBox} from '../search-box/SearchBox';
-import {Normal} from '../texts/Texts';
+import {LabelWithSubtitle} from '../texts/Labels';
+import {FirstUpper} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
 import {replaceWhereId, searchOverviewText, throttledSearch, ThrottledSearch, unknownItems} from './dropdownHelper';
 import './DropdownSelector.scss';
@@ -119,7 +120,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
           className={classNames('DropdownSelector-Text clickable', {isOpen})}
         >
           <RowMiddle>
-            <Normal className="first-uppercase">{selectionText}{selectedOverview}</Normal>
+            <FirstUpper>{selectionText}{selectedOverview}</FirstUpper>
             <IconDropDown/>
           </RowMiddle>
         </div>
@@ -272,31 +273,19 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
 
 }
 
-const translatedNameOf = ({name}: IdNamed): string =>
-  name === 'unknown' ? translate('unknown') : name;
+const translatedNameOf = ({name}: IdNamed): string => orUnknown(name);
 
-const renderLabels = (name: string, parentName: string) => {
-  return (
-    <Column>
-      <Normal className="first-uppercase">{name}</Normal>
-      <div className="first-uppercase" style={dropDownStyle.parentStyle}>{parentName}</div>
-    </Column>
-  );
-};
-
-const renderLabelAtIndex = (index: number, filteredList: SelectionListItem[]) => {
-  const {name} = filteredList[index];
-  return <Normal className="first-uppercase">{name}</Normal>;
-};
+const renderLabelAtIndex = (index: number, filteredList: SelectionListItem[]) =>
+  <FirstUpper>{filteredList[index]}</FirstUpper>;
 
 export const renderCityLabel = (index: number, filteredList: SelectionListItem[]) => {
   const city = filteredList[index] as City;
-  return renderLabels(translatedNameOf(city), translatedNameOf(city.country));
+  return <LabelWithSubtitle name={translatedNameOf(city)} subTitle={translatedNameOf(city.country)}/>;
 };
 
 export const renderAddressLabel = (index: number, filteredList: SelectionListItem[]) => {
   const address = filteredList[index] as Address;
-  return renderLabels(translatedNameOf(address), translatedNameOf(address.city));
+  return <LabelWithSubtitle name={translatedNameOf(address)} subTitle={translatedNameOf(address.country)}/>;
 };
 
 const DropdownSelector = (props: Props & OptionalProps) => (

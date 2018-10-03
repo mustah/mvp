@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
-import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
@@ -71,8 +70,9 @@ public class LogicalMeterDtoMapperTest {
     expected.medium = "Hot water";
     expected.isReported = false;
     expected.location = new LocationDto(
-      new IdNamedDto("kungsbacka"),
-      new IdNamedDto("kabelgatan 2t"),
+      "sverige",
+      "kungsbacka",
+      "kabelgatan 2t",
       new GeoPositionDto(57.5052592, 56.123, 1.0)
     );
     expected.manufacturer = "ELV";
@@ -140,6 +140,7 @@ public class LogicalMeterDtoMapperTest {
           .location(new LocationBuilder()
             .city("kungsbacka")
             .address("kabelgatan 2t")
+            .country("sverige")
             .latitude(57.5052592)
             .longitude(56.123)
             .confidence(1.0)

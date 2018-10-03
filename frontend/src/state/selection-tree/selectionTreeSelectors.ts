@@ -97,7 +97,7 @@ export const getSelectionTree =
 
       const citiesWithClusters: ObjectsById<CityWithClusters> = {};
 
-      const onlyMatches = (id) => !query || idsMatchingSearch.has(id);
+      const onlyMatches = (id: uuid) => !query || idsMatchingSearch.has(id);
 
       const createClustersByCity = (cityId: uuid): ObjectsById<ClusterWithAddresses> => {
         const city = cities[cityId];

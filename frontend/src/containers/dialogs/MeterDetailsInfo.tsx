@@ -6,6 +6,8 @@ import {Column} from '../../components/layouts/column/Column';
 import {Row, RowMiddle} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
 import {ErrorLabel} from '../../components/texts/ErrorLabel';
+import {CityInfo} from '../../components/texts/Labels';
+import {BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {formatCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
@@ -66,7 +68,7 @@ class MeterDetailsInfo extends React.Component<Props> {
       }
     };
 
-    const {city, address} = meter.location;
+    const {address, city, country} = meter.location;
     const formattedCollectionPercentage = formatCollectionPercentage(
       meter.collectionPercentage,
       meter.readIntervalMinutes,
@@ -83,11 +85,21 @@ class MeterDetailsInfo extends React.Component<Props> {
                 <MainTitle>{translate('meter')}</MainTitle>
               </Row>
             </Column>
-            <Info label={translate('product model')} value={orUnknown(meter.manufacturer)}/>
-            <Info label={translate('medium')} value={meter.medium}/>
-            <Info label={translate('city')} value={orUnknown(city.name)}/>
-            <Info label={translate('address')} value={orUnknown(address.name)}/>
-            <SuperAdminInfo label={translate('organisation')} value={organisationName}/>
+            <Info label={translate('product model')}>
+              <BoldFirstUpper>{orUnknown(meter.manufacturer)}</BoldFirstUpper>
+            </Info>
+            <Info label={translate('medium')}>
+              <BoldFirstUpper>{meter.medium}</BoldFirstUpper>
+            </Info>
+            <Info label={translate('city')}>
+              <CityInfo name={orUnknown(city)} subTitle={orUnknown(country)}/>
+            </Info>
+            <Info label={translate('address')}>
+              <BoldFirstUpper>{orUnknown(address)}</BoldFirstUpper>
+            </Info>
+            <SuperAdminInfo label={translate('organisation')}>
+              <BoldFirstUpper>{organisationName}</BoldFirstUpper>
+            </SuperAdminInfo>
           </Row>
           <Row>
             <Column>
@@ -95,8 +107,12 @@ class MeterDetailsInfo extends React.Component<Props> {
                 <Subtitle>{translate('collection')}</Subtitle>
               </Row>
             </Column>
-            <Info className="First-column" label={translate('resolution')} value={renderReadInterval()}/>
-            <Info label={translate('collection percentage')} value={formattedCollectionPercentage}/>
+            <Info className="First-column" label={translate('resolution')}>
+              <BoldFirstUpper>{renderReadInterval()}</BoldFirstUpper>
+            </Info>
+            <Info label={translate('collection percentage')}>
+              <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
+            </Info>
           </Row>
           <Row>
             <Column>
@@ -104,15 +120,12 @@ class MeterDetailsInfo extends React.Component<Props> {
                 <Subtitle>{translate('validation')}</Subtitle>
               </Row>
             </Column>
-            <Info
-              className="First-column"
-              label={translate('alarm')}
-              value={<MeterAlarm alarm={meter.alarm}/>}
-            />
-            <Info
-              label={translate('status change')}
-              value={<WrappedDateTime date={meter.statusChanged} hasContent={!!meter.statusChanged}/>}
-            />
+            <Info className="First-column" label={translate('alarm')}>
+              <MeterAlarm alarm={meter.alarm}/>
+            </Info>
+            <Info label={translate('status change')}>
+              <WrappedDateTime date={meter.statusChanged} hasContent={!!meter.statusChanged}/>
+            </Info>
           </Row>
           <RowMiddle>
             <Column>
@@ -120,8 +133,12 @@ class MeterDetailsInfo extends React.Component<Props> {
                 <Subtitle>{translate('labels')}</Subtitle>
               </Row>
             </Column>
-            <Info label={translate('facility id')} value={meter.facility}/>
-            <Info label={translate('meter id')} value={meter.address}/>
+            <Info label={translate('facility id')}>
+              <BoldFirstUpper>{meter.facility}</BoldFirstUpper>
+            </Info>
+            <Info label={translate('meter id')}>
+              <BoldFirstUpper>{meter.address}</BoldFirstUpper>
+            </Info>
             <ErrorLabel hasError={meter.isReported}>{translate('reported')}</ErrorLabel>
           </RowMiddle>
         </Column>

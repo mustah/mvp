@@ -1,6 +1,6 @@
 import {Meter, MeterStatusChangelog} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
-import {Identifiable, IdNamed, uuid} from '../types/Types';
+import {Identifiable, uuid} from '../types/Types';
 
 const meters = [
   {id: 'm1', name: 'UNICOcoder'},
@@ -33,7 +33,7 @@ export const testData = {
   gateways,
 };
 
-export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter => (
+export const makeMeter = (id: number, city: string, address: string): Meter => (
   {
     id,
     facility: '1',
@@ -43,6 +43,7 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
     location: {
       address,
       city,
+      country: 'sverige',
       position: {
         latitude: 1,
         longitude: 1,
@@ -59,7 +60,7 @@ export interface MeterDto extends Identifiable, LocationHolder {
   statusChangelog: MeterStatusChangelog[];
 }
 
-export const makeMeterDto = (id: number, city: IdNamed, address: IdNamed): MeterDto => {
+export const makeMeterDto = (id: number, city: string, address: string): MeterDto => {
   const meter: any = makeMeter(id, city, address);
   return {
     ...meter,

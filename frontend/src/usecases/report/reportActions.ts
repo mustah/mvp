@@ -71,7 +71,7 @@ export const toggleIncludingChildren = (id: uuid) =>
       addresses.push(id);
     }
 
-    clusters.map((clusterId: uuid) => {
+    clusters.forEach((clusterId: uuid) => {
       shouldShow ? listItems.add(clusterId) : listItems.delete(clusterId);
     });
 

@@ -78,14 +78,9 @@ describe('meterDetailsApiActions', () => {
       },
       organisationId: 'org123',
       location: {
-        address: {
-          id: 'adr123',
-          name: 'adr123',
-        },
-        city: {
-          id: 'cit123',
-          name: 'cit123',
-        },
+        address: 'adr123',
+        city: 'cit123',
+        country: 'sverige',
         position: {
           latitude: 0.0,
           longitude: 0.0,

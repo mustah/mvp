@@ -1,25 +1,23 @@
 import {default as classNames} from 'classnames';
-import './Info.scss';
 import * as React from 'react';
 import {componentOrNull} from '../../components/hoc/hocs';
 import {superAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
-import {Row} from '../../components/layouts/row/Row';
-import {Bold, Normal} from '../../components/texts/Texts';
-import {Children, ClassNamed} from '../../types/Types';
+import {Normal} from '../../components/texts/Texts';
+import {ClassNamed, WithChildren} from '../../types/Types';
+import './Info.scss';
 
-interface InfoProps extends ClassNamed {
+interface InfoProps extends ClassNamed, WithChildren {
   label: string;
-  value: Children;
 }
 
-const InfoComponent = ({className, label, value}: InfoProps) => (
+const InfoComponent = ({children, className, label}: InfoProps) => (
   <Column className={classNames('Info', className)}>
-    <Row><Normal className="Info-label">{label}</Normal></Row>
-    <Row><Bold className="first-uppercase">{value}</Bold></Row>
+    <Normal className="Info-label">{label}</Normal>
+    {children}
   </Column>
 );
 
-export const Info = componentOrNull<InfoProps>(({value}: InfoProps) => !!value)(InfoComponent);
+export const Info = componentOrNull<InfoProps>(({children}: InfoProps) => !!children)(InfoComponent);
 
 export const SuperAdminInfo = superAdminOnly<InfoProps>(Info);

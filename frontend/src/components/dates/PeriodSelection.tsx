@@ -38,7 +38,7 @@ const labelStyle: React.CSSProperties = {
   height,
   lineHeight: 1,
   paddingRight: 0,
-  paddingLeft: 16,
+  paddingLeft: 8,
   fontSize: 14,
   display: 'flex',
   alignItems: 'center',
@@ -48,7 +48,7 @@ const labelStyle: React.CSSProperties = {
 const iconStyle: React.CSSProperties = {
   fill: colors.lightBlack,
   height,
-  width: 46,
+  width: 36,
   right: 0,
   top: 0,
   padding: 0,

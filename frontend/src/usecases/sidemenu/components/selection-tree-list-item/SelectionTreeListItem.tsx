@@ -6,7 +6,7 @@ import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfo
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import '../../../../components/indicators/ReportIndicatorWidget.scss';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
-import {Normal} from '../../../../components/texts/Texts';
+import {FirstUpper} from '../../../../components/texts/Texts';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {Maybe} from '../../../../helpers/Maybe';
 import {orUnknown} from '../../../../helpers/translations';
@@ -205,13 +205,9 @@ const renderSelectableListItem = ({
       </RowCenter>
     )
     : (
-      <Normal
-        className="first-uppercase"
-        style={listItemStyle.textStyle}
-        title={firstUpper(primaryText)}
-      >
+      <FirstUpper style={listItemStyle.textStyle} title={firstUpper(primaryText)}>
         {primaryText}
-      </Normal>
+      </FirstUpper>
     );
 
   return (
