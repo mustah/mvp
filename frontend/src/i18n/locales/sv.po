@@ -474,6 +474,15 @@ msgstr "mätaren uppdateras snart"
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
+msgid "yes"
+msgstr "ja"
+
+msgid "no"
+msgstr "nej"
+
+msgid "close"
+msgstr "close"
+
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} av {{count}}"
@@ -516,17 +525,12 @@ msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "larm"
+
 #~ msgid "inside temperature"
 #~ msgstr "temp. inomhus"
-
-#~ msgid "yes"
-#~ msgstr "ja"
-
-#~ msgid "no"
-#~ msgstr "nej"
-
-#~ msgid "close"
-#~ msgstr "stäng"
 
 #~ msgid "quantity"
 #~ msgstr "storhet"
@@ -546,6 +550,4 @@ msgstr "{{count}} mätare kommer snart att uppdateras"
 #~ msgid "no data found for selected meters during chosen interval"
 #~ msgstr "ingen data finns för valda mätare under tidsperioden"
 
-#~ msgctxt "°plural"
-#~ msgid "alarm°"
-#~ msgstr "larm"
+

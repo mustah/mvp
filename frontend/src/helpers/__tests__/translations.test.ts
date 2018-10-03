@@ -101,6 +101,10 @@ describe('translations', () => {
       translate('Relative humidity short');
       translate('Energy return short');
       translate('Reactive energy short');
+      translate('close');
+      translate('yes');
+      translate('no');
+      translate('alarm', {count: 2});
     });
 
   });

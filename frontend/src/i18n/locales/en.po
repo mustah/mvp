@@ -474,6 +474,15 @@ msgstr "meter will soon be synchronized"
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} meter will soon be synchronized"
 
+msgid "yes"
+msgstr "yes"
+
+msgid "no"
+msgstr "no"
+
+msgid "close"
+msgstr "close"
+
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} of {{count}}"
@@ -514,17 +523,12 @@ msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} meters will soon be synchronized"
 
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "alarms"
+
 #~ msgid "inside temperature"
 #~ msgstr "inside temperature"
-
-#~ msgid "yes"
-#~ msgstr "yes"
-
-#~ msgid "no"
-#~ msgstr "no"
-
-#~ msgid "close"
-#~ msgstr "close"
 
 #~ msgid "quantity"
 #~ msgstr "quantity"
@@ -544,6 +548,3 @@ msgstr "{{count}} meters will soon be synchronized"
 #~ msgid "no data found for selected meters during chosen interval"
 #~ msgstr "no data found for selected meters during chosen interval"
 
-#~ msgctxt "°plural"
-#~ msgid "alarm°"
-#~ msgstr "alarms"

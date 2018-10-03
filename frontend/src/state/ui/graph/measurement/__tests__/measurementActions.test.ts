@@ -57,7 +57,7 @@ describe('measurementActions', () => {
 
       const requestedUrls: string[] = [];
       mockRestClient.onGet().reply((config) => {
-        requestedUrls.push(config.url);
+        requestedUrls.push(config.url!);
         return [200, 'some data'];
       });
 
@@ -83,7 +83,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = [];
         mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url);
+          requestedUrls.push(config.url!);
           return [200, 'some data'];
         });
 
@@ -110,7 +110,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = [];
         mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url);
+          requestedUrls.push(config.url!);
           return [200, 'some data'];
         });
 
@@ -141,7 +141,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = [];
         mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url);
+          requestedUrls.push(config.url!);
           return [200, 'some data'];
         });
 
@@ -188,7 +188,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = [];
         mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url);
+          requestedUrls.push(config.url!);
           return [200, 'some data'];
         });
 
@@ -213,7 +213,7 @@ describe('measurementActions', () => {
 
       const requestedUrls: string[] = [];
       mockRestClient.onGet().reply((config) => {
-        requestedUrls.push(config.url);
+        requestedUrls.push(config.url!);
         return [200, 'some data'];
       });
 
@@ -243,7 +243,7 @@ describe('measurementActions', () => {
       const requestedUrls: string[] = [];
 
       mockRestClient.onGet().reply(async (config) => {
-        requestedUrls.push(config.url);
+        requestedUrls.push(config.url!);
 
         const measurement: MeasurementApiResponse = [
           {
@@ -300,7 +300,7 @@ describe('measurementActions', () => {
           },
         ];
 
-        if (config.url.match(/^\/measurements\/average/)) {
+        if (config.url!.match(/^\/measurements\/average/)) {
           return [200, average];
         } else {
           return [200, measurement];
@@ -386,7 +386,7 @@ describe('measurementActions', () => {
           },
         ];
 
-        if (config.url.match(/^\/measurements\/average/)) {
+        if (config.url!.match(/^\/measurements\/average/)) {
           return [200, average];
         } else {
           return [200, measurement];
@@ -468,7 +468,7 @@ describe('measurementActions', () => {
           },
         ];
 
-        if (config.url.match(/^\/measurements\/average/)) {
+        if (config.url!.match(/^\/measurements\/average/)) {
           return [200, average];
         } else {
           return [200, measurement];
