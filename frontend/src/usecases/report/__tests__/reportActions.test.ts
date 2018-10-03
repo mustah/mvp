@@ -5,8 +5,10 @@ import {idGenerator} from '../../../helpers/idGenerator';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
 import {SHOW_FAIL_MESSAGE} from '../../../state/ui/message/messageActions';
+import {Action} from '../../../types/Types';
 import {
   addToReport,
+  SelectedEntriesPayload,
   selectEntryAdd,
   SET_SELECTED_ENTRIES,
   toggleIncludingChildren,
@@ -15,6 +17,8 @@ import {
 import {ReportState} from '../reportModels';
 
 const configureMockStore = configureStore([thunk]);
+
+type ExpectedActions = Array<Action<SelectedEntriesPayload>>;
 
 describe('reportActions', () => {
 
@@ -26,12 +30,16 @@ describe('reportActions', () => {
 
       store.dispatch(toggleSingleEntry(1));
 
-      expect(store.getActions()).toEqual([
+      const expected: ExpectedActions = [
         {
           type: SET_SELECTED_ENTRIES,
-          payload: [2, 3, 1],
+          payload: {
+            ids: [2, 3, 1],
+          },
         },
-      ]);
+      ];
+
+      expect(store.getActions()).toEqual(expected);
 
     });
 
@@ -41,12 +49,15 @@ describe('reportActions', () => {
 
       store.dispatch(toggleSingleEntry(1));
 
-      expect(store.getActions()).toEqual([
+      const expected: ExpectedActions = [
         {
           type: SET_SELECTED_ENTRIES,
-          payload: [2, 3],
+          payload: {
+            ids: [2, 3],
+          },
         },
-      ]);
+      ];
+      expect(store.getActions()).toEqual(expected);
     });
 
   });
@@ -59,12 +70,16 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(4));
 
-      expect(store.getActions()).toEqual([
+
+      const expected: ExpectedActions = [
         {
           type: SET_SELECTED_ENTRIES,
-          payload: [1, 2, 3, 4],
+          payload: {
+            ids: [1, 2, 3, 4],
+          },
         },
-      ]);
+      ];
+      expect(store.getActions()).toEqual(expected);
     });
 
     it('does not fire an event if meter is already selected', () => {
@@ -169,39 +184,49 @@ describe('reportActions', () => {
       const store = configureMockStore(initialState);
       store.dispatch(toggleIncludingChildren('sweden,höganäs,storgatan 5'));
 
-      expect(store.getActions()).toEqual([{
+
+      const expected: ExpectedActions = [{
         type: SET_SELECTED_ENTRIES,
-        payload: [
-          ...initialState.report!.selectedListItems,
-          'sweden,höganäs,storgatan 5',
-          '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
-        ],
-      }]);
+        payload: {
+          ids: [
+            ...initialState.report!.selectedListItems,
+            'sweden,höganäs,storgatan 5',
+            '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+          ],
+        },
+      }];
+      expect(store.getActions()).toEqual(expected);
     });
 
     it('deselects given address and meters, if address already selected', () => {
       const store = configureMockStore(initialState);
       store.dispatch(toggleIncludingChildren('sweden,höganäs,hasselgatan 4'));
 
-      expect(store.getActions()).toEqual([{
+      const expected: ExpectedActions = [{
         type: SET_SELECTED_ENTRIES,
-        payload: [],
-      }]);
+        payload: {
+          ids: [],
+        },
+      }];
+      expect(store.getActions()).toEqual(expected);
     });
 
     it('selects given clusters and meters, if cluster not already selected', () => {
       const store = configureMockStore(initialState);
       store.dispatch(toggleIncludingChildren('sweden,höganäs:s'));
 
-      expect(store.getActions()).toEqual([{
+      const expected: ExpectedActions = [{
         type: SET_SELECTED_ENTRIES,
-        payload: [
-          ...initialState.report!.selectedListItems,
-          'sweden,höganäs:s',
-          'sweden,höganäs,storgatan 5',
-          '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
-        ],
-      }]);
+        payload: {
+          ids: [
+            ...initialState.report!.selectedListItems,
+            'sweden,höganäs:s',
+            'sweden,höganäs,storgatan 5',
+            '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+          ],
+        },
+      }];
+      expect(store.getActions()).toEqual(expected);
     });
 
     it('deselects given clusters and meters, if cluster already selected', () => {
@@ -219,10 +244,13 @@ describe('reportActions', () => {
       });
       store.dispatch(toggleIncludingChildren(cluster));
 
-      expect(store.getActions()).toEqual([{
+      const expected: ExpectedActions = [{
         type: SET_SELECTED_ENTRIES,
-        payload: [],
-      }]);
+        payload: {
+          ids: [],
+        },
+      }];
+      expect(store.getActions()).toEqual(expected);
     });
 
     it('shows failure message if trying to select more than 20 meters at a time', () => {
@@ -263,10 +291,11 @@ describe('reportActions', () => {
       const store = configureMockStore(state);
       store.dispatch(toggleIncludingChildren(addressId));
 
-      expect(store.getActions()).toEqual([{
+      const expected = [{
         type: SHOW_FAIL_MESSAGE,
         payload: 'Only 20 meters can be selected at the same time',
-      }]);
+      }];
+      expect(store.getActions()).toEqual(expected);
     });
 
   });
@@ -279,12 +308,15 @@ describe('reportActions', () => {
 
       store.dispatch(selectEntryAdd(3));
 
-      expect(store.getActions()).toEqual([
+      const expected: ExpectedActions = [
         {
           type: SET_SELECTED_ENTRIES,
-          payload: [1, 2, 3],
+          payload: {
+            ids: [1, 2, 3],
+          },
         },
-      ]);
+      ];
+      expect(store.getActions()).toEqual(expected);
     });
 
     it('does not dispatch when id already exist in selected', () => {
@@ -293,7 +325,8 @@ describe('reportActions', () => {
 
       store.dispatch(selectEntryAdd(3));
 
-      expect(store.getActions()).toEqual([]);
+      const expected: ExpectedActions = [];
+      expect(store.getActions()).toEqual(expected);
     });
 
   });

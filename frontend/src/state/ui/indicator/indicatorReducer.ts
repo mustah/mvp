@@ -1,6 +1,6 @@
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {Action, uuid} from '../../../types/Types';
-import {SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
+import {Action} from '../../../types/Types';
+import {SelectedEntriesPayload, SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
 import {Quantity} from '../graph/measurement/measurementModels';
 import {SET_REPORT_INDICATOR_WIDGETS, SET_SELECTED_QUANTITIES} from './indicatorActions';
 
@@ -18,7 +18,7 @@ export const initialState: IndicatorState = {
   selectedQuantities: [],
 };
 
-type ActionTypes = Action<Medium[]> | Action<Quantity[]> | Action<uuid[]>;
+type ActionTypes = Action<Medium[]> | Action<Quantity[]> | Action<SelectedEntriesPayload>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   // TODO listen in on SET_SELECTED_ENTRIES and auto toggle some indicators/quantities if needed..
@@ -32,7 +32,7 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
         },
       };
     case SET_SELECTED_ENTRIES:
-      return (action.payload as uuid[]).length ? state : {...initialState};
+      return (action.payload as SelectedEntriesPayload).ids.length ? state : {...initialState};
     case SET_SELECTED_QUANTITIES:
       return {
         ...state,

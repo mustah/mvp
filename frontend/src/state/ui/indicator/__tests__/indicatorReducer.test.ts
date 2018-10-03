@@ -14,9 +14,23 @@ describe('indicatorReducer', () => {
       selectedQuantities: [Quantity.volume],
     };
 
-    const stateAfterDeselection = indicator(nonEmptyState, setSelectedEntries([]));
+    const stateAfterDeselection = indicator(nonEmptyState, setSelectedEntries({ids: []}));
 
     expect(stateAfterDeselection).toEqual(initialState);
+  });
+
+  it('selects indicator and default quantity for single report item', () => {
+    const stateAfterFirstReportItemIsSelected: IndicatorState = indicator(initialState, setSelectedEntries({ids: ['123']}));
+
+    const expected: IndicatorState = {
+      ...initialState,
+      selectedIndicators: {
+        report: [Medium.roomSensor],
+      },
+      selectedQuantities: [Quantity.externalTemperature],
+    };
+
+    expect(stateAfterFirstReportItemIsSelected).toEqual(expected);
   });
 
 });

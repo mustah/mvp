@@ -6,11 +6,16 @@ import {SelectionTree} from '../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../state/selection-tree/selectionTreeSelectors';
 import {isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
 import {showFailMessage} from '../../state/ui/message/messageActions';
-import {uuid} from '../../types/Types';
+import {OnPayloadAction, uuid} from '../../types/Types';
 
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 
-export const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTRIES);
+export interface SelectedEntriesPayload {
+  ids: uuid[];
+}
+
+export const setSelectedEntries: OnPayloadAction<SelectedEntriesPayload> =
+  createPayloadAction<string, SelectedEntriesPayload>(SET_SELECTED_ENTRIES);
 
 const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
   const limit: number = 20;
@@ -21,7 +26,8 @@ const dispatchIfWithinLimits = (dispatch, ids: uuid[]) => {
       'only {{limit}} meters can be selected at the same time', {limit},
     )));
   } else {
-    dispatch(setSelectedEntries(ids));
+    // TODO this should also toggle media/quantites, if needed. adjust the payload accordingly
+    dispatch(setSelectedEntries({ids}));
   }
 };
 
@@ -33,7 +39,7 @@ export const addToReport = (id: uuid) =>
   (dispatch, getState: GetState) => {
     const alreadyInReport: uuid[] = getState().report.selectedListItems;
     if (!alreadyInReport.includes(id)) {
-      dispatch(setSelectedEntries([...alreadyInReport, id]));
+      dispatch(setSelectedEntries({ids: [...alreadyInReport, id]}));
     }
   };
 
