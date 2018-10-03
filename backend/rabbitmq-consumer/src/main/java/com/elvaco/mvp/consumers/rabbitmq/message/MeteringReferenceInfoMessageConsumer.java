@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -179,7 +180,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
           .map(LogicalMeter::getId)
           .orElse(physicalMeter.logicalMeterId))
         .build()
-        .replaceActiveStatus(StatusType.from(meterDto.status))
+        .replaceActiveStatus(StatusType.from(meterDto.status), ZonedDateTime.now())
     );
   }
 

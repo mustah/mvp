@@ -50,11 +50,7 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
     return id;
   }
 
-  public PhysicalMeter replaceActiveStatus(StatusType status) {
-    return replaceActiveStatus(status, ZonedDateTime.now());
-  }
-
-  PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
+  public PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
     List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statuses,
       StatusLogEntry.<UUID>builder()

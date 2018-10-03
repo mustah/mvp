@@ -43,7 +43,6 @@ public class PhysicalMeterTest {
 
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
-
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(ERROR, now).statuses;
 
     assertThat(statuses).containsExactlyInAnyOrder(
@@ -65,7 +64,8 @@ public class PhysicalMeterTest {
       .build();
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK).statuses;
+    List<StatusLogEntry<UUID>> statuses =
+      meter.replaceActiveStatus(OK, ZonedDateTime.now()).statuses;
 
     assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
   }
