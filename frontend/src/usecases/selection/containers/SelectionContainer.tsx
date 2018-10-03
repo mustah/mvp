@@ -18,27 +18,24 @@ interface StateToProps {
 
 type Props = StateToProps & InjectedAuthRouterProps;
 
-const SelectionContainerComponent = ({title}: Props) => {
-  return (
-    <MvpPageContainer>
-      <Row className="space-between">
-        <MainTitle>{title}</MainTitle>
-        <Row>
-          <SummaryContainer/>
-          <PeriodContainer/>
-        </Row>
+const SelectionContainerComponent = ({title}: Props) => (
+  <MvpPageContainer>
+    <Row className="space-between">
+      <MainTitle>{title}</MainTitle>
+      <Row>
+        <SummaryContainer/>
+        <PeriodContainer/>
       </Row>
-      <Paper style={mainContentPaperStyle}>
-        <SelectionContentContainer/>
-      </Paper>
-    </MvpPageContainer>
-  );
-};
+    </Row>
+    <Paper style={mainContentPaperStyle}>
+      <SelectionContentContainer/>
+    </Paper>
+  </MvpPageContainer>
+);
 
-const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => {
-  const title = userSelection.id === -1 ? translate('selection') : userSelection.name;
-  return {title};
-};
+const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => ({
+  title: userSelection.id === -1 ? translate('selection') : userSelection.name
+});
 
 export const SelectionContainer =
   connect<StateToProps>(mapStateToProps)(SelectionContainerComponent);
