@@ -24,7 +24,7 @@
   },
   "jest": {
     "globals": {
-      "ts-jesModuleInteropest": {
+      "ts-jest": {
         "skipBabel": true
       }
     },
