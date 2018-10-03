@@ -4,6 +4,7 @@ import {ItemOrArray, uuid} from '../../types/Types';
 import {WidgetWithTitle} from '../../usecases/dashboard/components/widgets/Widget';
 import {ColumnCenter, ColumnContent} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
+import {FirstUpper} from '../texts/Texts';
 import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
 
@@ -83,7 +84,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
           <ColumnCenter>
             <div style={legendStyle}/>
           </ColumnCenter>
-          <div className="first-uppercase">{name} ({value})</div>
+          <FirstUpper>{name} ({value})</FirstUpper>
         </Row>);
     };
     return payload.map(render);

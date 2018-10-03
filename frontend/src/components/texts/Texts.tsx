@@ -16,7 +16,13 @@ export const Normal = (props: TextProps) => {
   );
 };
 
+export const FirstUpper = (props: TextProps) =>
+  (<Normal {...props} className={classNames('first-uppercase', props.className)}/>);
+
 export const Bold = (props: TextProps) => (<Normal {...props} className={classNames('Bold', props.className)}/>);
+
+export const BoldFirstUpper = (props: TextProps) =>
+  (<Bold {...props} className={classNames('first-uppercase', props.className)}/>);
 
 export const Large = (props: TextProps) => (<Normal {...props} className={classNames('Large', props.className)}/>);
 

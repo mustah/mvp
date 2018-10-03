@@ -50,16 +50,8 @@ describe('meterApiActions', () => {
 
   describe('fetchMeters', () => {
     const page = 0;
-    const meter1: MeterDto = makeMeterDto(
-      1,
-      {id: 1, name: 'gothenburg'},
-      {id: 1, name: 'kungsgatan'},
-    );
-    const meter2: MeterDto = makeMeterDto(
-      2,
-      {id: 2, name: 'stockholm'},
-      {id: 2, name: 'kungsgatan'},
-    );
+    const meter1: MeterDto = makeMeterDto(1, 'gothenburg', 'kungsgatan');
+    const meter2: MeterDto = makeMeterDto(2, 'stockholm', 'kungsgatan');
 
     const meterResponse = {
       content: [

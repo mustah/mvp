@@ -1,8 +1,9 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
-import {TabUnderline} from './TabUnderliner';
 import {Column} from '../../layouts/column/Column';
+import {FirstUpper} from '../../texts/Texts';
+import {TabUnderline} from './TabUnderliner';
 
 export interface TabProps {
   title: string;
@@ -17,9 +18,7 @@ export const Tab = (props: TabProps) => {
   const isSelected = tab === selectedTab;
   return (
     <Column className={classNames('Tab', {isSelected})} onClick={selectTab}>
-      <div className="Tab-header first-uppercase">
-        {title}
-      </div>
+      <FirstUpper className="Tab-header">{title}</FirstUpper>
       <TabUnderline isSelected={isSelected}/>
     </Column>
   );

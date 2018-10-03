@@ -25,17 +25,19 @@ describe('paginatedDomainModelsReducer', () => {
 
     const page = 0;
 
+    const location = {
+      address: 'Kungsgatan',
+      city: 'Göteborg',
+      country: 'sverige',
+      position: {latitude: 10, longitude: 10},
+    };
     const normalizedMeters: NormalizedPaginated<Meter> = {
       page,
       entities: {
         meters: {
           1: {
             id: 1,
-            location: {
-              address: {id: 1, name: 'Kungsgatan'},
-              city: {id: 'got', name: 'Göteborg'},
-              position: {latitude: 10, longitude: 10},
-            },
+            location,
             facility: 'torp',
             medium: 'Electricity',
             manufacturer: 'ABB',
@@ -45,11 +47,7 @@ describe('paginatedDomainModelsReducer', () => {
           },
           2: {
             id: 2,
-            location: {
-              address: {id: 1, name: 'Kungsgatan'},
-              city: {id: 'got', name: 'Göteborg'},
-              position: {latitude: 10, longitude: 10},
-            },
+            location,
             facility: 'torp',
             medium: 'Electricity',
             manufacturer: 'ABB',
@@ -227,7 +225,7 @@ describe('paginatedDomainModelsReducer', () => {
         {
           meters: {
             ...makeInitialState<Meter>(),
-            entities: {1: {...makeMeter(1, {id: 1, name: 'Mo'}, {id: 1, name: 'b'})}},
+            entities: {1: {...makeMeter(1, 'stockholm', 'king street')}},
           },
           gateways: {
             ...makeInitialState<Gateway>(),

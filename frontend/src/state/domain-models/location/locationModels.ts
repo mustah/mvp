@@ -1,8 +1,9 @@
 import {IdNamed} from '../../../types/Types';
 
 export interface Location {
-  address: IdNamed;
-  city: IdNamed;
+  address: string;
+  city: string;
+  country: string;
   position: GeoPosition;
 }
 

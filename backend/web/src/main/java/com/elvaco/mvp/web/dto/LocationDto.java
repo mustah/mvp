@@ -11,7 +11,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class LocationDto {
 
-  public IdNamedDto city;
-  public IdNamedDto address;
+  public String country;
+  public String city;
+  public String address;
   public GeoPositionDto position;
 }

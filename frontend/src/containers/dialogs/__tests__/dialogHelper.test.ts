@@ -17,8 +17,9 @@ describe('dialogHelper', () => {
       id: '12032010',
       serial: '005',
       location: {
-        address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33'},
-        city: {id: 'Perstorp', name: 'Perstorp'},
+        address: 'Stockholmsv 33',
+        city: 'Perstorp',
+        country: 'sverige',
         position: {longitude: 14.205929, latitude: 59.666749},
       },
       productModel: 'CMi2110',
@@ -99,14 +100,9 @@ describe('dialogHelper', () => {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         facility: '426',
         location: {
-          city: {
-            id: 'Perstorp',
-            name: 'Perstorp',
-          },
-          address: {
-            id: 'Bäckavägen 2 A',
-            name: 'Bäckavägen 2 A',
-          },
+          address: 'Bäckavägen 2 A',
+          city: 'Perstorp',
+          country: 'sverige',
           position: {
             latitude: 56.13955,
             longitude: 13.39741,
@@ -179,14 +175,9 @@ describe('dialogHelper', () => {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         facility: '426',
         location: {
-          city: {
-            id: 'Perstorp',
-            name: 'Perstorp',
-          },
-          address: {
-            id: 'Bäckavägen 2 A',
-            name: 'Bäckavägen 2 A',
-          },
+          country: 'sverige',
+          city: 'Perstorp',
+          address: 'Bäckavägen 2 A',
           position: {
             latitude: 56.13955,
             longitude: 13.39741,
@@ -238,14 +229,9 @@ describe('dialogHelper', () => {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         facility: '426',
         location: {
-          city: {
-            id: 'Perstorp',
-            name: 'Perstorp',
-          },
-          address: {
-            id: 'Bäckavägen 2 A',
-            name: 'Bäckavägen 2 A',
-          },
+          city: 'Perstorp',
+          address: 'Bäckavägen 2 A',
+          country: 'sverige',
           position: {
             latitude: 56.13955,
             longitude: 13.39741,

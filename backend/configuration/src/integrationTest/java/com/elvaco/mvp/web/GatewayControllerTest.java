@@ -20,7 +20,6 @@ import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
-import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import org.junit.After;
 import org.junit.Before;
@@ -319,7 +318,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .build());
 
     Location locationWithLowConfidence = new LocationBuilder()
-      .country("sweden")
+      .country("sverige")
       .city("kungsbacka")
       .address("kabelgatan 1")
       .longitude(1.3333)
@@ -351,8 +350,9 @@ public class GatewayControllerTest extends IntegrationTest {
           status1.status.name,
           formatUtc(status1.start),
           new LocationDto(
-            new IdNamedDto("unknown"),
-            new IdNamedDto("unknown"),
+            "unknown",
+            "unknown",
+            "unknown",
             new GeoPositionDto(1.234, 2.3323, 1.0)
           ),
           singletonList(meterId1),
@@ -365,8 +365,9 @@ public class GatewayControllerTest extends IntegrationTest {
           status2.status.name,
           formatUtc(status2.start),
           new LocationDto(
-            new IdNamedDto("kungsbacka"),
-            new IdNamedDto("kabelgatan 1"),
+            "sverige",
+            "kungsbacka",
+            "kabelgatan 1",
             new GeoPositionDto(1.12345, 1.3333, 0.6)
           ),
           singletonList(meterId2),
@@ -450,7 +451,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .getPage("/gateways?w=kungsb", GatewayDto.class);
 
     assertThat(page)
-      .extracting("location.city.name")
+      .extracting("location.city")
       .containsExactly("kungsbacka");
   }
 
@@ -474,7 +475,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .getPage("/gateways?w=Kungsb", GatewayDto.class);
 
     assertThat(page)
-      .extracting("location.city.name")
+      .extracting("location.city")
       .containsExactly("kungsbacka");
   }
 
@@ -499,7 +500,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .getPage("/gateways?w=tekni", GatewayDto.class);
 
     assertThat(page)
-      .extracting("location.address.name", "location.city.name")
+      .extracting("location.address", "location.city")
       .containsExactly(tuple("teknikgatan 2t", "kungsbacka"));
   }
 
@@ -516,6 +517,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
       .location(new LocationBuilder()
+        .country("sverige")
         .city("kungsbacka")
         .address("teknikgatan 2t")
         .build())
@@ -524,7 +526,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .getPage("/gateways?w=Tekni", GatewayDto.class);
 
     assertThat(page)
-      .extracting("location.address.name", "location.city.name")
+      .extracting("location.address", "location.city")
       .containsExactly(tuple("teknikgatan 2t", "kungsbacka"));
   }
 
@@ -590,8 +592,6 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   private static LocationBuilder unknownLocationBuilder() {
-    return new LocationBuilder()
-      .latitude(1.234)
-      .longitude(2.3323);
+    return new LocationBuilder().latitude(1.234).longitude(2.3323);
   }
 }

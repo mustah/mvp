@@ -21,8 +21,8 @@ export const GatewayList = ({
 
   const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
   const renderCollectionStatus = ({status: {name}}: Gateway) => <Status label={name}/>;
-  const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
-  const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
+  const renderCity = ({location: {city}}: Gateway) => orUnknown(city);
+  const renderAddress = ({location: {address}}: Gateway) => orUnknown(address);
   const renderProductModel = ({productModel}: Gateway) => productModel;
 
   const onChangePage = (page: number) => changePage({entityType, componentId, page});

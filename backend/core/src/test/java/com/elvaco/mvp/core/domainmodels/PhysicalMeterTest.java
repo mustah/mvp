@@ -50,6 +50,7 @@ public class PhysicalMeterTest {
       previousStatus.toBuilder().stop(now).build(),
       StatusLogEntry.<UUID>builder()
         .entityId(meterId)
+        .start(now)
         .status(ERROR)
         .build()
     );
