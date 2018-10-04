@@ -12,6 +12,16 @@ fetch_mvp_archive:
     - source: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar
     - source_hash: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar.sha1
 
+create_new_mvp_log_dir:
+  file.directory:
+    - name: /var/log/elvaco/mvp
+    - user: mvp
+    - group: mvp
+    - mode: 755
+    - makedirs: True
+    - require:
+      - fetch_mvp_archive
+
 create_new_mvp_dir:
   file.directory:
     - name: /opt/elvaco/mvp-{{ mvp_version }}/config
@@ -47,6 +57,14 @@ deploy_mvp_config:
     - require:
         - deploy_mvp
 
+deploy_mvp_log_config:
+  file.managed:
+    - name: /opt/elvaco/mvp-{{ mvp_version }}/config/logback-spring.xml
+    - source: salt://mvp/app/files/mvp/logback-spring.xml
+    - require:
+        - deploy_mvp
+        - create_new_mvp_log_dir
+
 deploy_mvp_db_config:
   file.managed:
     - name: /opt/elvaco/mvp-{{ mvp_version }}/config/application-postgresql.properties
@@ -69,6 +87,7 @@ deploy_mvp_systemd:
     - require:
       - create_mvp_symlink
       - deploy_mvp_config
+      - deploy_mvp_log_config
       - deploy_mvp_db_config
     - watch:
       - file: /lib/systemd/system/{{ mvp_systemd_unit }}

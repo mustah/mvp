@@ -12,10 +12,14 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Slf4j
 @RequiredArgsConstructor
 public class MeteringMessageListener implements MessageListener {
+
+  private static final Logger MESSAGE_LOGGER = LoggerFactory.getLogger("MeteringMessageLogger");
 
   private final MessageParser messageParser;
   private final MeasurementMessageConsumer measurementMessageConsumer;
@@ -27,6 +31,7 @@ public class MeteringMessageListener implements MessageListener {
   @Override
   public String onMessage(String message) {
     try {
+      MESSAGE_LOGGER.info(message);
       return handleMessage(messageParser.parse(message));
     } catch (RuntimeException exception) {
       log.warn("Message handling raised exception. Offending message is: {}", message);
