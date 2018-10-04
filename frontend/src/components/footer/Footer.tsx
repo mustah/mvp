@@ -6,14 +6,13 @@ import {RowCenter} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 import './Footer.scss';
 
-const version: string = config().frontendVersion;
-// keep the placeholder string separated, so that it itself is not replaced in the build process
-const wasReplaced: boolean = version !== 'FRONTEND' + '_VERSION';
+const frontendVersion = config().frontendVersion;
+const isProductionEnvironment = config().environment === 'production';
 
-export const FooterComponent = () => (
+const FooterComponent = () => (
   <RowCenter className="Footer">
-    <Normal>{firstUpperTranslated('version')} {version}</Normal>
+    <Normal>{firstUpperTranslated('version')} {frontendVersion}</Normal>
   </RowCenter>
 );
 
-export const Footer = componentOrNull((_) => wasReplaced)(FooterComponent);
+export const Footer = componentOrNull((_) => isProductionEnvironment)(FooterComponent);
