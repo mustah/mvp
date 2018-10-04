@@ -15,3 +15,8 @@ export const changeTabValidation = (tab: TabName) => changeTab({
   useCase: UseCases.validation,
   tab,
 });
+
+export const changeTabReport = (tab: TabName) => changeTab({
+  useCase: UseCases.report,
+  tab,
+});

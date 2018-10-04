@@ -1,8 +1,6 @@
 import {PersistedState} from 'redux-persist';
-import {
-  mapSelectedIdToAddress,
-  mapSelectedIdToCity,
-} from '../state/domain-models/selections/selectionsApiActions';
+import {mapSelectedIdToAddress, mapSelectedIdToCity} from '../state/domain-models/selections/selectionsApiActions';
+import {initialState} from '../state/ui/tabs/tabsReducer';
 import {OldSelectionParameters, UserSelection} from '../state/user-selection/userSelectionModels';
 import {IdNamed, toIdNamed, uuid} from '../types/Types';
 
@@ -75,6 +73,18 @@ export const migrations = {
       },
     };
   },
+  4: (state: PersistedState | any) => {
+    return {
+      ...state,
+      ui: {
+        ...state.ui,
+        tabs: {
+          ...state.ui.tabs,
+          report: initialState.report.selectedTab,
+        },
+      },
+    };
+  },
 };
 
-export const currentVersion: number = 3;
+export const currentVersion: number = 4;

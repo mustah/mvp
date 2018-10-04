@@ -1,15 +1,12 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
 import {CHANGE_TAB} from './tabsActions';
-import {SelectedTabs, TabName, TabSelection, TabsState} from './tabsModels';
-
-const listTab: SelectedTabs = {
-  selectedTab: TabName.list,
-};
+import {TabName, TabSelection, TabsState} from './tabsModels';
 
 export const initialState: TabsState = {
-  validation: {...listTab},
-  collection: {...listTab},
+  validation: {selectedTab: TabName.list},
+  collection: {selectedTab: TabName.list},
+  report: {selectedTab: TabName.graph},
 };
 
 type ActionType = Action<TabSelection> | EmptyAction<string>;
