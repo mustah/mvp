@@ -12,7 +12,7 @@ Feature: Acceptance test
         | name     | email          | password      | company   |
         | at-user  | at@example.com | dummyPassw0rd | Test Corp |
 
-    Scenario Outline: Login to MVP
+    Scenario Outline: Login to EVO
         Given I am on the login page
         When I login as user '<email>' and password '<password>'
         Then I should be logged in as '<name>'
@@ -21,7 +21,7 @@ Feature: Acceptance test
             | email          | password      | name    |
             | at@example.com | dummyPassw0rd | at-user |
 
-    Scenario Outline: Deny login to MVP
+    Scenario Outline: Deny login to EVO
         Given I am on the login page
         When I login as user '<email>' and password '<password>'
         Then I should see error message '<message>'

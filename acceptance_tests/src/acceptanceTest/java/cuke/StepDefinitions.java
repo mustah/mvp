@@ -34,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StepDefinitions {
 
   private WebDriver driver;
-  private String mvpServer;
-  private String mvpApiServer;
-  private String mvpAdminUsername;
-  private String mvpAdminPassword;
+  private String evoServer;
+  private String evoApiServer;
+  private String evoAdminUsername;
+  private String evoAdminPassword;
   private String useLocalBrowser;
   private List<JsonNode> organisations;
   private ApiRequestHelper api;
@@ -49,14 +49,14 @@ public class StepDefinitions {
       .orElse("4444");
     String apiPort = Optional.ofNullable(System.getenv("MVP_API_PORT"))
       .orElse("8080");
-    mvpAdminUsername = Optional.ofNullable(System.getenv("MVP_ADMIN_USERNAME"))
+    evoAdminUsername = Optional.ofNullable(System.getenv("MVP_ADMIN_USERNAME"))
       .orElse("mvpadmin@elvaco.se");
-    mvpAdminPassword = Optional.ofNullable(System.getenv("MVP_ADMIN_PASSWORD"))
+    evoAdminPassword = Optional.ofNullable(System.getenv("MVP_ADMIN_PASSWORD"))
       .orElse("changeme");
     useLocalBrowser = System.getenv("LOCAL_BROWSER");
 
-    mvpServer = server + ":" + webPort;
-    mvpApiServer = server + ":" + apiPort;
+    evoServer = server + ":" + webPort;
+    evoApiServer = server + ":" + apiPort;
   }
 
   @Before
@@ -75,9 +75,9 @@ public class StepDefinitions {
 
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-    System.out.println("MVP_WEB_SERVER: " + mvpServer);
-    System.out.println("MVP_API_SERVER: " + mvpApiServer);
-    api = new ApiRequestHelper(mvpApiServer, mvpAdminUsername, mvpAdminPassword);
+    System.out.println("MVP_WEB_SERVER: " + evoServer);
+    System.out.println("MVP_API_SERVER: " + evoApiServer);
+    api = new ApiRequestHelper(evoApiServer, evoAdminUsername, evoAdminPassword);
     organisations = new ArrayList<>();
   }
 
@@ -85,8 +85,7 @@ public class StepDefinitions {
   public void afterScenario(Scenario scenario) {
     api.deleteOrganisations(organisations);
     if (scenario.isFailed()) {
-      final byte[] screenshot = ((TakesScreenshot) driver)
-        .getScreenshotAs(OutputType.BYTES);
+      byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
       scenario.write("URL at failure: " + driver.getCurrentUrl());
       scenario.embed(screenshot, "image/png");
     }
@@ -95,8 +94,7 @@ public class StepDefinitions {
 
   @Given("the following companies exist")
   public void givenTheFollowingCompaniesExist(DataTable table) throws UnirestException {
-    List<Map<String, String>> data = table.asMaps(String.class, String.class);
-    for (Map<String, String> row : data) {
+    for (Map<String, String> row : table.asMaps(String.class, String.class)) {
       JsonNode organisation = api.createOrganisation(row.get("company"), row.get("slug"));
       organisations.add(organisation);
     }
@@ -104,19 +102,20 @@ public class StepDefinitions {
 
   @Given("the following users exist")
   public void givenTheFollowingUsersExist(DataTable table) throws UnirestException {
-    List<Map<String,String>> data = table.asMaps(String.class, String.class);
-    for (Map<String, String> row: data) {
-      api.createUser(row.get("name"),
+    for (Map<String, String> row : table.asMaps(String.class, String.class)) {
+      api.createUser(
+        row.get("name"),
         row.get("email"),
         row.get("password"),
-        api.findOrganisationByName(row.get("organisation"), organisations));
+        api.findOrganisationByName(row.get("organisation"), organisations)
+      );
     }
   }
 
   @Given("I am on the login page")
   public void givenIAmOnTheLoginPage() {
-    driver.get(mvpServer);
-    assertThat(driver.getTitle()).isEqualTo("Elvaco");
+    driver.get(evoServer);
+    assertThat(driver.getTitle()).isEqualTo("EVO");
   }
 
   @When("I login as user '(.*)' and password '(.*)'")
@@ -149,7 +148,7 @@ public class StepDefinitions {
     assertThat(contextElement.getText()).isEqualTo(text);
   }
 
-  private String getHostName() throws UnknownHostException {
+  private static String getHostName() throws UnknownHostException {
     InetAddress hostName = InetAddress.getLocalHost();
     return hostName.getCanonicalHostName();
   }

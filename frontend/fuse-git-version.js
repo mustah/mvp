@@ -13,7 +13,7 @@ const gitVersion = async () => {
 
     const execAsync = promisify(exec);
 
-    await execAsync(`sed -i '' 's/FRONTEND_VERSION/${`${date} (${ref})`}/' ${appJs}`);
+    await execAsync(`sed -i'' 's/FRONTEND_VERSION/${`${date} (${ref})`}/' ${appJs}`);
   } catch (error) {
     console.error('Unable to replace version due to: ', error);
     process.exit(1);
