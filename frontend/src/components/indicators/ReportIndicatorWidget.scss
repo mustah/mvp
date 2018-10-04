@@ -6,7 +6,7 @@
   .Indicator {
     cursor: pointer;
     justify-content: space-around;
-    width: 98px;
+    min-width: 112px;
 
     .Indicator-name {
       font-size: $sm;
