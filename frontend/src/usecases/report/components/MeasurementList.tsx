@@ -31,7 +31,7 @@ const renderName = (item: MeasurementListItem) => orUnknown(item.label);
 const renderCity = (item: MeasurementListItem) => orUnknown(item.city);
 const renderAddress = (item: MeasurementListItem) => orUnknown(item.address);
 const renderValue = ({value = null, unit}: MeasurementListItem): string =>
-  value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
+  value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '-';
 const renderCreated = (item: MeasurementListItem) => timestamp(item.created * 1000);
 
 const lineSchema = [new schema.Entity('items', {}, {idAttribute: 'id'})];
