@@ -1,3 +1,4 @@
+const {promisify} = require('util');
 const {exec, execFileSync} = require('child_process');
 
 const appJs = `./dist/src.*.js`;
@@ -10,9 +11,9 @@ const gitVersion = async () => {
     // ref is of the format: v0.0.22-26-ge4808a1
     const ref = execFileSync('git', ['describe', '--tags', '--abbrev=7']).toString().trim();
 
-    await exec(`sed -i '' 's/FRONTEND_VERSION/${`${date} (${ref})`}/' ${appJs}`);
+    const execAsync = promisify(exec);
 
-    process.exit(0);
+    await execAsync(`sed -i '' 's/FRONTEND_VERSION/${`${date} (${ref})`}/' ${appJs}`);
   } catch (error) {
     console.error('Unable to replace version due to: ', error);
     process.exit(1);
