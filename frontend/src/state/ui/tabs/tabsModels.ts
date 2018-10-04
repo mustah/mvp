@@ -5,23 +5,24 @@ export const enum TabName {
   map = 'map',
   graph = 'graph',
   table = 'table',
-  overview = 'overview',
   values = 'values',
   log = 'log',
   connectedGateways = 'connectedGateways',
 }
 
+type TabUseCases = UseCases.collection | UseCases.validation | UseCases.report;
+
 export interface SelectedTabs {
   selectedTab: TabName;
 }
 
-export interface TabsState {
-  [key: string]: SelectedTabs;
-}
+export type TabsState = {
+  [key in TabUseCases]: SelectedTabs;
+};
 
 export interface TabSelection {
   tab: TabName;
-  useCase: UseCases.collection | UseCases.validation;
+  useCase: TabUseCases;
 }
 
 export interface SelectedTab {

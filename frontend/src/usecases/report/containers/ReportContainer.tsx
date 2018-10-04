@@ -38,7 +38,9 @@ import {
   Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
-import {TabName} from '../../../state/ui/tabs/tabsModels';
+import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
+import {TabName, TabsContainerDispatchToProps} from '../../../state/ui/tabs/tabsModels';
+import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {ErrorResponse, Omit, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
@@ -56,6 +58,7 @@ interface StateToProps {
   selectedListItems: uuid[];
   selectedQuantities: Quantity[];
   selectionTreeEntities: SelectionTreeEntities;
+  selectedTab: TabName;
 }
 
 export interface ReportContainerState {
@@ -66,7 +69,7 @@ export interface ReportContainerState {
   measurementResponse: MeasurementResponses;
 }
 
-interface DispatchToProps {
+interface DispatchToProps extends TabsContainerDispatchToProps {
   toggleReportIndicatorWidget: OnSelectIndicator;
   logout: OnLogout;
 }
@@ -88,22 +91,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   constructor(props) {
     super(props);
     this.state = {...initialState};
-  }
-
-  updateState = (state: ReportContainerState) => this.setState({...state});
-
-  clearError = async () => {
-    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
-    this.setState({error: Maybe.nothing(), isFetching: true});
-    await fetchMeasurements({
-      selectedIndicators,
-      quantities: selectedQuantities,
-      selectedListItems,
-      timePeriod: period,
-      customDateRange,
-      updateState: this.updateState,
-      logout,
-    });
   }
 
   async componentDidMount() {
@@ -139,17 +126,16 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
   render() {
     const {
+      selectedTab,
       selectedIndicatorTypes,
       toggleReportIndicatorWidget,
       enabledIndicatorTypes,
       selectedListItems,
       selectionTreeEntities,
     } = this.props;
-    const {isFetching, error, hiddenKeys, selectedTab, measurementResponse} = this.state;
+    const {isFetching, error, hiddenKeys, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
-
-    const onChangeTab = (selectedTab: TabName) => this.setState({selectedTab});
 
     const onToggleLine = (dataKey: string) => {
       this.setState({
@@ -183,7 +169,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
           <Paper style={contentStyle}>
             <Tabs>
               <TabTopBar>
-                <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+                <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
                   <Tab tab={TabName.graph} title={translate('graph')}/>
                   <Tab tab={TabName.list} title={translate('list')}/>
                 </TabHeaders>
@@ -210,13 +196,37 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
       </MvpPageContainer>
     );
   }
+
+  updateState = (state: ReportContainerState): void => this.setState({...state});
+
+  onChangeTab = (selectedTab: TabName): void => {
+    this.setState({selectedTab});
+    this.props.changeTab(selectedTab);
+  }
+
+  clearError = async () => {
+    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
+    this.setState({error: Maybe.nothing(), isFetching: true});
+    await fetchMeasurements({
+      selectedIndicators,
+      quantities: selectedQuantities,
+      selectedListItems,
+      timePeriod: period,
+      customDateRange,
+      updateState: this.updateState,
+      logout,
+    });
+  }
 }
 
 const mapStateToProps =
   ({
     report: {selectedListItems},
     userSelection: {userSelection},
-    ui: {indicator: {selectedIndicators: {report}, selectedQuantities}},
+    ui: {
+      indicator: {selectedIndicators: {report}, selectedQuantities},
+      tabs,
+    },
     selectionTree: {entities},
   }: RootState): StateToProps & SelectedIndicatorWidgetProps =>
     ({
@@ -227,11 +237,13 @@ const mapStateToProps =
       selectedIndicators: report,
       selectedIndicatorTypes: report,
       selectionTreeEntities: entities,
+      selectedTab: getSelectedTab(tabs.report),
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleReportIndicatorWidget,
   logout,
+  changeTab: changeTabReport,
 }, dispatch);
 
 export const ReportContainer =
