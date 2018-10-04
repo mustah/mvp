@@ -1,7 +1,6 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {mainContentPaperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
@@ -16,29 +15,24 @@ interface StateToProps {
   title: string;
 }
 
-type Props = StateToProps & InjectedAuthRouterProps;
-
-const SelectionContainerComponent = ({title}: Props) => {
-  return (
-    <MvpPageContainer>
-      <Row className="space-between">
-        <MainTitle>{title}</MainTitle>
-        <Row>
-          <SummaryContainer/>
-          <PeriodContainer/>
-        </Row>
+const SelectionContainerComponent = ({title}: StateToProps) => (
+  <MvpPageContainer>
+    <Row className="space-between">
+      <MainTitle>{title}</MainTitle>
+      <Row>
+        <SummaryContainer/>
+        <PeriodContainer/>
       </Row>
-      <Paper style={mainContentPaperStyle}>
-        <SelectionContentContainer/>
-      </Paper>
-    </MvpPageContainer>
-  );
-};
+    </Row>
+    <Paper style={mainContentPaperStyle}>
+      <SelectionContentContainer/>
+    </Paper>
+  </MvpPageContainer>
+);
 
-const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => {
-  const title = userSelection.id === -1 ? translate('selection') : userSelection.name;
-  return {title};
-};
+const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => ({
+  title: userSelection.id === -1 ? translate('selection') : userSelection.name,
+});
 
 export const SelectionContainer =
   connect<StateToProps>(mapStateToProps)(SelectionContainerComponent);

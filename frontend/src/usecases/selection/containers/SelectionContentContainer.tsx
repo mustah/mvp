@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import './SelectionContentContainer.scss';
 import {
   renderAddressLabel,
   renderCityLabel,
@@ -38,8 +37,8 @@ import {
   getSelectedReported,
   getSelectedSecondaryAddresses,
 } from '../../../state/user-selection/userSelectionSelectors';
-import {uuid} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';
+import './SelectionContentContainer.scss';
 
 interface StateToProps {
   addresses: SelectionListItem[];
@@ -50,7 +49,6 @@ interface StateToProps {
   media: SelectionListItem[];
   reported: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
-  selectionId: uuid;
 }
 
 interface DispatchToProps {
@@ -72,7 +70,6 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       media,
       reported,
       secondaryAddresses,
-      selectionId,
       toggleParameter,
     } = this.props;
 
@@ -103,7 +100,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
     const gatewaySerialSelectionText = translate('gateway serial') + ': ';
 
     return (
-      <Column className="SelectionContentBox" key={selectionId === -1 ? 1 : selectionId}>
+      <Column className="SelectionContentBox">
         <Subtitle>{translate('filter')}</Subtitle>
 
         <Row className="SelectionDropdownOptions">
@@ -179,7 +176,6 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   media: getSelectedMedia(userSelection),
   reported: getSelectedReported(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),
-  selectionId: userSelection.userSelection.id,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
