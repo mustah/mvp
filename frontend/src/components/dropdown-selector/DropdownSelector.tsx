@@ -275,8 +275,10 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
 
 const translatedNameOf = ({name}: IdNamed): string => orUnknown(name);
 
-const renderLabelAtIndex = (index: number, filteredList: SelectionListItem[]) =>
-  <FirstUpper>{filteredList[index]}</FirstUpper>;
+const renderLabelAtIndex = (index: number, filteredList: SelectionListItem[]) => {
+  const {name} = filteredList[index];
+  return <FirstUpper>{name}</FirstUpper>;
+};
 
 export const renderCityLabel = (index: number, filteredList: SelectionListItem[]) => {
   const city = filteredList[index] as City;
