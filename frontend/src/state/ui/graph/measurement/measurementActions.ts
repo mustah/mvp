@@ -13,6 +13,12 @@ import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '.
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {MeterDetails} from '../../../domain-models/meter-details/meterDetailsModels';
 import {
+  SelectionTreeCity,
+  SelectionTreeEntities,
+  SelectionTreeMeter,
+} from '../../../selection-tree/selectionTreeModels';
+import {
+  allQuantities,
   initialMeterMeasurementsState,
   initialState,
   Measurement,
@@ -56,7 +62,8 @@ export const isSelectedCity = (listItem: uuid): boolean =>
 
 type OnUpdateGraph = (state: ReportContainerState) => void;
 
-interface MeasurementOptions {
+export interface MeasurementOptions {
+  selectionTreeEntities: SelectionTreeEntities;
   selectedIndicators: Medium[];
   quantities: Quantity[];
   selectedListItems: uuid[];
@@ -66,10 +73,92 @@ interface MeasurementOptions {
   logout: OnLogout;
 }
 
-const noopRequest = new Promise<GraphDataResponse>((resolve) => resolve({data: []}));
+interface GroupedRequests {
+  average: Array<Promise<GraphDataResponse>>;
+  meters: Array<Promise<GraphDataResponse>>;
+  cities: Array<Promise<GraphDataResponse>>;
+}
+
+const requestsPerQuantity = (
+  quantities: Quantity[],
+  selectionTreeEntities: SelectionTreeEntities,
+  selectedListItems: uuid[],
+  timePeriod: Period,
+  customDateRange: Maybe<DateRange>,
+): GroupedRequests => {
+
+  const meterByQuantity: Partial<{[quantity in Quantity]: uuid[]}> = {};
+  const cityByQuantity: Partial<{[quantity in Quantity]: uuid[]}> = {};
+  quantities.forEach((quantity: Quantity) => {
+    meterByQuantity[quantity] = [];
+    cityByQuantity[quantity] = [];
+  });
+
+  const urls: GroupedRequests = {
+    average: [],
+    meters: [],
+    cities: [],
+  };
+
+  selectedListItems
+    .filter(isSelectedCity)
+    .map((cityId: uuid) => selectionTreeEntities.cities[cityId])
+    .forEach(({medium, id}: SelectionTreeCity) => {
+      medium.forEach((singleMedium: Medium) => {
+        const cityQuantities: Quantity[] = allQuantities[singleMedium];
+        quantities
+          .filter((quantity: Quantity) => cityQuantities.includes(quantity))
+          .forEach((quantity: Quantity) => cityByQuantity[quantity]!.push(id));
+      });
+    });
+
+  Object.keys(cityByQuantity).forEach((quantity: Quantity) => {
+    if (cityByQuantity[quantity]!.length) {
+      urls.cities.push(
+        restClient.getParallel(makeUrl(
+          EndPoints.measurements.concat('/cities'),
+          measurementCityUri([quantity], cityByQuantity[quantity]!, timePeriod, customDateRange),
+        )),
+      );
+    }
+  });
+
+  selectedListItems
+    .filter(isSelectedMeter)
+    .map((meterId: uuid) => selectionTreeEntities.meters[meterId])
+    .forEach(({medium, id}: SelectionTreeMeter) => {
+      const meterQuantities: Quantity[] = allQuantities[medium];
+      quantities
+        .filter((quantity: Quantity) => meterQuantities.includes(quantity))
+        .forEach((quantity: Quantity) => meterByQuantity[quantity]!.push(id));
+    });
+
+  Object.keys(meterByQuantity).forEach((quantity: Quantity) => {
+    if (meterByQuantity[quantity]!.length) {
+      urls.meters.push(
+        restClient.getParallel(makeUrl(
+          EndPoints.measurements,
+          measurementMeterUri([quantity], meterByQuantity[quantity]!, timePeriod, customDateRange),
+        )),
+      );
+
+      if (meterByQuantity[quantity]!.length > 1) {
+        urls.average.push(
+          restClient.getParallel(makeUrl(
+            EndPoints.measurements.concat('/average'),
+            measurementMeterUri([quantity], meterByQuantity[quantity]!, timePeriod, customDateRange),
+          )),
+        );
+      }
+    }
+  });
+
+  return urls;
+};
 
 export const fetchMeasurements =
   async ({
+    selectionTreeEntities,
     selectedIndicators,
     quantities,
     selectedListItems,
@@ -78,60 +167,41 @@ export const fetchMeasurements =
     updateState,
     logout,
   }: MeasurementOptions): Promise<void> => {
-
-    const selectedMeters = selectedListItems.filter(isSelectedMeter);
-    const selectedCities = selectedListItems.filter(isSelectedCity);
+    const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
+      quantities,
+      selectionTreeEntities,
+      selectedListItems,
+      timePeriod,
+      customDateRange,
+    );
 
     if (
       selectedIndicators.length === 0 ||
-      (selectedMeters.length + selectedCities.length) === 0 ||
+      (cities.length + meters.length) === 0 ||
       quantities.length === 0
     ) {
       updateState({...initialState});
       return;
     }
 
-    const averageUrl: EncodedUriParameters = makeUrl(
-      EndPoints.measurements.concat('/average'),
-      measurementMeterUri(quantities, selectedMeters, timePeriod, customDateRange),
-    );
-
-    const averageRequest: () => Promise<GraphDataResponse> =
-      selectedMeters.length > 1
-        ? () => restClient.get(averageUrl)
-        : () => noopRequest;
-
-    const cityUrl: EncodedUriParameters = makeUrl(
-      EndPoints.measurements.concat('/cities'),
-      measurementCityUri(quantities, selectedCities, timePeriod, customDateRange),
-    );
-
-    const cityRequest: () => Promise<GraphDataResponse> =
-      selectedCities.length
-        ? () => restClient.get(cityUrl)
-        : () => noopRequest;
-
-    const measurementUrl: EncodedUriParameters = makeUrl(
-      EndPoints.measurements,
-      measurementMeterUri(quantities, selectedMeters, timePeriod, customDateRange),
-    );
-
-    const measurementRequest: () => Promise<GraphDataResponse> =
-      selectedMeters.length
-        ? () => restClient.get(measurementUrl)
-        : () => noopRequest;
-
     try {
-      const response: [GraphDataResponse, GraphDataResponse, GraphDataResponse] =
-        await Promise.all([measurementRequest(), averageRequest(), cityRequest()]);
+      const response: GraphDataResponse[][] =
+        await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
 
       const graphData: MeasurementResponses = {
-        measurements: response[0].data,
-        average: response[1].data.map((averageEntity) => ({
-          ...averageEntity,
-          values: averageEntity.values.filter(({value}) => value !== undefined),
-        })),
-        cities: response[2].data,
+        measurements: response[0]
+          .map((response) => response.data)
+          .reduce((all, current) => all.concat(current), []),
+        average: response[1]
+          .map((response) => response.data
+            .map((averageEntity) => ({
+              ...averageEntity,
+              values: averageEntity.values.filter(({value}) => value !== undefined),
+            })))
+          .reduce((all, current) => all.concat(current), []),
+        cities: response[2]
+          .map((response) => response.data)
+          .reduce((all, current) => all.concat(current), []),
       };
 
       updateState({

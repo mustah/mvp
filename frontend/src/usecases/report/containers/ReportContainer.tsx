@@ -8,10 +8,6 @@ import {DateRange, Period} from '../../../components/dates/dateModels';
 import {componentOrNull} from '../../../components/hoc/hocs';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Medium, OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
-import {
-  ReportIndicatorWidgets,
-  SelectedIndicatorWidgetProps,
-} from '../components/indicators/ReportIndicatorWidgets';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -34,7 +30,8 @@ import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurement
 import {
   initialState,
   MeasurementResponses,
-  Measurements, Quantity,
+  Measurements,
+  Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
@@ -44,6 +41,7 @@ import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSele
 import {ErrorResponse, Omit, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
+import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
 import {MeasurementList} from '../components/MeasurementList';
 import {GraphContents, hardcodedIndicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
@@ -92,12 +90,51 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     this.state = {...initialState};
   }
 
+  updateState = (state: ReportContainerState): void => this.setState({...state});
+
+  onChangeTab = (selectedTab: TabName): void => {
+    this.setState({selectedTab});
+    this.props.changeTab(selectedTab);
+  }
+
+  clearError = async () => {
+    const {
+      selectionTreeEntities,
+      selectedIndicators,
+      selectedListItems,
+      period,
+      customDateRange,
+      selectedQuantities,
+      logout,
+    } = this.props;
+    this.setState({error: Maybe.nothing(), isFetching: true});
+    await fetchMeasurements({
+      selectionTreeEntities,
+      selectedIndicators,
+      quantities: selectedQuantities,
+      selectedListItems,
+      timePeriod: period,
+      customDateRange,
+      updateState: this.updateState,
+      logout,
+    });
+  }
+
   async componentDidMount() {
-    const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
+    const {
+      selectionTreeEntities,
+      selectedListItems,
+      period,
+      customDateRange,
+      selectedQuantities,
+      logout,
+      selectedIndicators,
+    } = this.props;
 
     this.setState({isFetching: true});
 
     await fetchMeasurements({
+      selectionTreeEntities,
       selectedIndicators,
       quantities: selectedQuantities,
       selectedListItems,
@@ -109,10 +146,17 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   }
 
   async componentWillReceiveProps({
-    selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
+    selectionTreeEntities,
+    selectedListItems,
+    period,
+    customDateRange,
+    selectedQuantities,
+    logout,
+    selectedIndicators,
   }: Props) {
     this.setState({isFetching: true});
     await fetchMeasurements({
+      selectionTreeEntities,
       selectedIndicators,
       quantities: selectedQuantities,
       selectedListItems,
@@ -194,27 +238,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
         </Loader>
       </MvpPageContainer>
     );
-  }
-
-  updateState = (state: ReportContainerState): void => this.setState({...state});
-
-  onChangeTab = (selectedTab: TabName): void => {
-    this.setState({selectedTab});
-    this.props.changeTab(selectedTab);
-  }
-
-  clearError = async () => {
-    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
-    this.setState({error: Maybe.nothing(), isFetching: true});
-    await fetchMeasurements({
-      selectedIndicators,
-      quantities: selectedQuantities,
-      selectedListItems,
-      timePeriod: period,
-      customDateRange,
-      updateState: this.updateState,
-      logout,
-    });
   }
 }
 
