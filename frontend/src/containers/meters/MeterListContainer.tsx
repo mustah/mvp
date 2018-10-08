@@ -9,7 +9,6 @@ import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/with
 import {superAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
 import {Loader} from '../../components/loading/Loader';
-import {now} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {isSelectionPage} from '../../selectors/routerSelectors';
@@ -146,7 +145,6 @@ const mapStateToProps = (
     parameters: getPaginatedMeterParameters({
       pagination: paginationData,
       userSelection,
-      now: now(),
       query: selectionPage ? undefined : query,
     }),
     isFetching: getPageIsFetching(meters, page),

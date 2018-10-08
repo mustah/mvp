@@ -1,7 +1,7 @@
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
-import {now, toPeriodApiParameters} from '../../../../helpers/dateHelpers';
+import {toPeriodApiParameters} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
@@ -31,7 +31,7 @@ const measurementMeterUri = (
 ): string =>
   `quantities=${quantities.join(',')}` +
   `&meters=${meters.join(',')}` +
-  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
+  `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
 
 const measurementCityUri = (
   quantities: Quantity[],
@@ -41,7 +41,7 @@ const measurementCityUri = (
 ): string =>
   `quantities=${quantities.join(',')}` +
   `&${cities.map((city) => `city=${city}`).join('&')}` +
-  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
+  `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
 
 interface GraphDataResponse {
   data: MeasurementApiResponse;

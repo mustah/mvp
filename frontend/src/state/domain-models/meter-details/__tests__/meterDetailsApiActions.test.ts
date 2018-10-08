@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
-import {now} from '../../../../helpers/dateHelpers';
+import {momentFrom} from '../../../../helpers/dateHelpers';
 import {makeApiParametersOf} from '../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
@@ -22,11 +22,12 @@ describe('meterDetailsApiActions', () => {
   let mockRestClient: MockAdapter;
   let store;
 
+  const now = momentFrom().toDate();
   const dateRange: SelectionInterval = {
     period: Period.custom,
     customDateRange: {
-      start: now(),
-      end: now(),
+      start: now,
+      end: now,
     },
   };
 
@@ -114,7 +115,7 @@ describe('meterDetailsApiActions', () => {
     });
 
     it('fetches meter if not yet fetched', async () => {
-      const parameters: EncodedUriParameters = makeApiParametersOf(now(), dateRange);
+      const parameters: EncodedUriParameters = makeApiParametersOf(dateRange);
 
       await fetchMeterWithResponseOk([meter.id], parameters);
 
@@ -143,7 +144,7 @@ describe('meterDetailsApiActions', () => {
       };
       store = configureMockStoreWith(alreadyFetchedMeter);
 
-      const parameters: EncodedUriParameters = makeApiParametersOf(now(), {
+      const parameters: EncodedUriParameters = makeApiParametersOf({
         period: Period.custom,
         customDateRange: {
           start: new Date(0),

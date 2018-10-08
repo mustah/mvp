@@ -1,5 +1,5 @@
 import {default as numeral} from 'numeral';
-import {momentWithTimeZone} from './dateHelpers';
+import {momentFrom} from './dateHelpers';
 
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
   collectionPercentage !== undefined && collectionPercentage > 100;
@@ -22,7 +22,7 @@ export const formatCollectionPercentage =
   };
 
 export const formatDate = (date: Date, format: string = 'DD/MM'): string =>
-  momentWithTimeZone(date).format(format);
+  momentFrom(date).format(format);
 
 export const roundMeasurement = (num: number | string): string =>
   round(num, '0.000');

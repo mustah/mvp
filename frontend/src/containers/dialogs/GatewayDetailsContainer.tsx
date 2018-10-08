@@ -5,7 +5,6 @@ import {Period} from '../../components/dates/dateModels';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import {TableInfoText} from '../../components/table/TableInfoText';
-import {now} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
@@ -61,7 +60,7 @@ const fetchGatewayAndItsMeters =
     selectedId.do((id: uuid) => fetchGateway(id));
     gateway.filter(({meterIds}: Gateway) => meterIds.length > 0)
       .map(({id, meterIds}: Gateway) =>
-        fetchGatewayMeterDetails(meterIds, makeApiParametersOf(now(), {period: Period.latest}), id));
+        fetchGatewayMeterDetails(meterIds, makeApiParametersOf({period: Period.latest}), id));
   };
 
 class GatewayDetails extends React.Component<Props> {

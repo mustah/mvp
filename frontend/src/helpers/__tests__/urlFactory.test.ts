@@ -2,7 +2,7 @@ import {Period} from '../../components/dates/dateModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {SelectedParameters} from '../../state/user-selection/userSelectionModels';
 import {IdNamed, toIdNamed} from '../../types/Types';
-import {momentWithTimeZone, toPeriodApiParameters} from '../dateHelpers';
+import {momentFrom, toPeriodApiParameters} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 import {
   encodedUriParametersFrom,
@@ -125,37 +125,46 @@ describe('urlFactory', () => {
   });
 
   describe('toPeriodApiParameters', () => {
-    const now: Date = momentWithTimeZone('2018-02-02T00:00:00Z').toDate();
+    const now: Date = momentFrom('2018-02-02T00:00:00Z').toDate();
 
     it('know about the last 24h', () => {
       expect(toPeriodApiParameters({
-        now,
+        start: now,
         period: Period.latest,
         customDateRange: Maybe.nothing(),
-      })).toEqual(['after=2018-02-01T00%3A00%3A00.000Z', 'before=2018-02-02T00%3A00%3A00.000Z']);
+      })).toEqual([
+        'after=2018-02-01T00%3A00%3A00.000Z',
+        'before=2018-02-02T00%3A00%3A00.000Z',
+      ]);
     });
 
     it('knows about previous month', () => {
       const prevMonthRange = toPeriodApiParameters({
-        now,
+        start: now,
         period: Period.previousMonth,
         customDateRange: Maybe.nothing(),
       });
-      expect(prevMonthRange).toEqual(['after=2018-01-01T00%3A00%3A00.000Z', 'before=2018-02-01T00%3A00%3A00.000Z']);
+      expect(prevMonthRange).toEqual([
+        'after=2018-01-01T00%3A00%3A00.000Z',
+        'before=2018-01-31T00%3A00%3A00.000Z',
+      ]);
     });
 
     it('knows about previous 7 days', () => {
       const prevWeek = toPeriodApiParameters({
-        now,
+        start: now,
         period: Period.previous7Days,
         customDateRange: Maybe.nothing(),
       });
-      expect(prevWeek).toEqual(['after=2018-01-27T00%3A00%3A00.000Z', 'before=2018-02-02T00%3A00%3A00.001Z']);
+      expect(prevWeek).toEqual([
+        'after=2018-01-27T00%3A00%3A00.000Z',
+        'before=2018-02-02T00%3A00%3A00.000Z',
+      ]);
     });
 
     it('knows about current week', () => {
       const currentWeekApiParameters = toPeriodApiParameters({
-        now,
+        start: now,
         period: Period.currentWeek,
         customDateRange: Maybe.nothing(),
       });
@@ -168,22 +177,22 @@ describe('urlFactory', () => {
 
     it('knows about current month', () => {
       const currentMonthApiParameters = toPeriodApiParameters({
-        now,
+        start: now,
         period: Period.currentMonth,
         customDateRange: Maybe.nothing(),
       });
       expect(currentMonthApiParameters).toEqual([
         'after=2018-02-01T00%3A00%3A00.000Z',
-        'before=2018-03-01T00%3A00%3A00.000Z',
+        'before=2018-02-28T00%3A00%3A00.000Z',
       ]);
     });
 
     it('knows about a custom period', () => {
-      const start: Date = momentWithTimeZone('2018-02-02T00:00:00Z').toDate();
-      const end: Date = momentWithTimeZone('2018-02-10T00:00:00Z').toDate();
+      const start: Date = momentFrom('2018-02-02T00:00:00Z').toDate();
+      const end: Date = momentFrom('2018-02-10T00:00:00Z').toDate();
 
       const customPeriodApiParameters = toPeriodApiParameters({
-        now,
+        start: now,
         period: Period.custom,
         customDateRange: Maybe.just({start, end}),
       });

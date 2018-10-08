@@ -2,7 +2,6 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
-import {now} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
@@ -53,7 +52,7 @@ const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 const fetchMeterAndMapMarker =
   ({dateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId}: Props) => {
     selectedId.do((id: uuid) => {
-      fetchMeterDetails([id], makeApiParametersOf(now(), dateRange));
+      fetchMeterDetails([id], makeApiParametersOf(dateRange));
       fetchMeterMapMarker(id);
     });
   };

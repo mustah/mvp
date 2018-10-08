@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
 import {SearchBox} from '../../../../components/search-box/SearchBox';
-import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
 import {translate} from '../../../../services/translationService';
@@ -133,7 +132,7 @@ const mapStateToProps =
       isFetching: selectionTree.isFetching,
       selectionTree: getSelectionTree({...selectionTree, query}),
       openListItems: getOpenListItems(selectionTreeUi),
-      parameters: getMeterParameters({userSelection, now: now()}),
+      parameters: getMeterParameters({userSelection}),
       itemOptions: {
         zoomable: isDashboardPage(routing),
         report: isReportPage(routing),

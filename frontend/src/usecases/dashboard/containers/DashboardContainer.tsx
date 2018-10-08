@@ -8,7 +8,6 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
-import {now} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -80,7 +79,7 @@ const mapStateToProps =
     ({
       dashboard: record,
       isFetching,
-      parameters: getMeterParameters({userSelection, now: now()}),
+      parameters: getMeterParameters({userSelection}),
       meterMapMarkers: getDomainModel(meterMapMarkers),
     });
 

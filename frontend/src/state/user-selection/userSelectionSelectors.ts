@@ -64,9 +64,9 @@ export const getSelectedSecondaryAddresses = getSelectedItems(ParameterName.seco
 export const getSelectedGatewaySerials = getSelectedItems(ParameterName.gatewaySerials);
 
 const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
-  const {now} = state;
+  const {start} = state;
   const {dateRange: {period, customDateRange}} = getSelectionParameters(state);
-  return ({now, period, customDateRange: Maybe.maybe(customDateRange)});
+  return ({start, period, customDateRange: Maybe.maybe(customDateRange)});
 };
 
 const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) =>

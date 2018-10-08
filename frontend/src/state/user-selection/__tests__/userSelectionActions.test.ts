@@ -2,7 +2,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {DateRange, Period} from '../../../components/dates/dateModels';
-import {momentWithTimeZone} from '../../../helpers/dateHelpers';
+import {momentFrom} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {IdNamed, toIdNamed} from '../../../types/Types';
@@ -98,8 +98,8 @@ describe('userSelectionActions', () => {
 
   describe('setCustomDateRange', () => {
     it('sends out a request to set a new customDateRange', () => {
-      const start: Date = momentWithTimeZone('2018-12-09').toDate();
-      const end: Date = momentWithTimeZone('2018-12-24').toDate();
+      const start: Date = momentFrom('2018-12-09').toDate();
+      const end: Date = momentFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
       store.dispatch(setCustomDateRange(dateRange));
 

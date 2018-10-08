@@ -2,7 +2,7 @@ import {DropDownMenu, MenuItem} from 'material-ui';
 import {Moment} from 'moment-timezone';
 import * as React from 'react';
 import {colors, fontSize, listItemStyle} from '../../app/themes';
-import {momentWithTimeZone, now, prettyRange} from '../../helpers/dateHelpers';
+import {momentFrom, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
@@ -95,31 +95,31 @@ export class PeriodSelection extends React.Component<Props, State> {
       },
       {
         value: Period.currentWeek,
-        chosen: prettyRange({now: now(), period: Period.currentWeek, customDateRange}),
+        chosen: prettyRange({period: Period.currentWeek, customDateRange}),
         alternative: translate('current week'),
         onClick: (event) => this.onSelectPeriod(event, Period.currentWeek),
       },
       {
         value: Period.previous7Days,
-        chosen: prettyRange({now: now(), period: Period.previous7Days, customDateRange}),
+        chosen: prettyRange({period: Period.previous7Days, customDateRange}),
         alternative: translate('last 7 days'),
         onClick: (event) => this.onSelectPeriod(event, Period.previous7Days),
       },
       {
         value: Period.currentMonth,
-        chosen: prettyRange({now: now(), period: Period.currentMonth, customDateRange}),
+        chosen: prettyRange({period: Period.currentMonth, customDateRange}),
         alternative: translate('current month'),
         onClick: (event) => this.onSelectPeriod(event, Period.currentMonth),
       },
       {
         value: Period.previousMonth,
-        chosen: prettyRange({now: now(), period: Period.previousMonth, customDateRange}),
+        chosen: prettyRange({period: Period.previousMonth, customDateRange}),
         alternative: translate('previous month'),
         onClick: (event) => this.onSelectPeriod(event, Period.previousMonth),
       },
       {
         value: Period.custom,
-        chosen: prettyRange({now: now(), period: Period.custom, customDateRange}),
+        chosen: prettyRange({period: Period.custom, customDateRange}),
         alternative: translate('custom period'),
         onClick: this.openPeriodSelector,
       },
@@ -138,8 +138,8 @@ export class PeriodSelection extends React.Component<Props, State> {
     ));
 
     const {start, end} = customDateRange.map<NullableDateRange>(({start, end}) => ({
-      start: momentWithTimeZone(start),
-      end: momentWithTimeZone(end),
+      start: momentFrom(start),
+      end: momentFrom(end),
     })).orElse({start: null, end: null});
 
     return (

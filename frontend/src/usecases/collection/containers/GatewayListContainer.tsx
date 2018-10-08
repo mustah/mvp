@@ -3,14 +3,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Loader} from '../../../components/loading/Loader';
-import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {
-  clearErrorGateways,
-  fetchGateways,
-} from '../../../state/domain-models-paginated/gateway/gatewayApiActions';
+import {clearErrorGateways, fetchGateways} from '../../../state/domain-models-paginated/gateway/gatewayApiActions';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {
   getPageError,
@@ -23,13 +19,7 @@ import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {
-  ClearErrorPaginated,
-  ErrorResponse,
-  FetchPaginated,
-  OnClickWithId,
-  uuid,
-} from '../../../types/Types';
+import {ClearErrorPaginated, ErrorResponse, FetchPaginated, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import {Query} from '../../search/searchModels';
 import {GatewayList} from '../components/GatewayList';
@@ -119,7 +109,6 @@ const mapStateToProps = (
       query,
       pagination: paginationData,
       ...userSelection,
-      now: now(),
     }),
     query,
     isFetching: getPageIsFetching(gateways, page),
