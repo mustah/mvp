@@ -1,0 +1,4 @@
+logging:
+  level:
+    # Set to INFO to se metering messages in console
+    MeteringMessageLogger: WARN
