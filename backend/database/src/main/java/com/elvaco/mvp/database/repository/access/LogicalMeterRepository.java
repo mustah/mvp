@@ -81,7 +81,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
       logicalMeterJpaRepository.findAll(
         parameters,
-        new PageRequest(
+        PageRequest.of(
           pageable.getPageNumber(),
           pageable.getPageSize(),
           sortingMapper.getAsSpringSort(pageable.getSort())

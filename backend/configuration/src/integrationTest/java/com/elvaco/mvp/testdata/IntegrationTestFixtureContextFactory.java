@@ -131,12 +131,12 @@ class IntegrationTestFixtureContextFactory {
   @Transactional
   public void destroy(IntegrationTestFixtureContext context) {
     try {
-      organisationJpaRepository.delete(context.organisationEntity.id);
+      organisationJpaRepository.deleteById(context.organisationEntity.id);
     } catch (EmptyResultDataAccessException ignore) {
       // The test case probably removed it already
     }
     try {
-      organisationJpaRepository.delete(context.organisationEntity2.id);
+      organisationJpaRepository.deleteById(context.organisationEntity2.id);
     } catch (EmptyResultDataAccessException ignore) {
       // The test case probably removed it already
     }

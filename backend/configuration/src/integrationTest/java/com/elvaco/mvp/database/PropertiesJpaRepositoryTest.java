@@ -43,7 +43,7 @@ public class PropertiesJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void createTwoProperties() {
-    propertiesJpaRepository.save(asList(
+    propertiesJpaRepository.saveAll(asList(
       new PropertyEntity(randomUUID(), organisationId, "metering.forceUpdate", "true"),
       new PropertyEntity(randomUUID(), organisationId, "metering.forceUpdate", "false")
     ));
@@ -53,7 +53,7 @@ public class PropertiesJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void findAllByKey() {
-    propertiesJpaRepository.save(asList(
+    propertiesJpaRepository.saveAll(asList(
       new PropertyEntity(randomUUID(), organisationId, "metering.forceUpdate", "true"),
       new PropertyEntity(randomUUID(), organisationId, "metering.forceUpdate", "false"),
       new PropertyEntity(randomUUID(), organisationId, "metering.ignore", "false")
@@ -64,7 +64,7 @@ public class PropertiesJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void findAllByKey_CannotBeNull_OnlyEmpty() {
-    propertiesJpaRepository.save(asList(
+    propertiesJpaRepository.saveAll(asList(
       new PropertyEntity(randomUUID(), organisationId, "metering.forceUpdate", "true"),
       new PropertyEntity(randomUUID(), organisationId, "metering.forceUpdate", "false"),
       new PropertyEntity(randomUUID(), organisationId, "metering.ignore", "false")
@@ -79,13 +79,13 @@ public class PropertiesJpaRepositoryTest extends IntegrationTest {
     UUID entityId1 = randomUUID();
     UUID entityId3 = randomUUID();
     UUID entityId2 = randomUUID();
-    propertiesJpaRepository.save(asList(
+    propertiesJpaRepository.saveAll(asList(
       new PropertyEntity(entityId1, organisationId, key, "true"),
       new PropertyEntity(entityId2, organisationId, key, "false"),
       new PropertyEntity(entityId3, organisationId, "metering.ignore", "false")
     ));
 
-    propertiesJpaRepository.delete(new PropertyPk(entityId1, organisationId, key));
+    propertiesJpaRepository.deleteById(new PropertyPk(entityId1, organisationId, key));
 
     assertThat(propertiesJpaRepository.findAll())
       .containsExactlyInAnyOrder(
@@ -102,7 +102,7 @@ public class PropertiesJpaRepositoryTest extends IntegrationTest {
 
     assertThat(propertiesJpaRepository.findById(id).isPresent()).isTrue();
 
-    propertiesJpaRepository.delete(id);
+    propertiesJpaRepository.deleteById(id);
 
     assertThat(propertiesJpaRepository.findById(id).isPresent()).isFalse();
   }

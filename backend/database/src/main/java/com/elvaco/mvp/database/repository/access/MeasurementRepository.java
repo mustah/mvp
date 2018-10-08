@@ -40,7 +40,7 @@ public class MeasurementRepository implements Measurements {
 
   @Override
   public Optional<Measurement> findById(Measurement.Id id) {
-    return Optional.ofNullable(measurementJpaRepository.findOne(toPk(id)))
+    return measurementJpaRepository.findById(toPk(id))
       .map(MeasurementEntityMapper::toDomainModel);
   }
 
@@ -180,7 +180,7 @@ public class MeasurementRepository implements Measurements {
     return new PageAdapter<>(
       new PageImpl<>(
         measurementEntities.stream().map(MeasurementEntityMapper::toDomainModel).collect(toList()),
-        new PageRequest(pageable.getPageNumber(), pageable.getPageSize()),
+        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
         measurementJpaRepository.countMeasurementsForMeter(organisationId, logicalMeterId)
       )
     );

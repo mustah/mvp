@@ -153,7 +153,7 @@ public class DashboardControllerTest extends IntegrationTest {
     List<PhysicalMeterEntity> physicalMeters,
     ZonedDateTime startDate
   ) {
-    physicalMeterStatusLogJpaRepository.save(physicalMeters.stream()
+    physicalMeterStatusLogJpaRepository.saveAll(physicalMeters.stream()
       .map(physicalMeterEntity -> new PhysicalMeterStatusLogEntity(
         null,
         physicalMeterEntity.id,
@@ -170,7 +170,7 @@ public class DashboardControllerTest extends IntegrationTest {
     long dayCount
   ) {
     for (PhysicalMeterEntity meter : physicalMeters) {
-      measurementJpaRepository.save(createMeasurements(
+      measurementJpaRepository.saveAll(createMeasurements(
         meter,
         startDate,
         meter.readIntervalMinutes,

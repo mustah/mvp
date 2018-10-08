@@ -95,7 +95,7 @@ public class UserSelectionDataLoader implements CommandLineRunner {
       ))
       .collect(toList());
 
-    userSelectionJpaRepository.save(selectionEntities);
+    userSelectionJpaRepository.saveAll(selectionEntities);
 
     log.info("Demo user selections saved: " + selectionEntities.size());
   }

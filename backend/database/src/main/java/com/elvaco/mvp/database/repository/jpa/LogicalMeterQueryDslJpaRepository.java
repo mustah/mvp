@@ -62,11 +62,6 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public Optional<LogicalMeterEntity> findById(UUID id) {
-    return Optional.ofNullable(findOne(id));
-  }
-
-  @Override
   public Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.id.eq(id));

@@ -3,13 +3,11 @@ package com.elvaco.mvp.testdata;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import static java.util.Collections.emptyList;
 
 public class RestResponsePage<T> extends PageImpl<T> {
 
@@ -36,10 +34,6 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return number;
   }
 
-  public void setNumber(int number) {
-    this.number = number;
-  }
-
   @Override
   public int getSize() {
     return size;
@@ -54,17 +48,9 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return totalPages;
   }
 
-  public void setTotalPages(int totalPages) {
-    this.totalPages = totalPages;
-  }
-
   @Override
   public int getNumberOfElements() {
     return numberOfElements;
-  }
-
-  public void setNumberOfElements(int numberOfElements) {
-    this.numberOfElements = numberOfElements;
   }
 
   @Override
@@ -72,59 +58,14 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return totalElements;
   }
 
-  public void setTotalElements(long totalElements) {
-    this.totalElements = totalElements;
-  }
-
-  public boolean isPreviousPage() {
-    return previousPage;
-  }
-
-  public void setPreviousPage(boolean previousPage) {
-    this.previousPage = previousPage;
-  }
-
-  public boolean isFirstPage() {
-    return firstPage;
-  }
-
-  public void setFirstPage(boolean firstPage) {
-    this.firstPage = firstPage;
-  }
-
-  public boolean isNextPage() {
-    return nextPage;
-  }
-
-  public void setNextPage(boolean nextPage) {
-    this.nextPage = nextPage;
-  }
-
-  public boolean isLastPage() {
-    return lastPage;
-  }
-
-  public void setLastPage(boolean lastPage) {
-    this.lastPage = lastPage;
-  }
-
   @Override
   public List<T> getContent() {
     return content;
   }
 
-  public void setContent(List<T> content) {
-    this.content = content;
-  }
-
   @Override
   public Sort getSort() {
     return sort;
-  }
-
-  @JsonDeserialize(using = CustomSortDeserializer.class)
-  public void setSort(Sort sort) {
-    this.sort = sort;
   }
 
   @Override
@@ -137,10 +78,10 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return super.hashCode();
   }
 
-  public Page<T> newPage() {
+  Page<T> newPage() {
     return new PageImpl<>(
-      getContent() != null ? getContent() : emptyList(),
-      size == 0 ? null : new PageRequest(getNumber(), getSize(), getSort()),
+      getContent(),
+      size == 0 ? Pageable.unpaged() : PageRequest.of(getNumber(), getSize(), getSort()),
       getTotalElements()
     );
   }

@@ -20,7 +20,7 @@ public abstract class SortingEntityMapper {
     if (sort.getOrders().isEmpty()) {
       return null;
     } else {
-      return new Sort(sort.getOrders().stream().map(this::mapOrderToSprintOrder).collect(toList()));
+      return Sort.by(sort.getOrders().stream().map(this::mapOrderToSprintOrder).collect(toList()));
     }
   }
 

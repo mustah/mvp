@@ -247,7 +247,7 @@ public interface MeasurementJpaRepository
     @Param("organisation_id") UUID organisationId,
     @Param("logical_meter_id") UUID logicalMeterId,
     @Param("limit") int limit,
-    @Param("offset") int offset
+    @Param("offset") long offset
   );
 
   /**

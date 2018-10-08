@@ -42,7 +42,7 @@ public class UserRepository implements Users {
 
   @Override
   public Optional<User> findById(UUID id) {
-    return Optional.ofNullable(userJpaRepository.findOne(id))
+    return userJpaRepository.findById(id)
       .map(UserEntityMapper::toDomainModel);
   }
 
@@ -72,7 +72,7 @@ public class UserRepository implements Users {
 
   @Override
   public void deleteById(UUID id) {
-    userJpaRepository.delete(id);
+    userJpaRepository.deleteById(id);
   }
 
   @Override

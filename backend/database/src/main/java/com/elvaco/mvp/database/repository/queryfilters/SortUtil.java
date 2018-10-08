@@ -33,7 +33,7 @@ public class SortUtil {
   private static Sort.Direction getDirection(String s) {
     return Optional.ofNullable(s)
       .filter(sort -> sort.contains(","))
-      .map(sort -> Sort.Direction.fromStringOrNull(s.substring(s.indexOf(",") + 1)))
+      .flatMap(sort -> Sort.Direction.fromOptionalString(s.substring(s.indexOf(",") + 1)))
       .orElse(Sort.Direction.ASC);
   }
 

@@ -57,7 +57,7 @@ public class LocationRepository implements Locations {
   public Page<Location> findAll(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(locationJpaRepository.findAll(
       parameters,
-      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+      PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())
     ).map(LocationEntityMapper::toDomainModel));
   }
 
@@ -65,7 +65,7 @@ public class LocationRepository implements Locations {
   public Page<City> findAllCities(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(locationJpaRepository.findAllCities(
       parameters,
-      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+      PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())
     ));
   }
 
@@ -73,7 +73,7 @@ public class LocationRepository implements Locations {
   public Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(locationJpaRepository.findAllAddresses(
       parameters,
-      new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+      PageRequest.of(pageable.getPageNumber(), pageable.getPageSize())
     ));
   }
 }

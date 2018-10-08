@@ -31,7 +31,7 @@ public class OrganisationRepository implements Organisations {
 
   @Override
   public Optional<Organisation> findById(UUID id) {
-    return Optional.ofNullable(organisationJpaRepository.findOne(id))
+    return organisationJpaRepository.findById(id)
       .map(OrganisationEntityMapper::toDomainModel);
   }
 
@@ -54,7 +54,7 @@ public class OrganisationRepository implements Organisations {
     }
   )
   public void deleteById(UUID id) {
-    organisationJpaRepository.delete(id);
+    organisationJpaRepository.deleteById(id);
   }
 
   @Override

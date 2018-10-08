@@ -51,7 +51,7 @@ public class UserSelectionJpaRepositoryTest extends IntegrationTest {
     assertThat(saved.selectionParameters).isEqualTo(entityToSave.selectionParameters);
     assertThat(saved.organisationId).isEqualTo(entityToSave.organisationId);
 
-    UserSelectionEntity fetchedInitialFromDb = userSelectionJpaRepository.findOne(saved.id);
+    UserSelectionEntity fetchedInitialFromDb = userSelectionJpaRepository.findById(saved.id).get();
     assertThat(fetchedInitialFromDb.selectionParameters).isEqualTo(originalData);
 
     JsonField newData = new JsonField(
@@ -64,7 +64,7 @@ public class UserSelectionJpaRepositoryTest extends IntegrationTest {
     assertThat(modifiedAndSaved.id).isEqualTo(saved.id);
     assertThat(modifiedAndSaved.selectionParameters).isEqualTo(newData);
 
-    UserSelectionEntity fetchedUpdatedFromDb = userSelectionJpaRepository.findOne(saved.id);
+    UserSelectionEntity fetchedUpdatedFromDb = userSelectionJpaRepository.findById(saved.id).get();
     assertThat(fetchedUpdatedFromDb.selectionParameters).isEqualTo(newData);
   }
 }

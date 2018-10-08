@@ -28,7 +28,7 @@ public class PropertiesRepository implements Properties {
 
   @Override
   public void deleteById(Property.Id id) {
-    propertiesJpaRepository.delete(toPk(id));
+    propertiesJpaRepository.deleteById(toPk(id));
   }
 
   private static PropertyPk toPk(Property.Id id) {

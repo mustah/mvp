@@ -164,7 +164,7 @@ public class PhysicalMetersTest extends IntegrationTest {
           .build())
         .build());
 
-    physicalMeterJpaRepository.delete(meterId);
+    physicalMeterJpaRepository.deleteById(meterId);
 
     assertThat(physicalMeterStatusLogJpaRepository.findAll()).isEmpty();
   }

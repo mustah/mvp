@@ -49,7 +49,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(physicalMeterJpaRepository.findAll(
       new PhysicalMeterQueryFilters().toExpression(parameters),
-      new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+      PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
     ).map(PhysicalMeterEntityMapper::toDomainModel));
   }
 
@@ -58,7 +58,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
     return new PageAdapter<>(
       physicalMeterJpaRepository.findAddresses(
         new PhysicalMeterQueryFilters().toExpression(parameters),
-        new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
       ));
   }
 
@@ -67,7 +67,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
     return new PageAdapter<>(
       physicalMeterJpaRepository.findFacilities(
         new PhysicalMeterQueryFilters().toExpression(parameters),
-        new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
       ));
   }
 

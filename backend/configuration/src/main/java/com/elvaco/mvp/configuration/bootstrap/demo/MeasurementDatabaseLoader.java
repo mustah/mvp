@@ -67,7 +67,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         .minusDays(DAYS_TO_ADD);
 
       PhysicalMeter physicalMeter = meters.get(i);
-      measurementJpaRepository.save(createMeasurements(
+      measurementJpaRepository.saveAll(createMeasurements(
         physicalMeter,
         startDate,
         physicalMeter.readIntervalMinutes,

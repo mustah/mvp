@@ -22,7 +22,7 @@ public class PageableAdapter implements Pageable {
   }
 
   @Override
-  public int getOffset() {
+  public long getOffset() {
     return delegate.getOffset();
   }
 

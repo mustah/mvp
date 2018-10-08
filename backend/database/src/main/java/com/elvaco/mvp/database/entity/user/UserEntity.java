@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.Language;
@@ -23,7 +24,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.Email;
 
 @AllArgsConstructor
 @NoArgsConstructor

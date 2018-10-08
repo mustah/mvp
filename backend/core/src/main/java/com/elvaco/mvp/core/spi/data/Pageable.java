@@ -5,7 +5,7 @@ public interface Pageable {
 
   int getPageSize();
 
-  int getOffset();
+  long getOffset();
 
   Sort getSort();
 

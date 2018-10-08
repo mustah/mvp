@@ -11,6 +11,7 @@ import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
@@ -18,7 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
@@ -33,7 +34,11 @@ public final class RestClient {
 
   RestClient(int serverPort) {
     this.baseUrl = "http://localhost:" + serverPort + API_V1;
-    this.template = new TestRestTemplate(new RestTemplate());
+    DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
+    uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
+    this.template = new TestRestTemplate(
+      new RestTemplateBuilder().uriTemplateHandler(uriBuilderFactory)
+    );
   }
 
   public static String apiPathOf(String url) {
@@ -101,7 +106,8 @@ public final class RestClient {
   }
 
   public <T> Page<T> getPage(String url, Class<T> pagedClass) {
-    return getPageResponse(url, pagedClass).getBody().newPage();
+    RestResponsePage<T> body = getPageResponse(url, pagedClass).getBody();
+    return body != null ? body.newPage() : new RestResponsePage<>();
   }
 
   public <T> ResponseEntity<List<T>> getList(String url, Class<T> listedClass) {
@@ -138,8 +144,8 @@ public final class RestClient {
   }
 
   public RestClient tokenAuthorization() {
-    String token = get("/authenticate", UserTokenDto.class).getBody().token;
-    return withBearerToken(token);
+    UserTokenDto body = get("/authenticate", UserTokenDto.class).getBody();
+    return withBearerToken(body == null ? "" : body.token);
   }
 
   public RestClient withBearerToken(String token) {

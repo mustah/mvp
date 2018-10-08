@@ -51,7 +51,7 @@ public class GatewayRepository implements Gateways {
     RequestParameters parameters,
     Pageable pageable
   ) {
-    PageRequest pageRequest = new PageRequest(
+    PageRequest pageRequest = PageRequest.of(
       pageable.getPageNumber(),
       pageable.getPageSize(),
       getSortOrNull(parameters)
@@ -111,7 +111,7 @@ public class GatewayRepository implements Gateways {
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(gatewayJpaRepository.findSerials(
       new GatewayQueryFilters().toExpression(parameters),
-      new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+      PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
     ));
   }
 
