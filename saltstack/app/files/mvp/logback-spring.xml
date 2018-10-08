@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" >
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+<configuration scan="true">
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <property name="LOGS" value="/var/log/elvaco/mvp" />
+  <property name="LOGS" value="/var/log/elvaco/mvp"/>
 
-    <appender name="MeteringMessageLoggerRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOGS}/meteringmessages.log</file>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d %m%n</Pattern>
-        </encoder>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOGS}/meteringmessages-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>2</maxHistory>
-            <totalSizeCap>500MB</totalSizeCap>
-        </rollingPolicy>
-    </appender>
+  <appender name="MeteringMessageLoggerRollingFileAppender"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOGS}/meteringmessages.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d %m%n</Pattern>
+    </encoder>
 
-    <root level="info">
-        <appender-ref ref="CONSOLE" />
-    </root>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOGS}/meteringmessages-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>2</maxHistory>
+      <totalSizeCap>1GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
 
-    <logger name="MeteringMessageLogger" level="info" additivity="false">
-        <appender-ref ref="MeteringMessageLoggerRollingFileAppender" />
-    </logger>
+  <logger name="MeteringMessageLogger" level="info" additivity="false">
+    <appender-ref ref="MeteringMessageLoggerRollingFileAppender"/>
+  </logger>
 
+  <root level="info">
+    <appender-ref ref="CONSOLE"/>
+  </root>
 
 </configuration>
