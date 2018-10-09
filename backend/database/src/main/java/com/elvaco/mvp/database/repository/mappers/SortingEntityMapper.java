@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.Map;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.Order;
 import org.springframework.data.domain.Sort;
@@ -13,12 +12,11 @@ public abstract class SortingEntityMapper {
 
   abstract Map<String, String> getSortingMap();
 
-  @Nullable
   public org.springframework.data.domain.Sort getAsSpringSort(
     com.elvaco.mvp.core.spi.data.Sort sort
   ) {
     if (sort.getOrders().isEmpty()) {
-      return null;
+      return Sort.unsorted();
     } else {
       return Sort.by(sort.getOrders().stream().map(this::mapOrderToSprintOrder).collect(toList()));
     }

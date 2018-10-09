@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
@@ -20,14 +19,13 @@ public class SortUtil {
       .map(p -> p.getValues(SORT).stream()
         .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
         .collect(toList()))
-      .map(Sort::new);
+      .map(Sort::by);
   }
 
-  @Nullable
-  public static Sort getSortOrNull(
+  public static Sort getSortOrUnsorted(
     RequestParameters parameters
   ) {
-    return getSort(parameters).orElse(null);
+    return getSort(parameters).orElse(Sort.unsorted());
   }
 
   private static Sort.Direction getDirection(String s) {
