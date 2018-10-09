@@ -185,21 +185,21 @@ export const fetchMeasurements =
     }
 
     try {
-      const response: GraphDataResponse[][] =
+      const [meterResponse, averageResponse, citiesResponse]: GraphDataResponse[][] =
         await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
 
       const graphData: MeasurementResponses = {
-        measurements: response[0]
+        measurements: meterResponse
           .map((response) => response.data)
           .reduce((all, current) => all.concat(current), []),
-        average: response[1]
+        average: averageResponse
           .map((response) => response.data
             .map((averageEntity) => ({
               ...averageEntity,
               values: averageEntity.values.filter(({value}) => value !== undefined),
             })))
           .reduce((all, current) => all.concat(current), []),
-        cities: response[2]
+        cities: citiesResponse
           .map((response) => response.data)
           .reduce((all, current) => all.concat(current), []),
       };
