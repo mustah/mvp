@@ -187,11 +187,11 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(getListAsSuperAdmin(
       "/measurements?meters=" + firstOrganisationsMeter.logicalMeterId.toString()
-      + "," + secondOrganisationsMeter.logicalMeterId.toString()
-      + "&quantities=Difference+temperature"
-      + "&resolution=hour"
-      + "&after=" + date
-      + "&before=" + date.plusHours(1)
+        + "," + secondOrganisationsMeter.logicalMeterId.toString()
+        + "&quantities=Difference+temperature"
+        + "&resolution=hour"
+        + "&after=" + date
+        + "&before=" + date.plusHours(1)
       )
     ).hasSize(2);
   }
@@ -582,16 +582,16 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
 
-        "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities={powerQuantity},{diffTempQuantity}"
-      + "&meters={meterId}"
-      + "&resolution=hour",
+      "/measurements/average"
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities={powerQuantity},{diffTempQuantity}"
+        + "&meters={meterId}"
+        + "&resolution=hour",
       MeasurementSeriesDto.class,
       Quantity.POWER.name,
       Quantity.DIFFERENCE_TEMPERATURE.name,
-          logicalMeter.id.toString()
+      logicalMeter.id.toString()
     );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -783,15 +783,13 @@ public class MeasurementControllerTest extends IntegrationTest {
       .presentationUnit());
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
-      .getList(String.format(
+      .getList(
         "/measurements/cities"
           + "?after=" + start
           + "&before=" + start.plusHours(1)
-          + "&quantities=%s"
+          + "&quantities=External+temperature"
           + "&city=sweden,kiruna"
           + "&resolution=hour",
-        Quantity.EXTERNAL_TEMPERATURE.name
-        ),
         MeasurementSeriesDto.class
       );
 
@@ -842,17 +840,14 @@ public class MeasurementControllerTest extends IntegrationTest {
       .presentationUnit());
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
-      .getList(String.format(
+      .getList(
         "/measurements/cities"
           + "?after=" + start
           + "&before=" + start.plusHours(1)
-          + "&quantities=%s,%s"
+          + "&quantities=External+temperature,Volume"
           + "&city=sweden,knivsta"
           + "&city=sweden,umeå"
           + "&resolution=hour",
-        Quantity.EXTERNAL_TEMPERATURE.name,
-        Quantity.VOLUME.name
-        ),
         MeasurementSeriesDto.class
       );
 
@@ -908,7 +903,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements/cities"
           + "?after=" + start
           + "&before=" + start.plusHours(1)
-          + "&quantities=" + Quantity.HUMIDITY.name
+          + "&quantities=Relative+humidity"
           + "&city=sweden,stockholm"
           + "&meters=123"
           + "&resolution=hour",
@@ -1033,16 +1028,16 @@ public class MeasurementControllerTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> responseForNonZuluRequest =
       asTestUser().getList(
 
-          "/measurements/average"
-            + "?after={after}"
-        + "&before={before}"
-        + "&quantities={powerQuantity}"
-        + "&meters={meterId}&resolution=hour",
+        "/measurements/average"
+          + "?after={after}"
+          + "&before={before}"
+          + "&quantities={powerQuantity}"
+          + "&meters={meterId}&resolution=hour",
         MeasurementSeriesDto.class,
         "2018-03-06T03:00:00.000-02:00",
-            "2018-03-06T06:59:59.999+01:00",
-            Quantity.POWER.name,
-            logicalMeter.id.toString()
+        "2018-03-06T06:59:59.999+01:00",
+        Quantity.POWER.name,
+        logicalMeter.id.toString()
       );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
