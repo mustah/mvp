@@ -12,8 +12,6 @@ public interface GatewayStatusLogJpaRepository {
 
   <S extends GatewayStatusLogEntity> S save(S entity);
 
-  <S extends GatewayStatusLogEntity> List<S> save(Iterable<S> entities);
-
   Map<UUID, List<GatewayStatusLogEntity>> findAllGroupedByGatewayId(@Nullable Predicate predicate);
 
   void deleteAll();

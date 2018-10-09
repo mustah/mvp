@@ -60,7 +60,7 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
 
     ResponseEntity<SelectionTreeDto> response = asTestSuperAdmin()
-      .get("/selection-tree?address=sweden,kungsbacka,kabelgatan 2", SelectionTreeDto.class);
+      .get("/selection-tree?address=sweden,kungsbacka,kabelgatan+2", SelectionTreeDto.class);
 
     assertThat(response.getBody().cities).hasSize(1);
     assertThat(response.getBody().cities.get(0).addresses).hasSize(1);

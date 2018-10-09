@@ -262,7 +262,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(post.getBody()).isEqualTo(userSelectionDto);
-    assertThat(repository.findOne(userSelectionDto.id)).isNull();
+    assertThat(repository.findById(userSelectionDto.id)).isEmpty();
   }
 
   @Test
@@ -282,7 +282,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(post.getBody().message)
       .isEqualTo("Unable to find user selection with ID '" + adminsSelectionDto.id + "'");
 
-    assertThat(repository.findOne(adminsSelectionDto.id)).isNotNull();
+    assertThat(repository.findById(adminsSelectionDto.id)).isNotNull();
   }
 
   private UserSelectionDto createSelection(

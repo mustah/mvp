@@ -164,7 +164,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
           null
         )).collect(toList());
 
-    physicalMeterStatusLogJpaRepository.save(statuses);
+    physicalMeterStatusLogJpaRepository.saveAll(statuses);
   }
 
   private LogicalMeterEntity newLogicalMeter(

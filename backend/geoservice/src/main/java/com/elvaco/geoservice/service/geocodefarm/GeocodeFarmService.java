@@ -12,6 +12,7 @@ import com.elvaco.geoservice.service.AddressToGeoService;
 import farm.geocoding.beans.Account;
 import farm.geocoding.beans.GeocodingFarmResult;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,8 @@ public class GeocodeFarmService implements AddressToGeoService {
 
   private static final String ID = "GeoCodeFarm";
 
+  private static final Map<String, String> COUNTRY_TO_CODE_MAP = new HashMap<>();
+
   @Value("${geocodeFarm.url}")
   private String url;
 
@@ -29,8 +32,6 @@ public class GeocodeFarmService implements AddressToGeoService {
 
   @Value("${geocodeFarm.maxrate:4}")
   private Integer maxRate;
-
-  private static final Map<String, String> COUNTRY_TO_CODE_MAP = new HashMap<>();
 
   static {
     //Add all countries to the map, ie sweden -> se, sverige -> se, tyskland -> de, germany -> de
@@ -55,6 +56,7 @@ public class GeocodeFarmService implements AddressToGeoService {
   }
 
   @Override
+  @Nullable
   public GeoLocation getGeoByAddress(Address address) {
     String countryCode = COUNTRY_TO_CODE_MAP.get(address.getCountry().toLowerCase());
     GeocodingFarmResult result = new RestTemplate().getForObject(
@@ -92,7 +94,12 @@ public class GeocodeFarmService implements AddressToGeoService {
     this.quota = 250;
   }
 
-  private GeoLocation convert(GeocodingFarmResult source) {
+  @Nullable
+  private GeoLocation convert(@Nullable GeocodingFarmResult source) {
+    if (source == null) {
+      return null;
+    }
+
     adjustQuota(source.getGeocodingResults().getAccount());
 
     return Optional.of(source.getGeocodingResults())

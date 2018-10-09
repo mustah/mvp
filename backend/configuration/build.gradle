@@ -30,6 +30,7 @@ dependencies {
   runtime 'org.liquibase:liquibase-core'
   runtime 'com.h2database:h2'
 
+  testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
   testCompile 'org.springframework.boot:spring-boot-starter-test'
   testCompile "org.assertj:assertj-core:${assertjVersion}"
   testCompile project(':backend:testing')
@@ -58,7 +59,7 @@ task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
 }
 
 task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
-  systemProperty "liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
+  systemProperty "spring.liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.profiles.active", "postgresql"
   systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.datasource.username", "appuser"
@@ -98,7 +99,7 @@ task cleanUpDockerServices {
 systemTest.finalizedBy cleanUpDockerServices
 
 configurations {
-  integrationTestCompile.extendsFrom testCompile
+  integrationTestCompile.extendsFrom(testCompile,testCompileOnly)
   integrationTestRuntime.extendsFrom testRuntime
 }
 

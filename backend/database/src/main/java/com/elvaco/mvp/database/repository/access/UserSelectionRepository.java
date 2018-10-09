@@ -52,6 +52,6 @@ public class UserSelectionRepository implements UserSelections {
 
   @Override
   public void delete(UserSelection userSelection) {
-    userSelectionJpaRepository.delete(userSelection.id);
+    userSelectionJpaRepository.deleteById(userSelection.id);
   }
 }

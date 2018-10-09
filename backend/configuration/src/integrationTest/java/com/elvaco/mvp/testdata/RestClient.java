@@ -11,6 +11,7 @@ import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
@@ -18,7 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
@@ -33,15 +34,23 @@ public final class RestClient {
 
   RestClient(int serverPort) {
     this.baseUrl = "http://localhost:" + serverPort + API_V1;
-    this.template = new TestRestTemplate(new RestTemplate());
+    DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
+    uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY);
+    this.template = new TestRestTemplate(
+      new RestTemplateBuilder().uriTemplateHandler(uriBuilderFactory)
+    );
   }
 
   public static String apiPathOf(String url) {
     return API_V1 + url;
   }
 
-  public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
-    return template.getForEntity(apiUrlOf(url), clazz);
+  public <T> ResponseEntity<T> get(UrlTemplate urlTemplate, Class<T> clazz) {
+    return get(urlTemplate.template(), clazz, urlTemplate.variables());
+  }
+
+  public <T> ResponseEntity<T> get(String url, Class<T> clazz, Object... urlVariables) {
+    return template.getForEntity(apiUrlOf(url), clazz, urlVariables);
   }
 
   public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
@@ -100,11 +109,32 @@ public final class RestClient {
     template.delete(apiUrlOf(url));
   }
 
-  public <T> Page<T> getPage(String url, Class<T> pagedClass) {
-    return getPageResponse(url, pagedClass).getBody().newPage();
+  public <T> Page<T> getPage(UrlTemplate urlTemplate, Class<T> pagedClass) {
+    RestResponsePage<T> body = getPageResponse(
+      urlTemplate.template(),
+      pagedClass,
+      urlTemplate.variables()
+    ).getBody();
+    return body != null ? body.newPage() : new RestResponsePage<>();
   }
 
-  public <T> ResponseEntity<List<T>> getList(String url, Class<T> listedClass) {
+  public <T> Page<T> getPage(String url, Class<T> pagedClass, Object... variables) {
+    RestResponsePage<T> body = getPageResponse(url, pagedClass, variables).getBody();
+    return body != null ? body.newPage() : new RestResponsePage<>();
+  }
+
+  public <T> ResponseEntity<List<T>> getList(
+    UrlTemplate urlTemplate,
+    Class<T> listedClass
+  ) {
+    return getList(urlTemplate.template(), listedClass, urlTemplate.variables());
+  }
+
+  public <T> ResponseEntity<List<T>> getList(
+    String url,
+    Class<T> listedClass,
+    Object... urlVariables
+  ) {
     ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
       @Override
       public Type getType() {
@@ -114,7 +144,7 @@ public final class RestClient {
         );
       }
     };
-    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType, urlVariables);
   }
 
   public RestClient loginWith(String username, String password) {
@@ -138,15 +168,19 @@ public final class RestClient {
   }
 
   public RestClient tokenAuthorization() {
-    String token = get("/authenticate", UserTokenDto.class).getBody().token;
-    return withBearerToken(token);
+    UserTokenDto body = get("/authenticate", UserTokenDto.class).getBody();
+    return withBearerToken(body == null ? "" : body.token);
   }
 
   public RestClient withBearerToken(String token) {
     return addHeader(AUTHORIZATION, BEARER + token);
   }
 
-  private <T> ResponseEntity<RestResponsePage<T>> getPageResponse(String url, Class<T> pagedClass) {
+  private <T> ResponseEntity<RestResponsePage<T>> getPageResponse(
+    String url,
+    Class<T> pagedClass,
+    Object... variables
+  ) {
     ParameterizedTypeReference<RestResponsePage<T>> responseType =
       new ParameterizedTypeReference<RestResponsePage<T>>() {
         @Override
@@ -157,7 +191,7 @@ public final class RestClient {
           );
         }
       };
-    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType, variables);
   }
 
   private RestClient basicAuthorization(String token) {

@@ -21,6 +21,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -29,6 +30,8 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
+import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
@@ -52,6 +55,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   private static final ZonedDateTime NOW = ZonedDateTime.now();
+
   private static final ZonedDateTime YESTERDAY = ZonedDateTime.now()
     .minusDays(1)
     .truncatedTo(ChronoUnit.DAYS);
@@ -138,9 +142,14 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .build()
     );
 
-    String url = meterDetailsUrl(logicalMeter.id) + "&before=" + NOW + "&after=" + YESTERDAY;
+    UrlTemplate urlTemplate = Url.builder()
+      .path("/meters/details")
+      .parameter(RequestParameter.ID, logicalMeter.id)
+      .parameter(RequestParameter.BEFORE, NOW)
+      .parameter(RequestParameter.AFTER, YESTERDAY)
+      .build();
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(url, LogicalMeterDto.class)
+      .getList(urlTemplate, LogicalMeterDto.class)
       .getBody()
       .get(0);
 
@@ -531,9 +540,9 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     ZonedDateTime start = NOW.minusDays(10);
     ZonedDateTime stop = NOW.plusHours(1);
-    String url = meterDetailsUrl(logicalMeter.id) + "&after=" + start + "&before=" + stop;
+    String url = meterDetailsUrl(logicalMeter.id) + "&after={start}&before={stop}";
     ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
-      .getList(url, LogicalMeterDto.class);
+      .getList(url, LogicalMeterDto.class, start, stop);
 
     List<LogicalMeterDto> meters = response.getBody();
     List<MeasurementDto> measurements = meters.get(0).measurements;

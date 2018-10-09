@@ -174,7 +174,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   @Test
   public void sync_OnlySuperAdminCanCheckStatus() {
     assertThat(asTestAdmin()
-      .get("/meters/sync?jobIds=12345 ", ErrorMessageDto.class).getStatusCode()
+      .get("/meters/sync?jobIds=12345", ErrorMessageDto.class).getStatusCode()
     ).isEqualTo(HttpStatus.FORBIDDEN);
 
     assertThat(asTestUser()

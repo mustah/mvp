@@ -16,9 +16,9 @@ mvp.url=http://localhost:8080
 
 geo-service.url=http://localhost:8081
 
-liquibase.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/mvpdb
-liquibase.user=mvpdb-admin
-liquibase.password=crA4JNdA8Z^N35&5u@!
-liquibase.parameters.application_user="mvpdb-app"
-liquibase.parameters.application_password=mvp-password
-liquibase.parameters.application_database=mvpdb
+spring.liquibase.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/mvpdb
+spring.liquibase.user=mvpdb-admin
+spring.liquibase.password=crA4JNdA8Z^N35&5u@!
+spring.liquibase.parameters.application_user="mvpdb-app"
+spring.liquibase.parameters.application_password=mvp-password
+spring.liquibase.parameters.application_database=mvpdb

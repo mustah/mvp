@@ -38,7 +38,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
 
     assertThat(userJpaRepository.findByOrganisationId(organisationEntity.id)).hasSize(1);
 
-    organisationJpaRepository.delete(organisationEntity.id);
+    organisationJpaRepository.deleteById(organisationEntity.id);
 
     assertThat(userJpaRepository.findByEmail("user@org.com").isPresent()).isFalse();
   }

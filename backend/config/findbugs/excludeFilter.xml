@@ -4,6 +4,10 @@
     <Class name="~com.elvaco.*\.*Dto"/>
     <Bug code="UrF,UuF,UwF"/>
   </Match>
+  <Match>
+    <Class name="~com.elvaco.*\.*Test"/>
+    <Bug code="NP"/>
+  </Match>
 
   <Match>
     <Bug code="Dm"/>

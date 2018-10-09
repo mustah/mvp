@@ -76,11 +76,14 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorMessageDto> handle(MethodArgumentTypeMismatchException exception) {
+    Object value = exception.getValue();
+    Class<?> requiredType = exception.getRequiredType();
+    String humanTypeName = humanTypeName(requiredType);
     String message = String.format(
       "Invalid '%s' %s: '%s'.",
       exception.getName(),
-      humanTypeName(exception.getRequiredType().getName()),
-      exception.getValue().toString()
+      humanTypeName,
+      value
     );
     return badRequest(message);
   }
@@ -129,8 +132,11 @@ public class ApiExceptionHandler {
       .orElse(INTERNAL_SERVER_ERROR);
   }
 
-  private static String humanTypeName(String javaType) {
-    return TYPE_TO_HUMAN_TYPE_MAP.getOrDefault(javaType, "parameter");
+  private static String humanTypeName(Class<?> javaType) {
+    if (javaType == null) {
+      return "parameter";
+    }
+    return TYPE_TO_HUMAN_TYPE_MAP.getOrDefault(javaType.getName(), "parameter");
   }
 
   private static ResponseEntity<ErrorMessageDto> badRequest(String message) {

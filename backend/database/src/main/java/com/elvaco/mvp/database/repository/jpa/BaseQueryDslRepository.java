@@ -22,8 +22,8 @@ import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
-import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
 import org.springframework.data.jpa.repository.support.Querydsl;
+import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
 import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -41,7 +41,7 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 
 @NoRepositoryBean
 abstract class BaseQueryDslRepository<T, I extends Serializable>
-  extends QueryDslJpaRepository<T, I> {
+  extends QuerydslJpaRepository<T, I> {
 
   static final QGatewayEntity GATEWAY = gatewayEntity;
   static final QLocationEntity LOCATION = locationEntity;

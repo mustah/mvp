@@ -30,7 +30,7 @@ import org.springframework.data.domain.PageRequest;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 import static com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper.ofPageableDomainModel;
-import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrNull;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrUnsorted;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -51,10 +51,10 @@ public class GatewayRepository implements Gateways {
     RequestParameters parameters,
     Pageable pageable
   ) {
-    PageRequest pageRequest = new PageRequest(
+    PageRequest pageRequest = PageRequest.of(
       pageable.getPageNumber(),
       pageable.getPageSize(),
-      getSortOrNull(parameters)
+      getSortOrUnsorted(parameters)
     );
     org.springframework.data.domain.Page<PagedGateway> pagedGateways =
       gatewayJpaRepository.findAll(parameters, pageRequest);
@@ -111,7 +111,11 @@ public class GatewayRepository implements Gateways {
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(gatewayJpaRepository.findSerials(
       new GatewayQueryFilters().toExpression(parameters),
-      new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), getSortOrNull(parameters))
+      PageRequest.of(
+        pageable.getPageNumber(),
+        pageable.getPageSize(),
+        getSortOrUnsorted(parameters)
+      )
     ));
   }
 
