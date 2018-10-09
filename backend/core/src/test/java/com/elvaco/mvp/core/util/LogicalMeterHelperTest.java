@@ -14,12 +14,15 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -30,6 +33,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterHelperTest {
 
@@ -142,18 +146,13 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
     LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
 
-    Map<Quantity, List<PhysicalMeter>> actual = mapMeterQuantitiesToPhysicalMeters(
-      asList(meterOne, meterTwo),
-      new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
+    assertThatThrownBy(() ->
+      mapMeterQuantitiesToPhysicalMeters(
+        asList(meterOne, meterTwo),
+        new HashSet<>(asList(Quantity.TEMPERATURE, Quantity.VOLUME))
+      )).isInstanceOf(
+      InvalidQuantityForMeterType.class
     );
-
-    assertThat(actual)
-      .hasEntrySatisfying(
-        Quantity.VOLUME, physicalMeters -> assertThat(physicalMeters).hasSize(2)
-      )
-      .hasEntrySatisfying(
-        Quantity.ENERGY, physicalMeters -> assertThat(physicalMeters).hasSize(1)
-      );
   }
 
   @Test
@@ -197,6 +196,38 @@ public class LogicalMeterHelperTest {
       )).isEqualTo(
       expected
     );
+  }
+
+  @Test
+  public void groupByQuantity_twoMetersTwoQuantitiesForDifferentMediums() {
+    LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
+    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
+
+    Map<Quantity, List<PhysicalMeter>> actual = groupByQuantity(
+      asList(meterOne, meterTwo),
+      new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
+    );
+
+    assertThat(actual)
+      .hasEntrySatisfying(
+        Quantity.VOLUME, physicalMeters -> assertThat(physicalMeters).hasSize(2)
+      )
+      .hasEntrySatisfying(
+        Quantity.ENERGY, physicalMeters -> assertThat(physicalMeters).hasSize(1)
+      );
+  }
+
+  @Test
+  public void groupByQuantity_excludesQuantitiesWithoutMeters() {
+    LogicalMeter meterOne = newMeter(ROOM_TEMP_METER);
+    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
+
+    Map<Quantity, List<PhysicalMeter>> actual = groupByQuantity(
+      asList(meterOne, meterTwo),
+      new HashSet<>(asList(Quantity.ENERGY))
+    );
+
+    assertThat(actual).isEmpty();
   }
 
   private LogicalMeter newMeter(MeterDefinition meterDefinition) {
