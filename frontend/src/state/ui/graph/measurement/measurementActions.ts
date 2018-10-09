@@ -30,22 +30,22 @@ import {
 import {measurementDataFormatter} from './measurementSchema';
 
 const measurementMeterUri = (
-  quantities: Quantity[],
+  quantity: Quantity,
   meters: uuid[],
   timePeriod: Period,
   customDateRange: Maybe<DateRange>,
 ): string =>
-  `quantities=${quantities.join(',')}` +
+  `quantities=${quantity}` +
   `&meters=${meters.join(',')}` +
   `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
 
 const measurementCityUri = (
-  quantities: Quantity[],
+  quantity: Quantity,
   cities: uuid[],
   timePeriod: Period,
   customDateRange: Maybe<DateRange>,
 ): string =>
-  `quantities=${quantities.join(',')}` +
+  `quantities=${quantity}` +
   `&${cities.map((city) => `city=${city}`).join('&')}` +
   `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
 
@@ -87,11 +87,11 @@ const requestsPerQuantity = (
   customDateRange: Maybe<DateRange>,
 ): GroupedRequests => {
 
-  const meterByQuantity: Partial<{[quantity in Quantity]: uuid[]}> = {};
-  const cityByQuantity: Partial<{[quantity in Quantity]: uuid[]}> = {};
+  const meterByQuantity: Partial<{[quantity in Quantity]: Set<uuid>}> = {};
+  const cityByQuantity: Partial<{[quantity in Quantity]: Set<uuid>}> = {};
   quantities.forEach((quantity: Quantity) => {
-    meterByQuantity[quantity] = [];
-    cityByQuantity[quantity] = [];
+    meterByQuantity[quantity] = new Set();
+    cityByQuantity[quantity] = new Set();
   });
 
   const urls: GroupedRequests = {
@@ -108,16 +108,16 @@ const requestsPerQuantity = (
         const cityQuantities: Quantity[] = allQuantities[singleMedium];
         quantities
           .filter((quantity: Quantity) => cityQuantities.includes(quantity))
-          .forEach((quantity: Quantity) => cityByQuantity[quantity]!.push(id));
+          .forEach((quantity: Quantity) => cityByQuantity[quantity]!.add(id));
       });
     });
 
   Object.keys(cityByQuantity).forEach((quantity: Quantity) => {
-    if (cityByQuantity[quantity]!.length) {
+    if (cityByQuantity[quantity]!.size) {
       urls.cities.push(
         restClient.getParallel(makeUrl(
           EndPoints.measurements.concat('/cities'),
-          measurementCityUri([quantity], cityByQuantity[quantity]!, timePeriod, customDateRange),
+          measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
         )),
       );
     }
@@ -130,23 +130,23 @@ const requestsPerQuantity = (
       const meterQuantities: Quantity[] = allQuantities[medium];
       quantities
         .filter((quantity: Quantity) => meterQuantities.includes(quantity))
-        .forEach((quantity: Quantity) => meterByQuantity[quantity]!.push(id));
+        .forEach((quantity: Quantity) => meterByQuantity[quantity]!.add(id));
     });
 
   Object.keys(meterByQuantity).forEach((quantity: Quantity) => {
-    if (meterByQuantity[quantity]!.length) {
+    if (meterByQuantity[quantity]!.size) {
       urls.meters.push(
         restClient.getParallel(makeUrl(
           EndPoints.measurements,
-          measurementMeterUri([quantity], meterByQuantity[quantity]!, timePeriod, customDateRange),
+          measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
         )),
       );
 
-      if (meterByQuantity[quantity]!.length > 1) {
+      if (meterByQuantity[quantity]!.size > 1) {
         urls.average.push(
           restClient.getParallel(makeUrl(
             EndPoints.measurements.concat('/average'),
-            measurementMeterUri([quantity], meterByQuantity[quantity]!, timePeriod, customDateRange),
+            measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
           )),
         );
       }
