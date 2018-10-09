@@ -44,7 +44,6 @@ before_script:
       - .yarn
       - frontend/dist
       - frontend/node_modules
-      - frontend/.fusebox/cache
       - .version
 
 .cache_gradle_read_only: &cache_gradle_read_only
