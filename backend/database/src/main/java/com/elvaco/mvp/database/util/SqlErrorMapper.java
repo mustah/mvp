@@ -11,11 +11,13 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.exception.MixedDimensionForMeterQuantity;
 import com.elvaco.mvp.core.exception.UnitConversionError;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.hibernate.JDBCException;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.elvaco.mvp.core.exception.UnitConversionError.unknownUnit;
 import static java.util.Arrays.asList;
 
 @UtilityClass
@@ -48,18 +50,6 @@ public class SqlErrorMapper {
       )
     );
 
-  private static RuntimeException mapDimensionMismatchError(MatchResult matchResult, String scale) {
-    return new UnitConversionError(matchResult.group(1), scale);
-  }
-
-  private static RuntimeException mapUnknownUnitError(MatchResult matchResult, String scale) {
-    return UnitConversionError.unknownUnit(scale);
-  }
-
-  private static RuntimeException mapMixedDimensionsError(MatchResult matchResult) {
-    return new MixedDimensionForMeterQuantity(matchResult.group(1), matchResult.group(2));
-  }
-
   public static RuntimeException mapDataIntegrityViolation(DataIntegrityViolationException ex) {
     return mapDataIntegrityViolation(ex, null);
   }
@@ -84,6 +74,18 @@ public class SqlErrorMapper {
       }
     }
     return ex;
+  }
+
+  private static RuntimeException mapDimensionMismatchError(MatchResult matchResult, String scale) {
+    return new UnitConversionError(matchResult.group(1), scale);
+  }
+
+  private static RuntimeException mapUnknownUnitError(MatchResult matchResult, String scale) {
+    return unknownUnit(scale);
+  }
+
+  private static RuntimeException mapMixedDimensionsError(MatchResult matchResult) {
+    return new MixedDimensionForMeterQuantity(matchResult.group(1), matchResult.group(2));
   }
 
   @RequiredArgsConstructor
