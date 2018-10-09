@@ -16,6 +16,7 @@ import {
   payloadActionOf,
 } from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
+import {DataFormatter} from '../domain-models/domainModelsActions';
 
 export interface RequestHandler<P> {
   request: OnEmptyAction;
@@ -24,9 +25,10 @@ export interface RequestHandler<P> {
 }
 
 interface AsyncRequest<P> extends RequestHandler<P> {
-  onRequest: (parameters?: EncodedUriParameters) => AxiosPromise<P>;
-  parameters?: EncodedUriParameters;
   dispatch: Dispatch<RootState>;
+  onRequest: (parameters?: EncodedUriParameters) => AxiosPromise<P>;
+  formatData?: DataFormatter<P>;
+  parameters?: EncodedUriParameters;
 }
 
 export const responseMessageOrFallback = (response?: any): ErrorResponse =>
@@ -42,19 +44,19 @@ export const requestTimeout = (): ErrorResponse => ({
     'looks like the server is taking to long to respond, please try again in soon'),
 });
 
-const makeAsyncRequest = async <P>(
-  {
-    request,
-    success,
-    failure,
-    onRequest,
-    parameters,
-    dispatch,
-  }: AsyncRequest<P>) => {
+const makeAsyncRequest = async <P>({
+  request,
+  success,
+  failure,
+  onRequest,
+  formatData = (id) => id,
+  parameters,
+  dispatch,
+}: AsyncRequest<P>) => {
   try {
     dispatch(request());
     const {data} = await onRequest(parameters);
-    dispatch(success(data));
+    dispatch(success(formatData(data)));
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
@@ -82,20 +84,19 @@ export const makeActionsOf = <P>(endPoint: EndPoints): RequestHandler<P> => ({
   failure: payloadActionOf<ErrorResponse>(failureAction(endPoint)),
 });
 
-export const fetchIfNeeded = <P>(endPoint: EndPoints, fetchIfNeeded: FetchIfNeeded) => {
-  const onRequest = (parameters?: EncodedUriParameters): AxiosPromise<P> =>
-    restClient.get(makeUrl(endPoint, parameters));
-
-  return (parameters?: EncodedUriParameters) =>
+export const fetchIfNeeded = <P>(endPoint: EndPoints, fetchIfNeeded: FetchIfNeeded, formatData?: DataFormatter<P>) =>
+  (parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
       if (fetchIfNeeded(getState)) {
+        const onRequest = (parameters?: EncodedUriParameters): AxiosPromise<P> =>
+          restClient.get(makeUrl(endPoint, parameters));
         return makeAsyncRequest<P>({
           ...makeActionsOf<P>(endPoint),
           onRequest,
+          formatData,
           parameters,
           dispatch,
         });
       }
       return null;
     };
-};

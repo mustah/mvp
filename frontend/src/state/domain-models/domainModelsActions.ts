@@ -1,5 +1,6 @@
+import {AxiosPromise} from 'axios';
 import {Dispatch} from 'react-redux';
-import {createEmptyAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
@@ -33,8 +34,7 @@ export const domainModelsDeleteSuccess: ActionTypeFactory = domainModelsSuccess(
 
 export const domainModelsClearError = (endPoint: EndPoints) => `DOMAIN_MODELS_CLEAR_ERROR${endPoint}`;
 
-export const clearError = (endPoint: EndPoints) =>
-  createEmptyAction<string>(domainModelsClearError(endPoint));
+export const clearError = (endPoint: EndPoints) => emptyActionOf(domainModelsClearError(endPoint));
 
 export interface RequestCallbacks<T> {
   afterSuccess?: (domainModel: T, dispatch: Dispatch<RootState>) => void;
@@ -110,10 +110,11 @@ export const fetchIfNeeded = <T extends Identifiable>(
   formatData: DataFormatter<Normalized<T>>,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
-  (requestData?: string) =>
+  (requestData?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
       if (shouldFetch(getState().domainModels[entityType])) {
-        const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
+        const requestFunc = (requestData: EncodedUriParameters): AxiosPromise<T> =>
+          restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, Normalized<T>>({
           ...getRequestOf<Normalized<T>>(endPoint),
           formatData,

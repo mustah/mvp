@@ -1,4 +1,3 @@
-import {normalize} from 'normalizr';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {EndPoints} from '../../../services/endPoints';
 import {uuid} from '../../../types/Types';
@@ -13,7 +12,7 @@ import {
 } from '../../user-selection/userSelectionActions';
 import {NormalizedSelectionTree, SelectionTreeState} from '../selectionTreeModels';
 import {initialState, selectionTree} from '../selectionTreeReducer';
-import {selectionTreeSchema} from '../selectionTreeSchemas';
+import {selectionTreeDataFormatter} from '../selectionTreeSchemas';
 
 describe('selectionTreeReducer', () => {
 
@@ -80,7 +79,7 @@ describe('selectionTreeReducer', () => {
       },
     ],
   };
-  const normalizedResponse: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+  const normalizedResponse: NormalizedSelectionTree = selectionTreeDataFormatter(responseFromApi);
 
   const actions: RequestHandler<NormalizedSelectionTree> =
     makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
@@ -131,7 +130,7 @@ describe('selectionTreeReducer', () => {
         delete missingMeterMedium.cities[0].addresses[0].meters[0].medium;
         const firstMetersId: uuid = missingMeterMedium.cities[0].addresses[0].meters[0].id;
 
-        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+        const payload: NormalizedSelectionTree = selectionTreeDataFormatter(responseFromApi);
 
         const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
         const {id, medium} = stateAfterSuccess.entities.meters[firstMetersId];
@@ -144,7 +143,7 @@ describe('selectionTreeReducer', () => {
         missingMeterMedium.cities[0].addresses[0].meters[0].medium = '';
         const firstMetersId: uuid = missingMeterMedium.cities[0].addresses[0].meters[0].id;
 
-        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+        const payload: NormalizedSelectionTree = selectionTreeDataFormatter(responseFromApi);
 
         const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
         const {id, medium} = stateAfterSuccess.entities.meters[firstMetersId];
@@ -157,7 +156,7 @@ describe('selectionTreeReducer', () => {
         delete missingMeterMedium.cities[0].medium;
         const firstCitysId: uuid = missingMeterMedium.cities[0].id;
 
-        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+        const payload: NormalizedSelectionTree = selectionTreeDataFormatter(responseFromApi);
 
         const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
         const {id, medium} = stateAfterSuccess.entities.cities[firstCitysId];
@@ -170,7 +169,7 @@ describe('selectionTreeReducer', () => {
         missingMeterMedium.cities[0].medium = [];
         const firstCitysId: uuid = missingMeterMedium.cities[0].id;
 
-        const payload: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+        const payload: NormalizedSelectionTree = selectionTreeDataFormatter(responseFromApi);
 
         const stateAfterSuccess: SelectionTreeState = selectionTree(initialState, actions.success(payload));
         const {id, medium} = stateAfterSuccess.entities.cities[firstCitysId];
