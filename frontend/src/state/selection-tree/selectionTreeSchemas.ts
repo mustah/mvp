@@ -1,5 +1,7 @@
-import {Schema, schema} from 'normalizr';
+import {normalize, Schema, schema} from 'normalizr';
 import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
+import {DataFormatter} from '../domain-models/domainModelsActions';
+import {NormalizedSelectionTree} from './selectionTreeModels';
 
 const idOfAddress: schema.SchemaFunction = (
   {name: entityName},
@@ -39,6 +41,7 @@ const city = new schema.Entity('cities', {addresses: [address]}, {
   processStrategy: processStrategyCity,
 });
 
-export const selectionTreeSchema: Schema = {
-  cities: [city],
-};
+const selectionTreeSchema: Schema = {cities: [city]};
+
+export const selectionTreeDataFormatter: DataFormatter<NormalizedSelectionTree> =
+  (response) => normalize(response, selectionTreeSchema);

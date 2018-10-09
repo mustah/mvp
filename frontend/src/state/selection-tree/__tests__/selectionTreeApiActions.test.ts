@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {normalize} from 'normalizr';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -17,8 +17,7 @@ import {User} from '../../domain-models/user/userModels';
 import {fetchSelectionTree} from '../selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../selectionTreeModels';
 import {initialState as initialSelectionTreeState} from '../selectionTreeReducer';
-import {selectionTreeSchema} from '../selectionTreeSchemas';
-import {default as MockAdapter} from 'axios-mock-adapter';
+import {selectionTreeDataFormatter} from '../selectionTreeSchemas';
 
 describe('selectionTreeApiActions', () => {
   initTranslations({
@@ -109,7 +108,7 @@ describe('selectionTreeApiActions', () => {
     ],
   };
 
-  const normalizedResponse: NormalizedSelectionTree = normalize(responseFromApi, selectionTreeSchema);
+  const normalizedResponse: NormalizedSelectionTree = selectionTreeDataFormatter(responseFromApi);
 
   const actions = makeActionsOf<NormalizedSelectionTree>(EndPoints.selectionTree);
 
