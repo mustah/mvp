@@ -187,11 +187,11 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(getListAsSuperAdmin(
       "/measurements?meters=" + firstOrganisationsMeter.logicalMeterId.toString()
-        + "," + secondOrganisationsMeter.logicalMeterId.toString()
-        + "&quantities=Difference temperature"
-        + "&resolution=hour"
-        + "&after=" + date
-        + "&before=" + date.plusHours(1)
+      + "," + secondOrganisationsMeter.logicalMeterId.toString()
+      + "&quantities=Difference+temperature"
+      + "&resolution=hour"
+      + "&after=" + date
+      + "&before=" + date.plusHours(1)
       )
     ).hasSize(2);
   }

@@ -39,6 +39,8 @@ import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.UrlDefinition;
+import com.elvaco.mvp.testdata.UrlDefinitionWithParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -225,6 +227,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .get(0);
 
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(0.0);
+  }
+
+  UrlDefinition metersUrl(ZonedDateTime after, ZonedDateTime before) {
+    return UrlDefinitionWithParameters.builder()
+      .endpointPath("/meters")
+      .parameter(RequestParameter.AFTER, after)
+      .parameter(RequestParameter.BEFORE, before)
+      .build();
   }
 
   @Test
@@ -479,7 +489,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     PagedLogicalMeterDto logicalMeterDto = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(3)), PagedLogicalMeterDto.class)
+      .getPage(
+        metersUrl(start, start.plusHours(3)),
+        PagedLogicalMeterDto.class
+      )
       .getContent()
       .get(0);
 
@@ -615,7 +628,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     missingMeasurementJpaRepository.refreshLocked();
 
     List<PagedLogicalMeterDto> pagedMeters = asTestUser()
-      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusDays(1)), PagedLogicalMeterDto.class)
+      .getPage(
+        metersUrl(YESTERDAY, YESTERDAY.plusDays(1)),
+        PagedLogicalMeterDto.class
+      )
       .getContent();
 
     /* NOTE! We get _two_ entries for the same logical meter here, since we have two physical meters
@@ -656,7 +672,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusDays(1)), PagedLogicalMeterDto.class);
+      .getPage(
+        metersUrl(start, start.plusDays(1)),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1573,7 +1592,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(1)), PagedLogicalMeterDto.class);
+      .getPage(
+        metersUrl(start, start.plusHours(1)),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1606,9 +1628,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .start(start)
       .build());
 
-    String alarm = String.format("&%s=%s", RequestParameter.ALARM.toString(), "yes");
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(9)) + alarm, PagedLogicalMeterDto.class);
+      .getPage(
+        UrlDefinitionWithParameters.builder()
+          .endpointPath("/meters")
+          .parameter(RequestParameter.AFTER, start)
+          .parameter(RequestParameter.BEFORE, start.plusHours(9))
+          .parameter(RequestParameter.ALARM, "yes")
+          .build(),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1645,9 +1674,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .start(start)
       .build());
 
-    String alarm = String.format("&%s=%s", RequestParameter.ALARM.toString(), "no");
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(9)) + alarm, PagedLogicalMeterDto.class);
+      .getPage(
+        UrlDefinitionWithParameters.builder()
+          .endpointPath("/meters")
+          .parameter(RequestParameter.AFTER, start)
+          .parameter(RequestParameter.BEFORE, start.plusHours(9))
+          .parameter(RequestParameter.ALARM, "no")
+          .build(),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1676,7 +1712,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(1)), PagedLogicalMeterDto.class);
+      .getPage(
+        metersUrl(start, start.plusHours(1)),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1712,7 +1751,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(1)), PagedLogicalMeterDto.class);
+      .getPage(
+        metersUrl(start, start.plusHours(1)),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1746,7 +1788,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
-      .getPage(metersUrl(start, start.plusHours(4)), PagedLogicalMeterDto.class);
+      .getPage(
+        metersUrl(start, start.plusHours(4)),
+        PagedLogicalMeterDto.class
+      );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
@@ -1943,7 +1988,4 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .confidence(0.75);
   }
 
-  private static String metersUrl(ZonedDateTime start, ZonedDateTime stop) {
-    return String.format("/meters?after=%s&before=%s", start, stop);
-  }
 }

@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -19,6 +20,8 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.UrlDefinition;
+import com.elvaco.mvp.testdata.UrlDefinitionWithParameters;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
@@ -133,16 +136,20 @@ public class MapMarkerControllerTest extends IntegrationTest {
     ZonedDateTime before = NOW.plusDays(2);
     ZonedDateTime after = NOW.minusDays(2);
 
-    String url = "/map-markers/meters/?before=" + before + "&after=" + after;
+    UrlDefinitionWithParameters urlDefinition =
+      UrlDefinitionWithParameters.builder().endpointPath("/map-markers/meters")
+        .parameter(RequestParameter.BEFORE, before)
+        .parameter(RequestParameter.AFTER, after)
+        .build();
 
     ResponseEntity<MapMarkersDto> differentOrganisation = restAsUser(context().user2)
-      .get(url, MapMarkersDto.class);
+      .get(urlDefinition, MapMarkersDto.class);
 
     assertThat(differentOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(differentOrganisation.getBody().markers.size()).isEqualTo(0);
 
     ResponseEntity<MapMarkersDto> sameOrganisation = asTestUser()
-      .get(url, MapMarkersDto.class);
+      .get(urlDefinition, MapMarkersDto.class);
 
     assertThat(sameOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(sameOrganisation.getBody().markers.get(status).size()).isEqualTo(2);
@@ -482,23 +489,22 @@ public class MapMarkerControllerTest extends IntegrationTest {
     return gateway;
   }
 
-  private static String mapMarkerAlarmUrl(String alarm) {
-    return urlOf("meters", alarm);
-  }
-
-  private static String gatewayMapMarkerAlarmUrl(String alarm) {
-    return urlOf("gateways", alarm);
-  }
-
-  private static String urlOf(String entity, String alarm) {
+  private static UrlDefinition mapMarkerAlarmUrl(String alarm) {
     ZonedDateTime now = ZonedDateTime.now();
-    return String.format(
-      "/map-markers/%s?alarm=%s&after=%s&before=%s",
-      entity,
-      alarm,
-      now.minusDays(1),
-      now.plusDays(1)
-    );
+    return UrlDefinitionWithParameters.builder().endpointPath("/map-markers/meters")
+      .parameter(RequestParameter.ALARM, alarm)
+      .parameter(RequestParameter.AFTER, now.minusDays(1))
+      .parameter(RequestParameter.BEFORE, now.plusDays(1))
+      .build();
+  }
+
+  private static UrlDefinition gatewayMapMarkerAlarmUrl(String alarm) {
+    ZonedDateTime now = ZonedDateTime.now();
+    return UrlDefinitionWithParameters.builder().endpointPath("/map-markers/gateways")
+      .parameter(RequestParameter.ALARM, alarm)
+      .parameter(RequestParameter.AFTER, now.minusDays(1))
+      .parameter(RequestParameter.BEFORE, now.plusDays(1))
+      .build();
   }
 
   private static Location lowConfidenceLocation() {
