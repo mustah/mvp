@@ -262,7 +262,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(post.getBody()).isEqualTo(userSelectionDto);
-    assertThat(repository.findById(userSelectionDto.id)).isNull();
+    assertThat(repository.findById(userSelectionDto.id)).isEmpty();
   }
 
   @Test
