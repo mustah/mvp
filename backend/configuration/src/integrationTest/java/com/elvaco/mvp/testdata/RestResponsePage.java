@@ -3,12 +3,14 @@ package com.elvaco.mvp.testdata;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+@JsonIgnoreProperties({"pageable", "sort"})
 public class RestResponsePage<T> extends PageImpl<T> {
 
   private static final long serialVersionUID = 7024191353049604570L;
