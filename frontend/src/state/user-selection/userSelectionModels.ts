@@ -65,10 +65,10 @@ export interface UserSelectionState {
 }
 
 export interface UriLookupState extends UserSelectionState, Query {
-  now: Date;
+  start?: Date;
 }
 
-export interface UriLookupStatePaginated extends UriLookupState, Query {
+export interface UriLookupStatePaginated extends UriLookupState {
   pagination: Pagination;
 }
 

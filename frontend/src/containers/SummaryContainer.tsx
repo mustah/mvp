@@ -5,7 +5,6 @@ import {Row} from '../components/layouts/row/Row';
 import {SmallLoader} from '../components/loading/SmallLoader';
 import {Summary} from '../components/summary/Summary';
 import '../components/summary/Summary.scss';
-import {now} from '../helpers/dateHelpers';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
 import {fetchSummary} from '../state/summary/summaryApiActions';
@@ -55,7 +54,7 @@ const mapStateToProps = ({userSelection: {userSelection}, summary}: RootState): 
   ({
     selectionSummary: getSelectionSummary(summary),
     isFetching: summary.isFetching,
-    parameters: getMeterParameters({userSelection, now: now()}),
+    parameters: getMeterParameters({userSelection}),
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

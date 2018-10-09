@@ -1,28 +1,29 @@
 import {Period} from '../../components/dates/dateModels';
-import {displayDate, momentWithTimeZone, prettyRange, toPeriodApiParameters} from '../dateHelpers';
+import {displayDate, momentFrom, prettyRange, toPeriodApiParameters} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 
 describe('dateHelper', () => {
 
   describe('relative time periods', () => {
-    it('defaults to no limits if no start/end time is given', () => {
-      const date = momentWithTimeZone('2018-03-23 11:00:00').toDate();
 
+    it('defaults to no limits if no start/end time is given', () => {
       expect(toPeriodApiParameters({
-        now: date,
+        start: momentFrom('2018-03-23 11:00:00').toDate(),
         period: Period.latest,
         customDateRange: Maybe.nothing(),
-      })).toEqual(['after=2018-03-22T00%3A00%3A00.000Z',
-                   'before=2018-03-23T00%3A00%3A00.000Z']);
+      })).toEqual([
+        'after=2018-03-22T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-03-23T00%3A00%3A00.000%2B01%3A00',
+      ]);
     });
   });
 
   describe('user friendliness', () => {
 
     it('can be expressed in a friendly looking way', () => {
-      const endOfNovember = momentWithTimeZone('2013-11-24 11:00:00').toDate();
+      const endOfNovember = momentFrom('2013-11-24 11:00:00').toDate();
       const timePeriod = prettyRange({
-        now: endOfNovember,
+        start: endOfNovember,
         period: Period.currentMonth,
         customDateRange: Maybe.nothing(),
       });
@@ -31,7 +32,7 @@ describe('dateHelper', () => {
 
     it('can be consumed by the MVP REST API', () => {
       const apiFriendlyOutput = toPeriodApiParameters({
-        now: momentWithTimeZone('2012-02-04').toDate(),
+        start: momentFrom('2012-02-04').toDate(),
         period: Period.currentMonth,
         customDateRange: Maybe.nothing(),
       });
@@ -54,9 +55,8 @@ describe('dateHelper', () => {
 
     describe('can be constructed from relative terms', () => {
       it('knows about previous month', () => {
-        const now = momentWithTimeZone('2013-03-25').toDate();
         const prevMonthRange = prettyRange({
-          now,
+          start: momentFrom('2013-03-25').toDate(),
           period: Period.previousMonth,
           customDateRange: Maybe.nothing(),
         });
@@ -64,9 +64,8 @@ describe('dateHelper', () => {
       });
 
       it('knows about previous 7 days', () => {
-        const march14 = momentWithTimeZone('2013-03-14T00:00:00Z').toDate();
         const prevWeek = prettyRange({
-          now: march14,
+          start: momentFrom('2013-03-14T00:00:00Z').toDate(),
           period: Period.previous7Days,
           customDateRange: Maybe.nothing(),
         });
@@ -74,20 +73,18 @@ describe('dateHelper', () => {
       });
 
       it('knows about current week', () => {
-        const friday10thNovember = momentWithTimeZone('2017-11-10T00:00:00Z').toDate();
         const currentWeekApiParameters = prettyRange({
-          now: friday10thNovember,
+          start: momentFrom('2017-11-10T00:00:00Z').toDate(),
           period: Period.currentWeek,
           customDateRange: Maybe.nothing(),
         });
 
-        expect(currentWeekApiParameters).toEqual('2017-11-06 - 2017-11-12');
+        expect(currentWeekApiParameters).toEqual('2017-11-06 - 2017-11-13');
       });
 
       it('knows about current month', () => {
-        const date = momentWithTimeZone('2017-11-23T00:00:00Z').toDate();
         const currentMonthApiParameters = prettyRange({
-          now: date,
+          start: momentFrom('2017-11-23T00:00:00Z').toDate(),
           period: Period.currentMonth,
           customDateRange: Maybe.nothing(),
         });
@@ -96,23 +93,23 @@ describe('dateHelper', () => {
 
       it('knows about last 24 h', () => {
         const currentDayApiParameters = prettyRange({
-          now: momentWithTimeZone('2013-03-13T00:00:00Z').toDate(),
+          start: momentFrom('2013-03-13T00:00:00Z').toDate(),
           period: Period.latest,
           customDateRange: Maybe.nothing(),
         });
-        expect(currentDayApiParameters).toEqual('2013-03-12 - 2013-03-12');
+        expect(currentDayApiParameters).toEqual('2013-03-12 - 2013-03-13');
       });
 
       it('knows about a custom time period', () => {
-        const start = momentWithTimeZone('2013-03-13T00:00:00Z').toDate();
-        const end = momentWithTimeZone('2013-03-13T00:00:00Z').toDate();
+        const start = momentFrom('2013-03-13T00:00:00Z').toDate();
+        const end = momentFrom('2013-03-13T00:00:00Z').toDate();
 
         const currentDayApiParameters = prettyRange({
-          now: momentWithTimeZone('2013-03-25T00:00:00Z').toDate(),
+          start: momentFrom('2013-03-25T00:00:00Z').toDate(),
           period: Period.custom,
           customDateRange: Maybe.just({start, end}),
         });
-        expect(currentDayApiParameters).toEqual('2013-03-13 - 2013-03-13');
+        expect(currentDayApiParameters).toEqual('2013-03-13 - 2013-03-14');
       });
     });
   });
@@ -120,16 +117,16 @@ describe('dateHelper', () => {
   describe('displayDate', () => {
 
     it('formats in timezone CET', () => {
-      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 01:00');
-      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 09:00');
+      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 00:00');
+      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 08:00');
     });
 
     it('formats in timezone with offset +1 from UTC', () => {
-      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 08:00');
+      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 07:00');
     });
 
     it('formats in timezone in Stockholm (offset +2 from UTC)', () => {
-      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 07:00');
+      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 06:00');
     });
 
   });

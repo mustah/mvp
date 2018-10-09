@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DispatchToProps, StateToProps} from '../../../components/tabs/components/MainContentTabs';
-import {now} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
@@ -29,7 +28,7 @@ const mapStateToProps =
       noContentText: firstUpperTranslated('no gateways'),
       selectedTab: getSelectedTab(tabs.collection),
       mapMarkers: getDomainModel(gatewayMapMarkers),
-      parameters: getGatewayParameters({now: now(), userSelection, query}),
+      parameters: getGatewayParameters({userSelection, query}),
       selectedId: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),

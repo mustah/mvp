@@ -1,5 +1,5 @@
 import {Period} from '../../../components/dates/dateModels';
-import {momentWithTimeZone} from '../../../helpers/dateHelpers';
+import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
@@ -28,7 +28,7 @@ describe('userSelectionSelectors', () => {
   const gothenburg: IdNamed = {name: 'göteborg', id: 'sweden,göteborg'};
 
   const initialUserSelectionState: UserSelectionState = {...initialState};
-  const now: Date = momentWithTimeZone('2018-02-02T00:00:00Z').toDate();
+  const start: Date = momentFrom('2018-02-02T00:00:00Z').toDate();
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialUserSelectionState,
     pagination: getPagination({
@@ -36,10 +36,11 @@ describe('userSelectionSelectors', () => {
       componentId: 'test',
       pagination: initialPaginationState,
     }),
-    now,
+    start,
   };
 
-  const latestUrlParameters = 'after=2018-02-01T00%3A00%3A00.000Z&before=2018-02-02T00%3A00%3A00.000Z';
+  const latestUrlParameters =
+    'after=2018-02-01T00%3A00%3A00.000%2B01%3A00&before=2018-02-02T00%3A00%3A00.000%2B01%3A00';
 
   const initialEncodedParameters = getPaginatedMeterParameters(initialUriLookupState);
 
@@ -68,7 +69,7 @@ describe('userSelectionSelectors', () => {
           componentId: 'test',
           pagination: initialPaginationState,
         }),
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=${limit}&page=0`);
@@ -99,7 +100,7 @@ describe('userSelectionSelectors', () => {
           componentId: 'test',
           pagination: initialPaginationState,
         }),
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(
@@ -123,7 +124,7 @@ describe('userSelectionSelectors', () => {
           componentId: 'test',
           pagination: initialPaginationState,
         }),
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=bro`);
@@ -146,7 +147,7 @@ describe('userSelectionSelectors', () => {
           componentId: 'test',
           pagination: initialPaginationState,
         }),
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
@@ -167,7 +168,7 @@ describe('userSelectionSelectors', () => {
           componentId: 'test',
           pagination: initialPaginationState,
         }),
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=sto`);
@@ -191,7 +192,7 @@ describe('userSelectionSelectors', () => {
           componentId: 'test',
           pagination: initialPaginationState,
         }),
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`gatewaySerial=123abc&${latestUrlParameters}&size=20&page=0&w=sto`);
@@ -210,7 +211,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getMeterParameters({
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
@@ -226,7 +227,7 @@ describe('userSelectionSelectors', () => {
       const uriParameters: EncodedUriParameters = getMeterParameters({
         query: 'sto',
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&w=sto`);
@@ -245,7 +246,7 @@ describe('userSelectionSelectors', () => {
       const uriParameters: EncodedUriParameters = getMeterParameters({
         query: 'sto',
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`facility=112&${latestUrlParameters}&w=sto`);
@@ -263,7 +264,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getMeterParameters({
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`alarm=yes&${latestUrlParameters}`);
@@ -281,7 +282,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getMeterParameters({
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`alarm=no&${latestUrlParameters}`);
@@ -300,7 +301,7 @@ describe('userSelectionSelectors', () => {
 
       const uriParameters: EncodedUriParameters = getGatewayParameters({
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
@@ -316,7 +317,7 @@ describe('userSelectionSelectors', () => {
       const uriParameters: EncodedUriParameters = getGatewayParameters({
         query: 'sto',
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&w=sto`);
@@ -335,7 +336,7 @@ describe('userSelectionSelectors', () => {
       const uriParameters: EncodedUriParameters = getGatewayParameters({
         query: 'sto',
         userSelection: state.userSelection,
-        now,
+        start,
       });
 
       expect(uriParameters).toEqual(`gatewaySerial=666&${latestUrlParameters}&w=sto`);

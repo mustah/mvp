@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {default as MockAdapter} from 'axios-mock-adapter';
 import {Period} from '../../../../../components/dates/dateModels';
 import {Medium} from '../../../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../../../helpers/Maybe';
@@ -10,7 +11,6 @@ import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {mapApiResponseToGraphData} from '../helpers/apiResponseToGraphContents';
 import {fetchMeasurements} from '../measurementActions';
 import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
-import {default as MockAdapter} from 'axios-mock-adapter';
 
 describe('measurementActions', () => {
 
@@ -51,7 +51,7 @@ describe('measurementActions', () => {
       expect(state).toEqual(expected);
     });
 
-    it('includes meters and excludes clusters/addreses in request', async () => {
+    it('includes meters and excludes clusters/addresses in request', async () => {
       const mockRestClient = new MockAdapter(axios);
       authenticate('test');
 
@@ -71,8 +71,9 @@ describe('measurementActions', () => {
         logout: (error?: Unauthorized) => void(0),
       });
 
-      expect(requestedUrls[0]).toMatch(
-        /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/);
+      expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e/);
+      expect(requestedUrls[0]).toContain('after=');
+      expect(requestedUrls[0]).toContain('before=');
     });
 
     describe('cities', () => {
@@ -98,10 +99,11 @@ describe('measurementActions', () => {
         });
 
         expect(requestedUrls).toHaveLength(1);
-
-        const expected: RegExp =
-          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&city=sweden,göteborg&after=20.+Z&before=20.+Z/;
-        expect(requestedUrls[0]).toMatch(expected);
+        expect(requestedUrls[0]).toMatch(
+          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&city=sweden,göteborg/,
+        );
+        expect(requestedUrls[0]).toContain('&after=');
+        expect(requestedUrls[0]).toContain('&before=');
       });
 
       it('requests cities when meters are selected too', async () => {
@@ -125,14 +127,16 @@ describe('measurementActions', () => {
         });
 
         expect(requestedUrls).toHaveLength(2);
-
         const meterUrl: RegExp =
-          /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e&after=20.+Z&before=20.+Z/;
+          /\/measurements\?quantities=Power&meters=8c5584ca-eaa3-4199-bf85-871edba8945e/;
         expect(requestedUrls[0]).toMatch(meterUrl);
+        expect(requestedUrls[0]).toContain('&after=');
+        expect(requestedUrls[0]).toContain('&before=');
 
-        const cityUrl: RegExp =
-          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&after=20.+Z&before=20.+Z/;
+        const cityUrl: RegExp = /\/measurements\/cities\?quantities=Power&city=sweden,höganäs/;
         expect(requestedUrls[1]).toMatch(cityUrl);
+        expect(requestedUrls[1]).toContain('&after=');
+        expect(requestedUrls[1]).toContain('&before=');
       });
 
       it('does not request addresses against cities endpoint', async () => {
@@ -156,10 +160,9 @@ describe('measurementActions', () => {
         });
 
         expect(requestedUrls).toHaveLength(1);
-
-        const cityUrl: RegExp =
-          /\/measurements\/cities\?quantities=Power&city=sweden,höganäs&after=20.+Z&before=20.+Z/;
-        expect(requestedUrls[0]).toMatch(cityUrl);
+        expect(requestedUrls[0]).toMatch(/\/measurements\/cities\?quantities=Power&city=sweden,höganäs/);
+        expect(requestedUrls[0]).toContain('&after=');
+        expect(requestedUrls[0]).toContain('&before=');
       });
 
     });
@@ -202,8 +205,9 @@ describe('measurementActions', () => {
           logout,
         });
         expect(requestedUrls).toHaveLength(1);
-        expect(requestedUrls[0]).toMatch(
-          /\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
+        expect(requestedUrls[0]).toMatch('/measurements?quantities=Power&meters=123abc&');
+        expect(requestedUrls[0]).toContain('&after=');
+        expect(requestedUrls[0]).toContain('&before=');
       },
     );
 
@@ -228,12 +232,12 @@ describe('measurementActions', () => {
       });
       expect(requestedUrls).toHaveLength(2);
       requestedUrls.sort();
-      expect(requestedUrls[0])
-        .toMatch(
-          /\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
-      expect(requestedUrls[1])
-        .toMatch(
-          /\/measurements\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+      expect(requestedUrls[0]).toMatch(/\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi/);
+      expect(requestedUrls[0]).toContain('&after=');
+      expect(requestedUrls[0]).toContain('&before=');
+      expect(requestedUrls[1]).toMatch(/\/measurements\?quantities=Power&meters=123abc,345def,456ghi/);
+      expect(requestedUrls[1]).toContain('&after=');
+      expect(requestedUrls[1]).toContain('&before=');
     });
 
     it('provides a result suitable for parsing by mapApiResponseToGraphData', async () => {

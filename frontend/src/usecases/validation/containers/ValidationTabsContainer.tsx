@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DispatchToProps, StateToProps} from '../../../components/tabs/components/MainContentTabs';
-import {now} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
@@ -30,7 +29,7 @@ const mapStateToProps =
       mapMarkers: getDomainModel(meterMapMarkers),
       noContentText: firstUpperTranslated('no meters'),
       selectedId: getSelectedMapMarker(map),
-      parameters: getMeterParameters({now: now(), userSelection, query}),
+      parameters: getMeterParameters({userSelection, query}),
       error: getError(meterMapMarkers),
       isFetching: meterMapMarkers.isFetching,
     });

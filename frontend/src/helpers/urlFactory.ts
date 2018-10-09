@@ -79,15 +79,12 @@ export const toMeterIdsApiParameters = (ids: uuid[]): string =>
 export const toGatewayIdsApiParameters = (ids: uuid[], gatewayId: uuid): string =>
   encodedUriParametersFrom([makeParameter(meterParameterNames, 'gatewayIds', gatewayId)]);
 
-export const makeApiParametersOf = (
-  start: Date,
-  selectionInterval: SelectionInterval,
-): EncodedUriParameters =>
-  toPeriodApiParameters({
-    now: start,
-    period: selectionInterval.period,
-    customDateRange: Maybe.maybe(selectionInterval.customDateRange),
-  }).join('&');
+export const makeApiParametersOf =
+  (selectionInterval: SelectionInterval): EncodedUriParameters =>
+    toPeriodApiParameters({
+      period: selectionInterval.period,
+      customDateRange: Maybe.maybe(selectionInterval.customDateRange),
+    }).join('&');
 
 export const makeUrl =
   (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>
