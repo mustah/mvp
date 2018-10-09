@@ -133,8 +133,8 @@ describe('urlFactory', () => {
         period: Period.latest,
         customDateRange: Maybe.nothing(),
       })).toEqual([
-        'after=2018-02-01T00%3A00%3A00.000Z',
-        'before=2018-02-02T00%3A00%3A00.000Z',
+        'after=2018-02-01T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-02T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 
@@ -145,8 +145,8 @@ describe('urlFactory', () => {
         customDateRange: Maybe.nothing(),
       });
       expect(prevMonthRange).toEqual([
-        'after=2018-01-01T00%3A00%3A00.000Z',
-        'before=2018-01-31T00%3A00%3A00.000Z',
+        'after=2018-01-01T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-01-31T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 
@@ -157,8 +157,8 @@ describe('urlFactory', () => {
         customDateRange: Maybe.nothing(),
       });
       expect(prevWeek).toEqual([
-        'after=2018-01-27T00%3A00%3A00.000Z',
-        'before=2018-02-02T00%3A00%3A00.000Z',
+        'after=2018-01-27T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-02T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 
@@ -170,8 +170,8 @@ describe('urlFactory', () => {
       });
 
       expect(currentWeekApiParameters).toEqual([
-        'after=2018-01-29T00%3A00%3A00.000Z',
-        'before=2018-02-05T00%3A00%3A00.000Z',
+        'after=2018-01-29T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-05T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 
@@ -182,8 +182,8 @@ describe('urlFactory', () => {
         customDateRange: Maybe.nothing(),
       });
       expect(currentMonthApiParameters).toEqual([
-        'after=2018-02-01T00%3A00%3A00.000Z',
-        'before=2018-02-28T00%3A00%3A00.000Z',
+        'after=2018-02-01T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-28T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 
@@ -197,8 +197,8 @@ describe('urlFactory', () => {
         customDateRange: Maybe.just({start, end}),
       });
       expect(customPeriodApiParameters).toEqual([
-        'after=2018-02-02T00%3A00%3A00.000Z',
-        'before=2018-02-11T00%3A00%3A00.000Z',
+        'after=2018-02-02T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-02-11T00%3A00%3A00.000%2B01%3A00',
       ]);
     });
 

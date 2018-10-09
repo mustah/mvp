@@ -39,7 +39,8 @@ describe('userSelectionSelectors', () => {
     start,
   };
 
-  const latestUrlParameters = 'after=2018-02-01T00%3A00%3A00.000Z&before=2018-02-02T00%3A00%3A00.000Z';
+  const latestUrlParameters =
+    'after=2018-02-01T00%3A00%3A00.000%2B01%3A00&before=2018-02-02T00%3A00%3A00.000%2B01%3A00';
 
   const initialEncodedParameters = getPaginatedMeterParameters(initialUriLookupState);
 

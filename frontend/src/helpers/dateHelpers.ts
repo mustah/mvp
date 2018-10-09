@@ -62,12 +62,16 @@ const currentDateRange = (
   customDateRange: Maybe<DateRange>,
 ): DateRange => dateRange(start, period, customDateRange);
 
-const toApiParameters = ({start, end}: DateRange): EncodedUriParameters[] => {
-  return [
-    `after=${encodeURIComponent(start.toISOString())}`,
-    `before=${encodeURIComponent(end.toISOString())}`,
-  ];
-};
+export const yyyymmdd = 'YYYY-MM-DD';
+const yyyymmddhhMm = `${yyyymmdd} HH:mm`;
+
+const hhmmss = `HH:mm:ss.sss`;
+const apiFormat = `${yyyymmdd}T${hhmmss}+01:00`;
+
+const toApiParameters = ({start, end}: DateRange): EncodedUriParameters[] => [
+  `after=${encodeURIComponent(momentFrom(start).format(apiFormat))}`,
+  `before=${encodeURIComponent(momentFrom(end).format(apiFormat))}`,
+];
 
 export interface CurrentPeriod {
   start?: Date;
@@ -82,21 +86,14 @@ export const toPeriodApiParameters = ({
 }: CurrentPeriod): EncodedUriParameters[] =>
   toApiParameters(currentDateRange(start, period, customDateRange));
 
-export const yyyymmdd = 'YYYY-MM-DD';
-
 const toFriendlyIso8601 = ({start, end}: DateRange): string =>
   `${momentFrom(start).format(yyyymmdd)} - ${momentFrom(end).format(yyyymmdd)}`;
 
 export const prettyRange = ({start, period, customDateRange}: CurrentPeriod): string =>
   toFriendlyIso8601(currentDateRange(start, period, customDateRange));
 
-const yyyymmddhhMm = `${yyyymmdd} HH:mm`;
-const utcOffsetHours = 1;
-
-export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string => {
-  const date = momentFrom(input).add(utcOffsetHours, 'hours');
-  return `${date.format(format)}`;
-};
-
 export const timestamp = (input: moment.MomentInput): string =>
   displayDate(input, 'MMM D, HH:mm');
+
+export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
+  momentFrom(input).format(format);

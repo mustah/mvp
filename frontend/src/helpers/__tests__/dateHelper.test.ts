@@ -5,15 +5,16 @@ import {Maybe} from '../Maybe';
 describe('dateHelper', () => {
 
   describe('relative time periods', () => {
-    it('defaults to no limits if no start/end time is given', () => {
-      const date = momentFrom('2018-03-23 11:00:00').toDate();
 
+    it('defaults to no limits if no start/end time is given', () => {
       expect(toPeriodApiParameters({
-        start: date,
+        start: momentFrom('2018-03-23 11:00:00').toDate(),
         period: Period.latest,
         customDateRange: Maybe.nothing(),
-      })).toEqual(['after=2018-03-22T00%3A00%3A00.000Z',
-                   'before=2018-03-23T00%3A00%3A00.000Z']);
+      })).toEqual([
+        'after=2018-03-22T00%3A00%3A00.000%2B01%3A00',
+        'before=2018-03-23T00%3A00%3A00.000%2B01%3A00',
+      ]);
     });
   });
 
@@ -116,16 +117,16 @@ describe('dateHelper', () => {
   describe('displayDate', () => {
 
     it('formats in timezone CET', () => {
-      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 01:00');
-      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 09:00');
+      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 00:00');
+      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 08:00');
     });
 
     it('formats in timezone with offset +1 from UTC', () => {
-      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 08:00');
+      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 07:00');
     });
 
     it('formats in timezone in Stockholm (offset +2 from UTC)', () => {
-      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 07:00');
+      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 06:00');
     });
 
   });
