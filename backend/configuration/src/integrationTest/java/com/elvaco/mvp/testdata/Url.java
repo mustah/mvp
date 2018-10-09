@@ -9,10 +9,10 @@ import com.elvaco.mvp.core.spi.data.RequestParameter;
 import lombok.Builder;
 
 @Builder
-public class UrlDefinitionWithParameters implements UrlDefinition {
+public class Url implements UrlTemplate {
 
-  private LinkedHashMap<RequestParameter, List<Object>> parameters;
-  private String endpointPath;
+  private Map<RequestParameter, List<Object>> parameters;
+  private String path;
 
   @Override
   public String template() {
@@ -20,9 +20,10 @@ public class UrlDefinitionWithParameters implements UrlDefinition {
     for (Map.Entry<RequestParameter, List<Object>> entry : parameters.entrySet()) {
       addParameter(sb, entry.getKey(), entry.getValue());
     }
-    return endpointPath + sb.toString();
+    return path + sb.toString();
   }
 
+  @Override
   public Object[] variables() {
     return parameters.values()
       .stream()
@@ -47,9 +48,9 @@ public class UrlDefinitionWithParameters implements UrlDefinition {
   }
 
   @SuppressWarnings("unused") // This is a Lombok skeleton, it's not unused
-  public static class UrlDefinitionWithParametersBuilder {
+  public static class UrlBuilder {
 
-    public UrlDefinitionWithParametersBuilder parameter(RequestParameter parameter, Object value) {
+    public UrlBuilder parameter(RequestParameter parameter, Object value) {
       if (parameters == null) {
         parameters = new LinkedHashMap<>();
       }

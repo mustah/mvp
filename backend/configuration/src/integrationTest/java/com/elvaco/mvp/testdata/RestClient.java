@@ -45,8 +45,8 @@ public final class RestClient {
     return API_V1 + url;
   }
 
-  public <T> ResponseEntity<T> get(UrlDefinition urlDefinition, Class<T> clazz) {
-    return get(urlDefinition.template(), clazz, urlDefinition.variables());
+  public <T> ResponseEntity<T> get(UrlTemplate urlTemplate, Class<T> clazz) {
+    return get(urlTemplate.template(), clazz, urlTemplate.variables());
   }
 
   public <T> ResponseEntity<T> get(String url, Class<T> clazz, Object... urlVariables) {
@@ -109,11 +109,11 @@ public final class RestClient {
     template.delete(apiUrlOf(url));
   }
 
-  public <T> Page<T> getPage(UrlDefinition urlDefinition, Class<T> pagedClass) {
+  public <T> Page<T> getPage(UrlTemplate urlTemplate, Class<T> pagedClass) {
     RestResponsePage<T> body = getPageResponse(
-      urlDefinition.template(),
+      urlTemplate.template(),
       pagedClass,
-      urlDefinition.variables()
+      urlTemplate.variables()
     ).getBody();
     return body != null ? body.newPage() : new RestResponsePage<>();
   }
@@ -124,10 +124,10 @@ public final class RestClient {
   }
 
   public <T> ResponseEntity<List<T>> getList(
-    UrlDefinition urlDefinition,
+    UrlTemplate urlTemplate,
     Class<T> listedClass
   ) {
-    return getList(urlDefinition.template(), listedClass, urlDefinition.variables());
+    return getList(urlTemplate.template(), listedClass, urlTemplate.variables());
   }
 
   public <T> ResponseEntity<List<T>> getList(

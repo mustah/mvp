@@ -20,8 +20,8 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.UrlDefinition;
-import com.elvaco.mvp.testdata.UrlDefinitionWithParameters;
+import com.elvaco.mvp.testdata.Url;
+import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
@@ -136,8 +136,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     ZonedDateTime before = NOW.plusDays(2);
     ZonedDateTime after = NOW.minusDays(2);
 
-    UrlDefinitionWithParameters urlDefinition =
-      UrlDefinitionWithParameters.builder().endpointPath("/map-markers/meters")
+    Url urlDefinition =
+      Url.builder().path("/map-markers/meters")
         .parameter(RequestParameter.BEFORE, before)
         .parameter(RequestParameter.AFTER, after)
         .build();
@@ -489,18 +489,18 @@ public class MapMarkerControllerTest extends IntegrationTest {
     return gateway;
   }
 
-  private static UrlDefinition mapMarkerAlarmUrl(String alarm) {
+  private static UrlTemplate mapMarkerAlarmUrl(String alarm) {
     ZonedDateTime now = ZonedDateTime.now();
-    return UrlDefinitionWithParameters.builder().endpointPath("/map-markers/meters")
+    return Url.builder().path("/map-markers/meters")
       .parameter(RequestParameter.ALARM, alarm)
       .parameter(RequestParameter.AFTER, now.minusDays(1))
       .parameter(RequestParameter.BEFORE, now.plusDays(1))
       .build();
   }
 
-  private static UrlDefinition gatewayMapMarkerAlarmUrl(String alarm) {
+  private static UrlTemplate gatewayMapMarkerAlarmUrl(String alarm) {
     ZonedDateTime now = ZonedDateTime.now();
-    return UrlDefinitionWithParameters.builder().endpointPath("/map-markers/gateways")
+    return Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.ALARM, alarm)
       .parameter(RequestParameter.AFTER, now.minusDays(1))
       .parameter(RequestParameter.BEFORE, now.plusDays(1))

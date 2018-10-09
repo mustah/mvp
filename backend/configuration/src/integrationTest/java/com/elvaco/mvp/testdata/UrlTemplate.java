@@ -1,6 +1,6 @@
 package com.elvaco.mvp.testdata;
 
-public interface UrlDefinition {
+public interface UrlTemplate {
 
   String template();
 

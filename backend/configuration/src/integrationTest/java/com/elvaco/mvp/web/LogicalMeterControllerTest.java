@@ -39,8 +39,8 @@ import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.UrlDefinition;
-import com.elvaco.mvp.testdata.UrlDefinitionWithParameters;
+import com.elvaco.mvp.testdata.Url;
+import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -229,9 +229,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(0.0);
   }
 
-  UrlDefinition metersUrl(ZonedDateTime after, ZonedDateTime before) {
-    return UrlDefinitionWithParameters.builder()
-      .endpointPath("/meters")
+  UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
+    return Url.builder()
+      .path("/meters")
       .parameter(RequestParameter.AFTER, after)
       .parameter(RequestParameter.BEFORE, before)
       .build();
@@ -1630,8 +1630,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
       .getPage(
-        UrlDefinitionWithParameters.builder()
-          .endpointPath("/meters")
+        Url.builder()
+          .path("/meters")
           .parameter(RequestParameter.AFTER, start)
           .parameter(RequestParameter.BEFORE, start.plusHours(9))
           .parameter(RequestParameter.ALARM, "yes")
@@ -1676,8 +1676,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asTestUser()
       .getPage(
-        UrlDefinitionWithParameters.builder()
-          .endpointPath("/meters")
+        Url.builder()
+          .path("/meters")
           .parameter(RequestParameter.AFTER, start)
           .parameter(RequestParameter.BEFORE, start.plusHours(9))
           .parameter(RequestParameter.ALARM, "no")

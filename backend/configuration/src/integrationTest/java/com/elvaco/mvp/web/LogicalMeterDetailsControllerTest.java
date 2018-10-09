@@ -30,8 +30,8 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.UrlDefinition;
-import com.elvaco.mvp.testdata.UrlDefinitionWithParameters;
+import com.elvaco.mvp.testdata.Url;
+import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
@@ -55,6 +55,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   private static final ZonedDateTime NOW = ZonedDateTime.now();
+
   private static final ZonedDateTime YESTERDAY = ZonedDateTime.now()
     .minusDays(1)
     .truncatedTo(ChronoUnit.DAYS);
@@ -141,14 +142,14 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .build()
     );
 
-    UrlDefinition urlDefinition = UrlDefinitionWithParameters.builder()
-      .endpointPath("/meters/details")
+    UrlTemplate urlTemplate = Url.builder()
+      .path("/meters/details")
       .parameter(RequestParameter.ID, logicalMeter.id)
       .parameter(RequestParameter.BEFORE, NOW)
       .parameter(RequestParameter.AFTER, YESTERDAY)
       .build();
     LogicalMeterDto logicalMeterDto = asTestUser()
-      .getList(urlDefinition, LogicalMeterDto.class)
+      .getList(urlTemplate, LogicalMeterDto.class)
       .getBody()
       .get(0);
 
