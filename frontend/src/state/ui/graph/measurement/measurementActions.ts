@@ -94,7 +94,7 @@ const requestsPerQuantity = (
     cityByQuantity[quantity] = new Set();
   });
 
-  const urls: GroupedRequests = {
+  const requests: GroupedRequests = {
     average: [],
     meters: [],
     cities: [],
@@ -114,7 +114,7 @@ const requestsPerQuantity = (
 
   Object.keys(cityByQuantity).forEach((quantity: Quantity) => {
     if (cityByQuantity[quantity]!.size) {
-      urls.cities.push(
+      requests.cities.push(
         restClient.getParallel(makeUrl(
           EndPoints.measurements.concat('/cities'),
           measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
@@ -135,7 +135,7 @@ const requestsPerQuantity = (
 
   Object.keys(meterByQuantity).forEach((quantity: Quantity) => {
     if (meterByQuantity[quantity]!.size) {
-      urls.meters.push(
+      requests.meters.push(
         restClient.getParallel(makeUrl(
           EndPoints.measurements,
           measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
@@ -143,7 +143,7 @@ const requestsPerQuantity = (
       );
 
       if (meterByQuantity[quantity]!.size > 1) {
-        urls.average.push(
+        requests.average.push(
           restClient.getParallel(makeUrl(
             EndPoints.measurements.concat('/average'),
             measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
@@ -153,7 +153,7 @@ const requestsPerQuantity = (
     }
   });
 
-  return urls;
+  return requests;
 };
 
 export const fetchMeasurements =
