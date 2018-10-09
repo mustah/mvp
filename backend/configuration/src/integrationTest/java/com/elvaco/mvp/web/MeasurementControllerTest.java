@@ -648,30 +648,23 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void oneCityAverage() {
     LocationBuilder locationBuilder = new LocationBuilder()
       .country("sweden")
-      .city("stockholm")
-      .address("stora gatan 1");
+      .city("stockholm");
 
-    Location storaGatan1 = locationBuilder.build();
+    PhysicalMeterEntity storaGatan1 = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      locationBuilder.address("stora gatan 1").build()
+    ).id);
 
-    Location storaGatan2 = locationBuilder.address("stora gatan 2").build();
-
-    LogicalMeterEntity meter1 = newLogicalMeterEntityWithLocation(
-      storaGatan1
-    );
-    PhysicalMeterEntity physical1 = newPhysicalMeterEntity(meter1.id);
-
-    LogicalMeterEntity meter2 = newLogicalMeterEntityWithLocation(
-      storaGatan2
-    );
-    PhysicalMeterEntity physical2 = newPhysicalMeterEntity(meter2.id);
+    PhysicalMeterEntity storaGatan2 = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      locationBuilder.address("stora gatan 2").build()
+    ).id);
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
-    newMeasurement(physical1, start, "Power", 1.0, "W");
-    newMeasurement(physical1, start.plusHours(1), "Power", 2.0, "W");
+    newMeasurement(storaGatan1, start, "Power", 1.0, "W");
+    newMeasurement(storaGatan1, start.plusHours(1), "Power", 2.0, "W");
 
-    newMeasurement(physical2, start, "Power", 3.0, "W");
-    newMeasurement(physical2, start.plusHours(1), "Power", 4.0, "W");
+    newMeasurement(storaGatan2, start, "Power", 3.0, "W");
+    newMeasurement(storaGatan2, start.plusHours(1), "Power", 4.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
       .getList(
@@ -758,6 +751,192 @@ public class MeasurementControllerTest extends IntegrationTest {
       .extracting("city")
       .hasSize(1)
       .allMatch("stockholm"::equals);
+  }
+
+  @Test
+  public void cityAverageCanContainBothMetersWithRequestedQuantitesAndOtherMeters() {
+    Location kiruna = new LocationBuilder()
+      .country("sweden")
+      .city("kiruna")
+      .address("stora gatan 1")
+      .build();
+
+    PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      kiruna,
+      MeterDefinition.ROOM_TEMP_METER
+    ).id);
+
+    PhysicalMeterEntity gas = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      kiruna,
+      MeterDefinition.GAS_METER
+    ).id);
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+
+    newMeasurement(roomTemperature, start, Quantity.EXTERNAL_TEMPERATURE.name, 1.0, Quantity
+      .EXTERNAL_TEMPERATURE.presentationUnit());
+    newMeasurement(roomTemperature, start.plusHours(1), Quantity.EXTERNAL_TEMPERATURE.name, 2.0,
+      Quantity.EXTERNAL_TEMPERATURE.presentationUnit());
+
+    newMeasurement(gas, start, Quantity.VOLUME.name, 10.0, Quantity.VOLUME.presentationUnit());
+    newMeasurement(gas, start.plusHours(1), Quantity.VOLUME.name, 11.0, Quantity.VOLUME
+      .presentationUnit());
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(String.format(
+        "/measurements/cities"
+          + "?after=" + start
+          + "&before=" + start.plusHours(1)
+          + "&quantities=%s"
+          + "&city=sweden,kiruna"
+          + "&resolution=hour",
+        Quantity.EXTERNAL_TEMPERATURE.name
+        ),
+        MeasurementSeriesDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    assertThat(response.getBody()).containsExactlyInAnyOrder(
+      new MeasurementSeriesDto(
+        "city-sweden,kiruna-External temperature",
+        Quantity.EXTERNAL_TEMPERATURE.name,
+        Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
+        "sweden,kiruna",
+        "kiruna",
+        null,
+        null,
+        asList(
+          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
+          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 2.0)
+        )
+      )
+    );
+  }
+
+  @Test
+  public void cityAverageOfTwoQuantitiesBelongingToDifferentMedia() {
+    LocationBuilder locationBuilder = new LocationBuilder()
+      .country("sweden")
+      .address("stora gatan 1");
+
+    PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      locationBuilder.city("knivsta").build(),
+      MeterDefinition.ROOM_TEMP_METER
+    ).id);
+
+    PhysicalMeterEntity gas = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      locationBuilder.city("umeå").build(),
+      MeterDefinition.GAS_METER
+    ).id);
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+
+    newMeasurement(roomTemperature, start, Quantity.EXTERNAL_TEMPERATURE.name, 1.0, Quantity
+      .EXTERNAL_TEMPERATURE.presentationUnit());
+    newMeasurement(roomTemperature, start.plusHours(1), Quantity.EXTERNAL_TEMPERATURE.name, 2.0,
+      Quantity.EXTERNAL_TEMPERATURE.presentationUnit());
+
+    newMeasurement(gas, start, Quantity.VOLUME.name, 10.0, Quantity.VOLUME.presentationUnit());
+    newMeasurement(gas, start.plusHours(1), Quantity.VOLUME.name, 11.0, Quantity.VOLUME
+      .presentationUnit());
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(String.format(
+        "/measurements/cities"
+          + "?after=" + start
+          + "&before=" + start.plusHours(1)
+          + "&quantities=%s,%s"
+          + "&city=sweden,knivsta"
+          + "&city=sweden,umeå"
+          + "&resolution=hour",
+        Quantity.EXTERNAL_TEMPERATURE.name,
+        Quantity.VOLUME.name
+        ),
+        MeasurementSeriesDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    assertThat(response.getBody()).containsExactlyInAnyOrder(
+      new MeasurementSeriesDto(
+        "city-sweden,knivsta-External temperature",
+        Quantity.EXTERNAL_TEMPERATURE.name,
+        Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
+        "sweden,knivsta",
+        "knivsta",
+        null,
+        null,
+        asList(
+          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
+          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 2.0)
+        )
+      ),
+      new MeasurementSeriesDto(
+        "city-sweden,umeå-Volume",
+        Quantity.VOLUME.name,
+        Quantity.VOLUME.presentationUnit(),
+        "sweden,umeå",
+        "umeå",
+        null,
+        null,
+        asList(
+          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), null),
+          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 1.0)
+        )
+      )
+    );
+  }
+
+  @Test
+  public void cityAverageIsEmptyWhenCityOnlyContainNonMatchingQuantities() {
+    LocationBuilder locationBuilder = new LocationBuilder()
+      .country("sweden")
+      .city("stockholm")
+      .address("stora gatan 1");
+
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(
+      newLogicalMeterEntityWithLocation(locationBuilder.build()).id
+    );
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+
+    newMeasurement(meter, start, "Power", 1.0, "W");
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(
+        "/measurements/cities"
+          + "?after=" + start
+          + "&before=" + start.plusHours(1)
+          + "&quantities=" + Quantity.HUMIDITY.name
+          + "&city=sweden,stockholm"
+          + "&meters=123"
+          + "&resolution=hour",
+        MeasurementSeriesDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEmpty();
+  }
+
+  @Test
+  public void cityAverageIsEmptyWhenNoMetersExistsInCity() {
+    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(
+        "/measurements/cities"
+          + "?after=" + start
+          + "&before=" + start.plusHours(1)
+          + "&quantities=" + Quantity.VOLUME.name
+          + "&city=sweden,stockholm"
+          + "&meters=123"
+          + "&resolution=hour",
+        MeasurementSeriesDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEmpty();
   }
 
   @Test
@@ -919,8 +1098,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getBody().message).contains(
-      "Invalid quantity 'SomeUnknownQuantity' for District heating meter");
+    assertThat(response.getBody().message).isEqualTo("Invalid quantity 'SomeUnknownQuantity' for "
+      + "District heating meter");
   }
 
   @Test
@@ -1397,9 +1576,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void measurementsForNonPresentQuantity() {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      GAS_METER
-    );
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
+    newPhysicalMeterEntity(logicalMeter.id);
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
       .get(
@@ -1407,7 +1585,9 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "?after=" + after
           + "&before=" + before
           + "&quantities=Floop"
-          + "&meters=" + logicalMeter.getId(), ErrorMessageDto.class);
+          + "&meters=" + logicalMeter.getId(),
+        ErrorMessageDto.class
+      );
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(responseEntity.getBody().message).contains("Invalid quantity 'Floop' for Gas meter");
@@ -1417,9 +1597,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void averageForTwoMetersAndTwoQuantitiesWhereOneQuantityIsNotPresentOnOneMeter() {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      GAS_METER
-    );
+
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
+
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after, "Volume", 1.0, "m^3");
     newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
@@ -1430,7 +1610,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements/average"
           + "?after=" + after
           + "&before=" + before
-          + "&quantities=" + Quantity.VOLUME.name + ",Power"
+          + "&quantities=Volume,Power"
           + "&meters=%s",
         logicalMeter.getId()
       ), ErrorMessageDto.class);
@@ -1457,11 +1637,13 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "?after=" + after
           + "&before=" + before
           + "&quantities=" + Quantity.VOLUME.name + ",Flarbb"
-          + "&meters=" + logicalMeter.getId(), ErrorMessageDto.class);
+          + "&meters=" + logicalMeter.getId(),
+        ErrorMessageDto.class
+      );
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(responseEntity.getBody().message)
-      .contains("Invalid quantity 'Flarbb' for Gas meter");
+    assertThat(responseEntity.getBody().message).contains("Invalid quantity 'Flarbb' for Gas "
+      + "meter");
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
@@ -1510,13 +1692,12 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private LogicalMeterEntity newLogicalMeterEntityWithLocation(
-    Location location
+    Location location,
+    MeterDefinition meterDefinition
   ) {
     UUID uuid = randomUUID();
 
-    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
 
     LogicalMeterEntity meter = logicalMeterJpaRepository.save(new LogicalMeterEntity(
       uuid,
@@ -1534,6 +1715,15 @@ public class MeasurementControllerTest extends IntegrationTest {
     ));
 
     return meter;
+  }
+
+  private LogicalMeterEntity newLogicalMeterEntityWithLocation(
+    Location location
+  ) {
+    return newLogicalMeterEntityWithLocation(
+      location,
+      MeterDefinition.DISTRICT_HEATING_METER
+    );
   }
 
   private PhysicalMeterEntity newButterMeterBelongingTo(

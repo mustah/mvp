@@ -15,7 +15,6 @@ import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -37,7 +36,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
+import static com.elvaco.mvp.core.util.QuantityHelper.complementWithUnits;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -103,36 +104,36 @@ public class MeasurementController {
         .collect(toSet()));
 
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
-    Set<Map.Entry<Quantity, List<PhysicalMeter>>> entries =
-      mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities).entrySet();
 
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
 
-    for (Map.Entry<Quantity, List<PhysicalMeter>> entry : entries) {
-      for (PhysicalMeter meter : entry.getValue()) {
-        List<MeasurementValue> series = measurementUseCases.seriesForPeriod(
-          meter.id,
-          entry.getKey(),
-          after,
-          stop,
-          temporalResolution
-        );
+    mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
+      .forEach((quantity, physicalMeters) -> {
+        physicalMeters.forEach((physicalMeter) -> {
+          List<MeasurementValue> series = measurementUseCases.seriesForPeriod(
+            physicalMeter.id,
+            quantity,
+            after,
+            stop,
+            temporalResolution
+          );
 
-        LogicalMeter logicalMeter = logicalMetersMap.get(meter.logicalMeterId);
-        foundMeasurements.addAll(series.stream()
-          .map(measurementValue -> new LabeledMeasurementValue(
-            meter.logicalMeterId.toString(),
-            meter.externalId,
-            logicalMeter.location.getCity(),
-            logicalMeter.location.getAddress(),
-            logicalMeter.meterDefinition.medium,
-            measurementValue.when,
-            measurementValue.value,
-            entry.getKey()
-          )).collect(toList()));
-      }
-    }
+          LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
+          foundMeasurements.addAll(series.stream()
+            .map(measurementValue -> new LabeledMeasurementValue(
+              physicalMeter.logicalMeterId.toString(),
+              physicalMeter.externalId,
+              logicalMeter.location.getCity(),
+              logicalMeter.location.getAddress(),
+              logicalMeter.meterDefinition.medium,
+              measurementValue.when,
+              measurementValue.value,
+              quantity
+            )).collect(toList()));
+        });
+      });
+
     return toSeries(foundMeasurements);
   }
 
@@ -147,14 +148,16 @@ public class MeasurementController {
   ) {
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
+    Set<Quantity> complementedQuantities = complementWithUnits(quantities);
+
     return cities.stream()
       .flatMap((city) -> {
         String cityId = String.format("%s,%s", city.country, city.name);
-        return measurementSeriesOf(
+        return measurementSeriesOfCity(
           after,
           stop,
           temporalResolution,
-          quantities,
+          complementedQuantities,
           findLogicalMetersByCityId(cityId),
           (quantity, measurementValue) -> new LabeledMeasurementValue(
             String.format("city-%s,%s-%s", city.country, city.name, quantity.name),
@@ -204,15 +207,12 @@ public class MeasurementController {
     List<LogicalMeter> logicalMeters,
     BiFunction<Quantity, MeasurementValue, LabeledMeasurementValue> valueMapper
   ) {
-    Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
-      mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities);
-
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
-    for (Map.Entry<Quantity, List<PhysicalMeter>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
-      Quantity quantity = entry.getKey();
-      foundMeasurements.addAll(
+
+    mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
+      .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
         measurementUseCases.averageForPeriod(
-          entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
+          physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
           quantity,
           after,
           before,
@@ -220,8 +220,33 @@ public class MeasurementController {
         ).stream()
           .map((measurementValue) -> valueMapper.apply(quantity, measurementValue))
           .collect(toList())
-      );
-    }
+      ));
+
+    return toSeries(foundMeasurements);
+  }
+
+  private List<MeasurementSeriesDto> measurementSeriesOfCity(
+    ZonedDateTime after,
+    ZonedDateTime before,
+    TemporalResolution resolution,
+    Set<Quantity> quantities,
+    List<LogicalMeter> logicalMeters,
+    BiFunction<Quantity, MeasurementValue, LabeledMeasurementValue> valueMapper
+  ) {
+    List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
+
+    groupByQuantity(logicalMeters, quantities)
+      .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
+        measurementUseCases.averageForPeriod(
+          physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
+          quantity,
+          after,
+          before,
+          resolution
+        ).stream()
+          .map((measurementValue) -> valueMapper.apply(quantity, measurementValue))
+          .collect(toList())
+      ));
 
     return toSeries(foundMeasurements);
   }

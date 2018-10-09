@@ -53,7 +53,7 @@ public class SqlErrorMapper {
   }
 
   private static RuntimeException mapUnknownUnitError(MatchResult matchResult, String scale) {
-    return new UnitConversionError(scale);
+    return UnitConversionError.unknownUnit(scale);
   }
 
   private static RuntimeException mapMixedDimensionsError(MatchResult matchResult) {

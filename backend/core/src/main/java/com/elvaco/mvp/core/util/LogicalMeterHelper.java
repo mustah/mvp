@@ -15,6 +15,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyMap;
@@ -53,6 +54,33 @@ public final class LogicalMeterHelper {
         }
       );
       physicalMeterQuantityMap.put(complementedQuantity, physicalMeters);
+    });
+    return physicalMeterQuantityMap;
+  }
+
+  public static Map<Quantity, List<PhysicalMeter>> groupByQuantity(
+    List<LogicalMeter> logicalMeters,
+    Set<Quantity> quantities
+  ) {
+    if (logicalMeters.isEmpty() || quantities.isEmpty()) {
+      return emptyMap();
+    }
+
+    Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
+    quantities.forEach((quantity) -> {
+      List<PhysicalMeter> physicalMeters = new ArrayList<>();
+      logicalMeters.forEach(logicalMeter -> {
+        if (logicalMeter.physicalMeters.isEmpty()) {
+          throw new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId);
+        }
+        if (logicalMeter.getQuantity(quantity.name).isPresent()) {
+          physicalMeters.addAll(logicalMeter.physicalMeters);
+        }
+      });
+
+      if (physicalMeters.size() > 0) {
+        physicalMeterQuantityMap.put(quantity, physicalMeters);
+      }
     });
     return physicalMeterQuantityMap;
   }
