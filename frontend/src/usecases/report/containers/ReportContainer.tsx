@@ -38,14 +38,15 @@ import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
-import {ErrorResponse, Omit, uuid} from '../../../types/Types';
+import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
+import {Legend, LegendProps} from '../components/Legend';
 import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
 import {MeasurementList} from '../components/MeasurementList';
+import {toggleSingleEntry} from '../reportActions';
 import {GraphContents, hardcodedIndicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
-import {LegendContainer, LegendProps} from './LegendContainer';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
@@ -67,17 +68,16 @@ export interface ReportContainerState {
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
-  toggleReportIndicatorWidget: OnSelectIndicator;
   logout: OnLogout;
+  toggleReportIndicatorWidget: OnSelectIndicator;
+  toggleSingleEntry: OnClickWithId;
 }
 
 type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
-type LegendOuterProps = Omit<LegendProps, 'toggleSingleEntry'>;
+const hasSelectedItems = ({selectedListItems}: LegendProps): boolean => selectedListItems.length > 0;
 
-const hasSelectedItems = ({selectedListItems}: LegendOuterProps): boolean => selectedListItems.length > 0;
-
-const Legend = componentOrNull<LegendOuterProps>(hasSelectedItems)(LegendContainer);
+const LegendWrapper = componentOrNull<LegendProps>(hasSelectedItems)(Legend);
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
@@ -145,6 +145,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
       enabledIndicatorTypes,
       selectedListItems,
       selectionTreeEntities,
+      toggleSingleEntry,
     } = this.props;
     const {isFetching, error, hiddenKeys, measurementResponse} = this.state;
 
@@ -198,11 +199,11 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                 />
               </TabContent>
             </Tabs>
-            <Legend
-              selectedListItems={selectedListItems}
-              graphContents={graphContents}
+            <LegendWrapper
               onToggleLine={onToggleLine}
+              selectedListItems={selectedListItems}
               selectionTreeEntities={selectionTreeEntities}
+              toggleSingleEntry={toggleSingleEntry}
             />
           </Paper>
         </Loader>
@@ -263,9 +264,10 @@ const mapStateToProps =
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  toggleReportIndicatorWidget,
-  logout,
   changeTab: changeTabReport,
+  logout,
+  toggleReportIndicatorWidget,
+  toggleSingleEntry,
 }, dispatch);
 
 export const ReportContainer =
