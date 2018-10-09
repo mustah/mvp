@@ -88,7 +88,7 @@
     "jest": "^22.0.6",
     "mkdirp": "^0.5.1",
     "node-sass": "^4.7.2",
-    "parcel-bundler": "^1.10.1",
+    "parcel-bundler": "^1.10.2",
     "postcss": "^7.0.5",
     "redux-devtools": "^3.4.0",
     "redux-mock-store": "^1.4.0",
