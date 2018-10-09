@@ -98,11 +98,11 @@ class RestClientDelegate implements AxiosInstance {
 
 const axiosConfig = config().axios;
 
-interface ExtendedAxiosInstance extends AxiosInstance {
+interface AxiosInstanceWrapper extends AxiosInstance {
   getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>;
 }
 
-export let restClient: ExtendedAxiosInstance = new RestClientDelegate(axios.create(axiosConfig));
+export let restClient: AxiosInstanceWrapper = new RestClientDelegate(axios.create(axiosConfig));
 
 interface Headers {
   Authorization: string;
