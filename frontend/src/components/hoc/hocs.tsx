@@ -3,9 +3,9 @@ import * as React from 'react';
 /**
  * This is a simple implementation of a Higher Order Component (HOC).
  *
- * Only render this component if the user is a super admin. Otherwise return null and do not render.
+ * Only render this component if the predicate passes. Otherwise return null and do not render.
  */
 export const componentOrNull =
-  <P extends {}>(test: (props: P) => boolean) =>
+  <P extends {}>(predicate: (props: P) => boolean) =>
     (Component: React.ComponentType<P>): React.SFC<P> =>
-      (props: P) => test(props) ? <Component {...props} /> : null;
+      (props: P) => predicate(props) ? <Component {...props} /> : null;
