@@ -200,6 +200,14 @@ public class MeasurementRepository implements Measurements {
     ).map(MeasurementEntityMapper::toDomainModel);
   }
 
+  @Override
+  public Optional<Measurement> firstForPhysicalMeterWithinDateRange(
+    UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEquals
+  ) {
+    return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId,after,beforeOrEquals)
+      .map(MeasurementEntityMapper::toDomainModel);
+  }
+
   private int maxNumberOfDataPointsForResolution(TemporalResolution resolution) {
     switch (resolution) {
       case month:

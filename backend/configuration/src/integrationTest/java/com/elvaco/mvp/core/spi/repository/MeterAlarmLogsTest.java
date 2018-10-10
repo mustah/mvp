@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -94,6 +95,43 @@ public class MeterAlarmLogsTest extends IntegrationTest {
     meterAlarmLogs.save(asList(entity1, entity2));
 
     assertThat(meterAlarmLogJpaRepository.findAll()).hasSize(2);
+  }
+
+  @Test
+  public void findActiveAlarmsBeforeDate() {
+    ZonedDateTime now = ZonedDateTime.now();
+    ZonedDateTime oneWeek = now.minusWeeks(1).truncatedTo(ChronoUnit.DAYS);
+    ZonedDateTime twoDays = now.minusDays(2).truncatedTo(ChronoUnit.DAYS);
+
+    PhysicalMeter physicalMeter = preparePhysicalMeter();
+
+    AlarmLogEntry notActive = AlarmLogEntry.builder()
+      .entityId(physicalMeter.id)
+      .mask(8)
+      .start(oneWeek)
+      .stop(oneWeek.plusHours(1))
+      .lastSeen(oneWeek)
+      .description("Low battery")
+      .build();
+    AlarmLogEntry activeOneWeekAgo = AlarmLogEntry.builder()
+      .entityId(physicalMeter.id)
+      .mask(16)
+      .start(oneWeek)
+      .lastSeen(oneWeek)
+      .description("Low battery")
+      .build();
+    AlarmLogEntry activeTwoDaysAgo = AlarmLogEntry.builder()
+      .entityId(physicalMeter.id)
+      .mask(32)
+      .start(twoDays)
+      .lastSeen(twoDays)
+      .description("Api error")
+      .build();
+
+    meterAlarmLogs.save(asList(activeTwoDaysAgo, notActive, activeOneWeekAgo));
+
+    assertThat(meterAlarmLogJpaRepository.findActiveAlamsOlderThan(now)).hasSize(2);
+    assertThat(meterAlarmLogJpaRepository.findActiveAlamsOlderThan(now.minusDays(3))).hasSize(1);
   }
 
   private PhysicalMeter preparePhysicalMeter() {

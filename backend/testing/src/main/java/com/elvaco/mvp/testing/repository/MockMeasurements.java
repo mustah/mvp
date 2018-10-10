@@ -103,6 +103,18 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
+  public Optional<Measurement> firstForPhysicalMeterWithinDateRange(
+    UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEqual
+  ) {
+    return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
+      .sorted((o1, o2) -> o1.created.compareTo(o2.created))
+      .filter(measurement -> measurement.created.isAfter(after)
+        && ((measurement.created.isBefore(beforeOrEqual)
+               || measurement.created.isEqual(beforeOrEqual))))
+      .findFirst();
+  }
+
+  @Override
   protected Measurement copyWithId(Measurement.Id id, Measurement entity) {
     return Measurement.builder()
       .created(entity.created)
@@ -117,4 +129,5 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   protected Measurement.Id generateId(Measurement entity) {
     return Measurement.idOf(entity.created, entity.quantity, entity.physicalMeter);
   }
+
 }

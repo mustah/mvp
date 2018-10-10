@@ -293,4 +293,21 @@ public interface MeasurementJpaRepository
     @Param("unit") String unit,
     @Param("value") double value
   );
+
+  @Query(nativeQuery = true, value = "select"
+    + "     measurement.created,"
+    + "     unit_at(measurement.value, quantity.unit) as value,"
+    + "     measurement.quantity,"
+    + "     physical_meter_id"
+    + " from measurement left join quantity on measurement.quantity = quantity.id"
+    + " where physical_meter_id = :physical_meter_id"
+    + " and created > :from"
+    + " and created <= :to"
+    + " order by created asc"
+    + " limit 1"
+  )
+  Optional<MeasurementEntity> firstForPhysicalMeter(
+    @Param("physical_meter_id") UUID logicalMeterId,
+    @Param("from") ZonedDateTime after,
+    @Param("to") ZonedDateTime beforeOrEquals);
 }

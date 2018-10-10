@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
@@ -28,6 +29,12 @@ public class MockMeterAlarmLogs
       .description(description)
       .build()
     );
+  }
+
+  @Override
+  public Stream<AlarmLogEntry> findActiveAlamsOlderThan(ZonedDateTime when) {
+    return allMocks().stream().filter(alarm -> alarm.stop == null)
+      .filter(alarm -> alarm.start.isBefore(when));
   }
 
   @Override

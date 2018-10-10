@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MissingMeasurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -21,6 +22,7 @@ import com.elvaco.mvp.core.usecase.LocationUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.MeterAlarmUseCases;
 import com.elvaco.mvp.core.usecase.MissingMeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
@@ -28,7 +30,6 @@ import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,7 @@ class UseCaseConfig {
   private final UserSelections userSelections;
   private final Locations locations;
   private final Properties properties;
+  private final MeterAlarmLogs meterAlarmLogs;
 
   @Bean
   SettingUseCases settingUseCases() {
@@ -119,5 +121,10 @@ class UseCaseConfig {
     MissingMeasurements missingMeasurements
   ) {
     return new MissingMeasurementUseCases(currentUser, missingMeasurements);
+  }
+
+  @Bean
+  MeterAlarmUseCases meterAlarmUseCases() {
+    return new MeterAlarmUseCases(measurements, meterAlarmLogs);
   }
 }

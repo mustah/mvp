@@ -111,6 +111,7 @@ public class MeteringMeasurementMessageConsumerTest {
     measurements = new MockMeasurements();
     logicalMeters = new MockLogicalMeters();
     gateways = new MockGateways();
+
     QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
