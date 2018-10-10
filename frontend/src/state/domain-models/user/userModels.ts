@@ -20,9 +20,3 @@ export const enum Role {
   USER = 'USER',
   SUPER_ADMIN = 'SUPER_ADMIN',
 }
-
-export const roleList: {[key: string]: Role[]} = {
-  [Role.USER]: [Role.USER],
-  [Role.ADMIN]: [Role.USER, Role.ADMIN],
-  [Role.SUPER_ADMIN]: [Role.USER, Role.ADMIN, Role.SUPER_ADMIN],
-};
