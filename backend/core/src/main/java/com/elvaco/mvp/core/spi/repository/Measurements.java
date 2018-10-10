@@ -60,4 +60,11 @@ public interface Measurements {
     ZonedDateTime before,
     Quantity quantity
   );
+
+  Optional<Measurement> firstForPhysicalMeterWithinDateRange(
+    UUID physicalMeterId,
+    ZonedDateTime after,
+    ZonedDateTime beforeOrEqual
+  );
+
 }

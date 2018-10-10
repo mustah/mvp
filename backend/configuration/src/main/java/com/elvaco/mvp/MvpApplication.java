@@ -17,6 +17,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
@@ -36,6 +37,7 @@ import static java.util.Collections.singletonList;
   scanBasePackages = "com.elvaco.mvp",
   exclude = RepositoryRestMvcAutoConfiguration.class
 )
+@EnableScheduling
 public class MvpApplication implements WebMvcConfigurer {
 
   public static void main(String[] args) {

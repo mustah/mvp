@@ -550,6 +550,30 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assertThat(result.get(1).getDoubleValue()).isEqualTo(2.5); // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
   }
 
+  @Test
+  public void findFirstReadoutWithinRange() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    newMeasurement(meter, START_TIME.plusHours(2), 3.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
+
+    MeasurementEntity firstEnergy = measurementJpaRepository
+      .firstForPhysicalMeter(meter.id,
+        START_TIME.minusDays(1).toZonedDateTime(),
+        START_TIME.plusHours(3).toZonedDateTime()).get();
+
+    assertThat(firstEnergy.id.created.toInstant()).isEqualTo(START_TIME.toInstant());
+    assertThat(firstEnergy.value.getValue()).isEqualTo(1.0);
+
+    firstEnergy = measurementJpaRepository
+      .firstForPhysicalMeter(meter.id,
+        START_TIME.plusHours(1).plusMinutes(59).toZonedDateTime(),
+        START_TIME.plusHours(2).toZonedDateTime()).get();
+    assertThat(firstEnergy.id.created.toInstant()).isEqualTo(START_TIME.plusHours(2).toInstant());
+    assertThat(firstEnergy.value.getValue()).isEqualTo(3.0);
+
+  }
+
   private PhysicalMeterEntity newPhysicalMeterEntity() {
     UUID uuid = UUID.randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(

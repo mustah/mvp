@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
@@ -35,4 +36,8 @@ public interface MeterAlarmLogJpaRepository extends JpaRepository<MeterAlarmLogE
     @Param("timestamp") ZonedDateTime timestamp,
     @Param("description") String description
   );
+
+  @Query("SELECT a FROM MeterAlarmLogEntity a WHERE a.stop IS NULL AND a.start <= :timestamp ")
+  List<MeterAlarmLogEntity> findActiveAlamsOlderThan(@Param("timestamp")ZonedDateTime timestamp);
+
 }

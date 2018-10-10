@@ -81,4 +81,5 @@ public class PhysicalMeterUseCases {
   private boolean hasTenantAccess(UUID organisationId) {
     return currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(organisationId);
   }
+
 }
