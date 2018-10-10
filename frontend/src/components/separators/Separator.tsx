@@ -1,10 +1,7 @@
 import * as React from 'react';
 import './Separator.scss';
+import {Styled} from '../../types/Types';
 
-interface Props {
-  style?: React.CSSProperties;
-}
-
-export const Separator = (props: Props) => (
+export const Separator = (props: Styled) => (
   <div className="Separator" {...props}/>
 );
