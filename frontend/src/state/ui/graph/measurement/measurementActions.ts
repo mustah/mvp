@@ -114,16 +114,13 @@ const requestsPerQuantity = (
       });
     });
 
-  Object.keys(cityByQuantity).forEach((quantity: Quantity) => {
-    if (cityByQuantity[quantity]!.size) {
-      requests.cities.push(
-        restClient.getParallel(makeUrl(
-          EndPoints.measurements.concat('/cities'),
-          measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
-        )),
-      );
-    }
-  });
+  requests.cities = Object.keys(cityByQuantity)
+    .filter((quantity: Quantity) => cityByQuantity[quantity]!.size)
+    .map((quantity: Quantity) =>
+      restClient.getParallel(makeUrl(
+        EndPoints.measurements.concat('/cities'),
+        measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
+      )));
 
   selectedListItems
     .filter(isSelectedMeter)
@@ -135,25 +132,21 @@ const requestsPerQuantity = (
         .forEach((quantity: Quantity) => meterByQuantity[quantity]!.add(id));
     });
 
-  Object.keys(meterByQuantity).forEach((quantity: Quantity) => {
-    if (meterByQuantity[quantity]!.size) {
-      requests.meters.push(
-        restClient.getParallel(makeUrl(
-          EndPoints.measurements,
-          measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
-        )),
-      );
+  requests.meters = Object.keys(meterByQuantity)
+    .filter((quantity) => meterByQuantity[quantity]!.size)
+    .map((quantity: Quantity) =>
+      restClient.getParallel(makeUrl(
+        EndPoints.measurements,
+        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
+      )));
 
-      if (meterByQuantity[quantity]!.size > 1) {
-        requests.average.push(
-          restClient.getParallel(makeUrl(
-            EndPoints.measurements.concat('/average'),
-            measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
-          )),
-        );
-      }
-    }
-  });
+  requests.average = Object.keys(meterByQuantity)
+    .filter((quantity) => meterByQuantity[quantity]!.size > 1)
+    .map((quantity: Quantity) =>
+      restClient.getParallel(makeUrl(
+        EndPoints.measurements.concat('/average'),
+        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
+      )));
 
   return requests;
 };
