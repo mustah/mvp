@@ -2,7 +2,6 @@ import 'es6-shim'; // adds polyfills for a host of functions that might otherwis
                    // older browsers
 import {History} from 'history';
 import createHashHistory from 'history/createHashHistory';
-import {InitOptions} from 'i18next';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as React from 'react';
 import 'react-dates/initialize'; // Needs to be imported in beginning of application in order for
@@ -20,7 +19,7 @@ import {persistor, store} from './store/configureStore';
 
 export const history: History = createHashHistory();
 
-onTranslationInitialized((options: InitOptions) => {
+onTranslationInitialized(() =>
   ReactDOM.render(
     <Provider store={store}>
       <MuiThemeProvider muiTheme={mvpTheme}>
@@ -32,5 +31,4 @@ onTranslationInitialized((options: InitOptions) => {
       </MuiThemeProvider>
     </Provider>,
     document.getElementById('app'),
-  );
-});
+  ));
