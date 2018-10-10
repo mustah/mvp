@@ -4,7 +4,6 @@ import {MediumButton} from '../../../../components/buttons/MediumButton';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
-import '../../../report/components/indicators/ReportIndicatorWidget.scss';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {FirstUpper} from '../../../../components/texts/Texts';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
@@ -13,6 +12,7 @@ import {orUnknown} from '../../../../helpers/translations';
 import {firstUpper} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import '../../../report/components/indicators/ReportIndicatorWidget.scss';
 import {SelectableListItem} from './SelectableListItem';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
@@ -35,7 +35,7 @@ export interface ItemOptions {
 }
 
 export const renderSelectionTreeCities = ({
-  id, selectionTree, toggleSingleEntry, openListItems, ...other,
+  id, selectionTree, toggleSingleEntry, openListItems, ...other
 }: RenderProps) => {
   const city = selectionTree.entities.cities[id];
 

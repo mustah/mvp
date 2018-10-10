@@ -73,7 +73,7 @@ class GatewayListComponent extends React.Component<Props> {
       error,
       query,
       result,
-      ...otherProps,
+      ...otherProps
     } = this.props;
 
     const wrapperProps: GatewayListProps & WithEmptyContentProps = {
