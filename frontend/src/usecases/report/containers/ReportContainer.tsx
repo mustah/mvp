@@ -90,36 +90,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     this.state = {...initialState};
   }
 
-  updateState = (state: ReportContainerState): void => this.setState({...state});
-
-  onChangeTab = (selectedTab: TabName): void => {
-    this.setState({selectedTab});
-    this.props.changeTab(selectedTab);
-  }
-
-  clearError = async () => {
-    const {
-      selectionTreeEntities,
-      selectedIndicators,
-      selectedListItems,
-      period,
-      customDateRange,
-      selectedQuantities,
-      logout,
-    } = this.props;
-    this.setState({error: Maybe.nothing(), isFetching: true});
-    await fetchMeasurements({
-      selectionTreeEntities,
-      selectedIndicators,
-      quantities: selectedQuantities,
-      selectedListItems,
-      timePeriod: period,
-      customDateRange,
-      updateState: this.updateState,
-      logout,
-    });
-  }
-
   async componentDidMount() {
     const {
       selectionTreeEntities,
@@ -238,6 +208,36 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
         </Loader>
       </MvpPageContainer>
     );
+  }
+
+  updateState = (state: ReportContainerState): void => this.setState({...state});
+
+  onChangeTab = (selectedTab: TabName): void => {
+    this.setState({selectedTab});
+    this.props.changeTab(selectedTab);
+  }
+
+  clearError = async () => {
+    const {
+      selectionTreeEntities,
+      selectedIndicators,
+      selectedListItems,
+      period,
+      customDateRange,
+      selectedQuantities,
+      logout,
+    } = this.props;
+    this.setState({error: Maybe.nothing(), isFetching: true});
+    await fetchMeasurements({
+      selectionTreeEntities,
+      selectedIndicators,
+      quantities: selectedQuantities,
+      selectedListItems,
+      timePeriod: period,
+      customDateRange,
+      updateState: this.updateState,
+      logout,
+    });
   }
 }
 
