@@ -9,18 +9,14 @@ import {TableHead} from '../../../components/table/TableHead';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
-import {selectedListItemsToLegendTable} from '../../../state/ui/graph/measurement/helpers/graphContentsToLegendTable';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
-import {GraphContents, LegendItem} from '../reportModels';
+import {OnClick, OnClickWithId} from '../../../types/Types';
+import {LegendItem} from '../reportModels';
 import './Legend.scss';
 
 export interface LegendProps {
-  graphContents: GraphContents;
   onToggleLine: OnClick;
-  selectedListItems: uuid[];
-  selectionTreeEntities: SelectionTreeEntities;
   toggleSingleEntry: OnClickWithId;
+  legendItems: Normalized<LegendItem>;
 }
 
 const iconIndicatorStyle: React.CSSProperties = {
@@ -30,8 +26,11 @@ const iconIndicatorStyle: React.CSSProperties = {
 };
 
 const renderFacility = ({facility}: LegendItem) => facility ? orUnknown(facility) : '';
+
 const renderAddress = ({address}: LegendItem) => address ? orUnknown(address) : '';
+
 const renderCity = ({city}: LegendItem) => city ? orUnknown(city) : '';
+
 const renderMedium = ({medium}: LegendItem) =>
   Array.isArray(medium)
     ? medium.map((singleMedium: Medium) => (
@@ -43,18 +42,7 @@ const renderMedium = ({medium}: LegendItem) =>
     ))
     : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
 
-export const Legend = ({
-  onToggleLine,
-  toggleSingleEntry,
-  selectedListItems,
-  selectionTreeEntities,
-}: LegendProps) => {
-  // const {result, entities}: Normalized<LegendItem> = graphContentsToLegendTable(graphContents);
-  // TODO do we want to construct the legend in a selector instead?
-  const {result, entities}: Normalized<LegendItem> = selectedListItemsToLegendTable({
-    selectedListItems,
-    entities: selectionTreeEntities,
-  });
+export const Legend = ({legendItems, onToggleLine, toggleSingleEntry}: LegendProps) => {
 
   const renderVisibilityButton = ({id}: LegendItem) => <ButtonVisibility onClick={onToggleLine} id={id}/>;
 
@@ -62,7 +50,7 @@ export const Legend = ({
 
   return (
     <Row className="Legend">
-      <Table result={result} entities={entities.lines}>
+      <Table result={legendItems.result} entities={legendItems.entities.lines}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
           cellClassName={'first first-uppercase'}

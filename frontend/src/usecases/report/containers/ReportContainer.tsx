@@ -23,7 +23,8 @@ import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
+import {Normalized} from '../../../state/domain-models/domainModels';
+import {SelectedTreeEntities, SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
@@ -41,22 +42,27 @@ import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSele
 import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
-import {Legend, LegendProps} from '../components/Legend';
 import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
+import {Legend, LegendProps} from '../components/Legend';
 import {MeasurementList} from '../components/MeasurementList';
 import {toggleSingleEntry} from '../reportActions';
-import {GraphContents, hardcodedIndicators} from '../reportModels';
+import {GraphContents, hardcodedIndicators, LegendItem} from '../reportModels';
+import {getLegendItems} from '../reportSelectors';
 import {GraphContainer} from './GraphContainer';
 
-interface StateToProps {
+interface SelectedIds {
+  selectedListItems: uuid[];
+}
+
+interface StateToProps extends SelectedIds {
   customDateRange: Maybe<DateRange>;
   enabledIndicatorTypes: Set<Medium>;
   period: Period;
   selectedIndicators: Medium[];
-  selectedListItems: uuid[];
   selectedQuantities: Quantity[];
   selectionTreeEntities: SelectionTreeEntities;
   selectedTab: TabName;
+  legendItems: Normalized<LegendItem>;
 }
 
 export interface ReportContainerState {
@@ -75,9 +81,9 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
 
 type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
-const hasSelectedItems = ({selectedListItems}: LegendProps): boolean => selectedListItems.length > 0;
+const hasSelectedItems = ({selectedListItems}: SelectedIds): boolean => selectedListItems.length > 0;
 
-const LegendWrapper = componentOrNull<LegendProps>(hasSelectedItems)(Legend);
+const LegendWrapper = componentOrNull<LegendProps & SelectedIds>(hasSelectedItems)(Legend);
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
@@ -139,12 +145,12 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
   render() {
     const {
+      legendItems,
       selectedTab,
       selectedIndicatorTypes,
       toggleReportIndicatorWidget,
       enabledIndicatorTypes,
       selectedListItems,
-      selectionTreeEntities,
       toggleSingleEntry,
     } = this.props;
     const {isFetching, error, hiddenKeys, measurementResponse} = this.state;
@@ -200,9 +206,9 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
               </TabContent>
             </Tabs>
             <LegendWrapper
+              legendItems={legendItems}
               onToggleLine={onToggleLine}
               selectedListItems={selectedListItems}
-              selectionTreeEntities={selectionTreeEntities}
               toggleSingleEntry={toggleSingleEntry}
             />
           </Paper>
@@ -245,16 +251,21 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 const mapStateToProps =
   ({
     report: {selectedListItems},
+    selectionTree: {entities},
     userSelection: {userSelection},
     ui: {
-      indicator: {selectedIndicators: {report}, selectedQuantities},
+      indicator: {
+        selectedIndicators: {report},
+        selectedQuantities,
+      },
       tabs,
     },
-    selectionTree: {entities},
-  }: RootState): StateToProps & SelectedIndicatorWidgetProps =>
-    ({
+  }: RootState): StateToProps & SelectedIndicatorWidgetProps => {
+    const selectedTreeState: SelectedTreeEntities = {selectedListItems, entities};
+    return ({
       ...getSelectedPeriod(userSelection),
-      enabledIndicatorTypes: getMedia({selectedListItems, entities}),
+      enabledIndicatorTypes: getMedia(selectedTreeState),
+      legendItems: getLegendItems(selectedTreeState),
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
@@ -262,6 +273,7 @@ const mapStateToProps =
       selectionTreeEntities: entities,
       selectedTab: getSelectedTab(tabs.report),
     });
+  };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabReport,
