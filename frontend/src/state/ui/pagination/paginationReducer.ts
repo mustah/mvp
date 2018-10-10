@@ -1,4 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
+import {isDefined} from '../../../helpers/commonUtils';
 import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';
 import {SEARCH} from '../../../usecases/search/searchActions';
@@ -51,7 +52,7 @@ const updateMetaData = (
   [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
 });
 
-const hasQuery = (it: Query) => !!it.query;
+const hasQuery = ({query}: Query) => isDefined(query);
 
 const resetGatewaysPage: PaginationChangePayload = {
   entityType: 'gateways',

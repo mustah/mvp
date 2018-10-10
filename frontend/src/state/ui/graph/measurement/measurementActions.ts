@@ -2,6 +2,7 @@ import {flatMap, map} from 'lodash';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
+import {isDefined} from '../../../../helpers/commonUtils';
 import {toPeriodApiParameters} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
@@ -105,6 +106,7 @@ const requestsPerQuantity = (
   selectedListItems
     .filter(isSelectedCity)
     .map((cityId: uuid) => selectionTreeEntities.cities[cityId])
+    .filter(isDefined)
     .forEach(({medium, id}: SelectionTreeCity) => {
       medium.forEach((singleMedium: Medium) => {
         const cityQuantities: Quantity[] = allQuantities[singleMedium];
@@ -114,6 +116,17 @@ const requestsPerQuantity = (
       });
     });
 
+  selectedListItems
+    .filter(isSelectedMeter)
+    .map((meterId: uuid) => selectionTreeEntities.meters[meterId])
+    .filter(isDefined)
+    .forEach(({medium, id}: SelectionTreeMeter) => {
+      const meterQuantities: Quantity[] = allQuantities[medium];
+      quantities
+        .filter((quantity: Quantity) => meterQuantities.includes(quantity))
+        .forEach((quantity: Quantity) => meterByQuantity[quantity]!.add(id));
+    });
+
   requests.cities = Object.keys(cityByQuantity)
     .filter((quantity: Quantity) => cityByQuantity[quantity]!.size)
     .map((quantity: Quantity) =>
@@ -121,16 +134,6 @@ const requestsPerQuantity = (
         EndPoints.measurements.concat('/cities'),
         measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
       )));
-
-  selectedListItems
-    .filter(isSelectedMeter)
-    .map((meterId: uuid) => selectionTreeEntities.meters[meterId])
-    .forEach(({medium, id}: SelectionTreeMeter) => {
-      const meterQuantities: Quantity[] = allQuantities[medium];
-      quantities
-        .filter((quantity: Quantity) => meterQuantities.includes(quantity))
-        .forEach((quantity: Quantity) => meterByQuantity[quantity]!.add(id));
-    });
 
   requests.meters = Object.keys(meterByQuantity)
     .filter((quantity) => meterByQuantity[quantity]!.size)
@@ -216,7 +219,6 @@ export const fetchMeasurements =
         });
       }
     }
-
   };
 
 export type OnUpdate = (state: MeterMeasurementsState) => void;

@@ -32,11 +32,11 @@ describe('measurementActions', () => {
     const updateState = (updatedState: ReportContainerState) => state = {...updatedState};
     const logout = (error?: Unauthorized) => error ? loggedOut = error.message : 'logged out';
 
-    const mockMeter = (medium: Medium, city = undefined, address = undefined): SelectionTreeMeter => {
+    const mockMeter = (medium: Medium): SelectionTreeMeter => {
       const id = idGenerator.uuid().toString();
       return ({
-        address: address ? address! : idGenerator.uuid().toString(),
-        city: city ? city! : idGenerator.uuid().toString(),
+        address: idGenerator.uuid().toString(),
+        city: idGenerator.uuid().toString(),
         id,
         medium,
         name: id,
@@ -73,49 +73,57 @@ describe('measurementActions', () => {
       };
     });
 
-    it('sets default state if no quantities are provided', async () => {
-      updateState({...initialState, isFetching: true});
-      const fetching: ReportContainerState = {...initialState};
-      expect(state).not.toEqual(fetching);
+    describe('do not fetch', () => {
 
-      await fetchMeasurements(defaultParameters);
-      const expected: ReportContainerState = {...initialState};
-      expect(state).toEqual(expected);
-    });
+      it('sets default state if no quantities are provided', async () => {
+        updateState({...initialState, isFetching: true});
+        const fetching: ReportContainerState = {...initialState};
+        expect(state).not.toEqual(fetching);
 
-    it('never requests addresses', async () => {
-      const mockRestClient = new MockAdapter(axios);
-      authenticate('test');
-
-      const requestedUrls: string[] = [];
-      mockRestClient.onGet().reply((config) => {
-        requestedUrls.push(config.url!);
-        return [200, 'some data'];
+        await fetchMeasurements(defaultParameters);
+        const expected: ReportContainerState = {...initialState};
+        expect(state).toEqual(expected);
       });
 
-      await fetchMeasurements({
-        ...defaultParameters,
-        selectedIndicators: [Medium.districtHeating],
-        quantities: [Quantity.power],
-        selectedListItems: ['sweden,höganäs,hasselgatan 4'],
-      });
+      it('never requests addresses', async () => {
+        const requestedUrls: string[] = onFetchAsync(
+          mockMeter(Medium.districtHeating),
+          mockMeter(Medium.districtHeating),
+        );
 
-      expect(requestedUrls).toHaveLength(0);
-    });
-
-    describe('only requests quantities for meters that has them', () => {
-
-      it('does not send requests for meters with unknown media', async () => {
-        const mockRestClient = new MockAdapter(axios);
-        authenticate('test');
-
-        const requestedUrls: string[] = [];
-        mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url!);
-          return [200, 'some data'];
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sweden,höganäs,hasselgatan 4'],
         });
 
+        expect(requestedUrls).toHaveLength(0);
+      });
+
+      it('returns empty data if no meter ids are provided', async () => {
+        updateState({...initialState, isFetching: true});
+        const fetching: ReportContainerState = {...initialState};
+        expect(state).not.toEqual(fetching);
+
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: [],
+        });
+        const expected: ReportContainerState = {...initialState};
+        expect(state).toEqual(expected);
+      });
+    });
+
+    describe('only fetch quantities for meters that have them', () => {
+
+      it('does not send requests for meters with unknown media', async () => {
         const unknownMeter = mockMeter(Medium.unknown);
+        const meter = mockMeter(Medium.unknown);
+
+        const requestedUrls = onFetchAsync(unknownMeter, meter);
 
         await fetchMeasurements({
           ...defaultParameters,
@@ -134,17 +142,9 @@ describe('measurementActions', () => {
       });
 
       it('sends separate requests for meters with different quantities', async () => {
-        const mockRestClient = new MockAdapter(axios);
-        authenticate('test');
-
-        const requestedUrls: string[] = [];
-        mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url!);
-          return [200, 'some data'];
-        });
-
         const roomSensorMeter = mockMeter(Medium.roomSensor);
         const gasMeter = mockMeter(Medium.gas);
+        const requestedUrls: string[] = onFetchAsync(roomSensorMeter, gasMeter);
 
         await fetchMeasurements({
           ...defaultParameters,
@@ -226,7 +226,7 @@ describe('measurementActions', () => {
 
     });
 
-    describe('cities', () => {
+    describe('fetch cities', () => {
 
       it('requests cities when no meters are selected', async () => {
         const mockRestClient = new MockAdapter(axios);
@@ -316,35 +316,12 @@ describe('measurementActions', () => {
 
     });
 
-    it('returns empty data if no meter ids are provided', async () => {
-      updateState({...initialState, isFetching: true});
-      const fetching: ReportContainerState = {...initialState};
-      expect(state).not.toEqual(fetching);
+    describe('fetch average ', () => {
 
-      await fetchMeasurements({
-        ...defaultParameters,
-        selectedIndicators: [Medium.districtHeating],
-        quantities: [Quantity.power],
-        selectedListItems: [],
-      });
-      const expected: ReportContainerState = {...initialState};
-      expect(state).toEqual(expected);
-    });
-
-    it(
-      'includes average when asking for measurements for multiple meters with the same quantity',
-      async () => {
-        const mockRestClient = new MockAdapter(axios);
-        authenticate('test');
-
-        const requestedUrls: string[] = [];
-        mockRestClient.onGet().reply((config) => {
-          requestedUrls.push(config.url!);
-          return [200, 'some data'];
-        });
-
+      it('includes average when asking for measurements for multiple meters with the same quantity', async () => {
         const firstRoomSensor = mockMeter(Medium.roomSensor);
         const secondRoomSensor = mockMeter(Medium.roomSensor);
+        const requestedUrls: string[] = onFetchAsync(firstRoomSensor, secondRoomSensor);
 
         await fetchMeasurements({
           ...defaultParameters,
@@ -372,23 +349,133 @@ describe('measurementActions', () => {
         );
         expect(averageUrl.searchParams.get('before')).toBeTruthy();
         expect(averageUrl.searchParams.get('after')).toBeTruthy();
-      },
-    );
+      });
 
-    it('provides a result suitable for parsing by mapApiResponseToGraphData', async () => {
-      const mockRestClient = new MockAdapter(axios);
-      authenticate('test');
+      it('provides a result suitable for parsing by mapApiResponseToGraphData', async () => {
+        const firstDistrictHeating = mockMeter(Medium.districtHeating);
+        const secondDistrictHeating = mockMeter(Medium.districtHeating);
+        const requestedUrls: string[] = onFetchAsync(firstDistrictHeating, secondDistrictHeating);
 
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
+          selectionTreeEntities: {
+            ...defaultParameters.selectionTreeEntities,
+            meters: {
+              [firstDistrictHeating.id]: firstDistrictHeating,
+              [secondDistrictHeating.id]: secondDistrictHeating,
+            },
+          },
+        });
+
+        expect(requestedUrls).toHaveLength(2);
+
+        const {data, lines, axes: {left}}: GraphContents = mapApiResponseToGraphData(state.measurementResponse);
+
+        expect(left).toEqual('mW');
+        expect(data).toHaveLength(2);
+        expect(lines).toHaveLength(3);
+      });
+
+      it('filters out average readouts without values', async () => {
+        const firstDistrictHeating = mockMeter(Medium.districtHeating);
+        const secondDistrictHeating = mockMeter(Medium.districtHeating);
+
+        onFetchAsync(firstDistrictHeating, secondDistrictHeating);
+
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
+          selectionTreeEntities: {
+            ...defaultParameters.selectionTreeEntities,
+            meters: {
+              [firstDistrictHeating.id]: firstDistrictHeating,
+              [secondDistrictHeating.id]: secondDistrictHeating,
+            },
+          },
+        });
+
+        expect(state.measurementResponse.average).toHaveLength(1);
+        expect(state.measurementResponse.average[0].values).toHaveLength(2);
+        expect(state.measurementResponse.average[0].values[1].value).toBe(0.55);
+      });
+
+      it('keeps average readouts with a value of 0', async () => {
+        const first = mockMeter(Medium.districtHeating);
+        const second = mockMeter(Medium.districtHeating);
+
+        onFetchAsync(first, second);
+
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectionTreeEntities: {
+            ...defaultParameters.selectionTreeEntities,
+            meters: {
+              [first.id]: first,
+              [second.id]: second,
+            },
+          },
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: [first.id, second.id],
+        });
+
+        expect(state.measurementResponse.average[0].values).toHaveLength(2);
+        expect(state.measurementResponse.average[0].values[0].value).toBe(0);
+        expect(state.measurementResponse.average[0].values[1].value).toBe(0.55);
+      });
+
+      it('does not include meters that are not within the meter entities', async () => {
+        const first = mockMeter(Medium.districtHeating);
+        const second = mockMeter(Medium.districtHeating);
+
+        onFetchAsync(first, second);
+
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: [first.id, second.id],
+        });
+
+        expect(state.measurementResponse).toEqual({average: [], measurements: [], cities: []});
+      });
+
+      it('does not include cities that are not within the cities entities', async () => {
+        const first = mockMeter(Medium.districtHeating);
+        const second = mockMeter(Medium.districtHeating);
+
+        onFetchAsync(first, second);
+
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: ['sto,bkk'],
+        });
+
+        expect(state.measurementResponse).toEqual({average: [], measurements: [], cities: []});
+      });
+    });
+
+    const onFetchAsync = (meter1: SelectionTreeMeter, meter2: SelectionTreeMeter): string[] => {
       const requestedUrls: string[] = [];
+      const mockRestClient = new MockAdapter(axios);
+
+      authenticate('test');
 
       mockRestClient.onGet().reply(async (config) => {
         requestedUrls.push(config.url!);
 
         const measurement: MeasurementApiResponse = [
           {
-            id: 'meter a',
-            city: 'Varberg',
-            address: 'Drottningatan 1',
+            id: meter1.id.toString(),
+            city: meter1.city,
+            address: meter1.address,
             quantity: Quantity.power,
             medium: 'Electricity',
             values: [
@@ -401,196 +488,9 @@ describe('measurementActions', () => {
             unit: 'mW',
           },
           {
-            id: 'meter b',
-            city: 'Varberg',
-            address: 'Drottningatan 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: '2',
-            unit: 'mW',
-          },
-        ];
-
-        const average: MeasurementApiResponse = [
-          {
-            id: 'Varberg',
-            city: 'Varberg',
-            address: '',
-            quantity: Quantity.power,
-            unit: 'mW',
-            label: 'average',
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.44,
-              },
-              {
-                when: 1516521585109,
-                value: 0.55,
-              },
-            ],
-          },
-        ];
-
-        if (config.url!.match(/^\/measurements\/average/)) {
-          return [200, average];
-        } else {
-          return [200, measurement];
-        }
-      });
-
-      const firstDistrictHeating = mockMeter(Medium.districtHeating);
-      const secondDistrictHeating = mockMeter(Medium.districtHeating);
-
-      await fetchMeasurements({
-        ...defaultParameters,
-        selectedIndicators: [Medium.districtHeating],
-        quantities: [Quantity.power],
-        selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
-        selectionTreeEntities: {
-          ...defaultParameters.selectionTreeEntities,
-          meters: {
-            [firstDistrictHeating.id]: firstDistrictHeating,
-            [secondDistrictHeating.id]: secondDistrictHeating,
-          },
-        },
-      });
-
-      expect(requestedUrls).toHaveLength(2);
-
-      const {data, lines, axes: {left}}: GraphContents = mapApiResponseToGraphData(state.measurementResponse);
-
-      expect(left).toEqual('mW');
-      expect(data).toHaveLength(2);
-      expect(lines).toHaveLength(3);
-    });
-
-    it('filters out average readouts without values', async () => {
-      const mockRestClient = new MockAdapter(axios);
-      authenticate('test');
-
-      mockRestClient.onGet().reply(async (config) => {
-
-        const measurement: MeasurementApiResponse = [
-          {
-            id: 'meter a',
-            city: 'Varberg',
-            address: 'Drottningatan 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: '1',
-            unit: 'mW',
-          },
-          {
-            id: 'meter b',
-            city: 'Varberg',
-            address: 'Drottningatan 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: '2',
-            unit: 'mW',
-          },
-        ];
-
-        const average: MeasurementApiResponse = [
-          {
-            id: 'Varberg',
-            city: 'Varberg',
-            address: '',
-            quantity: Quantity.power,
-            unit: 'mW',
-            label: 'average',
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-              },
-              {
-                when: 1516521585109,
-                value: 0.55,
-              },
-            ],
-          },
-        ];
-
-        if (config.url!.match(/^\/measurements\/average/)) {
-          return [200, average];
-        } else {
-          return [200, measurement];
-        }
-      });
-
-      const firstDistrictHeating = mockMeter(Medium.districtHeating);
-      const secondDistrictHeating = mockMeter(Medium.districtHeating);
-
-      await fetchMeasurements({
-        ...defaultParameters,
-        selectedIndicators: [Medium.districtHeating],
-        quantities: [Quantity.power],
-        selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
-        selectionTreeEntities: {
-          ...defaultParameters.selectionTreeEntities,
-          meters: {
-            [firstDistrictHeating.id]: firstDistrictHeating,
-            [secondDistrictHeating.id]: secondDistrictHeating,
-          },
-        },
-      });
-
-      expect(state.measurementResponse.average).toHaveLength(1);
-
-      expect(state.measurementResponse.average[0].values).toHaveLength(1);
-      expect(state.measurementResponse.average[0].values[0].value).toBe(0.55);
-    });
-
-    it('keeps average readouts with a value of 0', async () => {
-      const mockRestClient = new MockAdapter(axios);
-      authenticate('test');
-
-      const first = mockMeter(Medium.districtHeating);
-      const second = mockMeter(Medium.districtHeating);
-
-      mockRestClient.onGet().reply(async (config) => {
-
-        const measurement: MeasurementApiResponse = [
-          {
-            id: first.id.toString(),
-            city: first.city,
-            address: first.address,
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: '1',
-            unit: 'mW',
-          },
-          {
-            id: second.id.toString(),
-            city: second.city,
-            address: second.address,
+            id: meter2.id.toString(),
+            city: meter2.city,
+            address: meter2.address,
             quantity: Quantity.power,
             medium: 'Electricity',
             values: [
@@ -619,6 +519,9 @@ describe('measurementActions', () => {
                 value: 0.0,
               },
               {
+                when: 1516521583309,
+              },
+              {
                 when: 1516521585109,
                 value: 0.55,
               },
@@ -633,23 +536,7 @@ describe('measurementActions', () => {
         }
       });
 
-      await fetchMeasurements({
-        ...defaultParameters,
-        selectionTreeEntities: {
-          ...defaultParameters.selectionTreeEntities,
-          meters: {
-            [first.id]: first,
-            [second.id]: second,
-          },
-        },
-        selectedIndicators: [Medium.districtHeating],
-        quantities: [Quantity.power],
-        selectedListItems: [first.id, second.id],
-      });
-
-      expect(state.measurementResponse.average[0].values).toHaveLength(2);
-      expect(state.measurementResponse.average[0].values[0].value).toBe(0);
-      expect(state.measurementResponse.average[0].values[1].value).toBe(0.55);
-    });
+      return requestedUrls;
+    };
   });
 });
