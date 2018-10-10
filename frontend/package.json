@@ -114,7 +114,7 @@
     "normalizr": "^3.3.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.6.2",
-    "react": "^16.2.0",
+    "react": "^16.5.2",
     "react-dates": "^16.6.1",
     "react-dom": "^16.5.2",
     "react-leaflet": "^1.7.1",
