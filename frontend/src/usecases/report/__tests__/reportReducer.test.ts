@@ -1,8 +1,10 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
+import {Period} from '../../../components/dates/dateModels';
 import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {selectPeriod} from '../../../state/user-selection/userSelectionActions';
 import {uuid} from '../../../types/Types';
-import {LOGOUT_USER} from '../../auth/authActions';
+import {logoutUser} from '../../auth/authActions';
 import {SelectedEntriesPayload, setSelectedEntries} from '../reportActions';
 import {ReportState} from '../reportModels';
 import {initialState, report} from '../reportReducer';
@@ -35,11 +37,29 @@ describe('reportReducer', () => {
   describe('logout user', () => {
 
     it('resets state to initial state', () => {
-      let state: ReportState = {selectedListItems: [1, 2, 3]};
-      state = report(state, {type: LOGOUT_USER});
+      const state: ReportState = report({selectedListItems: [1, 2, 3]}, logoutUser(undefined));
 
       expect(state).toEqual({...initialState});
     });
+  });
+
+  describe('change period', () => {
+
+    it('should not clear selected list items', () => {
+      const payload: SelectedEntriesPayload = {
+        ids: [1, 2, 3],
+        quantitiesToSelect: [],
+        indicatorsToSelect: [],
+      };
+      const state: ReportState = report(initialState, setSelectedEntries(payload));
+
+      const expected: ReportState = {selectedListItems: payload.ids};
+      expect(state).toEqual(expected);
+
+      const newState: ReportState = report(state, selectPeriod(Period.currentMonth));
+      expect(newState).toBe(state);
+    });
+
   });
 
 });

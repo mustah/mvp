@@ -34,11 +34,9 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   setCustomDateRange,
 }, dispatch);
 
-const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => {
-  return {
+const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => ({
   ...getSelectedPeriod(userSelection),
-  };
-};
+});
 
 export const PeriodContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(PeriodComponent);

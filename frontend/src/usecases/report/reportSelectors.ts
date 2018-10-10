@@ -1,5 +1,6 @@
 import {normalize, schema} from 'normalizr';
 import {createSelector} from 'reselect';
+import {isDefined} from '../../helpers/commonUtils';
 import {firstUpper} from '../../services/translationService';
 import {Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {
@@ -14,23 +15,23 @@ import {LegendItem} from './reportModels';
 
 const lineSchema = [new schema.Entity('lines')];
 
-const regExp = /[^,]+,(.+)/;
+const matchesCityId = (id: string): RegExpMatchArray | null => id.match(/[^,]+,(.+)/);
 
 const selectedCityLines = (selectedIds: uuid[], cities: ObjectsById<SelectionTreeCity>): LegendItem[] =>
   selectedIds
     .filter(isSelectedCity)
-    .map((id: uuid): LegendItem => {
-      const {name: city, medium} = cities[id];
-      return {id, city, medium};
-    });
+    .map((id: uuid) => cities[id])
+    .filter(isDefined)
+    .map(({id, name: city, medium}: SelectionTreeCity): LegendItem => ({id, city, medium}));
 
 const selectedMeterLines = (selectedIds: uuid[], meters: ObjectsById<SelectionTreeMeter>): LegendItem[] =>
   selectedIds
     .filter(isSelectedMeter)
-    .map((id: uuid): LegendItem => {
-      const {name: facility, medium, address, city} = meters[id];
-      const cityParts = city.match(regExp);
-      const cityWithoutCountry = cityParts === null ? city : cityParts[1];
+    .map((id: uuid) => meters[id])
+    .filter(isDefined)
+    .map(({id, name: facility, medium, address, city}: SelectionTreeMeter) => {
+      const cityMatchParts = matchesCityId(city);
+      const cityWithoutCountry = cityMatchParts === null ? city : cityMatchParts[1];
       return {
         id,
         facility,

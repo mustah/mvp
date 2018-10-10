@@ -1,9 +1,6 @@
 import {createSelector} from 'reselect';
 import {uuid} from '../../../types/Types';
-import {
-  PageNumbered,
-  PaginatedDomainModelsState,
-} from '../../domain-models-paginated/paginatedDomainModels';
+import {PageNumbered, PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
 import {DomainModelsState} from '../../domain-models/domainModels';
 import {Pagination, PaginationLookupState, PaginationModel} from './paginationModels';
 import {initialPaginationModel} from './paginationReducer';
@@ -32,8 +29,10 @@ const isPageAssigned = ({pagination, entityType, componentId}: GetPagination): b
     componentId,
   }) && !!pagination[entityType]!.useCases[componentId];
 
-const getMetadata = (state: GetPagination): PaginationModel => isPaginationDefined(state) ?
-  state.pagination[state.entityType]! : {...initialPaginationModel};
+const getMetadata = (state: GetPagination): PaginationModel =>
+  isPaginationDefined(state)
+    ? state.pagination[state.entityType]!
+    : {...initialPaginationModel};
 
 const getPage = (state: GetPagination): PageNumbered => isPageAssigned(state) ?
   state.pagination[state.entityType]!.useCases[state.componentId] : {page: 0};

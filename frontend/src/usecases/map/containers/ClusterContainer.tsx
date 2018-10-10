@@ -3,6 +3,7 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {isDefined} from '../../../helpers/commonUtils';
 import {Dictionary} from '../../../types/Types';
 import {
   isAlarmIconUrl,
@@ -47,7 +48,7 @@ const getClusterDimensions = (clusterCount: number): number => {
 const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   const faults = cluster.getAllChildMarkers()
     .map(({options: {icon}}: Leaflet.Marker) => icon)
-    .filter((icon) => !!icon)
+    .filter(isDefined)
     .filter((icon) => isErrorIconUrl(icon.options.iconUrl)
                       || isAlarmIconUrl(icon.options.iconUrl)
                       || isWarningIconUrl(icon.options.iconUrl))
