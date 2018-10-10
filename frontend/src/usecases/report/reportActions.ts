@@ -20,9 +20,7 @@ export interface SelectedEntriesPayload {
 export const setSelectedEntries: OnPayloadAction<SelectedEntriesPayload> =
   payloadActionOf<SelectedEntriesPayload>(SET_SELECTED_ENTRIES);
 
-const mediaForSelection = (ids: uuid[], selectionTree: SelectionTreeState): Set<Medium> => {
-  const {entities: {meters, cities}}: SelectionTreeState = selectionTree;
-
+const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionTreeState): Set<Medium> => {
   const cityMedia: Medium[] = ids.filter(isSelectedCity)
     .map((cityId) => cities[cityId].medium)
     .reduce((all, current) => all.concat(current), []);
