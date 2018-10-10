@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {timestamp} from '../../../helpers/dateHelpers';
-import {roundMeasurement} from '../../../helpers/formatters';
-import {ActiveDataPoint} from '../reportModels';
+import {timestamp} from '../../../../helpers/dateHelpers';
+import {roundMeasurement} from '../../../../helpers/formatters';
+import {ActiveDataPoint} from '../../reportModels';
 
 const style: React.CSSProperties = {
   backgroundColor: 'white',

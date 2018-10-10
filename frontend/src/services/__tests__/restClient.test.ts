@@ -34,7 +34,6 @@ describe('restClient', () => {
     });
 
     it('throws a InvalidToken exception if token invalid from backend', async () => {
-
       const getInvalidTokenError = async () => {
         mockRestClient.onGet(EndPoints.selectionTree).reply(401, {message: 'Token missing or invalid'});
         return restClient.get(EndPoints.selectionTree);
@@ -45,7 +44,6 @@ describe('restClient', () => {
     });
 
     it('doesnt throws a InvalidToken exception for errors not related to token invalid', async () => {
-
       const getErrorElseThanInvalidToken = async () => {
         mockRestClient.onGet(EndPoints.selectionTree).reply(401, {message: 'An other error'});
         return restClient.get(EndPoints.selectionTree);
@@ -72,6 +70,15 @@ describe('restClient', () => {
       }
     };
 
+    const getParallelRequestsFromURL = async (url: string) => {
+      mockRestClient.onGet(url).reply(201, 'some data');
+      try {
+        return await restClient.getParallel(url);
+      } catch (error) {
+        return Promise.resolve(error);
+      }
+    };
+
     it('cancels all but the last of simultaneous requests to the same endpoint', async () => {
       const url = '/endPoint';
       const response = await Promise.all([getRequestFromURL(url), getRequestFromURL(url)]);
@@ -87,14 +94,33 @@ describe('restClient', () => {
       expect(response[1].data).toEqual('some data');
     });
 
-    it('handles more than two simultaneous requests to the same endpoint', async () => {
-      const url1 = '/endPoint?city=abc';
-      const url2 = '/endPoint?id=5';
-      const url3 = '/endPoint?id=5&address=kungsgatan';
-      const response = await Promise.all([getRequestFromURL(url1), getRequestFromURL(url2), getRequestFromURL(url3)]);
-      expect(wasRequestCanceled(response[0])).toBeTruthy();
-      expect(wasRequestCanceled(response[1])).toBeTruthy();
-      expect(response[2].data).toEqual('some data');
+    it(
+      'handles more than two simultaneous requests to the same endpoint by cancelling all but the last',
+      async () => {
+        const url1 = '/endPoint?city=abc';
+        const url2 = '/endPoint?id=5';
+        const url3 = '/endPoint?id=5&address=kungsgatan';
+        const response = await Promise.all([getRequestFromURL(url1), getRequestFromURL(url2), getRequestFromURL(url3)]);
+        expect(wasRequestCanceled(response[0])).toBeTruthy();
+        expect(wasRequestCanceled(response[1])).toBeTruthy();
+        expect(response[2].data).toEqual('some data');
+      },
+    );
+
+    it('can ask the same endpoint for different parameters', async () => {
+      const urls = [
+        '/endPoint?city=abc',
+        '/endPoint?id=5',
+        '/endPoint?id=5&address=kungsgatan',
+      ];
+      const [response1, response2, response3] = await Promise.all(urls.map(getParallelRequestsFromURL));
+
+      expect(wasRequestCanceled(response1)).toBeFalsy();
+      expect(wasRequestCanceled(response2)).toBeFalsy();
+      expect(wasRequestCanceled(response3)).toBeFalsy();
+      expect(response1.data).toEqual('some data');
+      expect(response2.data).toEqual('some data');
+      expect(response3.data).toEqual('some data');
     });
 
     it('resolves requests to different endPoints', async () => {

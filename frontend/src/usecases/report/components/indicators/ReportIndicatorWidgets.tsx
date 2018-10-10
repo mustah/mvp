@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {RowCenter} from '../layouts/row/Row';
-import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
+import {Medium, OnSelectIndicator} from '../../../../components/indicators/indicatorWidgetModels';
+import {RowCenter} from '../../../../components/layouts/row/Row';
 import {ClickableReportIndicatorProps, ReportIndicatorProps, ReportIndicatorWidget} from './ReportIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {

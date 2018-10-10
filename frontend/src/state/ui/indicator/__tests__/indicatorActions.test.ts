@@ -1,14 +1,15 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {Quantity} from '../graph/measurement/measurementModels';
+import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
+import {Quantity} from '../../graph/measurement/measurementModels';
 import {
   canToggleMedia,
   selectQuantities,
   setReportIndicatorWidgets,
+  setSelectedQuantities,
   toggleReportIndicatorWidget,
-} from '../indicator/indicatorActions';
-import {IndicatorState, initialState} from '../indicator/indicatorReducer';
+} from '../indicatorActions';
+import {IndicatorState, initialState} from '../indicatorReducer';
 
 describe('indicatorActions', () => {
 
@@ -57,7 +58,7 @@ describe('indicatorActions', () => {
       expect(store.getActions()).toEqual(expected);
     });
 
-    it('can deselect indicators', () => {
+    it('deselects indicators', () => {
       const store = storeWith({
         selectedIndicators: {
           report: [Medium.districtHeating],
@@ -74,7 +75,7 @@ describe('indicatorActions', () => {
       expect(store.getActions()).toEqual(expected);
     });
 
-    describe('defaults to certain quantity', () => {
+    describe('sets quantity', () => {
 
       it('defaults to energy for district heating', () => {
         const store = storeWith(initialState);
@@ -137,6 +138,24 @@ describe('indicatorActions', () => {
 
         const expected = [
           setReportIndicatorWidgets([Medium.gas, Medium.districtHeating, Medium.roomSensor]),
+        ];
+
+        expect(store.getActions()).toEqual(expected);
+      });
+
+      it('deselects quantity that is no longer represented by medium', () => {
+        const store = storeWith({
+          selectedIndicators: {
+            report: [Medium.gas, Medium.roomSensor],
+          },
+          selectedQuantities: [Quantity.volume, Quantity.externalTemperature],
+        });
+
+        store.dispatch(toggleReportIndicatorWidget(Medium.gas));
+
+        const expected = [
+          setReportIndicatorWidgets([Medium.roomSensor]),
+          setSelectedQuantities([Quantity.externalTemperature]),
         ];
 
         expect(store.getActions()).toEqual(expected);

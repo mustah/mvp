@@ -30,6 +30,7 @@ class RestClientDelegate implements AxiosInstance {
   };
 
   private readonly delegate: AxiosInstance;
+
   private readonly requests: Dictionary<CancelTokenSource>;
 
   constructor(delegate: AxiosInstance) {
@@ -45,14 +46,11 @@ class RestClientDelegate implements AxiosInstance {
   }
 
   get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
-    const requestId = RestClientDelegate.getRequestId(url);
-    const request = this.requests[requestId];
-    if (request) {
-      request.cancel(requestCanceled);
-    }
-    const source: CancelTokenSource = axios.CancelToken.source();
-    this.requests[requestId] = source;
-    return this.delegate.get(url, {...config, cancelToken: source.token});
+    return this.doGet(RestClientDelegate.getRequestId(url), url, config);
+  }
+
+  getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
+    return this.doGet(url, url, config);
   }
 
   delete(url: string, config?: AxiosRequestConfig): AxiosPromise {
@@ -75,6 +73,16 @@ class RestClientDelegate implements AxiosInstance {
     return this.delegate.patch(url, data, config);
   }
 
+  private doGet<T = any>(requestId: string, url: string, config?: AxiosRequestConfig): AxiosPromise<T> {
+    const request = this.requests[requestId];
+    if (request) {
+      request.cancel(requestCanceled);
+    }
+    const source: CancelTokenSource = axios.CancelToken.source();
+    this.requests[requestId] = source;
+    return this.delegate.get(url, {...config, cancelToken: source.token});
+  }
+
   private setResponseInterceptors(): void {
     this.interceptors.response.use((response) => response, (error) => {
       const {response} = error;
@@ -90,7 +98,11 @@ class RestClientDelegate implements AxiosInstance {
 
 const axiosConfig = config().axios;
 
-export let restClient: AxiosInstance = new RestClientDelegate(axios.create(axiosConfig));
+interface AxiosInstanceWrapper extends AxiosInstance {
+  getParallel<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>;
+}
+
+export let restClient: AxiosInstanceWrapper = new RestClientDelegate(axios.create(axiosConfig));
 
 interface Headers {
   Authorization: string;

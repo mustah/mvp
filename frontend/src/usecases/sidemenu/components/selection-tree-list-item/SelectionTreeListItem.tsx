@@ -4,7 +4,7 @@ import {MediumButton} from '../../../../components/buttons/MediumButton';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
-import '../../../../components/indicators/ReportIndicatorWidget.scss';
+import '../../../report/components/indicators/ReportIndicatorWidget.scss';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {FirstUpper} from '../../../../components/texts/Texts';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';

@@ -28,9 +28,9 @@ import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectQuantities} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
-import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
-import {CustomizedTooltip} from '../components/CustomizedTooltip';
-import {Dot, DotReChartProps} from '../components/Dot';
+import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
+import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
+import {Dot, DotReChartProps} from '../components/graph/Dot';
 import {QuantityDropdown} from '../components/QuantityDropdown';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
 

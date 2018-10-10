@@ -15,11 +15,14 @@ import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -75,7 +78,6 @@ public class LogicalMeterHelperTest {
 
     assertThat(
       mapMeterQuantitiesToPhysicalMeters(singletonList(newMeter(
-        randomUUID(),
         DISTRICT_HEATING_METER
       )), emptySet()))
       .isEqualTo(emptyMap());
@@ -89,7 +91,7 @@ public class LogicalMeterHelperTest {
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_oneMeterOneQuantity() {
-    LogicalMeter meter = newMeter(randomUUID(), DISTRICT_HEATING_METER);
+    LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
     assertThat(
       mapMeterQuantitiesToPhysicalMeters(
         singletonList(meter),
@@ -101,8 +103,8 @@ public class LogicalMeterHelperTest {
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_twoMetersOneQuantity() {
-    LogicalMeter meterOne = newMeter(randomUUID(), DISTRICT_HEATING_METER);
-    LogicalMeter meterTwo = newMeter(randomUUID(), DISTRICT_HEATING_METER);
+    LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
+    LogicalMeter meterTwo = newMeter(DISTRICT_HEATING_METER);
     assertThat(
       mapMeterQuantitiesToPhysicalMeters(
         asList(meterOne, meterTwo),
@@ -117,8 +119,8 @@ public class LogicalMeterHelperTest {
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_twoMetersTwoQuantities() {
-    LogicalMeter meterOne = newMeter(randomUUID(), DISTRICT_HEATING_METER);
-    LogicalMeter meterTwo = newMeter(randomUUID(), DISTRICT_HEATING_METER);
+    LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
+    LogicalMeter meterTwo = newMeter(DISTRICT_HEATING_METER);
 
     Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
     expected.put(
@@ -141,8 +143,8 @@ public class LogicalMeterHelperTest {
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_twoMetersTwoQuantitiesForDifferentMediums() {
-    LogicalMeter meterOne = newMeter(randomUUID(), DISTRICT_HEATING_METER);
-    LogicalMeter meterTwo = newMeter(randomUUID(), HOT_WATER_METER);
+    LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
+    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
 
     assertThatThrownBy(() ->
       mapMeterQuantitiesToPhysicalMeters(
@@ -159,7 +161,7 @@ public class LogicalMeterHelperTest {
       Quantity.VOLUME.name,
       new QuantityPresentationInformation("km³", SeriesDisplayMode.CONSUMPTION)
     );
-    LogicalMeter meter = newMeter(randomUUID(), DISTRICT_HEATING_METER);
+    LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
 
     Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
     expected.put(
@@ -179,7 +181,7 @@ public class LogicalMeterHelperTest {
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_customQuantityWithoutUnit() {
     Quantity volumeWithNoUnit = new Quantity(Quantity.VOLUME.name);
-    LogicalMeter meter = newMeter(randomUUID(), DISTRICT_HEATING_METER);
+    LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
 
     Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
     expected.put(
@@ -196,7 +198,40 @@ public class LogicalMeterHelperTest {
     );
   }
 
-  private LogicalMeter newMeter(UUID meterId, MeterDefinition meterDefinition) {
+  @Test
+  public void groupByQuantity_twoMetersTwoQuantitiesForDifferentMediums() {
+    LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
+    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
+
+    Map<Quantity, List<PhysicalMeter>> actual = groupByQuantity(
+      asList(meterOne, meterTwo),
+      new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
+    );
+
+    assertThat(actual)
+      .hasEntrySatisfying(
+        Quantity.VOLUME, physicalMeters -> assertThat(physicalMeters).hasSize(2)
+      )
+      .hasEntrySatisfying(
+        Quantity.ENERGY, physicalMeters -> assertThat(physicalMeters).hasSize(1)
+      );
+  }
+
+  @Test
+  public void groupByQuantity_excludesQuantitiesWithoutMeters() {
+    LogicalMeter meterOne = newMeter(ROOM_TEMP_METER);
+    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
+
+    Map<Quantity, List<PhysicalMeter>> actual = groupByQuantity(
+      asList(meterOne, meterTwo),
+      new HashSet<>(asList(Quantity.ENERGY))
+    );
+
+    assertThat(actual).isEmpty();
+  }
+
+  private LogicalMeter newMeter(MeterDefinition meterDefinition) {
+    UUID meterId = randomUUID();
     return LogicalMeter.builder()
       .id(meterId)
       .externalId("meter-" + meterId)
