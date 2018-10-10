@@ -1,3 +1,4 @@
+import {flatMap, map} from 'lodash';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
@@ -23,6 +24,7 @@ import {
   initialState,
   Measurement,
   MeasurementApiResponse,
+  MeasurementResponsePart,
   MeasurementResponses,
   MeterMeasurementsState,
   Quantity,
@@ -156,6 +158,11 @@ const requestsPerQuantity = (
   return requests;
 };
 
+const removeUndefinedValues = (averageEntity: MeasurementResponsePart): MeasurementResponsePart => ({
+  ...averageEntity,
+  values: averageEntity.values.filter(({value}) => value !== undefined),
+});
+
 export const fetchMeasurements =
   async ({
     selectionTreeEntities,
@@ -185,23 +192,15 @@ export const fetchMeasurements =
     }
 
     try {
-      const [meterResponse, averageResponse, citiesResponse]: GraphDataResponse[][] =
+      const [meterResponses, averageResponses, citiesResponses]: GraphDataResponse[][] =
         await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
-
       const graphData: MeasurementResponses = {
-        measurements: meterResponse
-          .map((response) => response.data)
-          .reduce((all, current) => all.concat(current), []),
-        average: averageResponse
-          .map((response) => response.data
-            .map((averageEntity) => ({
-              ...averageEntity,
-              values: averageEntity.values.filter(({value}) => value !== undefined),
-            })))
-          .reduce((all, current) => all.concat(current), []),
-        cities: citiesResponse
-          .map((response) => response.data)
-          .reduce((all, current) => all.concat(current), []),
+        measurements: flatMap(meterResponses, 'data'),
+        average: map(
+          flatMap(averageResponses, 'data'),
+          removeUndefinedValues,
+        ),
+        cities: flatMap(citiesResponses, 'data'),
       };
 
       updateState({
