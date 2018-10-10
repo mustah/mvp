@@ -47,6 +47,12 @@
       "no-public"
     ],
     "prefer-const": true,
+    "trailing-comma": [
+      true,
+      {
+        "esSpecCompliant": true
+      }
+    ],
     "quotemark": [
       true,
       "single",
