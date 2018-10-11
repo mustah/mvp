@@ -16,13 +16,14 @@
     <file>${LOGS}/meteringmessages.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d %m%n</Pattern>
+      <charset>utf8</charset>
     </encoder>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
       <fileNamePattern>${LOGS}/meteringmessages-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-      <maxFileSize>100MB</maxFileSize>
-      <maxHistory>2</maxHistory>
-      <totalSizeCap>1GB</totalSizeCap>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>3</maxHistory>
+      <totalSizeCap>2GB</totalSizeCap>
     </rollingPolicy>
   </appender>
 

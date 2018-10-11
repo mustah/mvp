@@ -1,4 +1,7 @@
 logging:
+ # Uncomment to use saltstack logback-spring configuration
+ # config:
+ #  ./saltstack/app/files/mvp/logback-spring.xml
   level:
     # Set to INFO to se metering messages in console
     MeteringMessageLogger: WARN
