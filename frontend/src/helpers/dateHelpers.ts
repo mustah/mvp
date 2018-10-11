@@ -96,4 +96,4 @@ export const timestamp = (input: moment.MomentInput): string =>
   displayDate(input, 'MMM D, HH:mm');
 
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
-  momentFrom(input).format(format);
+  momentFrom(input).add(1, 'hours').format(format);
