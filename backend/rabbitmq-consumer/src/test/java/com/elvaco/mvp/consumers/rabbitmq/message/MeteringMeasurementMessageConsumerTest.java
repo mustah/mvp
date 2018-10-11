@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -422,6 +423,36 @@ public class MeteringMeasurementMessageConsumerTest {
     all = measurements.allMocks();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).value).isEqualTo(2.0);
+  }
+
+  @Test
+  public void measurementTimezoneOffsetAtNormalTime() {
+    ValueDto valueAtNormalTime = new ValueDto(
+      LocalDateTime.parse("2018-01-07T16:13:09"),
+      1.0,
+      "kWh",
+      QUANTITY
+    );
+
+    messageConsumer.accept(newMeasurementMessage(valueAtNormalTime));
+
+    List<Measurement> all = measurements.allMocks();
+    assertThat(all.get(0).created.toOffsetDateTime().getOffset()).isEqualTo(ZoneOffset.ofHours(1));
+  }
+
+  @Test
+  public void measurementTimezoneOffsetAtDaylightSavingTime() {
+    ValueDto valueAtDaylightSavingTime = new ValueDto(
+      LocalDateTime.parse("2018-07-07T14:32:27"),
+      1.0,
+      "kWh",
+      QUANTITY
+    );
+
+    messageConsumer.accept(newMeasurementMessage(valueAtDaylightSavingTime));
+
+    List<Measurement> all = measurements.allMocks();
+    assertThat(all.get(0).created.toOffsetDateTime().getOffset()).isEqualTo(ZoneOffset.ofHours(1));
   }
 
   @Test
