@@ -1,6 +1,6 @@
 # === Global ===
 image:
-  name: gradle:jdk8
+  name: gradle:jdk10
 
 stages:
   - docker
