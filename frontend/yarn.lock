@@ -840,13 +840,19 @@
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.34.tgz#7a8f795afd8a404a9c4af9539b24c75d3996914e"
   integrity sha512-Ee66fX2qMsDnDq7sPnDtq1bGoo479j6Fo1BlSnne+L5rp6ndzBUgz72+MRNuN56zg9uuteRCkJAMdDJEX2Uqig==
 
-"@types/recharts@^1.0.18":
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/@types/recharts/-/recharts-1.0.18.tgz#d5749ea4e47e175325a6526eb2caec619f181126"
-  integrity sha512-ejhdsmceUEJoOFxSokGLgr3DJY49Gx2GUgP+iZEae7P7HZVI08HRw2Y01iBdNYAnAZx46FzRNweNMBhRbj5fYA==
+"@types/recharts-scale@*":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/recharts-scale/-/recharts-scale-1.0.0.tgz#348c9220d6d9062c44a9d585d686644a97f7e25d"
+  integrity sha512-HR/PrCcxYb2YHviTqH7CMdL1TUhUZLTUKzfrkMhxm1HTa5mg/QtP8XMiuSPz6dZ6wecazAOu8aYZ5DqkNlgHHQ==
+
+"@types/recharts@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/recharts/-/recharts-1.1.0.tgz#b61d7828ef38614690254f888778467b8661c1cf"
+  integrity sha512-BkbByJvNY/1JOJppkefEd4GOGje8yXlcvEenaVqLD62L6w2n5r89jLDm4yj68vA/w7Bx6Gfd6LGpTFhLejbwEQ==
   dependencies:
     "@types/d3-shape" "*"
     "@types/react" "*"
+    "@types/recharts-scale" "*"
 
 "@types/recompose@^0.26.1":
   version "0.26.1"
