@@ -117,16 +117,16 @@ describe('dateHelper', () => {
   describe('displayDate', () => {
 
     it('formats in timezone CET', () => {
-      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 00:00');
-      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 08:00');
+      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 01:00');
+      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 09:00');
     });
 
     it('formats in timezone with offset +1 from UTC', () => {
-      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 07:00');
+      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 08:00');
     });
 
     it('formats in timezone in Stockholm (offset +2 from UTC)', () => {
-      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 06:00');
+      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 07:00');
     });
 
   });
