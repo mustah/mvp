@@ -30,8 +30,8 @@ interface MeasurementListItem {
 const renderName = (item: MeasurementListItem) => orUnknown(item.label);
 const renderCity = (item: MeasurementListItem) => orUnknown(item.city);
 const renderAddress = (item: MeasurementListItem) => orUnknown(item.address);
-const renderValue = ({value = null, unit}: MeasurementListItem): string =>
-  value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '-';
+const renderValue = ({value, unit}: MeasurementListItem): string =>
+  value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '-';
 const renderCreated = (item: MeasurementListItem) => timestamp(item.created * 1000);
 
 const lineSchema = [new schema.Entity('items', {}, {idAttribute: 'id'})];
@@ -56,11 +56,11 @@ const getMeasurementItems = (measurements: MeasurementApiResponse): MeasurementL
 };
 
 export const MeasurementList = ({measurements}: Measurements) => {
-  const normalized: Normalized<LegendItem> = normalize(getMeasurementItems(measurements), lineSchema);
+  const {result, entities: {items}}: Normalized<LegendItem> = normalize(getMeasurementItems(measurements), lineSchema);
 
   return (
     <Column>
-      <Table result={normalized.result} entities={normalized.entities.items}>
+      <Table result={result} entities={items}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
           cellClassName={'first first-uppercase'}

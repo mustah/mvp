@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {colors} from '../../app/themes';
 import {RootState} from '../../reducers/rootReducer';
 import {hideMessage} from '../../state/ui/message/messageActions';
-import {MessageState} from '../../state/ui/message/messageModels';
+import {MessageState, MessageType} from '../../state/ui/message/messageModels';
 
 type StateToProps = MessageState;
 
@@ -13,18 +13,18 @@ interface DispatchToProps {
   hideMessage: (reason: string) => void;
 }
 
-const messageStyles: {[key: string]: React.CSSProperties} = {
+const messageStyles: {[key in MessageType]: React.CSSProperties} = {
   fail: {backgroundColor: colors.red},
   success: {backgroundColor: colors.darkGreen},
 };
 
-const MessageComponent = ({message = '', isOpen, hideMessage, messageType = ''}: StateToProps & DispatchToProps) => (
+const MessageComponent = ({message = '', isOpen, hideMessage, messageType}: StateToProps & DispatchToProps) => (
   <Snackbar
     autoHideDuration={4000}
     message={message}
     onRequestClose={hideMessage}
     open={isOpen}
-    bodyStyle={messageStyles[messageType]}
+    bodyStyle={messageType ? messageStyles[messageType] : {}}
   />
 );
 

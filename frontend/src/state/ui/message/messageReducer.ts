@@ -15,7 +15,7 @@ export const message = (state: MessageState = initialState, action: Action<any>)
         message: action.payload,
         messageType: 'success',
       };
-      case SHOW_FAIL_MESSAGE:
+    case SHOW_FAIL_MESSAGE:
       return {
         isOpen: true,
         message: action.payload,

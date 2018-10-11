@@ -1,9 +1,15 @@
 import {createSelector} from 'reselect';
-import {Role, roleList, User} from './userModels';
+import {Role, User} from './userModels';
 
 export const isSuperAdmin = (user: User): boolean => user.roles.includes(Role.SUPER_ADMIN);
 
 export const isAdmin = (user: User): boolean => user.roles.includes(Role.ADMIN) || isSuperAdmin(user);
+
+const roleList: {[key: string]: Role[]} = {
+  [Role.USER]: [Role.USER],
+  [Role.ADMIN]: [Role.USER, Role.ADMIN],
+  [Role.SUPER_ADMIN]: [Role.USER, Role.ADMIN, Role.SUPER_ADMIN],
+};
 
 export const getRoles = createSelector<User, Role[], Role[]>(
   ({roles}: User) => roles,
