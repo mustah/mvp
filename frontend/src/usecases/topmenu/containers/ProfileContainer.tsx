@@ -40,23 +40,22 @@ type Props = StateToProps & DispatchToProps;
 const Profile = ({user: {name}, logout}: Props) => {
   const Icon = makeAvatarIcon(name);
 
-  const renderPopoverContent: RenderFunction<OnClick> = () => ([
-      (
-        <Link to={routes.userProfile} className="link" key="goToProfile">
-          <MenuItem
-            style={menuItemInnerDivStyle}
-            className="first-uppercase"
-          >
-            {translate('profile')}
-          </MenuItem>
-        </Link>
-      ),
-      (
-        <MenuItem style={menuItemInnerDivStyle} className="first-uppercase" onClick={logout} key="logout">
-          {translate('logout')}
+  const wrappedLogout = () => logout();
+
+  const renderPopoverContent: RenderFunction<OnClick> = () => (
+    <React.Fragment>
+      <Link to={routes.userProfile} className="link" key="goToProfile">
+        <MenuItem
+          style={menuItemInnerDivStyle}
+          className="first-uppercase"
+        >
+          {translate('profile')}
         </MenuItem>
-      ),
-    ]
+      </Link>
+      <MenuItem style={menuItemInnerDivStyle} className="first-uppercase" onClick={wrappedLogout} key="logout">
+        {translate('logout')}
+      </MenuItem>
+    </React.Fragment>
   );
 
   return (
