@@ -26,6 +26,8 @@ dependencies {
   compile 'org.postgresql:postgresql'
   compile 'commons-io:commons-io:2.6'
   compile 'org.springframework.boot:spring-boot-starter-actuator'
+  /* Deprecated & removed (http://openjdk.java.net/jeps/320) - used by hibernate */
+  compile 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
