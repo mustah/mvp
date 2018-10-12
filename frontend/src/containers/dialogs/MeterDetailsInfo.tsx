@@ -24,6 +24,16 @@ import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
 import {Info, SuperAdminInfo} from './Info';
 
+const renderReadInterval = (minutes: number | undefined): string => {
+  if (!minutes) {
+    return translate('unknown');
+  } else if (minutes >= 60) {
+    return (minutes / 60) + translate('hour in short');
+  } else {
+    return minutes + translate('minute in short');
+  }
+};
+
 interface OwnProps {
   meter: MeterDetails;
 }
@@ -42,9 +52,9 @@ type Props = OwnProps & StateToProps & DispatchToProps;
 class MeterDetailsInfo extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchOrganisation, meter, user} = this.props;
+    const {fetchOrganisation, meter: {organisationId}, user} = this.props;
     if (isSuperAdmin(user)) {
-      fetchOrganisation(meter.organisationId);
+      fetchOrganisation(organisationId);
     }
   }
 
@@ -55,23 +65,27 @@ class MeterDetailsInfo extends React.Component<Props> {
   }
 
   render() {
-    const {meter, organisation, user} = this.props;
-    const organisationName = organisation.map((o) => o.name).orElse(translate('unknown'));
+    const {
+      meter: {
+        readIntervalMinutes,
+        collectionPercentage,
+        location: {address, city, country},
+        id,
+        manufacturer,
+        medium,
+        alarm,
+        statusChanged,
+        facility,
+        isReported,
+      },
+      organisation,
+      user
+    } = this.props;
+    const organisationName = organisation.map(({name}) => name).orElse(translate('unknown'));
 
-    const renderReadInterval = () => {
-      if (!meter.readIntervalMinutes) {
-        return translate('unknown');
-      } else if (meter.readIntervalMinutes >= 60) {
-        return (meter.readIntervalMinutes / 60) + translate('hour in short');
-      } else {
-        return meter.readIntervalMinutes + translate('minute in short');
-      }
-    };
-
-    const {address, city, country} = meter.location;
     const formattedCollectionPercentage = formatCollectionPercentage(
-      meter.collectionPercentage,
-      meter.readIntervalMinutes,
+      collectionPercentage,
+      readIntervalMinutes,
       isSuperAdmin(user),
     );
 
@@ -81,15 +95,15 @@ class MeterDetailsInfo extends React.Component<Props> {
           <Row>
             <Column>
               <Row>
-                <div className="display-none">{meter.id}</div>
+                <div className="display-none">{id}</div>
                 <MainTitle>{translate('meter')}</MainTitle>
               </Row>
             </Column>
             <Info label={translate('product model')}>
-              <BoldFirstUpper>{orUnknown(meter.manufacturer)}</BoldFirstUpper>
+              <BoldFirstUpper>{orUnknown(manufacturer)}</BoldFirstUpper>
             </Info>
             <Info label={translate('medium')}>
-              <BoldFirstUpper>{meter.medium}</BoldFirstUpper>
+              <BoldFirstUpper>{medium}</BoldFirstUpper>
             </Info>
             <Info label={translate('city')}>
               <CityInfo name={orUnknown(city)} subTitle={orUnknown(country)}/>
@@ -108,7 +122,7 @@ class MeterDetailsInfo extends React.Component<Props> {
               </Row>
             </Column>
             <Info className="First-column" label={translate('resolution')}>
-              <BoldFirstUpper>{renderReadInterval()}</BoldFirstUpper>
+              <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
             </Info>
             <Info label={translate('collection percentage')}>
               <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
@@ -121,10 +135,10 @@ class MeterDetailsInfo extends React.Component<Props> {
               </Row>
             </Column>
             <Info className="First-column" label={translate('alarm')}>
-              <MeterAlarm alarm={meter.alarm}/>
+              <MeterAlarm alarm={alarm}/>
             </Info>
             <Info label={translate('status change')}>
-              <WrappedDateTime date={meter.statusChanged} hasContent={!!meter.statusChanged}/>
+              <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
             </Info>
           </Row>
           <RowMiddle>
@@ -134,12 +148,12 @@ class MeterDetailsInfo extends React.Component<Props> {
               </Row>
             </Column>
             <Info label={translate('facility id')}>
-              <BoldFirstUpper>{meter.facility}</BoldFirstUpper>
+              <BoldFirstUpper>{facility}</BoldFirstUpper>
             </Info>
             <Info label={translate('meter id')}>
-              <BoldFirstUpper>{meter.address}</BoldFirstUpper>
+              <BoldFirstUpper>{address}</BoldFirstUpper>
             </Info>
-            <ErrorLabel hasError={meter.isReported}>{translate('reported')}</ErrorLabel>
+            <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
           </RowMiddle>
         </Column>
       </Row>
