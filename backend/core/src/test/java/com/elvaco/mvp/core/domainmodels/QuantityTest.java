@@ -80,8 +80,10 @@ public class QuantityTest {
       "a",
       new QuantityPresentationInformation(null, SeriesDisplayMode.UNKNOWN)
     );
-    assertThatThrownBy(() -> quantity.complementedBy(
-      new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT)
-    )).isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> {
+      Quantity ignored = quantity.complementedBy(
+        new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT)
+      );
+    }).isInstanceOf(IllegalArgumentException.class);
   }
 }
