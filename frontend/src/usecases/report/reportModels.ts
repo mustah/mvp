@@ -1,5 +1,5 @@
 import {LegendPayload} from 'recharts';
-import {Medium} from '../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {ReportIndicatorProps} from './components/indicators/ReportIndicatorWidget';
 import {firstUpperTranslated} from '../../services/translationService';
 import {uuid} from '../../types/Types';

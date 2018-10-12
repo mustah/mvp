@@ -1,6 +1,5 @@
-import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {setSelectedEntries} from '../../../../usecases/report/reportActions';
-import {Quantity} from '../../graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../graph/measurement/measurementModels';
 import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 
 describe('indicatorReducer', () => {

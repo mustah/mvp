@@ -1,6 +1,5 @@
 import {flatMap, map} from 'lodash';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
-import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
 import {toPeriodApiParameters} from '../../../../helpers/dateHelpers';
@@ -27,8 +26,9 @@ import {
   MeasurementApiResponse,
   MeasurementResponsePart,
   MeasurementResponses,
+  Medium,
   MeterMeasurementsState,
-  Quantity,
+  Quantity
 } from './measurementModels';
 import {measurementDataFormatter} from './measurementSchema';
 

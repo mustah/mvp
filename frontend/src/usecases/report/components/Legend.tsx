@@ -2,7 +2,7 @@ import * as React from 'react';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconIndicator} from '../../../components/icons/IconIndicator';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';

@@ -1,8 +1,13 @@
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {toggle} from '../../../helpers/collections';
 import {GetState} from '../../../reducers/rootReducer';
 import {payloadActionOf} from '../../../types/Types';
-import {allQuantities, defaultQuantityForMedium, Quantity, quantityUnits} from '../graph/measurement/measurementModels';
+import {
+  allQuantities,
+  defaultQuantityForMedium,
+  Medium,
+  Quantity,
+  quantityUnits
+} from '../graph/measurement/measurementModels';
 import {IndicatorState} from './indicatorReducer';
 
 export const SET_REPORT_INDICATOR_WIDGETS = 'SET_REPORT_INDICATOR_WIDGETS';

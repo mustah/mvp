@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
-import {Medium} from '../indicators/indicatorWidgetModels';
+import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {iconComponentFor} from '../../usecases/report/components/indicators/ReportIndicatorWidget';
 
 interface OwnProps {

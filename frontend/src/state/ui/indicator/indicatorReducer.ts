@@ -1,7 +1,6 @@
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Action} from '../../../types/Types';
 import {SelectedEntriesPayload, SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
-import {Quantity} from '../graph/measurement/measurementModels';
+import {Medium, Quantity} from '../graph/measurement/measurementModels';
 import {SET_REPORT_INDICATOR_WIDGETS, SET_SELECTED_QUANTITIES} from './indicatorActions';
 
 export interface IndicatorState {

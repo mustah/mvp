@@ -1,5 +1,5 @@
 import {normalize, Schema, schema} from 'normalizr';
-import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
+import {getMediumType} from '../ui/graph/measurement/measurementModels';
 import {DataFormatter} from '../domain-models/domainModelsActions';
 import {NormalizedSelectionTree} from './selectionTreeModels';
 

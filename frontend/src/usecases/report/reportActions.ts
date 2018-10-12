@@ -1,11 +1,15 @@
-import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {toggle} from '../../helpers/collections';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
 import {SelectionTree, SelectionTreeState} from '../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../state/selection-tree/selectionTreeSelectors';
 import {isSelectedCity, isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
-import {allQuantities, defaultQuantityForMedium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
+import {
+  allQuantities,
+  defaultQuantityForMedium,
+  Medium,
+  Quantity
+} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {Dispatcher, OnPayloadAction, payloadActionOf, uuid} from '../../types/Types';
 

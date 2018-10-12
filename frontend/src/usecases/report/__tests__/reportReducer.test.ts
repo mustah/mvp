@@ -1,7 +1,6 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {Period} from '../../../components/dates/dateModels';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
-import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod} from '../../../state/user-selection/userSelectionActions';
 import {uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';

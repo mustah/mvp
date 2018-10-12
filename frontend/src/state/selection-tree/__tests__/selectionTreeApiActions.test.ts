@@ -4,7 +4,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
