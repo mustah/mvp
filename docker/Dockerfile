@@ -1,4 +1,4 @@
-FROM sgrio/java-oracle:server_jre_8
+FROM openjdk:10-jre
 RUN mkdir -p /app
 RUN apt-get -y update && apt-get -y install curl
 ARG MVP_APPVER
