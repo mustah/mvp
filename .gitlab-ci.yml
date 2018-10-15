@@ -23,7 +23,6 @@ variables:
   SALTAPI_USER: "saltapi"
   SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
   GITLAB_API_TOKEN: "J1Jb27mvUxZqAVx5MhhJ"
-  SALTSTACK_GIT_REPO: "17"
   DOCKER_REGISTRY_HOST: gitlab.elvaco.se:4567
   DOCKER_REGISTRY_URL: gitlab.elvaco.se:4567/elvaco/mvp
 
@@ -135,7 +134,6 @@ prepare:update-salt:
     - /^release-.*$/
     - tags
   script:
-    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 build:frontend:
