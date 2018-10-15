@@ -26,7 +26,7 @@ public class MeteringMessageMapper {
    * Metering stores and treats all values as CET.
    * At least it's consistent!
    */
-  public static final ZoneId METERING_TIMEZONE = ZoneId.of("CET");
+  public static final ZoneId METERING_TIMEZONE = ZoneId.of("UTC+1");
 
   static final Map<String, String> METERING_TO_MVP_UNITS = meteringUnitTranslationsMap();
 

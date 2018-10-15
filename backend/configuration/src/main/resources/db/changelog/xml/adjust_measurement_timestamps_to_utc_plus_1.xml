@@ -1,0 +1,66 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet dbms="postgresql" id="Adjust existing measurement timestampts to correct offset" author="antlof">
+    <sqlFile
+      path="../sql/postgresql/disable_trigger_reject_mixed_measurement_dimensions.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+    <dropUniqueConstraint tableName="measurement"
+                          constraintName="measurement_physical_meter_id_created_quantity_key"/>
+    <createTable tableName="new_measurement">
+      <column name="physical_meter_id" type="UUID">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="now()" name="created" type="TIMESTAMP WITH TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="quantity" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="${unit_type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <sqlFile
+      path="../sql/postgresql/insert_new_adjusted_measurement_timestamps.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+
+    <dropTable tableName="measurement" cascadeConstraints="true"/>
+    <renameTable oldTableName="new_measurement" newTableName="measurement"/>
+    <addUniqueConstraint columnNames="physical_meter_id, created, quantity"
+                         constraintName="measurement_physical_meter_id_created_quantity_key"
+                         tableName="measurement"/>
+
+    <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="measurement"
+                             constraintName="measurement_physical_meter_id_fkey"
+                             deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                             referencedColumnNames="id" referencedTableName="physical_meter"/>
+
+    <sqlFile
+      path="../sql/postgresql/create_trigger_reject_mixed_measurement_dimensions.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+
+    <!-- recreate missing_measurement view (no data) -->
+    <sqlFile
+      path="../sql/postgresql/create_missing_measurement_materialized_view_v2.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+    <sql>refresh materialized view missing_measurement;</sql>
+
+
+  </changeSet>
+</databaseChangeLog>

@@ -1,4 +1,4 @@
-drop materialized view missing_measurement; -- can't do this in liquibase xml, unfortunately :(
+drop materialized view if exists missing_measurement; -- can't do this in liquibase xml, unfortunately :(
 
 create materialized view missing_measurement
   as

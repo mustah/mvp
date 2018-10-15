@@ -5,6 +5,7 @@
 
     <changeSet id="Create missing measurement materialized view (v2)" author="Anton Löfgren"
                dbms="postgresql">
+        <validCheckSum>7:67d08f9e80fb5a54374052f628bcd8da</validCheckSum>
         <sqlFile path="../sql/postgresql/create_missing_measurement_materialized_view_v2.sql"
                  relativeToChangelogFile="true"
                  splitStatements="false"
