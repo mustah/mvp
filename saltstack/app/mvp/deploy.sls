@@ -1,107 +1,103 @@
-{% set mvp_systemd_unit = "elvaco-mvp.service" %}
+{% set module = "mvp" %}
+{% set systemd_unit = "elvaco-" + module + ".service" %}
 {% set mvp_branch = salt['pillar.get']('mvp-branch', 'master') %}
-{% set mvp_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
+{% set module_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
 
 include:
   - mvp.openjdk-8-jre
+  - docker
   - mvp.app.user
 
-fetch_mvp_archive:
-  file.managed:
-    - name: /tmp/mvp-{{ mvp_version }}.tar
-    - source: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar
-    - source_hash: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar.sha1
-
-create_new_mvp_log_dir:
+create_{{module}}_log_dir:
   file.directory:
-    - name: /var/log/elvaco/mvp
+    - name: /var/log/elvaco/{{module}}
     - user: mvp
     - group: mvp
     - mode: 755
     - makedirs: True
-    - require:
-      - fetch_mvp_archive
 
-create_new_mvp_dir:
+create_{{module}}_dir:
   file.directory:
-    - name: /opt/elvaco/mvp-{{ mvp_version }}/config
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config
     - user: mvp
     - group: mvp
     - mode: 755
     - makedirs: True
-    - require:
-      - fetch_mvp_archive
 
-deploy_mvp:
-  archive.extracted:
-    - name: /opt/elvaco
-    - archive_format: tar
-    - source: /tmp/mvp-{{ mvp_version }}.tar
-    - source_hash: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar.sha1
-    - user: mvp
-    - group: mvp
-    - require:
-      - create_new_mvp_dir
-
-create_mvp_symlink:
+create_{{module}}_symlink:
   file.symlink:
-    - name: /opt/elvaco/mvp-current
-    - target: /opt/elvaco/mvp-{{ mvp_version }}
+    - name: /opt/elvaco/{{module}}-current
+    - target: /opt/elvaco/{{module}}-{{module_version}}
     - require:
-      - deploy_mvp
+        - create_{{module}}_dir
 
-deploy_mvp_config:
+deploy_{{module}}_config:
   file.managed:
-    - name: /opt/elvaco/mvp-{{ mvp_version }}/config/application.properties
-    - source: salt://mvp/app/files/mvp/application.properties
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config/application.properties
+    - source: salt://mvp/app/files/{{module}}/application.properties
     - require:
-        - deploy_mvp
+        - create_{{module}}_dir
 
-deploy_mvp_log_config:
+deploy_{{module}}_log_config:
   file.managed:
-    - name: /opt/elvaco/mvp-{{ mvp_version }}/config/logback-spring.xml
-    - source: salt://mvp/app/files/mvp/logback-spring.xml
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config/logback-spring.xml
+    - source: salt://mvp/app/files/{{module}}/logback-spring.xml
     - require:
-        - deploy_mvp
-        - create_new_mvp_log_dir
+        - create_{{module}}_log_dir
 
-deploy_mvp_db_config:
+deploy_{{module}}_db_config:
   file.managed:
-    - name: /opt/elvaco/mvp-{{ mvp_version }}/config/application-postgresql.properties
-    - source: salt://mvp/app/files/mvp/application-postgresql.properties.jinja
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config/application-postgresql.properties
+    - source: salt://mvp/app/files/{{module}}/application-postgresql.properties.jinja
     - template: jinja
     - require:
-        - deploy_mvp
+        - create_{{module}}_dir
 
-deploy_mvp_systemd:
-  file.managed:
-    - name: /lib/systemd/system/{{ mvp_systemd_unit }}
-    - source: salt://mvp/app/files/mvp/{{ mvp_systemd_unit }}
-  module.wait:
-    - name: service.systemctl_reload
-    - watch:
-      - file: /lib/systemd/system/{{ mvp_systemd_unit }}
-  service.running:
-    - name: {{ mvp_systemd_unit }}
-    - enable: True
-    - require:
-      - create_mvp_symlink
-      - deploy_mvp_config
-      - deploy_mvp_log_config
-      - deploy_mvp_db_config
-    - watch:
-      - file: /lib/systemd/system/{{ mvp_systemd_unit }}
-      - file: /opt/elvaco/mvp-{{ mvp_version }}/config/application.properties
-      - file: /opt/elvaco/mvp-{{ mvp_version }}/config/application-postgresql.properties
+download_{{module}}_image:
+  docker_image.present:
+    - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
 
-remove_mvp_archive:
-  file.absent:
-    - name: /tmp/mvp-{{ mvp_version }}.tar
-    - require:
-      - deploy_mvp_systemd
+docker_{{module}}:
+  docker_container.running:
+    - name: evo
+    - user: mvp
+    - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
+    - links: geoservice:geoservice
+    - detach: True
+    - dns: 10.120.1.10
+    - dns_search: elvaco.local
+    - ports: 8080/tcp
+    - port_bindings:
+      - 8080:8080
+    - restart_policy: always
+    - log_driver: journald
+    - binds:
+      - /opt/elvaco/{{module}}-current/config/:/app/config:ro
+      - /var/log/elvaco/{{module}}/:/var/log/elvaco/{{module}}:rw
 
-mvp_version:
+#deploy_mvp_systemd:
+#  file.managed:
+#    - name: /lib/systemd/system/{{ systemd_unit }}
+#    - source: salt://mvp/app/files/mvp/{{ systemd_unit }}
+#  module.wait:
+#    - name: service.systemctl_reload
+#    - watch:
+#      - file: /lib/systemd/system/{{ systemd_unit }}
+#  service.running:
+#    - name: {{ systemd_unit }}
+#    - enable: True
+#    - require:
+#      - create_mvp_symlink
+#      - deploy_mvp_config
+#      - deploy_mvp_log_config
+#      - deploy_mvp_db_config
+#    - watch:
+#      - file: /lib/systemd/system/{{ systemd_unit }}
+#      - file: /opt/elvaco/mvp-{{ module_version }}/config/application.properties
+#      - file: /opt/elvaco/mvp-{{ module_version }}/config/application-postgresql.properties
+
+{{module}}_version:
   grains.present:
-    - value: {{ mvp_version }}
+    - value: {{ module_version }}
     - require:
-      - deploy_mvp_systemd
+      - docker_{{module}}
