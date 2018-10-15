@@ -119,7 +119,7 @@ const GraphContent =
   ({data, setTooltipPayload, legendClick, content, lines, legend}: GraphContentProps) => (
     <Column className="GraphContainer">
       <Column>
-        <ResponsiveContainer aspect={2.5}>
+        <ResponsiveContainer height={600} aspect={2.5}>
           <LineChart
             width={10}
             height={50}
