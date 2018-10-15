@@ -2,6 +2,5 @@ include:
   - mvp
 
 Install JRE:
-  pkg.latest:
+  pkg.removed:
     - name: openjdk-8-jre-headless
-    - refresh: True
