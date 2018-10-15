@@ -65,6 +65,13 @@
       color: $white !important;
     }
 
+    .CalendarDay__today,
+    .CalendarDay__today:hover,
+    .CalendarDay__today:active {
+      color: $white !important;
+      background: $pink !important;
+    }
+
     .DayPicker__withBorder {
       box-shadow: none !important;
     }
