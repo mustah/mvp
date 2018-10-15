@@ -2,7 +2,10 @@ FROM sgrio/java-oracle:server_jre_8
 RUN mkdir -p /app
 RUN apt-get -y update && apt-get -y install curl
 ARG GEOSERVICE_APPVER
+RUN groupadd -g 4000 mvp && \
+	useradd -r -u 4000 -g mvp mvp
 COPY ./backend/geoservice/build/distributions/geoservice-$GEOSERVICE_APPVER.tar /app/geoservice.tar
 RUN cd /app/ && tar -m -xf geoservice.tar --strip-components=1
+RUN chown -R mvp:mvp /app
 HEALTHCHECK CMD curl -v --fail http://localhost:8081/actuator/health || exit 1
 CMD ["/app/bin/geoservice"]
