@@ -4,6 +4,7 @@
   top: 400px;
   left: $main-menu-width - 5;
   position: fixed;
+  z-index: $main-menu-z-index;
 
   &.isSideMenuOpen {
     left: $main-menu-width + 250;

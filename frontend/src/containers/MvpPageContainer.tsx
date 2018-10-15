@@ -49,7 +49,7 @@ const MvpPageComponent = ({
   );
 };
 
-const mapStateToProps = ({routing, ui, userSelection}: RootState): StateToProps => ({
+const mapStateToProps = ({routing, userSelection}: RootState): StateToProps => ({
   selection: getUserSelection(userSelection),
   isSelectionPage: isSelectionPage(routing),
 });
