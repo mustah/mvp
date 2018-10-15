@@ -1,10 +1,16 @@
 import {normalize} from 'normalizr';
-import {getMediumType, Medium} from '../../components/indicators/indicatorWidgetModels';
 import {measurement} from '../../state/domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {allQuantities, Measurement, Quantity, Reading} from '../../state/ui/graph/measurement/measurementModels';
+import {
+  allQuantities,
+  getMediumType,
+  Measurement,
+  Medium,
+  Quantity,
+  Reading
+} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
 

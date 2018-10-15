@@ -4,7 +4,6 @@ import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
-import {getMediumType} from '../../components/indicators/indicatorWidgetModels';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
 import {TableInfoText} from '../../components/table/TableInfoText';
@@ -15,11 +14,12 @@ import {firstUpperTranslated, translate} from '../../services/translationService
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {fetchMeasurementsPaged} from '../../state/ui/graph/measurement/measurementActions';
 import {
+  getMediumType,
   initialMeterMeasurementsState,
   Measurement,
   MeterMeasurementsState,
   Quantity,
-  Reading,
+  Reading
 } from '../../state/ui/graph/measurement/measurementModels';
 import {Children, Fetching} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';

@@ -1,10 +1,15 @@
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
 import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
-import {allQuantities, Measurement, Quantity, Reading} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  allQuantities,
+  Measurement,
+  Medium,
+  Quantity,
+  Reading
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {measurementDataFormatter} from '../../../state/ui/graph/measurement/measurementSchema';
 import {groupMeasurementsByDate, MeasurementTableData, meterMeasurementsForTable} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';

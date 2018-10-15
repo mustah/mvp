@@ -2,10 +2,9 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {withEmptyContentComponent} from '../../../components/hoc/withEmptyContent';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Normal} from '../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
 import {Children, HasContent} from '../../../types/Types';
 

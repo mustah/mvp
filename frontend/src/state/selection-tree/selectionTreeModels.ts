@@ -1,4 +1,4 @@
-import {Medium} from '../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../ui/graph/measurement/measurementModels';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {ReportState} from '../../usecases/report/reportModels';
 import {ObjectsById} from '../domain-models/domainModels';

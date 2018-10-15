@@ -7,7 +7,7 @@ import {paperStyle} from '../../../app/themes';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {componentOrNull} from '../../../components/hoc/hocs';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Medium, OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
+import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -31,7 +31,7 @@ import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurement
 import {
   initialState,
   MeasurementResponses,
-  Measurements,
+  Measurements, Medium,
   Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';

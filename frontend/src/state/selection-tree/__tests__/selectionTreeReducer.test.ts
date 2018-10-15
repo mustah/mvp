@@ -1,4 +1,4 @@
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {EndPoints} from '../../../services/endPoints';
 import {uuid} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';

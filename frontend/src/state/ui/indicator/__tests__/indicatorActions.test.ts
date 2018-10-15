@@ -1,7 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
-import {Quantity} from '../../graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../graph/measurement/measurementModels';
 import {
   canToggleMedia,
   selectQuantities,

@@ -1,10 +1,9 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
-import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {SHOW_FAIL_MESSAGE} from '../../../state/ui/message/messageActions';
 import {
   addToReport,

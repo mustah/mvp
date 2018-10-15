@@ -1,4 +1,3 @@
-import './GraphContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {
@@ -16,7 +15,6 @@ import {
 import {bindActionCreators} from 'redux';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Column} from '../../../components/layouts/column/Column';
 import {TableInfoText} from '../../../components/table/TableInfoText';
 import {toggle} from '../../../helpers/collections';
@@ -24,7 +22,7 @@ import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectQuantities} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
@@ -33,6 +31,7 @@ import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/graph/Dot';
 import {QuantityDropdown} from '../components/QuantityDropdown';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
+import './GraphContainer.scss';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;

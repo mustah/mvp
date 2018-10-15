@@ -1,4 +1,3 @@
-import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, uuid} from '../../../../types/Types';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
@@ -108,6 +107,27 @@ export const quantityUnits: {[q in Quantity]: string} = {
   [Quantity.relativeHumidity]: '%',
   [Quantity.differenceTemperature]: 'K',
 };
+
+export const enum Medium {
+  electricity = 'current',
+  districtHeating = 'districtHeating',
+  gas = 'gas',
+  hotWater = 'warmWater',
+  roomSensor = 'roomSensor',
+  water = 'water',
+  unknown = 'unknown',
+}
+
+const mediumTypes: {[key: string]: Medium} = {
+  'District heating': Medium.districtHeating,
+  'Gas': Medium.gas,
+  'Water': Medium.water,
+  'Hot water': Medium.hotWater,
+  'Electricity': Medium.electricity,
+  'Room sensor': Medium.roomSensor,
+};
+
+export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
 
 export const allQuantities: {[m in Medium]: Quantity[]} = {
   [Medium.districtHeating]: [

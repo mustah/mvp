@@ -1,4 +1,4 @@
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {uuid} from '../../../types/Types';
 import {SelectedTreeEntities, SelectionTree, SelectionTreeState} from '../selectionTreeModels';
 import {getMedia, getSelectionTree} from '../selectionTreeSelectors';

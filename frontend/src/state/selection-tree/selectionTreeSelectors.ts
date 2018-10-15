@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {Medium} from '../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../ui/graph/measurement/measurementModels';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';

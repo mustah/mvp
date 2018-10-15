@@ -1,4 +1,4 @@
-import {Medium} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {
   SelectedTreeEntities,

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
 import {Period} from '../../../../../components/dates/dateModels';
-import {Medium} from '../../../../../components/indicators/indicatorWidgetModels';
 import {idGenerator} from '../../../../../helpers/idGenerator';
 import {Maybe} from '../../../../../helpers/Maybe';
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
@@ -12,7 +11,7 @@ import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {SelectionTreeCity, SelectionTreeMeter} from '../../../../selection-tree/selectionTreeModels';
 import {mapApiResponseToGraphData} from '../helpers/apiResponseToGraphContents';
 import {fetchMeasurements, MeasurementOptions} from '../measurementActions';
-import {initialState, MeasurementApiResponse, Quantity} from '../measurementModels';
+import {initialState, MeasurementApiResponse, Medium, Quantity} from '../measurementModels';
 
 describe('measurementActions', () => {
 

@@ -3,7 +3,7 @@ import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../../components/dates/dateModels';
-import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../ui/graph/measurement/measurementModels';
 import {momentFrom} from '../../../../helpers/dateHelpers';
 import {makeApiParametersOf} from '../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
