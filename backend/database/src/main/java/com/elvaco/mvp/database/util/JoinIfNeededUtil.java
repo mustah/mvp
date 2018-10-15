@@ -62,7 +62,7 @@ public final class JoinIfNeededUtil {
   public static <T> void joinMeterAlarmLogs(JPQLQuery<T> query, RequestParameters parameters) {
     if (isAlarmQuery(parameters)) {
       query.leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-        .on(MeterAlarmLogQueryFilters.isWithinPeriod(parameters));
+        .on(new MeterAlarmLogQueryFilters().toPredicate(parameters));
     }
   }
 

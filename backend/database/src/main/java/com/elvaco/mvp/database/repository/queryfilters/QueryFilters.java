@@ -43,12 +43,21 @@ public abstract class QueryFilters {
   protected static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
     physicalMeterStatusLogEntity;
 
+  private static final Predicate[] NO_PREDICATE = new Predicate[0];
+
   public abstract Optional<Predicate> buildPredicateFor(
     RequestParameter parameter,
     RequestParameters parameters,
     List<String> values
   );
 
+  /**
+   * Should be used in WHERE statements.
+   *
+   * @param parameters to build the predicate from.
+   *
+   * @return a predicate or {@code null}.
+   */
   @Nullable
   public final Predicate toExpression(RequestParameters parameters) {
     if (parameters.isEmpty()) {
@@ -73,6 +82,19 @@ public abstract class QueryFilters {
     }
 
     return applyAndPredicates(predicates);
+  }
+
+  /**
+   * Should mainly be used in JOIN ON statements.
+   *
+   * @param parameters to build the predicate from.
+   *
+   * @return non {@code null} predicate.
+   */
+  public final Predicate[] toPredicate(RequestParameters parameters) {
+    return Optional.ofNullable(toExpression(parameters))
+      .map(predicate -> new Predicate[] {predicate})
+      .orElse(NO_PREDICATE);
   }
 
   private Predicate applyAndPredicates(List<Predicate> predicates) {

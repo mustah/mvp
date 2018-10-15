@@ -14,18 +14,8 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuid
 
 public class MeterAlarmLogQueryFilters extends QueryFilters {
 
-  private static final Predicate[] NO_PREDICATE = new Predicate[0];
-
   private ZonedDateTime start;
   private ZonedDateTime stop;
-
-  public static Predicate[] isWithinPeriod(RequestParameters parameters) {
-    return parameters.getPeriod()
-      .map(selectionPeriod -> new Predicate[] {
-        isAlarmLogIsWithinInterval(selectionPeriod.start, selectionPeriod.stop)
-      })
-      .orElse(NO_PREDICATE);
-  }
 
   @Override
   public Optional<Predicate> buildPredicateFor(
