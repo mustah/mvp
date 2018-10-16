@@ -4,7 +4,6 @@
 {% set module_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
 
 include:
-  - mvp.openjdk-8-jre
   - docker
   - mvp.app.user
 
