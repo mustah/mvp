@@ -8,5 +8,5 @@ COPY ./backend/configuration/build/distributions/mvp-$MVP_APPVER.tar /app/mvp.ta
 RUN cd /app/ && tar -m -xf mvp.tar --strip-components=1 && rm mvp.tar
 RUN chown -R mvp:mvp /app
 WORKDIR /app
-HEALTHCHECK CMD curl -v --fail http://localhost:80/ || exit 1
+HEALTHCHECK CMD curl -v --fail http://localhost:8080/ || exit 1
 CMD ["/app/bin/mvp"]
