@@ -18,11 +18,11 @@ const Content = ({children}: WithChildren) => (
   </Column>
 );
 
-export const PageComponent = (props: Props) => (
+export const PageComponent = ({topMenuSearch, ...props}: Props) => (
   <Layout className="flex-1">
     <TopMenuContainer>
       <AppTitle>{translate('metering')}</AppTitle>
-      {props.topMenuSearch}
+      {topMenuSearch}
     </TopMenuContainer>
 
     <Content {...props}/>
