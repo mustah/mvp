@@ -57,8 +57,10 @@ public class PhysicalMeterTest {
   @Test
   public void doesNotReplaceSameStatus() {
     UUID meterId = randomUUID();
+    ZonedDateTime now = ZonedDateTime.now();
     StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
       .entityId(meterId)
+      .start(now)
       .status(OK)
       .build();
     PhysicalMeter meter = physicalMeter()
@@ -66,8 +68,7 @@ public class PhysicalMeterTest {
       .status(previousStatus)
       .build();
 
-    List<StatusLogEntry<UUID>> statuses =
-      meter.replaceActiveStatus(OK, ZonedDateTime.now()).statuses;
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
 
     assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
   }
