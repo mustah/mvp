@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -44,10 +45,11 @@ class LogicalMeterMapQueryDslJpaRepository
       ))
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
+      .on(new PhysicalMeterStatusLogQueryFilters().toPredicate(parameters))
       .join(LOGICAL_METER.location, LOCATION)
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-      .on(MeterAlarmLogQueryFilters.isWithinPeriod(parameters));
+      .on(new MeterAlarmLogQueryFilters().toPredicate(parameters));
 
     joinLogicalMeterGateways(query, parameters);
 

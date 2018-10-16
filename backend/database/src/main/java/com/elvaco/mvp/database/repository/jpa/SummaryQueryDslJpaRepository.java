@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -77,7 +78,8 @@ class SummaryQueryDslJpaRepository
   private static JPQLQuery<?> applyJoins(JPQLQuery<?> query, RequestParameters parameters) {
     query.leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG);
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
+      .on(new PhysicalMeterStatusLogQueryFilters().toPredicate(parameters));
 
     joinLogicalMeterGateways(query, parameters);
     joinMeterAlarmLogs(query, parameters);

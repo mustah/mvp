@@ -48,7 +48,7 @@ class GatewayMapQueryDslJpaRepository
       .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-      .on(MeterAlarmLogQueryFilters.isWithinPeriod(parameters));
+      .on(new MeterAlarmLogQueryFilters().toPredicate(parameters));
 
     joinReportedMeters(query, parameters);
 
