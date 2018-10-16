@@ -65,27 +65,6 @@ docker_{{module}}:
     - binds:
       - /opt/elvaco/{{module}}-current/config/:/app/config:ro
 
-#deploy_mvp_systemd:
-#  file.managed:
-#    - name: /lib/systemd/system/{{ systemd_unit }}
-#    - source: salt://mvp/app/files/mvp/{{ systemd_unit }}
-#  module.wait:
-#    - name: service.systemctl_reload
-#    - watch:
-#      - file: /lib/systemd/system/{{ systemd_unit }}
-#  service.running:
-#    - name: {{ systemd_unit }}
-#    - enable: True
-#    - require:
-#      - create_mvp_symlink
-#      - deploy_mvp_config
-#      - deploy_mvp_log_config
-#      - deploy_mvp_db_config
-#    - watch:
-#      - file: /lib/systemd/system/{{ systemd_unit }}
-#      - file: /opt/elvaco/mvp-{{ module_version }}/config/application.properties
-#      - file: /opt/elvaco/mvp-{{ module_version }}/config/application-postgresql.properties
-
 {{module}}_version:
   grains.present:
     - value: {{ module_version }}
