@@ -26,10 +26,9 @@ describe('measurementActions', () => {
 
     const mockHost: string = 'https://blabla.com';
     let state: ReportContainerState;
-    let loggedOut: string;
     let defaultParameters: MeasurementOptions;
     const updateState = (updatedState: ReportContainerState) => state = {...updatedState};
-    const logout = (error?: Unauthorized) => error ? loggedOut = error.message : 'logged out';
+    const logout = (error?: Unauthorized) => 'logged out or error';
 
     const mockMeter = (medium: Medium): SelectionTreeMeter => {
       const id = idGenerator.uuid().toString();
@@ -55,7 +54,6 @@ describe('measurementActions', () => {
 
     beforeEach(() => {
       state = initialState;
-      loggedOut = 'not logged out';
       defaultParameters = {
         selectionTreeEntities: {
           addresses: {},
