@@ -97,6 +97,7 @@ class CacheManagerConfig {
       new ConcurrentMapCache("organisation.slug"),
       new ConcurrentMapCache("organisation.externalId"),
       new ConcurrentMapCache("physicalMeter.organisationIdExternalIdAddress"),
+      new ConcurrentMapCache("physicalMeter.organisationIdExternalIdAddress.withStatuses"),
       new ConcurrentMapCache("logicalMeter.organisationIdExternalId"),
       new ConcurrentMapCache("gateway.organisationIdSerial")
     ));
