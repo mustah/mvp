@@ -56,6 +56,12 @@ download_{{module}}_image:
   docker_image.present:
     - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
 
+shutdown_{{module}}_systemd:
+  service.dead:
+    - name: {{systemd_unit}}
+    - require:
+      - download_{{module}}_image
+
 docker_{{module}}:
   docker_container.running:
     - name: evo
