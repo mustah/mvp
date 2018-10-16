@@ -19,5 +19,4 @@ public class MeterDto {
   public final Integer revision;
   @Nullable
   public final Integer mbusDeviceType;
-  //TODO: revision
 }
