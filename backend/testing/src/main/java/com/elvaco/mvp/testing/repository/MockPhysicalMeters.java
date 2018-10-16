@@ -52,15 +52,6 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
-  public Optional<PhysicalMeter> findByWithAlarms(
-    UUID organisationId,
-    String externalId,
-    String address
-  ) {
-    return findByWithStatuses(organisationId, externalId, address);
-  }
-
-  @Override
   public Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,

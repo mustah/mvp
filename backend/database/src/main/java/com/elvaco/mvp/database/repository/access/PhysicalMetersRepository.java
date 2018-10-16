@@ -115,19 +115,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
-  public Optional<PhysicalMeter> findByWithAlarms(
-    UUID organisationId,
-    String externalId,
-    String address
-  ) {
-    return physicalMeterJpaRepository.findByOrganisationIdAndExternalIdAndAddress(
-      organisationId,
-      externalId,
-      address
-    ).map(PhysicalMeterEntityMapper::toDomainModelWithAlarms);
-  }
-
-  @Override
   @Cacheable(
     cacheNames = "physicalMeter.organisationIdExternalIdAddress",
     key = "#organisationId + #externalId + #address"
@@ -143,5 +130,4 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       address
     ).map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs);
   }
-
 }

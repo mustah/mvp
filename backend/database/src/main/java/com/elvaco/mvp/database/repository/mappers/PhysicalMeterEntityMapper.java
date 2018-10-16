@@ -43,12 +43,6 @@ public class PhysicalMeterEntityMapper {
       .build();
   }
 
-  public static PhysicalMeter toDomainModelWithAlarms(PhysicalMeterEntity entity) {
-    return physicalMeterBuilderFrom(entity)
-      .alarms(toAlarms(entity))
-      .build();
-  }
-
   public static PhysicalMeterEntity toEntity(PhysicalMeter domainModel) {
     return new PhysicalMeterEntity(
       domainModel.id,
