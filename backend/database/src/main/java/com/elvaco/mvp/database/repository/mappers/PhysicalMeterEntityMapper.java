@@ -37,8 +37,7 @@ public class PhysicalMeterEntityMapper {
     Collection<PhysicalMeterStatusLogEntity> statuses
   ) {
     return physicalMeterBuilderFrom(entity)
-      .statuses(statuses.stream()
-        .map(MeterStatusLogEntityMapper::toDomainModel).collect(toList()))
+      .statuses(statuses.stream().map(MeterStatusLogEntityMapper::toDomainModel).collect(toList()))
       .alarms(toAlarms(entity))
       .build();
   }

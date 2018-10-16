@@ -9,8 +9,6 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,8 +17,7 @@ public class PhysicalMeterTest {
   @Test
   public void firstStatus() {
     ZonedDateTime now = ZonedDateTime.now();
-
-    PhysicalMeter meter = newPhysicalMeterWithStatuses(randomUUID(), emptyList());
+    PhysicalMeter meter = physicalMeter().build();
 
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
 
@@ -40,8 +37,10 @@ public class PhysicalMeterTest {
       .start(now)
       .status(OK)
       .build();
-
-    PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
+    PhysicalMeter meter = physicalMeter()
+      .id(meterId)
+      .status(previousStatus)
+      .build();
 
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(ERROR, now).statuses;
 
@@ -62,7 +61,10 @@ public class PhysicalMeterTest {
       .entityId(meterId)
       .status(OK)
       .build();
-    PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
+    PhysicalMeter meter = physicalMeter()
+      .id(meterId)
+      .status(previousStatus)
+      .build();
 
     List<StatusLogEntry<UUID>> statuses =
       meter.replaceActiveStatus(OK, ZonedDateTime.now()).statuses;
@@ -70,19 +72,32 @@ public class PhysicalMeterTest {
     assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
   }
 
-  private PhysicalMeter newPhysicalMeterWithStatuses(
-    UUID meterId,
-    List<StatusLogEntry<UUID>> statusLogs
-  ) {
-    return PhysicalMeter.builder()
+  @Test
+  public void doesNotReplaceSameStatusWithDifferentTimestamps() {
+    UUID meterId = randomUUID();
+    ZonedDateTime now = ZonedDateTime.now();
+    StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
+      .entityId(meterId)
+      .status(OK)
+      .start(now.minusHours(1))
+      .build();
+    PhysicalMeter meter = physicalMeter()
       .id(meterId)
+      .status(previousStatus)
+      .build();
+
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
+
+    assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
+  }
+
+  private static PhysicalMeter.PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
       .organisation(OTHER_ORGANISATION)
       .address("12341234")
       .externalId("an-external-id")
       .medium("Hot water")
       .manufacturer("ELV")
-      .logicalMeterId(randomUUID())
-      .statuses(statusLogs)
-      .build();
+      .logicalMeterId(randomUUID());
   }
 }
