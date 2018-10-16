@@ -76,6 +76,7 @@ docker_{{module}}:
       - 8080:8080
     - restart_policy: always
     - log_driver: journald
+    - log_opt: tag={{module}}
     - binds:
       - /opt/elvaco/{{module}}-current/config/:/app/config:ro
       - /var/log/elvaco/{{module}}/:/var/log/elvaco/{{module}}:rw
