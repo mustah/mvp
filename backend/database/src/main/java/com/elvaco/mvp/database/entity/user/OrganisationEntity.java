@@ -8,7 +8,9 @@ import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
@@ -33,6 +35,10 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
   public String name;
   public String slug;
   public String externalId;
+  @OneToOne
+  @JoinColumn(name = "parent_id")
+  @Audited(modifiedColumnName = "parent_id_mod")
+  public OrganisationEntity parent;
 
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
   public Set<UserEntity> users = new HashSet<>();
