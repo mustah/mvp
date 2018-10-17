@@ -10,16 +10,17 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class MeterAlarmUseCases {
+
   private final Measurements measurements;
   private final MeterAlarmLogs meterAlarmLogs;
 
   public void closeAlarms() {
-
-    ZonedDateTime oneDayAgo = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
-    ZonedDateTime twoDaysAgo = ZonedDateTime.now().minusDays(2).truncatedTo(ChronoUnit.DAYS);
-    meterAlarmLogs.findActiveAlamsOlderThan(twoDaysAgo).forEach((alarm) -> {
-      measurements.firstForPhysicalMeterWithinDateRange(alarm.entityId, alarm.lastSeen,oneDayAgo)
-        .ifPresent((firstMeasurementAfterLastSeen) -> {
+    ZonedDateTime now = ZonedDateTime.now();
+    ZonedDateTime oneDayAgo = now.minusDays(1).truncatedTo(ChronoUnit.DAYS);
+    ZonedDateTime twoDaysAgo = now.minusDays(2).truncatedTo(ChronoUnit.DAYS);
+    meterAlarmLogs.findActiveAlarmsOlderThan(twoDaysAgo).forEach(alarm ->
+      measurements.firstForPhysicalMeterWithinDateRange(alarm.entityId, alarm.lastSeen, oneDayAgo)
+        .ifPresent((firstMeasurementAfterLastSeen) ->
           meterAlarmLogs.save(AlarmLogEntry.builder()
             .entityId(alarm.entityId)
             .id(alarm.id)
@@ -28,8 +29,6 @@ public class MeterAlarmUseCases {
             .start(alarm.start)
             .lastSeen(alarm.lastSeen)
             .stop(firstMeasurementAfterLastSeen.created)
-            .build());
-        });
-    });
+            .build())));
   }
 }
