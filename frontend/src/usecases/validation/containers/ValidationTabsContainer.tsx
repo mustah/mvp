@@ -7,7 +7,7 @@ import {getDomainModel, getError} from '../../../state/domain-models/domainModel
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {withMapMarkersFetcher} from '../../map/helper/mapMarkersHoc';
+import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';

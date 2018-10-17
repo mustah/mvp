@@ -5,7 +5,7 @@ import * as React from 'react';
  *
  * Only render this component if the predicate passes. Otherwise return null and do not render.
  */
-export const componentOrNull =
+export const componentOrNothing =
   <P extends {}>(predicate: (props: P) => boolean) =>
     (Component: React.ComponentType<P>): React.SFC<P> =>
       (props: P) => predicate(props) ? <Component {...props} /> : null;

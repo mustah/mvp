@@ -33,7 +33,7 @@ task('clean', async () => {
   await src(distDir).clean(distDir).exec();
 });
 
-task('type-checker', () => {
+task('type-check', () => {
   try {
     TypeHelper({
       tsConfig: './tsconfig.json',
@@ -54,11 +54,11 @@ task('type-checker', () => {
 
 task('test', async () => await runTests({bail: isProduction}, [homeDir]));
 
-task('verify', ['test', 'type-checker']);
+task('verify', ['test', 'type-check']);
 
 task('start', ['translations', 'verify']);
 
-task('serve', ['translations', 'type-checker']);
+task('serve', ['translations', 'type-check']);
 
 task('set-is-prod', () => isProduction = true);
 
