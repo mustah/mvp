@@ -23,7 +23,6 @@ variables:
   SALTAPI_USER: "saltapi"
   SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
   GITLAB_API_TOKEN: "J1Jb27mvUxZqAVx5MhhJ"
-  SALTSTACK_GIT_REPO: "17"
   DOCKER_REGISTRY_HOST: gitlab.elvaco.se:4567
   DOCKER_REGISTRY_URL: gitlab.elvaco.se:4567/elvaco/mvp
 
@@ -135,7 +134,6 @@ prepare:update-salt:
     - /^release-.*$/
     - tags
   script:
-    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 build:frontend:
@@ -311,9 +309,9 @@ deploy:staging:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
 
 post-staging:acceptance:
   <<: *acceptance_test
@@ -349,9 +347,9 @@ deploy:production:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
 
 post-prod:acceptance:
   <<: *acceptance_test

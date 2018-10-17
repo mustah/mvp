@@ -2,89 +2,78 @@
 {% set systemd_unit = "elvaco-" + module + ".service" %}
 {% set mvp_branch = salt['pillar.get']('mvp-branch', 'master') %}
 {% set module_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
-{% set artifact = module + "-" + module_version + ".tar" %}
 
 include:
-  - mvp.openjdk-8-jre
+  - docker
   - mvp.app.user
 
-fetch_{{module}}_archive:
-  file.managed:
-    - name: /tmp/{{artifact}}
-    - source: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/{{artifact}}
-    - source_hash: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/{{artifact}}.sha1
-
-create_new_{{module}}_dir:
+create_{{module}}_log_dir:
   file.directory:
-    - name: /opt/elvaco/{{module}}-{{ module_version }}/config
+    - name: /var/log/elvaco/{{module}}
     - user: mvp
     - group: mvp
     - mode: 755
     - makedirs: True
-    - require:
-      - fetch_{{module}}_archive
 
-deploy_{{module}}:
-  archive.extracted:
-    - name: /opt/elvaco
-    - archive_format: tar
-    - source: /tmp/{{artifact}}
-    - source_hash: http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/{{artifact}}.sha1
+create_{{module}}_dir:
+  file.directory:
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config
     - user: mvp
     - group: mvp
-    - require:
-      - create_new_{{module}}_dir
+    - mode: 755
+    - makedirs: True
 
 create_{{module}}_symlink:
   file.symlink:
     - name: /opt/elvaco/{{module}}-current
-    - target: /opt/elvaco/{{module}}-{{ module_version }}
+    - target: /opt/elvaco/{{module}}-{{module_version}}
     - require:
-      - deploy_{{module}}
+        - create_{{module}}_dir
 
 deploy_{{module}}_config:
   file.managed:
-    - name: /opt/elvaco/{{module}}-{{ module_version }}/config/application.properties
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config/application.properties
     - source: salt://mvp/app/files/{{module}}/application.properties
     - require:
-        - deploy_{{module}}
+        - create_{{module}}_dir
 
 deploy_{{module}}_db_config:
   file.managed:
-    - name: /opt/elvaco/{{module}}-{{ module_version }}/config/application-postgresql.properties
+    - name: /opt/elvaco/{{module}}-{{module_version}}/config/application-postgresql.properties
     - source: salt://mvp/app/files/{{module}}/application-postgresql.properties.jinja
     - template: jinja
     - require:
-        - deploy_{{module}}
+        - create_{{module}}_dir
 
-deploy_{{module}}_systemd:
-  file.managed:
-    - name: /lib/systemd/system/{{ systemd_unit }}
-    - source: salt://mvp/app/files/{{module}}/{{ systemd_unit }}
-  module.wait:
-    - name: service.systemctl_reload
-    - watch:
-      - file: /lib/systemd/system/{{ systemd_unit }}
-  service.running:
-    - name: {{ systemd_unit }}
-    - enable: True
-    - require:
-      - create_{{module}}_symlink
-      - deploy_{{module}}_config
-      - deploy_{{module}}_db_config
-    - watch:
-      - file: /lib/systemd/system/{{ systemd_unit }}
-      - file: /opt/elvaco/{{module}}-{{ module_version }}/config/application.properties
-      - file: /opt/elvaco/{{module}}-{{ module_version }}/config/application-postgresql.properties
+download_{{module}}_image:
+  docker_image.present:
+    - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
 
-remove_{{module}}_archive:
-  file.absent:
-    - name: /tmp/{{artifact}}
+shutdown_{{module}}_systemd:
+  service.dead:
+    - name: {{systemd_unit}}
     - require:
-      - deploy_{{module}}_systemd
+      - download_{{module}}_image
+
+docker_{{module}}:
+  docker_container.running:
+    - name: {{module}}
+    - user: mvp
+    - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
+    - detach: True
+    - dns: 10.120.1.10
+    - dns_search: elvaco.local
+    - ports: 8081/tcp
+    - port_bindings:
+      - 8081:8081
+    - restart_policy: always
+    - log_driver: journald
+    - log_opt: tag={{module}}
+    - binds:
+      - /opt/elvaco/{{module}}-current/config/:/app/config:ro
 
 {{module}}_version:
   grains.present:
     - value: {{ module_version }}
     - require:
-      - deploy_{{module}}_systemd
+      - docker_{{module}}
