@@ -4,11 +4,10 @@ import {initialState} from '../state/ui/tabs/tabsReducer';
 import {OldSelectionParameters, UserSelection} from '../state/user-selection/userSelectionModels';
 import {IdNamed, toIdNamed, uuid} from '../types/Types';
 
-const convert = (name: keyof OldSelectionParameters, selectionParameters): IdNamed[] => {
-  return selectionParameters[name]
+const convert = (name: keyof OldSelectionParameters, selectionParameters): IdNamed[] =>
+  selectionParameters[name]
     ? selectionParameters[name].map((id: uuid) => ({...toIdNamed(id as string)}))
     : [];
-};
 
 export const oldParameterNames: Array<keyof OldSelectionParameters> = [
   'facilities',
@@ -73,8 +72,8 @@ export const migrations = {
       },
     };
   },
-  4: (state: PersistedState | any) => {
-    return {
+  4: (state: PersistedState | any) =>
+    ({
       ...state,
       ui: {
         ...state.ui,
@@ -83,8 +82,7 @@ export const migrations = {
           report: initialState.report.selectedTab,
         },
       },
-    };
-  },
+    }),
 };
 
 export const currentVersion: number = 4;

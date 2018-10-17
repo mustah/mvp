@@ -3,13 +3,12 @@ import * as React from 'react';
 import {LayoutProps} from '../layout/Layout';
 import './Row.scss';
 
-export const Row = ({children, className, onClick, style}: LayoutProps) => {
-  return (
+export const Row = ({children, className, onClick, style}: LayoutProps) =>
+  (
     <div className={classNames('Row', className)} onClick={onClick} style={style}>
       {children}
     </div>
   );
-};
 
 export const RowCenter = (props: LayoutProps) =>
   <Row {...props} className={classNames(props.className, 'Row-center')}/>;

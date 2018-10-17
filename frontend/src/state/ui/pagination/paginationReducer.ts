@@ -66,12 +66,11 @@ const resetMetersPage: PaginationChangePayload = {
   page: 0,
 };
 
-const toPaginationChangePayload = (payload: QueryParameter): PaginationChangePayload => {
-  return Maybe.maybe(payload[UseCases.collection])
+const toPaginationChangePayload = (payload: QueryParameter): PaginationChangePayload =>
+  Maybe.maybe(payload[UseCases.collection])
     .filter(hasQuery)
     .map(() => resetGatewaysPage)
     .orElse(resetMetersPage);
-};
 
 export const pagination = (
   state: PaginationState = initialPaginationState,

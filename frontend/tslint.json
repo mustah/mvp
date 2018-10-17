@@ -12,6 +12,10 @@
     ]
   },
   "rules": {
+    "arrow-return-shorthand": [
+      true,
+      "multiline"
+    ],
     "no-submodule-imports": [
       true,
       "assets",

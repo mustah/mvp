@@ -206,8 +206,8 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     customDateRange,
     selectedQuantities: quantities,
     logout,
-  }: Props) => {
-    return {
+  }: Props) =>
+    ({
       quantities,
       customDateRange,
       logout,
@@ -216,8 +216,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
       selectionTreeEntities,
       timePeriod,
       updateState: this.updateState,
-    };
-  }
+    })
 }
 
 const mapStateToProps =

@@ -7,12 +7,11 @@ interface Props {
   children?: Children;
 }
 
-export const LowConfidenceInfo = ({children}: Props) => {
-  return children
+export const LowConfidenceInfo = ({children}: Props) =>
+  children
     ? (
       <Control position="topright" className="LowConfidence">
         <p>{children}</p>
       </Control>
     )
     : null;
-};
