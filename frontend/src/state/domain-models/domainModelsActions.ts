@@ -20,8 +20,10 @@ import {DomainModelsState, Normalized, NormalizedState, RequestType} from './dom
 
 type ActionTypeFactory = (endPoint: EndPoints) => string;
 
-const domainModelsSuccess = (requestType: RequestType) => (endPoint: EndPoints) =>
-  `DOMAIN_MODELS_${requestType}_SUCCESS${endPoint}`;
+const domainModelsSuccess =
+  (requestType: RequestType) =>
+    (endPoint: EndPoints) =>
+      `DOMAIN_MODELS_${requestType}_SUCCESS${endPoint}`;
 
 export const domainModelsRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
 export const domainModelsFailure = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
