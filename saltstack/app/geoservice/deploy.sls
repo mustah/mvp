@@ -7,6 +7,21 @@ include:
   - docker
   - mvp.app.user
 
+create_{{module}}_docker_config_dir:
+  file.directory:
+    - name: /root/.docker
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+
+copy_{{module}}_docker_config:
+  file.managed:
+    - name: /root/.docker/config.json
+    - source: salt://mvp/app/files/common/docker_config.json
+    - require:
+      - create_{{module}}_docker_config_dir
+
 create_{{module}}_log_dir:
   file.directory:
     - name: /var/log/elvaco/{{module}}
@@ -29,6 +44,7 @@ create_{{module}}_symlink:
     - target: /opt/elvaco/{{module}}-{{module_version}}
     - require:
       - create_{{module}}_dir
+      - copy_{{module}}_docker_config
 
 deploy_{{module}}_config:
   file.managed:
