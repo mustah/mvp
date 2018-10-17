@@ -41,7 +41,7 @@ describe('organisationsApiActions', () => {
     mockRestClient.reset();
   });
 
-  describe('add new organisation', () => {
+  describe('addOrganisation', () => {
 
     const newOrganisation: Partial<Organisation> = {
       name: 'Hällesåkers IF',
