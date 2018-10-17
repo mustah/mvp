@@ -1,3 +1,4 @@
+import {ObjectsById} from '../state/domain-models/domainModels';
 import {Identifiable, IdNamed, uuid} from '../types/Types';
 
 export const toggle = <T>(item: T, list: T[]): T[] => {
@@ -9,3 +10,12 @@ export const toggle = <T>(item: T, list: T[]): T[] => {
 };
 
 export const getId = (item: IdNamed | Identifiable): uuid => item.id;
+
+export const groupById = <T extends Identifiable>(items: T[]): ObjectsById<T> =>
+  items.reduce(
+    (all: ObjectsById<T>, current: T) => {
+      all[current.id] = current;
+      return all;
+    },
+    {}
+  );
