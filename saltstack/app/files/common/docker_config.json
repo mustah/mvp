@@ -1,0 +1,10 @@
+{
+	"auths": {
+		"gitlab.elvaco.se:4567": {
+		"auth": "cm9ib3Q6UGFzc3dvcmQy"
+		}
+	},
+	"HttpHeaders": {
+		"User-Agent": "Docker-Client/17.09.1-ce (linux)"
+	}
+}

@@ -7,6 +7,21 @@ include:
   - docker
   - mvp.app.user
 
+create_{{module}}_docker_config_dir:
+  file.directory:
+    - name: /root/.docker
+    - user: root
+    - group: root
+    - mode: 755
+    - makedirs: True
+
+copy_{{module}}_docker_config:
+  file.managed:
+    - name: /root/.docker/config.json
+    - source: salt://mvp/app/files/common/docker_config.json
+    - require:
+      - create_{{module}}_docker_config_dir
+
 create_{{module}}_log_dir:
   file.directory:
     - name: /var/log/elvaco/{{module}}
@@ -28,21 +43,22 @@ create_{{module}}_symlink:
     - name: /opt/elvaco/{{module}}-current
     - target: /opt/elvaco/{{module}}-{{module_version}}
     - require:
-        - create_{{module}}_dir
+      - create_{{module}}_dir
+      - copy_{{module}}_docker_config
 
 deploy_{{module}}_config:
   file.managed:
     - name: /opt/elvaco/{{module}}-{{module_version}}/config/application.properties
     - source: salt://mvp/app/files/{{module}}/application.properties
     - require:
-        - create_{{module}}_dir
+      - create_{{module}}_dir
 
 deploy_{{module}}_log_config:
   file.managed:
     - name: /opt/elvaco/{{module}}-{{module_version}}/config/logback-spring.xml
     - source: salt://mvp/app/files/{{module}}/logback-spring.xml
     - require:
-        - create_{{module}}_log_dir
+      - create_{{module}}_log_dir
 
 deploy_{{module}}_db_config:
   file.managed:
@@ -50,11 +66,13 @@ deploy_{{module}}_db_config:
     - source: salt://mvp/app/files/{{module}}/application-postgresql.properties.jinja
     - template: jinja
     - require:
-        - create_{{module}}_dir
+      - create_{{module}}_dir
 
 download_{{module}}_image:
   docker_image.present:
     - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
+    - require:
+      - deploy_{{module}}_db_config
 
 shutdown_{{module}}_systemd:
   service.dead:
@@ -80,6 +98,8 @@ docker_{{module}}:
     - binds:
       - /opt/elvaco/{{module}}-current/config/:/app/config:ro
       - /var/log/elvaco/{{module}}/:/var/log/elvaco/{{module}}:rw
+    - require:
+      - shutdown_{{module}}_systemd
 
 {{module}}_version:
   grains.present:
