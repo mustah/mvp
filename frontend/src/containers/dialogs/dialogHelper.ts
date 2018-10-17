@@ -14,11 +14,10 @@ import {
 import {uuid} from '../../types/Types';
 import {RenderableMeasurement} from './MeterDetailsTabs';
 
-const orderedQuantities = (medium: Medium): Quantity[] => {
-  return medium in allQuantities
+const orderedQuantities = (medium: Medium): Quantity[] =>
+  medium in allQuantities
     ? allQuantities[medium]
     : [];
-};
 
 export const meterMeasurementsForTable = (meter: MeterDetails): DomainModel<RenderableMeasurement> => {
   const normalized: Normalized<Measurement> = normalize(meter.measurements, measurement);

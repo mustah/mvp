@@ -32,7 +32,7 @@ public class MockMeterAlarmLogs
   }
 
   @Override
-  public Stream<AlarmLogEntry> findActiveAlamsOlderThan(ZonedDateTime when) {
+  public Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when) {
     return allMocks().stream().filter(alarm -> alarm.stop == null)
       .filter(alarm -> alarm.start.isBefore(when));
   }

@@ -9,6 +9,5 @@ export interface TabContentProps extends ClassNamed {
   children: any;
 }
 
-export const TabContent = ({tab, selectedTab, children, className}: TabContentProps) => {
-  return selectedTab === tab ? <Column className={className}>{children}</Column> : null;
-};
+export const TabContent = ({tab, selectedTab, children, className}: TabContentProps) =>
+  selectedTab === tab ? <Column className={className}>{children}</Column> : null;

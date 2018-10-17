@@ -9,8 +9,8 @@ export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
 const changeLanguageRequest = createPayloadAction<string, LanguageCode>(CHANGE_LANGUAGE);
 
 const reloadPage = () => window.location.reload();
-export const changeLanguage = (language: LanguageCode, onComplete: Callback = reloadPage) => {
-  return (dispatch, getState: GetState) => {
+export const changeLanguage = (language: LanguageCode, onComplete: Callback = reloadPage) =>
+  (dispatch, getState: GetState) => {
     const {language: stateLanguage} = getState().language;
     if (stateLanguage.code !== language || getI18nLanguage() !== language) {
       changeTranslationLanguage(language, () => {
@@ -19,4 +19,3 @@ export const changeLanguage = (language: LanguageCode, onComplete: Callback = re
       });
     }
   };
-};

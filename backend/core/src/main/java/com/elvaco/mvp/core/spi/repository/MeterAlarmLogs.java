@@ -20,5 +20,5 @@ public interface MeterAlarmLogs {
     String description
   );
 
-  Stream<AlarmLogEntry> findActiveAlamsOlderThan(ZonedDateTime when);
+  Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when);
 }

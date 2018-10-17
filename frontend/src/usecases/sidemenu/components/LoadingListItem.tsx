@@ -9,8 +9,7 @@ interface Props {
   text: string;
 }
 
-export const LoadingListItem = ({isFetching, text}: Props) => {
-  return isFetching
+export const LoadingListItem = ({isFetching, text}: Props) =>
+  isFetching
     ? <RowCenter><LoadingSmall/></RowCenter>
     : <EmptyContentText text={text} key="empty-content-1"/>;
-};

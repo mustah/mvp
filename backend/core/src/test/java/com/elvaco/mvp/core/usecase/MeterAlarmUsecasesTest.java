@@ -48,7 +48,7 @@ public class MeterAlarmUsecasesTest {
 
     meterAlarmUseCases.closeAlarms();
 
-    assertThat(meterAlarmLogs.findActiveAlamsOlderThan(ZonedDateTime.now()).count()).isEqualTo(0);
+    assertThat(meterAlarmLogs.findActiveAlarmsOlderThan(ZonedDateTime.now()).count()).isEqualTo(0);
   }
 
   @Test
@@ -68,7 +68,7 @@ public class MeterAlarmUsecasesTest {
 
     meterAlarmUseCases.closeAlarms();
 
-    assertThat(meterAlarmLogs.findActiveAlamsOlderThan(ZonedDateTime.now()).count()).isEqualTo(1);
+    assertThat(meterAlarmLogs.findActiveAlarmsOlderThan(ZonedDateTime.now()).count()).isEqualTo(1);
   }
 
   @Test
@@ -87,7 +87,7 @@ public class MeterAlarmUsecasesTest {
 
     meterAlarmUseCases.closeAlarms();
 
-    assertThat(meterAlarmLogs.findActiveAlamsOlderThan(ZonedDateTime.now()).count()).isEqualTo(1);
+    assertThat(meterAlarmLogs.findActiveAlarmsOlderThan(ZonedDateTime.now()).count()).isEqualTo(1);
   }
 
   @Test
@@ -104,6 +104,6 @@ public class MeterAlarmUsecasesTest {
 
     meterAlarmUseCases.closeAlarms();
 
-    assertThat(meterAlarmLogs.findActiveAlamsOlderThan(ZonedDateTime.now()).toArray()).hasSize(1);
+    assertThat(meterAlarmLogs.findActiveAlarmsOlderThan(ZonedDateTime.now()).toArray()).hasSize(1);
   }
 }

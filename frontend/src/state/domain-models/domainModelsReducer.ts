@@ -128,11 +128,8 @@ const resetDomainModel = <T extends Identifiable>(
   state: NormalizedState<T>,
   entity: keyof DomainModelsState,
   payload: QueryParameter,
-): NormalizedState<T> => {
-  return canResetEntities(entity, payload)
-    ? {...initialDomain<T>()}
-    : state;
-};
+): NormalizedState<T> =>
+  canResetEntities(entity, payload) ? {...initialDomain<T>()} : state;
 
 type ActionTypes<T extends Identifiable> =
   | EmptyAction<string>

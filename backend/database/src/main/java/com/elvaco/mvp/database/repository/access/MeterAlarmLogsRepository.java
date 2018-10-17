@@ -33,7 +33,7 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
   }
 
   @Override
-  public Stream<AlarmLogEntry> findActiveAlamsOlderThan(ZonedDateTime when) {
+  public Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when) {
     return meterAlarmLogJpaRepository.findActiveAlamsOlderThan(when).stream()
       .map(MeterAlarmLogEntityMapper::toDomainModel);
   }

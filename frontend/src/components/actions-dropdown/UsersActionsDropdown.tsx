@@ -9,13 +9,12 @@ import './ActionsDropdown.scss';
 
 export const UsersActionsDropdown = () => {
 
-  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
-    return [(
+  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) =>
+    [(
       <Link to={routes.adminUsersAdd} className="link" key={'add user'}>
         <ActionMenuItem name={translate('add user')} onClick={onClick}/>
       </Link>),
     ];
-  };
 
   return (<ActionsDropdown className="ActionsDropdown-Admin" renderPopoverContent={renderPopoverContent}/>);
 };

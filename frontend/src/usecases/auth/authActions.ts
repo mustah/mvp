@@ -32,8 +32,8 @@ const translatedError = (error?: Unauthorized): Unauthorized | undefined =>
 
 const isAuthenticated = (auth: AuthState): boolean => !!auth.user && auth.isAuthenticated;
 
-export const login = (username: string, password: string) => {
-  return async (dispatch) => {
+export const login = (username: string, password: string) =>
+  async (dispatch) => {
     dispatch(loginRequest());
     try {
       const basicToken = makeToken(username, password);
@@ -46,7 +46,6 @@ export const login = (username: string, password: string) => {
       dispatch(loginFailure(translatedError(data)!));
     }
   };
-};
 
 export const logout = (error?: Unauthorized) =>
   async (dispatch, getState: GetState) => {
