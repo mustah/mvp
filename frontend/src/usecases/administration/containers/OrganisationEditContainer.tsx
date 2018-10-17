@@ -37,5 +37,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addOrganisation,
 }, dispatch);
 
-export const OrganisationAddContainer =
+export const OrganisationEditContainer =
   connect<null, DispatchToProps, OwnProps>(null, mapDispatchToProps)(OrganisationAdd);
