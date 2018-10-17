@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/SelectionResultActionsDropdown';
-import {componentOrNull} from '../../components/hoc/hocs';
+import {componentOrNothing} from '../../components/hoc/hocs';
 import {withContent} from '../../components/hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {superAdminOnly} from '../../components/hoc/withRoles';
@@ -73,7 +73,7 @@ export type MeterListProps = StateToProps & DispatchToProps & OwnProps;
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const selectionPageEnhancer = componentOrNull<SelectionPage>(({isSelectionPage}: SelectionPage) => isSelectionPage);
+const selectionPageEnhancer = componentOrNothing<SelectionPage>(({isSelectionPage}: SelectionPage) => isSelectionPage);
 
 const enhance = compose<Clickable, Clickable & HasContent & SelectionPage>(
   selectionPageEnhancer,

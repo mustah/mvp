@@ -1,6 +1,7 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
-import {componentOrNull} from '../../components/hoc/hocs';
+import {compose} from 'recompose';
+import {componentOrNothing} from '../../components/hoc/hocs';
 import {superAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
 import {Normal} from '../../components/texts/Texts';
@@ -18,6 +19,8 @@ const InfoComponent = ({children, className, label}: InfoProps) => (
   </Column>
 );
 
-export const Info = componentOrNull<InfoProps>(({children}: InfoProps) => !!children)(InfoComponent);
+const withChildren = componentOrNothing<InfoProps>(({children}) => !!children);
 
-export const SuperAdminInfo = superAdminOnly<InfoProps>(Info);
+export const Info = withChildren(InfoComponent);
+
+export const SuperAdminInfo = compose<InfoProps, InfoProps>(superAdminOnly, withChildren)(InfoComponent);

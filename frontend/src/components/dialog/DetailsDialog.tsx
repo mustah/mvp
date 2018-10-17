@@ -3,20 +3,18 @@ import {GatewayDetailsContainer} from '../../containers/dialogs/GatewayDetailsCo
 import {MeterDetailsContainer} from '../../containers/dialogs/MeterDetailsContainer';
 import {SelectedId} from '../../usecases/map/mapModels';
 import {ButtonClose} from '../buttons/DialogButtons';
-import {componentOrNull} from '../hoc/hocs';
+import {componentOrNothing} from '../hoc/hocs';
 import {Dialog, DialogProps} from './Dialog';
 
 export type DetailsDialogProps = SelectedId & DialogProps;
 
-const DialogOrNull = componentOrNull<DetailsDialogProps>(
-  ({selectedId}: DetailsDialogProps) => selectedId.isJust(),
-)(Dialog);
+const DialogComponent = componentOrNothing<DetailsDialogProps>(({selectedId}) => selectedId.isJust())(Dialog);
 
 const DetailsDialog = (props: DetailsDialogProps) => (
-  <DialogOrNull {...props}>
+  <DialogComponent {...props}>
     <ButtonClose onClick={props.close}/>
     {props.children}
-  </DialogOrNull>
+  </DialogComponent>
 );
 
 export const MeterDetailsDialog = (props: DetailsDialogProps) => (

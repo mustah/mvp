@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {DateRange, Period} from '../../../components/dates/dateModels';
-import {componentOrNull} from '../../../components/hoc/hocs';
+import {componentOrNothing} from '../../../components/hoc/hocs';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
@@ -83,7 +83,7 @@ type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & Inj
 
 const hasSelectedItems = ({selectedListItems}: SelectedIds): boolean => selectedListItems.length > 0;
 
-const LegendWrapper = componentOrNull<LegendProps & SelectedIds>(hasSelectedItems)(Legend);
+const LegendWrapper = componentOrNothing<LegendProps & SelectedIds>(hasSelectedItems)(Legend);
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
