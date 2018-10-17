@@ -1,4 +1,5 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
+import {getId, groupById} from '../../../helpers/collections';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, Status} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
@@ -12,10 +13,19 @@ import {
   deleteRequestOf,
   domainModelsGetSuccess,
   getEntityRequestOf,
+  getRequestOf,
   postRequestOf,
   putRequestOf,
 } from '../domainModelsActions';
-import {domainModels, gatewayMapMarkers, initialDomain, meterMapMarkers, users} from '../domainModelsReducer';
+import {
+  domainModels,
+  gatewayMapMarkers,
+  initialDomain,
+  meterMapMarkers,
+  organisations,
+  users
+} from '../domainModelsReducer';
+import {Organisation} from '../organisation/organisationModels';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
@@ -104,6 +114,54 @@ describe('domainModelsReducer', () => {
         total: 1,
       });
     });
+  });
+
+  describe('organisations', () => {
+
+    const initialState: NormalizedState<Organisation> = initialDomain<Organisation>();
+
+    const respondSuccessWith = (orgs: Organisation[]) =>
+      getRequestOf<Normalized<Organisation>>(EndPoints.organisations)
+        .success({
+          result: orgs.map(getId),
+          entities: {
+            organisations: groupById(orgs)
+          },
+        });
+
+    const organisationWithoutParent: Organisation = {
+      name: 'org 1',
+      id: 'org 1',
+      slug: 'org-1',
+    };
+
+    const organisationWithParent: Organisation = {
+      ...organisationWithoutParent,
+      parent: {
+        name: 'org 0',
+        id: 'org 0',
+        slug: 'org-0',
+      }
+    };
+
+    it('accepts organisation without parent', async () => {
+      const organisation: Organisation = {...organisationWithoutParent};
+
+      const action: Action<Normalized<Organisation>> = respondSuccessWith([organisation]);
+      const state: NormalizedState<Organisation> = organisations(initialState, action);
+
+      expect(state).toHaveProperty('entities', {[organisation.id]: {...organisation}});
+    });
+
+    it('accepts organisation with parent', async () => {
+      const organisation: Organisation = {...organisationWithParent};
+
+      const action: Action<Normalized<Organisation>> = respondSuccessWith([organisation]);
+      const state: NormalizedState<Organisation> = organisations(initialState, action);
+
+      expect(state).toHaveProperty('entities', {[organisation.id]: {...organisation}});
+    });
+
   });
 
   describe('gatewayMapMarkers', () => {
