@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {uuid} from '../../types/Types';
@@ -12,11 +13,7 @@ interface OrganisationFormProps {
   organisation?: Organisation;
 }
 
-interface State {
-  id?: uuid;
-  name: string;
-  slug: uuid;
-}
+type State = Overwrite<Organisation, {id?: uuid}>;
 
 export class OrganisationEditForm extends React.Component<OrganisationFormProps, State> {
 
