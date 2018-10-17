@@ -85,7 +85,10 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   @CacheEvict(
-    cacheNames = "physicalMeter.organisationIdExternalIdAddress",
+    cacheNames = {
+      "physicalMeter.organisationIdExternalIdAddress",
+      "physicalMeter.organisationIdExternalIdAddress.withStatuses"
+    },
     key = "#physicalMeter.organisation.id + #physicalMeter.externalId + #physicalMeter.address"
   )
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
@@ -99,7 +102,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   @Cacheable(
-    cacheNames = "physicalMeter.organisationIdExternalIdAddress",
+    cacheNames = "physicalMeter.organisationIdExternalIdAddress.withStatuses",
     key = "#organisationId + #externalId + #address"
   )
   public Optional<PhysicalMeter> findByWithStatuses(
@@ -112,19 +115,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       externalId,
       address
     ).map(PhysicalMeterEntityMapper::toDomainModel);
-  }
-
-  @Override
-  public Optional<PhysicalMeter> findByWithAlarms(
-    UUID organisationId,
-    String externalId,
-    String address
-  ) {
-    return physicalMeterJpaRepository.findByOrganisationIdAndExternalIdAndAddress(
-      organisationId,
-      externalId,
-      address
-    ).map(PhysicalMeterEntityMapper::toDomainModelWithAlarms);
   }
 
   @Override
@@ -143,5 +133,4 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       address
     ).map(PhysicalMeterEntityMapper::toDomainModelWithoutStatusLogs);
   }
-
 }

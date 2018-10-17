@@ -128,12 +128,22 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     assertOrganisationWithSlugWasCreated("organisation-123-456");
   }
 
-  private MeterDto newMeterDto(String manufacturer) {
-    return newMeterDto(manufacturer, "Some medium");
-  }
+  @Test
+  public void meterWithSameStatus_ShouldNotCreateNewStatusWithCurrentTimestamp() throws Exception {
+    MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto();
 
-  private MeterDto newMeterDto(String manufacturer, String medium) {
-    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *", 1, 1);
+    publishMessage(toJson(message).getBytes());
+
+    assertOrganisationWithSlugWasCreated("some-organisation");
+
+    publishMessage(toJson(message).getBytes());
+
+    waitFor(100);
+
+    publishMessage(toJson(message).getBytes());
+
+    assertThat(waitForCondition(() -> physicalMeterStatusLogJpaRepository.findAll().size() == 1))
+      .as("Just one status log has been created").isTrue();
   }
 
   private void deleteAllTestData() {
@@ -252,5 +262,17 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   private void assertOrganisationWithSlugWasCreated(String slug) throws InterruptedException {
     assertThat(waitForCondition(() -> organisationJpaRepository.findBySlug(slug)
       .isPresent())).as("Organisation '" + slug + "' was created").isTrue();
+  }
+
+  private static MeterDto newMeterDto(String manufacturer) {
+    return newMeterDto(manufacturer, "Some medium");
+  }
+
+  private static MeterDto newMeterDto(String manufacturer, String medium) {
+    return new MeterDto("1234", medium, "OK", manufacturer, "*/15 * * * *", 1, 1);
+  }
+
+  private static void waitFor(int millis) throws InterruptedException {
+    Thread.sleep(millis);
   }
 }
