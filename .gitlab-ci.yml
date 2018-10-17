@@ -169,7 +169,7 @@ assemble:
 
 pre-test:docker-mvp-app:
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_SLUG}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: pre-test
   tags:
     - shell
@@ -183,7 +183,7 @@ pre-test:docker-mvp-app:
 
 pre-test:docker-geoservice-app:
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_SLUG}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
   stage: pre-test
   tags:
     - shell
@@ -241,7 +241,7 @@ test:upgrade:
   variables:
     DOCKER_DRIVER: overlay2
     MVP_UPGRADE_FROM_TAG: production
-    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_SLUG}
+    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_NAME}
     TEST_HOST: docker-host
   stage: test
   dependencies:
@@ -378,8 +378,8 @@ finalize:tag-production-mvp-docker:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   script:
-    - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG}
-    - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/mvp:production
+    - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_NAME}
+    - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_NAME} ${DOCKER_REGISTRY_URL}/mvp:production
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
 
 finalize:create-jira-version:
@@ -413,6 +413,6 @@ finalize:tag-production-geoservice-docker:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   script:
-    - docker pull ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_SLUG}
-    - docker tag ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/geoservice:production
+    - docker pull ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_NAME}
+    - docker tag ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_NAME} ${DOCKER_REGISTRY_URL}/geoservice:production
     - docker push ${DOCKER_REGISTRY_URL}/geoservice:production
