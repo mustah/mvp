@@ -1,6 +1,7 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {shallowEqual} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
@@ -31,7 +32,8 @@ import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurement
 import {
   initialState,
   MeasurementResponses,
-  Measurements, Medium,
+  Measurements,
+  Medium,
   Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
@@ -97,50 +99,16 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   }
 
   async componentDidMount() {
-    const {
-      selectionTreeEntities,
-      selectedListItems,
-      period,
-      customDateRange,
-      selectedQuantities,
-      logout,
-      selectedIndicators,
-    } = this.props;
-
     this.setState({isFetching: true});
-
-    await fetchMeasurements({
-      selectionTreeEntities,
-      selectedIndicators,
-      quantities: selectedQuantities,
-      selectedListItems,
-      timePeriod: period,
-      customDateRange,
-      updateState: this.updateState,
-      logout,
-    });
+    await fetchMeasurements(this.makeRequestParameters(this.props));
   }
 
-  async componentWillReceiveProps({
-    selectionTreeEntities,
-    selectedListItems,
-    period,
-    customDateRange,
-    selectedQuantities,
-    logout,
-    selectedIndicators,
-  }: Props) {
-    this.setState({isFetching: true});
-    await fetchMeasurements({
-      selectionTreeEntities,
-      selectedIndicators,
-      quantities: selectedQuantities,
-      selectedListItems,
-      timePeriod: period,
-      customDateRange,
-      updateState: this.updateState,
-      logout,
-    });
+  async componentWillReceiveProps(nextProps: Props) {
+    const requestParameters = this.makeRequestParameters(nextProps);
+    if (!shallowEqual(requestParameters, this.makeRequestParameters(this.props))) {
+      this.setState({isFetching: true});
+      await fetchMeasurements(requestParameters);
+    }
   }
 
   render() {
@@ -156,15 +124,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     const {isFetching, error, hiddenKeys, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
-
-    const onToggleLine = (dataKey: string) => {
-      this.setState({
-        hiddenKeys: toggle(
-          dataKey,
-          hiddenKeys,
-        ),
-      });
-    };
 
     const indicators = hardcodedIndicators();
 
@@ -207,7 +166,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
             </Tabs>
             <LegendWrapper
               legendItems={legendItems}
-              onToggleLine={onToggleLine}
+              onToggleLine={this.onToggleLine}
               selectedListItems={selectedListItems}
               toggleSingleEntry={toggleSingleEntry}
             />
@@ -225,26 +184,39 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   }
 
   clearError = async () => {
-    const {
-      selectionTreeEntities,
-      selectedIndicators,
-      selectedListItems,
-      period,
-      customDateRange,
-      selectedQuantities,
-      logout,
-    } = this.props;
     this.setState({error: Maybe.nothing(), isFetching: true});
-    await fetchMeasurements({
-      selectionTreeEntities,
-      selectedIndicators,
-      quantities: selectedQuantities,
-      selectedListItems,
-      timePeriod: period,
+    await fetchMeasurements(this.makeRequestParameters(this.props));
+  }
+
+  onToggleLine = (dataKey: string) => {
+    this.setState(({hiddenKeys}) => ({
+        hiddenKeys: toggle(
+          dataKey,
+          hiddenKeys,
+        ),
+      })
+    );
+  }
+
+  makeRequestParameters = ({
+    selectionTreeEntities,
+    selectedIndicators,
+    selectedListItems,
+    period: timePeriod,
+    customDateRange,
+    selectedQuantities: quantities,
+    logout,
+  }: Props) => {
+    return {
+      quantities,
       customDateRange,
-      updateState: this.updateState,
       logout,
-    });
+      selectedListItems,
+      selectedIndicators,
+      selectionTreeEntities,
+      timePeriod,
+      updateState: this.updateState,
+    };
   }
 }
 
@@ -262,10 +234,12 @@ const mapStateToProps =
     },
   }: RootState): StateToProps & SelectedIndicatorWidgetProps => {
     const selectedTreeState: SelectedTreeEntities = {selectedListItems, entities};
+    const {period, customDateRange} = getSelectedPeriod(userSelection);
     return ({
-      ...getSelectedPeriod(userSelection),
+      customDateRange,
       enabledIndicatorTypes: getMedia(selectedTreeState),
       legendItems: getLegendItems(selectedTreeState),
+      period,
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,

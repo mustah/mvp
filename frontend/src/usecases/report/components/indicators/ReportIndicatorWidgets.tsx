@@ -17,22 +17,21 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
   enabledIndicatorTypes: Set<Medium>;
 }
 
-export const ReportIndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {indicators, selectedIndicatorTypes, enabledIndicatorTypes, onClick} = props;
+export const ReportIndicatorWidgets =
+  ({indicators, selectedIndicatorTypes, enabledIndicatorTypes, onClick}: IndicatorWidgetProps) => {
+    const indicatorWidgets = indicators.map((props: ClickableReportIndicatorProps) => (
+      <ReportIndicatorWidget
+        {...props}
+        key={props.type}
+        isSelected={selectedIndicatorTypes.includes(props.type)}
+        enabled={enabledIndicatorTypes.has(props.type)}
+        onClick={onClick}
+      />
+    ));
 
-  const indicatorWidgets = indicators.map((props: ClickableReportIndicatorProps) => (
-    <ReportIndicatorWidget
-      {...props}
-      key={props.type}
-      isSelected={selectedIndicatorTypes.includes(props.type)}
-      enabled={enabledIndicatorTypes.has(props.type)}
-      onClick={onClick}
-    />
-  ));
-
-  return (
-    <RowCenter>
-      {indicatorWidgets}
-    </RowCenter>
-  );
-};
+    return (
+      <RowCenter>
+        {indicatorWidgets}
+      </RowCenter>
+    );
+  };
