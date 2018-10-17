@@ -76,7 +76,7 @@ function send_amqp_message () {
 }
 
 # === Main application ===
-MVP_PORT=80 MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d rabbitmq application geoservice
+MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d rabbitmq application geoservice
 echo -n ":: Waiting for GEOSERVICE application to start up"
 check_application_startup geoservice
 
