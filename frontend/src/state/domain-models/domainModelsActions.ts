@@ -176,12 +176,30 @@ export const fetchEntityIfNeeded = <T extends Identifiable>(
       }
     };
 
-export const postRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) =>
+export const postRequest = <T>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>
+) =>
   (requestData: T) =>
     (dispatch) =>
       asyncRequest<T, T>({
         ...postRequestOf<T>(endPoint),
-        requestFunc: (requestData: T) => restClient.post(makeUrl(endPoint), requestData),
+        requestFunc: (requestData: T) => restClient.post(endPoint, requestData),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
+
+export const postRequestToUrl = <T, Y>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>,
+  urlFormatter: (parameters: Y) => string
+) =>
+  (requestData: T, urlFormattingParameters: Y) =>
+    (dispatch) =>
+      asyncRequest<T, T>({
+        ...postRequestOf<T>(endPoint),
+        requestFunc: (requestData: T) => restClient.post(urlFormatter(urlFormattingParameters), requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
@@ -192,7 +210,7 @@ export const putRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCall
     (dispatch) =>
       asyncRequest<T, T>({
         ...putRequestOf<T>(endPoint),
-        requestFunc: (requestData: T) => restClient.put(makeUrl(endPoint), requestData),
+        requestFunc: (requestData: T) => restClient.put(endPoint, requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
