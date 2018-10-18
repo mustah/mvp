@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
+import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
 import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import lombok.AllArgsConstructor;
@@ -62,5 +63,20 @@ public class OrganisationController {
     // TODO delete should actually not remove the entity, just mark it as deleted.
     organisationUseCases.delete(organisation);
     return toDto(organisation);
+  }
+
+  @PostMapping("{id}/sub-organisations")
+  public ResponseEntity<OrganisationDto> createSubOrganisation(
+    @PathVariable UUID id,
+    @RequestBody SubOrganisationRequestDto requestDto
+  ) {
+    return organisationUseCases.findById(id)
+      .map(parent -> organisationUseCases.create(OrganisationDtoMapper.toDomainModel(
+        parent,
+        requestDto
+      )))
+      .map(OrganisationDtoMapper::toDto)
+      .map(subOrganisationDto -> ResponseEntity.status(HttpStatus.CREATED).body(subOrganisationDto))
+      .orElseThrow(() -> new OrganisationNotFound(id));
   }
 }

@@ -35,6 +35,7 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
   public String name;
   public String slug;
   public String externalId;
+
   @OneToOne
   @JoinColumn(name = "parent_id")
   @Audited(modifiedColumnName = "parent_id_mod")
@@ -49,6 +50,13 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
     this.slug = slug;
     this.externalId = externalId;
     this.users = emptySet();
+  }
+
+  public OrganisationEntity(
+    UUID id, String name, String slug, String externalId, OrganisationEntity parent
+  ) {
+    this(id, name, slug, externalId);
+    this.parent = parent;
   }
 
   @Override

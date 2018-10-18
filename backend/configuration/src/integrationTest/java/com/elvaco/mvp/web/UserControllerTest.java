@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -40,7 +39,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void findUserById() {
-    UUID id = ELVACO_SUPER_ADMIN_USER.getId();
+    UUID id = context().superAdmin.getId();
 
     ResponseEntity<UserDto> response = asSuperAdmin()
       .get("/users/" + id, UserDto.class);

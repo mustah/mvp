@@ -32,14 +32,16 @@ public class OrganisationControllerTest extends IntegrationTest {
     );
 
   private Organisation wayneIndustries =
-    new Organisation(randomUUID(),
+    new Organisation(
+      randomUUID(),
       "Wayne Industries",
       "wayne-industries",
       "Wayne Industries"
-      );
+    );
 
   private Organisation theBeatles =
-    new Organisation(randomUUID(),
+    new Organisation(
+      randomUUID(),
       "The Beatles",
       "the-beatles",
       "The Beatles"
