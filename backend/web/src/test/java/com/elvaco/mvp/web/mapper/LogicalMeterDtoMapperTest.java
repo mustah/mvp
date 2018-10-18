@@ -21,7 +21,6 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper.toDto;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -97,7 +96,6 @@ public class LogicalMeterDtoMapperTest {
     expected.collectionPercentage = 75.0;
     expected.readIntervalMinutes = 15L;
 
-    expected.measurements = emptyList();
     expected.organisationId = ELVACO.id;
 
     UUID organisationId = ELVACO.id;

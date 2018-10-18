@@ -39,7 +39,6 @@ import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
-import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
@@ -116,11 +115,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     meterStatusLogs = new MockMeterStatusLogs();
     jobService = new MockJobService<>();
     messageHandler = new MeteringReferenceInfoMessageConsumer(
-      new LogicalMeterUseCases(
-        authenticatedUser,
-        logicalMeters,
-        new MockMeasurements()
-      ),
+      new LogicalMeterUseCases(authenticatedUser, logicalMeters),
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters, meterStatusLogs),
       new OrganisationUseCases(
         authenticatedUser,
@@ -426,7 +421,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
-    Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
+    Organisation organisation = organisations.save(newOrganisation("", "Organisation code"));
     physicalMeters.save(physicalMeter().organisation(organisation).build());
 
     messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
@@ -830,10 +825,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
     return organisations.findBySlug(ORGANISATION_SLUG).get();
   }
 
-  private Organisation newOrganisation(String code) {
-    return newOrganisation("", code);
-  }
-
   private Organisation newOrganisation(String name, String code) {
     return new Organisation(randomUUID(), name, code, name);
   }
@@ -868,7 +859,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     private String organisationExternalId = ORGANISATION_EXTERNAL_ID;
     private String jobId = "";
 
-    MeteringReferenceInfoMessageDtoBuilder physicalMeterId(String physicalMeterId) {
+    private MeteringReferenceInfoMessageDtoBuilder physicalMeterId(String physicalMeterId) {
       this.physicalMeterId = physicalMeterId;
       return this;
     }
@@ -878,7 +869,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder mbusDeviceType(Integer mbusDeviceType) {
+    private MeteringReferenceInfoMessageDtoBuilder mbusDeviceType(Integer mbusDeviceType) {
       this.mbusDeviceType = mbusDeviceType;
       return this;
     }
@@ -893,52 +884,54 @@ public class MeteringReferenceInfoMessageConsumerTest {
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder revision(Integer revision) {
+    private MeteringReferenceInfoMessageDtoBuilder revision(Integer revision) {
       this.revision = revision;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder externalId(String externalId) {
+    private MeteringReferenceInfoMessageDtoBuilder externalId(String externalId) {
       this.externalId = externalId;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder location(Location location) {
+    private MeteringReferenceInfoMessageDtoBuilder location(Location location) {
       this.location = location;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder gatewayStatus(String gatewayStatus) {
+    private MeteringReferenceInfoMessageDtoBuilder gatewayStatus(String gatewayStatus) {
       this.gatewayStatus = gatewayStatus;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder meterStatus(String meterStatus) {
+    private MeteringReferenceInfoMessageDtoBuilder meterStatus(String meterStatus) {
       this.meterStatus = meterStatus;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder gatewayExternalId(String gatewayExternalId) {
+    private MeteringReferenceInfoMessageDtoBuilder gatewayExternalId(String gatewayExternalId) {
       this.gatewayExternalId = gatewayExternalId;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder productModel(String productModel) {
+    private MeteringReferenceInfoMessageDtoBuilder productModel(String productModel) {
       this.productModel = productModel;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder organisationExternalId(String organisationExternalId) {
+    private MeteringReferenceInfoMessageDtoBuilder organisationExternalId(
+      String organisationExternalId
+    ) {
       this.organisationExternalId = organisationExternalId;
       return this;
     }
 
-    MeteringReferenceInfoMessageDtoBuilder jobId(String jobId) {
+    private MeteringReferenceInfoMessageDtoBuilder jobId(String jobId) {
       this.jobId = jobId;
       return this;
     }
 
-    MeteringReferenceInfoMessageDto build() {
+    private MeteringReferenceInfoMessageDto build() {
       return new MeteringReferenceInfoMessageDto(
         new MeterDto(
           physicalMeterId,
@@ -965,6 +958,5 @@ public class MeteringReferenceInfoMessageConsumerTest {
         jobId
       );
     }
-
   }
 }

@@ -1,30 +1,21 @@
 package com.elvaco.mvp.web;
 
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -34,7 +25,6 @@ import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.After;
 import org.junit.Before;
@@ -43,13 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
@@ -68,9 +55,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
-
-  @Autowired
-  private Measurements measurements;
 
   @Autowired
   private PhysicalMeters physicalMeters;
@@ -498,81 +482,6 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findById_MeterContainsLatestMeasurements() {
-    LogicalMeter logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
-
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(logicalMeter.id)
-      .readIntervalMinutes(15)
-      .build());
-
-    saveStatusLogForMeter(StatusLogEntry.<UUID>builder()
-      .entityId(physicalMeter.id)
-      .status(StatusType.OK)
-      .start(start)
-      .build()
-    );
-
-    Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
-      Quantity.ENERGY,
-      Quantity.VOLUME,
-      Quantity.VOLUME_FLOW,
-      Quantity.POWER,
-      Quantity.FORWARD_TEMPERATURE,
-      Quantity.RETURN_TEMPERATURE
-    ));
-
-    addMeasurementsForMeter(
-      physicalMeter,
-      quantitiesWithoutDiffTemperature,
-      ZonedDateTime.now().minusDays(3),
-      Duration.ofDays(1),
-      1.0
-    );
-
-    addMeasurementsForMeter(
-      physicalMeter,
-      Collections.singleton(Quantity.POWER),
-      ZonedDateTime.now(),
-      Duration.ofDays(1),
-      2.0
-    );
-
-    ZonedDateTime start = NOW.minusDays(10);
-    ZonedDateTime stop = NOW.plusHours(1);
-    String url = meterDetailsUrl(logicalMeter.id) + "&after={start}&before={stop}";
-    ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
-      .getList(url, LogicalMeterDto.class, start, stop);
-
-    List<LogicalMeterDto> meters = response.getBody();
-    List<MeasurementDto> measurements = meters.get(0).measurements;
-
-    assertThatStatusIsOk(response);
-    assertThat(meters).hasSize(1);
-    assertThat(measurements)
-      .as("The difference temperature is missing")
-      .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
-      .anyMatch(m -> m.quantity.equals(Quantity.ENERGY.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.VOLUME.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.POWER.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
-      .anyMatch(m -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
-      .noneMatch(m -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
-
-    List<MeasurementDto> power = measurements.stream()
-      .filter(m -> m.quantity.equals(Quantity.POWER.name))
-      .collect(toList());
-
-    assertThat(power)
-      .as("Not showing duplicate values for a quantity")
-      .hasSize(1);
-
-    assertThat(power.get(0).value)
-      .as("Only showing the latest value for a quantity")
-      .isEqualTo(2.0);
-  }
-
-  @Test
   public void findById_ShouldHaveMeterWithLatestActiveAlarm() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 
@@ -626,48 +535,8 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.alarm).isNull();
   }
 
-  private void addMeasurementsForMeter(
-    PhysicalMeter physicalMeter,
-    Set<Quantity> quantities,
-    ZonedDateTime start,
-    Duration periodDuration,
-    double value
-  ) {
-    ZonedDateTime now = start;
-    double incrementedValue = value;
-    while (now.isBefore(start.plus(periodDuration))) {
-      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, incrementedValue);
-      now = now.plusMinutes(60L);
-      incrementedValue += (double) 0;
-    }
-  }
-
-  private void addMeasurementsForMeterQuantities(
-    PhysicalMeter physicalMeter,
-    Set<Quantity> quantities,
-    ZonedDateTime when,
-    double value
-  ) {
-    for (Quantity quantity : quantities) {
-      measurements.save(Measurement.builder()
-        .created(when)
-        .quantity(quantity.name)
-        .value(value)
-        .unit(quantity.presentationUnit())
-        .physicalMeter(physicalMeter)
-        .build()
-      );
-    }
-  }
-
   private LogicalMeter saveLogicalMeter() {
-    return saveLogicalMeter(UNKNOWN_METER);
-  }
-
-  private LogicalMeter saveLogicalMeter(MeterDefinition meterDefinition) {
-    return logicalMeters.save(logicalMeter()
-      .meterDefinition(meterDefinition)
-      .build());
+    return logicalMeters.save(logicalMeter().build());
   }
 
   private LogicalMeter.LogicalMeterBuilder logicalMeter() {
@@ -680,7 +549,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @SafeVarargs
   private final void saveStatusLogForMeter(StatusLogEntry<UUID>... statusLogs) {
-    Arrays.asList(statusLogs).forEach(meterStatusLogs::save);
+    asList(statusLogs).forEach(meterStatusLogs::save);
   }
 
   private PhysicalMeterBuilder physicalMeter() {

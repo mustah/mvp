@@ -105,10 +105,6 @@ public class LogicalMeterDtoMapper {
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
-    meterDto.measurements = logicalMeter.latestReadouts.stream()
-      .map(MeasurementDtoMapper::toDto)
-      .collect(toList());
-
     meterDto.statusChangelog = getMeterStatusLogs(logicalMeter).stream()
       .map(MeterStatusLogDtoMapper::toDto)
       .collect(toList());

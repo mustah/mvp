@@ -61,7 +61,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
 
   @Override
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return null;
+    throw new NotImplementedYet();
   }
 
   @Override
@@ -117,7 +117,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       .meterDefinition(logicalMeter.meterDefinition)
       .created(logicalMeter.created)
       .physicalMeters(logicalMeter.physicalMeters)
-      .latestReadouts(logicalMeter.latestReadouts)
       .location(logicalMeter.location)
       .expectedMeasurementCount(logicalMeter.expectedMeasurementCount)
       .missingMeasurementCount(logicalMeter.missingMeasurementCount)

@@ -116,11 +116,7 @@ public class MeteringMeasurementMessageConsumerTest {
     QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
-      new LogicalMeterUseCases(
-        authenticatedUser,
-        logicalMeters,
-        measurements
-      ),
+      new LogicalMeterUseCases(authenticatedUser, logicalMeters),
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters, new MockMeterStatusLogs()),
       new OrganisationUseCases(
         authenticatedUser,
