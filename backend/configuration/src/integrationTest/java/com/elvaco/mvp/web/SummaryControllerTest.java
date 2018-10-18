@@ -44,7 +44,7 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void whenNoMetersGetEmptySummaryInfo() {
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -55,7 +55,7 @@ public class SummaryControllerTest extends IntegrationTest {
   public void getSummaryOfMetersShouldHaveOneResult() {
     logicalMeters.save(newLogicalMeter());
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -67,7 +67,7 @@ public class SummaryControllerTest extends IntegrationTest {
     logicalMeters.save(newLogicalMeter());
     logicalMeters.save(newLogicalMeter());
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -79,7 +79,7 @@ public class SummaryControllerTest extends IntegrationTest {
     logicalMeters.save(newLogicalMeter());
     logicalMeters.save(newLogicalMeterWith(sweden().city("kungsbacka").address("gatan med G")));
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get(
         "/summary/meters?reported=ok&before=2019-01-01T00:00:00Z&after=2018-01-01T00:00:00Z",
         MeterSummaryDto.class
@@ -96,7 +96,7 @@ public class SummaryControllerTest extends IntegrationTest {
       .city("kungsbacka")
       .address("drottninggatan 1")));
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -113,7 +113,7 @@ public class SummaryControllerTest extends IntegrationTest {
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -128,7 +128,7 @@ public class SummaryControllerTest extends IntegrationTest {
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -164,7 +164,7 @@ public class SummaryControllerTest extends IntegrationTest {
       .city("kungsbacka")
       .address("drottninggatan 2")));
 
-    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+    ResponseEntity<MeterSummaryDto> response = asTestSuperAdmin()
       .get("/summary/meters?city=sweden,kungsbacka", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

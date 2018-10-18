@@ -41,7 +41,7 @@ public class UserControllerTest extends IntegrationTest {
   public void findUserById() {
     UUID id = context().superAdmin.getId();
 
-    ResponseEntity<UserDto> response = asSuperAdmin()
+    ResponseEntity<UserDto> response = asTestSuperAdmin()
       .get("/users/" + id, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -50,7 +50,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void unableToFindNoneExistingUser() {
-    ResponseEntity<UserDto> response = asSuperAdmin()
+    ResponseEntity<UserDto> response = asTestSuperAdmin()
       .get("/users/" + randomUUID(), UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -99,7 +99,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void findAllUsers() {
-    ResponseEntity<List<UserDto>> response = asSuperAdmin()
+    ResponseEntity<List<UserDto>> response = asTestSuperAdmin()
       .getList("/users", UserDto.class);
 
     assertThat(response.getBody().size()).isGreaterThanOrEqualTo(3);
@@ -110,7 +110,7 @@ public class UserControllerTest extends IntegrationTest {
   public void createNewUser() {
     UserWithPasswordDto user = createUserDto("n@b.com", "someNewPassword");
 
-    ResponseEntity<UserDto> response = asSuperAdmin()
+    ResponseEntity<UserDto> response = asTestSuperAdmin()
       .post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -137,7 +137,7 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
 
-    asSuperAdmin().put("/users", userDto);
+    asTestSuperAdmin().put("/users", userDto);
 
     User updatedUser = users.findById(user.id).get();
 
@@ -157,7 +157,7 @@ public class UserControllerTest extends IntegrationTest {
         .build()
     );
 
-    ResponseEntity<UserDto> response = asSuperAdmin()
+    ResponseEntity<UserDto> response = asTestSuperAdmin()
       .delete("/users/" + user.id, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -222,7 +222,7 @@ public class UserControllerTest extends IntegrationTest {
     String password = "testing";
     UserWithPasswordDto user = createUserDto(email, password);
 
-    HttpStatus statusCode = asSuperAdmin()
+    HttpStatus statusCode = asTestSuperAdmin()
       .post("/users", user, UserDto.class)
       .getStatusCode();
 
@@ -242,7 +242,7 @@ public class UserControllerTest extends IntegrationTest {
   public void superAdminCanCreateUserOfDifferentOrganisation() {
     UserWithPasswordDto user = createUserDto("jacket@player.hm", "nana yeye");
 
-    ResponseEntity<UserDto> response = asSuperAdmin().post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = asTestSuperAdmin().post("/users", user, UserDto.class);
 
     UserDto savedUser = response.getBody();
 
@@ -255,13 +255,13 @@ public class UserControllerTest extends IntegrationTest {
   public void createNewUserWithExistingEmail() {
     UserWithPasswordDto firstUser = createUserDto("first@user.com", "first user");
 
-    ResponseEntity<UserDto> response = asSuperAdmin().post("/users", firstUser, UserDto.class);
+    ResponseEntity<UserDto> response = asTestSuperAdmin().post("/users", firstUser, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     UserWithPasswordDto secondUser = createUserDto("first@user.com", "second user");
 
-    ResponseEntity<ErrorMessageDto> errorResponse = asSuperAdmin()
+    ResponseEntity<ErrorMessageDto> errorResponse = asTestSuperAdmin()
       .post("/users", secondUser, ErrorMessageDto.class);
 
     assertThat(errorResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -292,11 +292,11 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotSeeUsersOfDifferentOrganisation() {
-    UserDto batman = asSuperAdmin()
+    UserDto batman = asTestSuperAdmin()
       .post("/users", createUserDto("b@tm.an", context().organisation2()), UserDto.class)
       .getBody();
 
-    UserDto colleague = asSuperAdmin()
+    UserDto colleague = asTestSuperAdmin()
       .post("/users", createUserDto("my.colleague@elvaco.se"), UserDto.class)
       .getBody();
 
@@ -314,7 +314,7 @@ public class UserControllerTest extends IntegrationTest {
       context().organisation2()
     );
 
-    ResponseEntity<UserDto> postResponse = asSuperAdmin()
+    ResponseEntity<UserDto> postResponse = asTestSuperAdmin()
       .post("/users", userWithPassword, UserDto.class);
 
     assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -338,7 +338,7 @@ public class UserControllerTest extends IntegrationTest {
       created.roles
     );
 
-    ResponseEntity<UserDto> putResponse = asSuperAdmin()
+    ResponseEntity<UserDto> putResponse = asTestSuperAdmin()
       .put("/users", user, UserDto.class);
 
     assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

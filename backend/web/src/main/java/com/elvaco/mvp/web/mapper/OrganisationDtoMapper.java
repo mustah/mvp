@@ -5,7 +5,6 @@ import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 import lombok.experimental.UtilityClass;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 @UtilityClass
