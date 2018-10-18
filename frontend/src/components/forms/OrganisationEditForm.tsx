@@ -36,8 +36,6 @@ export class OrganisationEditForm extends React.Component<OrganisationEditFormPr
     }
   }
 
-  // TODO: need check that slug can't contain whitespaces or other characters that aren't allowed
-  // in a url. Also need to be unique
   render() {
     const {parent, name, slug} = this.state;
     const {organisations} = this.props;
