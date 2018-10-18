@@ -2,20 +2,12 @@ import * as React from 'react';
 import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
 import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
-import {uuid} from '../../types/Types';
+import {CallbackOfData, CallbackOfDataAndUrlParameters, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
 import {TextFieldInput} from '../inputs/InputText';
 import {Column} from '../layouts/column/Column';
 import './OrganisationEditForm.scss';
-
-const filterParentPlaceholder = (state: State) => {
-  const maybeParentOrganisation: State = {...state};
-  if (maybeParentOrganisation.parent && maybeParentOrganisation.parent.id === noOrganisation().id) {
-    delete maybeParentOrganisation.parent;
-  }
-  return maybeParentOrganisation;
-};
 
 const organisationById = (organisationId: uuid, organisations: Organisation[]) =>
   organisationId === noOrganisation().id
@@ -23,7 +15,8 @@ const organisationById = (organisationId: uuid, organisations: Organisation[]) =
     : organisations.find(({id}) => id === organisationId);
 
 interface OrganisationEditFormProps {
-  onSubmit: (event: any) => void;
+  addOrganisation: CallbackOfData;
+  addSubOrganisation: CallbackOfDataAndUrlParameters;
   organisation?: Organisation;
   organisations: Organisation[];
 }
@@ -100,6 +93,15 @@ export class OrganisationEditForm extends React.Component<OrganisationEditFormPr
 
   wrappedSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(filterParentPlaceholder(this.state));
+
+    const parentId: uuid | undefined = this.state.parent ? this.state.parent.id : undefined;
+    const withoutParent: State = {...this.state};
+    delete withoutParent.parent;
+
+    if (parentId && parentId !== noOrganisation().id) {
+      this.props.addSubOrganisation(withoutParent, parentId);
+    } else {
+      this.props.addOrganisation(withoutParent);
+    }
   }
 }

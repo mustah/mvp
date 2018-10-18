@@ -16,11 +16,12 @@ import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {
   addOrganisation,
+  addSubOrganisation,
   clearOrganisationErrors,
   fetchOrganisations
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {ClearError, ErrorResponse, Fetch, OnClick} from '../../../types/Types';
+import {CallbackOfData, CallbackOfDataAndUrlParameters, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -29,7 +30,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  addOrganisation: OnClick;
+  addOrganisation: CallbackOfData;
+  addSubOrganisation: CallbackOfDataAndUrlParameters;
   fetchOrganisations: Fetch;
   clearError: ClearError;
 }
@@ -48,7 +50,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
   }
 
   render() {
-    const {addOrganisation, organisations, isFetching, error, clearError} = this.props;
+    const {addOrganisation, addSubOrganisation, organisations, isFetching, error, clearError} = this.props;
     return (
       <AdminPageComponent>
         <PageTitle>
@@ -59,7 +61,8 @@ class OrganisationEdit extends React.Component<Props, {}> {
           <WrapperIndent>
             <Loader isFetching={isFetching} error={error} clearError={clearError}>
               <OrganisationEditForm
-                onSubmit={addOrganisation}
+                addOrganisation={addOrganisation}
+                addSubOrganisation={addSubOrganisation}
                 organisations={organisations}
               />
             </Loader>
@@ -78,6 +81,7 @@ const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): Stat
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addOrganisation,
+  addSubOrganisation,
   fetchOrganisations,
   clearError: clearOrganisationErrors,
 }, dispatch);
