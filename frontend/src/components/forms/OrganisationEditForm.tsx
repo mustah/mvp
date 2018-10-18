@@ -1,28 +1,43 @@
 import * as React from 'react';
 import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
-import {Organisation} from '../../state/domain-models/organisation/organisationModels';
+import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
+import {SelectFieldInput} from '../inputs/InputSelectable';
 import {TextFieldInput} from '../inputs/InputText';
 import {Column} from '../layouts/column/Column';
 import './OrganisationEditForm.scss';
 
-interface OrganisationFormProps {
+const filterParentPlaceholder = (state: State) => {
+  const maybeParentOrganisation: State = {...state};
+  if (maybeParentOrganisation.parent && maybeParentOrganisation.parent.id === noOrganisation().id) {
+    delete maybeParentOrganisation.parent;
+  }
+  return maybeParentOrganisation;
+};
+
+const organisationById = (organisationId: uuid, organisations: Organisation[]) =>
+  organisationId === noOrganisation().id
+    ? noOrganisation()
+    : organisations.find(({id}) => id === organisationId);
+
+interface OrganisationEditFormProps {
   onSubmit: (event: any) => void;
   organisation?: Organisation;
+  organisations: Organisation[];
 }
 
 type State = Overwrite<Organisation, {id?: uuid}>;
 
-export class OrganisationEditForm extends React.Component<OrganisationFormProps, State> {
+export class OrganisationEditForm extends React.Component<OrganisationEditFormProps, State> {
 
-  constructor(props: OrganisationFormProps) {
+  constructor(props: OrganisationEditFormProps) {
     super(props);
-    this.state = props.organisation ? {...props.organisation} : {name: '', slug: ''};
+    this.state = {name: '', slug: '', parent: noOrganisation(), ...props.organisation};
   }
 
-  componentWillReceiveProps({organisation}: OrganisationFormProps) {
+  componentWillReceiveProps({organisation}: OrganisationEditFormProps) {
     if (organisation) {
       this.setState({...organisation});
     }
@@ -31,10 +46,16 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
   // TODO: need check that slug can't contain whitespaces or other characters that aren't allowed
   // in a url. Also need to be unique
   render() {
-    const {name, slug} = this.state;
+    const {parent, name, slug} = this.state;
+    const {organisations} = this.props;
 
     const nameLabel = firstUpperTranslated('organisation name');
     const codeLabel = firstUpperTranslated('organisation slug');
+    const parentLabel = firstUpperTranslated('parent organisation');
+
+    const parentValue: uuid = parent ? parent.id : noOrganisation().id;
+
+    const organisationOptions: Organisation[] = [noOrganisation(), ...organisations];
 
     return (
       <form onSubmit={this.wrappedSubmit}>
@@ -55,6 +76,14 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
             value={slug.toString()}
             onChange={this.onChange}
           />
+          <SelectFieldInput
+            options={organisationOptions}
+            floatingLabelText={parentLabel}
+            hintText={parentLabel}
+            id="parent"
+            onChange={this.changeParent}
+            value={parentValue}
+          />
           <ButtonSave
             className="SaveButton"
             type="submit"
@@ -64,10 +93,13 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
     );
   }
 
+  changeParent = (event, index, value) =>
+    this.setState({parent: organisationById(value, this.props.organisations)})
+
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
 
   wrappedSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state);
+    this.props.onSubmit(filterParentPlaceholder(this.state));
   }
 }
