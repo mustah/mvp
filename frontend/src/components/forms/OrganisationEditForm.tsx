@@ -40,6 +40,7 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
       <form onSubmit={this.wrappedSubmit}>
         <Column className="EditOrganisationContainer">
           <TextFieldInput
+            autoComplete="off"
             floatingLabelText={nameLabel}
             hintText={nameLabel}
             id="name"
@@ -47,6 +48,7 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
             onChange={this.onChange}
           />
           <TextFieldInput
+            autoComplete="off"
             floatingLabelText={codeLabel}
             hintText={codeLabel}
             id="slug"
