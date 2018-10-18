@@ -40,8 +40,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
   public final List<PhysicalMeter> physicalMeters;
   @Singular
   public final List<Gateway> gateways;
-  @Singular
-  public final List<Measurement> latestReadouts;
   @Builder.Default
   public Location location = Location.UNKNOWN_LOCATION;
   @Nullable
@@ -78,10 +76,6 @@ public class LogicalMeter implements Identifiable<UUID>, Serializable {
     newPhysicalMeters.add(physicalMeter);
 
     return toBuilder().physicalMeters(newPhysicalMeters).build();
-  }
-
-  public LogicalMeter withMeasurements(List<Measurement> measurements) {
-    return toBuilder().latestReadouts(measurements).build();
   }
 
   @Nullable

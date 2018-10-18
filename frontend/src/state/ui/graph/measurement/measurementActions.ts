@@ -12,7 +12,6 @@ import {OnLogout} from '../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
-import {MeterDetails} from '../../../domain-models/meter-details/meterDetailsModels';
 import {
   SelectionTreeCity,
   SelectionTreeEntities,
@@ -90,8 +89,8 @@ const requestsPerQuantity = (
   customDateRange: Maybe<DateRange>,
 ): GroupedRequests => {
 
-  const meterByQuantity: Partial<{[quantity in Quantity]: Set<uuid>}> = {};
-  const cityByQuantity: Partial<{[quantity in Quantity]: Set<uuid>}> = {};
+  const meterByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
+  const cityByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
   quantities.forEach((quantity: Quantity) => {
     meterByQuantity[quantity] = new Set();
     cityByQuantity[quantity] = new Set();
@@ -227,37 +226,32 @@ interface MeasurementPagedApiResponse {
   data: NormalizedPaginated<Measurement>;
 }
 
-export const fetchMeasurementsPaged =
-  async (
-    meter: MeterDetails,
-    updateState: OnUpdate,
-    logout: OnLogout,
-  ): Promise<void> => {
-    try {
-      const measurementUrl: EncodedUriParameters = makeUrl(
-        EndPoints.measurementsPaged,
-        `sort=created,desc&sort=quantity,asc&logicalMeterId=${meter.id}&size=${(50 * meter.measurements.length)}`,
-      );
-      const {data}: MeasurementPagedApiResponse = await restClient.get(measurementUrl);
+export const fetchMeasurementsPaged = async (id: uuid, updateState: OnUpdate, logout: OnLogout): Promise<void> => {
+  try {
+    const measurementUrl: EncodedUriParameters = makeUrl(
+      EndPoints.measurementsPaged,
+      `sort=created,desc&sort=quantity,asc&logicalMeterId=${id}&size=300`,
+    );
+    const {data}: MeasurementPagedApiResponse = await restClient.get(measurementUrl);
 
+    updateState({
+      ...initialMeterMeasurementsState,
+      measurementPages: measurementDataFormatter(data),
+    });
+  } catch (error) {
+    if (error instanceof InvalidToken) {
+      await logout(error);
+    } else if (wasRequestCanceled(error)) {
+      return;
+    } else if (isTimeoutError(error)) {
+      updateState({...initialMeterMeasurementsState, error: Maybe.maybe(requestTimeout())});
+    } else if (!error.response) {
+      updateState({...initialMeterMeasurementsState, error: Maybe.maybe(noInternetConnection())});
+    } else {
       updateState({
         ...initialMeterMeasurementsState,
-        measurementPages: measurementDataFormatter(data),
+        error: Maybe.maybe(responseMessageOrFallback(error.response)),
       });
-    } catch (error) {
-      if (error instanceof InvalidToken) {
-        await logout(error);
-      } else if (wasRequestCanceled(error)) {
-        return;
-      } else if (isTimeoutError(error)) {
-        updateState({...initialMeterMeasurementsState, error: Maybe.maybe(requestTimeout())});
-      } else if (!error.response) {
-        updateState({...initialMeterMeasurementsState, error: Maybe.maybe(noInternetConnection())});
-      } else {
-        updateState({
-          ...initialMeterMeasurementsState,
-          error: Maybe.maybe(responseMessageOrFallback(error.response)),
-        });
-      }
     }
-  };
+  }
+};

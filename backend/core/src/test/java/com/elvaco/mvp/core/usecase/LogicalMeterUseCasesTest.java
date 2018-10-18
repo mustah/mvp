@@ -260,11 +260,7 @@ public class LogicalMeterUseCasesTest {
     AuthenticatedUser authenticatedUser,
     List<LogicalMeter> logicalMeters
   ) {
-    return new LogicalMeterUseCases(
-      authenticatedUser,
-      new MockLogicalMeters(logicalMeters),
-      null
-    );
+    return new LogicalMeterUseCases(authenticatedUser, new MockLogicalMeters(logicalMeters));
   }
 }
 

@@ -3,13 +3,13 @@ import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../../components/dates/dateModels';
-import {Medium} from '../../../ui/graph/measurement/measurementModels';
 import {momentFrom} from '../../../../helpers/dateHelpers';
 import {makeApiParametersOf} from '../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {EncodedUriParameters, IdNamed, Status, toIdNamed, uuid} from '../../../../types/Types';
+import {Medium} from '../../../ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {Normalized, NormalizedState} from '../../domainModels';
 import {domainModelsGetEntitiesSuccess, domainModelsRequest} from '../../domainModelsActions';
@@ -68,7 +68,6 @@ describe('meterDetailsApiActions', () => {
       facility: 'fac123',
       medium: Medium.districtHeating,
       manufacturer: 'man123',
-      measurements: [],
       statusChangelog: [],
       gatewaySerial: 'gatser123',
       gateway: {

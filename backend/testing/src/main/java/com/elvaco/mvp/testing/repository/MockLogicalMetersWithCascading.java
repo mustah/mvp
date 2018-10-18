@@ -30,7 +30,6 @@ public class MockLogicalMetersWithCascading extends MockLogicalMeters {
       .meterDefinition(logicalMeter.meterDefinition)
       .created(logicalMeter.created)
       .physicalMeters(savedPhysicalMeters)
-      .latestReadouts(logicalMeter.latestReadouts)
       .location(logicalMeter.location)
       .expectedMeasurementCount(logicalMeter.expectedMeasurementCount)
       .missingMeasurementCount(logicalMeter.missingMeasurementCount)

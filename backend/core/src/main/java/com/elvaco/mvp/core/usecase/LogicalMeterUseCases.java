@@ -1,13 +1,10 @@
 package com.elvaco.mvp.core.usecase;
 
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -15,30 +12,20 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Measurements;
-
 import lombok.RequiredArgsConstructor;
-
-import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class LogicalMeterUseCases {
 
   private final AuthenticatedUser currentUser;
   private final LogicalMeters logicalMeters;
-  private final Measurements measurements;
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
     return logicalMeters.findAllBy(parameters.ensureOrganisation(currentUser));
   }
 
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
-    return logicalMeters.findAllWithDetails(parameters.ensureOrganisation(currentUser)).stream()
-      .map(meter -> parameters.getAsZonedDateTime(BEFORE)
-        .map(beforeTime -> withLatestReadouts(meter, beforeTime))
-        .orElse(meter))
-      .collect(toList());
+    return logicalMeters.findAllWithDetails(parameters.ensureOrganisation(currentUser));
   }
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
@@ -52,14 +39,6 @@ public class LogicalMeterUseCases {
     throw new Unauthorized(
       "User '" + currentUser.getUsername() + "' is not allowed to create this meter."
     );
-  }
-
-  public Optional<LogicalMeter> findBy(RequestParameters parameters) {
-    Optional<LogicalMeter> meter = logicalMeters.findBy(parameters.ensureOrganisation(currentUser));
-
-    return parameters.getAsZonedDateTime(BEFORE)
-      .map(beforeTime -> meter.map(m -> withLatestReadouts(m, beforeTime)))
-      .orElse(meter);
   }
 
   public Optional<LogicalMeter> findBy(UUID organisationId, String externalId) {
@@ -98,32 +77,11 @@ public class LogicalMeterUseCases {
   }
 
   public Optional<UUID> effectiveOrganisationId(UUID logicalMeterId) {
-    if (!currentUser.isSuperAdmin()) {
+    if (currentUser.isSuperAdmin()) {
+      return logicalMeters.findById(logicalMeterId).map(lm -> lm.organisationId);
+    } else {
       return Optional.of(currentUser.getOrganisationId());
     }
-    return logicalMeters
-      .findById(logicalMeterId)
-      .map(lm -> lm.organisationId);
-  }
-
-  private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter, ZonedDateTime before) {
-    return logicalMeter.activePhysicalMeter()
-      .map(pm -> pm.id)
-      .map(id -> findLatestMeasurements(logicalMeter, before, id))
-      .map(logicalMeter::withMeasurements)
-      .orElse(logicalMeter);
-  }
-
-  private List<Measurement> findLatestMeasurements(
-    LogicalMeter logicalMeter,
-    ZonedDateTime before,
-    UUID physicalMeterId
-  ) {
-    return logicalMeter.getQuantities().stream()
-      .map(quantity -> measurements.findLatestReadout(physicalMeterId, before, quantity)
-        .orElse(null))
-      .filter(Objects::nonNull)
-      .collect(toList());
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

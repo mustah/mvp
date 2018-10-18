@@ -109,20 +109,18 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
     this.state = {...initialMeterMeasurementsState};
   }
 
-  updateState = (state: MeterMeasurementsState) => this.setState({...state});
-
   async componentDidMount() {
-    const {meter, logout} = this.props;
+    const {meter: {id}, logout} = this.props;
 
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(meter, this.updateState, logout);
+    await fetchMeasurementsPaged(id, this.updateState, logout);
   }
 
-  async componentWillReceiveProps({meter, logout}: Props) {
+  async componentWillReceiveProps({meter: {id}, logout}: Props) {
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(meter, this.updateState, logout);
+    await fetchMeasurementsPaged(id, this.updateState, logout);
   }
 
   render() {
@@ -144,6 +142,8 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
 
     return <MeasurementsTableComponent {...wrapperProps}/>;
   }
+
+  updateState = (state: MeterMeasurementsState) => this.setState({...state});
 }
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
