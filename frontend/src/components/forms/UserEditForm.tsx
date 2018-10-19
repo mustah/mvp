@@ -102,6 +102,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             floatingLabelText={organisationLabel}
             hintText={organisationLabel}
             id="organisation"
+            multiple={false}
             onChange={this.changeOrganisation}
             value={organisation.id}
             disabled={isEditSelf}
@@ -121,6 +122,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             floatingLabelText={languageLabel}
             hintText={languageLabel}
             id="language"
+            multiple={false}
             onChange={this.changeLanguage}
             value={language}
           />

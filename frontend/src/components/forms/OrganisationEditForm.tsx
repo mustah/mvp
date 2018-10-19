@@ -73,6 +73,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
             floatingLabelText={parentLabel}
             hintText={parentLabel}
             id="parent"
+            multiple={false}
             onChange={this.changeParent}
             value={parentId}
           />
