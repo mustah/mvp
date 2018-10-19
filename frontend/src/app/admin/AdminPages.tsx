@@ -9,7 +9,7 @@ import {UserEditContainer} from '../../usecases/administration/containers/UserEd
 import {routes} from '../routes';
 
 const OrganisationsPage = superAdminIsAuthenticated(Organisations);
-const OrganisationAddPage = superAdminIsAuthenticated(OrganisationEditContainer);
+const OrganisationEditPage = superAdminIsAuthenticated(OrganisationEditContainer);
 
 export const AdminPages = () => (
   <Switch>
@@ -18,7 +18,8 @@ export const AdminPages = () => (
     <Route exact={true} path={routes.adminUsersAdd} component={UserAddContainer}/>
     <Route exact={true} path={`${routes.adminUsersModify}/:userId`} component={UserEditContainer}/>
     <Route exact={true} path={routes.adminOrganisations} component={OrganisationsPage}/>
-    <Route exact={true} path={routes.adminOrganisationsAdd} component={OrganisationAddPage}/>
+    <Route exact={true} path={routes.adminOrganisationsAdd} component={OrganisationEditPage}/>
+    <Route exact={true} path={`${routes.adminOrganisationsModify}/:organisationId`} component={OrganisationEditPage}/>
     <Redirect to={routes.admin}/>
   </Switch>
 );

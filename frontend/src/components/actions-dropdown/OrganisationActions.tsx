@@ -11,8 +11,7 @@ interface Props {
   confirmDelete: OnClickWithId;
 }
 
-export const UserActionsDropdown = ({id, confirmDelete}: Props) => {
-
+export const OrganisationActions = ({id, confirmDelete}: Props) => {
   const openAlert = () => confirmDelete(id);
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
@@ -20,11 +19,16 @@ export const UserActionsDropdown = ({id, confirmDelete}: Props) => {
       onClick();
       openAlert();
     };
-    return [(
-      <Link to={`${routes.adminUsersModify}/${id}`} className="link" key={`0-${id}`}>
-        <ActionMenuItem name={translate('edit user')} onClick={onClick}/>
-      </Link>),
-      <ActionMenuItem name={translate('delete user')} onClick={onClickDelete} key={`1-${id}`}/>,
+
+    return [
+      (
+        <Link to={`${routes.adminOrganisationsModify}/${id}`} className="link" key={`edit-${id}`}>
+          <ActionMenuItem name={translate('edit organisation')} onClick={onClick}/>
+        </Link>
+      ),
+      (
+        <ActionMenuItem name={translate('delete organisation')} onClick={onClickDelete} key={`delete-${id}`}/>
+      ),
     ];
   };
 

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {Link} from 'react-router-dom';
+import {routes} from '../../app/routes';
 import {translate} from '../../services/translationService';
 import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../types/Types';
 import {ActionMenuItem} from './ActionMenuItem';
@@ -9,7 +11,7 @@ interface Props {
   confirmDelete: OnClickWithId;
 }
 
-export const OrganisationActionsDropdown = ({id, confirmDelete}: Props) => {
+export const UserActions = ({id, confirmDelete}: Props) => {
 
   const openAlert = () => confirmDelete(id);
 
@@ -20,7 +22,12 @@ export const OrganisationActionsDropdown = ({id, confirmDelete}: Props) => {
     };
     return [
       (
-        <ActionMenuItem name={translate('delete organisation')} onClick={onClickDelete} key={`1-${id}`}/>
+        <Link to={`${routes.adminUsersModify}/${id}`} className="link" key={`edit-${id}`}>
+          <ActionMenuItem name={translate('edit user')} onClick={onClick}/>
+        </Link>
+      ),
+      (
+        <ActionMenuItem name={translate('delete user')} onClick={onClickDelete} key={`delete-${id}`}/>
       ),
     ];
   };

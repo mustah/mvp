@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-10-18 10:34+0200\n"
+"POT-Creation-Date: 2018-10-19 09:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,6 +22,9 @@ msgstr "synka"
 
 msgid "add to report"
 msgstr "lägg till i rapport"
+
+msgid "edit organisation"
+msgstr "redigera organisation"
 
 msgid "delete organisation"
 msgstr "ta bort organisation"
@@ -316,6 +319,12 @@ msgstr "skapade organisationen {{name}} ({{slug}})"
 
 msgid "failed to create organisation: {{error}}"
 msgstr "misslyckades skapa organisationen: {{error}}"
+
+msgid "successfully updated the organisation {{name}} ({{slug}})"
+msgstr "lyckades uppdatera organisationen {{name}} ({{slug}})"
+
+msgid "failed to update organisation: {{error}}"
+msgstr "misslyckades med att uppdatera organisation: {{error}}"
 
 msgid "successfully created the user {{name}} ({{email}})"
 msgstr "skapade användaren {{name}} ({{email}})"

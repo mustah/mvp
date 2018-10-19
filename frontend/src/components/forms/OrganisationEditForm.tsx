@@ -9,16 +9,17 @@ import {TextFieldInput} from '../inputs/InputText';
 import {Column} from '../layouts/column/Column';
 import './OrganisationEditForm.scss';
 
-const organisationById = (organisationId: uuid, organisations: Organisation[]) =>
+const organisationById = (organisationId: uuid, organisations: Organisation[]): Organisation =>
   organisationId === noOrganisation().id
     ? noOrganisation()
-    : organisations.find(({id}) => id === organisationId);
+    : organisations.find(({id}) => id === organisationId)!;
 
 interface OrganisationEditFormProps {
   addOrganisation: CallbackOfData;
   addSubOrganisation: CallbackOfDataAndUrlParameters;
   organisation?: Organisation;
   organisations: Organisation[];
+  updateOrganisation: CallbackOfData;
 }
 
 type State = Overwrite<Organisation, {id?: uuid}>;
@@ -92,14 +93,18 @@ export class OrganisationEditForm extends React.Component<OrganisationEditFormPr
   wrappedSubmit = (event) => {
     event.preventDefault();
 
-    const parentId: uuid | undefined = this.state.parent ? this.state.parent.id : undefined;
-    const withoutParent: State = {...this.state};
-    delete withoutParent.parent;
-
-    if (parentId && parentId !== noOrganisation().id) {
-      this.props.addSubOrganisation(withoutParent, parentId);
+    if (this.state.id) {
+      this.props.updateOrganisation(this.state);
     } else {
-      this.props.addOrganisation(withoutParent);
+      const parentId: uuid | undefined = this.state.parent ? this.state.parent.id : undefined;
+      const withoutParent: State = {...this.state};
+      delete withoutParent.parent;
+
+      if (parentId && parentId !== noOrganisation().id) {
+        this.props.addSubOrganisation(withoutParent, parentId);
+      } else {
+        this.props.addOrganisation(withoutParent);
+      }
     }
   }
 }

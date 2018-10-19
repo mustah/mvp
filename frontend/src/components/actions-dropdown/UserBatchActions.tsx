@@ -7,13 +7,13 @@ import {ActionMenuItem} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 import './ActionsDropdown.scss';
 
-export const OrganisationsActionsDropdown = () => {
+export const UserBatchActions = () => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) =>
     [(
-      <Link to={routes.adminOrganisationsAdd} className="link" key={'add organisation'}>
-        <ActionMenuItem name={translate('add organisation')} onClick={onClick}/>
-      </Link>),
+       <Link to={routes.adminUsersAdd} className="link" key={'add user'}>
+         <ActionMenuItem name={translate('add user')} onClick={onClick}/>
+       </Link>),
     ];
 
   return (<ActionsDropdown className="ActionsDropdown-Admin" renderPopoverContent={renderPopoverContent}/>);

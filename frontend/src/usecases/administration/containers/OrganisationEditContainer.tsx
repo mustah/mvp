@@ -1,6 +1,7 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
@@ -18,10 +19,21 @@ import {
   addOrganisation,
   addSubOrganisation,
   clearOrganisationErrors,
-  fetchOrganisations
+  fetchOrganisations,
+  updateOrganisation
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {CallbackOfData, CallbackOfDataAndUrlParameters, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
+import {
+  CallbackOfData,
+  CallbackOfDataAndUrlParameters,
+  ClearError,
+  ErrorResponse,
+  Fetch,
+  uuid
+} from '../../../types/Types';
+
+const organisationByIdIfExisting = (organisationId: uuid, organisations: Organisation[]): Organisation | undefined =>
+  organisations.find(({id}) => id === organisationId);
 
 interface StateToProps {
   organisations: Organisation[];
@@ -34,9 +46,10 @@ interface DispatchToProps {
   addSubOrganisation: CallbackOfDataAndUrlParameters;
   fetchOrganisations: Fetch;
   clearError: ClearError;
+  updateOrganisation: CallbackOfData;
 }
 
-type OwnProps = InjectedAuthRouterProps;
+type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid}>;
 type Props = OwnProps & StateToProps & DispatchToProps;
 
 class OrganisationEdit extends React.Component<Props, {}> {
@@ -50,7 +63,17 @@ class OrganisationEdit extends React.Component<Props, {}> {
   }
 
   render() {
-    const {addOrganisation, addSubOrganisation, organisations, isFetching, error, clearError} = this.props;
+    const {
+      addOrganisation,
+      addSubOrganisation,
+      organisations,
+      isFetching,
+      error,
+      clearError,
+      match: {params: {organisationId}},
+      updateOrganisation,
+    } = this.props;
+
     return (
       <AdminPageComponent>
         <PageTitle>
@@ -64,6 +87,8 @@ class OrganisationEdit extends React.Component<Props, {}> {
                 addOrganisation={addOrganisation}
                 addSubOrganisation={addSubOrganisation}
                 organisations={organisations}
+                organisation={organisationByIdIfExisting(organisationId, organisations)}
+                updateOrganisation={updateOrganisation}
               />
             </Loader>
           </WrapperIndent>
@@ -82,6 +107,7 @@ const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): Stat
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addOrganisation,
   addSubOrganisation,
+  updateOrganisation,
   fetchOrganisations,
   clearError: clearOrganisationErrors,
 }, dispatch);
