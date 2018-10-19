@@ -9,11 +9,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
@@ -40,6 +42,13 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
   @JoinColumn(name = "parent_id")
   @Audited(modifiedColumnName = "parent_id_mod")
   public OrganisationEntity parent;
+
+  @OneToOne
+  @JoinTable(
+    name = "organisation_user_selection",
+    joinColumns = @JoinColumn(name = "organisation_id", referencedColumnName = "id")
+  )
+  public UserSelectionEntity selection;
 
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
   public Set<UserEntity> users = new HashSet<>();
