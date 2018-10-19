@@ -26,16 +26,15 @@ export const Table = ({result, entities, children, className}: TableProps) => {
   const columns = Array.isArray(children) ? children : [children];
 
   const tableHeaders = columns.map((
-    column: React.ReactElement<TableColumnProps>,
+    {props: {header}}: React.ReactElement<TableColumnProps>,
     index: number,
   ) => {
-    const {header} = column.props;
     const headerProps: TableHeadProps = {...header.props, key: `${index}`};
     return React.cloneElement(header, headerProps);
   });
 
   const cellRenderFunctions: RenderCellCallback[] =
-    columns.map((column) => column.props.renderCell);
+    columns.map(({props: {renderCell}}) => renderCell);
 
   const renderCell = (onRenderCell: RenderCellCallback, id: uuid, index: number) => {
     const item = entities[id];

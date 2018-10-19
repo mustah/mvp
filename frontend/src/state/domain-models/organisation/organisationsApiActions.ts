@@ -2,7 +2,7 @@ import {Dispatch} from 'react-redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {ErrorResponse} from '../../../types/Types';
+import {CallbackOfData, CallbackOfDataAndUrlParameters, ErrorResponse, uuid} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
   clearError,
@@ -10,8 +10,9 @@ import {
   fetchEntityIfNeeded,
   fetchIfNeeded,
   postRequest,
+  postRequestToUrl
 } from '../domainModelsActions';
-import {Organisation} from './organisationModels';
+import {Organisation, OrganisationWithoutId} from './organisationModels';
 import {organisationsDataFormatter} from './organisationSchema';
 
 export const clearOrganisationErrors = clearError(EndPoints.organisations);
@@ -42,7 +43,7 @@ export const deleteOrganisation = deleteRequest<Organisation>(EndPoints.organisa
   },
 );
 
-export const addOrganisation = postRequest<Organisation>(EndPoints.organisations, {
+const organisationCallbacks = {
   afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(
       firstUpperTranslated(
@@ -57,4 +58,14 @@ export const addOrganisation = postRequest<Organisation>(EndPoints.organisations
       {error: message},
     )));
   },
-});
+};
+
+export const addOrganisation: CallbackOfData =
+  postRequest<OrganisationWithoutId>(EndPoints.organisations, organisationCallbacks);
+
+export const addSubOrganisation: CallbackOfDataAndUrlParameters =
+  postRequestToUrl<OrganisationWithoutId, uuid>(
+    EndPoints.organisations,
+    organisationCallbacks,
+    (parentId: uuid) => `${EndPoints.organisations}/${parentId}/sub-organisations`
+  );

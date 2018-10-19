@@ -23,6 +23,9 @@ export type ClearError = () => void;
 export type FetchPaginated = (page: number, requestModel?: string) => void;
 export type ClearErrorPaginated = (payload: PageNumbered) => void;
 
+export type CallbackOfData = (requestData: any) => Dispatch<any>;
+export type CallbackOfDataAndUrlParameters = (requestData: any, urlFormattingParameters: any) => any;
+
 export type Predicate<T> = (value: T) => boolean;
 
 export type ItemOrArray<T> = T | T[];

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-09-26 13:37+0200\n"
+"POT-Creation-Date: 2018-10-18 10:34+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -86,9 +86,6 @@ msgstr "är du säker på att du vill ta bort detta objekt"
 msgid "all"
 msgstr "alla"
 
-msgid "unknown"
-msgstr "okänd"
-
 msgid "version"
 msgstr "version"
 
@@ -97,6 +94,9 @@ msgstr "organisationsnamn"
 
 msgid "organisation slug"
 msgstr "organisationskod"
+
+msgid "parent organisation"
+msgstr "huvudorganisation"
 
 msgid "name"
 msgstr "namn"
@@ -131,8 +131,8 @@ msgstr "mätvärde saknas"
 msgid "other"
 msgstr "övriga"
 
-msgid "ok"
-msgstr "ok"
+msgid "yes"
+msgstr "ja"
 
 msgid "all timestamps are displayed in UTC+1"
 msgstr "alla tider visas i UTC+1"
@@ -142,6 +142,9 @@ msgstr "lista"
 
 msgid "map"
 msgstr "karta"
+
+msgid "unknown"
+msgstr "okänd"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -266,6 +269,15 @@ msgstr "Energy return"
 msgid "Reactive energy short"
 msgstr "Reactive energy"
 
+msgid "close"
+msgstr "close"
+
+msgid "no"
+msgstr "nej"
+
+msgid "ok"
+msgstr "ok"
+
 msgid "error"
 msgstr "fel"
 
@@ -289,6 +301,9 @@ msgstr "du har ingen internetuppkoppling"
 msgid ""
 "looks like the server is taking to long to respond, please try again in soon"
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
+
+msgid "no parent organisation"
+msgstr "ingen huvudorganisation"
 
 msgid "successfully deleted the organisation {{name}}"
 msgstr "lyckades ta bort organisationen {{name}}"
@@ -474,15 +489,6 @@ msgstr "mätaren uppdateras snart"
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
-msgid "yes"
-msgstr "ja"
-
-msgid "no"
-msgstr "nej"
-
-msgid "close"
-msgstr "close"
-
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} av {{count}}"
@@ -502,6 +508,10 @@ msgstr "adresser"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "mätare"
+
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "larm"
 
 msgctxt "°plural"
 msgid "{{count}} meter of your selection, are not displayed in the map°"
@@ -525,9 +535,8 @@ msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
-msgctxt "°plural"
-msgid "alarm°"
-msgstr "larm"
+#~ msgid "none"
+#~ msgstr "ingen"
 
 #~ msgid "inside temperature"
 #~ msgstr "temp. inomhus"
@@ -549,5 +558,3 @@ msgstr "larm"
 
 #~ msgid "no data found for selected meters during chosen interval"
 #~ msgstr "ingen data finns för valda mätare under tidsperioden"
-
-

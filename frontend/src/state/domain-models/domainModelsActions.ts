@@ -20,8 +20,10 @@ import {DomainModelsState, Normalized, NormalizedState, RequestType} from './dom
 
 type ActionTypeFactory = (endPoint: EndPoints) => string;
 
-const domainModelsSuccess = (requestType: RequestType) => (endPoint: EndPoints) =>
-  `DOMAIN_MODELS_${requestType}_SUCCESS${endPoint}`;
+const domainModelsSuccess =
+  (requestType: RequestType) =>
+    (endPoint: EndPoints) =>
+      `DOMAIN_MODELS_${requestType}_SUCCESS${endPoint}`;
 
 export const domainModelsRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
 export const domainModelsFailure = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
@@ -174,48 +176,57 @@ export const fetchEntityIfNeeded = <T extends Identifiable>(
       }
     };
 
-export const postRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) => {
-  const requestFunc = (requestData: T) => restClient.post(makeUrl(endPoint), requestData);
-
-  return (requestData: T) =>
+export const postRequest = <T>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>
+) =>
+  (requestData: T) =>
     (dispatch) =>
       asyncRequest<T, T>({
         ...postRequestOf<T>(endPoint),
-        requestFunc,
+        requestFunc: (requestData: T) => restClient.post(endPoint, requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
       });
-};
 
-export const putRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) => {
-  const requestFunc = (requestData: T) => restClient.put(makeUrl(endPoint), requestData);
+export const postRequestToUrl = <T, Y>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>,
+  urlFormatter: (parameters: Y) => string
+) =>
+  (requestData: T, urlFormattingParameters: Y) =>
+    (dispatch) =>
+      asyncRequest<T, T>({
+        ...postRequestOf<T>(endPoint),
+        requestFunc: (requestData: T) => restClient.post(urlFormatter(urlFormattingParameters), requestData),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
 
-  return (requestData: T) =>
+export const putRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) =>
+  (requestData: T) =>
     (dispatch) =>
       asyncRequest<T, T>({
         ...putRequestOf<T>(endPoint),
-        requestFunc,
+        requestFunc: (requestData: T) => restClient.put(endPoint, requestData),
         requestData,
         ...requestCallbacks,
         dispatch,
       });
-};
 
-export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) => {
-  const requestFunc = (requestData: uuid) =>
-    restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
-
-  return (requestData: uuid) =>
+export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) =>
+  (requestData: uuid) =>
     (dispatch) =>
       asyncRequest<uuid, T>({
         ...deleteRequestOf<T>(endPoint),
-        requestFunc,
+        requestFunc: (requestData: uuid) =>
+          restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`)),
         requestData,
         ...requestCallbacks,
         dispatch,
       });
-};
 
 const makeRequestActionsOf = <T>(
   endPoint: EndPoints,

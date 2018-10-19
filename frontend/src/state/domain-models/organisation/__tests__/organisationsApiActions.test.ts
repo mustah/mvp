@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
+import {Overwrite} from 'react-redux-typescript';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {idGenerator} from '../../../../helpers/idGenerator';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
@@ -9,8 +11,8 @@ import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageAc
 import {DomainModelsState} from '../../domainModels';
 import {postRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
-import {Organisation} from '../organisationModels';
-import {addOrganisation} from '../organisationsApiActions';
+import {Organisation, OrganisationWithoutId} from '../organisationModels';
+import {addOrganisation, addSubOrganisation} from '../organisationsApiActions';
 
 const configureMockStore = configureStore([thunk]);
 
@@ -41,7 +43,7 @@ describe('organisationsApiActions', () => {
     mockRestClient.reset();
   });
 
-  describe('add new organisation', () => {
+  describe('addOrganisation', () => {
 
     const newOrganisation: Partial<Organisation> = {
       name: 'Hällesåkers IF',
@@ -79,6 +81,41 @@ describe('organisationsApiActions', () => {
         showFailMessage(`Failed to create organisation: ${errorResponse.message}`),
       ]);
     });
+  });
+
+  describe('addSubOrganisation', () => {
+
+    type UnsavedOrganisationWithParent = Overwrite<OrganisationWithoutId, {parent: Organisation}>;
+
+    const newSubOrganisation: UnsavedOrganisationWithParent = {
+      name: 'Hällesåkers IF',
+      slug: 'HIF',
+      parent: {
+        name: 'Höganäs BK',
+        slug: 'HBK',
+        id: idGenerator.uuid(),
+      },
+    };
+    const returnedOrganisation: Organisation = {...newSubOrganisation, id: 1};
+
+    const postSubOrganisationWithResponseOk = async (organisation: UnsavedOrganisationWithParent) => {
+      mockRestClient.onPost(`${EndPoints.organisations}/${organisation.parent.id}/sub-organisations`, organisation)
+        .reply(200, returnedOrganisation);
+      return store.dispatch(addSubOrganisation(organisation, organisation.parent.id));
+    };
+
+    it('sends a post request to backend and get a user with an id back', async () => {
+      await postSubOrganisationWithResponseOk(newSubOrganisation);
+
+      const {name, slug} = returnedOrganisation;
+
+      expect(store.getActions()).toEqual([
+        createOrganisation.request(),
+        createOrganisation.success(returnedOrganisation),
+        showSuccessMessage(`Successfully created the organisation ${name} (${slug})`),
+      ]);
+    });
+
   });
 
 });

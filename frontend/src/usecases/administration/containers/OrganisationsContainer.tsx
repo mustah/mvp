@@ -23,6 +23,10 @@ import {
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {ClearError, ErrorResponse, Fetch, OnClickWithId, uuid} from '../../../types/Types';
 
+const renderParentOrganisation = ({parent}: Organisation) => parent ? parent.name : '';
+const renderName = ({name}: Organisation) => name;
+const renderSlug = ({slug}: Organisation) => slug;
+
 interface StateToProps {
   organisations: DomainModel<Organisation>;
   isFetching: boolean;
@@ -62,8 +66,6 @@ class OrganisationsComponent extends React.Component<Props, State> {
       clearError,
     } = this.props;
 
-    const renderName = ({name}: Organisation) => name;
-    const renderSlug = ({slug}: Organisation) => slug;
     const renderActionDropdown = ({id}: Organisation) =>
       <OrganisationActionsDropdown confirmDelete={this.openDialog} id={id}/>;
 
@@ -73,10 +75,14 @@ class OrganisationsComponent extends React.Component<Props, State> {
           <RowRight>
             <OrganisationsActionsDropdown/>
           </RowRight>
-          <Table result={organisations.result} entities={organisations.entities}>
+          <Table {...organisations}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
               renderCell={renderName}
+            />
+            <TableColumn
+              header={<TableHead className="first">{translate('parent organisation')}</TableHead>}
+              renderCell={renderParentOrganisation}
             />
             <TableColumn
               header={<TableHead>{translate('slug')}</TableHead>}
