@@ -68,7 +68,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
 
-    ResponseEntity<Void> response = asSuperAdmin()
+    ResponseEntity<Void> response = asTestSuperAdmin()
       .post(
         "/missing/measurement/refresh",
         null,

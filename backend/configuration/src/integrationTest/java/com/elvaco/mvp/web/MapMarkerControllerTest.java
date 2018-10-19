@@ -73,7 +73,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void locationForMeterNotFound() {
     UUID logicalMeterId = randomUUID();
 
-    ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
+    ResponseEntity<ErrorMessageDto> response = asTestSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -85,7 +85,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void cannotFindMapMarkerWithNoLocation_HasEmptyBody() {
     UUID logicalMeterId = saveLogicalMeterWith(UNKNOWN_LOCATION, context().user).id;
 
-    ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
+    ResponseEntity<ErrorMessageDto> response = asTestSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -96,7 +96,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void findLogicalMeterWithLocation() {
     UUID logicalMeterId = saveLogicalMeter().id;
 
-    ResponseEntity<MapMarkerWithStatusDto> response = asSuperAdmin()
+    ResponseEntity<MapMarkerWithStatusDto> response = asTestSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerWithStatusDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -161,7 +161,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     savePhysicalMeterWith(logicalMeter, StatusType.OK);
 
-    ResponseEntity<MapMarkersDto> response = asSuperAdmin()
+    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
       .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

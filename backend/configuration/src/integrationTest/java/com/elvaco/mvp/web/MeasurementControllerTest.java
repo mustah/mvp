@@ -641,6 +641,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {
-    return asSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
+    return asTestSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
   }
 }

@@ -34,8 +34,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:it.properties")
@@ -91,6 +89,7 @@ public abstract class IntegrationTest {
   private int serverPort;
 
   private IntegrationTestFixtureContext context;
+
   private RestClient restClient;
 
   @After
@@ -138,10 +137,6 @@ public abstract class IntegrationTest {
       restClient = new RestClient(serverPort);
     }
     return restClient;
-  }
-
-  protected RestClient asSuperAdmin() {
-    return restAsUser(ELVACO_SUPER_ADMIN_USER);
   }
 
   protected RestClient asOtherUser() {

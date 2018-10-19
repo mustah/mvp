@@ -8,7 +8,13 @@ import lombok.experimental.UtilityClass;
 public class OrganisationEntityMapper {
 
   public static Organisation toDomainModel(OrganisationEntity entity) {
-    return new Organisation(entity.id, entity.name, entity.slug, entity.externalId);
+    return new Organisation(
+      entity.id,
+      entity.name,
+      entity.slug,
+      entity.externalId,
+      entity.parent != null ? toDomainModel(entity.parent) : null
+    );
   }
 
   public static OrganisationEntity toEntity(Organisation domainModel) {
@@ -16,7 +22,8 @@ public class OrganisationEntityMapper {
       domainModel.id,
       domainModel.name,
       domainModel.slug,
-      domainModel.externalId
+      domainModel.externalId,
+      domainModel.parent != null ? toEntity(domainModel.parent) : null
     );
   }
 }

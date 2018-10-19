@@ -32,14 +32,16 @@ public class OrganisationControllerTest extends IntegrationTest {
     );
 
   private Organisation wayneIndustries =
-    new Organisation(randomUUID(),
+    new Organisation(
+      randomUUID(),
       "Wayne Industries",
       "wayne-industries",
       "Wayne Industries"
-      );
+    );
 
   private Organisation theBeatles =
-    new Organisation(randomUUID(),
+    new Organisation(
+      randomUUID(),
       "The Beatles",
       "the-beatles",
       "The Beatles"
@@ -61,7 +63,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminFindsOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asSuperAdmin()
+    ResponseEntity<OrganisationDto> request = asTestSuperAdmin()
       .get("/organisations/" + secretService.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -98,7 +100,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminFindsAllOrganisations() {
-    ResponseEntity<List<OrganisationDto>> request = asSuperAdmin()
+    ResponseEntity<List<OrganisationDto>> request = asTestSuperAdmin()
       .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -126,7 +128,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void superAdminCanCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("Something borrowed", "something-blue");
-    ResponseEntity<OrganisationDto> response = asSuperAdmin()
+    ResponseEntity<OrganisationDto> response = asTestSuperAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -158,7 +160,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   public void superAdminCanUpdateOrganisation() {
     OrganisationDto requestModel = new OrganisationDto("OrganisationName", "org-slug");
 
-    ResponseEntity<OrganisationDto> response = asSuperAdmin()
+    ResponseEntity<OrganisationDto> response = asTestSuperAdmin()
       .post("/organisations", requestModel, OrganisationDto.class);
 
     OrganisationDto created = response.getBody();
@@ -167,9 +169,9 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     created.name = "NewName";
 
-    asSuperAdmin().put("/organisations", created, OrganisationDto.class);
+    asTestSuperAdmin().put("/organisations", created, OrganisationDto.class);
 
-    ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
+    ResponseEntity<OrganisationDto> updatedDto = asTestSuperAdmin()
       .get("/organisations/" + created.id, OrganisationDto.class);
 
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -196,7 +198,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserCannotUpdateOrganisation() {
     // arrange
-    ResponseEntity<OrganisationDto> original = asSuperAdmin()
+    ResponseEntity<OrganisationDto> original = asTestSuperAdmin()
       .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(original.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -211,7 +213,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     // assert
     assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
+    ResponseEntity<OrganisationDto> updatedDto = asTestSuperAdmin()
       .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(updatedDto.getBody().slug).isEqualTo(oldCode);
@@ -219,24 +221,24 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanDeleteOrganisation() {
-    ResponseEntity<OrganisationDto> exists = asSuperAdmin()
+    ResponseEntity<OrganisationDto> exists = asTestSuperAdmin()
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> deleted = asSuperAdmin()
+    ResponseEntity<OrganisationDto> deleted = asTestSuperAdmin()
       .delete("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> shouldBeDeleted = asSuperAdmin()
+    ResponseEntity<OrganisationDto> shouldBeDeleted = asTestSuperAdmin()
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
     assertThat(shouldBeDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void adminCannotDeleteOrganisation() {
-    ResponseEntity<OrganisationDto> exists = asSuperAdmin()
+    ResponseEntity<OrganisationDto> exists = asTestSuperAdmin()
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -244,14 +246,14 @@ public class OrganisationControllerTest extends IntegrationTest {
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
-    ResponseEntity<OrganisationDto> shouldStillExist = asSuperAdmin()
+    ResponseEntity<OrganisationDto> shouldStillExist = asTestSuperAdmin()
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(shouldStillExist.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   public void regularUserCannotDeleteOrganisation() {
-    ResponseEntity<OrganisationDto> exists = asSuperAdmin()
+    ResponseEntity<OrganisationDto> exists = asTestSuperAdmin()
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -259,7 +261,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
-    ResponseEntity<OrganisationDto> shouldStillExist = asSuperAdmin()
+    ResponseEntity<OrganisationDto> shouldStillExist = asTestSuperAdmin()
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(shouldStillExist.getStatusCode()).isEqualTo(HttpStatus.OK);
   }

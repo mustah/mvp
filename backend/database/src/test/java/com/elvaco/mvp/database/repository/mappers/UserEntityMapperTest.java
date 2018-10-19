@@ -13,7 +13,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.admin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.superAdmin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.user;
-import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,7 +74,12 @@ public class UserEntityMapperTest {
       "a@b.com",
       "letmein",
       Language.en,
-      ELVACO_ENTITY,
+      new OrganisationEntity(
+        randomUUID(),
+        "Elvaco",
+        "elvaco",
+        "Elvaco AB"
+      ),
       asList(user(), superAdmin())
     );
   }
