@@ -13,7 +13,10 @@ public class OrganisationEntityMapper {
       entity.name,
       entity.slug,
       entity.externalId,
-      entity.parent != null ? toDomainModel(entity.parent) : null
+      entity.parent != null ? toDomainModel(entity.parent) : null,
+      entity.selection != null
+        ? UserSelectionEntityMapper.toDomainModel(entity.selection)
+        : null
     );
   }
 
@@ -23,7 +26,10 @@ public class OrganisationEntityMapper {
       domainModel.name,
       domainModel.slug,
       domainModel.externalId,
-      domainModel.parent != null ? toEntity(domainModel.parent) : null
+      domainModel.parent != null ? toEntity(domainModel.parent) : null,
+      domainModel.selection != null
+        ? UserSelectionEntityMapper.toEntity(domainModel.selection)
+        : null
     );
   }
 }

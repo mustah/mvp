@@ -25,13 +25,16 @@ public class Organisation implements Identifiable<UUID>, Serializable {
   @Nullable
   public final Organisation parent;
 
+  @Nullable
+  public final UserSelection selection;
+
   public Organisation(
     UUID id,
     String name,
     String slug,
     String externalId
   ) {
-    this(id, name, slugify(slug), externalId, null);
+    this(id, name, slugify(slug), externalId, null, null);
   }
 
   @Override

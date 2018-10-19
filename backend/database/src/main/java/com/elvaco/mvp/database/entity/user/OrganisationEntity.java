@@ -59,13 +59,20 @@ public class OrganisationEntity extends IdentifiableType<UUID> {
     this.slug = slug;
     this.externalId = externalId;
     this.users = emptySet();
+    this.selection = null;
   }
 
   public OrganisationEntity(
-    UUID id, String name, String slug, String externalId, OrganisationEntity parent
+    UUID id,
+    String name,
+    String slug,
+    String externalId,
+    OrganisationEntity parent,
+    UserSelectionEntity selection
   ) {
     this(id, name, slug, externalId);
     this.parent = parent;
+    this.selection = selection;
   }
 
   @Override
