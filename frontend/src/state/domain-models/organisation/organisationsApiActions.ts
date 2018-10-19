@@ -2,7 +2,7 @@ import {Dispatch} from 'react-redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {CallbackOfData, CallbackOfDataAndUrlParameters, ErrorResponse, uuid} from '../../../types/Types';
+import {CallbackWithData, CallbackWithDataAndUrlParameters, ErrorResponse, uuid} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
   clearError,
@@ -61,17 +61,17 @@ const createOrganisationCallbacks = {
   },
 };
 
-export const addOrganisation: CallbackOfData =
+export const addOrganisation: CallbackWithData =
   postRequest<OrganisationWithoutId>(EndPoints.organisations, createOrganisationCallbacks);
 
-export const addSubOrganisation: CallbackOfDataAndUrlParameters =
+export const addSubOrganisation: CallbackWithDataAndUrlParameters =
   postRequestToUrl<OrganisationWithoutId, uuid>(
     EndPoints.organisations,
     createOrganisationCallbacks,
     (parentId: uuid) => `${EndPoints.organisations}/${parentId}/sub-organisations`
   );
 
-export const updateOrganisation: CallbackOfData =
+export const updateOrganisation: CallbackWithData =
   putRequest<Organisation>(
     EndPoints.organisations,
     {

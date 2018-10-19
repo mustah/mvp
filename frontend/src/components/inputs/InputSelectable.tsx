@@ -30,13 +30,16 @@ interface WrappedSelectFieldProps extends SelectFieldProps {
 
 const WrappedSelectField = (props: WrappedSelectFieldProps) => <SelectField {...props} />;
 
-export const SelectFieldInput = ({className, options, ...props}: SelectFieldInputProps) => (
-  <WrappedSelectField
-    className={classNames('SelectField', className)}
-    floatingLabelFocusStyle={floatingLabelFocusStyle}
-    underlineFocusStyle={underlineFocusStyle}
-    {...props}
-  >
-    {options.map(renderMenuItem)}
-  </WrappedSelectField>
-);
+export const SelectFieldInput = ({className, options, ...props}: SelectFieldInputProps) => {
+  const renderedItems = options.map(renderMenuItem);
+  return (
+    <WrappedSelectField
+      className={classNames('SelectField', className)}
+      floatingLabelFocusStyle={floatingLabelFocusStyle}
+      underlineFocusStyle={underlineFocusStyle}
+      {...props}
+    >
+      {renderedItems}
+    </WrappedSelectField>
+  );
+};

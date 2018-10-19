@@ -190,16 +190,16 @@ export const postRequest = <T>(
         dispatch,
       });
 
-export const postRequestToUrl = <T, Y>(
+export const postRequestToUrl = <T, P>(
   endPoint: EndPoints,
   requestCallbacks: RequestCallbacks<T>,
-  urlFormatter: (parameters: Y) => string
+  url: (parameters: P) => string
 ) =>
-  (requestData: T, urlFormattingParameters: Y) =>
+  (requestData: T, urlParameters: P) =>
     (dispatch) =>
       asyncRequest<T, T>({
         ...postRequestOf<T>(endPoint),
-        requestFunc: (requestData: T) => restClient.post(urlFormatter(urlFormattingParameters), requestData),
+        requestFunc: (requestData: T) => restClient.post(url(urlParameters), requestData),
         requestData,
         ...requestCallbacks,
         dispatch,

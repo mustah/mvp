@@ -24,8 +24,8 @@ import {
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {
-  CallbackOfData,
-  CallbackOfDataAndUrlParameters,
+  CallbackWithData,
+  CallbackWithDataAndUrlParameters,
   ClearError,
   ErrorResponse,
   Fetch,
@@ -42,11 +42,11 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  addOrganisation: CallbackOfData;
-  addSubOrganisation: CallbackOfDataAndUrlParameters;
+  addOrganisation: CallbackWithData;
+  addSubOrganisation: CallbackWithDataAndUrlParameters;
   fetchOrganisations: Fetch;
   clearError: ClearError;
-  updateOrganisation: CallbackOfData;
+  updateOrganisation: CallbackWithData;
 }
 
 type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid}>;

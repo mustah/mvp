@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
 import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
-import {CallbackOfData, CallbackOfDataAndUrlParameters, uuid} from '../../types/Types';
+import {CallbackWithData, CallbackWithDataAndUrlParameters, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
 import {TextFieldInput} from '../inputs/InputText';
@@ -14,24 +14,24 @@ const organisationById = (organisationId: uuid, organisations: Organisation[]): 
     ? noOrganisation()
     : organisations.find(({id}) => id === organisationId)!;
 
-interface OrganisationEditFormProps {
-  addOrganisation: CallbackOfData;
-  addSubOrganisation: CallbackOfDataAndUrlParameters;
+interface Props {
+  addOrganisation: CallbackWithData;
+  addSubOrganisation: CallbackWithDataAndUrlParameters;
   organisation?: Organisation;
   organisations: Organisation[];
-  updateOrganisation: CallbackOfData;
+  updateOrganisation: CallbackWithData;
 }
 
 type State = Overwrite<Organisation, {id?: uuid}>;
 
-export class OrganisationEditForm extends React.Component<OrganisationEditFormProps, State> {
+export class OrganisationEditForm extends React.Component<Props, State> {
 
-  constructor(props: OrganisationEditFormProps) {
+  constructor(props: Props) {
     super(props);
     this.state = {name: '', slug: '', parent: noOrganisation(), ...props.organisation};
   }
 
-  componentWillReceiveProps({organisation}: OrganisationEditFormProps) {
+  componentWillReceiveProps({organisation}: Props) {
     if (organisation) {
       this.setState({...organisation});
     }
@@ -45,7 +45,7 @@ export class OrganisationEditForm extends React.Component<OrganisationEditFormPr
     const codeLabel = firstUpperTranslated('organisation slug');
     const parentLabel = firstUpperTranslated('parent organisation');
 
-    const parentValue: uuid = parent ? parent.id : noOrganisation().id;
+    const parentId: uuid = parent ? parent.id : noOrganisation().id;
 
     const organisationOptions: Organisation[] = [noOrganisation(), ...organisations];
 
@@ -74,7 +74,7 @@ export class OrganisationEditForm extends React.Component<OrganisationEditFormPr
             hintText={parentLabel}
             id="parent"
             onChange={this.changeParent}
-            value={parentValue}
+            value={parentId}
           />
           <ButtonSave
             className="SaveButton"
