@@ -1,6 +1,7 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -94,20 +95,11 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public Optional<Measurement> findLatestReadout(
-    UUID meterId,
-    ZonedDateTime before,
-    Quantity quantity
-  ) {
-    throw new NotImplementedYet();
-  }
-
-  @Override
   public Optional<Measurement> firstForPhysicalMeterWithinDateRange(
     UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEqual
   ) {
     return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
-      .sorted((o1, o2) -> o1.created.compareTo(o2.created))
+      .sorted(Comparator.comparing(o -> o.created))
       .filter(measurement -> measurement.created.isAfter(after)
         && ((measurement.created.isBefore(beforeOrEqual)
                || measurement.created.isEqual(beforeOrEqual))))
@@ -129,5 +121,4 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   protected Measurement.Id generateId(Measurement entity) {
     return Measurement.idOf(entity.created, entity.quantity, entity.physicalMeter);
   }
-
 }

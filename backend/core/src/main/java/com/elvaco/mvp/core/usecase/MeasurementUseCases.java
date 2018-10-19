@@ -11,7 +11,6 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,11 +29,7 @@ public class MeasurementUseCases {
   }
 
   public Page<Measurement> findAllBy(UUID organisationId, UUID logicalMeterId, Pageable pageable) {
-    return measurements.findAllBy(
-      organisationId,
-      logicalMeterId,
-      pageable
-    );
+    return measurements.findAllBy(organisationId, logicalMeterId, pageable);
   }
 
   public List<MeasurementValue> averageForPeriod(

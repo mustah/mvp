@@ -55,16 +55,9 @@ public interface Measurements {
     Pageable pageable
   );
 
-  Optional<Measurement> findLatestReadout(
-    UUID physicalMeterId,
-    ZonedDateTime before,
-    Quantity quantity
-  );
-
   Optional<Measurement> firstForPhysicalMeterWithinDateRange(
     UUID physicalMeterId,
     ZonedDateTime after,
     ZonedDateTime beforeOrEqual
   );
-
 }

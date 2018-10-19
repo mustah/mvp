@@ -26,7 +26,6 @@ import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +48,8 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 @RequiredArgsConstructor
 @RestApi("/api/v1/measurements")
 public class MeasurementController {
+
+  private static final PageImpl<MeasurementDto> EMPTY_PAGE = new PageImpl<>(emptyList());
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
@@ -179,24 +180,18 @@ public class MeasurementController {
     @RequestParam UUID logicalMeterId,
     Pageable pageable
   ) {
-    Optional<UUID> organisationId = logicalMeterUseCases
-      .effectiveOrganisationId(logicalMeterId);
+    return logicalMeterUseCases.effectiveOrganisationId(logicalMeterId)
+      .map(findMeasurements(logicalMeterId, new PageableAdapter(pageable)))
+      .map(page -> new PageImpl<>(page.getContent(), pageable, page.getTotalElements()))
+      .orElse(EMPTY_PAGE);
+  }
 
-    if (!organisationId.isPresent()) {
-      return new PageImpl<>(emptyList());
-    }
-
-    Page<MeasurementDto> page = measurementUseCases.findAllBy(
-      organisationId.get(),
-      logicalMeterId,
-      new PageableAdapter(pageable)
-    ).map(MeasurementDtoMapper::toDto);
-
-    return new PageImpl<>(
-      page.getContent(),
-      pageable,
-      page.getTotalElements()
-    );
+  private Function<UUID, Page<MeasurementDto>> findMeasurements(
+    UUID logicalMeterId,
+    PageableAdapter pageable
+  ) {
+    return organisationId -> measurementUseCases.findAllBy(organisationId, logicalMeterId, pageable)
+      .map(MeasurementDtoMapper::toDto);
   }
 
   private List<MeasurementSeriesDto> measurementSeriesOf(
