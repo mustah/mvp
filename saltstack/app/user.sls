@@ -11,6 +11,9 @@ mvp_user:
     - home:  /home/elvaco
     - uid: 4000
     - gid: 4000
+    - groups:
+      - mvp
+      - docker
     - password: $1$1Nvnb.no$TfN/WL9yt8zfCD1.WDBBt/
     - hash_password: True
     - require:
