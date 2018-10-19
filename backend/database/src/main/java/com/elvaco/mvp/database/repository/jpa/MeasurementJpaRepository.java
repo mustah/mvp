@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -209,22 +208,6 @@ public interface MeasurementJpaRepository
     @Param("resolution") String resolution
   );
 
-  @Query(nativeQuery = true, value = "select "
-    + " physical_meter_id, created, quantity,"
-    + " unit_at(value, :unit) as value"
-    + " from measurement"
-    + " where physical_meter_id = :meter_id"
-    + " and quantity = (select id from quantity where quantity.name=:quantity)"
-    + " and created <= :before"
-    + " order by created desc"
-    + " limit 1")
-  Optional<MeasurementEntity> findLatestReadout(
-    @Param("meter_id") UUID meterId,
-    @Param("before") OffsetDateTime before,
-    @Param("quantity") String quantity,
-    @Param("unit") String unit
-  );
-
   @Query(nativeQuery = true, value = "select"
     + "     measurement.created,"
     + "     unit_at(measurement.value, quantity.unit) as value,"
@@ -309,5 +292,6 @@ public interface MeasurementJpaRepository
   Optional<MeasurementEntity> firstForPhysicalMeter(
     @Param("physical_meter_id") UUID logicalMeterId,
     @Param("from") ZonedDateTime after,
-    @Param("to") ZonedDateTime beforeOrEquals);
+    @Param("to") ZonedDateTime beforeOrEquals
+  );
 }

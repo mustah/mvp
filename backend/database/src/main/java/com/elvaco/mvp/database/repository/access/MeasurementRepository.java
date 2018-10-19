@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -25,7 +24,6 @@ import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
@@ -170,16 +168,18 @@ public class MeasurementRepository implements Measurements {
 
   @Override
   public Page<Measurement> findAllBy(UUID organisationId, UUID logicalMeterId, Pageable pageable) {
-    List<MeasurementEntity> measurementEntities = measurementJpaRepository.latestForMeter(
+    List<Measurement> measurements = measurementJpaRepository.latestForMeter(
       organisationId,
       logicalMeterId,
       pageable.getPageSize(),
       pageable.getOffset()
-    );
+    ).stream()
+      .map(MeasurementEntityMapper::toDomainModel)
+      .collect(toList());
 
     return new PageAdapter<>(
       new PageImpl<>(
-        measurementEntities.stream().map(MeasurementEntityMapper::toDomainModel).collect(toList()),
+        measurements,
         PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
         measurementJpaRepository.countMeasurementsForMeter(organisationId, logicalMeterId)
       )
@@ -187,24 +187,10 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Optional<Measurement> findLatestReadout(
-    UUID meterId,
-    ZonedDateTime before,
-    Quantity quantity
-  ) {
-    return measurementJpaRepository.findLatestReadout(
-      meterId,
-      before.toOffsetDateTime(),
-      quantity.name,
-      quantity.presentationUnit()
-    ).map(MeasurementEntityMapper::toDomainModel);
-  }
-
-  @Override
   public Optional<Measurement> firstForPhysicalMeterWithinDateRange(
     UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEquals
   ) {
-    return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId,after,beforeOrEquals)
+    return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId, after, beforeOrEquals)
       .map(MeasurementEntityMapper::toDomainModel);
   }
 
