@@ -63,7 +63,7 @@ deploy_{{module}}_db_config:
 
 download_{{module}}_image:
   docker_image.present:
-    - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
+    - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
     - require:
       - deploy_{{module}}_db_config
 
@@ -77,7 +77,7 @@ docker_{{module}}:
   docker_container.running:
     - name: {{module}}
     - user: mvp
-    - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
+    - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
     - detach: True
     - dns: 10.120.1.10
     - dns_search: elvaco.local
