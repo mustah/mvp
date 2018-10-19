@@ -1,3 +1,4 @@
+import {values} from 'lodash';
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
@@ -13,7 +14,8 @@ import {AdminPageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {getError} from '../../../state/domain-models/domainModelsSelectors';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {
   addOrganisation,
@@ -23,6 +25,8 @@ import {
   updateOrganisation
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
+import {clearUserSelectionErrors, fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
+import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {
   CallbackWithData,
   CallbackWithDataAndUrlParameters,
@@ -37,15 +41,20 @@ const organisationByIdIfExisting = (organisationId: uuid, organisations: Organis
 
 interface StateToProps {
   organisations: Organisation[];
-  isFetching: boolean;
-  error: Maybe<ErrorResponse>;
+  isFetchingOrganisations: boolean;
+  isFetchingUserSelections: boolean;
+  organisationsError: Maybe<ErrorResponse>;
+  userSelectionsError: Maybe<ErrorResponse>;
+  selections: ObjectsById<UserSelection>;
 }
 
 interface DispatchToProps {
   addOrganisation: CallbackWithData;
   addSubOrganisation: CallbackWithDataAndUrlParameters;
   fetchOrganisations: Fetch;
-  clearError: ClearError;
+  fetchUserSelections: Fetch;
+  clearOrganisationErrors: ClearError;
+  clearUserSelectionErrors: ClearError;
   updateOrganisation: CallbackWithData;
 }
 
@@ -56,10 +65,12 @@ class OrganisationEdit extends React.Component<Props, {}> {
 
   componentDidMount() {
     this.props.fetchOrganisations();
+    this.props.fetchUserSelections();
   }
 
-  componentWillReceiveProps({fetchOrganisations}: Props) {
+  componentWillReceiveProps({fetchOrganisations, fetchUserSelections}: Props) {
     fetchOrganisations();
+    fetchUserSelections();
   }
 
   render() {
@@ -67,29 +78,49 @@ class OrganisationEdit extends React.Component<Props, {}> {
       addOrganisation,
       addSubOrganisation,
       organisations,
-      isFetching,
-      error,
-      clearError,
+      isFetchingOrganisations,
+      isFetchingUserSelections,
+      organisationsError,
+      userSelectionsError,
+      clearOrganisationErrors,
+      clearUserSelectionErrors,
       match: {params: {organisationId}},
       updateOrganisation,
+      selections
     } = this.props;
+
+    const title: string =
+      organisationId
+        ? translate('edit organisation')
+        : translate('add organisation');
 
     return (
       <AdminPageComponent>
         <PageTitle>
-          {translate('add organisation')}
+          {title}
         </PageTitle>
 
         <Paper style={paperStyle}>
           <WrapperIndent>
-            <Loader isFetching={isFetching} error={error} clearError={clearError}>
-              <OrganisationEditForm
-                addOrganisation={addOrganisation}
-                addSubOrganisation={addSubOrganisation}
-                organisations={organisations}
-                organisation={organisationByIdIfExisting(organisationId, organisations)}
-                updateOrganisation={updateOrganisation}
-              />
+            <Loader
+              isFetching={isFetchingOrganisations}
+              error={organisationsError}
+              clearError={clearOrganisationErrors}
+            >
+              <Loader
+                isFetching={isFetchingUserSelections}
+                error={userSelectionsError}
+                clearError={clearUserSelectionErrors}
+              >
+                <OrganisationEditForm
+                  addOrganisation={addOrganisation}
+                  addSubOrganisation={addSubOrganisation}
+                  organisations={organisations}
+                  organisation={organisationByIdIfExisting(organisationId, organisations)}
+                  updateOrganisation={updateOrganisation}
+                  selections={values(selections)}
+                />
+              </Loader>
             </Loader>
           </WrapperIndent>
         </Paper>
@@ -98,10 +129,13 @@ class OrganisationEdit extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): StateToProps => ({
-  isFetching: organisations.isFetching,
-  error: getError(organisations),
+const mapStateToProps = ({auth, domainModels: {organisations, userSelections}}: RootState): StateToProps => ({
+  isFetchingOrganisations: organisations.isFetching,
+  isFetchingUserSelections: userSelections.isFetching,
+  organisationsError: getError(organisations),
+  userSelectionsError: getError(userSelections),
   organisations: getOrganisations(organisations),
+  selections: getEntitiesDomainModels(userSelections),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
@@ -109,7 +143,9 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addSubOrganisation,
   updateOrganisation,
   fetchOrganisations,
-  clearError: clearOrganisationErrors,
+  fetchUserSelections,
+  clearOrganisationErrors,
+  clearUserSelectionErrors,
 }, dispatch);
 
 export const OrganisationEditContainer =

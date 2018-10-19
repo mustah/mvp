@@ -9,19 +9,9 @@ import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
 import {emptyActionOf, ErrorResponse, payloadActionOf, uuid} from '../../types/Types';
 import {NormalizedState, SelectionItem} from '../domain-models/domainModels';
-import {
-  deleteRequest,
-  fetchIfNeeded,
-  postRequest,
-  putRequest,
-} from '../domain-models/domainModelsActions';
+import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
-import {
-  OldSelectionParameters,
-  ParameterName,
-  SelectionParameter,
-  UserSelection,
-} from './userSelectionModels';
+import {OldSelectionParameters, ParameterName, SelectionParameter, UserSelection} from './userSelectionModels';
 import {userSelectionsDataFormatter} from './userSelectionSchema';
 import {getUserSelection} from './userSelectionSelectors';
 
@@ -38,6 +28,8 @@ const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELEC
 
 export const resetSelection = emptyActionOf(RESET_SELECTION);
 export const selectPeriod = payloadActionOf<Period>(SELECT_PERIOD);
+
+export const clearUserSelectionErrors = clearError(EndPoints.userSelections);
 
 const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
 

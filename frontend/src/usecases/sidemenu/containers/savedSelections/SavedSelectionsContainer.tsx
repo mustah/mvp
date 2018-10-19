@@ -58,10 +58,10 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
   }
 
   render() {
-    const {isFetching, savedSelections, selectSavedSelection, selection} = this.props;
+    const {isFetching, savedSelections: {entities, result}, selectSavedSelection, selection} = this.props;
 
     const renderListItem = (id: uuid) => {
-      const item: UserSelection = savedSelections.entities[id];
+      const item: UserSelection = entities[id];
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
       const style: React.CSSProperties = item.id === selection.id
         ? listItemStyleSelected
@@ -87,8 +87,8 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
       );
     };
 
-    const listItems = savedSelections.result.length
-      ? savedSelections.result.map(renderListItem)
+    const listItems = result.length
+      ? result.map(renderListItem)
       : [(
            <LoadingListItem
              isFetching={isFetching}
