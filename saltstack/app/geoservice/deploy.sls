@@ -67,12 +67,6 @@ download_{{module}}_image:
     - require:
       - deploy_{{module}}_db_config
 
-shutdown_{{module}}_systemd:
-  service.dead:
-    - name: {{systemd_unit}}
-    - require:
-      - download_{{module}}_image
-
 docker_{{module}}:
   docker_container.running:
     - name: {{module}}
@@ -90,7 +84,7 @@ docker_{{module}}:
     - binds:
       - /opt/elvaco/{{module}}-current/config/:/app/config:ro
     - require:
-      - shutdown_{{module}}_systemd
+      - download_{{module}}_image
 
 {{module}}_version:
   grains.present:
