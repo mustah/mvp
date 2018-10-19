@@ -36,7 +36,6 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -214,14 +213,14 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterInPeriod() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newButterTemperatureMeasurement(butterMeter, date.minusHours(1));
-    newButterTemperatureMeasurement(butterMeter, date.plusHours(1));
+    newButterTemperatureMeasurement(butterMeter, date);
+    newButterTemperatureMeasurement(butterMeter, date.plusHours(2));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
         + "meters=" + butterMeter.logicalMeterId
         + "&after=" + date
-        + "&before=" + date.plusHours(2)
+        + "&before=" + date.plusHours(1)
         + "&resolution=hour");
 
     assertThat(contents).containsExactlyInAnyOrder(
@@ -231,7 +230,10 @@ public class MeasurementControllerTest extends IntegrationTest {
         "K",
         butterMeter.externalId,
         MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
-        singletonList(new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74))
+        asList(
+          new MeasurementValueDto(date.toInstant(), 558.74)
+        //to be fixed by MVP-799: new MeasurementValueDto(date.plusHours(1).toInstant(), null)
+        )
       ),
       new MeasurementSeriesDto(
         butterMeter.logicalMeterId.toString(),
@@ -284,7 +286,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "&meters=" + butterMeter.logicalMeterId.toString()
           + "&resolution=hour"
           + "&after=" + date
-          + "&before=" + date.plusHours(2));
+          + "&before=" + date.plusHours(1));
 
     assertThat(contents).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
@@ -294,8 +296,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         butterMeter.externalId,
         MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
-          new MeasurementValueDto(date.toInstant(), 558.74),
-          new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74)
+          new MeasurementValueDto(date.toInstant(), 558.74)
+        // to be fixed by MVP-799: new MeasurementValueDto(date.plusHours(1).toInstant(), null)
         )
       ),
       new MeasurementSeriesDto(
@@ -385,7 +387,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void consumptionSeriesIsDisplayedWithConsumptionValues() {
+  public void consumptionSeriesIsDisplayedWithConsumptionValuesAtFirstTimeInInterval() {
     ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     LogicalMeterEntity consumptionMeter = newLogicalMeterEntity(
 
@@ -406,7 +408,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?resolution=hour&quantities=Volume"
           + "&meters=" + consumptionMeter.getId()
           + "&after=" + when
-          + "&before=" + when.plusHours(3),
+          + "&before=" + when.plusHours(2),
         MeasurementSeriesDto.class
       ).getBody();
 
@@ -422,16 +424,16 @@ public class MeasurementControllerTest extends IntegrationTest {
         meter.externalId,
         consumptionMeter.meterDefinition.medium,
         asList(
-          new MeasurementValueDto(when.toInstant(), null),
-          new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
-          new MeasurementValueDto(when.plusHours(2).toInstant(), 20.0)
+          new MeasurementValueDto(when.toInstant(), 10.0),
+          new MeasurementValueDto(when.plusHours(1).toInstant(), 20.0),
+          new MeasurementValueDto(when.plusHours(2).toInstant(), null)
         )
       )
     );
   }
 
   @Test
-  public void consumptionIsIncludedForFirstValueInPeriodWhenPreviousValueExists() {
+  public void consumptionIsIncludedForValueDirectAfterPeriod() {
     ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     LogicalMeterEntity consumptionMeter = newLogicalMeterEntity(
       new MeterDefinition(
@@ -451,8 +453,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         "/measurements?resolution=hour&quantities=Volume&meters=%s"
           + "&after=%s&before=%s",
         consumptionMeter.getId(),
-        when.plusHours(1),
-        when.plusHours(3)
+        when,
+        when.plusHours(1)
       ), MeasurementSeriesDto.class).getBody().get(0);
 
     assertThat(seriesDto).isEqualTo(
@@ -463,8 +465,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         meter.externalId,
         consumptionMeter.meterDefinition.medium,
         asList(
-          new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
-          new MeasurementValueDto(when.plusHours(2).toInstant(), 20.0)
+          new MeasurementValueDto(when.plusHours(0).toInstant(), 10.0),
+          new MeasurementValueDto(when.plusHours(1).toInstant(), 20.0)
         )
       )
     );
@@ -472,41 +474,40 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void findsConsumptionForGasMeters() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z");
-    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:00:00Z");
+    ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
       GAS_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
+    newMeasurement(meter, when, "Volume", 1.0, "m^3");
+    newMeasurement(meter, when.plusHours(1), "Volume", 2.0, "m^3");
+    newMeasurement(meter, when.plusHours(2), "Volume", 5.0, "m^3");
 
     MeasurementSeriesDto response = asTestUser()
       .getList(String.format(
         "/measurements"
-          + "?after=" + after
-          + "&before=" + before
+          + "?after=" + when
+          + "&before=" + when.plusHours(2)
           + "&quantities=" + Quantity.VOLUME.name
           + "&meters=%s",
         logicalMeter.getId()
       ), MeasurementSeriesDto.class).getBody().get(0);
 
-    ZonedDateTime periodStartHour = after.truncatedTo(ChronoUnit.HOURS);
+    ZonedDateTime periodStartHour = when.truncatedTo(ChronoUnit.HOURS);
 
     assertThat(response.values)
       .containsExactly(
         new MeasurementValueDto(
           periodStartHour.toInstant(),
-          null
-        ),
-        new MeasurementValueDto(
-          periodStartHour.plusHours(1).toInstant(),
           1.0
         ),
         new MeasurementValueDto(
-          periodStartHour.plusHours(2).toInstant(),
+          periodStartHour.plusHours(1).toInstant(),
           3.0
+        ),
+        new MeasurementValueDto(
+          periodStartHour.plusHours(2).toInstant(),
+          null
         )
       );
   }

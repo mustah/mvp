@@ -331,28 +331,157 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void seriesInConsumptionMode() {
+  public void getSeriesForConsumption_PutConsumptionOnStartOfInterval() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME.minusMinutes(1), 0.0, "kWh", "Energy");
-    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
-    newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(3), 24.0, "m³", "Volume");
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getSeriesForPeriodConsumption(
         meter.id,
-        "Energy",
-        "MWh",
-        START_TIME.minusMinutes(1),
-        START_TIME.plusMinutes(2),
-        "minute",
-        10
+        "Volume",
+        "m³",
+        START_TIME,
+        START_TIME.plusHours(2),
+        "hour"
+      );
+
+    assertThat(result).hasSize(3);
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(6.0);
+    assertThat(result.get(2).getDoubleValue()).isEqualTo(12.0);
+  }
+
+  @Test
+  public void getSeriesForConsumption_PutSumOfMissingIntervalsOnStartOfInterval() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    //missing measurement at START_TIME.plusHours(2)
+    //missing measurement at START_TIME.plusHours(3)
+    newMeasurement(meter, START_TIME.plusHours(4), 48.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(5), 96.0, "m³", "Volume");
+
+    List<MeasurementValueProjection> result =
+      measurementJpaRepository.getSeriesForPeriodConsumption(
+        meter.id,
+        "Volume",
+        "m³",
+        START_TIME,
+        START_TIME.plusHours(4),
+        "hour"
+      );
+
+    assertThat(result).hasSize(5);
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(42);
+    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result.get(3).getValue()).isNull();
+    assertThat(result.get(4).getDoubleValue()).isEqualTo(48);
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAtStartOfIntervalAndAfterInterval() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME.minusHours(1), 1.0, "m³", "Volume");
+    // missing measurement for START_TIME
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
+    // missing measurement after interval
+
+    List<MeasurementValueProjection> result =
+      measurementJpaRepository.getSeriesForPeriodConsumption(
+        meter.id,
+        "Volume",
+        "m³",
+        START_TIME,
+        START_TIME.plusHours(2),
+        "hour"
       );
 
     assertThat(result).hasSize(3);
     assertThat(result.get(0).getValue()).isNull();
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(0.001);
-    assertThat(result.get(2).getDoubleValue()).isEqualTo(0.001);
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(6.0);
+    assertThat(result.get(2).getValue()).isNull();
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAtEndOfInterval() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    // missing measurement at end of interval
+
+    List<MeasurementValueProjection> result =
+      measurementJpaRepository.getSeriesForPeriodConsumption(
+        meter.id,
+        "Volume",
+        "m³",
+        START_TIME,
+        START_TIME.plusHours(2),
+        "hour"
+      );
+
+    assertThat(result).hasSize(3);
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
+    assertThat(result.get(1).getValue()).isNull();
+    assertThat(result.get(2).getValue()).isNull();
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAtEndOfIntervalButLaterExists() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    // missing measurement at end of interval
+    newMeasurement(meter, START_TIME.plusHours(4), 24.0, "m³", "Volume");
+
+    List<MeasurementValueProjection> result =
+      measurementJpaRepository.getSeriesForPeriodConsumption(
+        meter.id,
+        "Volume",
+        "m³",
+        START_TIME,
+        START_TIME.plusHours(2),
+        "hour"
+      );
+
+    assertThat(result).hasSize(3);
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
+    assertThat(result.get(1).getValue()).isNull();
+    assertThat(result.get(2).getValue()).isNull();
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAfterInterval() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
+    // missing measurement at
+
+    List<MeasurementValueProjection> result =
+      measurementJpaRepository.getSeriesForPeriodConsumption(
+        meter.id,
+        "Volume",
+        "m³",
+        START_TIME,
+        START_TIME.plusHours(2),
+        "hour"
+      );
+
+    assertThat(result).hasSize(3);
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(6.0);
+    assertThat(result.get(2).getValue()).isNull();
   }
 
   @Test

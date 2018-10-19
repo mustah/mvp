@@ -127,51 +127,36 @@ public interface MeasurementJpaRepository
     @Param("to") OffsetDateTime to
   );
 
-  @Query(nativeQuery = true, value = "select"
-    + "  cast (unit_at("
-    + "      value - coalesce("
-    // If we have a previous value, diff against that ...
-    + "        lag(value) over (order by created ASC),"
-    // ... Otherwise, pick the latest value in the series _before_ this period, and diff against
-    // _that_, to avoid surprising null consumptions at the beginning of a period
-    + "        (SELECT value "
-    + "        FROM "
-    + "          (SELECT "
-    + "            generate_series( "
-    + "              date_trunc(:resolution, "
-    + "                ((cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC') -"
-    + "                cast(:fallbackMax || :resolution AS INTERVAL))), "
-    + "              date_trunc(:resolution, "
-    + "                ((cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC') - "
-    + "                cast('1 ' || :resolution AS INTERVAL))), "
-    + "              cast('1 ' || :resolution AS INTERVAL)"
-    + "            ) AT TIME ZONE 'UTC' AS date "
-    + "          ) inner_date_serie "
-    + "        inner join measurement on measurement.created = inner_date_serie.date "
-    + "          and quantity = (SELECT id "
-    + "                        FROM quantity "
-    + "                        WHERE quantity.name = :quantity) "
-    + "          AND physical_meter_id = :meter_id"
-    + "          AND inner_date_serie.date < date_serie.date "
-    + "        ORDER BY inner_date_serie.date DESC "
-    + "        LIMIT 1)"
-    + "      )"
-    + "    , :unit) as TEXT) as value,"
-    + "  date_serie.date as when "
-    + "FROM (SELECT generate_series( "
-    + " date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'), "
-    + " date_trunc(:resolution, "
-    + "   ((cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC') - "
-    + "   cast('1 ' || :resolution AS INTERVAL))), "
-    + " cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS date) as date_serie "
-    + "LEFT JOIN measurement "
-    + "  on date_serie.date = created "
-    + "  AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity) "
-    + "  AND physical_meter_id = :meter_id "
-    + "WHERE "
-    + "  date_serie.date >= cast(:from AS TIMESTAMPTZ) "
-    + "  AND date_serie.date < cast(:to AS TIMESTAMPTZ) "
-    + "ORDER BY date_serie.date ASC;"
+  @Query(nativeQuery = true, value =
+    "     SELECT measurement_serie.value, measurement_serie.when from "
+      + "   (SELECT"
+      + "     CAST (unit_at( lead(value) over (ORDER BY created ASC) - value , :unit) AS TEXT)"
+      + "     AS value,"
+      + "     date_serie.date AS when"
+      + "   FROM"
+      + "     ("
+      + "       SELECT"
+      //          Series of all expected measurements from startTime up to (stopTime + 1) intervals.
+      //          Consider stopTime as inclusive, hence +1 to the stopTime
+      + "         generate_series("
+      + "           date_trunc(:resolution,"
+      + "                      CAST(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+      + "           date_trunc(:resolution,"
+      + "                      (CAST(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC') + "
+      + "                       CAST('1 ' || :resolution AS INTERVAL)),"
+      + "           CAST('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
+      + "     ) AS date_serie"
+      + "     LEFT JOIN measurement"
+      + "     ON"
+      + "       date_serie.date = created"
+      + "       AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
+      + "       AND physical_meter_id = :meter_id"
+      + "   ) as measurement_serie"
+      + " WHERE"
+      + "   measurement_serie.when >= CAST(:from AS TIMESTAMPTZ)"
+      + "   AND measurement_serie.when <= CAST(:to AS TIMESTAMPTZ)"
+      + " ORDER BY"
+      + "   measurement_serie.when ASC;"
   )
   List<MeasurementValueProjection> getSeriesForPeriodConsumption(
     @Param("meter_id") UUID physicalMeterId,
@@ -179,8 +164,7 @@ public interface MeasurementJpaRepository
     @Param("unit") String unit,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to,
-    @Param("resolution") String resolution,
-    @Param("fallbackMax") int fallbackMax
+    @Param("resolution") String resolution
   );
 
   @Query(nativeQuery = true, value = "select"
