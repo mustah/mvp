@@ -1,7 +1,8 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
-import {Period} from '../../../components/dates/dateModels';
+import {DateRange, Period} from '../../../components/dates/dateModels';
+import {momentFrom} from '../../../helpers/dateHelpers';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {selectPeriod} from '../../../state/user-selection/userSelectionActions';
+import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
 import {SelectedEntriesPayload, setSelectedEntries} from '../reportActions';
@@ -56,6 +57,29 @@ describe('reportReducer', () => {
       expect(state).toEqual(expected);
 
       const newState: ReportState = report(state, selectPeriod(Period.currentMonth));
+      expect(newState).toBe(state);
+    });
+
+  });
+
+  describe('change custom date range', () => {
+
+    it('should not clear selected list items', () => {
+      const start: Date = momentFrom('2018-12-09').toDate();
+      const end: Date = momentFrom('2018-12-24').toDate();
+      const dateRange: DateRange = {start, end};
+
+      const payload: SelectedEntriesPayload = {
+        ids: [1, 2, 3],
+        quantitiesToSelect: [],
+        indicatorsToSelect: [],
+      };
+      const state: ReportState = report(initialState, setSelectedEntries(payload));
+
+      const expected: ReportState = {selectedListItems: payload.ids};
+      expect(state).toEqual(expected);
+
+      const newState: ReportState = report(state, setCustomDateRange(dateRange));
       expect(newState).toBe(state);
     });
 

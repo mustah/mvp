@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {resetReducer} from '../../state/domain-models/domainModelsReducer';
-import {SELECT_PERIOD} from '../../state/user-selection/userSelectionActions';
+import {SELECT_PERIOD, SET_CUSTOM_DATE_RANGE} from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
 import {SelectedEntriesPayload, SET_SELECTED_ENTRIES} from './reportActions';
@@ -22,6 +22,7 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
     case LOGOUT_USER:
       return {...initialState};
     case SELECT_PERIOD:
+    case SET_CUSTOM_DATE_RANGE:
       return state;
     default:
       return resetReducer<ReportState>(state, action, {...initialState});
