@@ -134,7 +134,6 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     OrganisationDto output = response.getBody();
     assertThat(output.name).isEqualTo(input.name);
-    assertThat(output.name).isEqualTo(input.name);
     assertThat(output.id).isNotNull();
   }
 
