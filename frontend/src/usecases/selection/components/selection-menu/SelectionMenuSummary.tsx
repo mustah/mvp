@@ -1,32 +1,27 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../../app/routes';
-import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {IconSelection} from '../../../../components/icons/IconSelection';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Bold, Normal} from '../../../../components/texts/Texts';
-import {firstUpperTranslated, translate} from '../../../../services/translationService';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {OnClick, OnClickWithId} from '../../../../types/Types';
+import {DiscardChangesButton} from './SelectionMenuButtons';
+import {withResetButtons} from './selectionMenuEnhancers';
 
-interface Props {
+export interface SelectionMenuProps {
   selection: UserSelection;
   resetSelection: OnClick;
   selectSavedSelection: OnClickWithId;
 }
 
-export const SelectionMenuSummary = (props: Props) => {
-  const {selection: {id, name, isChanged}, resetSelection, selectSavedSelection} = props;
+const ResetButtons = withResetButtons(DiscardChangesButton);
+
+export const SelectionMenuSummary = (props: SelectionMenuProps) => {
+  const {selection: {id, name}, selectSavedSelection} = props;
   const selectionName = id === -1 ? firstUpperTranslated('all') : name;
-
-  const isInitialSelection = (id: uuid) => id === -1;
-
-  const renderReset = (): React.ReactNode => {
-    const resetToSelection = () => selectSavedSelection(id);
-    return isInitialSelection(id) ?
-      <ButtonLink onClick={resetSelection}>{translate('reset selection')}</ButtonLink> :
-      <ButtonLink onClick={resetToSelection}>{translate('discard changes')}</ButtonLink>;
-  };
+  const resetToSelection = () => selectSavedSelection(id);
 
   return (
     <RowCenter className="SelectionMenuSummary">
@@ -36,7 +31,7 @@ export const SelectionMenuSummary = (props: Props) => {
       <Normal>{firstUpperTranslated('selection')}: </Normal>
       <Row>
         <Bold className="Italic">{selectionName}</Bold>
-        {isChanged && renderReset()}
+        <ResetButtons {...props} selectSavedSelection={resetToSelection}/>
       </Row>
     </RowCenter>
   );
