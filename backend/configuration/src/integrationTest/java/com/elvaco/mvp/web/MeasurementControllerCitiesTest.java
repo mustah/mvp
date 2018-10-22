@@ -348,8 +348,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         null,
         null,
         asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), null),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 1.0)
+          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
+          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), null)
         )
       )
     );

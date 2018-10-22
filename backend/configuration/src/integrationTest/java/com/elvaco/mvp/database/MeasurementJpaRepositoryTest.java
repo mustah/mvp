@@ -466,7 +466,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
-    // missing measurement at
+    // missing measurement at START_TIME.plusHours(3)
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getSeriesForPeriodConsumption(
@@ -530,20 +530,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "kWh",
         START_TIME.plusHours(1),
-        START_TIME.plusHours(3),
-        96
+        START_TIME.plusHours(3)
       );
 
     assertThat(result).hasSize(3);
-    assertThat(result.get(0).getValue()).isNull();
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(1.0); // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
-    assertThat(result.get(2).getDoubleValue()).isEqualTo(2.5); // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(1.0); // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(2.5); // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+    assertThat(result.get(2).getValue()).isNull();
   }
 
   @Test
-  public void averageForConsumptionSeries_firstIsNotNullWhenPreviousValueExistOutsidePeriod() {
+  public void averageForConsumptionSeries_lastIsNotNullWhenValueExistAfterPeriod() {
     PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
-
     newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
@@ -559,9 +557,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour",
         "Energy",
         "kWh",
-        START_TIME.plusHours(2),
-        START_TIME.plusHours(3),
-        96
+        START_TIME.plusHours(1),
+        START_TIME.plusHours(2)
       );
 
     assertThat(result).hasSize(2);
@@ -600,7 +597,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void averageForConsumptionSeries_missingMeasurementsForOneMeter() {
     PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
-
     newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
 
@@ -615,9 +611,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour",
         "Energy",
         "kWh",
-        START_TIME.plusHours(2),
-        START_TIME.plusHours(3),
-        96
+        START_TIME.plusHours(1),
+        START_TIME.plusHours(2)
       );
 
     assertThat(result).hasSize(2);
