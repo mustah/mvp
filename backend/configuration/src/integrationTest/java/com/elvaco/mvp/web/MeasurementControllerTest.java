@@ -62,12 +62,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     assumeTrue(isPostgresDialect());
 
     otherOrganisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        randomUUID(),
-        "Wayne Industries",
-        "wayne-industries",
-        "wayne-industries"
-      )
+      OrganisationEntity.builder()
+        .id(randomUUID())
+        .name("Wayne Industries")
+        .slug("wayne-industries")
+        .externalId("wayne-industries")
+        .build()
     );
   }
 

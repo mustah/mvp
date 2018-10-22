@@ -47,12 +47,12 @@ public class UserEntityMapperTest {
       user.email,
       "letmein",
       Language.en,
-      new OrganisationEntity(
-        user.organisation.id,
-        user.organisation.name,
-        user.organisation.slug,
-        user.organisation.externalId
-      ),
+      OrganisationEntity.builder()
+        .id(user.organisation.id)
+        .name(user.organisation.name)
+        .slug(user.organisation.slug)
+        .externalId(user.organisation.externalId)
+        .build(),
       asList(admin(), user())
     ));
   }
@@ -74,12 +74,12 @@ public class UserEntityMapperTest {
       "a@b.com",
       "letmein",
       Language.en,
-      new OrganisationEntity(
-        randomUUID(),
-        "Elvaco",
-        "elvaco",
-        "Elvaco AB"
-      ),
+      OrganisationEntity.builder()
+        .id(randomUUID())
+        .name("Elvaco")
+        .slug("elvaco")
+        .externalId("Elvaco AB")
+        .build(),
       asList(user(), superAdmin())
     );
   }

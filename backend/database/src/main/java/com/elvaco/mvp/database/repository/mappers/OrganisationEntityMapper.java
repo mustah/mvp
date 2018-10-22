@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import lombok.experimental.UtilityClass;
 
@@ -21,15 +22,17 @@ public class OrganisationEntityMapper {
   }
 
   public static OrganisationEntity toEntity(Organisation domainModel) {
-    return new OrganisationEntity(
-      domainModel.id,
-      domainModel.name,
-      domainModel.slug,
-      domainModel.externalId,
-      domainModel.parent != null ? toEntity(domainModel.parent) : null,
-      domainModel.selection != null
-        ? UserSelectionEntityMapper.toEntity(domainModel.selection)
-        : null
-    );
+    OrganisationEntity parent = domainModel.parent != null ? toEntity(domainModel.parent) : null;
+    UserSelectionEntity selection = domainModel.selection != null
+      ? UserSelectionEntityMapper.toEntity(domainModel.selection)
+      : null;
+    return OrganisationEntity.builder()
+      .id(domainModel.id)
+      .name(domainModel.name)
+      .slug(domainModel.slug)
+      .externalId(domainModel.externalId)
+      .parent(parent)
+      .selection(selection)
+      .build();
   }
 }

@@ -29,9 +29,12 @@ public class OrganisationEntityMapperTest {
       "organisation-slug",
       "organisation-external-id"
     ))).isEqualToComparingFieldByField(
-      new OrganisationEntity(
-        id, "organisation", "organisation-slug", "organisation-external-id"
-      )
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation")
+        .slug("organisation-slug")
+        .externalId("organisation-external-id")
+        .build()
     );
   }
 
@@ -61,20 +64,25 @@ public class OrganisationEntityMapperTest {
         selectionOwnerOrganisationId
       )
     ))).isEqualToComparingFieldByField(
-      new OrganisationEntity(
-        id,
-        "organisation",
-        "organisation-slug",
-        "organisation-external-id",
-        new OrganisationEntity(parentId, "parent", "parent-slug", "parent-external-id"),
-        new UserSelectionEntity(
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation")
+        .slug("organisation-slug")
+        .externalId("organisation-external-id")
+        .parent(OrganisationEntity.builder()
+          .id(parentId)
+          .name("parent")
+          .slug("parent-slug")
+          .externalId("parent-external-id")
+          .build())
+        .selection(new UserSelectionEntity(
           selectionId,
           selectionOwnerId,
           "selection",
           toJsonField(createJsonNode()),
           selectionOwnerOrganisationId
-        )
-      )
+        ))
+        .build()
     );
   }
 
@@ -82,9 +90,12 @@ public class OrganisationEntityMapperTest {
   public void toDomainModel_noParent() {
     UUID id = randomUUID();
     assertThat(toDomainModel(
-      new OrganisationEntity(
-        id, "organisation", "organisation-slug", "organisation-external-id"
-      )
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation")
+        .slug("organisation-slug")
+        .externalId("organisation-external-id")
+        .build()
     )).isEqualTo(
       new Organisation(
         id,
@@ -103,20 +114,25 @@ public class OrganisationEntityMapperTest {
     UUID selectionOwnerId = randomUUID();
     UUID selectionOwnerOrganisationId = randomUUID();
     assertThat(toDomainModel(
-      new OrganisationEntity(
-        id,
-        "organisation",
-        "organisation-slug",
-        "organisation-external-id",
-        new OrganisationEntity(parentId, "parent", "parent-slug", "parent-external-id"),
-        new UserSelectionEntity(
+      OrganisationEntity.builder()
+        .id(id)
+        .name("organisation")
+        .slug("organisation-slug")
+        .externalId("organisation-external-id")
+        .parent(OrganisationEntity.builder()
+          .id(parentId)
+          .name("parent")
+          .slug("parent-slug")
+          .externalId("parent-external-id")
+          .build())
+        .selection(new UserSelectionEntity(
           selectionId,
           selectionOwnerId,
           "selection",
           toJsonField(createJsonNode()),
           selectionOwnerOrganisationId
-        )
-      )
+        ))
+        .build()
     )).isEqualTo(
       new Organisation(
         id,

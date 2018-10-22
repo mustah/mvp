@@ -31,12 +31,12 @@ class IntegrationTestFixtureContextFactory {
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
     UUID contextUuid = randomUUID();
     OrganisationEntity organisation = organisationJpaRepository.save(
-      new OrganisationEntity(
-        contextUuid,
-        callSiteIdentifier + "-organisation",
-        contextUuid.toString(),
-        contextUuid.toString()
-      )
+      OrganisationEntity.builder()
+        .id(contextUuid)
+        .name(callSiteIdentifier + "-organisation")
+        .slug(contextUuid.toString())
+        .externalId(contextUuid.toString())
+        .build()
     );
 
     User user = new UserBuilder()
@@ -74,12 +74,12 @@ class IntegrationTestFixtureContextFactory {
 
     UUID contextUuid2 = randomUUID();
     OrganisationEntity organisation2 = organisationJpaRepository.save(
-      new OrganisationEntity(
-        contextUuid2,
-        callSiteIdentifier + "-organisation",
-        contextUuid2.toString(),
-        contextUuid2.toString()
-      )
+      OrganisationEntity.builder()
+        .id(contextUuid2)
+        .name(callSiteIdentifier + "-organisation")
+        .slug(contextUuid2.toString())
+        .externalId(contextUuid2.toString())
+        .build()
     );
 
     User user2 = new UserBuilder()
