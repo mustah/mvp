@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.Objects.requireNonNull;
-import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toMap;
 
 @Slf4j
@@ -53,6 +52,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
   private final Gateways gateways;
   private final SettingUseCases settingUseCases;
   private final StatusLogsDataLoader statusLogsDataLoader;
+  private final Organisation rootOrganisation;
 
   private int daySeed = 1;
 
@@ -90,12 +90,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
           .map(csvData -> {
             LogicalMeter logicalMeter = LogicalMeter.builder()
               .externalId(csvData.facilityId)
-              .organisationId(new Organisation(
-                randomUUID(),
-                "Elvaco",
-                "elvaco",
-                "Elvaco"
-              ).id)
+              .organisationId(rootOrganisation.id)
               .meterDefinition(MeterDefinition.fromMedium(Medium.from(csvData.medium)))
               .created(addDays())
               .location(locationMap.get(csvData.address.toLowerCase()))
@@ -105,21 +100,11 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .externalId(csvData.facilityId)
               .medium(csvData.medium)
               .manufacturer(csvData.meterManufacturer)
-              .organisation(new Organisation(
-                randomUUID(),
-                "Elvaco",
-                "elvaco",
-                "Elvaco"
-              ))
+              .organisation(rootOrganisation)
               .readIntervalMinutes(counter.incrementAndGet() > 10 ? 1440 : 60)
               .build();
             Gateway gateway = Gateway.builder()
-              .organisationId(new Organisation(
-                randomUUID(),
-                "Elvaco",
-                "elvaco",
-                "Elvaco"
-              ).id)
+              .organisationId(rootOrganisation.id)
               .serial(csvData.gatewayId)
               .productModel(csvData.gatewayProductModel)
               .build();

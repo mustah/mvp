@@ -35,58 +35,6 @@ import static java.util.UUID.randomUUID;
 @Slf4j
 class UserDatabaseLoader implements CommandLineRunner {
 
-  public static final User ROOT_ORGANISATION_USER = new User(
-    "Stefan Stefanson",
-    "steste@elvaco.se",
-    "stefan123",
-    Language.en,
-    new Organisation(
-      randomUUID(),
-      "Elvaco",
-      "elvaco",
-      "Elvaco"
-    ),
-    singletonList(USER)
-  );
-  private static final User ELVACO_SUPER_ADMIN_USER = new User(
-    "Super Admin",
-    "superadmin@elvaco.se",
-    "admin123",
-    Language.en,
-    new Organisation(
-      randomUUID(),
-      "Elvaco",
-      "elvaco",
-      "Elvaco"
-    ),
-    singletonList(SUPER_ADMIN)
-  );
-  private static final User ELVACO_ADMIN_USER = new User(
-    "Peter Eriksson",
-    "peteri@elvaco.se",
-    "peter123",
-    Language.en,
-    new Organisation(
-      randomUUID(),
-      "Elvaco",
-      "elvaco",
-      "Elvaco"
-    ),
-    singletonList(ADMIN)
-  );
-  private static final User DEVELOPER_USER = new User(
-    "Developer",
-    "user@domain.tld",
-    "complicated_password",
-    Language.en,
-    new Organisation(
-      randomUUID(),
-      "Elvaco",
-      "elvaco",
-      "Elvaco"
-    ),
-    singletonList(SUPER_ADMIN)
-  );
   private static final Organisation WAYNE_INDUSTRIES =
     new Organisation(
       randomUUID(),
@@ -108,19 +56,6 @@ class UserDatabaseLoader implements CommandLineRunner {
     "erik123",
     Language.en,
     WAYNE_INDUSTRIES,
-    singletonList(USER)
-  );
-  private static final User OTHER_ELVACO_USER = new User(
-    "Eva Nilsson",
-    "evanil@elvaco.se",
-    "eva123",
-    Language.en,
-    new Organisation(
-      randomUUID(),
-      "Elvaco",
-      "elvaco",
-      "Elvaco"
-    ),
     singletonList(USER)
   );
   private final TokenService tokenService;
@@ -159,7 +94,14 @@ class UserDatabaseLoader implements CommandLineRunner {
     organisations.save(WAYNE_INDUSTRIES);
 
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
-      ELVACO_SUPER_ADMIN_USER,
+      new User(
+        "Super Admin",
+        "superadmin@elvaco.se",
+        "admin123",
+        Language.en,
+        rootOrganisation,
+        singletonList(SUPER_ADMIN)
+      ),
       tokenFactory.newToken()
     );
 
@@ -176,12 +118,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "emitir@elvaco.se",
         "emil123",
         Language.sv,
-        new Organisation(
-          randomUUID(),
-          "Elvaco",
-          "elvaco",
-          "Elvaco"
-        ),
+        rootOrganisation,
         asList(USER, ADMIN, SUPER_ADMIN)
       ),
       new User(
@@ -189,12 +126,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "hansjo@elvaco.se",
         "hanna123",
         Language.en,
-        new Organisation(
-          randomUUID(),
-          "Elvaco",
-          "elvaco",
-          "Elvaco"
-        ),
+        rootOrganisation,
         asList(USER, ADMIN)
       ),
       new User(
@@ -224,11 +156,46 @@ class UserDatabaseLoader implements CommandLineRunner {
       ),
       OTHER_ADMIN_USER,
       OTHER_USER,
-      ROOT_ORGANISATION_USER,
-      OTHER_ELVACO_USER,
-      ELVACO_ADMIN_USER,
-      ELVACO_SUPER_ADMIN_USER,
-      DEVELOPER_USER
+      new User(
+        "Stefan Stefanson",
+        "steste@elvaco.se",
+        "stefan123",
+        Language.en,
+        rootOrganisation,
+        singletonList(USER)
+      ),
+      new User(
+        "Eva Nilsson",
+        "evanil@elvaco.se",
+        "eva123",
+        Language.en,
+        rootOrganisation,
+        singletonList(USER)
+      ),
+      new User(
+        "Peter Eriksson",
+        "peteri@elvaco.se",
+        "peter123",
+        Language.en,
+        rootOrganisation,
+        singletonList(ADMIN)
+      ),
+      new User(
+        "Super Admin",
+        "superadmin@elvaco.se",
+        "admin123",
+        Language.en,
+        rootOrganisation,
+        singletonList(SUPER_ADMIN)
+      ),
+      new User(
+        "Developer",
+        "user@domain.tld",
+        "complicated_password",
+        Language.en,
+        rootOrganisation,
+        singletonList(SUPER_ADMIN)
+      )
     );
 
     users.stream()
