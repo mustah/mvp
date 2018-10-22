@@ -93,8 +93,7 @@ public class MeasurementRepository implements Measurements {
           seriesQuantity.name,
           seriesQuantity.presentationUnit(),
           OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-          OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
-          maxNumberOfDataPointsForResolution(resolution)
+          OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
         );
         break;
       default:
@@ -191,18 +190,6 @@ public class MeasurementRepository implements Measurements {
   ) {
     return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId, after, beforeOrEquals)
       .map(MeasurementEntityMapper::toDomainModel);
-  }
-
-  private int maxNumberOfDataPointsForResolution(TemporalResolution resolution) {
-    switch (resolution) {
-      case month:
-        return 3;
-      case hour:
-        return 96;
-      case day:
-      default:
-        return 10;
-    }
   }
 
   private MeasurementValue projectionToMeasurementValue(MeasurementValueProjection projection) {
