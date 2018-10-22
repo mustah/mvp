@@ -55,8 +55,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    organisations.findAll().stream()
-      .forEach(organisation -> organisations.deleteById(organisation.id));
+    removeNonRootOrganisations();
   }
 
   @Test

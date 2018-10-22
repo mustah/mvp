@@ -29,16 +29,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    organisations.findAll().stream()
-      .sorted((o1, o2) -> {
-        if (o1.parent != null) {
-          return o2.parent == null ? -1 : 0;
-        } else if (o2.parent != null) {
-          return 1;
-        }
-        return 0;
-      })
-      .forEach(organisation -> organisations.deleteById(organisation.id));
+    removeNonRootOrganisations();
   }
 
   @Test

@@ -15,7 +15,7 @@ public class MvpProperties {
 
   @Getter
   @Setter
-  static class RootOrganisation {
+  public static class RootOrganisation {
     private String name = "Elvaco";
     private String slug = "elvaco";
   }
