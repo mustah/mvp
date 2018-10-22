@@ -43,13 +43,14 @@ interface StateToProps {
   selectedQuantities: Quantity[];
 }
 
-export interface OwnProps {
+interface OwnProps {
   outerHiddenKeys: string[];
   graphContents: GraphContents;
 }
 
-export interface GraphComponentState {
+interface GraphComponentState {
   hiddenKeys: string[];
+  resized: boolean;
 }
 
 interface DispatchToProps {
@@ -67,18 +68,12 @@ interface MouseOverProps {
 interface GraphContentProps {
   content?: React.ReactElement<any> | React.StatelessComponent<any> | ContentRenderer<TooltipProps>;
   data?: object[];
-  isSideMenuOpen: boolean;
+  key: string;
   lines: Children[];
   legend: ProprietaryLegendProps[];
   legendClick: OnClick;
   setTooltipPayload: OnClick;
 }
-
-type Props = OwnProps & StateToProps & DispatchToProps;
-
-type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
-
-const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = (
   {lines, axes: {left, right}}: GraphContents,
@@ -118,15 +113,17 @@ const renderGraphContents = (
   return components;
 };
 
+const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
+
 const GraphContent =
-  ({content, data, isSideMenuOpen, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => (
-    <Column className="GraphContainer" key={`graph-sideMenuIsOpen-${isSideMenuOpen}`}>
+  ({content, data, key, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => (
+    <Column className="GraphContainer" key={key}>
       <ResponsiveContainer aspect={2.5}>
         <LineChart
           width={10}
           height={50}
           data={data}
-          margin={margin}
+          margin={lineMargins}
           onMouseMove={setTooltipPayload}
         >
           <XAxis
@@ -146,16 +143,32 @@ const GraphContent =
     </Column>
   );
 
+type Props = OwnProps & StateToProps & DispatchToProps;
+
+type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
+
 const GraphContentWrapper = withEmptyContent<GraphContentWrapperProps>(GraphContent);
 
 class GraphComponent extends React.Component<Props, GraphComponentState> {
-  state: GraphComponentState = {hiddenKeys: []};
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
   private tooltipPayload: ActiveDataPoint;
 
   private activeDataKey: uuid;
+
+  constructor(props) {
+    super(props);
+    this.state = {hiddenKeys: [], resized: false};
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
 
   render() {
     const {
@@ -179,20 +192,13 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
     );
     const {data, legend} = graphContents;
 
-    const legendClick = ({value}: any) => this.setState({
-      hiddenKeys: toggle(
-        value,
-        this.state.hiddenKeys,
-      ),
-    });
-
     const wrapperProps: GraphContentWrapperProps = {
       lines,
       data,
       legend,
       content: this.renderToolTip,
-      isSideMenuOpen,
-      legendClick,
+      key: `graph-update-${isSideMenuOpen}-${this.state.resized}`,
+      legendClick: this.legendClick,
       setTooltipPayload: this.setTooltipPayload,
       hasContent: selectedListItems.length > 0,
       noContentText: firstUpperTranslated('select meters to include in graph'),
@@ -209,6 +215,10 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       </React.Fragment>
     );
   }
+
+  updateDimensions = () => this.setState(({resized}) => ({resized: !resized}));
+
+  legendClick = ({value}) => this.setState({hiddenKeys: toggle(value, this.state.hiddenKeys)});
 
   renderActiveDot = (props: ActiveDotReChartProps) =>
     <ActiveDot {...props} activeDataKey={this.activeDataKey}/>
