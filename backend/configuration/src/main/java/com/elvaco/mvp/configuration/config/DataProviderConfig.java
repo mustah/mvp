@@ -60,7 +60,6 @@ import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,7 +67,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
 @Configuration
-@EnableConfigurationProperties(RootOrganisationProperties.class)
+@EnableConfigurationProperties(MvpProperties.class)
 class DataProviderConfig {
 
   private final PasswordEncoder passwordEncoder;
@@ -139,27 +138,28 @@ class DataProviderConfig {
   @Bean
   Organisation rootOrganisation(
     Organisations organisations,
-    RootOrganisationProperties rootOrganisationProperties
+    MvpProperties mvpProperties
   ) {
+    MvpProperties.RootOrganisation rootOrg = mvpProperties.getRootOrganisation();
     return organisations
-      .findBySlug(rootOrganisationProperties.getSlug())
+      .findBySlug(rootOrg.getSlug())
       .orElse(new Organisation(
         UUID.randomUUID(),
-        rootOrganisationProperties.getName(),
-        rootOrganisationProperties.getSlug(),
-        rootOrganisationProperties.getName()
+        rootOrg.getName(),
+        rootOrg.getSlug(),
+        rootOrg.getName()
       ));
   }
 
   @Bean
   ProductionDataProvider productionData(
-    @Value("${mvp.superadmin.email}") String superAdminEmail,
-    @Value("${mvp.superadmin.password}") String superAdminPassword,
+    MvpProperties mvpProperties,
     Organisation rootOrganisation
   ) {
+    MvpProperties.Superadmin superadmin = mvpProperties.getSuperadmin();
     return new ProductionData(
-      superAdminEmail,
-      superAdminPassword,
+      superadmin.getEmail(),
+      superadmin.getPassword(),
       rootOrganisation
     );
   }
