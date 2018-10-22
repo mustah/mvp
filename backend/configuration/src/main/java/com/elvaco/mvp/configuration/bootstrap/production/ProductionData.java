@@ -9,16 +9,15 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
 @RequiredArgsConstructor
 public class ProductionData implements ProductionDataProvider {
-
   private final String superAdminEmail;
   private final String superAdminPassword;
+  private final Organisation rootOrganisation;
 
   @Override
   public List<Role> users() {
@@ -45,7 +44,7 @@ public class ProductionData implements ProductionDataProvider {
 
   @Override
   public List<Organisation> organisations() {
-    return singletonList(ELVACO);
+    return singletonList(rootOrganisation);
   }
 
   @Override
@@ -55,7 +54,7 @@ public class ProductionData implements ProductionDataProvider {
       superAdminEmail,
       superAdminPassword,
       Language.sv,
-      ELVACO,
+      rootOrganisation,
       singletonList(Role.SUPER_ADMIN)
     );
   }

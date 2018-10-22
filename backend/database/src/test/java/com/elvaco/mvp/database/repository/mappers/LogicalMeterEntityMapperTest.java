@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
 import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;

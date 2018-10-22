@@ -12,7 +12,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;

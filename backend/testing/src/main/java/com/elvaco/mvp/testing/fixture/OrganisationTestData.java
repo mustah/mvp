@@ -37,4 +37,12 @@ public class OrganisationTestData {
       "marvel",
       "Marvel"
     );
+
+  public static final Organisation ELVACO =
+    new Organisation(
+      randomUUID(),
+      "Elvaco",
+      "elvaco",
+      "Elvaco"
+    );
 }

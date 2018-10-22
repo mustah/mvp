@@ -129,7 +129,7 @@ public class UserControllerTest extends IntegrationTest {
         .email("t@b.com")
         .password("ttt123")
         .language(Language.en)
-        .organisationElvaco()
+        .organisation(context().organisation())
         .asUser()
         .build()
     );
@@ -152,7 +152,7 @@ public class UserControllerTest extends IntegrationTest {
         .email("noo@b.com")
         .password("test123")
         .language(Language.en)
-        .organisationElvaco()
+        .organisation(context().organisation())
         .roles(ADMIN, USER)
         .build()
     );
@@ -184,7 +184,7 @@ public class UserControllerTest extends IntegrationTest {
         .email("thisguy@users.net")
         .password("hunter2")
         .language(Language.en)
-        .organisationElvaco()
+        .organisation(context().organisation())
         .asUser()
         .build()
     );

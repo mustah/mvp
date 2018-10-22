@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +30,6 @@ public class SubOrganisationControllerTest extends IntegrationTest {
   @After
   public void tearDown() {
     organisations.findAll().stream()
-      .filter(organisation -> !organisation.id.equals(ELVACO.id))
       .sorted((o1, o2) -> {
         if (o1.parent != null) {
           return o2.parent == null ? -1 : 0;

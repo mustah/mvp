@@ -15,10 +15,10 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -34,9 +34,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.Objects.requireNonNull;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toMap;
 
 @Slf4j
@@ -50,7 +50,6 @@ class CsvDemoDataLoader implements CommandLineRunner {
 
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
-  private final MeterDefinitions meterDefinitions;
   private final Gateways gateways;
   private final SettingUseCases settingUseCases;
   private final StatusLogsDataLoader statusLogsDataLoader;
@@ -91,7 +90,12 @@ class CsvDemoDataLoader implements CommandLineRunner {
           .map(csvData -> {
             LogicalMeter logicalMeter = LogicalMeter.builder()
               .externalId(csvData.facilityId)
-              .organisationId(ELVACO.id)
+              .organisationId(new Organisation(
+                randomUUID(),
+                "Elvaco",
+                "elvaco",
+                "Elvaco"
+              ).id)
               .meterDefinition(MeterDefinition.fromMedium(Medium.from(csvData.medium)))
               .created(addDays())
               .location(locationMap.get(csvData.address.toLowerCase()))
@@ -101,11 +105,21 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .externalId(csvData.facilityId)
               .medium(csvData.medium)
               .manufacturer(csvData.meterManufacturer)
-              .organisation(ELVACO)
+              .organisation(new Organisation(
+                randomUUID(),
+                "Elvaco",
+                "elvaco",
+                "Elvaco"
+              ))
               .readIntervalMinutes(counter.incrementAndGet() > 10 ? 1440 : 60)
               .build();
             Gateway gateway = Gateway.builder()
-              .organisationId(ELVACO.id)
+              .organisationId(new Organisation(
+                randomUUID(),
+                "Elvaco",
+                "elvaco",
+                "Elvaco"
+              ).id)
               .serial(csvData.gatewayId)
               .productModel(csvData.gatewayProductModel)
               .build();

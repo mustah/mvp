@@ -1,7 +1,10 @@
 package com.elvaco.mvp.configuration.config;
 
+import java.util.UUID;
+
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -56,15 +59,16 @@ import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableConfigurationProperties(RootOrganisationProperties.class)
 class DataProviderConfig {
 
   private final PasswordEncoder passwordEncoder;
@@ -133,11 +137,31 @@ class DataProviderConfig {
   }
 
   @Bean
+  Organisation rootOrganisation(
+    Organisations organisations,
+    RootOrganisationProperties rootOrganisationProperties
+  ) {
+    return organisations
+      .findBySlug(rootOrganisationProperties.getSlug())
+      .orElse(new Organisation(
+        UUID.randomUUID(),
+        rootOrganisationProperties.getName(),
+        rootOrganisationProperties.getSlug(),
+        rootOrganisationProperties.getName()
+      ));
+  }
+
+  @Bean
   ProductionDataProvider productionData(
     @Value("${mvp.superadmin.email}") String superAdminEmail,
-    @Value("${mvp.superadmin.password}") String superAdminPassword
+    @Value("${mvp.superadmin.password}") String superAdminPassword,
+    Organisation rootOrganisation
   ) {
-    return new ProductionData(superAdminEmail, superAdminPassword);
+    return new ProductionData(
+      superAdminEmail,
+      superAdminPassword,
+      rootOrganisation
+    );
   }
 
   @Bean

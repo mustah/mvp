@@ -7,10 +7,10 @@ import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
 import static com.elvaco.mvp.testing.fixture.UserTestData.CLARK_KENT;
+import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_SUPER_ADMIN_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
