@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import lombok.EqualsAndHashCode;
@@ -18,7 +17,7 @@ import static java.util.Collections.unmodifiableSet;
 
 @EqualsAndHashCode
 @ToString
-public class MeterDefinition implements Identifiable<MeterDefinitionType>, Serializable {
+public class MeterDefinition implements Identifiable<MeterDefinitionType> {
 
   public static final MeterDefinition UNKNOWN_METER = fromMedium(UNKNOWN_MEDIUM);
 
@@ -35,8 +34,6 @@ public class MeterDefinition implements Identifiable<MeterDefinitionType>, Seria
   public static final MeterDefinition ROOM_TEMP_METER = fromMedium(ROOM_TEMP);
 
   public static final MeterDefinition ELECTRICITY_METER = fromMedium(ELECTRICITY);
-
-  private static final long serialVersionUID = -1017521226747299812L;
 
   public final MeterDefinitionType type;
   public final String medium;

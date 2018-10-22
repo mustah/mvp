@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -13,9 +12,7 @@ import static com.elvaco.mvp.core.util.Slugify.slugify;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-public class Organisation implements Identifiable<UUID>, Serializable {
-
-  private static final long serialVersionUID = -375927914085016616L;
+public class Organisation implements Identifiable<UUID> {
 
   public final UUID id;
   public final String name;

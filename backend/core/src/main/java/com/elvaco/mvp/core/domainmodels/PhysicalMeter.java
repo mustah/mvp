@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +21,8 @@ import static java.util.UUID.randomUUID;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PhysicalMeter implements Identifiable<UUID>, Serializable {
+public class PhysicalMeter implements Identifiable<UUID> {
 
-  private static final long serialVersionUID = -7089862561226980327L;
-
-  @Default
-  public UUID id = randomUUID();
   public final Organisation organisation;
   public final String address;
   public final String externalId;
@@ -36,6 +31,8 @@ public class PhysicalMeter implements Identifiable<UUID>, Serializable {
   public final String manufacturer;
   @Nullable
   public final UUID logicalMeterId;
+  @Default
+  public UUID id = randomUUID();
   public long readIntervalMinutes;
   public Integer revision;
   @Nullable

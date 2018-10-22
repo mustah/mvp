@@ -11,6 +11,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class UserSelection {
+
   public final UUID id;
   public final UUID ownerUserId;
   public final String name;

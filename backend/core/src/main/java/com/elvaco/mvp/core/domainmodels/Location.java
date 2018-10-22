@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -8,13 +7,11 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
-public class Location implements Serializable {
+public class Location {
 
   public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
 
   public static final String UNKNOWN = "unknown";
-
-  private static final long serialVersionUID = 1966442419777921908L;
 
   private final String address;
   private final String city;

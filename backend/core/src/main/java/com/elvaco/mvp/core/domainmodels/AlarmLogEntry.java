@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -15,7 +14,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class AlarmLogEntry implements Identifiable<Long>, Serializable {
+public class AlarmLogEntry implements Identifiable<Long> {
 
   @Nullable
   public final Long id;

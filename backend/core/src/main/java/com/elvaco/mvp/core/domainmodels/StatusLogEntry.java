@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 import javax.annotation.Nullable;
 
@@ -15,9 +14,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class StatusLogEntry<T> implements Identifiable<Long>, Serializable {
-
-  private static final long serialVersionUID = 2087665357079132249L;
+public class StatusLogEntry<T> implements Identifiable<Long> {
 
   @Nullable
   public final Long id;
