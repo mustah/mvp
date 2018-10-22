@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {OrganisationActionsDropdown} from '../../../components/actions-dropdown/OrganisationActionsDropdown';
-import {OrganisationsActionsDropdown} from '../../../components/actions-dropdown/OrganisationsActionsDropdown';
+import {OrganisationActions} from '../../../components/actions-dropdown/OrganisationActions';
+import {OrganisationBatchActions} from '../../../components/actions-dropdown/OrganisationBatchActions';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
@@ -67,13 +67,13 @@ class OrganisationsComponent extends React.Component<Props, State> {
     } = this.props;
 
     const renderActionDropdown = ({id}: Organisation) =>
-      <OrganisationActionsDropdown confirmDelete={this.openDialog} id={id}/>;
+      <OrganisationActions confirmDelete={this.openDialog} id={id}/>;
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
           <RowRight>
-            <OrganisationsActionsDropdown/>
+            <OrganisationBatchActions/>
           </RowRight>
           <Table {...organisations}>
             <TableColumn

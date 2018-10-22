@@ -9,10 +9,10 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
-import {postRequestOf} from '../../domainModelsActions';
+import {postRequestOf, putRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {Organisation, OrganisationWithoutId} from '../organisationModels';
-import {addOrganisation, addSubOrganisation} from '../organisationsApiActions';
+import {addOrganisation, addSubOrganisation, updateOrganisation} from '../organisationsApiActions';
 
 const configureMockStore = configureStore([thunk]);
 
@@ -26,6 +26,7 @@ describe('organisationsApiActions', () => {
   });
 
   const createOrganisation = postRequestOf<Organisation>(EndPoints.organisations);
+  const putOrganisation = putRequestOf<Organisation>(EndPoints.organisations);
 
   let mockRestClient: MockAdapter;
   let store;
@@ -113,6 +114,104 @@ describe('organisationsApiActions', () => {
         createOrganisation.request(),
         createOrganisation.success(returnedOrganisation),
         showSuccessMessage(`Successfully created the organisation ${name} (${slug})`),
+      ]);
+    });
+
+  });
+
+  describe('updateOrganisation', () => {
+
+    const existingOrganisation: Organisation = {
+      id: idGenerator.uuid(),
+      name: 'Hällesåkers IF',
+      slug: 'HIF',
+    };
+
+    const existingSubOrganisation: Organisation = {
+      id: idGenerator.uuid(),
+      name: 'Örebro SK',
+      slug: 'ÖSK',
+      parent: {
+        name: 'Höganäs BK',
+        slug: 'HBK',
+        id: idGenerator.uuid(),
+      },
+    };
+
+    const putOrganisationWithResponseOk = async (organisation: Organisation) => {
+      mockRestClient
+        .onPut(`${EndPoints.organisations}`, organisation)
+        .reply(200, organisation);
+      return store.dispatch(updateOrganisation(organisation));
+    };
+
+    it('can update organisation', async () => {
+      const updatedOrganisation: Organisation = {
+        ...existingOrganisation,
+        name: 'Märsta IF',
+        slug: 'MIF',
+      };
+
+      await putOrganisationWithResponseOk(updatedOrganisation);
+
+      const {name, slug} = updatedOrganisation;
+
+      expect(store.getActions()).toEqual([
+        putOrganisation.request(),
+        putOrganisation.success(updatedOrganisation),
+        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+      ]);
+    });
+
+    it('can update sub-organisation', async () => {
+      const updatedOrganisation: Organisation = {
+        ...existingSubOrganisation,
+        name: 'Märsta IF',
+        slug: 'MIF',
+      };
+
+      await putOrganisationWithResponseOk(updatedOrganisation);
+
+      const {name, slug} = updatedOrganisation;
+
+      expect(store.getActions()).toEqual([
+        putOrganisation.request(),
+        putOrganisation.success(updatedOrganisation),
+        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+      ]);
+    });
+
+    it('can turn sub-organisation into organisation', async () => {
+      const updatedOrganisation: Organisation = {...existingSubOrganisation};
+      delete updatedOrganisation.parent;
+
+      await putOrganisationWithResponseOk(updatedOrganisation);
+
+      const {name, slug} = updatedOrganisation;
+
+      expect(store.getActions()).toEqual([
+        putOrganisation.request(),
+        putOrganisation.success(updatedOrganisation),
+        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
+      ]);
+    });
+
+    it('can turn organisation into sub-organisation', async () => {
+      const updatedOrganisation: Organisation = {
+        ...existingOrganisation,
+        parent: {
+          ...existingSubOrganisation.parent!
+        },
+      };
+
+      await putOrganisationWithResponseOk(updatedOrganisation);
+
+      const {name, slug} = updatedOrganisation;
+
+      expect(store.getActions()).toEqual([
+        putOrganisation.request(),
+        putOrganisation.success(updatedOrganisation),
+        showSuccessMessage(`Successfully updated the organisation ${name} (${slug})`),
       ]);
     });
 

@@ -21,6 +21,7 @@ export const routes = {
   adminUsersModify: '/admin/users/modify',
   adminOrganisations: '/admin/organisations',
   adminOrganisationsAdd: '/admin/organisations/add',
+  adminOrganisationsModify: '/admin/organisations/modify',
 };
 
 const organisationLogo = {

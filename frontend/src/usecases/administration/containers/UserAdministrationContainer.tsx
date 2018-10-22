@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
-import {UsersActionsDropdown} from '../../../components/actions-dropdown/UsersActionsDropdown';
+import {UserActions} from '../../../components/actions-dropdown/UserActions';
+import {UserBatchActions} from '../../../components/actions-dropdown/UserBatchActions';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
@@ -64,13 +64,13 @@ class UserAdministration extends React.Component<Props, State> {
     const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown confirmDelete={this.openDialog} id={id}/>;
+      <UserActions confirmDelete={this.openDialog} id={id}/>;
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
           <RowRight>
-            <UsersActionsDropdown/>
+            <UserBatchActions/>
           </RowRight>
           <Table result={users.result} entities={users.entities}>
             <TableColumn

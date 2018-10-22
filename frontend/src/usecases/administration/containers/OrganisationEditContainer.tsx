@@ -1,6 +1,8 @@
+import {values} from 'lodash';
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
@@ -12,59 +14,113 @@ import {AdminPageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {getError} from '../../../state/domain-models/domainModelsSelectors';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {
   addOrganisation,
   addSubOrganisation,
   clearOrganisationErrors,
-  fetchOrganisations
+  fetchOrganisations,
+  updateOrganisation
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {CallbackOfData, CallbackOfDataAndUrlParameters, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
+import {clearUserSelectionErrors, fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
+import {UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {
+  CallbackWithData,
+  CallbackWithDataAndUrlParameters,
+  ClearError,
+  ErrorResponse,
+  Fetch,
+  uuid
+} from '../../../types/Types';
+
+const organisationByIdIfExisting = (organisationId: uuid, organisations: Organisation[]): Organisation | undefined =>
+  organisations.find(({id}) => id === organisationId);
 
 interface StateToProps {
   organisations: Organisation[];
-  isFetching: boolean;
-  error: Maybe<ErrorResponse>;
+  isFetchingOrganisations: boolean;
+  isFetchingUserSelections: boolean;
+  organisationsError: Maybe<ErrorResponse>;
+  userSelectionsError: Maybe<ErrorResponse>;
+  selections: ObjectsById<UserSelection>;
 }
 
 interface DispatchToProps {
-  addOrganisation: CallbackOfData;
-  addSubOrganisation: CallbackOfDataAndUrlParameters;
+  addOrganisation: CallbackWithData;
+  addSubOrganisation: CallbackWithDataAndUrlParameters;
   fetchOrganisations: Fetch;
-  clearError: ClearError;
+  fetchUserSelections: Fetch;
+  clearOrganisationErrors: ClearError;
+  clearUserSelectionErrors: ClearError;
+  updateOrganisation: CallbackWithData;
 }
 
-type OwnProps = InjectedAuthRouterProps;
+type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{organisationId: uuid}>;
 type Props = OwnProps & StateToProps & DispatchToProps;
 
 class OrganisationEdit extends React.Component<Props, {}> {
 
   componentDidMount() {
     this.props.fetchOrganisations();
+    this.props.fetchUserSelections();
   }
 
-  componentWillReceiveProps({fetchOrganisations}: Props) {
+  componentWillReceiveProps({fetchOrganisations, fetchUserSelections}: Props) {
     fetchOrganisations();
+    fetchUserSelections();
   }
 
   render() {
-    const {addOrganisation, addSubOrganisation, organisations, isFetching, error, clearError} = this.props;
+    const {
+      addOrganisation,
+      addSubOrganisation,
+      organisations,
+      isFetchingOrganisations,
+      isFetchingUserSelections,
+      organisationsError,
+      userSelectionsError,
+      clearOrganisationErrors,
+      clearUserSelectionErrors,
+      match: {params: {organisationId}},
+      updateOrganisation,
+      selections
+    } = this.props;
+
+    const title: string =
+      organisationId
+        ? translate('edit organisation')
+        : translate('add organisation');
+
     return (
       <AdminPageComponent>
         <PageTitle>
-          {translate('add organisation')}
+          {title}
         </PageTitle>
 
         <Paper style={paperStyle}>
           <WrapperIndent>
-            <Loader isFetching={isFetching} error={error} clearError={clearError}>
-              <OrganisationEditForm
-                addOrganisation={addOrganisation}
-                addSubOrganisation={addSubOrganisation}
-                organisations={organisations}
-              />
+            <Loader
+              isFetching={isFetchingOrganisations}
+              error={organisationsError}
+              clearError={clearOrganisationErrors}
+            >
+              <Loader
+                isFetching={isFetchingUserSelections}
+                error={userSelectionsError}
+                clearError={clearUserSelectionErrors}
+              >
+                <OrganisationEditForm
+                  addOrganisation={addOrganisation}
+                  addSubOrganisation={addSubOrganisation}
+                  organisations={organisations}
+                  organisation={organisationByIdIfExisting(organisationId, organisations)}
+                  updateOrganisation={updateOrganisation}
+                  selections={values(selections)}
+                />
+              </Loader>
             </Loader>
           </WrapperIndent>
         </Paper>
@@ -73,17 +129,23 @@ class OrganisationEdit extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): StateToProps => ({
-  isFetching: organisations.isFetching,
-  error: getError(organisations),
+const mapStateToProps = ({auth, domainModels: {organisations, userSelections}}: RootState): StateToProps => ({
+  isFetchingOrganisations: organisations.isFetching,
+  isFetchingUserSelections: userSelections.isFetching,
+  organisationsError: getError(organisations),
+  userSelectionsError: getError(userSelections),
   organisations: getOrganisations(organisations),
+  selections: getEntitiesDomainModels(userSelections),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addOrganisation,
   addSubOrganisation,
+  updateOrganisation,
   fetchOrganisations,
-  clearError: clearOrganisationErrors,
+  fetchUserSelections,
+  clearOrganisationErrors,
+  clearUserSelectionErrors,
 }, dispatch);
 
 export const OrganisationEditContainer =

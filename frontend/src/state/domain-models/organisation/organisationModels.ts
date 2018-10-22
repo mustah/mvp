@@ -4,6 +4,7 @@ import {IdNamed, Omit, uuid} from '../../../types/Types';
 export interface Organisation extends IdNamed {
   slug: uuid;
   parent?: Organisation;
+  selectionId?: uuid;
 }
 
 export type OrganisationWithoutId = Omit<Organisation, 'id'>;

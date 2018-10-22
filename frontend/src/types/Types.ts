@@ -15,6 +15,8 @@ export type Callback = () => void;
 export type CallbackWith<T> = (result: T) => void;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
 export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
+export type CallbackWithData = (requestData: any) => Dispatch<any>;
+export type CallbackWithDataAndUrlParameters = (requestData: any, urlParameters: any) => any;
 export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: EncodedUriParameters) => void;
@@ -22,9 +24,6 @@ export type ClearError = () => void;
 
 export type FetchPaginated = (page: number, requestModel?: string) => void;
 export type ClearErrorPaginated = (payload: PageNumbered) => void;
-
-export type CallbackOfData = (requestData: any) => Dispatch<any>;
-export type CallbackOfDataAndUrlParameters = (requestData: any, urlFormattingParameters: any) => any;
 
 export type Predicate<T> = (value: T) => boolean;
 
