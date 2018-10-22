@@ -24,6 +24,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectQuantities} from '../../../state/ui/indicator/indicatorActions';
+import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
@@ -35,6 +36,7 @@ import './GraphContainer.scss';
 
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
+  isSideMenuOpen: boolean;
   period: Period;
   selectedIndicators: Medium[];
   selectedListItems: uuid[];
@@ -65,6 +67,7 @@ interface MouseOverProps {
 interface GraphContentProps {
   content?: React.ReactElement<any> | React.StatelessComponent<any> | ContentRenderer<TooltipProps>;
   data?: object[];
+  isSideMenuOpen: boolean;
   lines: Children[];
   legend: ProprietaryLegendProps[];
   legendClick: OnClick;
@@ -116,31 +119,29 @@ const renderGraphContents = (
 };
 
 const GraphContent =
-  ({data, setTooltipPayload, legendClick, content, lines, legend}: GraphContentProps) => (
-    <Column className="GraphContainer">
-      <Column>
-        <ResponsiveContainer height={600} aspect={2.5}>
-          <LineChart
-            width={10}
-            height={50}
-            data={data}
-            margin={margin}
-            onMouseMove={setTooltipPayload}
-          >
-            <XAxis
-              dataKey="name"
-              domain={['dataMin', 'dataMax']}
-              scale="time"
-              tickFormatter={timestamp}
-              type="number"
-            />
-            <CartesianGrid strokeDasharray="3 3"/>
-            <Tooltip content={content}/>
-            <Legend onClick={legendClick} payload={legend}/>
-            {lines}
-          </LineChart>
-        </ResponsiveContainer>
-      </Column>
+  ({content, data, isSideMenuOpen, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => (
+    <Column className="GraphContainer" key={`graph-sideMenuIsOpen-${isSideMenuOpen}`}>
+      <ResponsiveContainer aspect={2.5}>
+        <LineChart
+          width={10}
+          height={50}
+          data={data}
+          margin={margin}
+          onMouseMove={setTooltipPayload}
+        >
+          <XAxis
+            dataKey="name"
+            domain={['dataMin', 'dataMax']}
+            scale="time"
+            tickFormatter={timestamp}
+            type="number"
+          />
+          <CartesianGrid strokeDasharray="3 3"/>
+          <Tooltip content={content}/>
+          <Legend onClick={legendClick} payload={legend}/>
+          {lines}
+        </LineChart>
+      </ResponsiveContainer>
       <TableInfoText/>
     </Column>
   );
@@ -159,6 +160,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
   render() {
     const {
       graphContents,
+      isSideMenuOpen,
       outerHiddenKeys,
       selectedListItems,
       selectedQuantities,
@@ -189,6 +191,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       data,
       legend,
       content: this.renderToolTip,
+      isSideMenuOpen,
       legendClick,
       setTooltipPayload: this.setTooltipPayload,
       hasContent: selectedListItems.length > 0,
@@ -251,14 +254,17 @@ const mapStateToProps =
   ({
     report: {selectedListItems},
     userSelection: {userSelection},
-    ui: {indicator: {selectedIndicators: {report}, selectedQuantities}},
-  }: RootState): StateToProps =>
-    ({
+    ui,
+  }: RootState): StateToProps => {
+    const {indicator: {selectedIndicators: {report}, selectedQuantities}} = ui;
+    return ({
       ...getSelectedPeriod(userSelection),
+      isSideMenuOpen: isSideMenuOpen(ui),
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
     });
+  };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectQuantities,
