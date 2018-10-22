@@ -21,12 +21,15 @@ public class OrganisationDto {
   @Nullable
   public OrganisationDto parent;
 
+  @Nullable
+  public UUID selectionId;
+
   public OrganisationDto(String name, String slug) {
     this(null, name, slug);
   }
 
   public OrganisationDto(UUID id, String name, String slug) {
-    this(id, name, slug, null);
+    this(id, name, slug, null, null);
   }
 
 }

@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -12,7 +11,7 @@ import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
 @ToString
-public class Quantity implements Identifiable<Integer>, Serializable {
+public class Quantity implements Identifiable<Integer> {
 
   public static final Quantity VOLUME = new Quantity("Volume")
     .withDefaultPresentation("m³", SeriesDisplayMode.CONSUMPTION);
@@ -64,8 +63,6 @@ public class Quantity implements Identifiable<Integer>, Serializable {
     REACTIVE_ENERGY,
     EXTERNAL_TEMPERATURE
   ));
-
-  private static final long serialVersionUID = -4279706519680318521L;
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
 

@@ -1,0 +1,48 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet id="Add user selection to sub-organisations" author="antlof">
+    <createTable
+      tableName="organisation_user_selection">
+      <column type="uuid" name="organisation_id">
+        <constraints
+          referencedTableName="organisation"
+          referencedColumnNames="id"
+          foreignKeyName="organisation_user_selection_organisation_id_fkey"
+          nullable="false"
+          deleteCascade="true"
+        />
+      </column>
+      <column type="uuid" name="selection_id">
+        <constraints
+          referencedTableName="user_selection"
+          referencedColumnNames="id"
+          foreignKeyName="organisation_user_selection_selection_id_fkey"
+          nullable="false"
+        />
+      </column>
+    </createTable>
+    <addPrimaryKey
+      constraintName="organisation_user_selection_pkey"
+      tableName="organisation_user_selection"
+      columnNames="organisation_id,selection_id"
+    />
+
+    <createTable schemaName="evoaudit" tableName="organisation_user_selection_aud">
+
+      <column name="selection_id" type="uuid"/>
+      <column name="selection_mod" type="BOOLEAN"/>
+      <column name="organisation_id" type="uuid"/>
+      <column name="rev" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="revtype" type="tinyint(3)"/>
+      <column name="revend" type="bigint"/>
+      <column name="revend_tstmp" type="timestamp"/>
+      <column name="property_value" type="${text_type}"/>
+      <column name="value_mod" type="boolean"/>
+
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>

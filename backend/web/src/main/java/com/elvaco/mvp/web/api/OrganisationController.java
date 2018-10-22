@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
+import com.elvaco.mvp.web.exception.UserSelectionNotFound;
 import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 public class OrganisationController {
 
   private final OrganisationUseCases organisationUseCases;
+  private final UserSelectionUseCases selections;
 
   @GetMapping
   public List<OrganisationDto> allOrganisations() {
@@ -70,9 +74,14 @@ public class OrganisationController {
     @PathVariable UUID id,
     @RequestBody SubOrganisationRequestDto requestDto
   ) {
+    UserSelection selection = selections.findByIdForCurrentUser(requestDto.selectionId).orElseThrow(
+      () -> new UserSelectionNotFound(requestDto.selectionId)
+    );
+
     return organisationUseCases.findById(id)
       .map(parent -> organisationUseCases.create(OrganisationDtoMapper.toDomainModel(
         parent,
+        selection,
         requestDto
       )))
       .map(OrganisationDtoMapper::toDto)

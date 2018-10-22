@@ -20,12 +20,13 @@ public class OrganisationRepositoryTest extends IntegrationTest {
 
   @Test
   public void deletingOrganisationDeletesUsers() {
-    OrganisationEntity organisationEntity = organisationJpaRepository.save(new OrganisationEntity(
-      randomUUID(),
-      "An organisation",
-      "an-organisation",
-      "an-organisation"
-    ));
+    OrganisationEntity organisationEntity = organisationJpaRepository.save(
+      OrganisationEntity.builder()
+        .id(randomUUID())
+        .name("An organisation")
+        .slug("an-organisation")
+        .externalId("an-organisation")
+        .build());
     userJpaRepository.save(new UserEntity(
       randomUUID(),
       "user",

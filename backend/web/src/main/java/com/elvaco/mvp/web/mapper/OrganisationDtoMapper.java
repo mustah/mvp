@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 import lombok.experimental.UtilityClass;
@@ -15,7 +16,8 @@ public class OrganisationDtoMapper {
       organisation.id,
       organisation.name,
       organisation.slug,
-      organisation.parent != null ? toDto(organisation.parent) : null
+      organisation.parent != null ? toDto(organisation.parent) : null,
+      organisation.selection != null ? organisation.selection.id : null
     );
   }
 
@@ -30,6 +32,7 @@ public class OrganisationDtoMapper {
 
   public static Organisation toDomainModel(
     Organisation parent,
+    UserSelection selection,
     SubOrganisationRequestDto requestDto
   ) {
     return new Organisation(
@@ -37,7 +40,8 @@ public class OrganisationDtoMapper {
       requestDto.name,
       requestDto.slug,
       requestDto.name,
-      parent
+      parent,
+      selection
     );
   }
 }

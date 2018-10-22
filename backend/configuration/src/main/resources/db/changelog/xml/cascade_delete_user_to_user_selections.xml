@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet id="Delete user selections when user is deleted" author="antlof">
+    <dropForeignKeyConstraint
+      baseTableName="user_selection"
+      constraintName="user_selection_organisation_id_fkey"
+    />
+    <addForeignKeyConstraint
+      baseTableName="user_selection"
+      constraintName="user_selection_organisation_id_fkey"
+      baseColumnNames="organisation_id,owner_user_id"
+      referencedTableName="mvp_user"
+      referencedColumnNames="organisation_id,id"
+      onDelete="CASCADE"
+    />
+  </changeSet>
+</databaseChangeLog>

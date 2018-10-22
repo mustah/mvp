@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,9 +23,7 @@ import static java.util.stream.Collectors.toList;
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LogicalMeter implements Identifiable<UUID>, Serializable {
-
-  private static final long serialVersionUID = -7467562865583613538L;
+public class LogicalMeter implements Identifiable<UUID> {
 
   @Builder.Default
   public UUID id = UUID.randomUUID();

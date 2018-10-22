@@ -1,16 +1,13 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.io.Serializable;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-public class GeoCoordinate implements Serializable {
+public class GeoCoordinate {
 
   public static final double HIGH_CONFIDENCE = 0.75;
-
-  private static final long serialVersionUID = 663484783496157531L;
 
   private final Double longitude;
   private final Double latitude;
