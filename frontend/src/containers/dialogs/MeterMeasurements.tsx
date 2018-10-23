@@ -8,6 +8,7 @@ import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
 import {TableInfoText} from '../../components/table/TableInfoText';
 import {Normal} from '../../components/texts/Texts';
+import {isDefined} from '../../helpers/commonUtils';
 import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {firstUpperTranslated, translate} from '../../services/translationService';
@@ -41,9 +42,9 @@ const renderReadingRows =
 
       readings.forEach((reading: Reading, timestamp: number) => {
         const measurements = quantities
-          .map((quantity: Quantity) => reading.measurements[quantity]!)
-          .map((measurement: Measurement, index: number) =>
-            <td key={index}>{renderValue(measurement)}</td>);
+          .map((quantity: Quantity) => reading.measurements[quantity])
+          .filter(isDefined)
+          .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>);
 
         rows.push((
           <tr key={timestamp}>
