@@ -10,6 +10,7 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringReferenceInfoMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
@@ -112,8 +113,14 @@ class RabbitMqConfig {
   }
 
   @Bean
-  MessageListenerAdapter listenerAdapter(MessageListener messageListener) {
-    return new MessageListenerAdapter(new AuthenticatedMessageListener(messageListener));
+  MessageListenerAdapter listenerAdapter(
+    MessageListener messageListener,
+    Organisation rootOrganisation
+  ) {
+    return new MessageListenerAdapter(new AuthenticatedMessageListener(
+      messageListener,
+      rootOrganisation
+    ));
   }
 
   @Bean

@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
 import com.elvaco.mvp.core.domainmodels.Language;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.web.security.MvpUserDetails;
@@ -13,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
@@ -22,6 +22,7 @@ import static java.util.UUID.randomUUID;
 class AuthenticatedMessageListener {
 
   private final MessageListener messageListener;
+  private final Organisation rootOrganisation;
 
   /**
    * This is used through reflection in com.elvaco.mvp.configuration.config.RabbitMqConfig.
@@ -48,14 +49,14 @@ class AuthenticatedMessageListener {
     }
   }
 
-  private static User meteringUser() {
+  private User meteringUser() {
     return new User(
       randomUUID(),
       "Metering Message RabbitMQ Consumer",
       "noone@example.com",
       "",
       Language.sv,
-      ELVACO,
+      rootOrganisation,
       singletonList(Role.SUPER_ADMIN)
     );
   }

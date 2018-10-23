@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,8 +60,8 @@ public class UserDetailsMapperTest {
   }
 
   @Test
-  public void userIsNotWithingOrganisation() {
-    assertThat(mvpUserDetails().isWithinOrganisation(WAYNE_INDUSTRIES.id)).isFalse();
+  public void userIsNotWithinOrganisation() {
+    assertThat(mvpUserDetails().isWithinOrganisation(randomUUID())).isFalse();
   }
 
   private static MvpUserDetails mvpUserDetails() {

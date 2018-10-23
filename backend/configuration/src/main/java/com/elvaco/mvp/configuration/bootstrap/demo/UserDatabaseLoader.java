@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Language;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -24,17 +25,9 @@ import org.springframework.stereotype.Component;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.DEVELOPER_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 
 @Order(2)
 @Profile("demo")
@@ -42,11 +35,35 @@ import static java.util.Collections.singletonList;
 @Slf4j
 class UserDatabaseLoader implements CommandLineRunner {
 
+  private static final Organisation WAYNE_INDUSTRIES =
+    new Organisation(
+      randomUUID(),
+      "Wayne Industries",
+      "wayne-industries",
+      "Wayne Industries"
+    );
+  private static final User OTHER_ADMIN_USER = new User(
+    "Elvis Cohan",
+    "elvis.cohan@wayne.com",
+    "elvis123",
+    Language.en,
+    WAYNE_INDUSTRIES,
+    singletonList(ADMIN)
+  );
+  private static final User OTHER_USER = new User(
+    "Erik Karlsson",
+    "erikar@wayne.se",
+    "erik123",
+    Language.en,
+    WAYNE_INDUSTRIES,
+    singletonList(USER)
+  );
   private final TokenService tokenService;
   private final TokenFactory tokenFactory;
   private final Organisations organisations;
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
+  private final Organisation rootOrganisation;
 
   @Autowired
   UserDatabaseLoader(
@@ -54,13 +71,15 @@ class UserDatabaseLoader implements CommandLineRunner {
     TokenFactory tokenFactory,
     Organisations organisations,
     UserUseCases userUseCases,
-    SettingUseCases settingUseCases
+    SettingUseCases settingUseCases,
+    Organisation rootOrganisation
   ) {
     this.tokenService = tokenService;
     this.tokenFactory = tokenFactory;
     this.organisations = organisations;
     this.userUseCases = userUseCases;
     this.settingUseCases = settingUseCases;
+    this.rootOrganisation = rootOrganisation;
   }
 
   @Override
@@ -75,7 +94,14 @@ class UserDatabaseLoader implements CommandLineRunner {
     organisations.save(WAYNE_INDUSTRIES);
 
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
-      ELVACO_SUPER_ADMIN_USER,
+      new User(
+        "Super Admin",
+        "superadmin@elvaco.se",
+        "admin123",
+        Language.en,
+        rootOrganisation,
+        singletonList(SUPER_ADMIN)
+      ),
       tokenFactory.newToken()
     );
 
@@ -92,7 +118,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "emitir@elvaco.se",
         "emil123",
         Language.sv,
-        ELVACO,
+        rootOrganisation,
         asList(USER, ADMIN, SUPER_ADMIN)
       ),
       new User(
@@ -100,7 +126,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "hansjo@elvaco.se",
         "hanna123",
         Language.en,
-        ELVACO,
+        rootOrganisation,
         asList(USER, ADMIN)
       ),
       new User(
@@ -130,11 +156,46 @@ class UserDatabaseLoader implements CommandLineRunner {
       ),
       OTHER_ADMIN_USER,
       OTHER_USER,
-      ELVACO_USER,
-      OTHER_ELVACO_USER,
-      ELVACO_ADMIN_USER,
-      ELVACO_SUPER_ADMIN_USER,
-      DEVELOPER_USER
+      new User(
+        "Stefan Stefanson",
+        "steste@elvaco.se",
+        "stefan123",
+        Language.en,
+        rootOrganisation,
+        singletonList(USER)
+      ),
+      new User(
+        "Eva Nilsson",
+        "evanil@elvaco.se",
+        "eva123",
+        Language.en,
+        rootOrganisation,
+        singletonList(USER)
+      ),
+      new User(
+        "Peter Eriksson",
+        "peteri@elvaco.se",
+        "peter123",
+        Language.en,
+        rootOrganisation,
+        singletonList(ADMIN)
+      ),
+      new User(
+        "Super Admin",
+        "superadmin@elvaco.se",
+        "admin123",
+        Language.en,
+        rootOrganisation,
+        singletonList(SUPER_ADMIN)
+      ),
+      new User(
+        "Developer",
+        "user@domain.tld",
+        "complicated_password",
+        Language.en,
+        rootOrganisation,
+        singletonList(SUPER_ADMIN)
+      )
     );
 
     users.stream()

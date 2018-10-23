@@ -13,10 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER_PASSWORD;
-import static com.elvaco.mvp.core.fixture.DomainModels.RANDOM_ELVACO_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.RANDOM_ELVACO_USER_PASSWORD;
+import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,10 +26,17 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void authenticate() {
-    User user = createUserIfNotPresent(ELVACO_SUPER_ADMIN_USER);
+    User user = createUserIfNotPresent(new User(
+      "Super Admin",
+      "superadmin@elvaco.se",
+      "admin123",
+      Language.en,
+      context().organisation(),
+      singletonList(SUPER_ADMIN)
+    ));
 
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(user.getUsername(), ELVACO_SUPER_ADMIN_USER_PASSWORD)
+      .loginWith(user.getUsername(), "admin123")
       .get("/authenticate", UserTokenDto.class);
 
     UserTokenDto body = response.getBody();
@@ -72,10 +78,17 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void logoutUserShouldRemoveItsTokenFromTokenService() {
-    User user = createUserIfNotPresent(RANDOM_ELVACO_USER);
+    User user = createUserIfNotPresent(new User(
+      "Random User",
+      "random@user.tld",
+      "yes-random",
+      Language.en,
+      context().organisation(),
+      singletonList(ADMIN)
+    ));
 
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(user.getUsername(), RANDOM_ELVACO_USER_PASSWORD)
+      .loginWith(user.getUsername(), "yes-random")
       .get("/authenticate", UserTokenDto.class);
 
     String token = response.getBody().token;
@@ -126,7 +139,7 @@ public class AuthControllerTest extends IntegrationTest {
         .email("basic@auth.se")
         .password(password)
         .language(Language.en)
-        .organisationElvaco()
+        .organisation(context().organisation())
         .asUser()
         .build()
     );

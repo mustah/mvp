@@ -103,7 +103,7 @@ public class UserUseCasesTest extends IntegrationTest {
       .email(email)
       .password(rawPassword)
       .language(Language.en)
-      .organisationElvaco()
+      .organisation(context().organisation())
       .roles(ADMIN, USER)
       .build();
   }
@@ -114,7 +114,7 @@ public class UserUseCasesTest extends IntegrationTest {
         .name("Integration test user")
         .email("noone@nowhere")
         .password("nopass")
-        .organisationElvaco()
+        .organisation(context().organisation())
         .asSuperAdmin()
         .build()
     );

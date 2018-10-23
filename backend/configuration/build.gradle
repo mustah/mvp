@@ -26,6 +26,7 @@ dependencies {
   compile "org.ehcache:ehcache:${ehcacheVersion}"
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 
   runtime 'org.liquibase:liquibase-core'
   runtime 'com.h2database:h2'

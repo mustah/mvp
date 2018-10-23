@@ -18,8 +18,8 @@ class ServiceConfig {
   @Bean
   GeocodeService geocodeService(
     @Value("${geo-service.url}") String geoServiceUrl,
-    @Value("${mvp.url}") String mvpUrl
+    MvpProperties mvpProperties
   ) {
-    return new GeocodeSpringService(mvpUrl, geoServiceUrl, HTTP_GET_CLIENT);
+    return new GeocodeSpringService(mvpProperties.getUrl(), geoServiceUrl, HTTP_GET_CLIENT);
   }
 }

@@ -80,6 +80,10 @@ mvp:
   superadmin:
     email: "mvpadmin@elvaco.se"
     password: "changeme"
+  root-organisation:
+    name: "Elvaco"
+    slug: "elvaco"
+
 
 geo-service:
   url: http://localhost:8081

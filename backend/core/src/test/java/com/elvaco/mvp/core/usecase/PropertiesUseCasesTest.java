@@ -11,7 +11,7 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
+import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_SUPER_ADMIN_USER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -13,8 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper.toDomainModel;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementEntityMapperTest {

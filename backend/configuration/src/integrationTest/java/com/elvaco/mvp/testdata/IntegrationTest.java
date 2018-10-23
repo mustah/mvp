@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import javax.persistence.EntityManagerFactory;
 
+import com.elvaco.mvp.configuration.config.MvpProperties;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Users;
@@ -40,6 +41,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class IntegrationTest {
 
   private static final long MAX_WAIT_TIME = TimeUnit.SECONDS.toNanos(15);
+
+  @Autowired
+  protected MvpProperties mvpProperties;
 
   @Autowired
   protected OrganisationJpaRepository organisationJpaRepository;
@@ -100,6 +104,20 @@ public abstract class IntegrationTest {
       context = null;
     }
     SecurityContextHolder.clearContext();
+  }
+
+  protected void removeNonRootOrganisations() {
+    String rootOrgSlug = mvpProperties.getRootOrganisation().getSlug();
+    organisationJpaRepository.findAll().stream()
+      .filter(organisation -> !organisation.slug.equals(rootOrgSlug))
+      .sorted((o1, o2) -> {
+        if (o1.parent != null) {
+          return o2.parent == null ? -1 : 0;
+        } else if (o2.parent != null) {
+          return 1;
+        }
+        return 0;
+      }).forEach(organisation -> organisationJpaRepository.deleteById(organisation.id));
   }
 
   protected boolean isPostgresDialect() {

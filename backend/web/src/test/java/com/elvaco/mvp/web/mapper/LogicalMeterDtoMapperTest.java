@@ -18,8 +18,8 @@ import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper.toDto;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
