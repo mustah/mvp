@@ -1,3 +1,9 @@
+import com.github.spotbugs.SpotBugsTask
+
+plugins {
+  id "com.github.spotbugs" version "1.6.4"
+}
+
 def getVersion = { ->
   def versionFile = new File('.version')
   try {
@@ -45,14 +51,17 @@ subprojects { subproject ->
   }
 
   plugins.withType(JavaPlugin) {
+    /* No released version of Spring Boot support Java 11, yet. We'll have to wait for 2.1.0.*/
+    // sourceCompatibility = JavaVersion.VERSION_11
+    // targetCompatibility = JavaVersion.VERSION_11
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_10
+    targetCompatibility = JavaVersion.VERSION_1_10
 
     plugins.apply('idea')
     plugins.apply('eclipse')
     plugins.apply('checkstyle')
-    plugins.apply('findbugs')
+    plugins.apply('com.github.spotbugs')
 
     idea {
       module {
@@ -69,8 +78,8 @@ subprojects { subproject ->
       toolVersion = '8.5'
     }
 
-    tasks.withType(FindBugs) {
-      excludeFilter = file("$rootDir/backend/config/findbugs/excludeFilter.xml")
+    tasks.withType(SpotBugsTask) {
+      excludeFilter = file("$rootDir/backend/config/spotbugs/excludeFilter.xml")
       reports {
         xml.enabled false
       }
@@ -82,6 +91,6 @@ task checkstyle {
   dependsOn subprojects.collect { it.tasks.withType(Checkstyle) }
 }
 
-task findbugs {
-  dependsOn subprojects.collect { it.tasks.withType(FindBugs) }
+task spotbugs {
+  dependsOn subprojects.collect { it.tasks.withType(com.github.spotbugs.SpotBugsTask) }
 }

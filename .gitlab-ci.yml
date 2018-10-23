@@ -1,6 +1,6 @@
 # === Global ===
 image:
-  name: gradle:jdk8
+  name: gradle:jdk10
 
 stages:
   - docker
@@ -150,7 +150,7 @@ build:compile:
   dependencies:
     - prepare:version
   script:
-    - gradle compileJava checkstyle findbugsMain test
+    - gradle compileJava checkstyle spotbugsMain test
 
 assemble:
   <<: *cache_gradle

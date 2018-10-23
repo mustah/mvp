@@ -24,6 +24,9 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-amqp'
   compile 'org.simpleflatmapper:sfm-csv:3.15.5'
   compile "org.ehcache:ehcache:${ehcacheVersion}"
+  /* Deprecated & removed (http://openjdk.java.net/jeps/320) - used by hibernate */
+  compile 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
+  compile 'javax.activation:javax.activation-api:1.2.0'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   compileOnly "org.springframework.boot:spring-boot-configuration-processor"
