@@ -118,7 +118,7 @@ const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0}
 const GraphContent =
   ({content, data, key, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => (
     <Column className="GraphContainer" key={key}>
-      <ResponsiveContainer aspect={2.5} width="99%" height="99%">
+      <ResponsiveContainer aspect={2.5} width="95%" height="99%">
         <LineChart
           width={10}
           height={50}
