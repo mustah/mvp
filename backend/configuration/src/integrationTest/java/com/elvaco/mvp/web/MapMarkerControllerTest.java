@@ -257,7 +257,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .parameter(RequestParameter.BEFORE, now)
       .build();
 
-    ResponseEntity<MapMarkersDto> response = asTestUser()
+    ResponseEntity<MapMarkersDto> response = asUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

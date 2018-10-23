@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -98,7 +99,7 @@ public final class FilterUtils {
       .and(METER_STATUS_LOG.status.in(statuses));
   }
 
-  static Predicate alarmQueryFilter(List<String> values) {
+  public static Predicate alarmQueryFilter(Collection<String> values) {
     return values.stream().anyMatch(FilterUtils::isYes)
       ? ALARM_LOG.mask.isNotNull()
       : ALARM_LOG.mask.isNull();

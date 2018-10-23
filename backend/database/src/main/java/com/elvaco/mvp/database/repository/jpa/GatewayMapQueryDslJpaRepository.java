@@ -7,17 +7,16 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
+import com.elvaco.mvp.core.filter.ComparisonMode;
+import com.elvaco.mvp.core.filter.FilterSet;
+import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
+import com.elvaco.mvp.core.filter.RequestParametersConverter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinReportedMeters;
 
 @Repository
 class GatewayMapQueryDslJpaRepository
@@ -31,9 +30,16 @@ class GatewayMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    Predicate predicate = new GatewayQueryFilters().toExpression(parameters);
 
-    JPQLQuery<MapMarker> query = createQuery(predicate)
+    return findAllMapMarkers(
+      RequestParametersConverter.toFilterSet(
+        parameters
+      )
+    );
+  }
+
+  private Set<MapMarker> findAllMapMarkers(FilterSet filters) {
+    JPQLQuery<MapMarker> query = createQuery()
       .select(Projections.constructor(
         MapMarker.class,
         GATEWAY.id,
@@ -41,17 +47,14 @@ class GatewayMapQueryDslJpaRepository
         ALARM_LOG.mask,
         LOCATION.latitude,
         LOCATION.longitude
-      ))
-      .join(GATEWAY.meters, LOGICAL_METER)
-      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
-      .join(LOGICAL_METER.location, LOCATION)
-      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-      .on(new MeterAlarmLogQueryFilters().toPredicate(parameters));
+      ));
 
-    joinReportedMeters(query, parameters);
+    filters.add(new LocationConfidenceFilter(GeoCoordinate.HIGH_CONFIDENCE, ComparisonMode.EQUAL));
 
-    return new HashSet<>(query.distinct().fetch());
+    new GatewayFilterQueryDslJpaVisitor().visitAndApply(filters, query);
+
+    return new HashSet<>(query
+      .distinct()
+      .fetch());
   }
 }

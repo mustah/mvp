@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -45,7 +44,7 @@ class StatusLogsDataLoader {
   }
 
   private void createGatewayLogMockData() {
-    gateways.findAll(new RequestParametersAdapter()).stream()
+    gateways.findAll().stream()
       .map(gateway -> StatusLogEntry.<UUID>builder()
         .entityId(gateway.id)
         .status(nextRandomStatusType())
