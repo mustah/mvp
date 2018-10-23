@@ -61,18 +61,28 @@ deploy_{{module}}_db_config:
     - require:
       - create_{{module}}_dir
 
+create_docker_network_for_{{module}}:
+  docker_network.present:
+    - name: elvaco_mvp
+    - reconnect: True
+    - require:
+      - deploy_{{module}}_db_config
+
 download_{{module}}_image:
   docker_image.present:
     - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
     - require:
-      - deploy_{{module}}_db_config
+      - create_docker_network_for_{{module}}
 
 docker_{{module}}:
   docker_container.running:
     - name: {{module}}
     - user: mvp
     - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
+    - networks:
+      - elvaco_mvp
     - detach: True
+    - force: True
     - dns: 10.120.1.10
     - dns_search: elvaco.local
     - ports: 8081/tcp
@@ -85,6 +95,7 @@ docker_{{module}}:
       - /opt/elvaco/{{module}}-current/config/:/app/config:ro
     - require:
       - download_{{module}}_image
+      - docker_network: elvaco_mvp
 
 {{module}}_version:
   grains.present:
