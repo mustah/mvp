@@ -229,7 +229,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(0.0);
   }
 
-  UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
+  private UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
       .path("/meters")
       .parameter(RequestParameter.AFTER, after)
