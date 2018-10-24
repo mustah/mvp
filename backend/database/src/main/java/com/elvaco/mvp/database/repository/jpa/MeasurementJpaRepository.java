@@ -52,29 +52,22 @@ public interface MeasurementJpaRepository
     @Param("to") OffsetDateTime to
   );
 
-  @Query(nativeQuery = true, value = "SELECT "
-    + "cast(unit_at(avg(value), :unit) AS TEXT) AS value,"
-    + "interval_start AS when"
-    + " FROM ("
-    + "   SELECT generate_series("
-    + "     date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
-    + "     date_trunc(:resolution, cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
-    + "     cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS interval_start"
-    + " ) x"
-    + " LEFT JOIN ("
-    + "   SELECT"
-    + "     value,"
-    + "     date_trunc(:resolution, created AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' AS "
-    + "interval_start FROM "
-    + "measurement WHERE"
-    + "     physical_meter_id IN :meter_ids"
-    + "     AND quantity = (select id from quantity where quantity.name=:quantity)"
-    + "     AND created >= cast(:from AS TIMESTAMPTZ) - cast('1 ' || :resolution as interval)"
-    + "     AND created <= cast(:to AS TIMESTAMPTZ)"
-    + ") y"
-    + "   USING (interval_start)"
-    + " GROUP BY interval_start"
-    + " ORDER BY interval_start")
+  @Query(nativeQuery = true, value = ""
+    + " SELECT"
+    + "   cast(unit_at(avg(value), :unit) as TEXT) as value,"
+    + "   date_serie.date as when"
+    + " FROM"
+    + "     (SELECT generate_series("
+    + "                  date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+    + "                  date_trunc(:resolution, cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+    + "                  cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
+    + "     ) AS date_serie"
+    + "     LEFT JOIN measurement"
+    + "            ON date_serie.date = created"
+    + "           AND physical_meter_id IN :meter_ids"
+    + "           AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
+    + " GROUP BY date_serie.date"
+    + " ORDER BY date_serie.date")
   List<MeasurementValueProjection> getAverageForPeriod(
     @Param("meter_ids") List<UUID> meterIds,
     @Param("resolution") String resolution,
@@ -124,21 +117,21 @@ public interface MeasurementJpaRepository
     @Param("resolution") String resolution
   );
 
-  @Query(nativeQuery = true, value = "select"
-    + "  cast (unit_at(value, :unit) as TEXT) as value,"
-    + "  created as when"
-    + "  from measurement"
-    + "  where created >= cast(:from AS TIMESTAMPTZ)"
-    + "  and quantity = (select id from quantity where quantity.name=:quantity)"
-    + "  and created < cast(:to AS TIMESTAMPTZ)"
-    + "  and created in ("
-    + "   SELECT generate_series("
-    + "     date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
-    + "     date_trunc(:resolution, cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
-    + "     cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS interval_start"
-    + "  )"
-    + "  and physical_meter_id = :meter_id"
-    + "  ORDER BY created ASC"
+  @Query(nativeQuery = true, value = ""
+    + " SELECT"
+    + "   cast(unit_at(value, :unit) as TEXT) as value,"
+    + "   date_serie.date as when"
+    + " FROM"
+    + "   (SELECT generate_series("
+    + "                  date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+    + "                  date_trunc(:resolution, cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+    + "                  cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
+    + "   ) AS date_serie"
+    + "   LEFT JOIN measurement"
+    + "          ON date_serie.date = created"
+    + "         AND physical_meter_id = :meter_id"
+    + "         AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
+    + " ORDER BY date_serie.date ASC"
   )
   List<MeasurementValueProjection> getSeriesForPeriod(
     @Param("meter_id") UUID physicalMeterId,

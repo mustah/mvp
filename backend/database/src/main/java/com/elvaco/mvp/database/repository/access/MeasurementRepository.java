@@ -141,7 +141,7 @@ public class MeasurementRepository implements Measurements {
             seriesQuantity.name,
             seriesQuantity.presentationUnit(),
             OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-            OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
+            OffsetDateTime.ofInstant(to.toInstant(), to.getZone()),
             resolution.toString()
           );
       }
