@@ -79,7 +79,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     newMeasurement(meter2, after.plusHours(4), "Volume", 7.0, "m^3");
 
-    org.springframework.data.domain.Page<MeasurementDto> firstPage = asTestUser()
+    org.springframework.data.domain.Page<MeasurementDto> firstPage = asUser()
       .getPage(String.format(
         "/measurements/paged?after=%s&before=%s&logicalMeterId=%s&size=2",
         after, before, logicalGasMeter.getId()
@@ -116,7 +116,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     newMeasurement(physicalMeter, created, "Difference temperature", 285.59, "°C");
 
-    Page<MeasurementDto> wrongUserResponse = asTestUser()
+    Page<MeasurementDto> wrongUserResponse = asUser()
       .getPage(String.format(
         "/measurements/paged?logicalMeterId=%s",
         physicalMeter.logicalMeterId
@@ -142,7 +142,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(districtHeatingMeter.id);
     newMeasurement(meter, after, "Energy", 1.0, "GJ");
 
-    org.springframework.data.domain.Page<MeasurementDto> firstPage = asTestUser()
+    org.springframework.data.domain.Page<MeasurementDto> firstPage = asUser()
       .getPage(String.format(
         "/measurements/paged/?after=%s&before=%s&logicalMeterId=%s",
         after, before, districtHeatingMeter.getId()

@@ -47,7 +47,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
-    ResponseEntity<UserSelectionDto> response = as(context.user)
+    ResponseEntity<UserSelectionDto> response = asUser()
       .get("/user/selections/" + selection1.id, UserSelectionDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -71,7 +71,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here2\"}")
     );
 
-    ResponseEntity<List<UserSelectionDto>> response = as(context.user)
+    ResponseEntity<List<UserSelectionDto>> response = asUser()
       .getList("/user/selections", UserSelectionDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -100,16 +100,16 @@ public class UserSelectionControllerTest extends IntegrationTest {
       (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"Json stuff here\"}")
     );
 
-    ResponseEntity<List<UserSelectionDto>> responseFindAll = as(context.admin)
+    ResponseEntity<List<UserSelectionDto>> responseFindAll = asAdmin()
       .getList("/user/selections", UserSelectionDto.class);
 
     assertThat(responseFindAll.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(responseFindAll.getBody().size()).isEqualTo(1);
+    assertThat(responseFindAll.getBody()).hasSize(1);
     assertThat(responseFindAll.getBody().get(0).id).isEqualTo(selection2.id);
     assertThat(responseFindAll.getBody().get(0).selectionParameters)
       .isEqualTo(selection2.selectionParameters);
 
-    ResponseEntity<UserSelectionDto> responseFindOne = as(context.admin)
+    ResponseEntity<UserSelectionDto> responseFindOne = asAdmin()
       .get("/user/selections/" + selection1.id, UserSelectionDto.class);
 
     assertThat(responseFindOne.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -127,7 +127,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       context().user.organisation.id
     );
 
-    ResponseEntity<UserSelectionDto> post = as(context().user).post(
+    ResponseEntity<UserSelectionDto> post = asUser().post(
       "/user/selections",
       userSelectionDto,
       UserSelectionDto.class
@@ -159,7 +159,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     userSelectionDto.selectionParameters = newData;
 
-    ResponseEntity<UserSelectionDto> response = as(context().user).put(
+    ResponseEntity<UserSelectionDto> response = asUser().put(
       "/user/selections",
       userSelectionDto,
       UserSelectionDto.class
@@ -195,7 +195,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     userSelectionDto.selectionParameters = changedData;
 
-    ResponseEntity<ErrorMessageDto> put = as(context().admin).put(
+    ResponseEntity<ErrorMessageDto> put = asAdmin().put(
       "/user/selections",
       userSelectionDto,
       ErrorMessageDto.class
@@ -256,7 +256,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}")
     );
 
-    ResponseEntity<UserSelectionDto> post = as(context().user).delete(
+    ResponseEntity<UserSelectionDto> post = asUser().delete(
       "/user/selections/" + userSelectionDto.id,
       UserSelectionDto.class
     );
@@ -273,7 +273,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}")
     );
 
-    ResponseEntity<ErrorMessageDto> post = as(context().user).delete(
+    ResponseEntity<ErrorMessageDto> post = asUser().delete(
       "/user/selections/" + adminsSelectionDto.id,
       ErrorMessageDto.class
     );
@@ -289,7 +289,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     User user,
     String name,
     ObjectNode jsonData
-  ) throws IOException {
+  ) {
     UserSelectionEntity entity = repository.save(new UserSelectionEntity(
       UUID.randomUUID(),
       user.id,

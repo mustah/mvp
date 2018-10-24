@@ -46,7 +46,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getCities() {
     prepareMeters();
 
-    Page<CityDto> response = asTestUser()
+    Page<CityDto> response = asUser()
       .getPage("/selections/cities", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -62,7 +62,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getCities_SortedByCityAsc() {
     prepareMeters();
 
-    Page<CityDto> response = asTestUser()
+    Page<CityDto> response = asUser()
       .getPage("/selections/cities?sort=city", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -78,7 +78,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getCities_SortedByCityDesc() {
     prepareMeters();
 
-    Page<CityDto> response = asTestUser()
+    Page<CityDto> response = asUser()
       .getPage("/selections/cities?sort=city,desc", CityDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -94,7 +94,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getAddresses_SortAsc() {
     prepareMeters();
 
-    Page<AddressDto> response = asTestUser()
+    Page<AddressDto> response = asUser()
       .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -111,7 +111,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getAddresses_SortDesc() {
     prepareMeters();
 
-    Page<AddressDto> response = asTestUser()
+    Page<AddressDto> response = asUser()
       .getPage("/selections/addresses?sort=streetAddress,desc", AddressDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -129,7 +129,7 @@ public class SelectionControllerTest extends IntegrationTest {
     prepareMeters();
     createLogicalMeter(null, "kungsbacka", "kabelgatan 17", "extId17");
 
-    Page<AddressDto> response = asTestUser()
+    Page<AddressDto> response = asUser()
       .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -184,7 +184,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_SortedAsc() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/facilities?sort=externalId,asc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -201,7 +201,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_SortedDesc() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/facilities?sort=externalId,desc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -218,7 +218,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_FilteredOnFacilitySearchText() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/facilities?sort=externalId,asc&facility=3", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -250,7 +250,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     String url = "/selections/facilities?sort=externalId,asc&facility=extId6";
 
-    Page<IdNamedDto> response = asTestUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
     assertThat(response.getTotalPages()).isEqualTo(0);
@@ -267,7 +267,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getSecondaryAddresses_SortedDesc() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/secondary-addresses?sort=address,desc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
@@ -284,7 +284,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getSecondaryAddressFiltered() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/secondary-addresses?secondaryAddress=444", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -307,7 +307,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     String url = "/selections/secondary-addresses?secondaryAddress=777";
 
-    Page<IdNamedDto> response = asTestUser().getPage(url, IdNamedDto.class);
+    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
     assertThat(response.getTotalPages()).isEqualTo(0);
@@ -324,7 +324,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getGatewaySerials_SortedDesc() {
     prepareGateways();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/gateway-serials?sort=serial,desc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -340,7 +340,7 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getGatewaySerials_FilteredOnQueryString() {
     prepareGateways();
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/gateway-serials?serial=66", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -384,7 +384,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<IdNamedDto> response = asTestUser().getPage(
+    Page<IdNamedDto> response = asUser().getPage(
       "/selections/facilities?q=bcd",
       IdNamedDto.class
     );
@@ -392,7 +392,7 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("abcdef");
     assertThat(
-      asTestUser().getPage(
+      asUser().getPage(
         "/selections/facilities?q=qwerty",
         IdNamedDto.class
       )
@@ -422,7 +422,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<IdNamedDto> response = asTestUser().getPage(
+    Page<IdNamedDto> response = asUser().getPage(
       "/selections/secondary-addresses?q=2345",
       IdNamedDto.class
     );
@@ -430,7 +430,7 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("123456");
     assertThat(
-      asTestUser().getPage(
+      asUser().getPage(
         "/selections/secondary-addresses?q=000000",
         IdNamedDto.class
       )
@@ -445,14 +445,14 @@ public class SelectionControllerTest extends IntegrationTest {
       .productModel("3100")
       .build());
 
-    Page<IdNamedDto> response = asTestUser().getPage(
+    Page<IdNamedDto> response = asUser().getPage(
       "/selections/gateway-serials?q=3456",
       IdNamedDto.class
     );
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("1234567");
-    assertThat(asTestUser().getPage(
+    assertThat(asUser().getPage(
       "/selections/gateway-serials?q=90909090",
       IdNamedDto.class
     )).hasSize(0);
@@ -481,14 +481,14 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<CityDto> response = asTestUser().getPage(
+    Page<CityDto> response = asUser().getPage(
       "/selections/cities?q=ngsback",
       CityDto.class
     );
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("kungsbacka");
-    assertThat(asTestUser().getPage(
+    assertThat(asUser().getPage(
       "/selections/cities?q=tockholm",
       IdNamedDto.class
     )).hasSize(0);
@@ -518,14 +518,14 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<AddressDto> response = asTestUser().getPage(
+    Page<AddressDto> response = asUser().getPage(
       "/selections/addresses?q=tora",
       AddressDto.class
     );
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).street).isEqualTo("stora vägen 24");
-    assertThat(asTestUser().getPage(
+    assertThat(asUser().getPage(
       "/selections/addresses?q=illa",
       AddressDto.class
     )).hasSize(0);
@@ -560,7 +560,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .build()
     );
 
-    Page<CityDto> response = asTestUser().getPage(
+    Page<CityDto> response = asUser().getPage(
       "/selections/cities",
       CityDto.class
     );
@@ -597,7 +597,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .build()
     );
 
-    Page<AddressDto> response = asTestUser().getPage(
+    Page<AddressDto> response = asUser().getPage(
       "/selections/addresses",
       AddressDto.class
     );
@@ -644,7 +644,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<IdNamedDto> response = asTestUser().getPage(
+    Page<IdNamedDto> response = asUser().getPage(
       "/selections/secondary-addresses",
       IdNamedDto.class
     );
@@ -681,7 +681,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("78910")
       .build());
 
-    Page<IdNamedDto> response = asTestUser().getPage(
+    Page<IdNamedDto> response = asUser().getPage(
       "/selections/facilities",
       IdNamedDto.class
     );
@@ -696,7 +696,7 @@ public class SelectionControllerTest extends IntegrationTest {
     gateways.save(gateway.serial("1").productModel("2100").build());
     gateways.save(gateway.serial("2").productModel("3100").build());
 
-    Page<IdNamedDto> response = asTestUser()
+    Page<IdNamedDto> response = asUser()
       .getPage("/selections/gateway-serials", IdNamedDto.class);
 
     assertThat(response).extracting("name").containsExactlyInAnyOrder("1", "2");
