@@ -74,7 +74,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         DAYS_TO_ADD * 1440 / physicalMeter.readIntervalMinutes,
         isFailing
       ));
-      log.info("Saved demo measurements " + i + "/" + meters.size());
+      log.info("Saved demo measurements " + (i + 1) + "/" + meters.size());
     }
   }
 

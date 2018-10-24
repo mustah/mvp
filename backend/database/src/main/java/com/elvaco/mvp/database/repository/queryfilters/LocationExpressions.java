@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
@@ -26,7 +27,6 @@ class LocationExpressions {
     return new BooleanBuilder()
       .and(locationExpressions.countriesAndCities(parameters))
       .or(locationExpressions.unknownCities(parameters))
-      .or(locationExpressions.hasLowConfidence(parameters))
       .getValue();
   }
 
@@ -36,7 +36,6 @@ class LocationExpressions {
     return new BooleanBuilder()
       .and(locationExpressions.address(parameters))
       .or(locationExpressions.unknownAddress(parameters))
-      .or(locationExpressions.hasLowConfidence(parameters))
       .getValue();
   }
 
@@ -48,13 +47,6 @@ class LocationExpressions {
   @Nullable
   private Predicate unknownAddress(Parameters parameters) {
     return parameters.hasUnknownAddresses ? location.streetAddress.isNull() : null;
-  }
-
-  @Nullable
-  private Predicate hasLowConfidence(Parameters parameters) {
-    return parameters.hasUnknownCities
-      ? location.confidence.lt(0.75).or(location.confidence.isNull())
-      : null;
   }
 
   @Nullable

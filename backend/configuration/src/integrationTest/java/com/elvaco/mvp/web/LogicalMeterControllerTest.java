@@ -46,6 +46,7 @@ import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
@@ -227,14 +228,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .get(0);
 
     assertThat(logicalMeterDto.collectionPercentage).isEqualTo(0.0);
-  }
-
-  UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
-    return Url.builder()
-      .path("/meters")
-      .parameter(RequestParameter.AFTER, after)
-      .parameter(RequestParameter.BEFORE, before)
-      .build();
   }
 
   @Test
@@ -1052,7 +1045,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).extracting("facility")
-      .containsExactlyInAnyOrder("123", "456", "789");
+      .containsExactlyInAnyOrder("123");
   }
 
   @Test
@@ -1081,7 +1074,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage("/meters?address=unknown,unknown,unknown", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).extracting("facility")
-      .containsExactlyInAnyOrder("abc", "789");
+      .containsExactly("abc");
   }
 
   @Test
@@ -1797,6 +1790,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).alarm)
       .isEqualTo(new AlarmDto(activeAlarm.id, activeAlarm.mask));
+  }
+
+  private UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
+    return Url.builder()
+      .path("/meters")
+      .parameter(RequestParameter.AFTER, after)
+      .parameter(RequestParameter.BEFORE, before)
+      .build();
   }
 
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
