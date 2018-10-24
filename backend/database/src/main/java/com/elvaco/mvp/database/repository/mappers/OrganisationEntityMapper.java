@@ -1,6 +1,9 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import javax.annotation.Nullable;
+
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import lombok.experimental.UtilityClass;
@@ -22,17 +25,18 @@ public class OrganisationEntityMapper {
   }
 
   public static OrganisationEntity toEntity(Organisation domainModel) {
-    OrganisationEntity parent = domainModel.parent != null ? toEntity(domainModel.parent) : null;
-    UserSelectionEntity selection = domainModel.selection != null
-      ? UserSelectionEntityMapper.toEntity(domainModel.selection)
-      : null;
     return OrganisationEntity.builder()
       .id(domainModel.id)
       .name(domainModel.name)
       .slug(domainModel.slug)
       .externalId(domainModel.externalId)
-      .parent(parent)
-      .selection(selection)
+      .parent(domainModel.parent != null ? toEntity(domainModel.parent) : null)
+      .selection(toUserSelectionEntity(domainModel.selection))
       .build();
+  }
+
+  @Nullable
+  private static UserSelectionEntity toUserSelectionEntity(UserSelection selection) {
+    return selection != null ? UserSelectionEntityMapper.toEntity(selection) : null;
   }
 }

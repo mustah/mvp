@@ -10,13 +10,13 @@ import lombok.experimental.UtilityClass;
 public class UserSelectionEntityMapper {
 
   public static UserSelection toDomainModel(UserSelectionEntity entity) {
-    return new UserSelection(
-      entity.id,
-      entity.ownerUserId,
-      entity.name,
-      entity.selectionParameters.getJson(),
-      entity.organisationId
-    );
+    return UserSelection.builder()
+      .id(entity.id)
+      .ownerUserId(entity.ownerUserId)
+      .organisationId(entity.organisationId)
+      .name(entity.name)
+      .selectionParameters(entity.selectionParameters.getJson())
+      .build();
   }
 
   public static UserSelectionEntity toEntity(UserSelection model) {

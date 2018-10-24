@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 public class SubOrganisationRequestDto {
 
   public String name;
-
   public String slug;
-
   public UUID selectionId;
 }

@@ -56,13 +56,13 @@ public class OrganisationEntityMapperTest {
         "parent-slug",
         "parent-external-id"
       ),
-      new UserSelection(
-        selectionId,
-        selectionOwnerId,
-        "selection",
-        createJsonNode(),
-        selectionOwnerOrganisationId
-      )
+      UserSelection.builder()
+        .id(selectionId)
+        .ownerUserId(selectionOwnerId)
+        .organisationId(selectionOwnerOrganisationId)
+        .name("selection")
+        .selectionParameters(createJsonNode())
+        .build()
     ))).isEqualToComparingFieldByField(
       OrganisationEntity.builder()
         .id(id)
@@ -145,13 +145,13 @@ public class OrganisationEntityMapperTest {
           "parent-slug",
           "parent-external-id"
         ),
-        new UserSelection(
-          selectionId,
-          selectionOwnerId,
-          "selection",
-          createJsonNode(),
-          selectionOwnerOrganisationId
-        )
+        UserSelection.builder()
+          .id(selectionId)
+          .ownerUserId(selectionOwnerId)
+          .organisationId(selectionOwnerOrganisationId)
+          .name("selection")
+          .selectionParameters(createJsonNode())
+          .build()
       )
     );
   }

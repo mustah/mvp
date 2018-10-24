@@ -20,12 +20,12 @@ public class UserSelectionDtoMapper {
   }
 
   public static UserSelection toDomainModel(UserSelectionDto dto) {
-    return new UserSelection(
-      dto.id != null ? dto.id : randomUUID(),
-      dto.ownerUserId,
-      dto.name,
-      dto.selectionParameters,
-      dto.organisationId
-    );
+    return UserSelection.builder()
+      .id(dto.id != null ? dto.id : randomUUID())
+      .ownerUserId(dto.ownerUserId)
+      .organisationId(dto.organisationId)
+      .name(dto.name)
+      .selectionParameters(dto.selectionParameters)
+      .build();
   }
 }

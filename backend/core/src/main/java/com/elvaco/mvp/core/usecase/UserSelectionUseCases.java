@@ -30,9 +30,10 @@ public class UserSelectionUseCases {
   }
 
   public UserSelection save(UserSelection userSelection) {
-    return userSelections.save(userSelection
-      .withUserId(currentUser.getUserId())
-      .withOrganisationId(currentUser.getOrganisationId())
+    return userSelections.save(userSelection.toBuilder()
+      .ownerUserId(currentUser.getUserId())
+      .organisationId(currentUser.getOrganisationId())
+      .build()
     );
   }
 

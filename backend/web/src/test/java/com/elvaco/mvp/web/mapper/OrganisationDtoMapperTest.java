@@ -28,13 +28,13 @@ public class OrganisationDtoMapperTest {
       "parent-external-id"
     );
 
-    UserSelection selection = new UserSelection(
-      randomUUID(),
-      randomUUID(),
-      "selection",
-      createJsonNode(),
-      randomUUID()
-    );
+    UserSelection selection = UserSelection.builder()
+      .id(randomUUID())
+      .ownerUserId(randomUUID())
+      .organisationId(randomUUID())
+      .name("selection")
+      .selectionParameters(createJsonNode())
+      .build();
     SubOrganisationRequestDto subOrganisationRequest = new SubOrganisationRequestDto(
       "sub",
       "sub-slug",
@@ -76,13 +76,13 @@ public class OrganisationDtoMapperTest {
   public void toDto_withSubOrganisation_sub() {
     UUID id = randomUUID();
     UUID parentId = randomUUID();
-    UserSelection selection = new UserSelection(
-      randomUUID(),
-      randomUUID(),
-      "selection",
-      createJsonNode(),
-      randomUUID()
-    );
+    UserSelection selection = UserSelection.builder()
+      .id(randomUUID())
+      .ownerUserId(randomUUID())
+      .organisationId(randomUUID())
+      .name("selection")
+      .selectionParameters(createJsonNode())
+      .build();
     Organisation organisation = new Organisation(
       id,
       "sub",

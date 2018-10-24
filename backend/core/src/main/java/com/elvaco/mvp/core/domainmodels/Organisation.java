@@ -38,7 +38,6 @@ public class Organisation implements Identifiable<UUID> {
     @Nullable Organisation parent,
     @Nullable UserSelection selection
   ) {
-
     this.id = id;
     this.name = name;
     this.slug = slugify(slug);
