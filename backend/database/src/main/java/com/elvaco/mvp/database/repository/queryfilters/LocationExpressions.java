@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.queryfilters;
 
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
@@ -53,7 +54,7 @@ class LocationExpressions {
   @Nullable
   private Predicate hasLowConfidence(Parameters parameters) {
     return parameters.hasUnknownCities
-      ? location.confidence.lt(0.75).or(location.confidence.isNull())
+      ? location.confidence.lt(GeoCoordinate.HIGH_CONFIDENCE).or(location.confidence.isNull())
       : null;
   }
 
