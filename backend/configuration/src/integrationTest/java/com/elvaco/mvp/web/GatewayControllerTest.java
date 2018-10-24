@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -19,8 +18,7 @@ import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
-import com.elvaco.mvp.web.dto.GeoPositionDto;
-import com.elvaco.mvp.web.dto.LocationDto;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +29,6 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
-import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -303,77 +300,27 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void findGateways_WithCompleteAddressInfoButLowConfidence() {
-    Gateway gateway1 = saveGateway(dailyPlanet.id);
-    Gateway gateway2 = saveGateway(dailyPlanet.id);
+    double lowConfidence = 0.6;
 
-    LocationBuilder unknownLocation = unknownLocationBuilder();
-
-    UUID meterId1 = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
-      .id(meterId1)
-      .externalId("external-1234")
-      .organisationId(dailyPlanet.id)
-      .gateways(singletonList(gateway1))
-      .location(unknownLocation.build())
-      .build());
-
-    Location locationWithLowConfidence = new LocationBuilder()
-      .country("sverige")
-      .city("kungsbacka")
-      .address("kabelgatan 1")
-      .longitude(1.3333)
-      .latitude(1.12345)
-      .confidence(0.6)
-      .build();
-
-    UUID meterId2 = randomUUID();
-    logicalMeters.save(LogicalMeter.builder()
-      .id(meterId2)
+      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
-      .gateways(singletonList(gateway2))
-      .location(locationWithLowConfidence)
+      .gateways(singletonList(saveGateway(dailyPlanet.id)))
+      .location(new LocationBuilder()
+        .country("sverige")
+        .city("kungsbacka")
+        .address("kabelgatan 1")
+        .longitude(1.3333)
+        .latitude(1.12345)
+        .confidence(lowConfidence)
+        .build())
       .build());
 
     Page<GatewayDto> content = asTestSuperAdmin()
-      .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
+      .getPage("/gateways?city=sverige,kungsbacka", GatewayDto.class);
 
-    StatusLogEntry<UUID> status1 = gateway1.currentStatus();
-    StatusLogEntry<UUID> status2 = gateway2.currentStatus();
-
-    assertThat(content.getContent())
-      .containsExactlyInAnyOrder(
-        new GatewayDto(
-          gateway1.id,
-          gateway1.serial,
-          gateway1.productModel,
-          status1.status.name,
-          formatUtc(status1.start),
-          new LocationDto(
-            "unknown",
-            "unknown",
-            "unknown",
-            new GeoPositionDto(1.234, 2.3323, 1.0)
-          ),
-          singletonList(meterId1),
-          gateway1.organisationId
-        ),
-        new GatewayDto(
-          gateway2.id,
-          gateway2.serial,
-          gateway2.productModel,
-          status2.status.name,
-          formatUtc(status2.start),
-          new LocationDto(
-            "sverige",
-            "kungsbacka",
-            "kabelgatan 1",
-            new GeoPositionDto(1.12345, 1.3333, 0.6)
-          ),
-          singletonList(meterId2),
-          gateway2.organisationId
-        )
-      );
+    assertThat(content.getContent()).hasSize(1);
   }
 
   @Test
