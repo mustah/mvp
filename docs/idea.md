@@ -7,7 +7,9 @@ Most of us use the IDEA editor. These instructions are written to work for IDEA 
 We use Lombok, which requires annotation processing.
 
 - Enable: Settings > Build, Execution, Deployment > Compiler > Annotation Processors. "[x] Enable annotation processing"
-- Set "Production sources directory" to "../../generated".
+- Set "Store generated sources relative to:" to "Module content root"
+- Set "Production sources directory" to "../generated".
+- Set "Test sources directory" to "../generated_tests".
 
 ## Javascript processing
 
