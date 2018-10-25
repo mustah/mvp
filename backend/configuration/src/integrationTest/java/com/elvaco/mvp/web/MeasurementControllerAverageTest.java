@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -72,17 +71,17 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void averageOfOneMeterTwoHours() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
-
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date, "Power", 1.0, "W");
+    newMeasurement(meter, date.plusHours(1), "Power", 2.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T06:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -97,31 +96,30 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         Quantity.POWER.presentationUnit(),
         "average",
         asList(
-          new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 1.0),
-          new MeasurementValueDto(Instant.parse("2018-03-06T06:00:00Z"), 2.0)
+          new MeasurementValueDto(date.toInstant(), 1.0),
+          new MeasurementValueDto(date.plusHours(1).toInstant(), 2.0)
         )
       )));
   }
 
   @Test
   public void averageOfTwoMetersTwoHours() {
-    LogicalMeterEntity logicalMeter1 = newLogicalMeterEntity(MeterDefinition
-      .DISTRICT_HEATING_METER);
-    PhysicalMeterEntity meter1 = newPhysicalMeterEntity(logicalMeter1.id);
-    newMeasurement(meter1, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(meter1, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
+    var logicalMeter1 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter1 = newPhysicalMeterEntity(logicalMeter1.id);
+    newMeasurement(meter1, date, "Power", 1.0, "W");
+    newMeasurement(meter1, date.plusHours(1), "Power", 2.0, "W");
 
-    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(MeterDefinition
-      .DISTRICT_HEATING_METER);
-    PhysicalMeterEntity meter2 = newPhysicalMeterEntity(logicalMeter2.id);
-    newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 3.0, "W");
-    newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 4.0, "W");
+    var logicalMeter2 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter2 = newPhysicalMeterEntity(logicalMeter2.id);
+    newMeasurement(meter2, date, "Power", 3.0, "W");
+    newMeasurement(meter2, date.plusHours(1), "Power", 4.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T06:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -137,33 +135,31 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           Quantity.POWER.presentationUnit(),
           "average",
           asList(
-            new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 2.0),
-            new MeasurementValueDto(Instant.parse("2018-03-06T06:00:00Z"), 3.0)
+            new MeasurementValueDto(date.toInstant(), 2.0),
+            new MeasurementValueDto(date.plusHours(1).toInstant(), 3.0)
           )
         )));
   }
 
   @Test
   public void averageOfConsumptionSeries() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-03-06T05:00:00Z");
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
 
-    LogicalMeterEntity logicalMeter1 = newLogicalMeterEntity(MeterDefinition
-      .DISTRICT_HEATING_METER);
-    PhysicalMeterEntity meter1 = newPhysicalMeterEntity(logicalMeter1.id);
-    newMeasurement(meter1, after, "Energy", 1.0, "kWh");
-    newMeasurement(meter1, after.plusHours(1), "Energy", 12.0, "kWh");
+    var logicalMeter1 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter1 = newPhysicalMeterEntity(logicalMeter1.id);
+    newMeasurement(meter1, date, "Energy", 1.0, "kWh");
+    newMeasurement(meter1, date.plusHours(1), "Energy", 12.0, "kWh");
 
-    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(MeterDefinition
-      .DISTRICT_HEATING_METER);
-    PhysicalMeterEntity meter2 = newPhysicalMeterEntity(logicalMeter2.id);
-    newMeasurement(meter2, after, "Energy", 3.0, "kWh");
-    newMeasurement(meter2, after.plusHours(1), "Energy", 8.0, "kWh");
+    var logicalMeter2 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter2 = newPhysicalMeterEntity(logicalMeter2.id);
+    newMeasurement(meter2, date, "Energy", 3.0, "kWh");
+    newMeasurement(meter2, date.plusHours(1), "Energy", 8.0, "kWh");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=" + after
-          + "&before=" + after.plusHours(1)
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
           + "&quantities=" + Quantity.ENERGY.name + ":kWh"
           + "&meters=%s"
           + "&resolution=hour",
@@ -171,7 +167,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
@@ -180,49 +175,28 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           Quantity.ENERGY.presentationUnit(),
           "average",
           asList(
-            new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 8.0),
-            new MeasurementValueDto(Instant.parse("2018-03-06T06:00:00Z"), null)
+            new MeasurementValueDto(date.toInstant(), 8.0),
+            new MeasurementValueDto(date.plusHours(1).toInstant(), null)
           )
         )));
   }
 
   @Test
   public void averageForMultipleQuantities() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:02Z"), "Power", 4.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:03Z"), "Power", 6.0, "W");
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
 
-    newMeasurement(
-      meter,
-      ZonedDateTime.parse("2018-03-06T05:00:01Z"),
-      "Difference temperature",
-      20.0,
-      "K"
-    );
-    newMeasurement(
-      meter,
-      ZonedDateTime.parse("2018-03-06T05:00:02Z"),
-      "Difference temperature",
-      40.0,
-      "K"
-    );
-    newMeasurement(
-      meter,
-      ZonedDateTime.parse("2018-03-06T05:00:03Z"),
-      "Difference temperature",
-      60.0,
-      "K"
-    );
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date, "Power", 2.0, "W");
+    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0, "W");
+
+    newMeasurement(meter, date, "Difference temperature", 20.0, "K");
+    newMeasurement(meter, date.plusSeconds(2), "Difference temperature", 40.0, "K");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
-
       "/measurements/average"
-        + "?after=2018-03-06T05:00:00.000Z"
-        + "&before=2018-03-06T05:59:59.999Z"
+        + "?after=" + date
+        + "&before=" + date.plusMinutes(1)
         + "&quantities={powerQuantity},{diffTempQuantity}"
         + "&meters={meterId}"
         + "&resolution=hour",
@@ -239,31 +213,32 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
         "average",
-        singletonList(new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 4.0))
+        singletonList(new MeasurementValueDto(date.toInstant(), 2.0))
       ),
       new MeasurementSeriesDto(
         "average-Difference temperature",
         Quantity.DIFFERENCE_TEMPERATURE.name,
         Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
         "average",
-        singletonList(new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 40.0))
+        singletonList(new MeasurementValueDto(date.toInstant(), 20.0))
       )
     );
   }
 
   @Test
-  public void averageOfOneMeterOneHour() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:02Z"), "Power", 4.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:03Z"), "Power", 6.0, "W");
+  public void averageOfOneMeterOneHourShoulOnlyIncludeValueAtIntervalStart() {
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date.plusSeconds(1), "Power", 2.0, "W");
+    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0, "W");
+    newMeasurement(meter, date.plusSeconds(3), "Power", 6.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -278,69 +253,74 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
           "average",
-          singletonList(new MeasurementValueDto(Instant.parse("2018-03-06T05:00:00Z"), 4.0))
+          singletonList(new MeasurementValueDto(date.toInstant(), null))
         )));
   }
 
   @Test
   public void timeZoneInformationIsConsidered() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T03:00:01-02:00"), "Power", 1.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T04:01:01-01:00"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:02:01Z"), "Power", 4.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:03:01+01:00"), "Power", 8.0, "W");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    newPhysicalMeterEntity(logicalMeter.id);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
-      String.format(
-        "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
-        logicalMeter.id.toString()
-      ), MeasurementSeriesDto.class);
+      "/measurements/average"
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T06:00:00.000Z"
+        + "&quantities={quantiy}"
+        + "&meters={meterId}"
+        + "&resolution=hour",
+      MeasurementSeriesDto.class,
+      Quantity.POWER.name,
+      logicalMeter.id.toString()
+    );
+
     ResponseEntity<List<MeasurementSeriesDto>> responseForNonZuluRequest =
       asTestUser().getList(
-
         "/measurements/average"
           + "?after={after}"
           + "&before={before}"
-          + "&quantities={powerQuantity}"
-          + "&meters={meterId}&resolution=hour",
+          + "&quantities={quantiy}"
+          + "&meters={meterId}"
+          + "&resolution=hour",
         MeasurementSeriesDto.class,
         "2018-03-06T03:00:00.000-02:00",
-        "2018-03-06T06:59:59.999+01:00",
+        "2018-03-06T07:00:00.000+01:00",
         Quantity.POWER.name,
         logicalMeter.id.toString()
       );
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody())
-      .flatExtracting("values")
-      .containsExactly(
-        new MeasurementValueDto(
-          Instant.parse("2018-03-06T05:00:00Z"),
-          3.75
+    assertThat(response.getBody()).isEqualTo(
+      singletonList(
+        new MeasurementSeriesDto(
+          "average-Power",
+          Quantity.POWER.name,
+          "W",
+          "average",
+          asList(
+            new MeasurementValueDto(
+              ZonedDateTime.parse("2018-03-06T05:00:00.000Z").toInstant(),
+              null
+            ),
+            new MeasurementValueDto(
+              ZonedDateTime.parse("2018-03-06T06:00:00.000Z").toInstant(),
+              null
+            )
+          )
         )
-      );
+      ));
     assertThat(response.getBody()).isEqualTo(responseForNonZuluRequest.getBody());
   }
 
   @Test
-  public void averageForNoPhysicalMeters() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+  public void averageForNoPhysicalMetersReturnsNotFound() {
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -353,17 +333,16 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void averageForUnknownQuantity() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+  public void averageForUnknownQuantityReturnsBadRequest() {
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     newPhysicalMeterEntity(logicalMeter.id);
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
           + "&quantities=SomeUnknownQuantity"
           + "&meters=%s"
           + "&resolution=hour",
@@ -377,16 +356,15 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void averageWithNoMatchingMeasurements() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     newPhysicalMeterEntity(logicalMeter.id);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -400,26 +378,22 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           "average-Power",
           Quantity.POWER.name, "W",
           "average",
-          singletonList(new MeasurementValueDto(
-            Instant.parse("2018-03-06T05:00:00Z"),
-            null
-          ))
+          singletonList(new MeasurementValueDto(date.toInstant(), null))
         )));
   }
 
   @Test
   public void allowsOverridingDefinitionsPresentationUnit() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 40000.0, "W");
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date, "Power", 40000.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
+          + "?after=" + date
+          + "&before=" + date
           + "&quantities=" + Quantity.POWER.name + ":kW"
           + "&meters=%s"
           + "&resolution=hour",
@@ -438,20 +412,19 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void averageWithDayResolution() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T00:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-07T00:00:02Z"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-07T00:00:03Z"), "Power", 4.0, "W");
+  public void averageWithDayResolutionIncludesFromAndToDatesButOnlyValuesAtResolution() {
+    var date = ZonedDateTime.parse("2018-03-06T00:00:00Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date.plusSeconds(1), "Power", 1.0, "W");
+    newMeasurement(meter, date.plusDays(1).plusSeconds(2), "Power", 2.0, "W");
+    newMeasurement(meter, date.plusDays(1).plusSeconds(3), "Power", 4.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-07T12:32:05.999Z"
+          + "?after=" + date.minusDays(1)
+          + "&before=" + date.plusDays(2).minusNanos(1)
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=day",
@@ -468,14 +441,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           "W",
           "average",
           asList(
-            new MeasurementValueDto(
-              Instant.parse("2018-03-06T00:00:00Z"),
-              1.0
-            ),
-            new MeasurementValueDto(
-              Instant.parse("2018-03-07T00:00:00Z"),
-              3.0
-            )
+            new MeasurementValueDto(date.minusDays(1).toInstant(), null),
+            new MeasurementValueDto(date.toInstant(), null),
+            new MeasurementValueDto(date.plusDays(1).toInstant(), null)
           )
         )
       ));
@@ -483,19 +451,18 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void averageWithMonthResolution() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, ZonedDateTime.parse("2018-01-01T00:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-02-01T00:00:01Z"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-01T00:00:01Z"), "Power", 4.0, "W");
+    var date = ZonedDateTime.parse("2018-01-01T00:00:00Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date, "Power", 1.0, "W");
+    newMeasurement(meter, date.plusMonths(1), "Power", 2.0, "W");
+    newMeasurement(meter, date.plusMonths(2), "Power", 4.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
       .getList(String.format(
         "/measurements/average"
-          + "?after=2018-01-01T05:00:00.000Z"
-          + "&before=2018-03-07T12:32:05.999Z"
+          + "?after=" + date.plusHours(5)
+          + "&before=" + date.plusMonths(2)
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=month",
@@ -511,18 +478,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           "W",
           "average",
           asList(
-            new MeasurementValueDto(
-              Instant.parse("2018-01-01T00:00:00Z"),
-              1.0
-            ),
-            new MeasurementValueDto(
-              Instant.parse("2018-02-01T00:00:00Z"),
-              2.0
-            ),
-            new MeasurementValueDto(
-              Instant.parse("2018-03-01T00:00:00Z"),
-              4.0
-            )
+            new MeasurementValueDto(date.toInstant(), 1.0),
+            new MeasurementValueDto(date.plusMonths(1).toInstant(), 2.0),
+            new MeasurementValueDto(date.plusMonths(2).toInstant(), 4.0)
           )
         )
       ));
@@ -623,12 +581,12 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void toTimestampDefaultsToNow() {
-    ZonedDateTime now = ZonedDateTime.now();
+    ZonedDateTime date = ZonedDateTime.now().withMinute(0).withSecond(0).withNano(0);
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
       MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, now, "Power", 1.0, "W");
+    newMeasurement(meter, date, "Power", 1.0, "W");
 
     List<MeasurementSeriesDto> response = asTestUser()
       .getList(
@@ -638,7 +596,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "&meters={meterId}"
           + "&resolution=hour",
         MeasurementSeriesDto.class,
-        now,
+        date,
         Quantity.POWER.name,
         logicalMeter.getId()
       ).getBody();
@@ -646,18 +604,16 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response)
       .flatExtracting("values")
       .containsExactly(
-        new MeasurementValueDto(now.truncatedTo(ChronoUnit.HOURS).toInstant(), 1.0)
+        new MeasurementValueDto(date.toInstant(), 1.0)
       );
   }
 
   @Test
   public void resolutionDefaultsToHourForPeriodLessThanADay() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
-    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T23:59:10Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
+    var after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
+    var before = ZonedDateTime.parse("2018-02-01T23:59:10Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after.plusHours(2), "Power", 1.0, "W");
 
     MeasurementSeriesDto response = asTestUser()
@@ -674,65 +630,49 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void findsAverageConsumptionForGasMeters() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:00:00Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      GAS_METER
-    );
+    var date = ZonedDateTime.parse("2018-02-01T01:00:00Z");
+    var logicalMeter = newLogicalMeterEntity(GAS_METER);
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
+    newMeasurement(meter, date, "Volume", 1.0, "m^3");
+    newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
+    newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
 
     MeasurementSeriesDto response = asTestUser()
       .getList(
         "/measurements/average"
-          + "?after=" + after
-          + "&before=" + after.plusHours(3)
+          + "?after=" + date
+          + "&before=" + date.plusHours(3)
           + "&quantities=" + Quantity.VOLUME.name
           + "&meters=" + logicalMeter.getId(),
         MeasurementSeriesDto.class
       ).getBody().get(0);
 
-    ZonedDateTime periodStartHour = after.truncatedTo(ChronoUnit.HOURS);
+    ZonedDateTime periodStartHour = date.truncatedTo(ChronoUnit.HOURS);
 
     assertThat(response.values)
       .containsExactly(
-        new MeasurementValueDto(
-          periodStartHour.toInstant(),
-          1.0
-        ),
-        new MeasurementValueDto(
-          periodStartHour.plusHours(1).toInstant(),
-          3.0
-        ),
-        new MeasurementValueDto(
-          periodStartHour.plusHours(2).toInstant(),
-          null
-        ),
-        new MeasurementValueDto(
-          periodStartHour.plusHours(3).toInstant(),
-          null
-        )
+        new MeasurementValueDto(periodStartHour.toInstant(), 1.0),
+        new MeasurementValueDto(periodStartHour.plusHours(1).toInstant(), 3.0),
+        new MeasurementValueDto(periodStartHour.plusHours(2).toInstant(), null),
+        new MeasurementValueDto(periodStartHour.plusHours(3).toInstant(), null)
       );
   }
 
   @Test
   public void averageForTwoMetersAndTwoQuantitiesWhereOneQuantityIsNotPresentOnOneMeter() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
-    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
+    var date = ZonedDateTime.parse("2018-02-01T01:12:00Z");
 
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
-
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
+    var logicalMeter = newLogicalMeterEntity(GAS_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date, "Volume", 1.0, "m^3");
+    newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
+    newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
       .get(String.format(
         "/measurements/average"
-          + "?after=" + after
-          + "&before=" + before
+          + "?after=" + date
+          + "&before=" + date.plusHours(4)
           + "&quantities=Volume,Power"
           + "&meters=%s",
         logicalMeter.getId()
@@ -744,21 +684,19 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void averageForTwoQuantitiesWhereOneIsNotPresent() {
-    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
-    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      GAS_METER
-    );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after, "Volume", 1.0, "m^3");
-    newMeasurement(meter, after.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, after.plusHours(2), "Volume", 5.0, "m^3");
+    var date = ZonedDateTime.parse("2018-02-01T01:12:00Z");
+
+    var logicalMeter = newLogicalMeterEntity(GAS_METER);
+    var meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, date, "Volume", 1.0, "m^3");
+    newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
+    newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
 
     ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
       .get(
         "/measurements/average"
-          + "?after=" + after
-          + "&before=" + before
+          + "?after=" + date
+          + "&before=" + date.plusHours(4)
           + "&quantities=" + Quantity.VOLUME.name + ",Flarbb"
           + "&meters=" + logicalMeter.getId(),
         ErrorMessageDto.class

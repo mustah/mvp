@@ -172,12 +172,12 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void averageValueIsCorrectForPeriod() {
+  public void averageShouldOnlyIncludeValuesAtResolutionPoints() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "W");
     newMeasurement(meter, START_TIME.plusMinutes(1), 100.0, "W");
 
-    OffsetDateTime oneHourLater = START_TIME.plus(Duration.ofHours(1));
+    OffsetDateTime oneHourLater = START_TIME.plusHours(1);
     newMeasurement(meter, oneHourLater, 1.0, "W");
     newMeasurement(meter, oneHourLater.plusMinutes(1), 9.0, "W");
 
@@ -192,8 +192,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(2);
-    assertThat(results.get(0).getValue()).isEqualTo("51 W");
-    assertThat(results.get(1).getValue()).isEqualTo("5 W");
+    assertThat(results.get(0).getValue()).isEqualTo("2 W");
+    assertThat(results.get(1).getValue()).isEqualTo("1 W");
   }
 
   @Test
@@ -308,7 +308,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void seriesInDefaultMode() {
+  public void seriesShouldIncludeEmptyResolutionPoints() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
@@ -323,11 +323,38 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "minute"
     );
 
-    assertThat(result).hasSize(2);
+    assertThat(result).hasSize(3);
     assertThat(result.get(0).getMeasurementUnit().get()).isEqualTo(new MeasurementUnit(
       "MWh",
       0.001
     ));
+    assertThat(result.get(1).getMeasurementUnit().get()).isEqualTo(new MeasurementUnit(
+      "MWh",
+      0.002
+    ));
+    assertThat(result.get(2).getValue()).isNull();
+  }
+
+  @Test
+  public void seriesShouldNotIncludeValuesInBetweenResolutionPoints() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusMinutes(30), 1.5, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
+
+    List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
+      meter.id,
+      "Energy",
+      "kWh",
+      START_TIME,
+      START_TIME.plusHours(1),
+      "hour"
+    );
+
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0).getDoubleValue()).isEqualTo(1.0);
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(2.0);
   }
 
   @Test
@@ -485,21 +512,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void emptySeries() {
-    PhysicalMeterEntity physicalMeterEntity = newPhysicalMeterEntity();
-
-    List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
-      physicalMeterEntity.id,
-      "Energy",
-      "MW",
-      START_TIME,
-      START_TIME.plus(Duration.ofSeconds(1)),
-      "minute"
-    );
-    assertThat(result).isEmpty();
-  }
-
-  @Test
   @Ignore("The transaction is commited after testmethod has returned, hence we get the "
     + "exception too late")
   public void mixedDimensionsAreRejected() {
@@ -584,14 +596,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "Energy",
       "kWh",
       START_TIME.plusHours(1),
-      START_TIME.plusHours(3)
+      START_TIME.plusHours(4)
     );
 
-    assertThat(result).hasSize(3);
+    assertThat(result).hasSize(4);
     // note: we average only over present measurement count for an interval
     assertThat(result.get(0).getDoubleValue()).isEqualTo(7.0);
     assertThat(result.get(1).getDoubleValue()).isEqualTo(1.5);
     assertThat(result.get(2).getDoubleValue()).isEqualTo(4.0);
+    assertThat(result.get(3).getValue()).isNull();
   }
 
   @Test
