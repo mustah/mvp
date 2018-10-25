@@ -52,6 +52,10 @@ public class MeasurementControllerTest extends IntegrationTest {
   );
   private static final Offset<Double> OFFSET = within(0.000_000_000_000_1);
 
+  private static final int ENERGY_VALUE = 9999;
+  private static final double DIFF_TEMP_VALUE_CELCIUS = 285.59;
+  private static final double DIFF_TEMP_VALUE_KELVIN = 558.74;
+
   @Autowired
   private MeterDefinitions meterDefinitions;
 
@@ -87,7 +91,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void measurementsRetrievableAtEndpoint() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity physicalButterMeter = newButterMeter(date);
-    newDiffTempMeasurementWithValue285_59Celsius(
+    newDiffTempMeasurementCelcius(
       physicalButterMeter,
       date
     );
@@ -113,7 +117,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void measurementUnitScaled() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date);
 
     List<MeasurementSeriesDto> measurements = asTestUser()
       .getList(
@@ -128,7 +132,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(measurements.get(0).quantity).isEqualTo("Difference temperature");
     assertThat(measurements.get(0).unit).isEqualTo("K");
-    assertThat(measurements.get(0).values.get(0).value).isEqualTo(558.74, OFFSET);
+    assertThat(measurements.get(0).values.get(0).value).isEqualTo(DIFF_TEMP_VALUE_KELVIN, OFFSET);
   }
 
   @Test
@@ -139,7 +143,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       date
     );
 
-    newDiffTempMeasurementWithValue285_59Celsius(otherOrganisationsMeter, date);
+    newDiffTempMeasurementCelcius(otherOrganisationsMeter, date);
 
     List<MeasurementDto> measurements = asTestUser()
       .getList(
@@ -161,7 +165,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       otherOrganisation,
       date
     );
-    newDiffTempMeasurementWithValue285_59Celsius(
+    newDiffTempMeasurementCelcius(
       firstOrganisationsMeter,
       date
     );
@@ -170,7 +174,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       context().organisationEntity,
       date
     );
-    newDiffTempMeasurementWithValue285_59Celsius(
+    newDiffTempMeasurementCelcius(
       secondOrganisationsMeter,
       date
     );
@@ -190,9 +194,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityInPeriod() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter();
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date.minusHours(1));
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date.plusHours(1));
-    newEnergyMeasurementWithValue9999J(butterMeter, date.minusHours(1));
+    newDiffTempMeasurementCelcius(butterMeter, date.minusHours(1));
+    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(1));
+    newEnergyMeasurement(butterMeter, date.minusHours(1));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
@@ -207,15 +211,15 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(dto.quantity).isEqualTo("Difference temperature");
     assertThat(dto.values).hasSize(2);
     assertThat(dto.values.get(0).value).isNull();
-    assertThat(dto.values.get(1).value).isEqualTo(558.74, OFFSET);
+    assertThat(dto.values.get(1).value).isEqualTo(DIFF_TEMP_VALUE_KELVIN, OFFSET);
   }
 
   @Test
   public void fetchMeasurementsForMeterInPeriod() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date.plusHours(2));
+    newDiffTempMeasurementCelcius(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(2));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
@@ -232,7 +236,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         butterMeter.externalId,
         MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
-          new MeasurementValueDto(date.toInstant(), 558.74),
+          new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
           new MeasurementValueDto(date.plusHours(1).toInstant(), null)
         )
       ),
@@ -254,8 +258,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityInPeriodWithNonDefaultUnit() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date.minusHours(1));
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date.plusHours(1));
+    newDiffTempMeasurementCelcius(butterMeter, date.minusHours(1));
+    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(1));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?quantities=Difference+temperature:K"
@@ -270,7 +274,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(dto.unit).isEqualTo("K");
     assertThat(dto.values).hasSize(2);
     assertThat(dto.values.get(0).value).isNull();
-    assertThat(dto.values.get(1).value).isEqualTo(558.74, OFFSET);
+    assertThat(dto.values.get(1).value).isEqualTo(DIFF_TEMP_VALUE_KELVIN, OFFSET);
   }
 
   @Test
@@ -278,9 +282,9 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
 
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date.plusHours(1));
-    newEnergyMeasurementWithValue9999J(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(1));
+    newEnergyMeasurement(butterMeter, date);
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
@@ -298,8 +302,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         butterMeter.externalId,
         MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
         asList(
-          new MeasurementValueDto(date.toInstant(), 558.74),
-          new MeasurementValueDto(date.plusHours(1).toInstant(), 558.74)
+          new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
+          new MeasurementValueDto(date.plusHours(1).toInstant(), DIFF_TEMP_VALUE_KELVIN)
         )
       ),
       new MeasurementSeriesDto(
@@ -320,7 +324,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void measurementSeriesAreLabeledWithMeterExternalId() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date);
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
@@ -339,7 +343,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void unknownUnitSuppliedForScaling() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter();
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date);
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
@@ -360,7 +364,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void wrongDimensionForQuantitySuppliedForScaling() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
     PhysicalMeterEntity butterMeter = newButterMeter();
-    newDiffTempMeasurementWithValue285_59Celsius(butterMeter, date);
+    newDiffTempMeasurementCelcius(butterMeter, date);
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
@@ -539,18 +543,18 @@ public class MeasurementControllerTest extends IntegrationTest {
     return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
-  private void newEnergyMeasurementWithValue9999J(
+  private void newEnergyMeasurement(
     PhysicalMeterEntity meter,
     ZonedDateTime created
   ) {
-    newMeasurement(meter, created, "Energy", 9999, "J");
+    newMeasurement(meter, created, "Energy", ENERGY_VALUE, "J");
   }
 
-  private void newDiffTempMeasurementWithValue285_59Celsius(
+  private void newDiffTempMeasurementCelcius(
     PhysicalMeterEntity meter,
     ZonedDateTime created
   ) {
-    newMeasurement(meter, created, "Difference temperature", 285.59, "°C");
+    newMeasurement(meter, created, "Difference temperature", DIFF_TEMP_VALUE_CELCIUS, "°C");
   }
 
   private void newMeasurement(
