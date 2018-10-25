@@ -239,6 +239,32 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void gatewayMapMarkers_doNotIncludeMarkersWithAlarmsOutsidePeriod() {
+    Gateway gateway = saveGatewayWith(context().organisationId(), StatusType.OK);
+
+    LogicalMeter meter = saveLogicalMeterWith(kungsbacka().build(), gateway);
+
+    PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
+
+    ZonedDateTime now = ZonedDateTime.now();
+    AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
+      .start(now.minusDays(2)).stop(now.minusDays(1)).mask(1);
+
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter.id).build());
+    Url url = Url.builder().path("/map-markers/gateways")
+      .parameter(RequestParameter.ALARM, "yes")
+      .parameter(RequestParameter.AFTER, now.minusDays(1).plusHours(1))
+      .parameter(RequestParameter.BEFORE, now)
+      .build();
+
+    ResponseEntity<MapMarkersDto> response = asTestUser()
+      .get(url, MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).isEmpty();
+  }
+
+  @Test
   public void meterMapMarkers_WithoutAlarms() {
     LogicalMeter meter1 = saveLogicalMeter();
     LogicalMeter meter2 = saveLogicalMeter();
