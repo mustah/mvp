@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {
   CartesianGrid,
   ContentRenderer,
+  LabelProps,
   Legend,
   Line,
   LineChart,
@@ -101,12 +102,14 @@ const renderGraphContents = (
     });
 
   if (left) {
-    components.push(<YAxis key="leftYAxis" label={left} yAxisId="left"/>);
+    const leftLabel: LabelProps = {value: left, position: 'insideLeft', angle: -90, dx: 10};
+    components.push(<YAxis key="leftYAxis" label={leftLabel} yAxisId="left"/>);
   }
 
   if (right) {
+    const rightLabel: LabelProps = {value: right, position: 'insideRight', angle: 90, dy: -10};
     components.push((
-      <YAxis key="rightYAxis" label={right} yAxisId="right" orientation="right"/>
+      <YAxis key="rightYAxis" label={rightLabel} yAxisId="right" orientation="right"/>
     ));
   }
 
