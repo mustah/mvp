@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,8 +99,7 @@ public class UserUseCasesTest extends IntegrationTest {
   }
 
   private User newUser(String rawPassword, String email) {
-    return new UserBuilder()
-      .name("john doh")
+    return userBuilder()
       .email(email)
       .password(rawPassword)
       .language(Language.en)

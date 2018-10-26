@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -70,5 +71,23 @@ public class User implements Identifiable<UUID>, Usernamed {
   @Override
   public String getUsername() {
     return email;
+  }
+
+  public UUID getOrganisationId() {
+    return organisation.getId();
+  }
+
+  public Optional<UUID> getParentOrganisationId() {
+    return Optional.of(organisation)
+      .filter(Organisation::isSubOrganisation)
+      .map(organisation -> organisation.parent)
+      .map(Organisation::getId);
+  }
+
+  public Optional<UserSelection.SelectionParametersDto> getSelectionParameters() {
+    return Optional.of(organisation)
+      .filter(Organisation::isSubOrganisation)
+      .map(organisation -> organisation.selection)
+      .flatMap(UserSelection::toSelectionParametersDto);
   }
 }

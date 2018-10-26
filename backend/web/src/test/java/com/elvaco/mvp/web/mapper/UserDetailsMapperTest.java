@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
+import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -66,13 +67,7 @@ public class UserDetailsMapperTest {
 
   private static MvpUserDetails mvpUserDetails() {
     return new MvpUserDetails(
-      new UserBuilder()
-        .name("john doh")
-        .email("a@b.com")
-        .password("letmein")
-        .organisationElvaco()
-        .roles(ADMIN, USER)
-        .build(),
+      userBuilder().organisationElvaco().build(),
       randomUUID().toString()
     );
   }

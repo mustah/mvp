@@ -7,10 +7,11 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserSelectionUseCases {
+
   private final AuthenticatedUser currentUser;
   private final UserSelections userSelections;
 

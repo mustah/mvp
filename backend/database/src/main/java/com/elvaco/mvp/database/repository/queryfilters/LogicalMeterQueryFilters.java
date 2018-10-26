@@ -13,8 +13,6 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQ
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.meterStatusQueryFilter;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toStatusTypes;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
@@ -43,9 +41,9 @@ public class LogicalMeterQueryFilters extends QueryFilters {
       case FACILITY:
         return LOGICAL_METER.externalId.in(values);
       case CITY:
-        return LocationExpressions.whereCity(toCityParameters(values));
+        return LocationPredicates.whereCityOrUnknown(values);
       case ADDRESS:
-        return LocationExpressions.whereAddress(toAddressParameters(values));
+        return LocationPredicates.whereAddressOrUnknown(values);
       case REPORTED:
         return parameters.getPeriod()
           .map(selectionPeriod -> meterStatusQueryFilter(selectionPeriod, toStatusTypes(values)))

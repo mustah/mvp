@@ -5,11 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.Pageable;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -25,13 +21,6 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   @Override
   public List<PhysicalMeter> findAll() {
     return allMocks();
-  }
-
-  @Override
-  public Page<PhysicalMeter> findAll(
-    RequestParameters parameters, Pageable pageable
-  ) {
-    throw new NotImplementedYet();
   }
 
   @Override
@@ -58,21 +47,6 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
     String address
   ) {
     return findByWithStatuses(organisationId, externalId, address);
-  }
-
-  @Override
-  public Page<String> findAddresses(
-    RequestParameters parameters, Pageable pageable
-  ) {
-    throw new NotImplementedYet();
-
-  }
-
-  @Override
-  public Page<String> findFacilities(
-    RequestParameters parameters, Pageable pageable
-  ) {
-    throw new NotImplementedYet();
   }
 
   @Override

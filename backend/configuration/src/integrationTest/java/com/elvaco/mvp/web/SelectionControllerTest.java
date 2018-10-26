@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
@@ -21,6 +22,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -184,8 +187,11 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_SortedAsc() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asUser()
-      .getPage("/selections/facilities?sort=externalId,asc", IdNamedDto.class);
+    var url = facilitiesUrl()
+      .sortBy("externalId,asc")
+      .build();
+
+    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -201,8 +207,11 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_SortedDesc() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asUser()
-      .getPage("/selections/facilities?sort=externalId,desc", IdNamedDto.class);
+    var url = facilitiesUrl()
+      .sortBy("externalId,desc")
+      .build();
+
+    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -218,8 +227,12 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getFacilities_FilteredOnFacilitySearchText() {
     prepareMeters();
 
-    Page<IdNamedDto> response = asUser()
-      .getPage("/selections/facilities?sort=externalId,asc&facility=3", IdNamedDto.class);
+    var url = facilitiesUrl()
+      .parameter(Q, "3")
+      .sortBy("externalId,asc")
+      .build();
+
+    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -248,7 +261,10 @@ public class SelectionControllerTest extends IntegrationTest {
     );
     createPhysicalMeter(context().organisation2(), "", logicalMeter);
 
-    String url = "/selections/facilities?sort=externalId,asc&facility=extId6";
+    var url = facilitiesUrl()
+      .sortBy("externalId,asc")
+      .parameter(Q, "extId6")
+      .build();
 
     Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
@@ -268,7 +284,7 @@ public class SelectionControllerTest extends IntegrationTest {
     prepareMeters();
 
     Page<IdNamedDto> response = asUser()
-      .getPage("/selections/secondary-addresses?sort=address,desc", IdNamedDto.class);
+      .getPage("/selections/secondary-addresses?sort=secondaryAddress,desc", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -285,7 +301,7 @@ public class SelectionControllerTest extends IntegrationTest {
     prepareMeters();
 
     Page<IdNamedDto> response = asUser()
-      .getPage("/selections/secondary-addresses?secondaryAddress=444", IdNamedDto.class);
+      .getPage("/selections/secondary-addresses?q=444", IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -305,7 +321,7 @@ public class SelectionControllerTest extends IntegrationTest {
     ));
     physicalMeters.save(createPhysicalMeter(context().organisation2(), "777", logicalMeter));
 
-    String url = "/selections/secondary-addresses?secondaryAddress=777";
+    String url = "/selections/secondary-addresses?q=777";
 
     Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
@@ -325,7 +341,7 @@ public class SelectionControllerTest extends IntegrationTest {
     prepareGateways();
 
     Page<IdNamedDto> response = asUser()
-      .getPage("/selections/gateway-serials?sort=serial,desc", IdNamedDto.class);
+      .getPage(gatewaySerialsUrl().sortBy("serial,desc").build(), IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -340,12 +356,15 @@ public class SelectionControllerTest extends IntegrationTest {
   public void getGatewaySerials_FilteredOnQueryString() {
     prepareGateways();
 
-    Page<IdNamedDto> response = asUser()
-      .getPage("/selections/gateway-serials?serial=66", IdNamedDto.class);
+    Url url = gatewaySerialsUrl()
+      .parameter(SERIAL, "66")
+      .build();
+
+    Page<IdNamedDto> response = asUser().getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent()).containsExactly(new IdNamedDto("5566"));
+    assertThat(response.getContent()).extracting("id").containsExactly("5566");
   }
 
   @Test
@@ -357,12 +376,11 @@ public class SelectionControllerTest extends IntegrationTest {
       .productModel("3100")
       .build());
 
-    Page<IdNamedDto> response = asOtherUser()
-      .getPage("/selections/gateway-serials", IdNamedDto.class);
+    var response = asOtherUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent()).containsExactly(new IdNamedDto("6666"));
+    assertThat(response.getContent()).extracting("id").containsExactly("6666");
   }
 
   @Test
@@ -384,37 +402,35 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<IdNamedDto> response = asUser().getPage(
-      "/selections/facilities?q=bcd",
-      IdNamedDto.class
-    );
+    var facilitiesUrl = facilitiesUrl()
+      .parameter(Q, "bcd");
+
+    var response = asUser().getPage(facilitiesUrl.build(), IdNamedDto.class);
 
     assertThat(response).hasSize(1);
-    assertThat(response.getContent().get(0).name).isEqualTo("abcdef");
-    assertThat(
-      asUser().getPage(
-        "/selections/facilities?q=qwerty",
-        IdNamedDto.class
-      )
-    ).hasSize(0);
+    assertThat(response).extracting("name").containsExactly("abcdef");
+
+    var emptySearchResponse = asUser().getPage(
+      facilitiesUrl.parameter(Q, "qwerty").build(),
+      IdNamedDto.class
+    );
+    assertThat(emptySearchResponse).isEmpty();
   }
 
   @Test
   public void secondaryAddressWildcardSearch() {
-    UUID meterId = randomUUID();
+    var logicalMeterId = randomUUID();
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(meterId)
+        .id(logicalMeterId)
         .externalId("1234")
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
-        .location(
-          new LocationBuilder().city("Kungsbacka").address("Stora vägen 24").build()
-        )
+        .location(new LocationBuilder().city("Kungsbacka").address("Stora vägen 24").build())
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
+      .logicalMeterId(logicalMeterId)
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
@@ -422,19 +438,19 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    Page<IdNamedDto> response = asUser().getPage(
-      "/selections/secondary-addresses?q=2345",
-      IdNamedDto.class
-    );
+    var urlBuilder = Url.builder()
+      .path("/selections/secondary-addresses")
+      .parameter(Q, "2345");
+
+    var response = asUser().getPage(urlBuilder.build(), IdNamedDto.class);
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("123456");
-    assertThat(
-      asUser().getPage(
-        "/selections/secondary-addresses?q=000000",
-        IdNamedDto.class
-      )
-    ).hasSize(0);
+
+    var emptySearchResponse = asUser()
+      .getPage(urlBuilder.parameter(Q, "000000").build(), IdNamedDto.class);
+
+    assertThat(emptySearchResponse).isEmpty();
   }
 
   @Test
@@ -445,17 +461,17 @@ public class SelectionControllerTest extends IntegrationTest {
       .productModel("3100")
       .build());
 
-    Page<IdNamedDto> response = asUser().getPage(
-      "/selections/gateway-serials?q=3456",
-      IdNamedDto.class
-    );
+    var urlBuilder = gatewaySerialsUrl()
+      .parameter(Q, "3456");
+
+    var response = asUser().getPage(urlBuilder.build(), IdNamedDto.class);
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("1234567");
     assertThat(asUser().getPage(
-      "/selections/gateway-serials?q=90909090",
+      gatewaySerialsUrl().parameter(Q, "90909090").build(),
       IdNamedDto.class
-    )).hasSize(0);
+    )).isEmpty();
   }
 
   @Test
@@ -609,18 +625,17 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getSecondaryAddresses_duplicatesAreNotIncluded() {
-    UUID meterId = randomUUID();
-    UUID meterIdTwo = randomUUID();
+    var logicalMeterId1 = randomUUID();
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(meterId)
+        .id(logicalMeterId1)
         .externalId("1234")
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
+      .logicalMeterId(logicalMeterId1)
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
@@ -628,15 +643,16 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
+    UUID logicalMeterId2 = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
-      .id(meterIdTwo)
+      .id(logicalMeterId2)
       .externalId("5678")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER).build()
     );
 
     physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterIdTwo)
+      .logicalMeterId(logicalMeterId2)
       .externalId("5678")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
@@ -654,17 +670,17 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getFacilities_duplicatesAreNotIncluded() {
-    UUID meterId = randomUUID();
+    var logicalMeterId = randomUUID();
     logicalMeters.save(
       LogicalMeter.builder()
-        .id(meterId)
+        .id(logicalMeterId)
         .externalId("1234")
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
+      .logicalMeterId(logicalMeterId)
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
@@ -673,7 +689,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
+      .logicalMeterId(logicalMeterId)
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
@@ -696,8 +712,7 @@ public class SelectionControllerTest extends IntegrationTest {
     gateways.save(gateway.serial("1").productModel("2100").build());
     gateways.save(gateway.serial("2").productModel("3100").build());
 
-    Page<IdNamedDto> response = asUser()
-      .getPage("/selections/gateway-serials", IdNamedDto.class);
+    Page<IdNamedDto> response = asUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
 
     assertThat(response).extracting("name").containsExactlyInAnyOrder("1", "2");
   }
@@ -712,7 +727,7 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   private void prepareMeters() {
-    LogicalMeter logicalMeter = createLogicalMeter(
+    var logicalMeter = createLogicalMeter(
       "sweden",
       "kungsbacka",
       "kabelgatan 1",
@@ -772,5 +787,13 @@ public class SelectionControllerTest extends IntegrationTest {
         .build())
       .build()
     );
+  }
+
+  private static Url.UrlBuilder gatewaySerialsUrl() {
+    return Url.builder().path("/selections/gateway-serials");
+  }
+
+  private static Url.UrlBuilder facilitiesUrl() {
+    return Url.builder().path("/selections/facilities");
   }
 }

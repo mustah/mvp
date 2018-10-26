@@ -6,7 +6,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LocationUseCases;
-import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
@@ -26,7 +26,7 @@ import static java.util.Collections.emptyList;
 @RestApi("/api/v1/selections")
 public class SelectionController {
 
-  private final PhysicalMeterUseCases physicalMeterUseCases;
+  private final LogicalMeterUseCases logicalMeterUseCases;
   private final LocationUseCases locationUseCases;
   private final GatewayUseCases gatewayUseCases;
 
@@ -85,7 +85,7 @@ public class SelectionController {
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = physicalMeterUseCases.findFacilities(parameters, adapter)
+    Page<IdNamedDto> page = logicalMeterUseCases.findFacilities(parameters, adapter)
       .map(IdNamedDto::new);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
@@ -102,7 +102,7 @@ public class SelectionController {
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = physicalMeterUseCases.findAddresses(parameters, adapter)
+    Page<IdNamedDto> page = logicalMeterUseCases.findSecondaryAddresses(parameters, adapter)
       .map(IdNamedDto::new);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());

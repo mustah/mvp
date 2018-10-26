@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isOrganisationQuery;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -91,7 +92,10 @@ class LocationQueryDslJpaRepository
         LOCATION.country
       ))
       .distinct()
-      .where(LOCATION.city.isNotNull().and(LOCATION.country.isNotNull()));
+      .where(
+        LOCATION.city.isNotNull()
+          .and(LOCATION.country.isNotNull())
+      );
   }
 
   private JPQLQuery<Address> allUniqueAddressesQuery(Predicate predicate) {
@@ -115,7 +119,7 @@ class LocationQueryDslJpaRepository
   }
 
   private static <T> void applyJoins(RequestParameters parameters, JPQLQuery<T> query) {
-    if (isOrganisationQuery(parameters)) {
+    if (isOrganisationQuery(parameters) || isLocationQuery(parameters)) {
       query.innerJoin(LOCATION.logicalMeter, LOGICAL_METER);
     }
   }

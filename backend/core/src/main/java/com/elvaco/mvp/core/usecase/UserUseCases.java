@@ -37,8 +37,9 @@ public class UserUseCases {
   public List<User> findAll() {
     if (currentUser.isSuperAdmin()) {
       return users.findAll();
+    } else {
+      return users.findByOrganisationId(currentUser.getOrganisationId());
     }
-    return users.findByOrganisationId(currentUser.getOrganisationId());
   }
 
   public Optional<User> findById(UUID id) {

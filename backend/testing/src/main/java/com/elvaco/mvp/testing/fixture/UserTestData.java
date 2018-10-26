@@ -5,6 +5,8 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import lombok.experimental.UtilityClass;
 
+import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
@@ -84,5 +86,21 @@ public class UserTestData {
       .organisation(organisation)
       .asUser()
       .build();
+  }
+
+  public static Organisation.OrganisationBuilder organisationBuilder() {
+    return Organisation.builder()
+      .name("Org AB")
+      .slug("org")
+      .externalId("ext-org");
+  }
+
+  public static UserBuilder userBuilder() {
+    return new UserBuilder()
+      .name("john doh")
+      .email("a@b.com")
+      .password("letmein")
+      .roles(ADMIN, USER)
+      .language(Language.en);
   }
 }

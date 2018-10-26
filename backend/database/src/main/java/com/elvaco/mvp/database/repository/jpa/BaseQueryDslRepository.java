@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
@@ -15,12 +14,7 @@ import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPQLQuery;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
@@ -37,7 +31,6 @@ import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAla
 import static com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity.meterDefinitionEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @NoRepositoryBean
 abstract class BaseQueryDslRepository<T, I extends Serializable>
@@ -69,16 +62,5 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
       entityManager,
       new PathBuilder<>(path.getType(), path.getMetadata())
     );
-  }
-
-  protected Page<String> findDistinctProperties(
-    Path<String> propertyPath,
-    Predicate predicate,
-    Pageable pageable
-  ) {
-    JPQLQuery<String> query = createQuery(predicate).select(propertyPath).distinct();
-    JPQLQuery<String> countQuery = createCountQuery(predicate).select(propertyPath).distinct();
-    List<String> all = querydsl.applyPagination(pageable, query).fetch();
-    return getPage(all, pageable, countQuery::fetchCount);
   }
 }

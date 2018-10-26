@@ -6,9 +6,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.Pageable;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import lombok.RequiredArgsConstructor;
@@ -58,18 +55,6 @@ public class PhysicalMeterUseCases {
     return Optional.empty();
   }
 
-  public Page<PhysicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return physicalMeters.findAll(parameters.ensureOrganisation(currentUser), pageable);
-  }
-
-  public Page<String> findAddresses(RequestParameters parameters, Pageable pageable) {
-    return physicalMeters.findAddresses(parameters.ensureOrganisation(currentUser), pageable);
-  }
-
-  public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
-    return physicalMeters.findFacilities(parameters.ensureOrganisation(currentUser), pageable);
-  }
-
   private Unauthorized userIsUnauthorized(UUID id) {
     return new Unauthorized(String.format(
       "User '%s' is not allowed to update physical meter with ID %s",
@@ -81,5 +66,4 @@ public class PhysicalMeterUseCases {
   private boolean hasTenantAccess(UUID organisationId) {
     return currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(organisationId);
   }
-
 }

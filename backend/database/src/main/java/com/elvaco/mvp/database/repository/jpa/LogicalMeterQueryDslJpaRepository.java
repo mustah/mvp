@@ -19,11 +19,13 @@ import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.SelectionQueryFilters;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -38,7 +40,9 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MAX_VALUE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MIN_VALUE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
+import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isMeasurementsQuery;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
@@ -78,6 +82,16 @@ class LogicalMeterQueryDslJpaRepository
   @Override
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
     return Optional.ofNullable(fetchOne(parameters, meterPredicate(parameters)));
+  }
+
+  @Override
+  public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
+    return fetchAllBy(parameters, pageable, PHYSICAL_METER.address);
+  }
+
+  @Override
+  public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
+    return fetchAllBy(parameters, pageable, PHYSICAL_METER.externalId);
   }
 
   @Override
@@ -125,7 +139,7 @@ class LogicalMeterQueryDslJpaRepository
 
     List<PagedLogicalMeter> all = querydsl.applyPagination(pageable, query).fetch();
 
-    if (!all.isEmpty()) {
+    if (isNotEmpty(all)) {
       parameters.setAll(
         ID,
         all.stream()
@@ -211,6 +225,30 @@ class LogicalMeterQueryDslJpaRepository
     new JPADeleteClause(entityManager, LOGICAL_METER)
       .where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
       .execute();
+  }
+
+  private Page<String> fetchAllBy(
+    RequestParameters parameters,
+    Pageable pageable,
+    StringPath path
+  ) {
+    var predicate = new SelectionQueryFilters().toExpression(parameters);
+
+    var countQuery = createCountQuery(predicate)
+      .select(Projections.constructor(String.class, path))
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .distinct();
+    joinLocation(countQuery, parameters);
+
+    var query = createQuery(predicate)
+      .select(Projections.constructor(String.class, path))
+      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .distinct();
+    joinLocation(query, parameters);
+
+    var all = querydsl.applyPagination(pageable, query).fetch();
+
+    return getPage(all, pageable, countQuery::fetchCount);
   }
 
   private JPQLQuery<LogicalMeterEntity> findAllQuery(RequestParameters parameters) {
@@ -323,6 +361,12 @@ class LogicalMeterQueryDslJpaRepository
     joinMeterAlarmLogs(query, parameters);
 
     return query.distinct().fetchOne();
+  }
+
+  private static void joinLocation(JPQLQuery<String> query, RequestParameters parameters) {
+    if (isLocationQuery(parameters)) {
+      query.join(LOGICAL_METER.location, LOCATION);
+    }
   }
 
   private static void applyDefaultJoins(JPQLQuery<?> query, RequestParameters parameters) {

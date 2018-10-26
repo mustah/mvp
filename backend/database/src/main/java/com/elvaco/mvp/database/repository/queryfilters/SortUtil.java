@@ -12,9 +12,7 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class SortUtil {
 
-  public static Optional<Sort> getSort(
-    RequestParameters parameters
-  ) {
+  public static Optional<Sort> getSort(RequestParameters parameters) {
     return parameters.has(SORT)
       .map(p -> p.getValues(SORT).stream()
         .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
@@ -22,9 +20,7 @@ public class SortUtil {
       .map(Sort::by);
   }
 
-  public static Sort getSortOrUnsorted(
-    RequestParameters parameters
-  ) {
+  public static Sort getSortOrUnsorted(RequestParameters parameters) {
     return getSort(parameters).orElse(Sort.unsorted());
   }
 

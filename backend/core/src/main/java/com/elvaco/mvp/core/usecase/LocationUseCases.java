@@ -17,14 +17,14 @@ public class LocationUseCases {
   private final Locations locations;
 
   public Page<Location> findAll(RequestParameters parameters, Pageable pageable) {
-    return locations.findAll(parameters.ensureOrganisation(currentUser), pageable);
+    return locations.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 
   public Page<City> findAllCities(RequestParameters parameters, Pageable pageable) {
-    return locations.findAllCities(parameters.ensureOrganisation(currentUser), pageable);
+    return locations.findAllCities(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 
   public Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable) {
-    return locations.findAllAddresses(parameters.ensureOrganisation(currentUser), pageable);
+    return locations.findAllAddresses(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 }

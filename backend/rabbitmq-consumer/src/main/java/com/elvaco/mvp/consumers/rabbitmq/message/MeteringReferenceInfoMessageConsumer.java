@@ -82,8 +82,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .flatMap(meter ->
         findOrCreatePhysicalMeter(
           meter,
+          facility.id,
           organisation,
-          facility,
           logicalMeter
         ));
 
@@ -150,8 +150,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
   private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
     MeterDto meterDto,
+    String facilityId,
     Organisation organisation,
-    FacilityDto facility,
     @Nullable LogicalMeter logicalMeter
   ) {
     String address = meterDto.id;
@@ -160,11 +160,11 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     }
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
-      .findByWithStatuses(organisation.id, facility.id, address)
+      .findByWithStatuses(organisation.id, facilityId, address)
       .orElseGet(() -> PhysicalMeter.builder()
         .organisation(organisation)
         .address(address)
-        .externalId(facility.id)
+        .externalId(facilityId)
         .build());
 
     return Optional.of(

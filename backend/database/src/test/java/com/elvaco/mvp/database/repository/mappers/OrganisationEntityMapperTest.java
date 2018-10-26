@@ -11,9 +11,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper.toDomainModel;
 import static com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper.toEntity;
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;

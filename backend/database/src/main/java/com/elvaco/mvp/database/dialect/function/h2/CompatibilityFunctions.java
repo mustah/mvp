@@ -21,7 +21,7 @@ import tec.uom.se.unit.MetricPrefix;
 import tec.uom.se.unit.TransformedUnit;
 import tec.uom.se.unit.Units;
 
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 
 @SuppressWarnings("WeakerAccess") // Used by H2 DB
 @Slf4j

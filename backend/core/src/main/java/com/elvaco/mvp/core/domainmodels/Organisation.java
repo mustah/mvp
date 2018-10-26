@@ -3,16 +3,20 @@ package com.elvaco.mvp.core.domainmodels;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import static com.elvaco.mvp.core.util.Slugify.slugify;
+import static java.util.UUID.randomUUID;
 
 @EqualsAndHashCode
 @ToString
+@Builder(toBuilder = true)
 public class Organisation implements Identifiable<UUID> {
 
-  public final UUID id;
+  @Builder.Default
+  public UUID id = randomUUID();
   public final String name;
   public final String slug;
   public final String externalId;
@@ -38,14 +42,14 @@ public class Organisation implements Identifiable<UUID> {
     @Nullable Organisation parent,
     @Nullable UserSelection selection
   ) {
-    this.id = id;
-    this.name = name;
-    this.slug = slugify(slug);
-    this.externalId = externalId;
     if (parent == null ^ selection == null) {
       throw new IllegalArgumentException(
         "Organisation needs either both 'parent' and 'selection', or none");
     }
+    this.id = id;
+    this.name = name;
+    this.slug = slugify(slug);
+    this.externalId = externalId;
     this.parent = parent;
     this.selection = selection;
   }
@@ -53,5 +57,9 @@ public class Organisation implements Identifiable<UUID> {
   @Override
   public UUID getId() {
     return id;
+  }
+
+  public boolean isSubOrganisation() {
+    return parent != null;
   }
 }

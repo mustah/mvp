@@ -20,6 +20,7 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity.missingMeasurementEntity;
@@ -67,7 +68,7 @@ public abstract class QueryFilters {
     List<Predicate> predicates = new ArrayList<>();
     for (Entry<RequestParameter, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> values = propertyFilter.getValue();
-      if (!values.isEmpty()) {
+      if (isNotEmpty(values)) {
         RequestParameter parameter = propertyFilter.getKey();
         try {
           buildPredicateFor(parameter, parameters, values).ifPresent(predicates::add);
