@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MvpUserDetailsTest {
 
   @Test
-  public void shouldHaveOrganisationIdOfParentOrganisationWhenUserBelongsToASubOrganisation() {
+  public void shouldHaveOrganisationIdOfSubOrganisation() {
     var subOrganisationId = randomUUID();
     var userId = randomUUID();
     var subOrganisation = organisationBuilder()
@@ -84,7 +84,7 @@ public class MvpUserDetailsTest {
   }
 
   @Test
-  public void subOrganisationHasSelectionParametersWithOneCity() {
+  public void subOrganisationHasSelectionParametersWithTwoCities() {
     var facilities = "{\"cities\": [{\"id\": \"sverige,kungsbacka\", \"name\": \"kungsbacka\", "
       + "\"country\": {\"id\": \"sverige\", \"name\": \"sverige\"}, \"selected\": true}, "
       + "{\"id\": \"sverige,stockholm\", \"name\": \"stockholm\", "
