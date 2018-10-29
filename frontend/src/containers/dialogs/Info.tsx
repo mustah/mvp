@@ -2,7 +2,7 @@ import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {compose} from 'recompose';
 import {componentOrNothing} from '../../components/hoc/hocs';
-import {superAdminOnly} from '../../components/hoc/withRoles';
+import {connectedSuperAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
 import {Normal} from '../../components/texts/Texts';
 import {ClassNamed, WithChildren} from '../../types/Types';
@@ -23,4 +23,4 @@ const withChildren = componentOrNothing<InfoProps>(({children}) => !!children);
 
 export const Info = withChildren(InfoComponent);
 
-export const SuperAdminInfo = compose<InfoProps, InfoProps>(superAdminOnly, withChildren)(InfoComponent);
+export const SuperAdminInfo = compose<InfoProps, InfoProps>(connectedSuperAdminOnly, withChildren)(InfoComponent);

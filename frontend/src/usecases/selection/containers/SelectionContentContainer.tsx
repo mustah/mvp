@@ -8,7 +8,7 @@ import {
   SearchableDropdownSelector,
   ListingDropdownSelector,
 } from '../../../components/dropdown-selector/DropdownSelector';
-import {superAdminOnly} from '../../../components/hoc/withRoles';
+import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Subtitle} from '../../../components/texts/Titles';
@@ -63,7 +63,7 @@ interface DispatchToProps {
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
-const OrganisationDropDown = superAdminOnly<SearchableProps>(SearchableDropdownSelector);
+const OrganisationDropDown = connectedSuperAdminOnly<SearchableProps>(SearchableDropdownSelector);
 
 class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
 

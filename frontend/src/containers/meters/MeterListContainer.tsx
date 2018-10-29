@@ -6,7 +6,7 @@ import {SelectionResultActionsDropdown} from '../../components/actions-dropdown/
 import {componentOrNothing} from '../../components/hoc/hocs';
 import {withContent} from '../../components/hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
-import {superAdminOnly} from '../../components/hoc/withRoles';
+import {connectedSuperAdminOnly} from '../../components/hoc/withRoles';
 import {Column} from '../../components/layouts/column/Column';
 import {Loader} from '../../components/loading/Loader';
 import {Maybe} from '../../helpers/Maybe';
@@ -77,7 +77,7 @@ const selectionPageEnhancer = componentOrNothing<SelectionPage>(({isSelectionPag
 
 const enhance = compose<Clickable, Clickable & HasContent & SelectionPage>(
   selectionPageEnhancer,
-  superAdminOnly,
+  connectedSuperAdminOnly,
   withContent,
 );
 

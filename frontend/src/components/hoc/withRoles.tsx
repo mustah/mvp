@@ -21,14 +21,14 @@ const onlyAdmins =
 
 const mapStateToProps = ({auth}: RootState): AuthenticatedUser => ({user: getUser(auth)});
 
-export const onlySuperAdmins =
+export const superAdminOnly =
   <P extends AuthenticatedUser>(Component: React.ComponentType<P>): React.SFC<P> =>
     componentOrNothing<P>(userIsSuperAdmin)(Component);
 
-export const superAdminOnly =
+export const connectedSuperAdminOnly =
   <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
-    connect<AuthenticatedUser>(mapStateToProps)(onlySuperAdmins(Component));
+    connect<AuthenticatedUser>(mapStateToProps)(superAdminOnly(Component));
 
-export const adminOnly =
+export const connectedAdminOnly =
   <OwnProps extends {}>(Component: React.ComponentType<OwnProps & AuthenticatedUser>) =>
     connect<AuthenticatedUser>(mapStateToProps)(onlyAdmins(Component));
