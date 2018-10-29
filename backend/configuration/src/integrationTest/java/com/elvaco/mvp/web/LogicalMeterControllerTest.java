@@ -74,7 +74,7 @@ import static org.junit.Assume.assumeTrue;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class LogicalMeterControllerTest extends IntegrationTest {
 
-  private static final ZonedDateTime YESTERDAY = ZonedDateTime.now()
+  private static final ZonedDateTime YESTERDAY = ZonedDateTime.parse("2018-09-25T00:00:00Z")
     .minusDays(1)
     .truncatedTo(ChronoUnit.DAYS);
 
