@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {colors, iconStyle} from '../../../app/themes';
-import {onlySuperAdmins} from '../../../components/hoc/withRoles';
+import {superAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
@@ -37,7 +37,7 @@ const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
   </Link>
 );
 
-const OrganisationMenuItem = onlySuperAdmins(AdminOrganisationLinkMenuItem);
+const OrganisationMenuItem = superAdminOnly(AdminOrganisationLinkMenuItem);
 
 const AdminMainMenu = (props: StateToProps) => (
   <MainMenuWrapper>

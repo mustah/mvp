@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {AppSwitchDropdown} from '../../../../components/actions-dropdown/AppSwitchDropdown';
-import {adminOnly} from '../../../../components/hoc/withRoles';
+import {connectedAdminOnly} from '../../../../components/hoc/withRoles';
 import {Column, ColumnBottom} from '../../../../components/layouts/column/Column';
 import {Children} from '../../../../types/Types';
 import {ProfileContainer} from '../../../topmenu/containers/ProfileContainer';
@@ -10,7 +10,7 @@ interface Props {
   children?: Children;
 }
 
-const AppSwitchDropdownComponent = adminOnly(AppSwitchDropdown);
+const AppSwitchDropdownComponent = connectedAdminOnly(AppSwitchDropdown);
 
 export const MainMenuWrapper = ({children}: Props) => (
   <Column className="MainMenuWrapper">

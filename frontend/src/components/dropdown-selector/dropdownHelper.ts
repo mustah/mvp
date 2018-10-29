@@ -6,7 +6,7 @@ import {
 } from '../../state/domain-models/selections/selectionsApiActions';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
 import {CallbackWith, uuid} from '../../types/Types';
-import {DropdownSelectorProps} from './DropdownSelector';
+import {DropdownComponentProps} from './DropdownSelector';
 
 const selectedOptions = (list: SelectionListItem[]): number =>
   list.filter((item: SelectionListItem) => item.selected).length;
@@ -25,8 +25,7 @@ export const searchOverviewText = (list: SelectionListItem[], totalElements: num
   return numSelected ? numSelected + ' / ' + totalElements : firstUpperTranslated('all');
 };
 
-export const unknownItems = (props: DropdownSelectorProps): SelectionListItem[] => {
-  const {selectedItems, unknownItem} = props;
+export const unknownItems = ({selectedItems, unknownItem}: DropdownComponentProps): SelectionListItem[] => {
   const unknownIsSelected = unknownItem && selectedItems.find((item) => item.id === unknownItem.id);
   return unknownIsSelected === undefined && unknownItem !== undefined
     ? [unknownItem]

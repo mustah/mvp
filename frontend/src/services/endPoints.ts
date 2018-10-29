@@ -4,6 +4,7 @@ export const enum EndPoints {
   facilities = '/selections/facilities',
   gatewaySerials = '/selections/gateway-serials',
   media = '/selections/media',
+  organisationsToSelect = '/selections/organisations',
   reported = '/selections/reported',
   secondaryAddresses = '/selections/secondary-addresses',
   selectionTree = '/selection-tree',

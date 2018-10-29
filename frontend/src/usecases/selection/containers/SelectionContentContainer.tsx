@@ -2,11 +2,13 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
+  SearchableProps,
   renderAddressLabel,
   renderCityLabel,
-  SearchDropdownSelector,
-  SimpleDropdownSelector,
+  SearchableDropdownSelector,
+  ListingDropdownSelector,
 } from '../../../components/dropdown-selector/DropdownSelector';
+import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Subtitle} from '../../../components/texts/Titles';
@@ -20,6 +22,7 @@ import {
   fetchFacilities,
   fetchGatewaySerials,
   fetchMedia,
+  fetchOrganisationsToSelect,
   fetchReported,
   fetchSecondaryAddresses,
   mapSelectedIdToAddress,
@@ -34,6 +37,7 @@ import {
   getSelectedFacilities,
   getSelectedGatewaySerials,
   getSelectedMedia,
+  getSelectedOrganisations,
   getSelectedReported,
   getSelectedSecondaryAddresses,
 } from '../../../state/user-selection/userSelectionSelectors';
@@ -47,6 +51,7 @@ interface StateToProps {
   facilities: SelectionListItem[];
   gatewaySerials: SelectionListItem[];
   media: SelectionListItem[];
+  organisations: SelectionListItem[];
   reported: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
 }
@@ -58,6 +63,8 @@ interface DispatchToProps {
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
+const OrganisationDropDown = connectedSuperAdminOnly<SearchableProps>(SearchableDropdownSelector);
+
 class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
 
   render() {
@@ -68,6 +75,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       facilities,
       gatewaySerials,
       media,
+      organisations,
       reported,
       secondaryAddresses,
       toggleParameter,
@@ -87,6 +95,8 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
       toggleParameter({item, parameter: ParameterName.secondaryAddresses});
     const selectFacilities = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.facilities});
+    const selectOrganisations = (item: SelectionListItem) =>
+      toggleParameter({item, parameter: ParameterName.organisations});
     const selectGatewaySerials = (item: SelectionListItem) =>
       toggleParameter({item, parameter: ParameterName.gatewaySerials});
 
@@ -96,6 +106,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
     const reportedSelectionText = translate('reported') + ': ';
     const mediumSelectionText = translate('medium') + ': ';
     const facilitySelectionText = translate('facility') + ': ';
+    const organisationSelectionText = translate('organisation') + ': ';
     const secondaryAddressSelectionText = translate('secondary address') + ': ';
     const gatewaySerialSelectionText = translate('gateway serial') + ': ';
 
@@ -104,13 +115,19 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
         <Subtitle>{translate('filter')}</Subtitle>
 
         <Row className="SelectionDropdownOptions">
-          <SearchDropdownSelector
+          <SearchableDropdownSelector
             fetchItems={fetchFacilities}
             selectedItems={facilities}
             selectionText={facilitySelectionText}
             select={selectFacilities}
           />
-          <SearchDropdownSelector
+          <OrganisationDropDown
+            fetchItems={fetchOrganisationsToSelect}
+            selectedItems={organisations}
+            selectionText={organisationSelectionText}
+            select={selectOrganisations}
+          />
+          <SearchableDropdownSelector
             fetchItems={fetchCities}
             selectedItems={cities}
             selectionText={citySelectionText}
@@ -119,7 +136,7 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             rowHeight={44}
             unknownItem={unknownCity as SelectionListItem}
           />
-          <SearchDropdownSelector
+          <SearchableDropdownSelector
             fetchItems={fetchAddresses}
             selectedItems={addresses}
             selectionText={addressSelectionText}
@@ -128,39 +145,41 @@ class SelectionContent extends React.Component<StateToProps & DispatchToProps> {
             rowHeight={44}
             unknownItem={unknownAddress as SelectionListItem}
           />
-          <SimpleDropdownSelector
+          <ListingDropdownSelector
             fetchItems={fetchMedia}
             selectedItems={media}
             selectionText={mediumSelectionText}
             select={selectMedium}
           />
         </Row>
+
         <Row className="SelectionDropdownOptions">
-          <SimpleDropdownSelector
+          <ListingDropdownSelector
             fetchItems={fetchReported}
             selectedItems={reported}
             selectionText={reportedSelectionText}
             select={selectReported}
           />
-          <SimpleDropdownSelector
+          <ListingDropdownSelector
             fetchItems={fetchAlarms}
             selectedItems={alarms}
             selectionText={alarmSelectionText}
             select={selectAlarm}
           />
-          <SearchDropdownSelector
+          <SearchableDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
             selectionText={secondaryAddressSelectionText}
             select={selectSecondaryAddresses}
           />
-          <SearchDropdownSelector
+          <SearchableDropdownSelector
             fetchItems={fetchGatewaySerials}
             selectedItems={gatewaySerials}
             selectionText={gatewaySerialSelectionText}
             select={selectGatewaySerials}
           />
         </Row>
+
         <SearchResultList/>
       </Column>
     );
@@ -174,6 +193,7 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   facilities: getSelectedFacilities(userSelection),
   gatewaySerials: getSelectedGatewaySerials(userSelection),
   media: getSelectedMedia(userSelection),
+  organisations: getSelectedOrganisations(userSelection),
   reported: getSelectedReported(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),
 });
