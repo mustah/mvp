@@ -38,6 +38,11 @@ import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerAverageTest extends IntegrationTest {
 
+  private static final String SERIES_ID_AVERAGE_POWER = "average-Power";
+  private static final String SERIES_ID_AVERAGE_ENERGY = "average-Energy";
+  private static final String AVERAGE = "average";
+  private static final String SERIES_ID_AVERAGE_DIFF_TEMP = "average-Difference temperature";
+
   @Autowired
   private MeterDefinitions meterDefinitions;
 
@@ -91,10 +96,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
       singletonList(new MeasurementSeriesDto(
-        "average-Power",
+        SERIES_ID_AVERAGE_POWER,
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
-        "average",
+        AVERAGE,
         asList(
           new MeasurementValueDto(date.toInstant(), 1.0),
           new MeasurementValueDto(date.plusHours(1).toInstant(), 2.0)
@@ -130,10 +135,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Power",
+          SERIES_ID_AVERAGE_POWER,
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
-          "average",
+          AVERAGE,
           asList(
             new MeasurementValueDto(date.toInstant(), 2.0),
             new MeasurementValueDto(date.plusHours(1).toInstant(), 3.0)
@@ -170,10 +175,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Energy",
+          SERIES_ID_AVERAGE_ENERGY,
           Quantity.ENERGY.name,
           Quantity.ENERGY.presentationUnit(),
-          "average",
+          AVERAGE,
           asList(
             new MeasurementValueDto(date.toInstant(), 8.0),
             new MeasurementValueDto(date.plusHours(1).toInstant(), null)
@@ -209,17 +214,17 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "average-Power",
+        SERIES_ID_AVERAGE_POWER,
         Quantity.POWER.name,
         Quantity.POWER.presentationUnit(),
-        "average",
+        AVERAGE,
         singletonList(new MeasurementValueDto(date.toInstant(), 2.0))
       ),
       new MeasurementSeriesDto(
-        "average-Difference temperature",
+        SERIES_ID_AVERAGE_DIFF_TEMP,
         Quantity.DIFFERENCE_TEMPERATURE.name,
         Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
-        "average",
+        AVERAGE,
         singletonList(new MeasurementValueDto(date.toInstant(), 20.0))
       )
     );
@@ -249,10 +254,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Power",
+          SERIES_ID_AVERAGE_POWER,
           Quantity.POWER.name,
           Quantity.POWER.presentationUnit(),
-          "average",
+          AVERAGE,
           singletonList(new MeasurementValueDto(date.toInstant(), null))
         )));
   }
@@ -292,10 +297,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Power",
+          SERIES_ID_AVERAGE_POWER,
           Quantity.POWER.name,
           "W",
-          "average",
+          AVERAGE,
           asList(
             new MeasurementValueDto(
               ZonedDateTime.parse("2018-03-06T05:00:00.000Z").toInstant(),
@@ -375,9 +380,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Power",
+          SERIES_ID_AVERAGE_POWER,
           Quantity.POWER.name, "W",
-          "average",
+          AVERAGE,
           singletonList(new MeasurementValueDto(date.toInstant(), null))
         )));
   }
@@ -436,10 +441,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Power",
+          SERIES_ID_AVERAGE_POWER,
           Quantity.POWER.name,
           "W",
-          "average",
+          AVERAGE,
           asList(
             new MeasurementValueDto(date.minusDays(1).toInstant(), null),
             new MeasurementValueDto(date.toInstant(), null),
@@ -473,10 +478,10 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(
         new MeasurementSeriesDto(
-          "average-Power",
+          SERIES_ID_AVERAGE_POWER,
           Quantity.POWER.name,
           "W",
-          "average",
+          AVERAGE,
           asList(
             new MeasurementValueDto(date.toInstant(), 1.0),
             new MeasurementValueDto(date.plusMonths(1).toInstant(), 2.0),

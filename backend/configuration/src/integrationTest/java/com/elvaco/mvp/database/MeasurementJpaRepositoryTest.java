@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
@@ -34,8 +35,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
-  private static final OffsetDateTime START_TIME =
-    OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
+  private static final OffsetDateTime START_TIME = OffsetDateTime.parse(
+    "2018-01-01T00:00:00+00:00");
 
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
@@ -58,10 +59,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void correctNumberOfValuesAreReturnedRelativeToStart() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     generateSeries(meter, 10, START_TIME, Duration.ofHours(1), 2.0, "W");
-    OffsetDateTime fiveHoursIn = START_TIME.plus(Duration.ofHours(5));
-    OffsetDateTime lastHourWithMeasurements = START_TIME.plus(Duration.ofHours(9));
+    var fiveHoursIn = START_TIME.plusHours(5);
+    var lastHourWithMeasurements = START_TIME.plusHours(9);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
@@ -78,9 +79,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void allValuesHaveSameScale() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
+    var oneHourLater = START_TIME.plusHours(1);
+
     newMeasurement(meter, START_TIME, 2.0, "W");
-    OffsetDateTime oneHourLater = START_TIME.plus(Duration.ofHours(1));
     newMeasurement(meter, oneHourLater, 0.002, "kW");
 
     List<MeasurementValueProjection> results = measurementJpaRepository
@@ -93,7 +95,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void valuesAreScaledAccordingToSpecifiedUnit() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "W");
 
     List<MeasurementValueProjection> results = measurementJpaRepository
@@ -103,18 +105,19 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "kW",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).getDoubleValue()).isEqualTo(0.002);
+    assertThat(results).extracting(MeasurementValueProjection::getDoubleValue)
+      .containsExactly(0.002);
   }
 
   @Test
   public void resultsCanBeFetchedWithDayResolution() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
+    var dayTwo = START_TIME.plus(Period.ofDays(1));
+
     newMeasurement(meter, START_TIME, 2.0, "W");
-    OffsetDateTime dayTwo = START_TIME.plus(Period.ofDays(1));
     newMeasurement(meter, dayTwo, 4.0, "W");
 
     List<MeasurementValueProjection> results = measurementJpaRepository
@@ -127,16 +130,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         dayTwo
       );
 
-    assertThat(results).hasSize(2);
-    assertThat(results.get(0).getDoubleValue()).isEqualTo(2.0);
-    assertThat(results.get(1).getDoubleValue()).isEqualTo(4.0);
+    assertThat(results).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      2.0,
+      4.0
+    );
   }
 
   @Test
   public void resultsCanBeFetchedWithMonthResolution() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
+    var nextMonth = START_TIME.plus(Period.ofMonths(1));
+
     newMeasurement(meter, START_TIME, 2.0, "W");
-    OffsetDateTime nextMonth = START_TIME.plus(Period.ofMonths(1));
     newMeasurement(meter, nextMonth, 4.0, "W");
 
     List<MeasurementValueProjection> results = measurementJpaRepository
@@ -149,35 +154,43 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         nextMonth
       );
 
-    assertThat(results).hasSize(2);
-    assertThat(results.get(0).getDoubleValue()).isEqualTo(2.0);
-    assertThat(results.get(1).getDoubleValue()).isEqualTo(4.0);
+    assertThat(results).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      2.0,
+      4.0
+    );
   }
 
   @Test
   public void missingIntervalValuesAreRepresentedAsNull() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
+    var twoHoursLater = START_TIME.plusHours(2);
+
     newMeasurement(meter, START_TIME, 2.0, "W");
-    OffsetDateTime twoHoursLater = START_TIME.plus(Duration.ofHours(2));
-    newMeasurement(meter, twoHoursLater, 2.0, "W");
+    newMeasurement(meter, twoHoursLater, 3.0, "W");
 
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id), "hour", "Energy", "W", START_TIME, twoHoursLater);
+    List<MeasurementValueProjection> results = measurementJpaRepository.getAverageForPeriod(
+      singletonList(meter.id),
+      "hour",
+      "Energy",
+      "W",
+      START_TIME,
+      twoHoursLater
+    );
 
-    assertThat(results).hasSize(3);
-    assertThat(results.get(0).getValue()).isEqualTo("2 W");
-    assertThat(results.get(1).getValue()).isEqualTo(null);
-    assertThat(results.get(2).getValue()).isEqualTo("2 W");
+    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(
+      "2 W",
+      null,
+      "3 W"
+    );
   }
 
   @Test
   public void averageShouldOnlyIncludeValuesAtResolutionPoints() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "W");
     newMeasurement(meter, START_TIME.plusMinutes(1), 100.0, "W");
 
-    OffsetDateTime oneHourLater = START_TIME.plusHours(1);
+    var oneHourLater = START_TIME.plusHours(1);
     newMeasurement(meter, oneHourLater, 1.0, "W");
     newMeasurement(meter, oneHourLater.plusMinutes(1), 9.0, "W");
 
@@ -191,15 +204,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         oneHourLater.plusMinutes(1)
       );
 
-    assertThat(results).hasSize(2);
-    assertThat(results.get(0).getValue()).isEqualTo("2 W");
-    assertThat(results.get(1).getValue()).isEqualTo("1 W");
+    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(
+      "2 W",
+      "1 W"
+    );
   }
 
   @Test
   public void unspecifiedMetersAreNotIncluded() {
-    PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
-    PhysicalMeterEntity secondMeter = newPhysicalMeterEntity();
+    var firstMeter = newPhysicalMeterEntity();
+    var secondMeter = newPhysicalMeterEntity();
     newMeasurement(firstMeter, START_TIME, 12, "W");
     newMeasurement(secondMeter, START_TIME, 99.8, "W");
 
@@ -210,16 +224,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "W",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).getValue()).isEqualTo("12 W");
+    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly("12 W");
   }
 
   @Test
   public void valuesAreFilteredByQuantity() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "°C", Quantity.TEMPERATURE.name);
     newMeasurement(meter, START_TIME, 6.0, "°C", Quantity.RETURN_TEMPERATURE.name);
 
@@ -230,16 +243,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         Quantity.TEMPERATURE.name,
         "°C",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).getValue()).isEqualTo("2 °C");
+    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly("2 °C");
   }
 
   @Test
   public void timesAreCorrect() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "W");
 
     List<MeasurementValueProjection> resultsWithHourResolution = measurementJpaRepository
@@ -249,7 +261,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "W",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
     List<MeasurementValueProjection> resultsWithDayResolution = measurementJpaRepository
@@ -259,7 +271,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "W",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
     List<MeasurementValueProjection> resultsWithMonthResolution = measurementJpaRepository
@@ -269,10 +281,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "W",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
-    assertThat(resultsWithHourResolution).hasSize(1);
+    assertThat(resultsWithDayResolution).hasSize(1);
     assertThat(resultsWithHourResolution.get(0)
       .getWhen()
       .toInstant()).isEqualTo(START_TIME.toInstant());
@@ -290,7 +302,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void correctScaleIsReturned() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "W");
 
     List<MeasurementValueProjection> results = measurementJpaRepository
@@ -300,16 +312,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Energy",
         "W",
         START_TIME,
-        START_TIME.plus(Duration.ofSeconds(1))
+        START_TIME.plusSeconds(1)
       );
 
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).getUnit()).isEqualTo("W");
+    assertThat(results).extracting(MeasurementValueProjection::getUnit).containsExactly("W");
   }
 
   @Test
   public void seriesShouldIncludeEmptyResolutionPoints() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
     newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "kWh", "Energy");
@@ -323,21 +334,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "minute"
     );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getMeasurementUnit().get()).isEqualTo(new MeasurementUnit(
-      "MWh",
-      0.001
-    ));
-    assertThat(result.get(1).getMeasurementUnit().get()).isEqualTo(new MeasurementUnit(
-      "MWh",
-      0.002
-    ));
-    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getMeasurementUnit).containsExactly(
+      Optional.of(new MeasurementUnit("MWh", 0.001)),
+      Optional.of(new MeasurementUnit("MWh", 0.002)),
+      Optional.empty()
+    );
   }
 
   @Test
   public void seriesShouldNotIncludeValuesInBetweenResolutionPoints() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
     newMeasurement(meter, START_TIME.plusMinutes(30), 1.5, "kWh", "Energy");
@@ -352,14 +358,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "hour"
     );
 
-    assertThat(result).hasSize(2);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(1.0);
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(2.0);
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      1.0,
+      2.0
+    );
   }
 
   @Test
   public void getSeriesForConsumption_PutConsumptionOnStartOfInterval() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
@@ -376,15 +383,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour"
       );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(6.0);
-    assertThat(result.get(2).getDoubleValue()).isEqualTo(12.0);
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      3.0,
+      6.0,
+      12.0
+    );
   }
 
   @Test
   public void getSeriesForConsumption_PutSumOfMissingIntervalsOnStartOfInterval() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
@@ -403,17 +411,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour"
       );
 
-    assertThat(result).hasSize(5);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(42);
-    assertThat(result.get(2).getValue()).isNull();
-    assertThat(result.get(3).getValue()).isNull();
-    assertThat(result.get(4).getDoubleValue()).isEqualTo(48);
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      3.0,
+      42.0,
+      null,
+      null,
+      48.0
+    );
   }
 
   @Test
   public void getSeriesForConsumption_MissingMeasurementAtStartOfIntervalAndAfterInterval() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME.minusHours(1), 1.0, "m³", "Volume");
     // missing measurement for START_TIME
@@ -431,15 +440,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour"
       );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getValue()).isNull();
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(6.0);
-    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      null,
+      6.0,
+      null
+    );
   }
 
   @Test
   public void getSeriesForConsumption_MissingMeasurementAtEndOfInterval() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
@@ -455,15 +465,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour"
       );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
-    assertThat(result.get(1).getValue()).isNull();
-    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      3.0,
+      null,
+      null
+    );
   }
 
   @Test
   public void getSeriesForConsumption_MissingMeasurementAtEndOfIntervalButLaterExists() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
@@ -480,15 +491,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour"
       );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
-    assertThat(result.get(1).getValue()).isNull();
-    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      3.0,
+      null,
+      null
+    );
   }
 
   @Test
   public void getSeriesForConsumption_MissingMeasurementAfterInterval() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
 
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
@@ -505,17 +517,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "hour"
       );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(3.0);
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(6.0);
-    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      3.0,
+      6.0,
+      null
+    );
   }
 
   @Test
   @Ignore("The transaction is commited after testmethod has returned, hence we get the "
     + "exception too late")
   public void mixedDimensionsAreRejected() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 1.0, "m³", "Volume");
     assertThatThrownBy(() ->
       newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "m³/s", "Volume")
@@ -524,13 +537,13 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void averageForConsumptionSeries() {
-    PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
+    var firstMeter = newPhysicalMeterEntity();
 
     newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
 
-    PhysicalMeterEntity secondMeter = newPhysicalMeterEntity();
+    var secondMeter = newPhysicalMeterEntity();
     newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
@@ -545,20 +558,21 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         START_TIME.plusHours(3)
       );
 
-    assertThat(result).hasSize(3);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(1.0); // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(2.5); // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
-    assertThat(result.get(2).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      1.0, // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
+      2.5, // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+      null
+    );
   }
 
   @Test
   public void averageForConsumptionSeries_lastIsNotNullWhenValueExistAfterPeriod() {
-    PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
+    var firstMeter = newPhysicalMeterEntity();
     newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
 
-    PhysicalMeterEntity secondMeter = newPhysicalMeterEntity();
+    var secondMeter = newPhysicalMeterEntity();
     newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
@@ -573,19 +587,20 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         START_TIME.plusHours(2)
       );
 
-    assertThat(result).hasSize(2);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(1.0); // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(2.5); // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      1.0,  // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
+      2.5  // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+    );
   }
 
   @Test
   public void averageForMissingMeasurements() {
-    PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
+    var firstMeter = newPhysicalMeterEntity();
 
     newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
 
-    PhysicalMeterEntity secondMeter = newPhysicalMeterEntity();
+    var secondMeter = newPhysicalMeterEntity();
     newMeasurement(secondMeter, START_TIME.plusHours(1), 7.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
@@ -599,21 +614,22 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       START_TIME.plusHours(4)
     );
 
-    assertThat(result).hasSize(4);
     // note: we average only over present measurement count for an interval
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(7.0);
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(1.5);
-    assertThat(result.get(2).getDoubleValue()).isEqualTo(4.0);
-    assertThat(result.get(3).getValue()).isNull();
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      7.0,
+      1.5,
+      4.0,
+      null
+    );
   }
 
   @Test
   public void averageForConsumptionSeries_missingMeasurementsForOneMeter() {
-    PhysicalMeterEntity firstMeter = newPhysicalMeterEntity();
+    var firstMeter = newPhysicalMeterEntity();
     newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
     newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
 
-    PhysicalMeterEntity secondMeter = newPhysicalMeterEntity();
+    var secondMeter = newPhysicalMeterEntity();
     newMeasurement(secondMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
     newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
@@ -628,19 +644,20 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         START_TIME.plusHours(2)
       );
 
-    assertThat(result).hasSize(2);
-    assertThat(result.get(0).getDoubleValue()).isEqualTo(2.0); // (2.0 - 0.0) / 1
-    assertThat(result.get(1).getDoubleValue()).isEqualTo(2.5); // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+    assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
+      2.0, // (2.0 - 0.0) / 1
+      2.5 // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
+    );
   }
 
   @Test
   public void findFirstReadoutWithinRange() {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    var meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME.plusHours(2), 3.0, "kWh", "Energy");
     newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
     newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
 
-    MeasurementEntity firstEnergy = measurementJpaRepository
+    var firstEnergy = measurementJpaRepository
       .firstForPhysicalMeter(
         meter.id,
         START_TIME.minusDays(1).toZonedDateTime(),
@@ -656,6 +673,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         START_TIME.plusHours(1).plusMinutes(59).toZonedDateTime(),
         START_TIME.plusHours(2).toZonedDateTime()
       ).get();
+
     assertThat(firstEnergy.id.created.toInstant()).isEqualTo(START_TIME.plusHours(2).toInstant());
     assertThat(firstEnergy.value.getValue()).isEqualTo(3.0);
   }
