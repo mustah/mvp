@@ -22,23 +22,23 @@ import {replaceWhereId, searchOverviewText, throttledSearch, ThrottledSearch, un
 import './DropdownSelector.scss';
 import origin = __MaterialUI.propTypes.origin;
 
-interface OptionalProps {
-  renderLabel?: (index: number, items: SelectionListItem[]) => Children;
-  rowHeight?: number;
-  visibleItems?: number;
-}
+type OptionalProps = Partial<{
+  renderLabel: (index: number, items: SelectionListItem[]) => Children;
+  rowHeight: number;
+  visibleItems: number;
+}>;
 
-interface SimpleProps {
+interface SelectableProps {
   fetchItems: FetchByPage;
   select: (props: SelectionListItem) => void;
   selectedItems: SelectionListItem[];
   selectionText: string;
 }
 
-interface Props extends SimpleProps {
-  fetchItemsByQuery?: ThrottledSearch<PagedResponse>;
-  unknownItem?: SelectionListItem;
-}
+type QueryProps = Partial<{
+  fetchItemsByQuery: ThrottledSearch<PagedResponse>;
+  unknownItem: SelectionListItem;
+}>;
 
 interface Cache {
   items: SelectionListItem[];
@@ -56,7 +56,8 @@ interface State extends PagedResponse {
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
 const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
 
-export type DropdownSelectorProps = Props & Required<OptionalProps>;
+export type SearchableProps = QueryProps & SelectableProps & OptionalProps;
+export type DropdownComponentProps = QueryProps & SelectableProps & Required<OptionalProps>;
 
 const listItems = (
   selectedItems: SelectionListItem[],
@@ -68,9 +69,9 @@ const listItems = (
   return [...selectedItems, ...unselected];
 };
 
-class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, State> {
+class DropdownComponent extends React.Component<DropdownComponentProps, State> {
 
-  constructor(props: DropdownSelectorProps) {
+  constructor(props: DropdownComponentProps) {
     super(props);
     const items = [...props.selectedItems, ...unknownItems(props)];
     this.state = {
@@ -87,7 +88,7 @@ class PaginatedDropdownSelector extends React.Component<DropdownSelectorProps, S
     await this.loadMoreRows();
   }
 
-  componentWillReceiveProps({selectedItems}: DropdownSelectorProps) {
+  componentWillReceiveProps({selectedItems}: DropdownComponentProps) {
     if (!this.state.isOpen && this.props.selectedItems.length !== selectedItems.length) {
       this.setState(({items: prevItems, cache: {totalElements}}: State) => {
         const items = listItems(selectedItems, prevItems);
@@ -290,8 +291,8 @@ export const renderAddressLabel = (index: number, filteredList: SelectionListIte
   return <LabelWithSubtitle name={translatedNameOf(address)} subTitle={translatedNameOf(address.country)}/>;
 };
 
-const DropdownSelector = (props: Props & OptionalProps) => (
-  <PaginatedDropdownSelector
+const DropdownSelector = (props: SearchableProps) => (
+  <DropdownComponent
     renderLabel={renderLabelAtIndex}
     rowHeight={40}
     visibleItems={10}
@@ -299,13 +300,13 @@ const DropdownSelector = (props: Props & OptionalProps) => (
   />
 );
 
-export const SearchDropdownSelector = (props: Props & OptionalProps) => (
+export const SearchableDropdownSelector = (props: SearchableProps) => (
   <DropdownSelector
     fetchItemsByQuery={throttledSearch(props.fetchItems)}
     {...props}
   />
 );
 
-export const SimpleDropdownSelector = (props: SimpleProps & OptionalProps) => (
+export const ListingDropdownSelector = (props: SelectableProps & OptionalProps) => (
   <DropdownSelector {...props}/>
 );

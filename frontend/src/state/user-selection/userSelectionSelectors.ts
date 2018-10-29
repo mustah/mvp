@@ -56,6 +56,7 @@ const getSelectedItems = (entityType: ParameterName) =>
 
 export const getSelectedAlarms = getSelectedItems(ParameterName.alarms);
 export const getSelectedMedia = getSelectedItems(ParameterName.media);
+export const getSelectedOrganisations = getSelectedItems(ParameterName.organisations);
 export const getSelectedReported = getSelectedItems(ParameterName.reported);
 export const getSelectedCities = getSelectedItems(ParameterName.cities);
 export const getSelectedAddresses = getSelectedItems(ParameterName.addresses);

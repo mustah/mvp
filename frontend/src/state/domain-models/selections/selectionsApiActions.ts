@@ -103,6 +103,13 @@ export const fetchFacilities = async (page: number, query?: string): Promise<Pag
     requestParameters('externalId', page, query),
   );
 
+export const fetchOrganisationsToSelect = async (page: number, query?: string): Promise<PagedResponse> =>
+  fetchItems<IdNamed, IdNamed>(
+    EndPoints.organisationsToSelect,
+    identity,
+    requestParameters('name', page, query),
+  );
+
 export const fetchSecondaryAddresses =
   async (page: number, query?: string): Promise<PagedResponse> =>
     fetchItems<IdNamed, IdNamed>(

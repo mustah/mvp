@@ -10,6 +10,7 @@ export const enum ParameterName {
   cities = 'cities',
   facilities = 'facilities',
   gatewaySerials = 'gatewaySerials',
+  organisations = 'organisations',
   media = 'media',
   period = 'period',
   reported = 'reported',
@@ -35,6 +36,7 @@ export interface SelectedParameters {
   facilities?: IdNamed[];
   gatewaySerials?: IdNamed[];
   media?: IdNamed[];
+  organisations?: IdNamed[];
   reported?: IdNamed[];
   secondaryAddresses?: IdNamed[];
 }
