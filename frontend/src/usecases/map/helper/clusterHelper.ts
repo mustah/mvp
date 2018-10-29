@@ -22,10 +22,18 @@ const warningMarkerIcon = icons[Status.warning];
 const getStatusIconUrl = ({alarm, status}: MapMarker): string =>
   alarm !== undefined ? alarmMarkerIcon : (icons[status] || markerIcon);
 
+const iconSize: Leaflet.PointTuple = [25, 41];
+
+const centerBottom = ([x, y]: Leaflet.PointTuple): Leaflet.Point => Leaflet.point(x / 2, y, true);
+
 const makeMarker = (marker: MapMarker): Marker => ({
   position: [marker.latitude, marker.longitude],
   options: {
-    icon: Leaflet.icon({iconUrl: getStatusIconUrl(marker)}),
+    icon: Leaflet.icon({
+      iconUrl: getStatusIconUrl(marker),
+      iconSize,
+      iconAnchor: centerBottom(iconSize),
+    }),
     mapMarkerItem: marker.id,
     status: marker.status,
   },

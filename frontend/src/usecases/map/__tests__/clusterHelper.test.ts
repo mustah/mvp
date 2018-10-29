@@ -31,7 +31,11 @@ describe('clusterHelper', () => {
         position: [57.505402, 12.069364],
         options: {
           icon: {
-            options: {iconUrl: {}},
+            options: {
+              iconAnchor: {x: 13, y: 41},
+              iconSize: [25, 41],
+              iconUrl: {}
+            },
             _initHooksCalled: true,
           },
           mapMarkerItem: 1,
@@ -48,7 +52,11 @@ describe('clusterHelper', () => {
           options: {
             icon: {
               _initHooksCalled: true,
-              options: {iconUrl: {}},
+              options: {
+                iconAnchor: {x: 13, y: 41},
+                iconSize: [25, 41],
+                iconUrl: {},
+              },
             },
             mapMarkerItem: 1,
             status: Status.ok,
@@ -59,7 +67,11 @@ describe('clusterHelper', () => {
           options: {
             icon: {
               _initHooksCalled: true,
-              options: {iconUrl: {}},
+              options: {
+                iconAnchor: {x: 13, y: 41},
+                iconSize: [25, 41],
+                iconUrl: {},
+              },
             },
             mapMarkerItem: 2,
             status: Status.warning,
