@@ -78,12 +78,15 @@ const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
     maxClusterRadius: getZoomBasedRadius,
   };
 
-  return leafletMarkers.length > 0 ? (
-    <MarkerClusterGroup
-      markers={leafletMarkers}
-      onMarkerClick={openClusterDialog}
-      options={markerClusterOptions}
-    />) : null;
+  return leafletMarkers.length > 0
+    ? (
+      <MarkerClusterGroup
+        markers={leafletMarkers}
+        onMarkerClick={openClusterDialog}
+        options={markerClusterOptions}
+      />
+    )
+    : null;
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
