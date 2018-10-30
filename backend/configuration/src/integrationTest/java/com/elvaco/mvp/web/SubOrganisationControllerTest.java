@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;

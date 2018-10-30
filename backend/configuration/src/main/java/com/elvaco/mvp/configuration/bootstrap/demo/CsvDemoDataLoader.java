@@ -34,7 +34,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 

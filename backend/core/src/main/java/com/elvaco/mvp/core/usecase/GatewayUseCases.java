@@ -19,11 +19,11 @@ public class GatewayUseCases {
   private final AuthenticatedUser currentUser;
 
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
-    return gateways.findAll(parameters.ensureOrganisation(currentUser), pageable);
+    return gateways.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
-    return gateways.findSerials(parameters.ensureOrganisation(currentUser), pageable);
+    return gateways.findSerials(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 
   public Gateway save(Gateway gateway) {

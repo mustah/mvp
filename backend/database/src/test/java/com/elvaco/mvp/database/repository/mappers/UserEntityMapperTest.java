@@ -4,15 +4,14 @@ import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
-import com.elvaco.mvp.testing.fixture.UserBuilder;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.admin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.superAdmin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.user;
+import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,13 +57,7 @@ public class UserEntityMapperTest {
   }
 
   private User createUser() {
-    return new UserBuilder()
-      .name("john doh")
-      .email("a@b.com")
-      .password("letmein")
-      .organisationElvaco()
-      .roles(ADMIN, USER)
-      .build();
+    return userBuilder().organisationElvaco().build();
   }
 
   private UserEntity createUserEntity() {

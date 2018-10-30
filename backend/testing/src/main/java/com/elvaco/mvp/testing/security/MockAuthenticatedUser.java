@@ -2,11 +2,13 @@ package com.elvaco.mvp.testing.security;
 
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
 import static java.util.Collections.singletonList;
@@ -73,7 +75,19 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
 
   @Override
   public UUID getOrganisationId() {
-    return user.organisation.id;
+    return user.getOrganisationId();
+  }
+
+  @Nullable
+  @Override
+  public UUID getParentOrganisationId() {
+    return user.getParentOrganisationId().orElse(null);
+  }
+
+  @Nullable
+  @Override
+  public UserSelection.SelectionParametersDto selectionParameters() {
+    return user.getSelectionParameters().orElse(null);
   }
 
   @Override

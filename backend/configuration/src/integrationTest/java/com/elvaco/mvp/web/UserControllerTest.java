@@ -24,6 +24,7 @@ import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
+import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -142,13 +143,10 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void deleteUserWithId() {
     User user = users.create(
-      new UserBuilder()
-        .name("john doh")
+      userBuilder()
         .email("noo@b.com")
         .password("test123")
-        .language(Language.en)
         .organisation(context().organisation())
-        .roles(ADMIN, USER)
         .build()
     );
 
@@ -174,11 +172,10 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void regularUserCannotDeleteUser() {
     User user = users.create(
-      new UserBuilder()
+      userBuilder()
         .name("Someu Ser")
         .email("thisguy@users.net")
         .password("hunter2")
-        .language(Language.en)
         .organisation(context().organisation())
         .asUser()
         .build()

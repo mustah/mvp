@@ -60,6 +60,18 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
+    throw new NotImplementedYet();
+  }
+
+  @Override
+  public Page<String> findFacilities(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    throw new NotImplementedYet();
+  }
+
+  @Override
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     throw new NotImplementedYet();
   }
@@ -104,7 +116,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public void delete(LogicalMeter logicalMeter) {
+  public LogicalMeter delete(LogicalMeter logicalMeter) {
     throw new NotImplementedYet();
   }
 

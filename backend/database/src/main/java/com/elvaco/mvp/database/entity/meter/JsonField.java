@@ -1,17 +1,14 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.ToString;
 
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
-import static com.elvaco.mvp.database.util.Json.toJsonNode;
-import static com.elvaco.mvp.database.util.Json.toObject;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
 
 @ToString
 public class JsonField implements Serializable {
@@ -37,33 +34,12 @@ public class JsonField implements Serializable {
     return new JsonField(newObjectNode);
   }
 
-  public JsonField putArray(String fieldName, List<Integer> l) {
-    ObjectNode newObjectNode = json.deepCopy();
-    ArrayNode arrayNode = newObjectNode.putArray(fieldName);
-    for (Integer v : l) {
-      arrayNode.add(v);
-    }
-    return new JsonField(newObjectNode);
-  }
-
   public String asJsonString() {
     return json.toString();
   }
 
   public Optional<JsonNode> get(String fieldName) {
     return Optional.ofNullable(json.deepCopy().get(fieldName));
-  }
-
-  public <T> Optional<T> asObject(String fieldName, Class<T> valueType) {
-    T returnObject = null;
-    if (json.has(fieldName)) {
-      returnObject = toObject(json.deepCopy().get(fieldName).toString(), valueType);
-    }
-    return Optional.ofNullable(returnObject);
-  }
-
-  public Optional<Double> getDoubleValue(String fieldName) {
-    return get(fieldName).map(JsonNode::doubleValue);
   }
 
   @Override

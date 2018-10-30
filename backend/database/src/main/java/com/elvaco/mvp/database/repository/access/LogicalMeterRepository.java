@@ -74,30 +74,57 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<LogicalMeter> findAll(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
+  public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(
+      logicalMeterJpaRepository.findSecondaryAddresses(
+        parameters,
+        PageRequest.of(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          sortingMapper.getAsQSort(pageable.getSort())
+        )
+      ));
+  }
+
+  @Override
+  public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(
+      logicalMeterJpaRepository.findFacilities(
+        parameters,
+        PageRequest.of(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          sortingMapper.getAsQSort(pageable.getSort())
+        )
+      ));
+  }
+
+  @Override
+  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
       logicalMeterJpaRepository.findAll(
         parameters,
         PageRequest.of(
           pageable.getPageNumber(),
           pageable.getPageSize(),
-          sortingMapper.getAsSpringSort(pageable.getSort())
+          sortingMapper.getAsQSort(pageable.getSort())
         )
       );
 
-    return parameters.getPeriod().map(selectionPeriod ->
-      new PageAdapter<>(
-        pagedLogicalMeters.map(source ->
-          toDomainModelWithCollectionPercentage(
-            source,
-            source.expectedReadingCount(selectionPeriod)
+    return parameters.getPeriod()
+      .map(selectionPeriod ->
+        new PageAdapter<>(
+          pagedLogicalMeters.map(source ->
+            toDomainModelWithCollectionPercentage(
+              source,
+              source.expectedReadingCount(selectionPeriod)
+            )
           )
         )
       )
-    ).orElse(new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel)));
+      .orElseGet(() ->
+        new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel))
+      );
   }
 
   @Override
@@ -159,8 +186,9 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Transactional
   @Override
-  public void delete(LogicalMeter logicalMeter) {
+  public LogicalMeter delete(LogicalMeter logicalMeter) {
     logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
+    return logicalMeter;
   }
 
   private List<LogicalMeter> findAllWithCollectionStatsAndStatuses(

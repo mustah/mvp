@@ -54,9 +54,8 @@ public class LogicalMeterController {
 
   @DeleteMapping("{id}")
   public LogicalMeterDto deleteMeter(@PathVariable UUID id) {
-    return LogicalMeterDtoMapper.toDto(
-      logicalMeterUseCases.deleteById(id)
-        .orElseThrow(() -> new MeterNotFound(id))
-    );
+    return logicalMeterUseCases.deleteById(id)
+      .map(LogicalMeterDtoMapper::toDto)
+      .orElseThrow(() -> new MeterNotFound(id));
   }
 }

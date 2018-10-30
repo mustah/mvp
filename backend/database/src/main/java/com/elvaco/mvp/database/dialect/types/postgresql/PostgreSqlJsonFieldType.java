@@ -14,7 +14,7 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.SerializationException;
 import org.postgresql.util.PGobject;
 
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 
 public class PostgreSqlJsonFieldType extends JsonFieldType {
 

@@ -30,8 +30,4 @@ public interface PhysicalMeterJpaRepository {
   void deleteAll();
 
   void deleteById(UUID meterId);
-
-  Page<String> findAddresses(Predicate predicate, Pageable pageable);
-
-  Page<String> findFacilities(Predicate predicate, Pageable pageable);
 }

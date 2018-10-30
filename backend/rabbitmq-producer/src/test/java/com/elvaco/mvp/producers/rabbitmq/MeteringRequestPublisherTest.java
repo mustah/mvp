@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeteringRequestPublisherTest {
 
-  private static final String JOB_ID = "test";
   private SpyMessagePublisher spy;
 
   @Before
@@ -225,5 +224,4 @@ public class MeteringRequestPublisherTest {
       .gateways(gateways)
       .build();
   }
-
 }

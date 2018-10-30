@@ -15,10 +15,10 @@ public class MapUseCases {
   private final Locations locations;
 
   public Set<MapMarker> findAllMeterMapMarkers(RequestParameters parameters) {
-    return locations.findAllMeterMapMarkers(parameters.ensureOrganisation(currentUser));
+    return locations.findAllMeterMapMarkers(parameters.ensureOrganisationFilters(currentUser));
   }
 
   public Set<MapMarker> findAllGatewayMapMarkers(RequestParameters parameters) {
-    return locations.findAllGatewayMapMarkers(parameters.ensureOrganisation(currentUser));
+    return locations.findAllGatewayMapMarkers(parameters.ensureOrganisationFilters(currentUser));
   }
 }

@@ -8,8 +8,6 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -35,22 +33,14 @@ class PhysicalMeterQueryDslJpaRepository
 
   @Override
   public Optional<PhysicalMeterEntity> findByOrganisationIdAndExternalIdAndAddress(
-    UUID organisationId, String externalId, String address
+    UUID organisationId,
+    String externalId,
+    String address
   ) {
     Predicate predicate = PHYSICAL_METER.organisation.id.eq(organisationId)
       .and(PHYSICAL_METER.externalId.eq(externalId))
       .and(PHYSICAL_METER.address.eq(address));
     return Optional.ofNullable(fetchOne(predicate));
-  }
-
-  @Override
-  public Page<String> findAddresses(Predicate predicate, Pageable pageable) {
-    return findDistinctProperties(PHYSICAL_METER.address, predicate, pageable);
-  }
-
-  @Override
-  public Page<String> findFacilities(Predicate predicate, Pageable pageable) {
-    return findDistinctProperties(PHYSICAL_METER.externalId, predicate, pageable);
   }
 
   private PhysicalMeterEntity fetchOne(Predicate predicate) {

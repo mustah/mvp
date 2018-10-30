@@ -8,11 +8,11 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.UserSelectionEntityMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserSelectionRepository implements UserSelections {
 
   private final UserSelectionJpaRepository userSelectionJpaRepository;

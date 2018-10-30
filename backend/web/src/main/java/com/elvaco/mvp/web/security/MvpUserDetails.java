@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,7 +57,19 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
   @Override
   public UUID getOrganisationId() {
-    return user.organisation.id;
+    return user.getOrganisationId();
+  }
+
+  @Nullable
+  @Override
+  public UUID getParentOrganisationId() {
+    return user.getParentOrganisationId().orElse(null);
+  }
+
+  @Nullable
+  @Override
+  public SelectionParametersDto selectionParameters() {
+    return user.getSelectionParameters().orElse(null);
   }
 
   @Override

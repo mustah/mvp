@@ -37,5 +37,5 @@ public interface GatewayJpaRepository {
 
   Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
-  Page<String> findSerials(Predicate predicate, Pageable pageable);
+  Page<String> findSerials(RequestParameters predicate, Pageable pageable);
 }

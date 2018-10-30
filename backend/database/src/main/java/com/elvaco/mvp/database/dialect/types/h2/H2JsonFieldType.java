@@ -15,7 +15,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.SerializationException;
 
-import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 
 public class H2JsonFieldType extends JsonFieldType {
 

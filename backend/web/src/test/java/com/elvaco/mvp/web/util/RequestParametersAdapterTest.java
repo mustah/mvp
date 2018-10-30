@@ -211,7 +211,7 @@ public class RequestParametersAdapterTest {
 
     RequestParameters parameters = new RequestParametersAdapter()
       .add(ORGANISATION, organisationId)
-      .ensureOrganisation(currentUser);
+      .ensureOrganisationFilters(currentUser);
 
     assertThat(parameters.getFirst(ORGANISATION))
       .isEqualTo(currentUser.getOrganisationId().toString());
@@ -220,7 +220,8 @@ public class RequestParametersAdapterTest {
   @Test
   public void add_ensureOrganisationIsSameAsUserOrganisationWhenNotSuperAdminUser() {
     AuthenticatedUser currentUser = MockAuthenticatedUser.user();
-    RequestParameters parameters = new RequestParametersAdapter().ensureOrganisation(currentUser);
+    RequestParameters parameters = new RequestParametersAdapter()
+      .ensureOrganisationFilters(currentUser);
 
     assertThat(parameters.getFirst(ORGANISATION))
       .isEqualTo(currentUser.getOrganisationId().toString());
@@ -233,7 +234,7 @@ public class RequestParametersAdapterTest {
 
     RequestParameters parameters = new RequestParametersAdapter()
       .add(ORGANISATION, organisationId)
-      .ensureOrganisation(currentUser);
+      .ensureOrganisationFilters(currentUser);
 
     assertThat(parameters.getFirst(ORGANISATION)).isEqualTo(organisationId);
   }
@@ -242,7 +243,8 @@ public class RequestParametersAdapterTest {
   public void doNotTouchParameters_ForSuperAdmin_WhenEnsuringOrganisation() {
     AuthenticatedUser currentUser = MockAuthenticatedUser.superAdmin();
 
-    RequestParameters parameters = new RequestParametersAdapter().ensureOrganisation(currentUser);
+    RequestParameters parameters = new RequestParametersAdapter()
+      .ensureOrganisationFilters(currentUser);
 
     assertThat(parameters.getFirst(ORGANISATION)).isNull();
   }

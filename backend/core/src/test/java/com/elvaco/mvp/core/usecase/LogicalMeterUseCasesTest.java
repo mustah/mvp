@@ -19,7 +19,6 @@ import static com.elvaco.mvp.core.util.LogicalMeterHelper.getNextReadoutDate;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,8 +29,8 @@ public class LogicalMeterUseCasesTest {
   public void shouldFindOrganisationsMeterById() {
     LogicalMeter meter = newMeter(randomUUID(), OTHER_ORGANISATION.id);
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(singletonList(Role.USER)),
-      singletonList(meter)
+      newAuthenticatedUser(List.of(Role.USER)),
+      List.of(meter)
     );
 
     assertThat(useCases.findById(meter.id)).isNotEmpty();
@@ -41,8 +40,8 @@ public class LogicalMeterUseCasesTest {
   public void shouldNotFindOtherOrganisationsMeterById() {
     LogicalMeter meter = newMeter(randomUUID(), randomUUID());
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(singletonList(Role.USER)),
-      singletonList(meter)
+      newAuthenticatedUser(List.of(Role.USER)),
+      List.of(meter)
     );
 
     assertThat(useCases.findById(meter.id)).isEmpty();
@@ -51,7 +50,7 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void superAdminShouldFindAllMeters() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(singletonList(Role.SUPER_ADMIN)),
+      newAuthenticatedUser(List.of(Role.SUPER_ADMIN)),
       asList(
         newMeter(randomUUID(), OTHER_ORGANISATION.id),
         newMeter(randomUUID(), randomUUID()),
@@ -65,7 +64,7 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void shouldOnlyFindAllMetersBelongingToOwnOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(singletonList(Role.USER)),
+      newAuthenticatedUser(List.of(Role.USER)),
       asList(
         newMeter(randomUUID(), OTHER_ORGANISATION.id),
         newMeter(randomUUID(), randomUUID()),
@@ -79,7 +78,7 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void notAllowedToCreateMeterForOtherOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(singletonList(Role.USER)),
+      newAuthenticatedUser(List.of(Role.USER)),
       emptyList()
     );
 
@@ -90,7 +89,7 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void allowedToCreateMeterForOwnOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(singletonList(Role.USER)),
+      newAuthenticatedUser(List.of(Role.USER)),
       emptyList()
     );
     UUID meterId = randomUUID();

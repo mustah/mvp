@@ -1,6 +1,6 @@
 package com.elvaco.mvp.core.spi.data;
 
-import java.util.Arrays;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public enum RequestParameter {
 
   @Nullable
   public static RequestParameter from(String name) {
-    return Arrays.stream(values())
+    return Stream.of(values())
       .filter(parameter -> parameter.name != null)
       .filter(parameter -> parameter.name.equals(name))
       .findAny()

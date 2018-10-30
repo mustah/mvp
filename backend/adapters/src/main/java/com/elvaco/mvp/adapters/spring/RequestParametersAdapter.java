@@ -1,5 +1,6 @@
 package com.elvaco.mvp.adapters.spring;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,7 +65,7 @@ public class RequestParametersAdapter implements RequestParameters {
   }
 
   @Override
-  public RequestParameters setAllIds(RequestParameter param, List<UUID> ids) {
+  public RequestParameters setAllIds(RequestParameter param, Collection<UUID> ids) {
     List<String> values = ids.stream().map(UUID::toString).collect(toList());
     delegate.put(param, values);
     return this;

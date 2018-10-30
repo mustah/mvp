@@ -20,7 +20,6 @@ import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
-import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -110,7 +109,7 @@ public class GatewayRepository implements Gateways {
   @Override
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(gatewayJpaRepository.findSerials(
-      new GatewayQueryFilters().toExpression(parameters),
+      parameters,
       PageRequest.of(
         pageable.getPageNumber(),
         pageable.getPageSize(),

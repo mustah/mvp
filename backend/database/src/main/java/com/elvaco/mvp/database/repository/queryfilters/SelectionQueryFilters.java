@@ -10,7 +10,7 @@ import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toUuids;
 
-public class PhysicalMeterQueryFilters extends QueryFilters {
+public class SelectionQueryFilters extends QueryFilters {
 
   @Override
   public Optional<Predicate> buildPredicateFor(
@@ -24,14 +24,16 @@ public class PhysicalMeterQueryFilters extends QueryFilters {
   @Nullable
   private Predicate buildNullablePredicateFor(RequestParameter parameter, List<String> values) {
     switch (parameter) {
-      case FACILITY:
+      case ORGANISATION:
+        return LOGICAL_METER.organisationId.in(toUuids(values));
+      case CITY:
+        return LocationPredicates.whereCityOrNull(values);
+      case ADDRESS:
+        return LocationPredicates.whereAddressOrNull(values);
       case Q_FACILITY:
-        return PHYSICAL_METER.externalId.containsIgnoreCase(values.get(0));
-      case SECONDARY_ADDRESS:
+        return LOGICAL_METER.externalId.containsIgnoreCase(values.get(0));
       case Q_SECONDARY_ADDRESS:
         return PHYSICAL_METER.address.containsIgnoreCase(values.get(0));
-      case ORGANISATION:
-        return PHYSICAL_METER.organisation.id.in(toUuids(values));
       default:
         return null;
     }

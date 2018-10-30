@@ -115,7 +115,7 @@ export const fetchSecondaryAddresses =
     fetchItems<IdNamed, IdNamed>(
       EndPoints.secondaryAddresses,
       identity,
-      requestParameters('address', page, query),
+      requestParameters('secondaryAddress', page, query),
     );
 
 export const fetchGatewaySerials = async (page: number, query?: string): Promise<PagedResponse> =>

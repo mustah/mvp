@@ -21,6 +21,10 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findBy(RequestParameters parameters);
 
+  Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable);
+
+  Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
+
   Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeter> findAllWithDetails(RequestParameters parameters);
@@ -37,5 +41,5 @@ public interface LogicalMeters {
 
   List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
 
-  void delete(LogicalMeter logicalMeter);
+  LogicalMeter delete(LogicalMeter logicalMeter);
 }

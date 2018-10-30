@@ -21,15 +21,15 @@ public class LogicalMeterUseCases {
   private final LogicalMeters logicalMeters;
 
   public List<LogicalMeter> findAllBy(RequestParameters parameters) {
-    return logicalMeters.findAllBy(parameters.ensureOrganisation(currentUser));
+    return logicalMeters.findAllBy(parameters.ensureOrganisationFilters(currentUser));
   }
 
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
-    return logicalMeters.findAllWithDetails(parameters.ensureOrganisation(currentUser));
+    return logicalMeters.findAllWithDetails(parameters.ensureOrganisationFilters(currentUser));
   }
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return logicalMeters.findAll(parameters.ensureOrganisation(currentUser), pageable);
+    return logicalMeters.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -62,18 +62,15 @@ public class LogicalMeterUseCases {
         "User '" + currentUser.getUsername() + "' is not allowed to delete this meter."
       );
     }
-    Optional<LogicalMeter> logicalMeter = findById(id);
-    logicalMeter.ifPresent(logicalMeters::delete);
-
-    return logicalMeter;
+    return findById(id).map(logicalMeters::delete);
   }
 
   public MeterSummary summary(RequestParameters parameters) {
-    return logicalMeters.summary(parameters.ensureOrganisation(currentUser));
+    return logicalMeters.summary(parameters.ensureOrganisationFilters(currentUser));
   }
 
   public List<LogicalMeter> selectionTree(RequestParameters parameters) {
-    return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisation(currentUser));
+    return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisationFilters(currentUser));
   }
 
   public Optional<UUID> effectiveOrganisationId(UUID logicalMeterId) {
@@ -82,6 +79,19 @@ public class LogicalMeterUseCases {
     } else {
       return Optional.of(currentUser.getOrganisationId());
     }
+  }
+
+  public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
+    return logicalMeters.findSecondaryAddresses(
+      parameters.ensureOrganisationFilters(currentUser),
+      pageable
+    );
+  }
+
+  public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
+    return logicalMeters.findFacilities(
+      parameters.ensureOrganisationFilters(currentUser), pageable
+    );
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

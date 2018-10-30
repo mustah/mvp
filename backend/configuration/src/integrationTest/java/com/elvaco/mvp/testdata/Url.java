@@ -8,16 +8,18 @@ import java.util.Map;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import lombok.Builder;
 
+import static java.util.Collections.emptyMap;
+
 @Builder
 public class Url implements UrlTemplate {
 
-  private Map<RequestParameter, List<Object>> parameters;
-  private String path;
+  private final Map<RequestParameter, List<Object>> parameters;
+  private final String path;
 
   @Override
   public String template() {
     StringBuilder sb = new StringBuilder();
-    for (Map.Entry<RequestParameter, List<Object>> entry : parameters.entrySet()) {
+    for (Map.Entry<RequestParameter, List<Object>> entry : parameters().entrySet()) {
       addParameter(sb, entry.getKey(), entry.getValue());
     }
     return path + sb.toString();
@@ -25,10 +27,13 @@ public class Url implements UrlTemplate {
 
   @Override
   public Object[] variables() {
-    return parameters.values()
-      .stream()
+    return parameters().values().stream()
       .flatMap(List::stream)
       .toArray();
+  }
+
+  private Map<RequestParameter, List<Object>> parameters() {
+    return parameters != null ? parameters : emptyMap();
   }
 
   private void addParameter(StringBuilder sb, RequestParameter parameter, List<Object> values) {
@@ -58,6 +63,10 @@ public class Url implements UrlTemplate {
       values.add(value);
       parameters.put(parameter, values);
       return this;
+    }
+
+    public UrlBuilder sortBy(Object value) {
+      return parameter(RequestParameter.SORT, value);
     }
   }
 }

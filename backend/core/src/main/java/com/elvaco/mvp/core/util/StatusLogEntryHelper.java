@@ -5,6 +5,7 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import lombok.experimental.UtilityClass;
 
+import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -19,7 +20,7 @@ public class StatusLogEntryHelper {
       .filter(logEntry -> logEntry.status == newActiveStatus.status)
       .collect(toList());
 
-    if (!activeSameStatuses.isEmpty()) {
+    if (isNotEmpty(activeSameStatuses)) {
       return currentStatuses;
     }
 
