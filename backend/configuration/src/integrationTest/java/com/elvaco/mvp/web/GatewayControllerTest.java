@@ -13,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -45,9 +44,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Autowired
   private LogicalMeters logicalMeters;
-
-  @Autowired
-  private Organisations organisations;
 
   private Organisation dailyPlanet;
 
@@ -92,7 +88,7 @@ public class GatewayControllerTest extends IntegrationTest {
       null
     );
 
-    Page<GatewayDto> response = asTestSuperAdmin()
+    Page<GatewayDto> response = asSuperAdmin()
       .getPage("/gateways" + "?after=" + date.minusDays(30) + "&before=" + date, GatewayDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(2);
@@ -137,7 +133,7 @@ public class GatewayControllerTest extends IntegrationTest {
       null
     );
 
-    Page<GatewayDto> response = asTestSuperAdmin()
+    Page<GatewayDto> response = asSuperAdmin()
       .getPage(
         "/gateways"
           + "?after=" + date.minusDays(60)
@@ -161,7 +157,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void fetchAllGatewaysShouldBeEmptyWhenNoGatewaysExists() {
-    Page<GatewayDto> response = asTestUser()
+    Page<GatewayDto> response = asUser()
       .getPage("/gateways", GatewayDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
@@ -175,7 +171,7 @@ public class GatewayControllerTest extends IntegrationTest {
     saveGateway(dailyPlanet.id);
     saveGateway(context().organisationId());
 
-    Page<GatewayDto> response = asTestSuperAdmin()
+    Page<GatewayDto> response = asSuperAdmin()
       .getPage("/gateways", GatewayDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -215,7 +211,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void superAdminCanGetSingleGateway() {
     UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
-    ResponseEntity<GatewayDto> response = asTestSuperAdmin()
+    ResponseEntity<GatewayDto> response = asSuperAdmin()
       .get("/gateways/" + gatewayId, GatewayDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -234,7 +230,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .serial("2")
       .productModel("elv").build());
 
-    Page<GatewayDto> content = asTestSuperAdmin()
+    Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?gatewaySerial=1", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(1);
@@ -256,7 +252,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .location(unknownLocation.build())
       .build());
 
-    Page<GatewayDto> content = asTestSuperAdmin()
+    Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?city=unknown,unknown", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(2);
@@ -292,7 +288,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .build())
       .build());
 
-    Page<GatewayDto> content = asTestSuperAdmin()
+    Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(3);
@@ -317,7 +313,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .build())
       .build());
 
-    Page<GatewayDto> content = asTestSuperAdmin()
+    Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?city=sverige,kungsbacka", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(1);
@@ -356,7 +352,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .build())
       .build());
 
-    Page<GatewayDto> content = asTestSuperAdmin()
+    Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?address=unknown,unknown,unknown", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(1);
@@ -370,7 +366,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .productModel("product-model")
       .build());
 
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=1234", GatewayDto.class);
 
     assertThat(page).hasSize(1);
@@ -394,7 +390,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .city("kungsbacka")
         .build())
       .build());
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=kungsb", GatewayDto.class);
 
     assertThat(page)
@@ -418,7 +414,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .city("kungsbacka")
         .build())
       .build());
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Kungsb", GatewayDto.class);
 
     assertThat(page)
@@ -443,7 +439,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .address("teknikgatan 2t")
         .build())
       .build());
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=tekni", GatewayDto.class);
 
     assertThat(page)
@@ -469,7 +465,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .address("teknikgatan 2t")
         .build())
       .build());
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Tekni", GatewayDto.class);
 
     assertThat(page)
@@ -485,7 +481,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .productModel("CMe3100")
       .build());
 
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=CMe3", GatewayDto.class);
 
     assertThat(page).hasSize(1);
@@ -505,7 +501,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .productModel("product-model")
       .build());
 
-    Page<GatewayDto> page = asTestUser()
+    Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=1234", GatewayDto.class);
 
     assertThat(page).hasSize(1);

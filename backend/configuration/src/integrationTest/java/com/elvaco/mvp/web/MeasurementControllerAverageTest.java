@@ -82,7 +82,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date, "Power", 1.0, "W");
     newMeasurement(meter, date.plusHours(1), "Power", 2.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
           + "?after=" + date
@@ -120,7 +120,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter2, date, "Power", 3.0, "W");
     newMeasurement(meter2, date.plusHours(1), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
           + "?after=" + date
@@ -160,7 +160,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter2, date, "Energy", 3.0, "kWh");
     newMeasurement(meter2, date.plusHours(1), "Energy", 8.0, "kWh");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
           + "?after=" + date
@@ -198,7 +198,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date, "Difference temperature", 20.0, "K");
     newMeasurement(meter, date.plusSeconds(2), "Difference temperature", 40.0, "K");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+
       "/measurements/average"
         + "?after=" + date
         + "&before=" + date.plusMinutes(1)
@@ -239,7 +240,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusSeconds(2), "Power", 4.0, "W");
     newMeasurement(meter, date.plusSeconds(3), "Power", 6.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
         "/measurements/average"
           + "?after=" + date
@@ -267,7 +268,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       "/measurements/average"
         + "?after=2018-03-06T05:00:00.000Z"
         + "&before=2018-03-06T06:00:00.000Z"
@@ -280,7 +281,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     );
 
     ResponseEntity<List<MeasurementSeriesDto>> responseForNonZuluRequest =
-      asTestUser().getList(
+      asUser().getList(
         "/measurements/average"
           + "?after={after}"
           + "&before={before}"
@@ -321,7 +322,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
 
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=" + date
@@ -343,7 +344,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=" + date
@@ -365,7 +366,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
           + "?after=" + date
@@ -394,7 +395,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, date, "Power", 40000.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
           + "?after=" + date
@@ -425,7 +426,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusDays(1).plusSeconds(2), "Power", 2.0, "W");
     newMeasurement(meter, date.plusDays(1).plusSeconds(3), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
           + "?after=" + date.minusDays(1)
@@ -463,7 +464,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusMonths(1), "Power", 2.0, "W");
     newMeasurement(meter, date.plusMonths(2), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
         "/measurements/average"
           + "?after=" + date.plusHours(5)
@@ -493,7 +494,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void invalidAverageParameterValuesReturnsHttp400() {
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=thisIsNotAValidTimestamp"
@@ -508,7 +509,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'after' timestamp: 'thisIsNotAValidTimestamp'.");
 
-    response = asTestUser()
+    response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=2018-03-07T12:32:05.999Z"
@@ -523,7 +524,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'before' timestamp: 'thisIsNotAValidTimestamp'.");
 
-    response = asTestUser()
+    response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=2018-03-07T12:32:05.999Z"
@@ -537,7 +538,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo("Invalid 'meters' list: 'NotAValidUUID'.");
 
-    response = asTestUser()
+    response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=2018-03-07T12:32:05.999Z"
@@ -555,7 +556,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void missingParametersReturnsHttp400() {
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?to=2018-03-07T12:32:05.999Z"
@@ -569,7 +570,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     assertThat(response.getBody().message).isEqualTo(
       "Missing 'after' parameter.");
 
-    response = asTestUser()
+    response = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=2018-03-07T12:32:05.999Z"
@@ -593,7 +594,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, date, "Power", 1.0, "W");
 
-    List<MeasurementSeriesDto> response = asTestUser()
+    List<MeasurementSeriesDto> response = asUser()
       .getList(
         "/measurements/average"
           + "?after={now}"
@@ -621,7 +622,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after.plusHours(2), "Power", 1.0, "W");
 
-    MeasurementSeriesDto response = asTestUser()
+    MeasurementSeriesDto response = asUser()
       .getList(String.format(
         "/measurements/average"
           + "?after=" + after
@@ -642,7 +643,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
 
-    MeasurementSeriesDto response = asTestUser()
+    MeasurementSeriesDto response = asUser()
       .getList(
         "/measurements/average"
           + "?after=" + date
@@ -673,7 +674,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
+    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .get(String.format(
         "/measurements/average"
           + "?after=" + date
@@ -697,7 +698,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
+    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .get(
         "/measurements/average"
           + "?after=" + date

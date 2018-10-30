@@ -99,7 +99,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .build()
     );
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -132,7 +132,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .parameter(RequestParameter.BEFORE, NOW)
       .parameter(RequestParameter.AFTER, YESTERDAY)
       .build();
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(urlTemplate, LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -156,7 +156,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .start(YESTERDAY)
       .build()
     );
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -182,7 +182,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .stop(ZonedDateTime.parse("2001-01-06T10:14:00Z"))
       .build());
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -213,7 +213,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .build()
     );
 
-    List<LogicalMeterDto> response = asTestUser()
+    List<LogicalMeterDto> response = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody();
 
@@ -256,7 +256,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     );
 
     String url = meterDetailsUrl(logicalMeter1.id) + "&id=" + logicalMeter2.id;
-    List<LogicalMeterDto> logicalMetersResponse = asTestUser()
+    List<LogicalMeterDto> logicalMetersResponse = asUser()
       .getList(url, LogicalMeterDto.class)
       .getBody();
 
@@ -320,7 +320,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .build()
     );
 
-    List<LogicalMeterDto> logicalMetersResponse = asTestUser()
+    List<LogicalMeterDto> logicalMetersResponse = asUser()
       .getList(gatewayMeterDetailsUrl(gateway.id), LogicalMeterDto.class)
       .getBody();
 
@@ -339,7 +339,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .build()
     );
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -364,7 +364,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .build()
     );
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -396,7 +396,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .build()
     );
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -435,7 +435,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .start(start)
         .build()
     );
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -445,7 +445,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void meterNotFound() {
-    ResponseEntity<List<LogicalMeterDto>> response = asTestUser()
+    ResponseEntity<List<LogicalMeterDto>> response = asUser()
       .getList(meterDetailsUrl(randomUUID()), LogicalMeterDto.class);
 
     assertThatStatusIsOk(response);
@@ -469,7 +469,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .description("something is wrong")
       .build());
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -505,7 +505,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .description("testing")
       .build());
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
@@ -527,7 +527,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
         .build()
     );
 
-    LogicalMeterDto logicalMeterDto = asTestUser()
+    LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);

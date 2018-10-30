@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import com.elvaco.mvp.configuration.config.MvpProperties;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
@@ -76,7 +77,10 @@ public abstract class IntegrationTest {
   protected PropertiesJpaRepository propertiesJpaRepository;
 
   @Autowired
-  private Users users;
+  protected Users users;
+
+  @Autowired
+  protected Organisations organisations;
 
   @Autowired
   private EntityManagerFactory factory;
@@ -161,15 +165,15 @@ public abstract class IntegrationTest {
     return restAsUser(context().user2);
   }
 
-  protected RestClient asTestUser() {
+  protected RestClient asUser() {
     return restAsUser(context().user);
   }
 
-  protected RestClient asTestAdmin() {
+  protected RestClient asAdmin() {
     return restAsUser(context().admin);
   }
 
-  protected RestClient asTestSuperAdmin() {
+  protected RestClient asSuperAdmin() {
     return restAsUser(context().superAdmin);
   }
 

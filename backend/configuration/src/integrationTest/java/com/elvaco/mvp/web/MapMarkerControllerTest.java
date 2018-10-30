@@ -73,7 +73,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void locationForMeterNotFound() {
     UUID logicalMeterId = randomUUID();
 
-    ResponseEntity<ErrorMessageDto> response = asTestSuperAdmin()
+    ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -85,7 +85,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void cannotFindMapMarkerWithNoLocation_HasEmptyBody() {
     UUID logicalMeterId = saveLogicalMeterWith(UNKNOWN_LOCATION, context().user).id;
 
-    ResponseEntity<ErrorMessageDto> response = asTestSuperAdmin()
+    ResponseEntity<ErrorMessageDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -96,7 +96,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void findLogicalMeterWithLocation() {
     UUID logicalMeterId = saveLogicalMeter().id;
 
-    ResponseEntity<MapMarkerWithStatusDto> response = asTestSuperAdmin()
+    ResponseEntity<MapMarkerWithStatusDto> response = asSuperAdmin()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerWithStatusDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -119,7 +119,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     assertThat(missing.getBody().message)
       .isEqualTo("Unable to find meter with ID '" + logicalMeterId + "'");
 
-    ResponseEntity<MapMarkerWithStatusDto> found = asTestUser()
+    ResponseEntity<MapMarkerWithStatusDto> found = asUser()
       .get("/map-markers/meters/" + logicalMeterId, MapMarkerWithStatusDto.class);
 
     assertThat(found.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -148,7 +148,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     assertThat(differentOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(differentOrganisation.getBody().markers.size()).isEqualTo(0);
 
-    ResponseEntity<MapMarkersDto> sameOrganisation = asTestUser()
+    ResponseEntity<MapMarkersDto> sameOrganisation = asUser()
       .get(urlDefinition, MapMarkersDto.class);
 
     assertThat(sameOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -161,7 +161,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     savePhysicalMeterWith(logicalMeter, StatusType.OK);
 
-    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+    ResponseEntity<MapMarkersDto> response = asSuperAdmin()
       .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -181,7 +181,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     savePhysicalMeterWith(meter2, StatusType.WARNING);
     savePhysicalMeterWith(meter3, StatusType.WARNING);
 
-    ResponseEntity<MapMarkersDto> response = asTestUser()
+    ResponseEntity<MapMarkersDto> response = asUser()
       .get("/map-markers/meters?city=sweden,kungsbacka", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -209,7 +209,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
 
-    ResponseEntity<MapMarkersDto> response = asTestUser()
+    ResponseEntity<MapMarkersDto> response = asUser()
       .get(mapMarkerAlarmUrl("yes"), MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -240,7 +240,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
 
-    ResponseEntity<MapMarkersDto> response = asTestUser()
+    ResponseEntity<MapMarkersDto> response = asUser()
       .get(gatewayMapMarkerAlarmUrl("yes"), MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -267,7 +267,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
     meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
 
-    ResponseEntity<MapMarkersDto> response = asTestUser()
+    ResponseEntity<MapMarkersDto> response = asUser()
       .get(mapMarkerAlarmUrl("no"), MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -287,7 +287,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     saveLogicalMeterWith(newLocation(), gateway3);
 
     String url = "/map-markers/gateways?city=sweden,kungsbacka";
-    ResponseEntity<MapMarkersDto> foundByCorrectUser = asTestUser()
+    ResponseEntity<MapMarkersDto> foundByCorrectUser = asUser()
       .get(url, MapMarkersDto.class);
 
     assertThat(foundByCorrectUser.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -309,7 +309,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void doNotIncludeMeterMapMarkerWithLowConfidence() {
     saveLogicalMeterWith(lowConfidenceLocation(), context().user);
 
-    ResponseEntity<MapMarkersDto> response = asTestUser()
+    ResponseEntity<MapMarkersDto> response = asUser()
       .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -320,7 +320,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void findMeterMapMarker_EmptyBodyForLowConfidence() {
     LogicalMeter logicalMeter = saveLogicalMeterWith(lowConfidenceLocation(), context().user);
 
-    ResponseEntity<MapMarkerWithStatusDto> response = asTestUser()
+    ResponseEntity<MapMarkerWithStatusDto> response = asUser()
       .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -331,7 +331,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   public void mapDataDoesNotIncludeGatewaysWithoutLocation() {
     saveGatewayWith(context().organisationId2(), StatusType.OK);
 
-    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+    ResponseEntity<MapMarkersDto> response = asSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -356,10 +356,10 @@ public class MapMarkerControllerTest extends IntegrationTest {
         .build())
       .build());
 
-    ResponseEntity<MapMarkersDto> cityAddressResponse = asTestSuperAdmin()
+    ResponseEntity<MapMarkersDto> cityAddressResponse = asSuperAdmin()
       .get("/map-markers/gateways?address=sweden,kungsbacka,super+1", MapMarkersDto.class);
 
-    ResponseEntity<MapMarkersDto> cityResponse = asTestSuperAdmin()
+    ResponseEntity<MapMarkersDto> cityResponse = asSuperAdmin()
       .get("/map-markers/gateways?city=sweden,kungsbacka", MapMarkersDto.class);
 
     assertThat(cityResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -387,7 +387,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .location(new LocationBuilder().build())
       .build());
 
-    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+    ResponseEntity<MapMarkersDto> response = asSuperAdmin()
       .get("/map-markers/gateways?city=unknown,unknown", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -406,7 +406,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .location(lowConfidenceLocation())
       .build());
 
-    ResponseEntity<MapMarkersDto> response = asTestSuperAdmin()
+    ResponseEntity<MapMarkersDto> response = asSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

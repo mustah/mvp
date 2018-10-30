@@ -94,7 +94,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     newMeasurement(englandMeter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
     newMeasurement(englandMeter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       "/measurements/cities"
         + "?after=2018-03-06T05:00:00.000Z"
         + "&before=2018-03-06T06:59:59.999Z"
@@ -136,7 +136,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     newMeasurement(storaGatan2, start, "Power", 3.0, "W");
     newMeasurement(storaGatan2, start.plusHours(1), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start
@@ -203,7 +203,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     newMeasurement(physicalIrrelevant, start, "Power", 10.0, "W");
     newMeasurement(physicalIrrelevant, start.plusHours(1), "Power", 10.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start
@@ -253,7 +253,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     newMeasurement(gas, start.plusHours(1), Quantity.VOLUME.name, 11.0, Quantity.VOLUME
       .presentationUnit());
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start
@@ -311,7 +311,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     newMeasurement(gas, start.plusHours(1), Quantity.VOLUME.name, 11.0, Quantity.VOLUME
       .presentationUnit());
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start
@@ -370,7 +370,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     newMeasurement(meter, start, "Power", 1.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start
@@ -390,7 +390,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   public void cityAverageIsEmptyWhenNoMetersExistsInCity() {
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start
@@ -431,7 +431,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     newMeasurement(physical3, start, "Power", 10.0, "W");
     newMeasurement(physical3, start.plusHours(1), "Power", 10.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
         "/measurements/cities"
           + "?after=" + start

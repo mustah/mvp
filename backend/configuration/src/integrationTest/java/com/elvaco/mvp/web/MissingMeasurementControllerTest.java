@@ -68,7 +68,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
 
-    ResponseEntity<Void> response = asTestSuperAdmin()
+    ResponseEntity<Void> response = asSuperAdmin()
       .post(
         "/missing/measurement/refresh",
         null,
@@ -99,7 +99,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
 
-    ResponseEntity<Void> response = asTestUser()
+    ResponseEntity<Void> response = asUser()
       .post(
         "/missing/measurement/refresh",
         null,
@@ -128,7 +128,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
 
-    ResponseEntity<Void> response = asTestAdmin()
+    ResponseEntity<Void> response = asAdmin()
       .post(
         "/missing/measurement/refresh",
         null,

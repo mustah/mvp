@@ -32,7 +32,7 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId2"));
     logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId3"));
 
-    ResponseEntity<SelectionTreeDto> response = asTestSuperAdmin()
+    ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
       .get("/selection-tree", SelectionTreeDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -45,7 +45,7 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3"));
     logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
 
-    ResponseEntity<SelectionTreeDto> response = asTestSuperAdmin()
+    ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
       .get("/selection-tree?city=sweden,kungsbacka", SelectionTreeDto.class);
 
     assertThat(response.getBody().cities).hasSize(1);
@@ -59,7 +59,7 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3"));
     logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
 
-    ResponseEntity<SelectionTreeDto> response = asTestSuperAdmin()
+    ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
       .get("/selection-tree?address=sweden,kungsbacka,kabelgatan+2", SelectionTreeDto.class);
 
     assertThat(response.getBody().cities).hasSize(1);

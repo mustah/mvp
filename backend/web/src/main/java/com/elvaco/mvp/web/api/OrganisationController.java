@@ -74,16 +74,12 @@ public class OrganisationController {
     @PathVariable UUID id,
     @RequestBody SubOrganisationRequestDto requestDto
   ) {
-    UserSelection selection = selections.findByIdForCurrentUser(requestDto.selectionId).orElseThrow(
-      () -> new UserSelectionNotFound(requestDto.selectionId)
-    );
+    UserSelection selection = selections.findByIdForCurrentUser(requestDto.selectionId)
+      .orElseThrow(() -> new UserSelectionNotFound(requestDto.selectionId));
 
     return organisationUseCases.findById(id)
-      .map(parent -> organisationUseCases.create(OrganisationDtoMapper.toDomainModel(
-        parent,
-        selection,
-        requestDto
-      )))
+      .map(parent -> OrganisationDtoMapper.toDomainModel(parent, selection, requestDto))
+      .map(organisationUseCases::create)
       .map(OrganisationDtoMapper::toDto)
       .map(subOrganisationDto -> ResponseEntity.status(HttpStatus.CREATED).body(subOrganisationDto))
       .orElseThrow(() -> new OrganisationNotFound(id));

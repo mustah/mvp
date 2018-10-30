@@ -20,13 +20,12 @@ public class OrganisationTest {
 
   @Test
   public void subOrganisation_withSelectionWithoutParent() {
-    UserSelection selection = new UserSelection(
-      randomUUID(),
-      randomUUID(),
-      "selection",
-      null,
-      randomUUID()
-    );
+    UserSelection selection = UserSelection.builder()
+      .id(randomUUID())
+      .ownerUserId(randomUUID())
+      .organisationId(randomUUID())
+      .name("selection")
+      .build();
 
     assertThatThrownBy(
       () -> new Organisation(randomUUID(), "name", "slug", "external-id", null, selection)

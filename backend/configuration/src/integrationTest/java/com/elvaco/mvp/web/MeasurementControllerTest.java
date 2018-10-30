@@ -96,7 +96,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       date
     );
 
-    List<MeasurementDto> measurements = asTestUser()
+    List<MeasurementDto> measurements = asUser()
       .getList(
         "/measurements?resolution=hour"
           + "&meters=" + physicalButterMeter.logicalMeterId
@@ -119,7 +119,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     PhysicalMeterEntity butterMeter = newButterMeter(date);
     newDiffTempMeasurementCelcius(butterMeter, date);
 
-    List<MeasurementSeriesDto> measurements = asTestUser()
+    List<MeasurementSeriesDto> measurements = asUser()
       .getList(
         "/measurements?quantities=Difference+temperature:K"
           + "&meters=" + butterMeter.logicalMeterId
@@ -145,7 +145,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     newDiffTempMeasurementCelcius(otherOrganisationsMeter, date);
 
-    List<MeasurementDto> measurements = asTestUser()
+    List<MeasurementDto> measurements = asUser()
       .getList(
         "/measurements?meters=" + otherOrganisationsMeter.logicalMeterId
           + "&after=" + date
@@ -345,7 +345,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     PhysicalMeterEntity butterMeter = newButterMeter();
     newDiffTempMeasurementCelcius(butterMeter, date);
 
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantities=Difference+temperature:unknownUnit"
           + "&meters=" + butterMeter.logicalMeterId.toString()
@@ -366,7 +366,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     PhysicalMeterEntity butterMeter = newButterMeter();
     newDiffTempMeasurementCelcius(butterMeter, date);
 
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantities=Difference+temperature:kWh"
           + "&meters=" + butterMeter.logicalMeterId.toString()
@@ -382,7 +382,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void missingMetersParametersReturnsHttp400() {
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantities=Difference+temperature:kWh",
         ErrorMessageDto.class
@@ -409,7 +409,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
     newMeasurement(meter, when.plusHours(2), "Volume", 55.0, "m³");
 
-    List<MeasurementSeriesDto> list = asTestUser()
+    List<MeasurementSeriesDto> list = asUser()
       .getList(
         "/measurements?resolution=hour&quantities=Volume"
           + "&meters=" + consumptionMeter.getId()
@@ -454,7 +454,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
     newMeasurement(meter, when.plusHours(2), "Volume", 55.0, "m³");
 
-    MeasurementSeriesDto seriesDto = asTestUser()
+    MeasurementSeriesDto seriesDto = asUser()
       .getList(String.format(
         "/measurements?resolution=hour&quantities=Volume&meters=%s"
           + "&after=%s&before=%s",
@@ -489,7 +489,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     newMeasurement(meter, when.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, when.plusHours(2), "Volume", 5.0, "m^3");
 
-    MeasurementSeriesDto response = asTestUser()
+    MeasurementSeriesDto response = asUser()
       .getList(String.format(
         "/measurements"
           + "?after=" + when
@@ -525,7 +525,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
+    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .get(
         "/measurements"
           + "?after=" + after
@@ -648,6 +648,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {
-    return asTestSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
+    return asSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
   }
 }

@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.exception.PropertyNotFound;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.producers.rabbitmq.SyncRequestStatusType;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
@@ -43,9 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
-
-  @Autowired
-  private Organisations organisations;
 
   @Autowired
   private LogicalMeters logicalMeters;
@@ -81,7 +77,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void syncMeterThatDoesNotExistReturns404() {
-    ResponseEntity<ErrorMessageDto> response = asTestUser()
+    ResponseEntity<ErrorMessageDto> response = asUser()
       .post(synchronizeUrl(randomUUID()), null, ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -92,7 +88,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     LogicalMeter otherOrganisationsMeter =
       logicalMeters.save(newLogicalMeter(otherOrganisation.id));
 
-    ResponseEntity<ErrorMessageDto> response = asTestUser().post(
+    ResponseEntity<ErrorMessageDto> response = asUser().post(
       synchronizeUrl(otherOrganisationsMeter.id),
       null,
       ErrorMessageDto.class
@@ -105,7 +101,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void regularUserSyncingMeterBelongingToSameOrganisationReturns403() {
     LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser().post(
+    ResponseEntity<ErrorMessageDto> responseEntity = asUser().post(
       synchronizeUrl(logicalMeter.id),
       null,
       ErrorMessageDto.class
@@ -119,7 +115,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void adminUserSyncingMeterBelongingToSameOrganisationReturns403() {
     LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestAdmin().post(
+    ResponseEntity<ErrorMessageDto> responseEntity = asAdmin().post(
       synchronizeUrl(logicalMeter.id),
       null,
       ErrorMessageDto.class
@@ -140,7 +136,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
-    ResponseEntity<Void> responseEntity = asTestSuperAdmin()
+    ResponseEntity<Void> responseEntity = asSuperAdmin()
       .post("/meters/sync", meterIds, Void.class);
 
     List<Property> properties = meterIds.stream()
@@ -162,7 +158,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
-    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asTestSuperAdmin()
+    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asSuperAdmin()
       .postList("/meters/sync", meterIds, SyncRequestResponseDto.class);
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
@@ -173,18 +169,18 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void sync_OnlySuperAdminCanCheckStatus() {
-    assertThat(asTestAdmin()
+    assertThat(asAdmin()
       .get("/meters/sync?jobIds=12345", ErrorMessageDto.class).getStatusCode()
     ).isEqualTo(HttpStatus.FORBIDDEN);
 
-    assertThat(asTestUser()
+    assertThat(asUser()
       .get("/meters/sync?jobIds=12345", ErrorMessageDto.class).getStatusCode()
     ).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
   @Test
   public void sync_UnknownStatusForUnknownJobIds() {
-    List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
+    List<SyncRequestStatusDto> syncDtos = asSuperAdmin()
       .getList("/meters/sync?jobIds=12345", SyncRequestStatusDto.class)
       .getBody();
 
@@ -197,7 +193,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void sync_PendingStatusForPendingJob() {
     meterSyncJobService.newPendingJob("12345");
 
-    List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
+    List<SyncRequestStatusDto> syncDtos = asSuperAdmin()
       .getList("/meters/sync?jobIds=12345", SyncRequestStatusDto.class)
       .getBody();
 
@@ -211,7 +207,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     MeteringReferenceInfoMessageDto response = newMeteringReferenceInfoMessageDto("12345");
 
     meterSyncJobService.update("12345", response);
-    List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
+    List<SyncRequestStatusDto> syncDtos = asSuperAdmin()
       .getList("/meters/sync?jobIds=12345", SyncRequestStatusDto.class)
       .getBody();
 
@@ -227,7 +223,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     MeteringReferenceInfoMessageDto response2 = newMeteringReferenceInfoMessageDto("54321");
     meterSyncJobService.update("12345", response1);
     meterSyncJobService.update("54321", response2);
-    List<SyncRequestStatusDto> syncDtos = asTestSuperAdmin()
+    List<SyncRequestStatusDto> syncDtos = asSuperAdmin()
       .getList("/meters/sync?jobIds=12345,54321,99999", SyncRequestStatusDto.class)
       .getBody();
     assertThat(syncDtos).containsExactlyInAnyOrder(
@@ -247,7 +243,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asTestUser()
+    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .post("/meters/sync", meterIds, ErrorMessageDto.class);
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -263,7 +259,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     rabbitTemplate.setConnectionFactory(new BrokenConnectionFactory());
 
     try {
-      ResponseEntity<ErrorMessageDto> responseEntity = asTestSuperAdmin().post(
+      ResponseEntity<ErrorMessageDto> responseEntity = asSuperAdmin().post(
         synchronizeUrl(logicalMeter.id),
         null,
         ErrorMessageDto.class
@@ -286,7 +282,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
     LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
-    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asTestSuperAdmin().postList(
+    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asSuperAdmin().postList(
       synchronizeUrl(logicalMeter.id),
       null,
       SyncRequestResponseDto.class
@@ -306,7 +302,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     TestRabbitConsumer consumer = newResponseConsumer();
     LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
 
-    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asTestSuperAdmin().postList(
+    ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asSuperAdmin().postList(
       synchronizeUrl(logicalMeter.id),
       null,
       SyncRequestResponseDto.class

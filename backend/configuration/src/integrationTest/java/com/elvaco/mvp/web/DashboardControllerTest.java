@@ -59,7 +59,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusNoPeriod_ReturnsEmptyCollectionStatus() {
-    ResponseEntity<DashboardDto> response = asTestUser()
+    ResponseEntity<DashboardDto> response = asUser()
       .get("/dashboards/current", DashboardDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -90,7 +90,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
     missingMeasurementJpaRepository.refreshLocked();
 
-    ResponseEntity<DashboardDto> response = asTestUser()
+    ResponseEntity<DashboardDto> response = asUser()
       .get(
         "/dashboards/current?medium=Gas&after=" + startDate + "&before=" + beforeDate,
         DashboardDto.class
@@ -126,7 +126,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
     missingMeasurementJpaRepository.refreshLocked();
 
-    ResponseEntity<DashboardDto> response = asTestUser()
+    ResponseEntity<DashboardDto> response = asUser()
       .get(
         "/dashboards/current?after=" + startDate + "&before=" + beforeDate,
         DashboardDto.class

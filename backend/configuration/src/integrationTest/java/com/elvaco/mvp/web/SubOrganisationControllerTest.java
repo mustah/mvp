@@ -3,7 +3,6 @@ package com.elvaco.mvp.web;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -13,7 +12,6 @@ import com.elvaco.mvp.web.dto.UserSelectionDto;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,9 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 public class SubOrganisationControllerTest extends IntegrationTest {
-
-  @Autowired
-  Organisations organisations;
 
   @After
   public void tearDown() {
@@ -37,7 +32,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asTestSuperAdmin(), context().organisationId(), subOrganisation
+      asSuperAdmin(), context().organisationId(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -48,11 +43,12 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asTestSuperAdmin(), context().organisationId(), subOrganisation
+      asSuperAdmin(), context().organisationId(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-    OrganisationDto organisationDto = asTestSuperAdmin().get(
+    assertThat(request.getBody()).isNotNull();
+    OrganisationDto organisationDto = asSuperAdmin().get(
       "/organisations/" + request.getBody().id,
       OrganisationDto.class
     ).getBody();
@@ -65,7 +61,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asTestSuperAdmin(), randomUUID(), subOrganisation
+      asSuperAdmin(), randomUUID(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -76,10 +72,11 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin2);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<ErrorMessageDto> request = createNew(
-      asTestSuperAdmin(), randomUUID(), subOrganisation, ErrorMessageDto.class
+      asSuperAdmin(), randomUUID(), subOrganisation, ErrorMessageDto.class
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(request.getBody()).isNotNull();
     assertThat(request.getBody().message)
       .isEqualTo("Unable to find user selection with ID '" + userSelection.id + "'");
   }
@@ -89,7 +86,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().user);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asTestUser(), context().organisationId(), subOrganisation
+      asUser(), context().organisationId(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -100,7 +97,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().admin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asTestAdmin(), context().organisationId(), subOrganisation
+      asAdmin(), context().organisationId(), subOrganisation
     );
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -111,7 +108,7 @@ public class SubOrganisationControllerTest extends IntegrationTest {
     UserSelectionDto userSelection = createUserSelection(context().superAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
-      asTestSuperAdmin(), context().organisationId(), subOrganisation
+      asSuperAdmin(), context().organisationId(), subOrganisation
     );
 
     OrganisationDto dto = request.getBody();
