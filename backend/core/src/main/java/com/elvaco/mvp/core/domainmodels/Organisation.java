@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -59,7 +60,12 @@ public class Organisation implements Identifiable<UUID> {
     return id;
   }
 
-  public boolean isSubOrganisation() {
-    return parent != null;
+  Optional<UUID> getParentId() {
+    return Optional.ofNullable(parent).map(Organisation::getId);
+  }
+
+  Optional<UserSelection.SelectionParametersDto> getSelectionParameters() {
+    return Optional.ofNullable(selection)
+      .flatMap(UserSelection::toSelectionParametersDto);
   }
 }
