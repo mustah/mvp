@@ -126,16 +126,8 @@ export class OrganisationEditForm extends React.Component<Props, State> {
     );
   }
 
-  changeParent = (event, index, value) => {
-    const parent: Organisation = organisationById(value, this.props.organisations);
-    const changes: Pick<State, 'parent' | 'selectionId'> = {parent};
-    if (parent.id === noOrganisation().id) {
-      changes.selectionId = undefined;
-    } else if (this.state.selectionId === undefined && this.props.selections.length) {
-      changes.selectionId = this.props.selections[0].id;
-    }
-    this.setState(changes);
-  }
+  changeParent = (event, index, value) =>
+    this.setState({parent: organisationById(value, this.props.organisations)})
 
   changeSelection = (event, index, value) =>
     this.setState({selectionId: value})
