@@ -33,21 +33,25 @@ import org.hibernate.envers.Audited;
 public class OrganisationEntity extends IdentifiableType<UUID> {
 
   private static final long serialVersionUID = -2369738291498443749L;
+
   @Id
   public UUID id;
   public String name;
   public String slug;
   public String externalId;
+
   @OneToOne
   @JoinColumn(name = "parent_id")
   @Audited(modifiedColumnName = "parent_id_mod")
   public OrganisationEntity parent;
+
   @OneToOne
   @JoinTable(
     name = "organisation_user_selection",
     joinColumns = @JoinColumn(name = "organisation_id", referencedColumnName = "id")
   )
   public UserSelectionEntity selection;
+
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
   @Builder.Default
   public Set<UserEntity> users = new HashSet<>();

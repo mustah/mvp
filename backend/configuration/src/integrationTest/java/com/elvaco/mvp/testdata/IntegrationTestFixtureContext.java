@@ -6,7 +6,9 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class IntegrationTestFixtureContext {
 
   public final OrganisationEntity organisationEntity;
@@ -18,26 +20,6 @@ public class IntegrationTestFixtureContext {
   public final User user2;
   public final User admin2;
   public final User superAdmin2;
-
-  IntegrationTestFixtureContext(
-    OrganisationEntity organisation,
-    User user,
-    User admin,
-    User superAdmin,
-    OrganisationEntity organisation2,
-    User user2,
-    User admin2,
-    User superAdmin2
-  ) {
-    this.organisationEntity = organisation;
-    this.user = user;
-    this.admin = admin;
-    this.superAdmin = superAdmin;
-    this.organisationEntity2 = organisation2;
-    this.user2 = user2;
-    this.admin2 = admin2;
-    this.superAdmin2 = superAdmin2;
-  }
 
   public Organisation organisation() {
     return OrganisationEntityMapper.toDomainModel(organisationEntity);

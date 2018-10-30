@@ -21,6 +21,7 @@ import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.hibernate.SessionFactory;
@@ -48,6 +49,9 @@ public abstract class IntegrationTest {
 
   @Autowired
   protected OrganisationJpaRepository organisationJpaRepository;
+
+  @Autowired
+  protected UserSelectionJpaRepository userSelectionJpaRepository;
 
   @Autowired
   protected LogicalMeterJpaRepository logicalMeterJpaRepository;

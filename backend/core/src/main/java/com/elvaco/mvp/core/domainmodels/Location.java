@@ -12,6 +12,7 @@ public class Location {
   public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
 
   public static final String UNKNOWN = "unknown";
+  public static final String UNKNOWN_CITY_ID = "unknown,unknown";
 
   private final String address;
   private final String city;

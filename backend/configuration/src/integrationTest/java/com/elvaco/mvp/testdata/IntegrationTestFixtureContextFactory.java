@@ -9,39 +9,33 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.UUID.randomUUID;
 
+@RequiredArgsConstructor
 class IntegrationTestFixtureContextFactory {
 
   private final OrganisationJpaRepository organisationJpaRepository;
   private final Users users;
 
-  IntegrationTestFixtureContextFactory(
-    OrganisationJpaRepository organisationJpaRepository,
-    Users users
-  ) {
-    this.organisationJpaRepository = organisationJpaRepository;
-    this.users = users;
-  }
-
   @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
-    UUID contextUuid = randomUUID();
+    UUID contextId = randomUUID();
     OrganisationEntity organisation = organisationJpaRepository.save(
       OrganisationEntity.builder()
-        .id(contextUuid)
+        .id(contextId)
         .name(callSiteIdentifier + "-organisation")
-        .slug(contextUuid.toString())
-        .externalId(contextUuid.toString())
+        .slug(contextId.toString())
+        .externalId(contextId.toString())
         .build()
     );
 
     User user = new UserBuilder()
       .name("integration-test-user")
-      .email(contextUuid.toString() + "@test.com")
+      .email(contextId.toString() + "@test.com")
       .password("password")
       .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
@@ -52,7 +46,7 @@ class IntegrationTestFixtureContextFactory {
 
     User admin = new UserBuilder()
       .name("integration-test-admin")
-      .email(contextUuid.toString() + "-admin@test.com")
+      .email(contextId.toString() + "-admin@test.com")
       .password("password")
       .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
@@ -63,7 +57,7 @@ class IntegrationTestFixtureContextFactory {
 
     User superAdmin = new UserBuilder()
       .name("integration-test-super-admin")
-      .email(contextUuid.toString() + "-super-admin@test.com")
+      .email(contextId.toString() + "-super-admin@test.com")
       .password("password")
       .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
@@ -72,19 +66,19 @@ class IntegrationTestFixtureContextFactory {
       .build();
     users.create(superAdmin);
 
-    UUID contextUuid2 = randomUUID();
+    UUID contextId2 = randomUUID();
     OrganisationEntity organisation2 = organisationJpaRepository.save(
       OrganisationEntity.builder()
-        .id(contextUuid2)
+        .id(contextId2)
         .name(callSiteIdentifier + "-organisation")
-        .slug(contextUuid2.toString())
-        .externalId(contextUuid2.toString())
+        .slug(contextId2.toString())
+        .externalId(contextId2.toString())
         .build()
     );
 
     User user2 = new UserBuilder()
       .name("integration-test-user2")
-      .email(contextUuid2.toString() + "@test.com")
+      .email(contextId2.toString() + "@test.com")
       .password("password")
       .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
@@ -95,7 +89,7 @@ class IntegrationTestFixtureContextFactory {
 
     User admin2 = new UserBuilder()
       .name("integration-test-admin2")
-      .email(contextUuid2.toString() + "-admin2@test.com")
+      .email(contextId2.toString() + "-admin2@test.com")
       .password("password")
       .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
@@ -106,7 +100,7 @@ class IntegrationTestFixtureContextFactory {
 
     User superAdmin2 = new UserBuilder()
       .name("integration-test-super-admin2")
-      .email(contextUuid.toString() + "-super-admin2@test.com")
+      .email(contextId.toString() + "-super-admin2@test.com")
       .password("password")
       .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
@@ -114,7 +108,6 @@ class IntegrationTestFixtureContextFactory {
       .asSuperAdmin()
       .build();
     users.create(superAdmin2);
-
 
     return new IntegrationTestFixtureContext(
       organisation,
