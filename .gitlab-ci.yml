@@ -125,16 +125,16 @@ prepare:version:
       - .version
     expire_in: 7 days
 
-prepare:update-salt:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: prepare
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  script:
-    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
+#prepare:update-salt:
+#  <<: *no_cache
+#  image: $DOCKER_REGISTRY_URL/ci-utils:latest
+#  stage: prepare
+#  only:
+#    - schedules
+#    - /^release-.*$/
+#    - tags
+#  script:
+#    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 build:frontend:
   <<: *cache_gradle
@@ -290,28 +290,28 @@ publish:geoservice_artifactory:
     - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
 
-deploy:staging:
-  <<: *auto_deploy
-  stage: deploy-staging
-  dependencies:
-    - prepare:version
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  environment:
-    name: staging
-    url: https://evo-staging.elvaco.se
-  before_script:
-    - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
-    - export MVP_VERSION=$(cat .version)
-  script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+#deploy:staging:
+#  <<: *auto_deploy
+#  stage: deploy-staging
+#  dependencies:
+#    - prepare:version
+#  only:
+#    - schedules
+#    - /^release-.*$/
+#    - tags
+#  environment:
+#    name: staging
+#    url: https://evo-staging.elvaco.se
+#  before_script:
+#    - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
+#    - export MVP_VERSION=$(cat .version)
+#  script:
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
+#    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+#    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
 
 post-staging:acceptance:
   <<: *acceptance_test
@@ -327,29 +327,29 @@ post-staging:acceptance:
     MVP_API_PORT: 443
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
-deploy:production:
-  <<: *auto_deploy
-  stage: deploy-prod
-  dependencies:
-    - prepare:version
-  only:
-    - schedules
-    - tags
-  when: manual
-  allow_failure: false #block the pipeline from continuing until we've deployed to prod
-  environment:
-    name: production
-    url: https://evo.elvaco.se
-  before_script:
-    - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
-    - export MVP_VERSION=$(cat .version)
-  script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+#deploy:production:
+#  <<: *auto_deploy
+#  stage: deploy-prod
+#  dependencies:
+#    - prepare:version
+#  only:
+#    - schedules
+#    - tags
+#  when: manual
+#  allow_failure: false #block the pipeline from continuing until we've deployed to prod
+#  environment:
+#    name: production
+#    url: https://evo.elvaco.se
+#  before_script:
+#    - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
+#    - export MVP_VERSION=$(cat .version)
+#  script:
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
+#    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+#    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+#    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
 
 post-prod:acceptance:
   <<: *acceptance_test
@@ -367,8 +367,6 @@ post-prod:acceptance:
 
 finalize:tag-production-mvp-docker:
   <<: *no_cache
-  dependencies:
-    - deploy:production
   stage: finalize
   tags:
     - shell
@@ -402,8 +400,6 @@ finalize:create-jira-version:
 
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
-  dependencies:
-    - deploy:production
   stage: finalize
   tags:
     - shell
