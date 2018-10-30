@@ -367,8 +367,6 @@ post-prod:acceptance:
 
 finalize:tag-production-mvp-docker:
   <<: *no_cache
-  dependencies:
-    - deploy:production
   stage: finalize
   tags:
     - shell
@@ -402,8 +400,6 @@ finalize:create-jira-version:
 
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
-  dependencies:
-    - deploy:production
   stage: finalize
   tags:
     - shell
