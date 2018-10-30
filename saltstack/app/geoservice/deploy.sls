@@ -71,6 +71,7 @@ create_docker_network_for_{{module}}:
 download_{{module}}_image:
   docker_image.present:
     - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
+    - force: True
     - require:
       - create_docker_network_for_{{module}}
 
