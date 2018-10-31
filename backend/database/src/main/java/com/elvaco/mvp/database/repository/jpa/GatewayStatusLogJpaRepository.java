@@ -1,18 +1,9 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import javax.annotation.Nullable;
-
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
-import com.querydsl.core.types.Predicate;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GatewayStatusLogJpaRepository {
-
-  <S extends GatewayStatusLogEntity> S save(S entity);
-
-  Map<UUID, List<GatewayStatusLogEntity>> findAllGroupedByGatewayId(@Nullable Predicate predicate);
+public interface GatewayStatusLogJpaRepository extends JpaRepository<GatewayStatusLogEntity, Long> {
 
   void deleteAll();
 }

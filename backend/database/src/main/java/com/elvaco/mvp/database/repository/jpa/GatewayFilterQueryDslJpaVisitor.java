@@ -1,10 +1,12 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
@@ -20,6 +22,8 @@ import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.database.repository.queryfilters.LocationPredicates;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 
@@ -39,6 +43,7 @@ class GatewayFilterQueryDslJpaVisitor implements FilterVisitor {
   private static final Predicate FALSE_PREDICATE = Expressions.asBoolean(true).isFalse();
 
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
+  private Predicate statusLogPredicate = FALSE_PREDICATE;
 
   private List<Consumer<JPQLQuery<?>>> consumerList = new ArrayList<>();
   private List<Predicate> predicates = new ArrayList<>();
@@ -88,8 +93,9 @@ class GatewayFilterQueryDslJpaVisitor implements FilterVisitor {
 
   @Override
   public void visit(PeriodFilter periodFilter) {
-    alarmLogPredicate = ALARM_LOG.start.before(periodFilter.getPeriod().stop)
-      .and(ALARM_LOG.stop.isNull().or(ALARM_LOG.stop.after(periodFilter.getPeriod().start)));
+    SelectionPeriod period = periodFilter.getPeriod();
+    alarmLogPredicate = inPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
+    statusLogPredicate = inPeriod(period, GATEWAY_STATUS_LOG.start, GATEWAY_STATUS_LOG.stop);
   }
 
   @Override
@@ -124,7 +130,7 @@ class GatewayFilterQueryDslJpaVisitor implements FilterVisitor {
   final void applyForQueries(JPQLQuery<?>... query) {
     for (JPQLQuery<?> q : query) {
 
-      q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
+      q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG).on(statusLogPredicate)
         .leftJoin(GATEWAY.meters, LOGICAL_METER)
         .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
         .leftJoin(LOGICAL_METER.location, LOCATION)
@@ -134,5 +140,14 @@ class GatewayFilterQueryDslJpaVisitor implements FilterVisitor {
 
       q.where(ExpressionUtils.allOf(predicates));
     }
+  }
+
+  private BooleanExpression inPeriod(
+    SelectionPeriod period,
+    DateTimePath<ZonedDateTime> start,
+    DateTimePath<ZonedDateTime> stop
+  ) {
+    return start.before(period.stop)
+      .and(stop.isNull().or(stop.after(period.start)));
   }
 }

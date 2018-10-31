@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
@@ -299,7 +300,13 @@ public class MapMarkerControllerTest extends IntegrationTest {
     saveLogicalMeterWith(kungsbacka().build(), gateway2);
     saveLogicalMeterWith(kungsbacka().build(), gateway3);
 
-    String url = "/map-markers/gateways?city=sverige,kungsbacka";
+    Url url = Url.builder()
+      .path("/map-markers/gateways")
+      .parameter(RequestParameter.BEFORE, NOW.plusHours(1))
+      .parameter(RequestParameter.AFTER, NOW.minusHours(1))
+      .parameter(RequestParameter.CITY, "sverige,kungsbacka")
+      .build();
+
     ResponseEntity<MapMarkersDto> foundByCorrectUser = asUser()
       .get(url, MapMarkersDto.class);
 

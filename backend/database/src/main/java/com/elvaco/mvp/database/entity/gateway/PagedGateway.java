@@ -17,6 +17,7 @@ public class PagedGateway implements Identifiable<UUID> {
   public final String serial;
   public final String productModel;
   public final Set<LogicalMeterEntity> meters;
+  public final Set<GatewayStatusLogEntity> statusLogs;
 
   @Override
   public UUID getId() {

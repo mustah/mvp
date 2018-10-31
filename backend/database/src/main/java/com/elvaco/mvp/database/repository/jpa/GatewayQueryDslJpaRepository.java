@@ -45,7 +45,8 @@ class GatewayQueryDslJpaRepository
       GATEWAY.organisationId,
       GATEWAY.serial,
       GATEWAY.productModel,
-      set(LOGICAL_METER)
+      set(LOGICAL_METER),
+      set(GATEWAY_STATUS_LOG)
     );
 
     JPQLQuery<PagedGateway> countQuery = createCountQuery().select(constructor)
