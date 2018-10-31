@@ -10,12 +10,9 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,20 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SummaryControllerTest extends IntegrationTest {
 
   @Autowired
-  private LogicalMeters logicalMeters;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
-
-  @Autowired
   private MeterStatusLogs meterStatusLogs;
-
-  @After
-  public void tearDown() {
-    logicalMeterJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    physicalMeterStatusLogJpaRepository.deleteAll();
-  }
 
   @Test
   public void whenNoMetersGetEmptySummaryInfo() {

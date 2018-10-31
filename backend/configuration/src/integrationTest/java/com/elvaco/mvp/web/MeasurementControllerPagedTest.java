@@ -57,8 +57,6 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     }
 
     measurementJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test

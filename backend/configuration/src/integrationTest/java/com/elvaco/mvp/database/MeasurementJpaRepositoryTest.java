@@ -17,8 +17,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,6 +28,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Transactional
@@ -43,18 +42,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    Assume.assumeTrue(isPostgresDialect());
-  }
-
-  @After
-  public void tearDown() {
-    try {
-      physicalMeterJpaRepository.deleteAll();
-      measurementJpaRepository.deleteAll();
-    } catch (org.hibernate.AssertionFailure ex) {
-      //mixedDimensionsAreRejected will rollback the transaction, trying to delete stuff
-      // after that will cause org.hibernate.AssertionFailure caught here
-    }
+    assumeTrue(isPostgresDialect());
   }
 
   @Test

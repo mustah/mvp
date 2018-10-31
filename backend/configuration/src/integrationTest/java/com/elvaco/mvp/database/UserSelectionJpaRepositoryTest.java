@@ -5,35 +5,22 @@ import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
-import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class UserSelectionJpaRepositoryTest extends IntegrationTest {
-
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-  @Autowired
-  private UserSelectionJpaRepository userSelectionJpaRepository;
-
-  @After
-  public void tearDown() {
-    userSelectionJpaRepository.deleteAll();
-  }
 
   @Test
   public void jsonbFieldTypeDetectsChanges() throws IOException {
     UUID owner = context().user.id;
     String name = "My selection";
     JsonField originalData = new JsonField((ObjectNode) OBJECT_MAPPER.readTree("{\"city\": "
-                                                                               + "\"Höganäs\"}"));
+      + "\"Höganäs\"}"));
     UUID organisationId = context().user.organisation.id;
 
     UserSelectionEntity entityToSave = new UserSelectionEntity(

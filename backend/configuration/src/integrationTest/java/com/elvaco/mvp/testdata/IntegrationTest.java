@@ -5,9 +5,13 @@ import java.util.function.BooleanSupplier;
 import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.configuration.config.MvpProperties;
+import com.elvaco.mvp.core.domainmodels.Identifiable;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
@@ -24,6 +28,7 @@ import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
@@ -32,11 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:it.properties")
@@ -87,6 +94,15 @@ public abstract class IntegrationTest {
   protected Organisations organisations;
 
   @Autowired
+  protected LogicalMeters logicalMeters;
+
+  @Autowired
+  protected PhysicalMeters physicalMeters;
+
+  @Autowired
+  protected Gateways gateways;
+
+  @Autowired
   private EntityManagerFactory factory;
 
   @Autowired
@@ -106,27 +122,19 @@ public abstract class IntegrationTest {
 
   @After
   public final void tearDownBase() {
-    restClient().logout();
-    if (context != null) {
-      getIntegrationTestFixtureContextFactory().destroy(context);
-      context = null;
+    try {
+      restClient().logout();
+      removeEntities();
+      afterRemoveEntitiesHook();
+      removeSubOrganisationsEntities();
+      destroyContext();
+      SecurityContextHolder.clearContext();
+    } catch (JpaSystemException e) {
+      log.warn("Exceptions should be ignored here, since most of them are transactions related", e);
     }
-    SecurityContextHolder.clearContext();
   }
 
-  protected void removeNonRootOrganisations() {
-    String rootOrgSlug = mvpProperties.getRootOrganisation().getSlug();
-    organisationJpaRepository.findAll().stream()
-      .filter(organisation -> !organisation.slug.equals(rootOrgSlug))
-      .sorted((o1, o2) -> {
-        if (o1.parent != null) {
-          return o2.parent == null ? -1 : 0;
-        } else if (o2.parent != null) {
-          return 1;
-        }
-        return 0;
-      }).forEach(organisation -> organisationJpaRepository.deleteById(organisation.id));
-  }
+  protected void afterRemoveEntitiesHook() {}
 
   protected boolean isPostgresDialect() {
     return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
@@ -209,6 +217,37 @@ public abstract class IntegrationTest {
       Thread.sleep(100);
     } while (System.nanoTime() < (start + MAX_WAIT_TIME));
     return false;
+  }
+
+  private void destroyContext() {
+    if (context != null) {
+      getIntegrationTestFixtureContextFactory().destroy(context);
+      context = null;
+    }
+  }
+
+  private void removeEntities() {
+    physicalMeterStatusLogJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
+  }
+
+  private void removeSubOrganisationsEntities() {
+    String rootOrgSlug = mvpProperties.getRootOrganisation().getSlug();
+    organisationJpaRepository.findAll().stream()
+      .filter(organisation -> !organisation.slug.equals(rootOrgSlug))
+      .sorted((o1, o2) -> {
+        if (o1.parent != null) {
+          return o2.parent == null ? -1 : 0;
+        } else if (o2.parent != null) {
+          return 1;
+        }
+        return 0;
+      })
+      .map(Identifiable::getId)
+      .forEach(organisationJpaRepository::deleteById);
+
+    userSelectionJpaRepository.deleteAll();
   }
 
   private String getCallerClassName() {

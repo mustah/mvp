@@ -11,8 +11,6 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Language;
-import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Medium;
@@ -51,6 +49,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -92,7 +91,6 @@ public class MeteringMeasurementMessageConsumerTest {
       .name("super-admin")
       .email("super@admin.io")
       .password("password")
-      .language(Language.en)
       .organisationElvaco()
       .asSuperAdmin()
       .build();
@@ -101,7 +99,6 @@ public class MeteringMeasurementMessageConsumerTest {
         .name("mock user")
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
-        .language(Language.en)
         .organisation(ORGANISATION)
         .asSuperAdmin()
         .build(),
@@ -517,7 +514,8 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueFor_ExistingEntities_CreateNoNewEntities() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
-    physicalMeters.save(physicalMeter().organisation(organisation)
+    physicalMeters.save(physicalMeter()
+      .organisation(organisation)
       .medium("Hot water")
       .revision(1)
       .build());
@@ -526,11 +524,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
         .meterDefinition(HOT_WATER_METER)
-        .location(new LocationBuilder()
-          .country("Sweden")
-          .city("Kungsbacka")
-          .address("Gatan")
-          .build())
+        .location(kungsbacka().build())
         .build()
     );
 
@@ -550,11 +544,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
         .meterDefinition(HOT_WATER_METER)
-        .location(new LocationBuilder()
-          .country("Sweden")
-          .city("Kungsbacka")
-          .address("Gatan")
-          .build())
+        .location(kungsbacka().build())
         .build()
     );
 
@@ -602,11 +592,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
         .meterDefinition(HOT_WATER_METER)
-        .location(new LocationBuilder()
-          .country("Sweden")
-          .city("Kungsbacka")
-          .address("Gatan")
-          .build())
+        .location(kungsbacka().build())
         .build()
     );
 

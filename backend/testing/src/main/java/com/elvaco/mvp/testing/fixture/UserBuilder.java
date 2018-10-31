@@ -24,7 +24,7 @@ public final class UserBuilder {
   private String email;
   @Nullable
   private String password;
-  private Language language;
+  private Language language = Language.en;
   private Organisation organisation;
   private List<Role> roles = emptyList();
 

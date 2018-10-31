@@ -9,8 +9,11 @@ public class LocationBuilderTest {
 
   @Test
   public void locationIsSetCorrectly() {
-    LocationBuilder builder = new LocationBuilder();
-    Location location = builder.confidence(0.5).latitude(45.999).longitude(99.12).build();
+    Location location = new LocationBuilder()
+      .confidence(0.5)
+      .latitude(45.999)
+      .longitude(99.12)
+      .build();
     assertThat(location.hasCoordinates()).isTrue();
     GeoCoordinate coordinate = location.getCoordinate();
     assertThat(coordinate.getLatitude()).isEqualTo(45.999);
@@ -20,8 +23,7 @@ public class LocationBuilderTest {
 
   @Test
   public void confidenceDefaultsToOneWhenLatLongIsSet() {
-    LocationBuilder builder = new LocationBuilder();
-    Location location = builder.latitude(45.999).longitude(99.12).build();
+    Location location = new LocationBuilder().latitude(45.999).longitude(99.12).build();
     assertThat(location.hasCoordinates()).isTrue();
     GeoCoordinate coordinate = location.getCoordinate();
     assertThat(coordinate.getLatitude()).isEqualTo(45.999);

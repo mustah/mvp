@@ -7,27 +7,24 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
-import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -38,12 +35,6 @@ import static org.assertj.core.api.Assertions.tuple;
 
 @SuppressWarnings("rawtypes")
 public class GatewayControllerTest extends IntegrationTest {
-
-  @Autowired
-  private Gateways gateways;
-
-  @Autowired
-  private LogicalMeters logicalMeters;
 
   private Organisation dailyPlanet;
 
@@ -242,14 +233,12 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
-    LocationBuilder unknownLocation = unknownLocationBuilder();
-
     logicalMeters.save(LogicalMeter.builder()
       .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
       .gateways(asList(gateway1, gateway2))
-      .location(unknownLocation.build())
+      .location(UNKNOWN_LOCATION)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -264,14 +253,12 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway2 = saveGateway(dailyPlanet.id);
     Gateway gateway3 = saveGateway(dailyPlanet.id);
 
-    LocationBuilder unknownLocation = unknownLocationBuilder();
-
     logicalMeters.save(LogicalMeter.builder()
       .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
       .gateways(asList(gateway1, gateway2))
-      .location(unknownLocation.build())
+      .location(UNKNOWN_LOCATION)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
@@ -279,17 +266,11 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(gateway3))
-      .location(new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(1.3333)
-        .latitude(1.12345)
-        .build())
+      .location(kungsbacka().build())
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
-      .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
+      .getPage("/gateways?city=unknown,unknown&city=sverige,kungsbacka", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(3);
   }
@@ -303,14 +284,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(saveGateway(dailyPlanet.id)))
-      .location(new LocationBuilder()
-        .country("sverige")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(1.3333)
-        .latitude(1.12345)
-        .confidence(lowConfidence)
-        .build())
+      .location(kungsbacka().confidence(lowConfidence).build())
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -323,18 +297,13 @@ public class GatewayControllerTest extends IntegrationTest {
   public void findGateways_WithUnknownAddress() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
-    Location unknownAddress = new LocationBuilder()
-      .country("sweden")
-      .city("kungsbacka")
-      .longitude(1.3333)
-      .latitude(1.12345)
-      .build();
+    Location unknownAddress = kungsbacka().address(null).build();
 
     logicalMeters.save(LogicalMeter.builder()
       .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
-      .gateways(singletonList(gateway1))
+      .gateway(gateway1)
       .location(unknownAddress)
       .build());
 
@@ -342,14 +311,8 @@ public class GatewayControllerTest extends IntegrationTest {
       .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
-      .gateways(singletonList(gateway2))
-      .location(new LocationBuilder()
-        .country("sweden")
-        .city("kungsbacka")
-        .address("kabelgatan 1")
-        .longitude(1.3333)
-        .latitude(1.12345)
-        .build())
+      .gateway(gateway2)
+      .location(kungsbacka().build())
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -386,16 +349,12 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-id")
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
-      .location(new LocationBuilder()
-        .city("kungsbacka")
-        .build())
+      .location(kungsbacka().build())
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=kungsb", GatewayDto.class);
 
-    assertThat(page)
-      .extracting("location.city")
-      .containsExactly("kungsbacka");
+    assertThat(page).extracting("location.city").containsExactly("kungsbacka");
   }
 
   @Test
@@ -410,9 +369,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-id")
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
-      .location(new LocationBuilder()
-        .city("kungsbacka")
-        .build())
+      .location(kungsbacka().build())
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Kungsb", GatewayDto.class);
@@ -434,10 +391,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-id")
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
-      .location(new LocationBuilder()
-        .city("kungsbacka")
-        .address("teknikgatan 2t")
-        .build())
+      .location(kungsbacka().address("teknikgatan 2t").build())
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=tekni", GatewayDto.class);
@@ -459,18 +413,14 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-id")
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
-      .location(new LocationBuilder()
-        .country("sverige")
-        .city("kungsbacka")
-        .address("teknikgatan 2t")
-        .build())
+      .location(kungsbacka().build())
       .build());
     Page<GatewayDto> page = asUser()
-      .getPage("/gateways?w=Tekni", GatewayDto.class);
+      .getPage("/gateways?w=Kabel", GatewayDto.class);
 
     assertThat(page)
       .extracting("location.address", "location.city")
-      .containsExactly(tuple("teknikgatan 2t", "kungsbacka"));
+      .containsExactly(tuple("kabelgatan 1", "kungsbacka"));
   }
 
   @Test
@@ -532,9 +482,5 @@ public class GatewayControllerTest extends IntegrationTest {
         stop
       )
     );
-  }
-
-  private static LocationBuilder unknownLocationBuilder() {
-    return new LocationBuilder().latitude(1.234).longitude(2.3323);
   }
 }

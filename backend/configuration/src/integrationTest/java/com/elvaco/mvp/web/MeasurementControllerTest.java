@@ -25,7 +25,6 @@ import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import org.assertj.core.data.Offset;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   private static final Offset<Double> OFFSET = within(0.000_000_000_000_1);
 
   private static final int ENERGY_VALUE = 9999;
-  private static final double DIFF_TEMP_VALUE_CELCIUS = 285.59;
+  private static final double DIFF_TEMP_VALUE_CELSIUS = 285.59;
   private static final double DIFF_TEMP_VALUE_KELVIN = 558.74;
 
   @Autowired
@@ -75,16 +74,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
   }
 
-  @After
-  public void tearDown() {
-    if (!isPostgresDialect()) {
-      return;
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+      organisationJpaRepository.delete(otherOrganisation);
     }
-
-    measurementJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
-    organisationJpaRepository.delete(otherOrganisation);
   }
 
   @Test
@@ -554,7 +549,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     PhysicalMeterEntity meter,
     ZonedDateTime created
   ) {
-    newMeasurement(meter, created, "Difference temperature", DIFF_TEMP_VALUE_CELCIUS, "°C");
+    newMeasurement(meter, created, "Difference temperature", DIFF_TEMP_VALUE_CELSIUS, "°C");
   }
 
   private void newMeasurement(
