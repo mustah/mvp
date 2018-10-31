@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.filter;
 
 public interface FilterVisitor {
-  void visit(StatusTypeSelectionPeriodFilter statusTypeSelectionPeriodFilter);
 
   void visit(CityFilter cityFilter);
 

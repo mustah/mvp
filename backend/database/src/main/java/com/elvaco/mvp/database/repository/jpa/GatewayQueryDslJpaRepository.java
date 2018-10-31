@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.filter.FilterSet;
-import com.elvaco.mvp.core.filter.RequestParametersConverter;
+import com.elvaco.mvp.core.filter.Filters;
+import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.PagedGateway;
@@ -36,8 +36,7 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Page<PagedGateway> findAll(RequestParameters parameters, Pageable pageable) {
-
-    FilterSet filterSet = RequestParametersConverter.toFilterSet(parameters);
+    Filters filters = RequestParametersMapper.toFilters(parameters);
 
     ConstructorExpression<PagedGateway> constructor = Projections.constructor(
       PagedGateway.class,
@@ -57,7 +56,7 @@ class GatewayQueryDslJpaRepository
     querydsl.applyPagination(pageable, selectQuery);
 
     new GatewayFilterQueryDslJpaVisitor().visitAndApply(
-      filterSet,
+      filters,
       countQuery,
       selectQuery
     );
@@ -101,14 +100,14 @@ class GatewayQueryDslJpaRepository
   }
 
   @Override
-  public Page<String> findSerials(FilterSet filterSet, Pageable pageable) {
+  public Page<String> findSerials(Filters filters, Pageable pageable) {
 
     GatewayFilterQueryDslJpaVisitor visitor = new GatewayFilterQueryDslJpaVisitor();
 
     JPQLQuery<String> query = createQuery().select(GATEWAY.serial).distinct();
     JPQLQuery<String> countQuery = createCountQuery().select(GATEWAY.serial).distinct();
 
-    visitor.visitAndApply(filterSet, query, countQuery);
+    visitor.visitAndApply(filters, query, countQuery);
     List<String> all = querydsl.applyPagination(pageable, query).fetch();
     return getPage(all, pageable, countQuery::fetchCount);
   }

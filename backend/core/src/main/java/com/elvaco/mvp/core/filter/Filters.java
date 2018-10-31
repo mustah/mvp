@@ -2,11 +2,11 @@ package com.elvaco.mvp.core.filter;
 
 import java.util.Collection;
 
-public class FilterSet implements VisitableFilter {
+public class Filters implements VisitableFilter {
 
   private final Collection<VisitableFilter> filters;
 
-  FilterSet(Collection<VisitableFilter> filters) {
+  Filters(Collection<VisitableFilter> filters) {
     this.filters = filters;
   }
 

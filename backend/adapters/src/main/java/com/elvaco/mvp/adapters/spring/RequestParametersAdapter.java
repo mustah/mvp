@@ -115,11 +115,6 @@ public class RequestParametersAdapter implements RequestParameters {
     return delegate.isEmpty();
   }
 
-  @Override
-  public RequestParameters shallowCopy() {
-    return new RequestParametersAdapter(new LinkedMultiValueMap<>(delegate));
-  }
-
   public MultiValueMap<RequestParameter, String> multiValueMap() {
     return delegate;
   }

@@ -51,8 +51,6 @@ public interface RequestParameters {
 
   boolean isEmpty();
 
-  RequestParameters shallowCopy();
-
   default RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser) {
     ensureOrganisation(currentUser);
 

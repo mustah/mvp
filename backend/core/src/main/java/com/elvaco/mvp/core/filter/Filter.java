@@ -8,7 +8,7 @@ abstract class Filter<T> implements VisitableFilter {
   private final ComparisonMode comparisonMode;
 
   Filter(Collection<T> values, ComparisonMode comparisonMode) {
-    if (values.size() == 0) {
+    if (values.isEmpty()) {
       throw new IllegalArgumentException(
         "No values provided; must have at least one value to filter on"
       );
