@@ -24,7 +24,6 @@ import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,22 +60,17 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     );
   }
 
-  @After
-  public void tearDown() {
-    if (!isPostgresDialect()) {
-      return;
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+      organisationJpaRepository.delete(otherOrganisation);
     }
-
-    measurementJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
-    organisationJpaRepository.delete(otherOrganisation);
   }
 
   @Test
   public void averagesForDifferentCitiesHaveUniqueIds() {
-    LocationBuilder locationBuilder = new LocationBuilder();
-    locationBuilder
+    LocationBuilder locationBuilder = new LocationBuilder()
       .address("street 1")
       .city("stockholm");
 

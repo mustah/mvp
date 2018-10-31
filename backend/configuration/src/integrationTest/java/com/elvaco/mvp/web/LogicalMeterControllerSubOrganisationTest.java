@@ -1,47 +1,30 @@
 package com.elvaco.mvp.web;
 
-import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
-import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Ignore
-public class LogicalMeterControllerSubOrgTest extends IntegrationTest {
-
-  @Autowired
-  private LogicalMeters logicalMeters;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
+public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
 
   @Autowired
   private UserSelections userSelections;
-
-  @After
-  public void tearDown() {
-    removeNonRootOrganisations();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
-    userSelectionJpaRepository.deleteAll();
-  }
 
   @Test
   public void excludeMetersWithUnknownCities() {
@@ -99,16 +82,5 @@ public class LogicalMeterControllerSubOrgTest extends IntegrationTest {
       .medium(Medium.HOT_WATER.medium)
       .manufacturer("ELV1")
       .readIntervalMinutes(30);
-  }
-
-  // TODO[!must!] I have a branch where usages of these are removed to LocationsTestData.java
-  private static LocationBuilder kungsbacka() {
-    return new LocationBuilder()
-      .country("sverige")
-      .city("kungsbacka")
-      .address("kabelgatan 1")
-      .longitude(11.123)
-      .latitude(12.345)
-      .confidence(1.0);
   }
 }

@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +25,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class PhysicalMetersTest extends IntegrationTest {
 
   @Autowired
-  private PhysicalMeters physicalMeters;
-
-  @Autowired
   private MeterStatusLogs meterStatusLogs;
 
   @Before
   public void setUp() {
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-  }
-
-  @After
-  public void tearDown() {
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
   }

@@ -20,8 +20,6 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
   }

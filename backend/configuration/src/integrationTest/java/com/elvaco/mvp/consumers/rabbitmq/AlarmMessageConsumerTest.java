@@ -68,7 +68,6 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
       .map(name -> cacheManager.getCache(name))
       .forEach(Cache::clear);
 
-    physicalMeterJpaRepository.deleteAll();
     meterAlarmLogJpaRepository.deleteAll();
   }
 

@@ -7,7 +7,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.repository.Locations;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
@@ -28,9 +27,6 @@ public class GeocodeControllerTest extends IntegrationTest {
 
   @Autowired
   private Locations locations;
-
-  @Autowired
-  private LogicalMeters logicalMeters;
 
   @After
   public void tearDown() {

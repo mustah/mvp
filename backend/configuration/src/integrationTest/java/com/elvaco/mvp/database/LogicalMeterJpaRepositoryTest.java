@@ -13,7 +13,6 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +69,6 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       emptySet()
     );
     physicalMeterJpaRepository.save(physicalMeterEntity);
-  }
-
-  @After
-  public void tearDown() {
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test

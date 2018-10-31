@@ -1,25 +1,19 @@
 package com.elvaco.mvp.web;
 
-import java.util.UUID;
-
-import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static java.util.UUID.randomUUID;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.oslo;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectionTreeControllerTest extends IntegrationTest {
-
-  @Autowired
-  private LogicalMeters logicalMeters;
 
   @After
   public void tearDown() {
@@ -28,9 +22,16 @@ public class SelectionTreeControllerTest extends IntegrationTest {
 
   @Test
   public void getResponseOk() {
-    logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1"));
-    logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId2"));
-    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId3"));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId1")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().build())
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId2")
+      .organisationId(context().organisationId())
+      .location(stockholm().build())
+      .build());
 
     ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
       .get("/selection-tree", SelectionTreeDto.class);
@@ -40,63 +41,60 @@ public class SelectionTreeControllerTest extends IntegrationTest {
 
   @Test
   public void getFilteredCity() {
-    logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1"));
-    logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2"));
-    logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3"));
-    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId1")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().build())
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId2")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().address("kabelgatan 2").build())
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId3")
+      .organisationId(context().organisationId())
+      .location(stockholm().build())
+      .build());
 
-    ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
-      .get("/selection-tree?city=sweden,kungsbacka", SelectionTreeDto.class);
+    var response = asSuperAdmin()
+      .get("/selection-tree?city=sverige,kungsbacka", SelectionTreeDto.class)
+      .getBody();
 
-    assertThat(response.getBody().cities).hasSize(1);
-    assertThat(response.getBody().cities.get(0).addresses).hasSize(2);
+    var cities = response.cities;
+    assertThat(cities).hasSize(1);
+    assertThat(cities.get(0).addresses).extracting("name")
+      .containsExactlyInAnyOrder("kabelgatan 1", "kabelgatan 2");
   }
 
   @Test
   public void getFilteredAddress() {
-    logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1"));
-    logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2"));
-    logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3"));
-    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
-
-    ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
-      .get("/selection-tree?address=sweden,kungsbacka,kabelgatan+2", SelectionTreeDto.class);
-
-    assertThat(response.getBody().cities).hasSize(1);
-    assertThat(response.getBody().cities.get(0).addresses).hasSize(1);
-  }
-
-  private LogicalMeter newLogicalMeter(
-    String country,
-    String city,
-    String address,
-    UUID id,
-    String externalId
-  ) {
-    return LogicalMeter.builder()
-      .id(id)
-      .externalId(externalId)
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId1")
       .organisationId(context().organisationId())
-      .location(new LocationBuilder()
-        .country(country)
-        .city(city)
-        .address(address)
-        .build())
-      .build();
-  }
+      .location(kungsbacka().build())
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId2")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().address("kabelgatan 2").build())
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId3")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().address("kabelgatan 3").build())
+      .build());
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("extId4")
+      .organisationId(context().organisationId())
+      .location(oslo().address("kabelgatan 2").build())
+      .build());
 
-  private LogicalMeter newLogicalMeter(
-    String country,
-    String city,
-    String address,
-    String externalId
-  ) {
-    return newLogicalMeter(
-      country,
-      city,
-      address,
-      randomUUID(),
-      externalId
-    );
+    var response = asSuperAdmin()
+      .get("/selection-tree?address=sverige,kungsbacka,kabelgatan+2", SelectionTreeDto.class)
+      .getBody();
+
+    assertThat(response.cities).hasSize(1);
+    assertThat(response.cities.get(0).addresses).extracting("name").containsExactly("kabelgatan 2");
   }
 }

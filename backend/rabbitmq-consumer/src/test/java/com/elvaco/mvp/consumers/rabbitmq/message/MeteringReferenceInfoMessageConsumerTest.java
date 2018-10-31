@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
@@ -49,6 +48,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.locationWithoutCoordinates;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -71,11 +71,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   private static final String ORGANISATION_SLUG = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
-  private static final Location LOCATION_KUNGSBACKA = new LocationBuilder()
-    .country("Sweden")
-    .city("Kungsbacka")
-    .address("Kabelgatan 2T")
-    .build();
+  private static final Location LOCATION_KUNGSBACKA = locationWithoutCoordinates().build();
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -94,7 +90,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
         .name("mock user")
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
-        .language(Language.en)
         .organisation(new Organisation(
           randomUUID(),
           ORGANISATION_EXTERNAL_ID,
@@ -125,7 +120,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
             .name("super-admin")
             .email("super@admin.io")
             .password("password")
-            .language(Language.en)
             .organisationElvaco()
             .asSuperAdmin()
             .build()
@@ -160,10 +154,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .organisationId(organisation.id)
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .created(logicalMeter.created)
-      .location(new LocationBuilder().country("Sweden")
-        .city("Kungsbacka")
-        .address("Kabelgatan 2T")
-        .build())
+      .location(locationWithoutCoordinates().build())
       .build();
 
     Gateway gateway = gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID).get();
@@ -349,10 +340,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void callsGeocodeService() {
     messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
-    LocationWithId expectedLocationWithId = new LocationBuilder()
-      .country("Sweden")
-      .city("Kungsbacka")
-      .address("Kabelgatan 2T")
+    LocationWithId expectedLocationWithId = locationWithoutCoordinates()
       .id(geocodeService.requestId)
       .buildLocationWithId();
 
@@ -366,10 +354,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
-    LocationBuilder builder = new LocationBuilder()
-      .country("Sweden")
-      .city("Kungsbacka")
-      .address("Kabelgatan 2T")
+    LocationBuilder builder = locationWithoutCoordinates()
       .id(geocodeService.requestId);
 
     assertThat(geocodeService.location).isEqualTo(builder.buildLocationWithId());

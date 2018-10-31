@@ -9,15 +9,15 @@ import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
@@ -25,23 +25,12 @@ import static java.util.stream.Collectors.toList;
 @Profile("demo")
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class UserSelectionDataLoader implements CommandLineRunner {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-  private final UserSelectionJpaRepository userSelectionJpaRepository;
   private final SettingUseCases settingUseCases;
+  private final UserSelectionJpaRepository userSelectionJpaRepository;
   private final UserJpaRepository userJpaRepository;
-
-  @Autowired
-  public UserSelectionDataLoader(
-    SettingUseCases settingUseCases,
-    UserSelectionJpaRepository userSelectionJpaRepository,
-    UserJpaRepository userJpaRepository
-  ) {
-    this.settingUseCases = settingUseCases;
-    this.userSelectionJpaRepository = userSelectionJpaRepository;
-    this.userJpaRepository = userJpaRepository;
-  }
 
   @Override
   public void run(String... args) throws Exception {
@@ -60,8 +49,8 @@ public class UserSelectionDataLoader implements CommandLineRunner {
   private void createSelections() throws IOException {
     String unknownJson =
       "{\"cities\":[\"unknown,unknown\"],\"addresses\":[],"
-      + "\"alarms\":[],\"manufacturers\":[],"
-      + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
+        + "\"alarms\":[],\"manufacturers\":[],"
+        + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
 
     JsonField selectionForUnknownCity = new JsonField(
       (ObjectNode) OBJECT_MAPPER.readTree(unknownJson)
@@ -69,8 +58,8 @@ public class UserSelectionDataLoader implements CommandLineRunner {
 
     String perstorpJson =
       "{\"cities\":[\"sweden,perstorp\"],\"addresses\":[],"
-      + "\"alarms\":[],\"manufacturers\":[],"
-      + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
+        + "\"alarms\":[],\"manufacturers\":[],"
+        + "\"productModels\":[],\"dateRange\":{\"period\":\"latest\"}}";
 
     JsonField selectionForPerstorp = new JsonField(
       (ObjectNode) OBJECT_MAPPER.readTree(perstorpJson)

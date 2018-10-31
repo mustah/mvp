@@ -14,11 +14,8 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
@@ -48,16 +45,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     .truncatedTo(ChronoUnit.DAYS);
 
   @Autowired
-  private LogicalMeters logicalMeters;
-
-  @Autowired
-  private Gateways gateways;
-
-  @Autowired
   private MeterAlarmLogs meterAlarmLogs;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
 
   @Autowired
   private MeterStatusLogs meterStatusLogs;
@@ -72,11 +60,8 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   @After
   public void tearDown() {
     measurementJpaRepository.deleteAll();
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
     meterAlarmLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test

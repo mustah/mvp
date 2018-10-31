@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -11,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.exception.PropertyNotFound;
 import com.elvaco.mvp.core.spi.amqp.JobService;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
 import com.elvaco.mvp.producers.rabbitmq.SyncRequestStatusType;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
@@ -42,9 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
-
-  @Autowired
-  private LogicalMeters logicalMeters;
 
   @Autowired
   private PropertiesUseCases propertiesUseCases;
@@ -357,6 +354,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
       throw new AmqpException("Ouch");
     }
 
+    @Nullable
     @Override
     public String getHost() {
       return null;
@@ -367,11 +365,13 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
       return 0;
     }
 
+    @Nullable
     @Override
     public String getVirtualHost() {
       return null;
     }
 
+    @Nullable
     @Override
     public String getUsername() {
       return null;

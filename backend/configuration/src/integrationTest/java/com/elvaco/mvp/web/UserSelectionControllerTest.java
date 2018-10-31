@@ -8,34 +8,21 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
-import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.UserSelectionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UserSelectionDto;
 import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserSelectionControllerTest extends IntegrationTest {
-
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-  @Autowired
-  private UserSelectionJpaRepository repository;
-
-  @After
-  public void tearDown() {
-    repository.deleteAll();
-  }
 
   @Test
   public void findByIdForCurrentUser() throws IOException {
@@ -136,11 +123,12 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(post.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     assertThat(post.getBody().id).isNotNull();
 
-    Optional<UserSelectionEntity> selection = repository.findByIdAndOwnerUserIdAndOrganisationId(
-      post.getBody().id,
-      context().user.id,
-      context().user.organisation.id
-    );
+    Optional<UserSelectionEntity> selection = userSelectionJpaRepository
+      .findByIdAndOwnerUserIdAndOrganisationId(
+        post.getBody().id,
+        context().user.id,
+        context().user.organisation.id
+      );
 
     assertThat(selection).isPresent();
     assertThat(selection.get().selectionParameters.getJson()).isEqualTo(data);
@@ -171,7 +159,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(updatedThroughApi.id).isNotNull();
     assertThat(updatedThroughApi.selectionParameters).isEqualTo(newData);
 
-    Optional<UserSelectionEntity> selectionInDatabase = repository
+    Optional<UserSelectionEntity> selectionInDatabase = userSelectionJpaRepository
       .findByIdAndOwnerUserIdAndOrganisationId(
         updatedThroughApi.id,
         context().user.id,
@@ -203,7 +191,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     assertThat(put.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
-    Optional<UserSelectionEntity> selectionUser = repository
+    Optional<UserSelectionEntity> selectionUser = userSelectionJpaRepository
       .findByIdAndOwnerUserIdAndOrganisationId(
         userSelectionDto.id,
         context().user.id,
@@ -238,11 +226,12 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(response.getBody().id).isNotNull();
     assertThat(response.getBody().ownerUserId).isEqualTo(apiUser.id);
 
-    Optional<UserSelectionEntity> selection = repository.findByIdAndOwnerUserIdAndOrganisationId(
-      response.getBody().id,
-      apiUser.id,
-      apiUser.organisation.id
-    );
+    Optional<UserSelectionEntity> selection = userSelectionJpaRepository
+      .findByIdAndOwnerUserIdAndOrganisationId(
+        response.getBody().id,
+        apiUser.id,
+        apiUser.organisation.id
+      );
 
     assertThat(selection).isPresent();
     assertThat(selection.get().selectionParameters.getJson()).isEqualTo(selectionJson);
@@ -262,7 +251,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(post.getBody()).isEqualTo(userSelectionDto);
-    assertThat(repository.findById(userSelectionDto.id)).isEmpty();
+    assertThat(userSelectionJpaRepository.findById(userSelectionDto.id)).isEmpty();
   }
 
   @Test
@@ -282,7 +271,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(post.getBody().message)
       .isEqualTo("Unable to find user selection with ID '" + adminsSelectionDto.id + "'");
 
-    assertThat(repository.findById(adminsSelectionDto.id)).isNotNull();
+    assertThat(userSelectionJpaRepository.findById(adminsSelectionDto.id)).isNotNull();
   }
 
   private UserSelectionDto createSelection(
@@ -290,7 +279,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     String name,
     ObjectNode jsonData
   ) {
-    UserSelectionEntity entity = repository.save(new UserSelectionEntity(
+    UserSelectionEntity entity = userSelectionJpaRepository.save(new UserSelectionEntity(
       UUID.randomUUID(),
       user.id,
       name,

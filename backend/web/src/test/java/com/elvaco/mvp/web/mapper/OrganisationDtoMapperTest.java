@@ -7,9 +7,9 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.SubOrganisationRequestDto;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDomainModel;
 import static com.elvaco.mvp.web.mapper.OrganisationDtoMapper.toDto;
 import static java.util.UUID.randomUUID;
@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 public class OrganisationDtoMapperTest {
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @Test
   public void toDomainModel_subOrganisation() {

@@ -13,7 +13,6 @@ import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -26,13 +25,10 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
@@ -46,7 +42,6 @@ import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
@@ -63,6 +58,7 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -81,19 +77,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private MeterDefinition hotWaterMeterDefinition;
 
   @Autowired
-  private LogicalMeters logicalMeters;
-
-  @Autowired
   private Measurements measurements;
 
   @Autowired
   private MeterDefinitions meterDefinitions;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
-
-  @Autowired
-  private Gateways gateways;
 
   @Autowired
   private MeterStatusLogs meterStatusLogs;
@@ -113,12 +100,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @After
   public void tearDown() {
     measurementJpaRepository.deleteAll();
-    physicalMeterStatusLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
     meterAlarmLogJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test
@@ -166,18 +150,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
-      .location(new LocationBuilder().city("kungsbacka")
-        .country("sweden")
-        .address("kabelgatan 2t")
-        .build())
+      .location(kungsbacka().build())
       .build());
 
     PagedLogicalMeterDto logicalMeterDto = asUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
-      .getContent().get(0);
+      .getContent()
+      .get(0);
 
     assertThat(logicalMeterDto.location.city).isEqualTo("kungsbacka");
-    assertThat(logicalMeterDto.location.address).isEqualTo("kabelgatan 2t");
+    assertThat(logicalMeterDto.location.address).isEqualTo("kabelgatan 1");
   }
 
   @Test
@@ -983,7 +965,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
-      .getPage("/meters?city=unknown,unknown&city=sweden,kungsbacka", PagedLogicalMeterDto.class);
+      .getPage("/meters?city=unknown,unknown&city=sverige,kungsbacka", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(2);
   }
@@ -1008,7 +990,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
-      .getPage("/meters?city=unknown,unknown&city=sweden,kungsbacka", PagedLogicalMeterDto.class);
+      .getPage("/meters?city=unknown,unknown&city=sverige,kungsbacka", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(3);
   }
@@ -1935,7 +1917,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .name("Me")
       .email("me@myorg.com")
       .password("secr3t")
-      .language(Language.en)
       .organisation(context().organisation2())
       .asUser();
   }
@@ -1978,15 +1959,4 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private static void assertThatStatusIsNotFound(ResponseEntity<ErrorMessageDto> response) {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
-
-  private static LocationBuilder kungsbacka() {
-    return new LocationBuilder()
-      .country("sweden")
-      .city("kungsbacka")
-      .address("kabelgatan 1")
-      .longitude(11.123)
-      .latitude(12.345)
-      .confidence(0.75);
-  }
-
 }

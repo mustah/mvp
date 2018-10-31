@@ -20,19 +20,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MeterAlarmLogsTest extends IntegrationTest {
 
   @Autowired
-  private LogicalMeters logicalMeters;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
-
-  @Autowired
   private MeterAlarmLogs meterAlarmLogs;
 
   @After
   public void tearDown() {
     meterAlarmLogJpaRepository.deleteAll();
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test

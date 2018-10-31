@@ -1,8 +1,8 @@
 package com.elvaco.mvp.testdata;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
-import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
@@ -37,9 +37,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-user")
       .email(contextId.toString() + "@test.com")
       .password("password")
-      .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
-      .id(randomUUID())
       .asUser()
       .build();
     users.create(user);
@@ -48,9 +46,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-admin")
       .email(contextId.toString() + "-admin@test.com")
       .password("password")
-      .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
-      .id(randomUUID())
       .asAdmin()
       .build();
     users.create(admin);
@@ -59,9 +55,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-super-admin")
       .email(contextId.toString() + "-super-admin@test.com")
       .password("password")
-      .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
-      .id(randomUUID())
       .asSuperAdmin()
       .build();
     users.create(superAdmin);
@@ -80,9 +74,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-user2")
       .email(contextId2.toString() + "@test.com")
       .password("password")
-      .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
-      .id(randomUUID())
       .asUser()
       .build();
     users.create(user2);
@@ -91,9 +83,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-admin2")
       .email(contextId2.toString() + "-admin2@test.com")
       .password("password")
-      .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
-      .id(randomUUID())
       .asAdmin()
       .build();
     users.create(admin2);
@@ -102,9 +92,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-super-admin2")
       .email(contextId.toString() + "-super-admin2@test.com")
       .password("password")
-      .language(Language.en)
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
-      .id(randomUUID())
       .asSuperAdmin()
       .build();
     users.create(superAdmin2);
@@ -123,15 +111,13 @@ class IntegrationTestFixtureContextFactory {
 
   @Transactional
   public void destroy(IntegrationTestFixtureContext context) {
-    try {
-      organisationJpaRepository.deleteById(context.organisationEntity.id);
-    } catch (EmptyResultDataAccessException ignore) {
-      // The test case probably removed it already
-    }
-    try {
-      organisationJpaRepository.deleteById(context.organisationEntity2.id);
-    } catch (EmptyResultDataAccessException ignore) {
-      // The test case probably removed it already
-    }
+    Stream.of(context.organisationEntity.id, context.organisationEntity2.id)
+      .forEach(id -> {
+        try {
+          organisationJpaRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException ignore) {
+          // The test case probably removed it already
+        }
+      });
   }
 }

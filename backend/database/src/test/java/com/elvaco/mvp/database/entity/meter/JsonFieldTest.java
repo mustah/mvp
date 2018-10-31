@@ -2,15 +2,13 @@ package com.elvaco.mvp.database.entity.meter;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class JsonFieldTest {
-
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @Test
   public void sameInstanceEquals() {

@@ -1,6 +1,5 @@
 package com.elvaco.mvp.testing.fixture;
 
-import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import lombok.experimental.UtilityClass;
@@ -18,7 +17,6 @@ public class UserTestData {
     .name("Clark Kent")
     .email("clark@dailyplanet.org")
     .password("KalEl")
-    .language(Language.en)
     .organisation(DAILY_PLANET)
     .asAdmin()
     .build();
@@ -27,7 +25,6 @@ public class UserTestData {
     .name("Super Admin")
     .email("superadmin@elvaco.se")
     .password("superadmin123")
-    .language(Language.en)
     .organisation(ELVACO)
     .asSuperAdmin()
     .build();
@@ -36,7 +33,6 @@ public class UserTestData {
     .name("Admin")
     .email("admin@elvaco.se")
     .password("admin123")
-    .language(Language.en)
     .organisation(ELVACO)
     .asAdmin()
     .build();
@@ -45,7 +41,6 @@ public class UserTestData {
     .name("User")
     .email("user@elvaco.se")
     .password("user123")
-    .language(Language.en)
     .organisation(ELVACO)
     .asUser()
     .build();
@@ -54,7 +49,6 @@ public class UserTestData {
     .name("User 2")
     .email("user2@elvaco.se")
     .password("user123-2")
-    .language(Language.en)
     .organisation(ELVACO)
     .asUser()
     .build();
@@ -63,7 +57,6 @@ public class UserTestData {
     .name("User")
     .email("user@other.com")
     .password("user123")
-    .language(Language.en)
     .organisation(OTHER_ORGANISATION)
     .asUser()
     .build();
@@ -72,7 +65,6 @@ public class UserTestData {
     .name("Admin")
     .email("admin@other.com")
     .password("admin123")
-    .language(Language.en)
     .organisation(OTHER_ORGANISATION)
     .asAdmin()
     .build();
@@ -82,7 +74,6 @@ public class UserTestData {
       .name("Jimmy Olsen")
       .email("jimy@dailyplanet.org")
       .password("jimols")
-      .language(Language.en)
       .organisation(organisation)
       .asUser()
       .build();
@@ -100,7 +91,6 @@ public class UserTestData {
       .name("john doh")
       .email("a@b.com")
       .password("letmein")
-      .roles(ADMIN, USER)
-      .language(Language.en);
+      .roles(ADMIN, USER);
   }
 }

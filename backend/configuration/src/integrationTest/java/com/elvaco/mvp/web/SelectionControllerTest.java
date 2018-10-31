@@ -9,9 +9,6 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.IdNamedDto;
@@ -19,29 +16,19 @@ import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectionControllerTest extends IntegrationTest {
 
-  @Autowired
-  private LogicalMeters logicalMeters;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
-
-  @Autowired
-  private Gateways gateways;
-
   @After
   public void tearDown() {
-    physicalMeterJpaRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
   }
 
@@ -426,7 +413,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .externalId("1234")
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
-        .location(new LocationBuilder().city("Kungsbacka").address("Stora vägen 24").build())
+        .location(kungsbacka().address("Stora vägen 24").build())
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -482,10 +469,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("sverige")
-        .city("Kungsbacka")
-        .address("Stora vägen 24")
-        .build())
+      .location(kungsbacka().build())
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -518,11 +502,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("sverige")
-        .city("Kungsbacka")
-        .address("Stora vägen 24")
-        .build()
-      )
+      .location(kungsbacka().address("Stora vägen 24").build())
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -554,7 +534,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("sverige").city("kungsbacka").build())
+      .location(kungsbacka().build())
       .build()
     );
 
@@ -563,7 +543,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("2")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("sverige").city("kungsbacka").build())
+      .location(kungsbacka().build())
       .build()
     );
 
@@ -572,7 +552,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("3")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("norge").city("kungsbacka").build())
+      .location(stockholm().country("norge").city("oslo").build())
       .build()
     );
 
@@ -583,7 +563,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
     assertThat(response.getContent()).containsExactlyInAnyOrder(
       new CityDto("kungsbacka", "sverige"),
-      new CityDto("kungsbacka", "norge")
+      new CityDto("oslo", "norge")
     );
   }
 
@@ -594,10 +574,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("sverige")
-        .city("kungsbacka")
-        .address("teknikgatan 2")
-        .build())
+      .location(kungsbacka().build())
       .build()
     );
 
@@ -606,10 +583,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("2")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(new LocationBuilder().country("sverige")
-        .city("kungsbacka")
-        .address("teknikgatan 2")
-        .build())
+      .location(kungsbacka().build())
       .build()
     );
 
@@ -619,7 +593,7 @@ public class SelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(response.getContent()).containsExactly(
-      new AddressDto("sverige", "kungsbacka", "teknikgatan 2")
+      new AddressDto("sverige", "kungsbacka", "kabelgatan 1")
     );
   }
 
