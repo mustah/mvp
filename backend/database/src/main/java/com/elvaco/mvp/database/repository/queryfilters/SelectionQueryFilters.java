@@ -30,6 +30,10 @@ public class SelectionQueryFilters extends QueryFilters {
         return LocationPredicates.whereCityOrNull(values);
       case ADDRESS:
         return LocationPredicates.whereAddressOrNull(values);
+      case FACILITY:
+        return LOGICAL_METER.externalId.in(values);
+      case SECONDARY_ADDRESS:
+        return PHYSICAL_METER.address.in(values);
       case Q_FACILITY:
         return LOGICAL_METER.externalId.containsIgnoreCase(values.get(0));
       case Q_SECONDARY_ADDRESS:
