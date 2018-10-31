@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
+import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static com.elvaco.mvp.testing.fixture.UserTestData.organisationBuilder;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MvpUserDetailsTest {
 
   @Test
-  public void shouldHaveOrganisationIdOfParentOrganisationWhenUserBelongsToASubOrganisation() {
+  public void shouldHaveOrganisationIdOfSubOrganisation() {
     var subOrganisationId = randomUUID();
     var userId = randomUUID();
     var subOrganisation = organisationBuilder()
@@ -84,16 +85,11 @@ public class MvpUserDetailsTest {
   }
 
   @Test
-  public void subOrganisationHasSelectionParametersWithOneCity() {
-    var facilities = "{\"cities\": [{\"id\": \"sverige,kungsbacka\", \"name\": \"kungsbacka\", "
-      + "\"country\": {\"id\": \"sverige\", \"name\": \"sverige\"}, \"selected\": true}, "
-      + "{\"id\": \"sverige,stockholm\", \"name\": \"stockholm\", "
-      + "\"country\": {\"id\": \"sverige\", \"name\": \"sverige\"}, \"selected\": true}]}";
-    var selectionParameters = toJsonNode(facilities);
+  public void subOrganisationHasSelectionParametersWithTwoCities() {
     var organisation = organisationBuilder()
       .parent(MARVEL)
       .selection(UserSelection.builder()
-        .selectionParameters(selectionParameters)
+        .selectionParameters(toJsonNode(CITIES_JSON_STRING))
         .build())
       .build();
 

@@ -78,16 +78,10 @@ public class User implements Identifiable<UUID>, Usernamed {
   }
 
   public Optional<UUID> getParentOrganisationId() {
-    return Optional.of(organisation)
-      .filter(Organisation::isSubOrganisation)
-      .map(organisation -> organisation.parent)
-      .map(Organisation::getId);
+    return organisation.getParentId();
   }
 
   public Optional<UserSelection.SelectionParametersDto> getSelectionParameters() {
-    return Optional.of(organisation)
-      .filter(Organisation::isSubOrganisation)
-      .map(organisation -> organisation.selection)
-      .flatMap(UserSelection::toSelectionParametersDto);
+    return organisation.getSelectionParameters();
   }
 }

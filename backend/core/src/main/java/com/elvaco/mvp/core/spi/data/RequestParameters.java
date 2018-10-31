@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.util.CollectionUtils;
@@ -23,6 +24,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
+import static java.util.stream.Collectors.toList;
 
 public interface RequestParameters {
 
@@ -66,6 +68,8 @@ public interface RequestParameters {
       .map(retainAllFor(CITY))
       .ifPresent(cities -> setAll(CITY, cities));
 
+    selectionParameters.ifPresent(selectionParameter -> removeUnknownCityParameter());
+
     return this;
   }
 
@@ -88,6 +92,12 @@ public interface RequestParameters {
 
   default Optional<RequestParameters> has(RequestParameter param) {
     return hasParam(param) ? Optional.of(this) : Optional.empty();
+  }
+
+  private void removeUnknownCityParameter() {
+    setAll(CITY, getValues(CITY).stream()
+      .filter(cityId -> !Location.UNKNOWN_CITY_ID.equals(cityId))
+      .collect(toList()));
   }
 
   private void ensureOrganisation(AuthenticatedUser currentUser) {

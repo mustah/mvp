@@ -3,7 +3,6 @@ package com.elvaco.mvp.web.util;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.junit.Test;
 
@@ -11,6 +10,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
+import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
+import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.FACILITIES_JSON_STRING;
 import static com.elvaco.mvp.testing.fixture.UserTestData.organisationBuilder;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.UUID.randomUUID;
@@ -22,7 +23,7 @@ public class EnsureOrganisationFiltersTest {
   public void whenUserBelongsToParentOrganisation_DoNotApplyImplicitUserSelection() {
     var organisation = organisationBuilder().build();
 
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .ensureOrganisationFilters(authenticatedUser(organisation));
 
     assertThat(parameters.getValues(FACILITY)).isEmpty();
@@ -33,7 +34,7 @@ public class EnsureOrganisationFiltersTest {
   public void shouldNotReplaceParameterValues_WhenNoSelectionParameters() {
     var organisation = organisationBuilder().build();
 
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(FACILITY, "c1")
       .add(FACILITY, "c2")
       .add(CITY, "sverige,kungsbacka")
@@ -45,16 +46,16 @@ public class EnsureOrganisationFiltersTest {
 
   @Test
   public void shouldJustAddFacilitiesFromSelectionParameters() {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(facilitiesJsonString())));
+    var parameters = new RequestParametersAdapter()
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(FACILITIES_JSON_STRING)));
 
     assertThat(parameters.getValues(FACILITY)).containsExactlyInAnyOrder("demo1", "demo2");
   }
 
   @Test
   public void shouldJustAddCitiesFromSelectionParameters() {
-    RequestParameters parameters = new RequestParametersAdapter()
-      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(citiesJsonString())));
+    var parameters = new RequestParametersAdapter()
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(CITIES_JSON_STRING)));
 
     assertThat(parameters.getValues(CITY))
       .containsExactlyInAnyOrder("sverige,kungsbacka", "sverige,stockholm");
@@ -62,43 +63,43 @@ public class EnsureOrganisationFiltersTest {
 
   @Test
   public void facilityParameterValuesAreEmpty_WhenNotInSelectionParameters() {
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(FACILITY, "demo3")
-      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(facilitiesJsonString())));
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(FACILITIES_JSON_STRING)));
 
     assertThat(parameters.getValues(FACILITY)).isEmpty();
   }
 
   @Test
   public void cityParameterValuesAreEmpty_WhenNotInSelectionParameters() {
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(CITY, "sverige,lund")
-      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(citiesJsonString())));
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(CITIES_JSON_STRING)));
 
     assertThat(parameters.getValues(CITY)).isEmpty();
   }
 
   @Test
   public void onlyIncludedFacilitiesIntersecting_SelectionParametersFacilities() {
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(FACILITY, "demo2")
-      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(facilitiesJsonString())));
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(FACILITIES_JSON_STRING)));
 
     assertThat(parameters.getValues(FACILITY)).containsExactly("demo2");
   }
 
   @Test
   public void onlyIncludedCitiesIntersecting_SelectionParametersCities() {
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(CITY, "sverige,stockholm")
-      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(citiesJsonString())));
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(CITIES_JSON_STRING)));
 
     assertThat(parameters.getValues(CITY)).containsExactly("sverige,stockholm");
   }
 
   @Test
   public void doNotIncludesFacilities_WhenSelectionParametersAreEmpty() {
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(FACILITY, "c1")
       .add(FACILITY, "c2")
       .ensureOrganisationFilters(authenticatedUser(makeOrganisation("{\"facilities\": []}")));
@@ -108,7 +109,7 @@ public class EnsureOrganisationFiltersTest {
 
   @Test
   public void doNotIncludesCities_WhenSelectionParametersAreEmpty() {
-    RequestParameters parameters = new RequestParametersAdapter()
+    var parameters = new RequestParametersAdapter()
       .add(CITY, "sverige,stockholm")
       .add(CITY, "sverige,kungsbacka")
       .ensureOrganisationFilters(authenticatedUser(makeOrganisation("{\"cities\": []}")));
@@ -117,6 +118,26 @@ public class EnsureOrganisationFiltersTest {
       "sverige,kungsbacka",
       "sverige,stockholm"
     );
+  }
+
+  @Test
+  public void doNotIncludesUnknownCity_WhenUserSelectionCitiesIsEmpty() {
+    var parameters = new RequestParametersAdapter()
+      .add(CITY, "sverige,stockholm")
+      .add(CITY, "unknown,unknown")
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation("{\"cities\": []}")));
+
+    assertThat(parameters.getValues(CITY)).containsExactlyInAnyOrder("sverige,stockholm");
+  }
+
+  @Test
+  public void doNotIncludesUnknownCity_WhenUserSelectionCitiesExists() {
+    var parameters = new RequestParametersAdapter()
+      .add(CITY, "sverige,stockholm")
+      .add(CITY, "unknown,unknown")
+      .ensureOrganisationFilters(authenticatedUser(makeOrganisation(CITIES_JSON_STRING)));
+
+    assertThat(parameters.getValues(CITY)).containsExactly("sverige,stockholm");
   }
 
   private static MvpUserDetails authenticatedUser(Organisation organisation) {
@@ -133,17 +154,5 @@ public class EnsureOrganisationFiltersTest {
         .selectionParameters(toJsonNode(jsonString))
         .build())
       .build();
-  }
-
-  private static String facilitiesJsonString() {
-    return "{\"facilities\": [{\"id\": \"demo1\", \"name\": \"demo1\"}, "
-      + "{\"id\": \"demo2\", \"name\": \"demo2\"}]}";
-  }
-
-  private static String citiesJsonString() {
-    return "{\"cities\": [{\"id\": \"sverige,kungsbacka\", \"name\": \"kungsbacka\", "
-      + "\"country\": {\"id\": \"sverige\", \"name\": \"sverige\"}, \"selected\": true}, "
-      + "{\"id\": \"sverige,stockholm\", \"name\": \"stockholm\", "
-      + "\"country\": {\"id\": \"sverige\", \"name\": \"sverige\"}, \"selected\": true}]}";
   }
 }
