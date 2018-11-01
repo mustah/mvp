@@ -33,6 +33,7 @@ import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -149,8 +150,14 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
     savePhysicalMeterWith(logicalMeter, StatusType.OK);
 
+    Url url = Url.builder()
+      .path("/map-markers/meters")
+      .parameter(BEFORE, NOW.plusDays(1))
+      .parameter(AFTER, NOW.minusDays(1))
+      .build();
+
     ResponseEntity<MapMarkersDto> response = asSuperAdmin()
-      .get("/map-markers/meters", MapMarkersDto.class);
+      .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody().markers).isEqualTo(ImmutableMultimap.builder()
@@ -169,8 +176,15 @@ public class MapMarkerControllerTest extends IntegrationTest {
     savePhysicalMeterWith(meter2, StatusType.WARNING);
     savePhysicalMeterWith(meter3, StatusType.WARNING);
 
+    Url url = Url.builder()
+      .path("/map-markers/meters")
+      .parameter(BEFORE, NOW.plusDays(1))
+      .parameter(AFTER, NOW.minusDays(1))
+      .parameter(CITY, "sverige,kungsbacka")
+      .build();
+
     ResponseEntity<MapMarkersDto> response = asUser()
-      .get("/map-markers/meters?city=sverige,kungsbacka", MapMarkersDto.class);
+      .get(url, MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody().markers).hasSize(1);
@@ -304,7 +318,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .path("/map-markers/gateways")
       .parameter(RequestParameter.BEFORE, NOW.plusHours(1))
       .parameter(RequestParameter.AFTER, NOW.minusHours(1))
-      .parameter(RequestParameter.CITY, "sverige,kungsbacka")
+      .parameter(CITY, "sverige,kungsbacka")
       .build();
 
     ResponseEntity<MapMarkersDto> foundByCorrectUser = asUser()
