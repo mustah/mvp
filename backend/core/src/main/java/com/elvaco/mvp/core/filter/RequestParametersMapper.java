@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
@@ -26,6 +27,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static java.util.stream.Collectors.toList;
@@ -42,6 +44,12 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, EQUAL));
     PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, ComparisonMode.WILDCARD));
     PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, EQUAL));
+    PARAMETER_TO_FILTER.put(REPORTED,
+      (values) -> new MeterStatusFilter(
+        values.stream().map(StatusType::from).collect(toList()),
+        EQUAL
+      )
+    );
     PARAMETER_TO_FILTER.put(
       GATEWAY_ID,
       (values) -> new GatewayIdFilter(

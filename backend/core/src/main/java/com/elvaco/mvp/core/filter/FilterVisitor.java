@@ -19,4 +19,6 @@ public interface FilterVisitor {
   void visit(WildcardFilter wildcardFilter);
 
   void visit(LocationConfidenceFilter locationConfidenceFilter);
+
+  void visit(MeterStatusFilter meterStatusFilter);
 }
