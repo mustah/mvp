@@ -15,7 +15,7 @@ public class RabbitConsumerProperties {
   private String responseRoutingKey = "mvp.to.metering";
   private String deadLetterExchange = "mvp.dead.letter";
   private Boolean requeueRejected = false;
-  private Integer prefetchCount = 100;
-  private Integer txSize = 100;
+  private Integer prefetchCount = 250;
+  private Integer txSize = 1;
 
 }
