@@ -168,6 +168,7 @@ assemble:
     expire_in: 1 hour
 
 pre-test:docker-mvp-app:
+  <<: *no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: pre-test
@@ -177,11 +178,14 @@ pre-test:docker-mvp-app:
     - assemble
     - prepare:version
   script:
+    - cat .version
+    - git describe --tags --abbrev=7
     - docker build --build-arg MVP_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
 
 pre-test:docker-geoservice-app:
+  <<: *no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
   stage: pre-test
@@ -191,6 +195,8 @@ pre-test:docker-geoservice-app:
     - assemble
     - prepare:version
   script:
+    - cat .version
+    - git describe --tags --abbrev=7
     - docker build --build-arg GEOSERVICE_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile-geoservice .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
