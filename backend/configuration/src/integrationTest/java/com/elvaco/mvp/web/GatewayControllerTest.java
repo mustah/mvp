@@ -9,10 +9,14 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import org.junit.After;
 import org.junit.Before;
@@ -22,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
@@ -45,6 +50,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
@@ -294,6 +300,78 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findGateways_WithErrorReportedMetersWithinPeriod() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    LogicalMeter logicalMeter = logicalMeters.save(
+      LogicalMeter.builder()
+        .id(randomUUID())
+        .externalId("external-1234")
+        .organisationId(dailyPlanet.id)
+        .gateway(gateway1)
+        .build()
+    );
+    PhysicalMeter physicalMeter = physicalMeters.save(
+      physicalMeterBuilder()
+        .organisation(dailyPlanet)
+        .logicalMeterId(logicalMeter.id)
+        .build()
+    );
+
+    ZonedDateTime time = ZonedDateTime.parse("2017-01-01T00:00:00Z");
+    savePhysicalMeterStatus(physicalMeter.id, ERROR, time.minusDays(1), null);
+
+    Page<GatewayDto> page = asSuperAdmin()
+      .getPage(
+        Url.builder()
+          .path("/gateways")
+          .parameter(RequestParameter.BEFORE, time)
+          .parameter(RequestParameter.AFTER, time.minusDays(2))
+          .parameter(RequestParameter.REPORTED, ERROR)
+          .build(),
+        GatewayDto.class
+      );
+
+    List<GatewayDto> content = page.getContent();
+    assertThat(content).hasSize(1);
+  }
+
+  @Test
+  public void findGateways_WithoutErrorReportedMetersWithinPeriod() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    LogicalMeter logicalMeter = logicalMeters.save(
+      LogicalMeter.builder()
+        .id(randomUUID())
+        .externalId("external-1234")
+        .organisationId(dailyPlanet.id)
+        .gateway(gateway1)
+        .build()
+    );
+    PhysicalMeter physicalMeter = physicalMeters.save(
+      physicalMeterBuilder()
+        .organisation(dailyPlanet)
+        .logicalMeterId(logicalMeter.id)
+        .build()
+    );
+
+    ZonedDateTime time = ZonedDateTime.parse("2017-01-01T00:00:00Z");
+    savePhysicalMeterStatus(physicalMeter.id, OK, time.minusDays(1), null);
+
+    Page<GatewayDto> page = asSuperAdmin()
+      .getPage(
+        Url.builder()
+          .path("/gateways")
+          .parameter(RequestParameter.BEFORE, time)
+          .parameter(RequestParameter.AFTER, time.minusDays(2))
+          .parameter(RequestParameter.REPORTED, ERROR)
+          .build(),
+        GatewayDto.class
+      );
+
+    List<GatewayDto> content = page.getContent();
+    assertThat(content).hasSize(0);
+  }
+
+  @Test
   public void findGateways_WithUnknownAddress() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
@@ -459,6 +537,12 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(gateway.serial).isEqualTo("123456");
   }
 
+  private PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilder() {
+    return PhysicalMeter.builder()
+      .address(randomUUID().toString())
+      .externalId(randomUUID().toString());
+  }
+
   private Gateway saveGateway(UUID organisationId) {
     return gateways.save(Gateway.builder()
       .organisationId(organisationId)
@@ -477,6 +561,23 @@ public class GatewayControllerTest extends IntegrationTest {
       new GatewayStatusLogEntity(
         null,
         gatewayId,
+        status,
+        start,
+        stop
+      )
+    );
+  }
+
+  private void savePhysicalMeterStatus(
+    UUID physicalMeterId,
+    StatusType status,
+    ZonedDateTime start,
+    @Nullable ZonedDateTime stop
+  ) {
+    physicalMeterStatusLogJpaRepository.save(
+      new PhysicalMeterStatusLogEntity(
+        null,
+        physicalMeterId,
         status,
         start,
         stop
