@@ -138,7 +138,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
     messageConsumer.accept(message);
 
-    assertThat(gateways.findAll(null)).isEmpty();
+    assertThat(gateways.findAll()).isEmpty();
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
     assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
@@ -157,7 +157,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
     messageConsumer.accept(message);
 
-    assertThat(gateways.findAll(null)).isEmpty();
+    assertThat(gateways.findAll()).isEmpty();
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
     assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
@@ -383,7 +383,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
     messageConsumer.accept(message);
 
-    assertThat(gateways.findAll(new MockRequestParameters())).hasSize(1);
+    assertThat(gateways.findAll()).hasSize(1);
   }
 
   @Test
@@ -505,7 +505,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
-    List<Gateway> all = gateways.findAll(null);
+    List<Gateway> all = gateways.findAll();
     assertThat(all).hasSize(1);
     assertThat(all.get(0)).isEqualTo(existingGateway);
   }

@@ -104,9 +104,4 @@ public class MockRequestParameters implements RequestParameters {
   public boolean isEmpty() {
     return map.isEmpty();
   }
-
-  @Override
-  public RequestParameters shallowCopy() {
-    return new MockRequestParameters(new HashMap<>(map));
-  }
 }

@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
@@ -239,6 +240,32 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void gatewayMapMarkers_doNotIncludeMarkersWithAlarmsOutsidePeriod() {
+    Gateway gateway = saveGatewayWith(context().organisationId(), StatusType.OK);
+
+    LogicalMeter meter = saveLogicalMeterWith(kungsbacka().build(), gateway);
+
+    PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
+
+    ZonedDateTime now = ZonedDateTime.now();
+    AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
+      .start(now.minusDays(2)).stop(now.minusDays(1)).mask(1);
+
+    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter.id).build());
+    Url url = Url.builder().path("/map-markers/gateways")
+      .parameter(RequestParameter.ALARM, "yes")
+      .parameter(RequestParameter.AFTER, now.minusDays(1).plusHours(1))
+      .parameter(RequestParameter.BEFORE, now)
+      .build();
+
+    ResponseEntity<MapMarkersDto> response = asUser()
+      .get(url, MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).isEmpty();
+  }
+
+  @Test
   public void meterMapMarkers_WithoutAlarms() {
     LogicalMeter meter1 = saveLogicalMeter();
     LogicalMeter meter2 = saveLogicalMeter();
@@ -273,7 +300,13 @@ public class MapMarkerControllerTest extends IntegrationTest {
     saveLogicalMeterWith(kungsbacka().build(), gateway2);
     saveLogicalMeterWith(kungsbacka().build(), gateway3);
 
-    String url = "/map-markers/gateways?city=sverige,kungsbacka";
+    Url url = Url.builder()
+      .path("/map-markers/gateways")
+      .parameter(RequestParameter.BEFORE, NOW.plusHours(1))
+      .parameter(RequestParameter.AFTER, NOW.minusHours(1))
+      .parameter(RequestParameter.CITY, "sverige,kungsbacka")
+      .build();
+
     ResponseEntity<MapMarkersDto> foundByCorrectUser = asUser()
       .get(url, MapMarkersDto.class);
 

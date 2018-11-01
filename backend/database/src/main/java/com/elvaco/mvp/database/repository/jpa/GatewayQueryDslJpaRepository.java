@@ -1,19 +1,18 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.core.filter.Filters;
+import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.PagedGateway;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
+import com.querydsl.core.ResultTransformer;
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -22,15 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
-import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMetersPhysicalMeter;
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinReportedMeters;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static java.util.Collections.emptySet;
-import static java.util.stream.Collectors.toList;
+import static com.querydsl.core.group.GroupBy.set;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -44,39 +35,37 @@ class GatewayQueryDslJpaRepository
   }
 
   @Override
-  public List<GatewayEntity> findAll(RequestParameters parameters) {
-    return createQuery(toPredicate(parameters))
-      .select(path)
-      .distinct()
-      .fetch();
-  }
-
-  @Override
   public Page<PagedGateway> findAll(RequestParameters parameters, Pageable pageable) {
-    Predicate predicate = toPredicate(parameters);
+    Filters filters = RequestParametersMapper.toFilters(parameters);
 
-    JPQLQuery<?> countQuery = createCountQuery(predicate).select(path).distinct();
+    ConstructorExpression<PagedGateway> constructor = Projections.constructor(
+      PagedGateway.class,
+      GATEWAY.id,
+      GATEWAY.organisationId,
+      GATEWAY.serial,
+      GATEWAY.productModel,
+      set(LOGICAL_METER),
+      set(GATEWAY_STATUS_LOG)
+    );
 
-    applyDefaultJoins(countQuery, parameters);
-
-    JPQLQuery<PagedGateway> selectQuery = createQuery(predicate)
-      .select(Projections.constructor(
-        PagedGateway.class,
-        GATEWAY.id,
-        GATEWAY.organisationId,
-        GATEWAY.serial,
-        GATEWAY.productModel
-      ))
+    JPQLQuery<PagedGateway> countQuery = createCountQuery().select(constructor)
+      .distinct();
+    JPQLQuery<PagedGateway> selectQuery = createQuery().select(constructor)
       .distinct();
 
-    applyDefaultJoins(selectQuery, parameters);
+    querydsl.applyPagination(pageable, selectQuery);
 
-    List<PagedGateway> pagedGateways = querydsl.applyPagination(pageable, selectQuery).fetch();
+    new GatewayFilterQueryDslJpaVisitor().visitAndApply(
+      filters,
+      countQuery,
+      selectQuery
+    );
 
-    List<PagedGateway> content =
-      fetchAllLogicalMetersByGatewayIds(pagedGateways, parameters.shallowCopy());
+    ResultTransformer<List<PagedGateway>> transformer = GroupBy.groupBy(GATEWAY.id)
+      .list(constructor);
+    List<PagedGateway> pagedGateways = selectQuery.transform(transformer);
 
-    return getPage(content, pageable, countQuery::fetchCount);
+    return getPage(pagedGateways, pageable, countQuery::fetchCount);
   }
 
   @Override
@@ -111,70 +100,15 @@ class GatewayQueryDslJpaRepository
   }
 
   @Override
-  public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
-    Predicate predicate = toPredicate(parameters);
-    JPQLQuery<String> query = createQuery(predicate).select(GATEWAY.serial).distinct();
-    joinLocation(query, parameters);
+  public Page<String> findSerials(Filters filters, Pageable pageable) {
 
-    JPQLQuery<String> countQuery = createCountQuery(predicate).select(GATEWAY.serial).distinct();
-    joinLocation(countQuery, parameters);
+    GatewayFilterQueryDslJpaVisitor visitor = new GatewayFilterQueryDslJpaVisitor();
 
+    JPQLQuery<String> query = createQuery().select(GATEWAY.serial).distinct();
+    JPQLQuery<String> countQuery = createCountQuery().select(GATEWAY.serial).distinct();
+
+    visitor.visitAndApply(filters, query, countQuery);
     List<String> all = querydsl.applyPagination(pageable, query).fetch();
     return getPage(all, pageable, countQuery::fetchCount);
-  }
-
-  @Override
-  public Optional<GatewayEntity> findById(UUID id) {
-    Predicate predicate = GATEWAY.id.eq(id);
-    return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
-  }
-
-  private List<PagedGateway> fetchAllLogicalMetersByGatewayIds(
-    List<PagedGateway> pagedGateways,
-    RequestParameters parameters
-  ) {
-    if (isNotEmpty(pagedGateways)) {
-      parameters.setAll(ID, pagedGateways.stream()
-        .map(item -> item.id.toString())
-        .collect(toList())
-      );
-
-      Map<UUID, Set<LogicalMeterEntity>> gatewayMeters = findGatewayMeters(parameters);
-
-      return pagedGateways.stream()
-        .map(pagedGateway -> pagedGateway.toBuilder()
-          .meters(gatewayMeters.getOrDefault(pagedGateway.id, emptySet()))
-          .build())
-        .collect(toList());
-    }
-
-    return new ArrayList<>(pagedGateways);
-  }
-
-  private Map<UUID, Set<LogicalMeterEntity>> findGatewayMeters(RequestParameters parameters) {
-    JPQLQuery<GatewayEntity> query = createQuery(toPredicate(parameters)).select(path);
-    applyDefaultJoins(query, parameters);
-    return query.transform(groupBy(GATEWAY.id).as(GroupBy.set(LOGICAL_METER)));
-  }
-
-  private static void joinLocation(JPQLQuery<String> query, RequestParameters parameters) {
-    if (isLocationQuery(parameters)) {
-      query.leftJoin(GATEWAY.meters, LOGICAL_METER)
-        .leftJoin(LOGICAL_METER.location, LOCATION);
-    }
-  }
-
-  private static void applyDefaultJoins(JPQLQuery<?> query, RequestParameters parameters) {
-    query.leftJoin(GATEWAY.meters, LOGICAL_METER)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG);
-
-    joinLogicalMetersPhysicalMeter(query, parameters);
-    joinReportedMeters(query, parameters);
-    joinMeterAlarmLogs(query, parameters);
-  }
-
-  private static Predicate toPredicate(RequestParameters parameters) {
-    return new GatewayQueryFilters().toExpression(parameters);
   }
 }
