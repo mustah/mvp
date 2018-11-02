@@ -66,7 +66,7 @@ public class RequestParametersAdapterTest {
     multiValueMap.add("id", "b");
 
     RequestParametersAdapter requestParameters =
-      (RequestParametersAdapter) requestParametersOf(multiValueMap);
+      (RequestParametersAdapter) requestParametersOf(multiValueMap, LOGICAL_METER_ID);
 
     assertThat(requestParameters.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()

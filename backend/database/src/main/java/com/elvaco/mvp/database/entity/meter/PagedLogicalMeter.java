@@ -1,15 +1,20 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.measurement.MissingMeasurementEntity;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PagedLogicalMeter {
 
   public final UUID id;
@@ -17,9 +22,9 @@ public class PagedLogicalMeter {
   public final String externalId;
   public final ZonedDateTime created;
   public final MeterDefinitionEntity meterDefinition;
-  public final GatewayEntity gateway;
   public final LocationEntity location;
   public final PhysicalMeterEntity activePhysicalMeter;
+  public final GatewayEntity gateway;
   public final Long missingReadingCount;
   public final MeterAlarmLogEntity alarm;
   public final PhysicalMeterStatusLogEntity status;
@@ -34,7 +39,10 @@ public class PagedLogicalMeter {
     String city,
     String streetAddress,
     PhysicalMeterEntity activePhysicalMeter,
-    GatewayEntity gateway
+    GatewayEntity gateway,
+    Set<MissingMeasurementEntity> missingMeasurements,
+    Set<MeterAlarmLogEntity> alarms,
+    Set<PhysicalMeterStatusLogEntity> statuses
   ) {
     this(
       id,
@@ -45,36 +53,14 @@ public class PagedLogicalMeter {
       new LocationEntity(id, country, city, streetAddress),
       activePhysicalMeter,
       gateway,
-      0L,
-      null,
-      null
+      missingMeasurements.stream().distinct().count(),
+      alarms.stream()
+        .max(alarmLogComparator())
+        .orElse(null),
+      statuses.stream()
+        .max(statusLogComparator())
+        .orElse(null)
     );
-  }
-
-  private PagedLogicalMeter(
-    UUID id,
-    UUID organisationId,
-    String externalId,
-    ZonedDateTime created,
-    MeterDefinitionEntity meterDefinition,
-    LocationEntity location,
-    @Nullable PhysicalMeterEntity activePhysicalMeter,
-    @Nullable GatewayEntity gateway,
-    @Nullable Long missingReadingCount,
-    @Nullable MeterAlarmLogEntity alarm,
-    @Nullable PhysicalMeterStatusLogEntity status
-  ) {
-    this.id = id;
-    this.organisationId = organisationId;
-    this.externalId = externalId;
-    this.created = created;
-    this.meterDefinition = meterDefinition;
-    this.location = location;
-    this.activePhysicalMeter = activePhysicalMeter;
-    this.gateway = gateway;
-    this.missingReadingCount = missingReadingCount;
-    this.alarm = alarm;
-    this.status = status;
   }
 
   public long expectedReadingCount(SelectionPeriod selectionPeriod) {
@@ -83,23 +69,15 @@ public class PagedLogicalMeter {
       .orElse(0L);
   }
 
-  public PagedLogicalMeter withMetaData(
-    @Nullable Long missingReadingCount,
-    @Nullable MeterAlarmLogEntity alarm,
-    @Nullable PhysicalMeterStatusLogEntity status
-  ) {
-    return new PagedLogicalMeter(
-      id,
-      organisationId,
-      externalId,
-      created,
-      meterDefinition,
-      location,
-      activePhysicalMeter,
-      gateway,
-      missingReadingCount,
-      alarm,
-      status
-    );
+  private static Comparator<MeterAlarmLogEntity> alarmLogComparator() {
+    return Comparator
+      .comparing((MeterAlarmLogEntity meterAlarmLogEntity) -> meterAlarmLogEntity.start)
+      .thenComparing(meterAlarmLogEntity -> meterAlarmLogEntity.stop);
+  }
+
+  private static Comparator<PhysicalMeterStatusLogEntity> statusLogComparator() {
+    return Comparator
+      .comparing((PhysicalMeterStatusLogEntity meterAlarmLogEntity) -> meterAlarmLogEntity.start)
+      .thenComparing(meterAlarmLogEntity -> meterAlarmLogEntity.stop);
   }
 }

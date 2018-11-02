@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
@@ -23,7 +22,6 @@ import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
-import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity.missingMeasurementEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;

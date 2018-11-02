@@ -28,12 +28,14 @@ import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATE
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOCATION;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOGICAL_METER;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_STATUS_LOG;
+import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.PHYSICAL_METER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
 class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
+  private Predicate missingMeasurementPredicate = FALSE_PREDICATE;
   private List<Predicate> predicates = new ArrayList<>();
 
   @Override
@@ -66,6 +68,8 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
     SelectionPeriod period = periodFilter.getPeriod();
     alarmLogPredicate = inPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
     statusLogPredicate = inPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
+    missingMeasurementPredicate = MISSING_MEASUREMENT.id.expectedTime.lt(period.stop)
+      .and(MISSING_MEASUREMENT.id.expectedTime.goe(period.start));
   }
 
   @Override
@@ -128,6 +132,8 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   void applyJoins(JPQLQuery<?> q) {
     q.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
+      .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
+      .on(missingMeasurementPredicate)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .on(statusLogPredicate)
       .leftJoin(LOGICAL_METER.location, LOCATION)
