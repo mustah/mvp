@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {Period} from '../../components/dates/dateModels';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
-import {TableInfoText} from '../../components/table/TableInfoText';
+import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../helpers/Maybe';
 import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
@@ -48,7 +48,7 @@ const GatewayDetailsContent = (props: Props) => {
     <Column>
       <GatewayDetailsInfoContainer gateway={gateway.get()}/>
       <GatewayDetailsTabs {...props} gateway={gateway.get()} meters={meters.get()}/>
-      <TableInfoText/>
+      <TimestampInfoMessage/>
     </Column>
   );
 };

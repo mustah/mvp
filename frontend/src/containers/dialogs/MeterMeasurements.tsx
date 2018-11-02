@@ -6,7 +6,7 @@ import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/with
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
-import {TableInfoText} from '../../components/table/TableInfoText';
+import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Normal} from '../../components/texts/Texts';
 import {isDefined} from '../../helpers/commonUtils';
 import {timestamp} from '../../helpers/dateHelpers';
@@ -91,7 +91,7 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
       {renderReadingRows(quantities)(readings)}
       </tbody>
     </table>
-    <TableInfoText/>
+    <TimestampInfoMessage/>
   </Column>
 );
 

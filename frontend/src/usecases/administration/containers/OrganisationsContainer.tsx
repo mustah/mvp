@@ -9,7 +9,7 @@ import {RowRight} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
-import {TableInfoText} from '../../../components/table/TableInfoText';
+import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -93,7 +93,7 @@ class OrganisationsComponent extends React.Component<Props, State> {
               renderCell={renderActionDropdown}
             />
           </Table>
-          <TableInfoText/>
+          <TimestampInfoMessage/>
           <ConfirmDialog
             isOpen={this.state.isDeleteDialogOpen}
             close={this.closeDialog}
