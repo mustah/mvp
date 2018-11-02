@@ -1,15 +1,19 @@
 import {SelectionItem} from '../state/domain-models/domainModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
-import {SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
+import {ParameterName, SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, Omit, uuid} from '../types/Types';
 import {toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
 
-interface ParameterNames {
-  [key: string]: string;
+type ParameterNames = {
+  [key in ParameterName]: string;
+};
+
+interface MeterParameterNames extends ParameterNames {
+  meterIds: string;
 }
 
-const baseParameterNames: ParameterNames = {
+const frontendToApiParameters: ParameterNames = {
   addresses: 'address',
   alarms: 'alarm',
   cities: 'city',
@@ -18,17 +22,18 @@ const baseParameterNames: ParameterNames = {
   gatewaySerials: 'gatewaySerial',
   manufacturers: 'manufacturer',
   media: 'medium',
+  organisations: 'organisation',
   productModels: 'productModel',
   reported: 'reported',
   secondaryAddresses: 'secondaryAddress',
 };
 
-const gatewayParameterNames: ParameterNames = {
-  ...baseParameterNames,
+const gatewayParameters: ParameterNames = {
+  ...frontendToApiParameters,
 };
 
-const meterParameterNames: ParameterNames = {
-  ...baseParameterNames,
+export const meterParameters: ParameterNames & MeterParameterNames = {
+  ...frontendToApiParameters,
   meterIds: 'id',
 };
 
@@ -48,11 +53,11 @@ export type EntityApiParametersFactory =
 
 export const toEntityApiParametersMeters =
   (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
-    toEntityApiParameters(selectionParameters, meterParameterNames);
+    toEntityApiParameters(selectionParameters, meterParameters);
 
 export const toEntityApiParametersGateways =
   (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
-    toEntityApiParameters(selectionParameters, gatewayParameterNames);
+    toEntityApiParameters(selectionParameters, gatewayParameters);
 
 const makeParameter = (parameterNames: ParameterNames, parameter: string, id: uuid): string =>
   `${parameterNames[parameter]}=${encodeURIComponent(id.toString())}`;
@@ -71,13 +76,13 @@ const toEntityApiParameters = (
           .map(({id}: SelectionItem) => makeParameter(parameterNames, parameter, id)),
       ], []);
 
-const toMeterIdParameters = (id: uuid) => makeParameter(meterParameterNames, 'meterIds', id);
+const toMeterIdParameters = (id: uuid) => makeParameter(meterParameters, 'meterIds', id);
 
 export const toMeterIdsApiParameters = (ids: uuid[]): string =>
   encodedUriParametersFrom(ids.map(toMeterIdParameters));
 
 export const toGatewayIdsApiParameters = (ids: uuid[], gatewayId: uuid): string =>
-  encodedUriParametersFrom([makeParameter(meterParameterNames, 'gatewayIds', gatewayId)]);
+  encodedUriParametersFrom([makeParameter(meterParameters, 'gatewayIds', gatewayId)]);
 
 export const makeApiParametersOf =
   (selectionInterval: SelectionInterval): EncodedUriParameters =>

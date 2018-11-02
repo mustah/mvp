@@ -12,9 +12,11 @@ export const enum ParameterName {
   gatewaySerials = 'gatewaySerials',
   organisations = 'organisations',
   media = 'media',
-  period = 'period',
   reported = 'reported',
   secondaryAddresses = 'secondaryAddresses',
+  gatewayIds = 'gatewayIds',
+  manufacturers = 'manufacturers',
+  productModels = 'productModels',
 }
 
 export interface SelectionParameter {
