@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
@@ -55,7 +56,7 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(GatewayIdFilter gatewayIdFilter) {
-
+    predicates.add(GATEWAY.id.eq(gatewayIdFilter.oneValue()));
   }
 
   @Override

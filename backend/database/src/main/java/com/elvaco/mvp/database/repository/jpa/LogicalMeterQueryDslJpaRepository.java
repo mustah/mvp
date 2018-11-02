@@ -238,15 +238,10 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private JPQLQuery<LogicalMeterEntity> findAllQuery(RequestParameters parameters) {
-    Predicate predicate = meterPredicate(parameters);
-    JPQLQuery<LogicalMeterEntity> query = createQuery(predicate).select(path)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .fetchJoin();
-
-    joinLogicalMeterGateways(query, parameters);
-    joinMeterAlarmLogs(query, parameters);
-
+    Filters filters = RequestParametersMapper.toFilters(parameters);
+    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
+    JPQLQuery<LogicalMeterEntity> query = createQuery().select(path);
+    visitor.visitAndApply(filters, query);
     return query;
   }
 
