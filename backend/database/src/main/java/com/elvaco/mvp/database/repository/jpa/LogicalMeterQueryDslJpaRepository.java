@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.filter.RequestParametersMapper;
@@ -38,7 +37,6 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLoca
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMetersStatusLogs;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinReportedMeters;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.Collections.emptyList;
@@ -58,19 +56,24 @@ class LogicalMeterQueryDslJpaRepository
   public Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.id.eq(id));
-    return Optional.ofNullable(fetchOne(new RequestParametersAdapter(), predicate));
+    return Optional.ofNullable(fetchOne(predicate));
   }
 
   @Override
   public Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId) {
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.externalId.eq(externalId));
-    return Optional.ofNullable(fetchOne(new RequestParametersAdapter(), predicate));
+    return Optional.ofNullable(fetchOne(predicate));
   }
 
   @Override
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
-    return Optional.ofNullable(fetchOne(parameters, meterPredicate(parameters)));
+    Filters filters = RequestParametersMapper.toFilters(parameters);
+    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
+    JPQLQuery<LogicalMeterEntity> query = createQuery().select(path);
+
+    visitor.visitAndApply(filters, query);
+    return Optional.ofNullable(query.distinct().fetchOne());
   }
 
   @Override
@@ -245,16 +248,8 @@ class LogicalMeterQueryDslJpaRepository
     return query;
   }
 
-  private LogicalMeterEntity fetchOne(RequestParameters parameters, Predicate... predicate) {
-    JPQLQuery<LogicalMeterEntity> query = createQuery(predicate).select(path)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .fetchJoin();
-
-    joinMetersStatusLogs(query, parameters);
-    joinLogicalMeterGateways(query, parameters);
-    joinMeterAlarmLogs(query, parameters);
-
+  private LogicalMeterEntity fetchOne(Predicate... predicate) {
+    JPQLQuery<LogicalMeterEntity> query = createQuery(predicate).select(path);
     return query.distinct().fetchOne();
   }
 
