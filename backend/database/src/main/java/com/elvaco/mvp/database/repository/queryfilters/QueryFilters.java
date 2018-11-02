@@ -37,7 +37,6 @@ import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisati
 public abstract class QueryFilters {
 
   protected static final QMissingMeasurementEntity MISSING_MEASUREMENT = missingMeasurementEntity;
-  protected static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
   protected static final QGatewayEntity GATEWAY = gatewayEntity;
   protected static final QOrganisationEntity ORGANISATION = organisationEntity;
   protected static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;

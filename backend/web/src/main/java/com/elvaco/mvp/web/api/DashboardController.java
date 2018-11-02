@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
@@ -27,7 +28,7 @@ public class DashboardController {
   public DashboardDto getAllDashboards(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = requestParametersOf(requestParams, LOGICAL_METER_ID);
 
     return new DashboardDto(randomUUID(), findCollectionWidget(parameters));
   }

@@ -8,8 +8,9 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.filter.Filters;
+import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
@@ -21,29 +22,21 @@ import com.elvaco.mvp.database.repository.queryfilters.MissingMeasurementQueryFi
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SelectionQueryFilters;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPADeleteClause;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.MAX_VALUE;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.MIN_VALUE;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isMeasurementsQuery;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterLocation;
 import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinMeterAlarmLogs;
@@ -112,14 +105,10 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public Page<PagedLogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    Predicate predicate = measurementPredicateOrDefault(parameters);
+    Filters filters = RequestParametersMapper.toFilters(parameters);
 
-    JPQLQuery<LogicalMeterEntity> countQuery = createCountQuery(predicate).select(path)
-      .distinct();
-
-    applyDefaultJoins(countQuery, parameters);
-
-    JPQLQuery<PagedLogicalMeter> query = createQuery(predicate)
+    JPQLQuery<LogicalMeterEntity> countQuery = createCountQuery().select(path).distinct();
+    JPQLQuery<PagedLogicalMeter> query = createQuery()
       .select(Projections.constructor(
         PagedLogicalMeter.class,
         LOGICAL_METER.id,
@@ -135,13 +124,14 @@ class LogicalMeterQueryDslJpaRepository
       ))
       .distinct();
 
-    applyDefaultJoins(query, parameters);
+    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
+    visitor.visitAndApply(filters, query, countQuery);
 
     List<PagedLogicalMeter> all = querydsl.applyPagination(pageable, query).fetch();
 
     if (isNotEmpty(all)) {
       parameters.setAll(
-        ID,
+        LOGICAL_METER_ID,
         all.stream()
           .map(pagedLogicalMeter -> pagedLogicalMeter.id.toString())
           .collect(toList())
@@ -311,43 +301,7 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private Predicate measurementPredicateOrDefault(RequestParameters parameters) {
-    if (isMeasurementsQuery(parameters)) {
-      JPAQuery<UUID> logicalMeterIds = new JPAQueryFactory(entityManager)
-        .select(LOGICAL_METER.id).from(path)
-        .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-        .join(PHYSICAL_METER.measurements, MEASUREMENT)
-        .where(withMeasurementAboveMax(
-          parameters,
-          withMeasurementBelowMin(
-            parameters,
-            MEASUREMENT.id.quantity.name.eq(parameters.getFirst(QUANTITY))
-          )
-        ));
-      return LOGICAL_METER.id.in(logicalMeterIds);
-    } else {
-      return meterPredicate(parameters);
-    }
-  }
-
-  private Predicate withMeasurementBelowMin(RequestParameters parameters, Predicate predicate) {
-    return Optional.ofNullable(parameters.getFirst(MIN_VALUE))
-      .map(minVal -> (Predicate) Expressions.booleanOperation(
-        Ops.LT,
-        MEASUREMENT.value,
-        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", MeasurementUnit.from(minVal))
-        ).and(predicate)
-      ).orElse(predicate);
-  }
-
-  private Predicate withMeasurementAboveMax(RequestParameters parameters, Predicate predicate) {
-    return Optional.ofNullable(parameters.getFirst(MAX_VALUE))
-      .map(maxVal ->
-        (Predicate) Expressions.booleanOperation(
-          Ops.GT,
-          MEASUREMENT.value,
-          Expressions.simpleTemplate(MeasurementUnit.class, "{0}", MeasurementUnit.from(maxVal))
-        ).and(predicate))
-      .orElse(predicate);
+    return meterPredicate(parameters);
   }
 
   private LogicalMeterEntity fetchOne(RequestParameters parameters, Predicate... predicate) {

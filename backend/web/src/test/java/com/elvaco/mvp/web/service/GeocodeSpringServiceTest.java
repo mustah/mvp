@@ -1,7 +1,7 @@
 package com.elvaco.mvp.web.service;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -173,11 +173,7 @@ public class GeocodeSpringServiceTest {
 
     @Override
     public String apply(String url) {
-      try {
-        this.url = URLDecoder.decode(url, "UTF-8");
-      } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
-      }
+      this.url = URLDecoder.decode(url, StandardCharsets.UTF_8);
       return HttpStatus.OK.name();
     }
   }

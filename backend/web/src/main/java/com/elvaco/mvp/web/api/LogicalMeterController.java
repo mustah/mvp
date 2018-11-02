@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class LogicalMeterController {
     Pageable pageable
   ) {
     Page<LogicalMeter> page = logicalMeterUseCases.findAll(
-      requestParametersOf(requestParams),
+      requestParametersOf(requestParams, LOGICAL_METER_ID),
       new PageableAdapter(pageable)
     );
 
@@ -47,7 +48,8 @@ public class LogicalMeterController {
   public List<LogicalMeterDto> logicalMetersWithDetails(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return logicalMeterUseCases.findAllWithDetails(requestParametersOf(requestParams)).stream()
+    return logicalMeterUseCases.findAllWithDetails(
+      requestParametersOf(requestParams, LOGICAL_METER_ID)).stream()
       .map(LogicalMeterDtoMapper::toDto)
       .collect(toList());
   }

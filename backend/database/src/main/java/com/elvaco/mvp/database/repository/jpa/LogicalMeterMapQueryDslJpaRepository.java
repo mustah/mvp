@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.MapMarker;
 import com.elvaco.mvp.core.filter.Filters;
+import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -14,6 +15,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import static com.elvaco.mvp.core.domainmodels.GeoCoordinate.HIGH_CONFIDENCE;
+import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
 
 @Repository
 class LogicalMeterMapQueryDslJpaRepository
@@ -41,6 +45,8 @@ class LogicalMeterMapQueryDslJpaRepository
         LOCATION.latitude,
         LOCATION.longitude
       ));
+
+    filters.add(new LocationConfidenceFilter(HIGH_CONFIDENCE, EQUAL));
     visitor.visitAndApply(filters, query);
 
     return new HashSet<>(query.distinct().fetch());

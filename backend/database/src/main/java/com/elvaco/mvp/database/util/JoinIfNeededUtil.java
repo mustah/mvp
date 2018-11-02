@@ -16,7 +16,6 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isAlar
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isGatewayQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isPhysicalMeterQuery;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isReportedQuery;
 
 @UtilityClass
@@ -72,15 +71,6 @@ public final class JoinIfNeededUtil {
   ) {
     if (isLocationQuery(parameters)) {
       query.leftJoin(LOGICAL_METER.location, LOCATION);
-    }
-  }
-
-  public static <T> void joinLogicalMetersPhysicalMeter(
-    JPQLQuery<T> query,
-    RequestParameters parameters
-  ) {
-    if (isPhysicalMeterQuery(parameters)) {
-      query.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER);
     }
   }
 }

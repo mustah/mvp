@@ -19,7 +19,7 @@ import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestPar
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
@@ -50,12 +50,12 @@ public class RequestParametersAdapterTest {
 
     requestParameters
       .add(ORGANISATION, "b")
-      .add(ID, "d");
+      .add(LOGICAL_METER_ID, "d");
 
     assertThat(requestParameters.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()
         .put(ORGANISATION, "b")
-        .put(ID, "d")
+        .put(LOGICAL_METER_ID, "d")
         .build()
         .asMap());
   }
@@ -70,7 +70,7 @@ public class RequestParametersAdapterTest {
 
     assertThat(requestParameters.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()
-        .put(ID, "b")
+        .put(LOGICAL_METER_ID, "b")
         .build()
         .asMap());
   }
@@ -78,7 +78,7 @@ public class RequestParametersAdapterTest {
   @Test
   public void createWithPathVariables() {
     Map<RequestParameter, String> pathVariable = new HashMap<>();
-    pathVariable.put(ID, "b");
+    pathVariable.put(LOGICAL_METER_ID, "b");
     pathVariable.put(ORGANISATION, "d");
 
     RequestParametersAdapter adapter = new RequestParametersAdapter();
@@ -86,7 +86,7 @@ public class RequestParametersAdapterTest {
 
     assertThat(adapter.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()
-        .put(ID, "b")
+        .put(LOGICAL_METER_ID, "b")
         .put(ORGANISATION, "d")
         .build()
         .asMap());
@@ -96,17 +96,17 @@ public class RequestParametersAdapterTest {
   public void addSameVariableWithMultipleValues() {
     RequestParametersAdapter adapter = new RequestParametersAdapter();
     adapter
-      .add(ID, "b")
-      .add(ID, "c")
-      .add(ID, "d");
+      .add(LOGICAL_METER_ID, "b")
+      .add(LOGICAL_METER_ID, "c")
+      .add(LOGICAL_METER_ID, "d");
 
-    assertThat(adapter.getValues(ID)).containsExactly("b", "c", "d");
+    assertThat(adapter.getValues(LOGICAL_METER_ID)).containsExactly("b", "c", "d");
   }
 
   @Test
   public void createMultiMapOfPathVariableAndRequestParameters() {
     Map<RequestParameter, String> pathVariables = new HashMap<>();
-    pathVariables.put(ID, "b");
+    pathVariables.put(LOGICAL_METER_ID, "b");
     pathVariables.put(ORGANISATION, "d");
 
     Map<String, List<String>> requestParams = new HashMap<>();
@@ -119,7 +119,7 @@ public class RequestParametersAdapterTest {
 
     assertThat(adapter.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()
-        .put(ID, "b")
+        .put(LOGICAL_METER_ID, "b")
         .put(ORGANISATION, "d")
         .putAll(FACILITY, "x", "y", "z")
         .putAll(GATEWAY_SERIAL, "testing", "to")
@@ -130,7 +130,7 @@ public class RequestParametersAdapterTest {
   @Test
   public void pathVarsOverridesRequestParams() {
     Map<RequestParameter, String> pathVariables = new HashMap<>();
-    pathVariables.put(ID, "b");
+    pathVariables.put(LOGICAL_METER_ID, "b");
     pathVariables.put(CITY, "d");
 
     Map<String, List<String>> requestParams = new HashMap<>();
@@ -142,7 +142,7 @@ public class RequestParametersAdapterTest {
 
     assertThat(adapter.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()
-        .put(ID, "b")
+        .put(LOGICAL_METER_ID, "b")
         .put(CITY, "d")
         .build()
         .asMap());
@@ -170,15 +170,15 @@ public class RequestParametersAdapterTest {
   public void transformParameter() {
     RequestParameters parameters = new RequestParametersAdapter()
       .setAll(ORGANISATION, asList("1", "2"))
-      .transform(ORGANISATION, ID);
+      .transform(ORGANISATION, LOGICAL_METER_ID);
 
     assertThat(parameters.hasParam(ORGANISATION)).isFalse();
-    assertThat(parameters.getValues(ID)).containsExactly("1", "2");
+    assertThat(parameters.getValues(LOGICAL_METER_ID)).containsExactly("1", "2");
   }
 
   @Test
   public void getNonExistingValuesShouldReturnEmptyList() {
-    assertThat(new RequestParametersAdapter().getValues(ID)).isEmpty();
+    assertThat(new RequestParametersAdapter().getValues(LOGICAL_METER_ID)).isEmpty();
   }
 
   @Test
@@ -196,9 +196,9 @@ public class RequestParametersAdapterTest {
     UUID id2 = randomUUID();
 
     RequestParameters parameters = new RequestParametersAdapter()
-      .setAllIds(ID, asList(id1, id2));
+      .setAllIds(LOGICAL_METER_ID, asList(id1, id2));
 
-    assertThat(parameters.getValues(ID)).containsExactly(
+    assertThat(parameters.getValues(LOGICAL_METER_ID)).containsExactly(
       id1.toString(),
       id2.toString()
     );

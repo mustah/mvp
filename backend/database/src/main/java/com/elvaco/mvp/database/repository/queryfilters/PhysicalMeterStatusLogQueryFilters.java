@@ -31,7 +31,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
     switch (parameter) {
       case PHYSICAL_METER_ID:
         return METER_STATUS_LOG.physicalMeterId.in(toUuids(values));
-      case ID:
+      case LOGICAL_METER_ID:
         return LOGICAL_METER.id.in(toUuids(values));
       case BEFORE:
         stop = getZonedDateTimeFrom(values);

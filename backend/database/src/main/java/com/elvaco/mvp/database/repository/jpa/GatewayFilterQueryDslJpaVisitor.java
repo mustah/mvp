@@ -8,11 +8,16 @@ import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
+import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
+import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
+import com.elvaco.mvp.core.filter.ManufacturerFilter;
+import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.database.repository.queryfilters.LocationPredicates;
@@ -101,6 +106,31 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
   @Override
   public void visit(MeterStatusFilter meterStatusFilter) {
     predicates.add(METER_STATUS_LOG.status.in(meterStatusFilter.values()));
+  }
+
+  @Override
+  public void visit(MediumFilter mediumFilter) {
+
+  }
+
+  @Override
+  public void visit(FacilityFilter facilityFilter) {
+
+  }
+
+  @Override
+  public void visit(SecondaryAddressFilter secondaryAddressFilter) {
+
+  }
+
+  @Override
+  public void visit(ManufacturerFilter manufacturerFilter) {
+
+  }
+
+  @Override
+  public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {
+
   }
 
   @Override

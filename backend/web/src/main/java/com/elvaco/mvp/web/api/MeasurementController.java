@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static com.elvaco.mvp.core.util.QuantityHelper.complementWithUnits;
@@ -248,7 +248,7 @@ public class MeasurementController {
 
   private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {
     RequestParameters parameters = new RequestParametersAdapter()
-      .setAll(ID, logicalMeterIds.stream().map(UUID::toString).collect(toList()));
+      .setAll(LOGICAL_METER_ID, logicalMeterIds.stream().map(UUID::toString).collect(toList()));
     return logicalMeterUseCases.findAllBy(parameters);
   }
 

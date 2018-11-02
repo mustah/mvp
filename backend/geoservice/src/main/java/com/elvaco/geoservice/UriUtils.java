@@ -1,9 +1,9 @@
 package com.elvaco.geoservice;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,10 @@ public class UriUtils {
   }
 
   public static String decode(String encodedUrlParameter) {
-    try {
-      return URLDecoder.decode(requireNonNull(trimOrNull(encodedUrlParameter)), "UTF-8");
-    } catch (UnsupportedEncodingException ignore) {
-      // cannot happen since we always provide encoding
-    }
-    return encodedUrlParameter;
+    return URLDecoder.decode(
+      requireNonNull(trimOrNull(encodedUrlParameter)),
+      StandardCharsets.UTF_8
+    );
   }
 
   private static String trimOrNull(String str) {

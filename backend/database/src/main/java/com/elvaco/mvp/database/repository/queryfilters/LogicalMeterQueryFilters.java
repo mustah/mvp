@@ -32,7 +32,7 @@ public class LogicalMeterQueryFilters extends QueryFilters {
     List<String> values
   ) {
     switch (parameter) {
-      case ID:
+      case LOGICAL_METER_ID:
         return LOGICAL_METER.id.in(toUuids(values));
       case ORGANISATION:
         return LOGICAL_METER.organisationId.in(toUuids(values));

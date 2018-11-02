@@ -235,6 +235,46 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findGateways_WithId() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(asList(gateway1, gateway2))
+      .build());
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?id=" + gateway1.id.toString(), GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gateway1.id);
+  }
+
+  @Test
+  public void findGateways_WithGatewayId() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(asList(gateway1, gateway2))
+      .build());
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?gatewayId=" + gateway1.id.toString(), GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gateway1.id);
+  }
+
+  @Test
   public void findGateways_WithUnknownCity() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);

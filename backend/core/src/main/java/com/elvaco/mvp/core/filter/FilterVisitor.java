@@ -21,4 +21,14 @@ public interface FilterVisitor {
   void visit(LocationConfidenceFilter locationConfidenceFilter);
 
   void visit(MeterStatusFilter meterStatusFilter);
+
+  void visit(MediumFilter mediumFilter);
+
+  void visit(FacilityFilter facilityFilter);
+
+  void visit(SecondaryAddressFilter secondaryAddressFilter);
+
+  void visit(ManufacturerFilter manufacturerFilter);
+
+  void visit(LogicalMeterIdFilter logicalMeterIdFilter);
 }

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Collections.singletonList;
 
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class LogicalMeterSyncController {
     @RequestBody List<UUID> logicalMetersIds
   ) {
     RequestParameters parameters = new RequestParametersAdapter()
-      .setAllIds(ID, logicalMetersIds);
+      .setAllIds(LOGICAL_METER_ID, logicalMetersIds);
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
       .map(this::sync)

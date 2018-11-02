@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -79,6 +80,6 @@ class GeocodeUri {
   }
 
   private static String encode(String s) throws UnsupportedEncodingException {
-    return URLEncoder.encode(s, UTF_8);
+    return URLEncoder.encode(s, StandardCharsets.UTF_8);
   }
 }

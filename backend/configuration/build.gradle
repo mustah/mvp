@@ -90,8 +90,8 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
 
 task cleanUpDockerServices {
   onlyIf {
-    final def doCleanup = System.getenv('MVP_SYSTEM_TEST_DO_CLEANUP');
-    return doCleanup == null || !doCleanup.equalsIgnoreCase('false');
+    final def doCleanup = System.getenv('MVP_SYSTEM_TEST_DO_CLEANUP')
+    return doCleanup == null || !doCleanup.equalsIgnoreCase('false')
   }
   doLast {
     exec {
