@@ -1031,6 +1031,23 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findAllMeters_WithManufacturer() {
+    physicalMeters.save(physicalMeter().manufacturer("KAM")
+      .logicalMeterId(saveLogicalMeter().id)
+      .build());
+
+    physicalMeters.save(physicalMeter().manufacturer("ELV")
+      .logicalMeterId(saveLogicalMeter().id)
+      .build());
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage("/meters?manufacturer=ELV", PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).extracting("manufacturer")
+      .containsExactly("ELV");
+  }
+
+  @Test
   public void findAllMeters_WithUnknownAddress() {
     LogicalMeter.LogicalMeterBuilder logicalMeter = LogicalMeter.builder()
       .organisationId(context().organisationId());
