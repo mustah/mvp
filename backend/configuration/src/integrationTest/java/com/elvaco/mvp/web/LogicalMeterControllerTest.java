@@ -1048,6 +1048,25 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findAllMeters_WithId() {
+    UUID id1 = saveLogicalMeter().id;
+    UUID id2 = saveLogicalMeter().id;
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(id1)
+      .build());
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(id2)
+      .build());
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage("/meters?id=" + id1, PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).extracting("id")
+      .containsExactly(id1.toString());
+  }
+
+  @Test
   public void findAllMeters_WithUnknownAddress() {
     LogicalMeter.LogicalMeterBuilder logicalMeter = LogicalMeter.builder()
       .organisationId(context().organisationId());
