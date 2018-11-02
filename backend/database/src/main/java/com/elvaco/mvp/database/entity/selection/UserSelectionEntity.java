@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
@@ -19,6 +20,7 @@ import org.hibernate.envers.Audited;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "user_selection")
 @Access(AccessType.FIELD)
 @Audited

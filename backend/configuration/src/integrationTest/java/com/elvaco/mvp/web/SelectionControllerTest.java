@@ -9,6 +9,8 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
+import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.IdNamedDto;
@@ -16,16 +18,22 @@ import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
+import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectionControllerTest extends IntegrationTest {
+
+  @Autowired
+  private UserSelections userSelections;
 
   @After
   public void tearDown() {
@@ -689,6 +697,64 @@ public class SelectionControllerTest extends IntegrationTest {
     Page<IdNamedDto> response = asUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
 
     assertThat(response).extracting("name").containsExactlyInAnyOrder("1", "2");
+  }
+
+  @Test
+  public void getOrganisations_allowedBySuperAdmin() {
+    assertThat(organisations.findAll())
+      .as("The test fixtures added some organisations for us")
+      .isNotEmpty();
+
+    Page<IdNamedDto> response = asSuperAdmin()
+      .getPage("/selections/organisations", IdNamedDto.class);
+
+    assertThat(response).isNotEmpty();
+  }
+
+  @Test
+  public void getOrganisations_disallowedByUser() {
+    assertThat(organisations.findAll())
+      .as("The test fixtures added some organisations for us")
+      .isNotEmpty();
+
+    Page<IdNamedDto> response = asUser()
+      .getPage("/selections/organisations", IdNamedDto.class);
+
+    assertThat(response).isEmpty();
+  }
+
+  @Test
+  public void getOrganisations_excludesSubOrganisations() {
+    var userSelection = userSelections.save(userSelection().build());
+    var subOrganisation = createSubOrganisation(userSelection);
+
+    Page<IdNamedDto> response = asSuperAdmin()
+      .getPage("/selections/organisations", IdNamedDto.class);
+
+    assertThat(response.getContent())
+      .extracting("id")
+      .contains(subOrganisation.parent.id.toString())
+      .doesNotContain(subOrganisation.id.toString());
+  }
+
+  private Organisation createSubOrganisation(UserSelection userSelection) {
+    return organisations.save(Organisation.builder()
+      .name("sub-org")
+      .slug("sub-org")
+      .externalId("sub-org")
+      .parent(context().organisation())
+      .selection(userSelection)
+      .build()
+    );
+  }
+
+  private UserSelection.UserSelectionBuilder userSelection() {
+    return UserSelection.builder()
+      .id(randomUUID())
+      .name("a-user-selection")
+      .ownerUserId(context().superAdmin.id)
+      .organisationId(context().organisationId())
+      .selectionParameters(toJsonNode(CITIES_JSON_STRING));
   }
 
   private void prepareGateways() {

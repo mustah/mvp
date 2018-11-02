@@ -5,7 +5,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.UUID.randomUUID;
 
@@ -18,18 +22,15 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  protected Organisation copyWithId(UUID id, Organisation entity) {
-    return new Organisation(id, entity.name, entity.slug, entity.name);
-  }
-
-  @Override
-  protected UUID generateId(Organisation entity) {
-    return randomUUID();
-  }
-
-  @Override
   public List<Organisation> findAll() {
     return allMocks();
+  }
+
+  @Override
+  public Page<Organisation> findAll(
+    RequestParameters parameters, Pageable pageable
+  ) {
+    throw new NotImplementedYet();
   }
 
   @Override
@@ -58,5 +59,15 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   public Optional<Organisation> findByExternalId(String externalId) {
     return filter(organisation -> organisation.externalId.equals(externalId))
       .findFirst();
+  }
+
+  @Override
+  protected Organisation copyWithId(UUID id, Organisation entity) {
+    return new Organisation(id, entity.name, entity.slug, entity.name);
+  }
+
+  @Override
+  protected UUID generateId(Organisation entity) {
+    return randomUUID();
   }
 }

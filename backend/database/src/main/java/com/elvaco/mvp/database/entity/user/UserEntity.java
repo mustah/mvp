@@ -20,6 +20,7 @@ import javax.validation.constraints.Email;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.Language;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.envers.Audited;
@@ -29,6 +30,7 @@ import org.hibernate.envers.NotAudited;
 @NoArgsConstructor
 @ToString
 @Entity
+@Builder
 @Access(AccessType.FIELD)
 @Table(name = "mvp_user")
 @Audited

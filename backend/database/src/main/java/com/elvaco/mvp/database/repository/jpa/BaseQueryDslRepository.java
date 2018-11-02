@@ -13,6 +13,7 @@ import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+import com.elvaco.mvp.database.entity.user.QOrganisationEntity;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
@@ -31,6 +32,7 @@ import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAla
 import static com.elvaco.mvp.database.entity.meter.QMeterDefinitionEntity.meterDefinitionEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisationEntity;
 
 @NoRepositoryBean
 abstract class BaseQueryDslRepository<T, I extends Serializable>
@@ -41,6 +43,7 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
   static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
   static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
   static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
+  static final QOrganisationEntity ORGANISATION = organisationEntity;
   static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG = physicalMeterStatusLogEntity;
   static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;
   static final QMeasurementEntity MEASUREMENT = measurementEntity;
