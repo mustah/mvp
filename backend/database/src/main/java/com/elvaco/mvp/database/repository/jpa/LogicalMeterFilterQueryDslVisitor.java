@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
@@ -28,6 +27,7 @@ import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.ALAR
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATEWAY;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOCATION;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOGICAL_METER;
+import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_DEFINITION;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_STATUS_LOG;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.PHYSICAL_METER;
@@ -133,6 +133,7 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   void applyJoins(JPQLQuery<?> q) {
     q.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
+      .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION)
       .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
       .on(missingMeasurementPredicate)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
