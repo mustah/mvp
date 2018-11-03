@@ -110,27 +110,26 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(MediumFilter mediumFilter) {
-
+    predicates.add(LOGICAL_METER.meterDefinition.medium.in(mediumFilter.values()));
   }
 
   @Override
   public void visit(FacilityFilter facilityFilter) {
-
+    predicates.add(LOGICAL_METER.externalId.in(facilityFilter.values()));
   }
 
   @Override
   public void visit(SecondaryAddressFilter secondaryAddressFilter) {
-
+    predicates.add(PHYSICAL_METER.address.in(secondaryAddressFilter.values()));
   }
 
   @Override
   public void visit(ManufacturerFilter manufacturerFilter) {
-
+    predicates.add(PHYSICAL_METER.manufacturer.in(manufacturerFilter.values()));
   }
 
   @Override
   public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {
-
   }
 
   @Override
