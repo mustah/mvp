@@ -30,10 +30,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isDateRange;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static java.util.Collections.emptyList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -159,10 +157,6 @@ class LogicalMeterQueryDslJpaRepository
   public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
     RequestParameters parameters
   ) {
-    if (!isDateRange(parameters)) {
-      return emptyList();
-    }
-
     Filters filters = RequestParametersMapper.toFilters(parameters);
     LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
     JPQLQuery<LogicalMeterCollectionStats> query = createQuery()
