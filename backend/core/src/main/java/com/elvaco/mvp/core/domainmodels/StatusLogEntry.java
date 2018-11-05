@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.Dates;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,7 @@ import lombok.ToString;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 @ToString
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class StatusLogEntry<T> implements Identifiable<Long> {
 
   @Nullable
@@ -25,7 +24,7 @@ public class StatusLogEntry<T> implements Identifiable<Long> {
   @Nullable
   public final ZonedDateTime stop;
 
-  static <T> StatusLogEntry<T> unknownFor(Identifiable<T> entity) {
+  public static <T> StatusLogEntry<T> unknownFor(Identifiable<T> entity) {
     return StatusLogEntry.<T>builder()
       .entityId(entity.getId())
       .status(StatusType.UNKNOWN)

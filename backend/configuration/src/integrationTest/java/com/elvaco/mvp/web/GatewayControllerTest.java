@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -233,6 +234,33 @@ public class GatewayControllerTest extends IntegrationTest {
 
     assertThat(content.getContent()).hasSize(1);
     assertThat(content.getContent().get(0).serial).isEqualTo("1");
+  }
+
+  @Test
+  public void findGateways_MultipleMetersConnected() {
+    Gateway gateway = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-1")
+      .organisationId(dailyPlanet.id)
+      .location(new LocationBuilder().city("stockholm").build())
+      .gateways(asList(gateway))
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(randomUUID())
+      .externalId("external-2")
+      .organisationId(dailyPlanet.id)
+      .location(new LocationBuilder().city("kungsbacka").build())
+      .gateways(asList(gateway))
+      .build());
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?id=" + gateway.id.toString(), GatewayDto.class);
+
+    assertThat(content).hasSize(1);
+    GatewayDto gatewayDto = content.getContent().get(0);
+    assertThat(gatewayDto.meterIds).hasSize(2);
   }
 
   @Test

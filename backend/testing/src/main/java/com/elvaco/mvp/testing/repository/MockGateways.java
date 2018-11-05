@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -21,7 +22,7 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
   }
 
   @Override
-  public Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable) {
+  public Page<GatewaySummaryDto> findAll(RequestParameters requestParameters, Pageable pageable) {
     return null;
   }
 

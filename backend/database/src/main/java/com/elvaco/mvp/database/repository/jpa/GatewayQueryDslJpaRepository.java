@@ -5,11 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+import com.elvaco.mvp.core.dto.GatewaySummaryDto;
+import com.elvaco.mvp.core.dto.LogicalMeterLocation;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.entity.gateway.PagedGateway;
 import com.querydsl.core.ResultTransformer;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ConstructorExpression;
@@ -35,22 +37,41 @@ class GatewayQueryDslJpaRepository
   }
 
   @Override
-  public Page<PagedGateway> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
     Filters filters = RequestParametersMapper.toFilters(parameters);
 
-    ConstructorExpression<PagedGateway> constructor = Projections.constructor(
-      PagedGateway.class,
+    ConstructorExpression<GatewaySummaryDto> constructor = Projections.constructor(
+      GatewaySummaryDto.class,
       GATEWAY.id,
       GATEWAY.organisationId,
       GATEWAY.serial,
       GATEWAY.productModel,
-      set(LOGICAL_METER),
-      set(GATEWAY_STATUS_LOG)
+      set(Projections.constructor(
+        StatusLogEntry.class,
+        GATEWAY_STATUS_LOG.id,
+        GATEWAY_STATUS_LOG.gatewayId,
+        GATEWAY_STATUS_LOG.status,
+        GATEWAY_STATUS_LOG.start,
+        GATEWAY_STATUS_LOG.stop
+        ).skipNulls()
+      ),
+      set(
+        Projections.constructor(
+          LogicalMeterLocation.class,
+          LOGICAL_METER.id,
+          LOCATION.latitude,
+          LOCATION.longitude,
+          LOCATION.confidence,
+          LOCATION.country,
+          LOCATION.city,
+          LOCATION.streetAddress
+        ).skipNulls()
+      )
     );
 
-    JPQLQuery<PagedGateway> countQuery = createCountQuery().select(constructor)
+    JPQLQuery<GatewaySummaryDto> countQuery = createCountQuery().select(constructor)
       .distinct();
-    JPQLQuery<PagedGateway> selectQuery = createQuery().select(constructor)
+    JPQLQuery<GatewaySummaryDto> selectQuery = createQuery().select(constructor)
       .distinct();
 
     querydsl.applyPagination(pageable, selectQuery);
@@ -61,9 +82,10 @@ class GatewayQueryDslJpaRepository
       selectQuery
     );
 
-    ResultTransformer<List<PagedGateway>> transformer = GroupBy.groupBy(GATEWAY.id)
-      .list(constructor);
-    List<PagedGateway> pagedGateways = selectQuery.transform(transformer);
+    ResultTransformer<List<GatewaySummaryDto>> transformer = GroupBy.groupBy(
+      GATEWAY.id
+    ).list(constructor);
+    List<GatewaySummaryDto> pagedGateways = selectQuery.transform(transformer);
 
     return getPage(pagedGateways, pageable, countQuery::fetchCount);
   }

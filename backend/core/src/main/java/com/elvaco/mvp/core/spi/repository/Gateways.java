@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -13,7 +14,7 @@ public interface Gateways {
 
   List<Gateway> findAll();
 
-  Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable);
+  Page<GatewaySummaryDto> findAll(RequestParameters requestParameters, Pageable pageable);
 
   Gateway save(Gateway gateway);
 

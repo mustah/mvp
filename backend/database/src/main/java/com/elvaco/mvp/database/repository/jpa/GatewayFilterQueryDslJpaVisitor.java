@@ -139,11 +139,14 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   void applyJoins(JPQLQuery<?> q) {
-    q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG).on(statusLogPredicate)
+    q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
+      .on(statusLogPredicate)
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
       .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG).on(alarmLogPredicate)
-      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG).on(meterStatusLogPredicate);
+      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
+      .on(alarmLogPredicate)
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
+      .on(meterStatusLogPredicate);
   }
 }
