@@ -43,7 +43,7 @@ export class OrganisationEditForm extends React.Component<Props, State> {
   }
 
   render() {
-    const {id, parent, name, slug, selectionId} = this.state;
+    const {parent, name, slug, selectionId} = this.state;
     const {organisations, selections} = this.props;
 
     const nameLabel = firstUpperTranslated('organisation name');
@@ -55,7 +55,8 @@ export class OrganisationEditForm extends React.Component<Props, State> {
 
     const organisationOptions: Organisation[] = [
       noOrganisation(),
-      ...organisations.filter((organisation: Organisation) => organisation.id !== id)
+      ...organisations
+        .filter((organisation: Organisation) => !organisation.parent)
     ];
 
     const selectionChooser =
