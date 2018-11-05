@@ -26,27 +26,21 @@ interface MarkerBounds {
 }
 
 export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
-  const mapMarkers = flattenMapMarkers(markers);
+  const mapMarkers: MapMarker[] = flattenMapMarkers(markers);
 
-  const bounds = Object.keys(mapMarkers)
+  const bounds: MarkerBounds = Object.keys(mapMarkers)
     .reduce(
       (sum: MarkerBounds, markerId: string) => {
         const {latitude, longitude} = mapMarkers[markerId];
 
         if (!isNaN(latitude)) {
-          if (latitude < sum.minLat) {
-            sum.minLat = latitude;
-          } else if (latitude > sum.maxLat) {
-            sum.maxLat = latitude;
-          }
+          sum.minLat = Math.min(sum.minLat, latitude);
+          sum.maxLat = Math.max(sum.maxLat, latitude);
         }
 
         if (!isNaN(longitude)) {
-          if (longitude < sum.minLong) {
-            sum.minLong = longitude;
-          } else if (longitude > sum.maxLong) {
-            sum.maxLong = longitude;
-          }
+          sum.minLong = Math.min(sum.minLong, longitude);
+          sum.maxLong = Math.max(sum.maxLong, longitude);
         }
 
         return sum;
@@ -59,7 +53,7 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
       },
     );
 
-  const changedBounds = Object.keys(bounds)
+  const changedBounds: string[] = Object.keys(bounds)
     .filter((bound) =>
       !Number.isNaN(bounds[bound])
       && bounds[bound] !== 9999
@@ -81,7 +75,7 @@ const lowConfidenceTextInfo = (
   translateWith: (count: number) => string,
 ): string | undefined => {
   const numMarkersWithLowConfidence = totalMeters - totalMarkers;
-  return numMarkersWithLowConfidence ? translateWith(numMarkersWithLowConfidence) : undefined;
+  return numMarkersWithLowConfidence > 0 ? translateWith(numMarkersWithLowConfidence) : undefined;
 };
 
 export const meterLowConfidenceTextInfo = (
