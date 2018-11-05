@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.usecase;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,6 +9,9 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.security.Permission;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import lombok.AllArgsConstructor;
 
@@ -17,7 +19,9 @@ import static com.elvaco.mvp.core.security.Permission.CREATE;
 import static com.elvaco.mvp.core.security.Permission.DELETE;
 import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
+import static com.elvaco.mvp.core.spi.data.EmptyPage.EMPTY_PAGE;
 import static com.elvaco.mvp.core.util.Slugify.slugify;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 @AllArgsConstructor
@@ -31,7 +35,21 @@ public class OrganisationUseCases {
     if (currentUser.isSuperAdmin()) {
       return organisations.findAll();
     }
-    return Collections.emptyList();
+    return emptyList();
+  }
+
+  public Page<Organisation> findAllMainOrganisations(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    if (currentUser.isSuperAdmin()) {
+      return organisations.findAllMainOrganisations(
+        parameters.ensureOrganisationFilters(currentUser),
+        pageable
+      );
+    } else {
+      return EMPTY_PAGE;
+    }
   }
 
   public Optional<Organisation> findById(UUID id) {
@@ -73,7 +91,7 @@ public class OrganisationUseCases {
       return organisations.save(organisation);
     } else {
       throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to save "
-                             + "this organisation");
+        + "this organisation");
     }
   }
 }

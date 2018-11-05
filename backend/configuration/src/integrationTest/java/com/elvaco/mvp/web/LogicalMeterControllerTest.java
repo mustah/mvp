@@ -1150,6 +1150,94 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findAllMetersPaged_WithOrganisationAsUser() {
+    LogicalMeter anotherOrganisationsMeter = logicalMeters.save(
+      logicalMeterBuilder(UNKNOWN_METER)
+        .organisationId(context().organisationId2())
+        .externalId("someone-elses-meter")
+        .build()
+    );
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(anotherOrganisationsMeter.id)
+      .externalId("someone-elses-meter")
+      .organisation(context().organisation2())
+      .build()
+    );
+
+    LogicalMeter usersMeter = logicalMeters.save(
+      LogicalMeter.builder()
+        .organisationId(context().organisationId())
+        .externalId("users-meter")
+        .build()
+    );
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(usersMeter.id)
+      .externalId("users-meter")
+      .organisation(context().organisation())
+      .build()
+    );
+
+    var allMeters = asUser().getPage("/meters", PagedLogicalMeterDto.class);
+
+    assertThat(allMeters.getContent())
+      .extracting("organisationId")
+      .containsExactly(context().organisationId());
+
+    asUser()
+      .getPage(
+        "/meters?organisation={id}",
+        PagedLogicalMeterDto.class,
+        context().organisationId2()
+      );
+
+    assertThat(allMeters.getContent())
+      .as("The requested organisation was ignored, and implicitly replaced with the user's")
+      .extracting("organisationId")
+      .containsExactly(context().organisationId());
+  }
+
+  @Test
+  public void findAllMetersPaged_WithOrganisationAsSuperAdmin() {
+    LogicalMeter anotherOrganisationsMeter = logicalMeters.save(
+      logicalMeterBuilder(UNKNOWN_METER)
+        .organisationId(context().organisationId2())
+        .build()
+    );
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(anotherOrganisationsMeter.id)
+      .externalId("someone-elses-meter")
+      .organisation(context().organisation2())
+      .build()
+    );
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .externalId("super-admins-meter")
+      .organisation(context().superAdmin.organisation)
+      .build()
+    );
+
+    var allMeters = asSuperAdmin().getPage("/meters", PagedLogicalMeterDto.class);
+
+    assertThat(allMeters.getContent()).hasSize(2);
+
+    var oneOrganisation = asSuperAdmin()
+      .getPage(
+        "/meters?organisation={id}",
+        PagedLogicalMeterDto.class,
+        context().organisationId2()
+      );
+
+    assertThat(oneOrganisation.getContent())
+      .hasSize(1)
+      .extracting("id")
+      .containsExactly(anotherOrganisationsMeter.id);
+  }
+
+  @Test
   public void userCanNotRemoveLogicalMeter() {
     LogicalMeter districtHeatingMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
     PhysicalMeter physicalMeter = physicalMeters.save(

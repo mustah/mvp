@@ -17,6 +17,7 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+import com.elvaco.mvp.database.entity.user.QOrganisationEntity;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
@@ -28,6 +29,7 @@ import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMe
 import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisationEntity;
 
 /**
  * A mapper of property filters to QueryDsl predicates.
@@ -37,6 +39,7 @@ public abstract class QueryFilters {
   protected static final QMissingMeasurementEntity MISSING_MEASUREMENT = missingMeasurementEntity;
   protected static final QGatewayStatusLogEntity GATEWAY_STATUS_LOG = gatewayStatusLogEntity;
   protected static final QGatewayEntity GATEWAY = gatewayEntity;
+  protected static final QOrganisationEntity ORGANISATION = organisationEntity;
   protected static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
   protected static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
   protected static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;

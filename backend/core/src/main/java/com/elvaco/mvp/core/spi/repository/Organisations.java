@@ -5,10 +5,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Organisations {
 
   List<Organisation> findAll();
+
+  Page<Organisation> findAllMainOrganisations(RequestParameters parameters, Pageable pageable);
 
   Optional<Organisation> findById(UUID id);
 

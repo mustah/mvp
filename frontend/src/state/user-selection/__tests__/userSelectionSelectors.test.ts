@@ -1,6 +1,7 @@
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
+import {meterParameters} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
@@ -53,7 +54,10 @@ describe('userSelectionSelectors', () => {
     expect(initialEncodedParameters).toEqual(`${latestUrlParameters}&size=${limit}&page=0`);
   });
 
-  describe('parameters', () => {
+  describe('getPaginatedMeterParameters', () => {
+
+    const urlForParameters = (parameters: EncodedUriParameters): URL =>
+      new URL(`${'https://blabla.com'}/?${parameters}`);
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
@@ -128,6 +132,40 @@ describe('userSelectionSelectors', () => {
       });
 
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=bro`);
+    });
+
+    it('includes organisations', () => {
+      const anOrganisation: IdNamed = {id: 'hello', name: 'there'};
+      const anotherOrganisation: IdNamed = {id: 'good', name: 'bye'};
+
+      const firstPayload: SelectionParameter = {item: {...anOrganisation}, parameter: ParameterName.organisations};
+      const secondPayload: SelectionParameter = {
+        item: {...anotherOrganisation},
+        parameter: ParameterName.organisations
+      };
+
+      const oneOrganisation: UserSelectionState = userSelection(initialState, addParameterToSelection(firstPayload));
+      const twoOrganisations: UserSelectionState = userSelection(
+        oneOrganisation,
+        addParameterToSelection(secondPayload)
+      );
+
+      const stateWithOrganisation: UriLookupStatePaginated = {
+        ...initialUriLookupState,
+        userSelection: {
+          ...twoOrganisations.userSelection,
+          selectionParameters: {
+            organisations: [{...anOrganisation}],
+            dateRange: {
+              period: Period.latest,
+            },
+          },
+        },
+      };
+
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters(stateWithOrganisation);
+      const url: URL = urlForParameters(parameters);
+      expect(url.searchParams.getAll(meterParameters.organisations)).toEqual([anOrganisation.id]);
     });
   });
 
@@ -344,7 +382,7 @@ describe('userSelectionSelectors', () => {
 
   });
 
-  describe('get selected period', () => {
+  describe('getSelectedPeriod', () => {
 
     it('there is a default period', () => {
       expect(initialState.userSelection.selectionParameters.dateRange)

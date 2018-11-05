@@ -33,6 +33,7 @@ public enum RequestParameter {
   Q("q"),
   Q_FACILITY(null),
   Q_ADDRESS(null),
+  Q_ORGANISATION(null),
   Q_SECONDARY_ADDRESS(null),
   Q_SERIAL(null),
   Q_CITY(null),

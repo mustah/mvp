@@ -1,15 +1,18 @@
 package com.elvaco.mvp.web.api;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LocationUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
+import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
-import static java.util.Collections.emptyList;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/selections")
@@ -29,6 +31,8 @@ public class SelectionController {
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final LocationUseCases locationUseCases;
   private final GatewayUseCases gatewayUseCases;
+  private final OrganisationUseCases organisationUseCases;
+  private final AuthenticatedUser authenticatedUser;
 
   @GetMapping("meter-alarms")
   public org.springframework.data.domain.Page<IdNamedDto> meterAlarms() {
@@ -130,6 +134,15 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    return new PageImpl<>(emptyList(), pageable, 0);
+    RequestParameters parameters = requestParametersOf(requestParams).transform(
+      RequestParameter.Q,
+      RequestParameter.Q_ORGANISATION
+    );
+    PageableAdapter adapter = new PageableAdapter(pageable);
+
+    Page<IdNamedDto> page = organisationUseCases.findAllMainOrganisations(parameters, adapter)
+      .map(OrganisationDtoMapper::toIdNamedDto);
+
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
   }
 }

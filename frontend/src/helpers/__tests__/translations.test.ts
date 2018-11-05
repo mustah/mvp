@@ -36,10 +36,6 @@ describe('translations', () => {
 
     describe('getTranslationOrName', () => {
 
-      it('does not translate parameter name period', () => {
-        expect(getTranslationOrName('unknown', ParameterName.period)).toEqual('unknown');
-      });
-
       it('does not translate city name when not unknown', () => {
         expect(getTranslationOrName('kungsbacka', ParameterName.cities)).toEqual('kungsbacka');
         expect(getTranslationOrName('kabelgatan 1', ParameterName.addresses)).toEqual('kabelgatan 1');
