@@ -75,8 +75,8 @@ mvp:
       requeueRejected: false
       deadLetterExchange: "mvp.dead.letter"
       meteringFanoutExchange: "mvp.fanout"
-      prefetchCount: 100
-      txSize: 100
+      prefetchCount: 250
+      txSize: 1
   superadmin:
     email: "mvpadmin@elvaco.se"
     password: "changeme"
