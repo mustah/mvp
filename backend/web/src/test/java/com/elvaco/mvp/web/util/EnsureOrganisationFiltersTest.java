@@ -107,7 +107,6 @@ public class EnsureOrganisationFiltersTest {
     var interestingOrganisations = asList(randomUUID(), randomUUID())
       .stream().map(UUID::toString).collect(toList());
     var usersOrganisation = Organisation.builder()
-      .id(randomUUID())
       .slug(randomUUID().toString())
       .build();
     var parameters = new RequestParametersAdapter()
@@ -122,7 +121,6 @@ public class EnsureOrganisationFiltersTest {
     var organisationsToSpyOn = asList(randomUUID(), randomUUID())
       .stream().map(UUID::toString).collect(toList());
     var usersOrganisation = Organisation.builder()
-      .id(randomUUID())
       .slug(randomUUID().toString())
       .build();
     var parameters = new RequestParametersAdapter()
