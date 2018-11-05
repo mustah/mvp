@@ -34,21 +34,13 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
         const {latitude, longitude} = mapMarkers[markerId];
 
         if (!isNaN(latitude)) {
-          if (latitude < sum.minLat) {
-            sum.minLat = latitude;
-          }
-          if (latitude > sum.maxLat) {
-            sum.maxLat = latitude;
-          }
+          sum.minLat = Math.min(sum.minLat, latitude);
+          sum.maxLat = Math.max(sum.maxLat, latitude);
         }
 
         if (!isNaN(longitude)) {
-          if (longitude < sum.minLong) {
-            sum.minLong = longitude;
-          }
-          if (longitude > sum.maxLong) {
-            sum.maxLong = longitude;
-          }
+          sum.minLong = Math.min(sum.minLong, longitude);
+          sum.maxLong = Math.max(sum.maxLong, longitude);
         }
 
         return sum;
