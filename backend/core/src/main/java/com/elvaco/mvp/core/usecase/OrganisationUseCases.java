@@ -19,6 +19,7 @@ import static com.elvaco.mvp.core.security.Permission.CREATE;
 import static com.elvaco.mvp.core.security.Permission.DELETE;
 import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
+import static com.elvaco.mvp.core.spi.data.EmptyPage.EMPTY_PAGE;
 import static com.elvaco.mvp.core.util.Slugify.slugify;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -41,10 +42,14 @@ public class OrganisationUseCases {
     RequestParameters parameters,
     Pageable pageable
   ) {
-    return organisations.findAllParentOrganisations(
-      parameters.ensureOrganisationFilters(currentUser),
-      pageable
-    );
+    if (currentUser.isSuperAdmin()) {
+      return organisations.findAllParentOrganisations(
+        parameters.ensureOrganisationFilters(currentUser),
+        pageable
+      );
+    } else {
+      return EMPTY_PAGE;
+    }
   }
 
   public Optional<Organisation> findById(UUID id) {

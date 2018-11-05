@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
-import static java.util.Collections.emptyList;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/selections")
@@ -135,10 +134,6 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    if (!authenticatedUser.isSuperAdmin()) {
-      return new PageImpl<>(emptyList(), pageable, 0);
-    }
-
     RequestParameters parameters = requestParametersOf(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_ORGANISATION
