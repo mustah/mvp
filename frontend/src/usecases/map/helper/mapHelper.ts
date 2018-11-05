@@ -26,9 +26,9 @@ interface MarkerBounds {
 }
 
 export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
-  const mapMarkers = flattenMapMarkers(markers);
+  const mapMarkers: MapMarker[] = flattenMapMarkers(markers);
 
-  const bounds = Object.keys(mapMarkers)
+  const bounds: MarkerBounds = Object.keys(mapMarkers)
     .reduce(
       (sum: MarkerBounds, markerId: string) => {
         const {latitude, longitude} = mapMarkers[markerId];
@@ -36,7 +36,8 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
         if (!isNaN(latitude)) {
           if (latitude < sum.minLat) {
             sum.minLat = latitude;
-          } else if (latitude > sum.maxLat) {
+          }
+          if (latitude > sum.maxLat) {
             sum.maxLat = latitude;
           }
         }
@@ -44,7 +45,8 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
         if (!isNaN(longitude)) {
           if (longitude < sum.minLong) {
             sum.minLong = longitude;
-          } else if (longitude > sum.maxLong) {
+          }
+          if (longitude > sum.maxLong) {
             sum.maxLong = longitude;
           }
         }
@@ -59,7 +61,7 @@ export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Bounds => {
       },
     );
 
-  const changedBounds = Object.keys(bounds)
+  const changedBounds: string[] = Object.keys(bounds)
     .filter((bound) =>
       !Number.isNaN(bounds[bound])
       && bounds[bound] !== 9999

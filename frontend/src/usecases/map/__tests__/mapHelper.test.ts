@@ -1,6 +1,6 @@
-import {Status} from '../../../types/Types';
-import {flatMapMarkers, flattenMapMarkers} from '../helper/mapHelper';
-import {IdentifiablePosition, MapMarker, MapMarkerApiResponse} from '../mapModels';
+import {Dictionary, Status} from '../../../types/Types';
+import {boundsFromMarkers, flatMapMarkers, flattenMapMarkers} from '../helper/mapHelper';
+import {Bounds, IdentifiablePosition, MapMarker, MapMarkerApiResponse} from '../mapModels';
 
 describe('mapHelper', () => {
 
@@ -91,6 +91,29 @@ describe('mapHelper', () => {
 
       expect(mapMarkers).toEqual(expected);
     });
+  });
+
+  describe('boundsFromMarkers', () => {
+
+    it('finds bounds of single meter with latitude and longitude', () => {
+      const latitude = 66.3091086409441;
+      const longitude = 14.1472317996851;
+      const mapMarkers: Dictionary<MapMarker> = {
+        '0030734d-743a-4915-ae9f-5e07b5866e22': {
+          id: '0030734d-743a-4915-ae9f-5e07b5866e22',
+          latitude,
+          longitude,
+          status: Status.ok,
+        }
+      };
+
+      const actual: Bounds = boundsFromMarkers(mapMarkers);
+
+      const expected: Bounds = [[latitude, longitude], [latitude, longitude]];
+
+      expect(actual).toEqual(expected);
+    });
+
   });
 
 });
