@@ -33,7 +33,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -241,19 +240,17 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1")
       .organisationId(dailyPlanet.id)
       .location(new LocationBuilder().city("stockholm").build())
-      .gateways(asList(gateway))
+      .gateway(gateway)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-2")
       .organisationId(dailyPlanet.id)
       .location(new LocationBuilder().city("kungsbacka").build())
-      .gateways(asList(gateway))
+      .gateway(gateway)
       .build());
     Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?id=" + gateway.id.toString(), GatewayDto.class);
@@ -269,10 +266,9 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway1, gateway2))
+      .gateways(List.of(gateway1, gateway2))
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -289,10 +285,9 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway1, gateway2))
+      .gateways(List.of(gateway1, gateway2))
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -309,19 +304,17 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway districtHeatingGateway = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .meterDefinition(MeterDefinition.GAS_METER)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gasGateway))
+      .gateway(gasGateway)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
-      .gateways(asList(districtHeatingGateway))
+      .gateway(districtHeatingGateway)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -338,19 +331,17 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway5678 = saveGateway(dailyPlanet.id);
 
     LogicalMeter meter1234 = logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .meterDefinition(MeterDefinition.GAS_METER)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway1234))
+      .gateway(gateway1234)
       .build());
 
     LogicalMeter meter5678 = logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway5678))
+      .gateway(gateway5678)
       .build());
 
     physicalMeters.save(
@@ -383,17 +374,15 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway bbbGateway = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("aaa")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(aaaGateway))
+      .gateway(aaaGateway)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("bbb")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(bbbGateway))
+      .gateway(bbbGateway)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -411,18 +400,16 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gatewayKam = saveGateway(dailyPlanet.id);
 
     LogicalMeter meterElv = logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .meterDefinition(MeterDefinition.GAS_METER)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gatewayElv))
+      .gateway(gatewayElv)
       .build());
 
     LogicalMeter meterKam = logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gatewayKam))
+      .gateway(gatewayKam)
       .build());
 
     physicalMeters.save(
@@ -456,15 +443,13 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway3 = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway1, gateway2))
+      .gateways(List.of(gateway1, gateway2))
       .location(UNKNOWN_LOCATION)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(gateway3))
@@ -482,7 +467,6 @@ public class GatewayControllerTest extends IntegrationTest {
     double lowConfidence = 0.6;
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(saveGateway(dailyPlanet.id)))
@@ -500,7 +484,6 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     LogicalMeter logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
         .gateway(gateway1)
@@ -536,7 +519,6 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     LogicalMeter logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
         .gateway(gateway1)
@@ -574,7 +556,6 @@ public class GatewayControllerTest extends IntegrationTest {
     Location unknownAddress = kungsbacka().address(null).build();
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
       .gateway(gateway1)
@@ -582,7 +563,6 @@ public class GatewayControllerTest extends IntegrationTest {
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateway(gateway2)
