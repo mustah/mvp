@@ -3,7 +3,6 @@ package com.elvaco.mvp.web;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -1031,6 +1030,61 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findAllMeters_WithManufacturer() {
+    physicalMeters.save(physicalMeter().manufacturer("KAM")
+      .logicalMeterId(saveLogicalMeter().id)
+      .build());
+
+    physicalMeters.save(physicalMeter().manufacturer("ELV")
+      .logicalMeterId(saveLogicalMeter().id)
+      .build());
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage("/meters?manufacturer=ELV", PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).extracting("manufacturer")
+      .containsExactly("ELV");
+  }
+
+  @Test
+  public void findAllMeters_WithId() {
+    UUID id1 = saveLogicalMeter().id;
+    UUID id2 = saveLogicalMeter().id;
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(id1)
+      .build());
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(id2)
+      .build());
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage("/meters?id=" + id1, PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).extracting("id")
+      .containsExactly(id1);
+  }
+
+  @Test
+  public void findAllMeters_WithLogicalMeterId() {
+    UUID id1 = saveLogicalMeter().id;
+    UUID id2 = saveLogicalMeter().id;
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(id1)
+      .build());
+
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(id2)
+      .build());
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage("/meters?logicalMeterId=" + id1, PagedLogicalMeterDto.class);
+
+    assertThat(result.getContent()).extracting("id")
+      .containsExactly(id1);
+  }
+
+  @Test
   public void findAllMeters_WithUnknownAddress() {
     LogicalMeter.LogicalMeterBuilder logicalMeter = LogicalMeter.builder()
       .organisationId(context().organisationId());
@@ -1057,96 +1111,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(result.getContent()).extracting("facility")
       .containsExactly("abc");
-  }
-
-  @Test
-  public void findAllMetersPaged_WithMeasurementAboveMax() {
-    LogicalMeter firstLogicalMeter = saveLogicalMeter();
-    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(firstLogicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    addMeasurementsForMeter(
-      firstMeter,
-      Collections.singleton(Quantity.POWER),
-      ZonedDateTime.now().minusHours(2),
-      Duration.ofHours(3),
-      60L,
-      2.0,
-      1.0
-    );
-
-    LogicalMeter secondLogicalMeter = saveLogicalMeter();
-    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(secondLogicalMeter.id)
-      .externalId("meter-two")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    addMeasurementsForMeter(
-      secondMeter,
-      Collections.singleton(Quantity.POWER),
-      ZonedDateTime.now().minusHours(2),
-      Duration.ofHours(3),
-      60L,
-      3.0,
-      1.0
-    );
-
-    Page<PagedLogicalMeterDto> page = asUser()
-      .getPage("/meters?quantity=Power&maxValue=4.0+W", PagedLogicalMeterDto.class);
-
-    assertThat(page.getTotalElements()).isEqualTo(1);
-    assertThat(page.getContent().get(0).id).isEqualTo(secondLogicalMeter.id);
-  }
-
-  @Test
-  public void findAllMetersPaged_WithMeasurementBelowMin() {
-    LogicalMeter firstLogicalMeter = saveLogicalMeter();
-    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(firstLogicalMeter.id)
-      .externalId("meter-one")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    addMeasurementsForMeter(
-      firstMeter,
-      Collections.singleton(Quantity.POWER),
-      ZonedDateTime.now().minusHours(2),
-      Duration.ofHours(3),
-      60L,
-      2.0,
-      1.0
-    );
-
-    LogicalMeter secondLogicalMeter = saveLogicalMeter();
-    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(secondLogicalMeter.id)
-      .externalId("meter-two")
-      .readIntervalMinutes(15)
-      .build()
-    );
-
-    addMeasurementsForMeter(
-      secondMeter,
-      Collections.singleton(Quantity.POWER),
-      ZonedDateTime.now().minusHours(2),
-      Duration.ofHours(3),
-      60L,
-      3.0,
-      1.0
-    );
-
-    Page<PagedLogicalMeterDto> page = asUser()
-      .getPage("/meters?quantity=Power&minValue=3.0+W", PagedLogicalMeterDto.class);
-
-    assertThat(page.getTotalElements()).isEqualTo(1);
-    assertThat(page.getContent().get(0).id).isEqualTo(firstLogicalMeter.id);
   }
 
   @Test

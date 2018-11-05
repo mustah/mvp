@@ -6,15 +6,14 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.entity.gateway.PagedGateway;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 
-import static com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper.ofPageableDomainModel;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.getSortOrUnsorted;
 import static java.util.stream.Collectors.toList;
 
@@ -30,7 +28,6 @@ import static java.util.stream.Collectors.toList;
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository gatewayJpaRepository;
-  private final GatewayStatusLogJpaRepository statusLogJpaRepository;
 
   @Override
   public List<Gateway> findAll() {
@@ -40,7 +37,7 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
-  public Page<Gateway> findAll(
+  public Page<GatewaySummaryDto> findAll(
     RequestParameters parameters,
     Pageable pageable
   ) {
@@ -49,11 +46,11 @@ public class GatewayRepository implements Gateways {
       pageable.getPageSize(),
       getSortOrUnsorted(parameters)
     );
-    org.springframework.data.domain.Page<PagedGateway> pagedGateways =
+    org.springframework.data.domain.Page<GatewaySummaryDto> pagedGateways =
       gatewayJpaRepository.findAll(parameters, pageRequest);
 
     return new PageAdapter<>(
-      pagedGateways.map(pagedGateway -> ofPageableDomainModel(pagedGateway))
+      pagedGateways
     );
   }
 

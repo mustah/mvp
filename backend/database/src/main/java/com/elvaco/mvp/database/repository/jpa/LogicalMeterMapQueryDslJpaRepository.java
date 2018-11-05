@@ -5,20 +5,19 @@ import java.util.Set;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
+import com.elvaco.mvp.core.filter.Filters;
+import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
+import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.MeterAlarmLogQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.database.util.JoinIfNeededUtil.joinLogicalMeterGateways;
+import static com.elvaco.mvp.core.domainmodels.GeoCoordinate.HIGH_CONFIDENCE;
+import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
 
 @Repository
 class LogicalMeterMapQueryDslJpaRepository
@@ -32,9 +31,12 @@ class LogicalMeterMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    Predicate predicate = new LogicalMeterQueryFilters().toExpression(parameters);
+    return findAllMapMarkers(RequestParametersMapper.toFilters(parameters));
+  }
 
-    JPQLQuery<MapMarker> query = createQuery(predicate)
+  private Set<MapMarker> findAllMapMarkers(Filters filters) {
+    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
+    JPQLQuery<MapMarker> query = createQuery()
       .select(Projections.constructor(
         MapMarker.class,
         LOCATION.logicalMeterId,
@@ -42,16 +44,10 @@ class LogicalMeterMapQueryDslJpaRepository
         ALARM_LOG.mask,
         LOCATION.latitude,
         LOCATION.longitude
-      ))
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
-      .on(new PhysicalMeterStatusLogQueryFilters().toPredicate(parameters))
-      .join(LOGICAL_METER.location, LOCATION)
-      .on(LOCATION.confidence.goe(GeoCoordinate.HIGH_CONFIDENCE))
-      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-      .on(new MeterAlarmLogQueryFilters().toPredicate(parameters));
+      ));
 
-    joinLogicalMeterGateways(query, parameters);
+    filters.add(new LocationConfidenceFilter(HIGH_CONFIDENCE, EQUAL));
+    visitor.visitAndApply(filters, query);
 
     return new HashSet<>(query.distinct().fetch());
   }

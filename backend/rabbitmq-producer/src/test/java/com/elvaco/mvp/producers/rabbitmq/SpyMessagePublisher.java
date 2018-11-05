@@ -1,6 +1,6 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +15,13 @@ class SpyMessagePublisher implements MessagePublisher {
     this.publishedMessages = new ArrayList<>();
   }
 
-  List<byte[]> getPublishedMessages() {
-    return publishedMessages;
-  }
-
   @Override
   public void publish(byte[] messageBody) {
     publishedMessages.add(messageBody);
+  }
+
+  List<byte[]> getPublishedMessages() {
+    return publishedMessages;
   }
 
   GetReferenceInfoDto deserialize(int index) {
@@ -29,13 +29,9 @@ class SpyMessagePublisher implements MessagePublisher {
   }
 
   private GetReferenceInfoDto fromBytes(byte[] messageBody) {
-    try {
-      return MessageSerializer.fromJson(
-        new String(messageBody, "UTF-8"),
-        GetReferenceInfoDto.class
-      );
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    return MessageSerializer.fromJson(
+      new String(messageBody, StandardCharsets.UTF_8),
+      GetReferenceInfoDto.class
+    );
   }
 }

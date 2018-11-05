@@ -176,7 +176,7 @@ class DataProviderConfig {
 
   @Bean
   Gateways gateways() {
-    return new GatewayRepository(gatewayJpaRepository, gatewayStatusLogJpaRepository);
+    return new GatewayRepository(gatewayJpaRepository);
   }
 
   @Bean

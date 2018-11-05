@@ -7,7 +7,9 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -31,7 +33,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -235,22 +236,204 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findGateways_WithUnknownCity() {
+  public void findGateways_MultipleMetersConnected() {
+    Gateway gateway = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-1")
+      .organisationId(dailyPlanet.id)
+      .location(new LocationBuilder().city("stockholm").build())
+      .gateway(gateway)
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-2")
+      .organisationId(dailyPlanet.id)
+      .location(new LocationBuilder().city("kungsbacka").build())
+      .gateway(gateway)
+      .build());
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?id=" + gateway.id.toString(), GatewayDto.class);
+
+    assertThat(content).hasSize(1);
+    GatewayDto gatewayDto = content.getContent().get(0);
+    assertThat(gatewayDto.meterIds).hasSize(2);
+  }
+
+  @Test
+  public void findGateways_WithId() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway1, gateway2))
-      .location(UNKNOWN_LOCATION)
+      .gateways(List.of(gateway1, gateway2))
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
-      .getPage("/gateways?city=unknown,unknown", GatewayDto.class);
+      .getPage("/gateways?id=" + gateway1.id.toString(), GatewayDto.class);
 
-    assertThat(content.getContent()).hasSize(2);
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gateway1.id);
+  }
+
+  @Test
+  public void findGateways_WithGatewayId() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("external-1234")
+      .organisationId(dailyPlanet.id)
+      .gateways(List.of(gateway1, gateway2))
+      .build());
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?gatewayId=" + gateway1.id.toString(), GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gateway1.id);
+  }
+
+  @Test
+  public void findGateways_WithMeterMedium() {
+    Gateway gasGateway = saveGateway(dailyPlanet.id);
+    Gateway districtHeatingGateway = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.GAS_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gasGateway)
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(districtHeatingGateway)
+      .build());
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?medium=Gas", GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gasGateway.id);
+  }
+
+  @Test
+  public void findGateways_WithMeterSecondaryAddress() {
+    Gateway gateway1234 = saveGateway(dailyPlanet.id);
+    Gateway gateway5678 = saveGateway(dailyPlanet.id);
+
+    LogicalMeter meter1234 = logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.GAS_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gateway1234)
+      .build());
+
+    LogicalMeter meter5678 = logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gateway5678)
+      .build());
+
+    physicalMeters.save(
+      physicalMeterBuilder()
+        .organisation(dailyPlanet)
+        .logicalMeterId(meter1234.id)
+        .address("1234")
+        .build()
+    );
+
+    physicalMeters.save(
+      physicalMeterBuilder()
+        .organisation(dailyPlanet)
+        .logicalMeterId(meter5678.id)
+        .address("5678")
+        .build()
+    );
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?secondaryAddress=1234", GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gateway1234.id);
+  }
+
+  @Test
+  public void findGateways_WithMeterFacilityId() {
+    Gateway aaaGateway = saveGateway(dailyPlanet.id);
+    Gateway bbbGateway = saveGateway(dailyPlanet.id);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("aaa")
+      .organisationId(dailyPlanet.id)
+      .gateway(aaaGateway)
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("bbb")
+      .organisationId(dailyPlanet.id)
+      .gateway(bbbGateway)
+      .build());
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?facility=aaa", GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(aaaGateway.id);
+  }
+
+  @Test
+  public void findGateways_WithManufacturer() {
+
+    Gateway gatewayElv = saveGateway(dailyPlanet.id);
+    Gateway gatewayKam = saveGateway(dailyPlanet.id);
+
+    LogicalMeter meterElv = logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.GAS_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gatewayElv)
+      .build());
+
+    LogicalMeter meterKam = logicalMeters.save(LogicalMeter.builder()
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gatewayKam)
+      .build());
+
+    physicalMeters.save(
+      physicalMeterBuilder()
+        .organisation(dailyPlanet)
+        .logicalMeterId(meterElv.id)
+        .manufacturer("ELV")
+        .build()
+    );
+
+    physicalMeters.save(
+      physicalMeterBuilder()
+        .organisation(dailyPlanet)
+        .logicalMeterId(meterKam.id)
+        .manufacturer("KAM")
+        .build()
+    );
+
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage("/gateways?manufacturer=ELV", GatewayDto.class);
+
+    assertThat(content.getContent())
+      .extracting("id")
+      .containsExactly(gatewayElv.id);
   }
 
   @Test
@@ -260,15 +443,13 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway3 = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
-      .gateways(asList(gateway1, gateway2))
+      .gateways(List.of(gateway1, gateway2))
       .location(UNKNOWN_LOCATION)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(gateway3))
@@ -286,7 +467,6 @@ public class GatewayControllerTest extends IntegrationTest {
     double lowConfidence = 0.6;
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(saveGateway(dailyPlanet.id)))
@@ -304,7 +484,6 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     LogicalMeter logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
         .gateway(gateway1)
@@ -340,7 +519,6 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     LogicalMeter logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
-        .id(randomUUID())
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
         .gateway(gateway1)
@@ -378,7 +556,6 @@ public class GatewayControllerTest extends IntegrationTest {
     Location unknownAddress = kungsbacka().address(null).build();
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
       .gateway(gateway1)
@@ -386,7 +563,6 @@ public class GatewayControllerTest extends IntegrationTest {
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
       .externalId("external-1235")
       .organisationId(dailyPlanet.id)
       .gateway(gateway2)

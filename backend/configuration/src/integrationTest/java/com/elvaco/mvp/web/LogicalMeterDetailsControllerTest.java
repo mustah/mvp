@@ -113,7 +113,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     UrlTemplate urlTemplate = Url.builder()
       .path("/meters/details")
-      .parameter(RequestParameter.ID, logicalMeter.id)
+      .parameter(RequestParameter.LOGICAL_METER_ID, logicalMeter.id)
       .parameter(RequestParameter.BEFORE, NOW)
       .parameter(RequestParameter.AFTER, YESTERDAY)
       .build();

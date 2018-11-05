@@ -22,12 +22,16 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.MANUFACTURER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static java.util.stream.Collectors.toList;
@@ -44,7 +48,15 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, EQUAL));
     PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, ComparisonMode.WILDCARD));
     PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(REPORTED,
+    PARAMETER_TO_FILTER.put(MEDIUM, (values) -> new MediumFilter(values, EQUAL));
+    PARAMETER_TO_FILTER.put(FACILITY, (values) -> new FacilityFilter(values, EQUAL));
+    PARAMETER_TO_FILTER.put(MANUFACTURER, (values) -> new ManufacturerFilter(values, EQUAL));
+    PARAMETER_TO_FILTER.put(
+      SECONDARY_ADDRESS,
+      (values) -> new SecondaryAddressFilter(values, EQUAL)
+    );
+    PARAMETER_TO_FILTER.put(
+      REPORTED,
       (values) -> new MeterStatusFilter(
         values.stream().map(StatusType::from).collect(toList()),
         EQUAL
@@ -53,6 +65,13 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(
       GATEWAY_ID,
       (values) -> new GatewayIdFilter(
+        values.stream().map(UUID::fromString).collect(toList()),
+        EQUAL
+      )
+    );
+    PARAMETER_TO_FILTER.put(
+      LOGICAL_METER_ID,
+      (values) -> new LogicalMeterIdFilter(
         values.stream().map(UUID::fromString).collect(toList()),
         EQUAL
       )
@@ -110,9 +129,6 @@ public final class RequestParametersMapper {
   }
 
   private static RequestParameter disambiguateParameter(RequestParameter parameter) {
-    if (parameter.equals(ID)) {
-      return GATEWAY_ID;
-    }
     if (parameter.equals(Q_SERIAL)) {
       return SERIAL;
     }

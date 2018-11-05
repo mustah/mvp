@@ -53,6 +53,22 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findMissingMeterReadings_WithoutPeriod() {
+    List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
+      logicalMeterJpaRepository.findMissingMeterReadingsCounts(new RequestParametersAdapter());
+
+    assertThat(missingMeterReadingsCounts).isEmpty();
+  }
+
+  @Test
+  public void findMissingMeterReadings_WhenNoneExists() {
+    List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
+      logicalMeterJpaRepository.findMissingMeterReadingsCounts(makeParametersWithDateRange());
+
+    assertThat(missingMeterReadingsCounts).isEmpty();
+  }
+
+  @Test
   public void refreshAsSuperAdmin() {
     LogicalMeterEntity logicalMeter = newLogicalMeter(
       MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),

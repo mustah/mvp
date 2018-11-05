@@ -35,9 +35,28 @@ public class RequestParametersAdapter implements RequestParameters {
   public static RequestParameters requestParametersOf(
     @Nullable Map<String, List<String>> multiValueMap
   ) {
+    return requestParametersOf(multiValueMap, null);
+  }
+
+  public static RequestParameters requestParametersOf(
+    Map<String, List<String>> multiValueMap,
+    @Nullable RequestParameter idParameter
+  ) {
     if (multiValueMap == null) {
       return new RequestParametersAdapter();
     }
+
+    if (multiValueMap.containsKey("id")) {
+      multiValueMap.put(
+        Optional.ofNullable(idParameter).map((param) -> param.toString())
+          .orElseThrow(() -> new IllegalArgumentException(
+              "Ambiguous parameter 'id' can not be mapped"
+            )
+          ),
+        multiValueMap.remove("id")
+      );
+    }
+
     MultiValueMap<RequestParameter, String> typedParams = new LinkedMultiValueMap<>();
     for (Map.Entry<String, List<String>> entry : multiValueMap.entrySet()) {
       Optional.ofNullable(RequestParameter.from(entry.getKey()))

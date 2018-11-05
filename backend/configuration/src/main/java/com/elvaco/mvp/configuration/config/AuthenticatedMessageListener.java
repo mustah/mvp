@@ -1,6 +1,6 @@
 package com.elvaco.mvp.configuration.config;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
@@ -62,10 +62,6 @@ class AuthenticatedMessageListener {
   }
 
   private static String toEncodedMessage(byte[] message) {
-    try {
-      return new String(message, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException("Unsupported encoding.", e);
-    }
+    return new String(message, StandardCharsets.UTF_8);
   }
 }

@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -20,6 +22,26 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class GatewayDtoMapper {
+
+  public static GatewayDto toDto(GatewaySummaryDto gateway) {
+    StatusLogEntry<UUID> gatewayStatusLog = gateway.statusLogs.stream()
+      .findFirst().orElseGet(() -> StatusLogEntry.unknownFor(gateway));
+
+    return new GatewayDto(
+      gateway.id,
+      gateway.serial,
+      formatProductModel(gateway.productModel),
+      gatewayStatusLog.status.name,
+      formatUtc(gatewayStatusLog.start),
+      LocationDtoMapper.toLocationDto(gateway.meters.stream()
+        .findFirst()
+        .map(meter -> meter.location)
+        .orElse(
+          Location.UNKNOWN_LOCATION)),
+      gateway.meters.stream().map(meter -> meter.id).collect(toList()),
+      gateway.organisationId
+    );
+  }
 
   public static GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
@@ -43,7 +65,7 @@ public class GatewayDtoMapper {
     );
   }
 
-  public static GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
+  static GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
     StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
     return new GatewayMandatoryDto(
       gateway.id,

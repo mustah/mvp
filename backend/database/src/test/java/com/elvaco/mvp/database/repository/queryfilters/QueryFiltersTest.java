@@ -12,7 +12,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,9 +22,9 @@ public class QueryFiltersTest {
   public void mapNullFilters() {
     RequestParameters parameters =
       new RequestParametersAdapter()
-        .add(ID, "1")
-        .add(ID, "2")
-        .add(ID, "3");
+        .add(LOGICAL_METER_ID, "1")
+        .add(LOGICAL_METER_ID, "2")
+        .add(LOGICAL_METER_ID, "3");
 
     QueryFilters test = new QueryFilters() {
       @Override
@@ -41,7 +41,10 @@ public class QueryFiltersTest {
 
   @Test
   public void mapEmptyFilter() {
-    RequestParameters parameters = new RequestParametersAdapter().setAll(ID, emptyList());
+    RequestParameters parameters = new RequestParametersAdapter().setAll(
+      LOGICAL_METER_ID,
+      emptyList()
+    );
 
     QueryFilters test = new QueryFilters() {
       @Override
@@ -75,7 +78,7 @@ public class QueryFiltersTest {
   public void mapSingleParameter() {
     RequestParameters parameters =
       new RequestParametersAdapter()
-        .add(ID, "42");
+        .add(LOGICAL_METER_ID, "42");
 
     QueryFilters test = new QueryFilters() {
       @Override
@@ -106,7 +109,7 @@ public class QueryFiltersTest {
     RequestParameters parameters =
       new RequestParametersAdapter()
         .add(CITY, "Woop!")
-        .add(ID, "42");
+        .add(LOGICAL_METER_ID, "42");
 
     QueryFilters test = new QueryFilters() {
       @Override
@@ -114,7 +117,7 @@ public class QueryFiltersTest {
         RequestParameter parameter, RequestParameters parameters,
         List<String> values
       ) {
-        if (parameter.equals(ID)) {
+        if (parameter.equals(LOGICAL_METER_ID)) {
           return Optional.of(
             Expressions.predicate(
               Ops.EQ,

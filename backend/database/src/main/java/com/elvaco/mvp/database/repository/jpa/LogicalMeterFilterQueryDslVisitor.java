@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
@@ -24,46 +23,40 @@ import com.elvaco.mvp.database.repository.queryfilters.LocationPredicates;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPQLQuery;
 
-import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
-import static com.elvaco.mvp.core.filter.ComparisonMode.WILDCARD;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.ALARM_LOG;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATEWAY;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATEWAY_STATUS_LOG;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOCATION;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOGICAL_METER;
+import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_DEFINITION;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_STATUS_LOG;
+import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.PHYSICAL_METER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
-class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
-
+class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
-  private Predicate meterStatusLogPredicate = FALSE_PREDICATE;
+  private Predicate missingMeasurementPredicate = FALSE_PREDICATE;
   private List<Predicate> predicates = new ArrayList<>();
 
   @Override
   public void visit(CityFilter cityFilter) {
-    Optional.ofNullable(
-      LocationPredicates.whereCityOrUnknown(cityFilter.values())
-    ).ifPresent(predicates::add);
+    predicates.add(LocationPredicates.whereCityOrUnknown(cityFilter.values()));
   }
 
   @Override
   public void visit(AddressFilter addressFilter) {
-    Optional.ofNullable(
-      LocationPredicates.whereAddressOrUnknown(addressFilter.values())
-    ).ifPresent(predicates::add);
+    predicates.add(LocationPredicates.whereAddressOrUnknown(addressFilter.values()));
   }
 
   @Override
   public void visit(OrganisationIdFilter organisationIdFilter) {
-    predicates.add(GATEWAY.organisationId.in(organisationIdFilter.values()));
+    predicates.add(LOGICAL_METER.organisationId.in(organisationIdFilter.values()));
   }
 
   @Override
   public void visit(GatewayIdFilter gatewayIdFilter) {
-    predicates.add(GATEWAY.id.in(gatewayIdFilter.values()));
+    predicates.add(GATEWAY.id.eq(gatewayIdFilter.oneValue()));
   }
 
   @Override
@@ -75,27 +68,25 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
   public void visit(PeriodFilter periodFilter) {
     SelectionPeriod period = periodFilter.getPeriod();
     alarmLogPredicate = withinPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
-    statusLogPredicate = withinPeriod(period, GATEWAY_STATUS_LOG.start, GATEWAY_STATUS_LOG.stop);
-    meterStatusLogPredicate = withinPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
+    statusLogPredicate = withinPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
+    missingMeasurementPredicate = MISSING_MEASUREMENT.id.expectedTime.lt(period.stop)
+      .and(MISSING_MEASUREMENT.id.expectedTime.goe(period.start));
   }
 
   @Override
   public void visit(SerialFilter serialFilter) {
-    if (serialFilter.mode() == EQUAL) {
-      predicates.add(GATEWAY.serial.in(serialFilter.values()));
-    } else if (serialFilter.mode() == WILDCARD) {
-      predicates.add(GATEWAY.serial.containsIgnoreCase(serialFilter.oneValue()));
-    }
+    predicates.add(GATEWAY.serial.in(serialFilter.values()));
   }
 
   @Override
   public void visit(WildcardFilter wildcardFilter) {
     String str = wildcardFilter.oneValue();
-
-    predicates.add(GATEWAY.serial.startsWithIgnoreCase(str)
-      .or(GATEWAY.productModel.startsWithIgnoreCase(str))
-      .or(LOCATION.city.startsWithIgnoreCase(str))
-      .or(LOCATION.streetAddress.startsWithIgnoreCase(str)));
+    predicates.add(LOGICAL_METER.externalId.startsWithIgnoreCase(str)
+      .or(LOGICAL_METER.meterDefinition.medium.startsWithIgnoreCase(str))
+      .or(LOGICAL_METER.location.city.startsWithIgnoreCase(str))
+      .or(LOGICAL_METER.location.streetAddress.startsWithIgnoreCase(str))
+      .or(PHYSICAL_METER.manufacturer.startsWithIgnoreCase(str))
+      .or(PHYSICAL_METER.address.startsWithIgnoreCase(str)));
   }
 
   @Override
@@ -130,6 +121,7 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {
+    predicates.add(LOGICAL_METER.id.in(logicalMeterIdFilter.values()));
   }
 
   @Override
@@ -139,14 +131,15 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   void applyJoins(JPQLQuery<?> q) {
-    q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
+    q.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(LOGICAL_METER.gateways, GATEWAY)
+      .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION)
+      .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
+      .on(missingMeasurementPredicate)
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .on(statusLogPredicate)
-      .leftJoin(GATEWAY.meters, LOGICAL_METER)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-      .on(alarmLogPredicate)
-      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
-      .on(meterStatusLogPredicate);
+      .on(alarmLogPredicate);
   }
 }
