@@ -5,7 +5,7 @@ export const isSuperAdmin = (user: User): boolean => user.roles.includes(Role.SU
 
 export const isAdmin = (user: User): boolean => user.roles.includes(Role.ADMIN) || isSuperAdmin(user);
 
-const roleList: {[key: string]: Role[]} = {
+const roleList: { [key in Role]: Role[] } = {
   [Role.USER]: [Role.USER],
   [Role.ADMIN]: [Role.USER, Role.ADMIN],
   [Role.SUPER_ADMIN]: [Role.USER, Role.ADMIN, Role.SUPER_ADMIN],
