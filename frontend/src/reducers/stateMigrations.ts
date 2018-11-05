@@ -49,7 +49,7 @@ export const migrations = {
     },
   }),
   2: (state: PersistedState | any) => {
-    const quantities = [...state.ui.measurements.selectedQuantities];
+    const selectedQuantities = [...state.ui.measurements.selectedQuantities];
     const newUiState = {...state.ui};
     delete newUiState.measurements;
     return {
@@ -58,7 +58,7 @@ export const migrations = {
         ...newUiState,
         indicator: {
           ...state.ui.indicator,
-          selectedQuantities: quantities,
+          selectedQuantities,
         },
       },
     };

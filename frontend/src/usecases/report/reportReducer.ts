@@ -3,21 +3,21 @@ import {resetReducer} from '../../state/domain-models/domainModelsReducer';
 import {SELECT_PERIOD, SET_CUSTOM_DATE_RANGE} from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
-import {SelectedEntriesPayload, SET_SELECTED_ENTRIES} from './reportActions';
-import {ReportState} from './reportModels';
+import {SET_SELECTED_ENTRIES} from './reportActions';
+import {ReportState, SelectedReportEntriesPayload} from './reportModels';
 
 export const initialState: ReportState = {
   selectedListItems: [],
 };
 
-type ActionTypes = Action<SelectedEntriesPayload> | Action<string[]> | EmptyAction<string>;
+type ActionTypes = Action<SelectedReportEntriesPayload> | Action<string[]> | EmptyAction<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
   switch (action.type) {
     case SET_SELECTED_ENTRIES:
       return {
         ...state,
-        selectedListItems: [...(action as Action<SelectedEntriesPayload>).payload.ids],
+        selectedListItems: [...(action as Action<SelectedReportEntriesPayload>).payload.ids],
       };
     case LOGOUT_USER:
       return {...initialState};

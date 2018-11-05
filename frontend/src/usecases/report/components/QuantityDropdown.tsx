@@ -17,7 +17,7 @@ interface Props {
 interface QuantitySelectorProps {
   selectedQuantities: Quantity[];
   selectedIndicators: Medium[];
-  selectQuantities: (quantities: Quantity[]) => void;
+  onSelectQuantities: (quantities: Quantity[]) => void;
 }
 
 const style: React.CSSProperties = {padding: '20px 20px 0px'};
@@ -54,17 +54,18 @@ const WrappedSelectFieldOptions = withEmptyContentComponent<Props & HasContent>(
 );
 
 export const QuantityDropdown =
-  ({selectedIndicators, selectedQuantities, selectQuantities}: QuantitySelectorProps) => {
+  ({selectedIndicators, selectedQuantities, onSelectQuantities}: QuantitySelectorProps) => {
     const quantities: Set<Quantity> = new Set();
     selectedIndicators.forEach((indicator) =>
       indicator in allQuantities && allQuantities[indicator].forEach((q) => quantities.add(q)),
     );
 
-    const changeQuantities = (event, index, values) => selectQuantities(values);
+    const changeQuantities = (event, index, values) => onSelectQuantities(values);
     const renderMenuItem = quantityMenuItem(selectedQuantities);
     const options = Array.from(quantities.values()).map(renderMenuItem);
+
     if (!options.length && selectedQuantities.length) {
-      selectQuantities([]);
+      onSelectQuantities([]);
     }
 
     const wrappedProps: HasContent & Props = {

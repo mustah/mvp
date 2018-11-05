@@ -1,5 +1,6 @@
 import {Action} from '../../../types/Types';
-import {SelectedEntriesPayload, SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
+import {SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
+import {SelectedReportEntriesPayload} from '../../../usecases/report/reportModels';
 import {Medium, Quantity} from '../graph/measurement/measurementModels';
 import {SET_REPORT_INDICATOR_WIDGETS, SET_SELECTED_QUANTITIES} from './indicatorActions';
 
@@ -17,7 +18,7 @@ export const initialState: IndicatorState = {
   selectedQuantities: [],
 };
 
-type ActionTypes = Action<Medium[]> | Action<Quantity[]> | Action<SelectedEntriesPayload>;
+type ActionTypes = Action<Medium[]> | Action<Quantity[]> | Action<SelectedReportEntriesPayload>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   switch (action.type) {
@@ -29,16 +30,16 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
         },
       };
     case SET_SELECTED_ENTRIES:
-      const selectedEntries: SelectedEntriesPayload = action.payload as SelectedEntriesPayload;
-      if (!selectedEntries.ids.length) {
+      const payload: SelectedReportEntriesPayload = action.payload as SelectedReportEntriesPayload;
+      if (!payload.ids.length) {
         return {...initialState};
       }
       return {
         ...state,
         selectedIndicators: {
-          report: [...selectedEntries.indicatorsToSelect],
+          report: [...payload.indicatorsToSelect],
         },
-        selectedQuantities: [...selectedEntries.quantitiesToSelect],
+        selectedQuantities: [...payload.quantitiesToSelect],
       };
     case SET_SELECTED_QUANTITIES:
       return {
