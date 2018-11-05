@@ -28,7 +28,7 @@ abstract class FilterQueryDslJpaVisitor implements FilterVisitor {
     }
   }
 
-  BooleanExpression inPeriod(
+  BooleanExpression withinPeriod(
     SelectionPeriod period,
     DateTimePath<ZonedDateTime> start,
     DateTimePath<ZonedDateTime> stop

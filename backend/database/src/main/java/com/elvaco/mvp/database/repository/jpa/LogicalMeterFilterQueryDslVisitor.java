@@ -67,8 +67,8 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   @Override
   public void visit(PeriodFilter periodFilter) {
     SelectionPeriod period = periodFilter.getPeriod();
-    alarmLogPredicate = inPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
-    statusLogPredicate = inPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
+    alarmLogPredicate = withinPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
+    statusLogPredicate = withinPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
     missingMeasurementPredicate = MISSING_MEASUREMENT.id.expectedTime.lt(period.stop)
       .and(MISSING_MEASUREMENT.id.expectedTime.goe(period.start));
   }

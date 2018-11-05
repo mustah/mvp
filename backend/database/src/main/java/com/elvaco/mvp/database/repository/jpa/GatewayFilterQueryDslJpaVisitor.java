@@ -74,9 +74,9 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
   @Override
   public void visit(PeriodFilter periodFilter) {
     SelectionPeriod period = periodFilter.getPeriod();
-    alarmLogPredicate = inPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
-    statusLogPredicate = inPeriod(period, GATEWAY_STATUS_LOG.start, GATEWAY_STATUS_LOG.stop);
-    meterStatusLogPredicate = inPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
+    alarmLogPredicate = withinPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
+    statusLogPredicate = withinPeriod(period, GATEWAY_STATUS_LOG.start, GATEWAY_STATUS_LOG.stop);
+    meterStatusLogPredicate = withinPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
   }
 
   @Override
