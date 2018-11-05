@@ -17,7 +17,7 @@ import {bindActionCreators} from 'redux';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Column} from '../../../components/layouts/column/Column';
-import {TableInfoText} from '../../../components/table/TableInfoText';
+import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {toggle} from '../../../helpers/collections';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
@@ -142,7 +142,7 @@ const GraphContent =
           {lines}
         </LineChart>
       </ResponsiveContainer>
-      <TableInfoText/>
+      <TimestampInfoMessage/>
     </Column>
   );
 

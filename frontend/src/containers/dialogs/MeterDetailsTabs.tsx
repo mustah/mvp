@@ -9,7 +9,7 @@ import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import '../../components/table/Table.scss';
 import {TableHead} from '../../components/table/TableHead';
-import {TableInfoText} from '../../components/table/TableInfoText';
+import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
@@ -142,7 +142,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
                 renderCell={renderStatus}
               />
             </Table>
-            <TableInfoText/>
+            <TimestampInfoMessage/>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <MapContentWrapper {...wrapperProps}/>

@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Column} from '../../../components/layouts/column/Column';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
-import {TableInfoText} from '../../../components/table/TableInfoText';
+import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
@@ -87,7 +87,7 @@ export const MeasurementList = ({measurements}: Measurements) => {
           renderCell={renderCreated}
         />
       </Table>
-      <TableInfoText/>
+      <TimestampInfoMessage/>
     </Column>
   );
 };
