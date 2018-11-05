@@ -31,12 +31,6 @@ public class OrganisationQueryFilters extends QueryFilters {
       case WILDCARD:
         String str = values.get(0);
         return ORGANISATION.name.startsWithIgnoreCase(str);
-      case INCLUDE_SUB_ORGANISATIONS:
-        String includeSubOrganisations = values.get(0);
-        if ("0".equalsIgnoreCase(includeSubOrganisations)) {
-          return ORGANISATION.parent.isNull();
-        }
-        return null;
       default:
         return null;
     }

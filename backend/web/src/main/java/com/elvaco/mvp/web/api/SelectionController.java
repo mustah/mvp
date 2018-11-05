@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.INCLUDE_SUB_ORGANISATIONS;
 import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
 import static java.util.Collections.emptyList;
@@ -144,10 +143,9 @@ public class SelectionController {
       RequestParameter.Q,
       RequestParameter.Q_ORGANISATION
     );
-    parameters.add(INCLUDE_SUB_ORGANISATIONS, "0");
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = organisationUseCases.findAll(parameters, adapter)
+    Page<IdNamedDto> page = organisationUseCases.findAllParentOrganisations(parameters, adapter)
       .map(OrganisationDtoMapper::toIdNamedDto);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());

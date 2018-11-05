@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,9 +43,16 @@ class OrganisationQueryDslJpaRepository
   }
 
   @Override
-  public Page<OrganisationEntity> findAll(Predicate predicate, Pageable pageable) {
-    var countQuery = createCountQuery(predicate).select(path);
-    var query = createQuery(predicate).select(path);
+  public Page<OrganisationEntity> findAllParentOrganisations(
+    Predicate predicate,
+    Pageable pageable
+  ) {
+    Predicate withoutParentOrganisatin = ExpressionUtils.allOf(
+      predicate,
+      ORGANISATION.parent.isNull()
+    );
+    var countQuery = createCountQuery(withoutParentOrganisatin).select(path);
+    var query = createQuery(withoutParentOrganisatin).select(path);
     var all = querydsl.applyPagination(pageable, query).fetch();
 
     return getPage(all, pageable, countQuery::fetchCount);

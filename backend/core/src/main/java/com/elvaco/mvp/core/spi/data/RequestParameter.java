@@ -16,7 +16,6 @@ public enum RequestParameter {
   GATEWAY_ID("gatewayId"),
   GATEWAY_SERIAL("gatewaySerial"),
   ID("id"),
-  INCLUDE_SUB_ORGANISATIONS("includeSubOrganisations"),
   MANUFACTURER("manufacturer"),
   MAX_VALUE("maxValue"),
   MEDIUM("medium"),

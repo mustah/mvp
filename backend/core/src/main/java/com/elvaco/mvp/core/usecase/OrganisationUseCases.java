@@ -37,8 +37,14 @@ public class OrganisationUseCases {
     return emptyList();
   }
 
-  public Page<Organisation> findAll(RequestParameters parameters, Pageable pageable) {
-    return organisations.findAll(parameters.ensureOrganisationFilters(currentUser), pageable);
+  public Page<Organisation> findAllParentOrganisations(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return organisations.findAllParentOrganisations(
+      parameters.ensureOrganisationFilters(currentUser),
+      pageable
+    );
   }
 
   public Optional<Organisation> findById(UUID id) {

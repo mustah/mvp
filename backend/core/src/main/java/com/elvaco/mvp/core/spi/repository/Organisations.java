@@ -13,7 +13,7 @@ public interface Organisations {
 
   List<Organisation> findAll();
 
-  Page<Organisation> findAll(RequestParameters parameters, Pageable pageable);
+  Page<Organisation> findAllParentOrganisations(RequestParameters parameters, Pageable pageable);
 
   Optional<Organisation> findById(UUID id);
 

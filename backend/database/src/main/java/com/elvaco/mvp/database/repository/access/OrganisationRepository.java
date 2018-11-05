@@ -37,9 +37,12 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  public Page<Organisation> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<Organisation> findAllParentOrganisations(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
     return new PageAdapter<>(
-      organisationJpaRepository.findAll(
+      organisationJpaRepository.findAllParentOrganisations(
         new OrganisationQueryFilters().toExpression(parameters),
         PageRequest.of(
           pageable.getPageNumber(),
