@@ -75,7 +75,7 @@ const lowConfidenceTextInfo = (
   translateWith: (count: number) => string,
 ): string | undefined => {
   const numMarkersWithLowConfidence = totalMeters - totalMarkers;
-  return numMarkersWithLowConfidence ? translateWith(numMarkersWithLowConfidence) : undefined;
+  return numMarkersWithLowConfidence > 0 ? translateWith(numMarkersWithLowConfidence) : undefined;
 };
 
 export const meterLowConfidenceTextInfo = (
