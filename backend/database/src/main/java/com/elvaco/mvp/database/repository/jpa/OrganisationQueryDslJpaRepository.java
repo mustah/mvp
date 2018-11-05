@@ -43,16 +43,16 @@ class OrganisationQueryDslJpaRepository
   }
 
   @Override
-  public Page<OrganisationEntity> findAllParentOrganisations(
+  public Page<OrganisationEntity> findAllMainOrganisations(
     Predicate predicate,
     Pageable pageable
   ) {
-    Predicate withoutParentOrganisatin = ExpressionUtils.allOf(
+    Predicate withoutParentOrganisation = ExpressionUtils.allOf(
       predicate,
       ORGANISATION.parent.isNull()
     );
-    var countQuery = createCountQuery(withoutParentOrganisatin).select(path);
-    var query = createQuery(withoutParentOrganisatin).select(path);
+    var countQuery = createCountQuery(withoutParentOrganisation).select(path);
+    var query = createQuery(withoutParentOrganisation).select(path);
     var all = querydsl.applyPagination(pageable, query).fetch();
 
     return getPage(all, pageable, countQuery::fetchCount);

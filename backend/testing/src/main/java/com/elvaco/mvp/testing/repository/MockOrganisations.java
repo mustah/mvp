@@ -27,7 +27,7 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  public Page<Organisation> findAllParentOrganisations(
+  public Page<Organisation> findAllMainOrganisations(
     RequestParameters parameters, Pageable pageable
   ) {
     throw new NotImplementedYet();

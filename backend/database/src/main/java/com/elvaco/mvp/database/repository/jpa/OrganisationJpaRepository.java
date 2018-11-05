@@ -27,7 +27,7 @@ public interface OrganisationJpaRepository {
 
   List<OrganisationEntity> findAllByOrderByNameAsc();
 
-  Page<OrganisationEntity> findAllParentOrganisations(Predicate predicate, Pageable pageable);
+  Page<OrganisationEntity> findAllMainOrganisations(Predicate predicate, Pageable pageable);
 
   List<OrganisationEntity> findAll();
 }

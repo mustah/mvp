@@ -140,7 +140,7 @@ public class SelectionController {
     );
     PageableAdapter adapter = new PageableAdapter(pageable);
 
-    Page<IdNamedDto> page = organisationUseCases.findAllParentOrganisations(parameters, adapter)
+    Page<IdNamedDto> page = organisationUseCases.findAllMainOrganisations(parameters, adapter)
       .map(OrganisationDtoMapper::toIdNamedDto);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());

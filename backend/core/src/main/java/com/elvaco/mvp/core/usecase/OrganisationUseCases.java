@@ -38,12 +38,12 @@ public class OrganisationUseCases {
     return emptyList();
   }
 
-  public Page<Organisation> findAllParentOrganisations(
+  public Page<Organisation> findAllMainOrganisations(
     RequestParameters parameters,
     Pageable pageable
   ) {
     if (currentUser.isSuperAdmin()) {
-      return organisations.findAllParentOrganisations(
+      return organisations.findAllMainOrganisations(
         parameters.ensureOrganisationFilters(currentUser),
         pageable
       );
