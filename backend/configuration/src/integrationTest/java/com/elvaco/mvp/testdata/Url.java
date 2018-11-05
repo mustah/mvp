@@ -13,14 +13,14 @@ import static java.util.Collections.emptyMap;
 @Builder
 public class Url implements UrlTemplate {
 
-  private final Map<RequestParameter, List<Object>> parameters;
+  private final Map<String, List<Object>> parameters;
   private final String path;
 
   @Override
   public String template() {
     StringBuilder sb = new StringBuilder();
-    for (Map.Entry<RequestParameter, List<Object>> entry : parameters().entrySet()) {
-      addParameter(sb, entry.getKey(), entry.getValue());
+    for (Map.Entry<String, List<Object>> entry : parameters().entrySet()) {
+      addParameter(sb, entry.getKey(), entry.getValue().size());
     }
     return path + sb.toString();
   }
@@ -32,21 +32,24 @@ public class Url implements UrlTemplate {
       .toArray();
   }
 
-  private Map<RequestParameter, List<Object>> parameters() {
+  private Map<String, List<Object>> parameters() {
     return parameters != null ? parameters : emptyMap();
   }
 
-  private void addParameter(StringBuilder sb, RequestParameter parameter, List<Object> values) {
+  private void addParameter(StringBuilder sb, String parameter, int parameterCount) {
     if (sb.length() == 0) {
       sb.append("?");
     } else {
       sb.append("&");
     }
 
-    for (int i = 0; i < values.size(); i++) {
-      sb.append(parameter.toString());
+    for (int i = 0; i < parameterCount; i++) {
+      if (i > 0) {
+        sb.append("&");
+      }
+      sb.append(parameter);
       sb.append("={");
-      sb.append(parameter.toString());
+      sb.append(parameter);
       sb.append(i);
       sb.append("}");
     }
@@ -56,9 +59,14 @@ public class Url implements UrlTemplate {
   public static class UrlBuilder {
 
     public UrlBuilder parameter(RequestParameter parameter, Object value) {
+      return parameter(parameter.toString(), value);
+    }
+
+    public UrlBuilder parameter(String parameter, Object value) {
       if (parameters == null) {
         parameters = new LinkedHashMap<>();
       }
+
       List<Object> values = parameters.getOrDefault(parameter, new ArrayList<>());
       values.add(value);
       parameters.put(parameter, values);
