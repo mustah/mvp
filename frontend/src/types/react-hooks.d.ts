@@ -2,34 +2,32 @@ import * as React from 'react';
 
 declare module 'react' {
 
-  type StateAction<S> = <S>(newState: S) => void;
+  type SetStateAction<S> = S | ((prevState: S) => S);
+  type Dispatch<A> = (value: A) => void;
+  type Reducer<S, A> = (prevState: S, action: A) => S;
+  type EffectCallback = () => (void | (() => void));
   type InstanceFactory<T> = <T>() => T;
+  type IdentityCheckInputList = ReadonlyArray<any>;
 
-  function useState<S>(initialState: S | InstanceFactory<S>): [S, StateAction<S>];
+  function useState<S>(initialState: S | InstanceFactory<S>): [S, Dispatch<SetStateAction<S>>];
 
-  function useEffect(
-    create: () => void,
-    inputs?: ReadonlyArray<any>
-  ): void;
+  function useEffect(effect: EffectCallback, inputs?: IdentityCheckInputList): void;
 
-  function useReducer<S, A>(
-    reducer: (state: S, action: A) => S,
-    initialState: S
-  ): [S, (action: A) => void];
+  function useReducer<S, A>(reducer: Reducer<S, A>, initialState: S): [S, Dispatch<A>];
 
   function useCallback<F extends (...args: never[]) => any>(
     callback: F,
-    inputs?: ReadonlyArray<any>
+    inputs?: IdentityCheckInputList
   ): F;
 
-  function useMemo<T>(create: InstanceFactory<T>, inputs?: ReadonlyArray<any>): T;
+  function useMemo<T>(factory: InstanceFactory<T>, inputs?: IdentityCheckInputList): T;
 
   function useRef<T extends {}>(initialValue?: T): React.Ref<T>;
 
   function useImperativeMethods<T>(
     ref: React.Ref<T>,
-    createInstance: InstanceFactory<T>,
-    inputs?: ReadonlyArray<any>
+    factory: InstanceFactory<T>,
+    inputs?: IdentityCheckInputList
   ): void;
 
   const useMutationEffect: typeof useEffect;
