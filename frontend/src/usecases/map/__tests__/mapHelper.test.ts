@@ -95,7 +95,7 @@ describe('mapHelper', () => {
 
   describe('boundsFromMarkers', () => {
 
-    it('finds bounds of single meter with latitude and longitude', () => {
+    it('finds bounds of single map marker', () => {
       const latitude = 66.3091086409441;
       const longitude = 14.1472317996851;
       const mapMarkers: Dictionary<MapMarker> = {
@@ -114,6 +114,28 @@ describe('mapHelper', () => {
       expect(actual).toEqual(expected);
     });
 
+    it('finds bounds for multiple map markers', () => {
+      const mapMarkers: Dictionary<MapMarker> = {
+        '6fe5c497-e409-4a76-b790-3cc974975b23': {
+          id: '6fe5c497-e409-4a76-b790-3cc974975b23',
+          latitude: 2,
+          longitude: 2,
+          status: Status.ok,
+        },
+        '04db7efe-f571-400b-b8a2-8342acb70711': {
+          id: '04db7efe-f571-400b-b8a2-8342acb70711',
+          latitude: 1,
+          longitude: 1,
+          status: Status.ok,
+        },
+      };
+
+      const actual: Bounds = boundsFromMarkers(mapMarkers);
+
+      const expected: Bounds = [[1, 1], [2, 2]];
+
+      expect(actual).toEqual(expected);
+    });
   });
 
 });
