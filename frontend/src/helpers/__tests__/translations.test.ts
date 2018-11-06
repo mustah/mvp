@@ -1,7 +1,7 @@
 import {initTranslations} from '../../i18n/__tests__/i18nMock';
 import {translate} from '../../services/translationService';
 import {ParameterName} from '../../state/user-selection/userSelectionModels';
-import {getTranslationOrName, statusTranslation, translatedErrorMessage} from '../translations';
+import {getTranslationOrName, orUnknown, statusTranslation, translatedErrorMessage} from '../translations';
 
 describe('translations', () => {
 
@@ -63,6 +63,10 @@ describe('translations', () => {
         },
       },
     ));
+
+    it('fallbacks to unknown when there is no translated name', () => {
+      expect(orUnknown(undefined)).toEqual('okänd');
+    });
 
     it('translates unknown text', () => {
       expect(getTranslationOrName('unknown', ParameterName.cities)).toEqual('okänd');

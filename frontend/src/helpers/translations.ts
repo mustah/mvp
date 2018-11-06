@@ -3,7 +3,7 @@ import {ParameterName} from '../state/user-selection/userSelectionModels';
 import {Status} from '../types/Types';
 import {texts} from './texts';
 
-export const orUnknown = (name: string) => name.toLowerCase() === 'unknown' ? translate('unknown') : name;
+export const orUnknown = (name?: string) => !name || name.toLowerCase() === 'unknown' ? translate('unknown') : name;
 
 export const getTranslationOrName = (name: string, domainModelName: ParameterName): string => {
   switch (domainModelName) {
