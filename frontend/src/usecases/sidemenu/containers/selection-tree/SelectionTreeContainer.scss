@@ -23,6 +23,12 @@
     svg {
       height: $iconSize !important;
       width: $iconSize !important;
+
+      &.Indicator-icon {
+        &:hover {
+          fill: $blue !important;
+        }
+      }
     }
   }
 }
