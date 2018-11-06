@@ -63,10 +63,13 @@ export const iconSizeLarge: React.CSSProperties = {
   height: 28,
 };
 
-export const sideBarStyles: Styles = {
-  fontSize: {fontSize: fontSize.normal},
-  selected: {color: colors.blue},
-  onHover: {color: colors.lightGrey},
+export const sideBarStyle: React.CSSProperties = {
+  color: colors.lightGrey,
+};
+
+export const selectedSideBarStyle: React.CSSProperties = {
+  color: colors.blue,
+  fontWeight: 'bold',
 };
 
 export const sideBarInnerDivStyle: React.CSSProperties = {
@@ -108,7 +111,7 @@ export const listItemStyleWithActions: React.CSSProperties = {
 
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
-  ...sideBarStyles.selected,
+  ...selectedSideBarStyle,
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {
