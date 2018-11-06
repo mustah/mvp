@@ -1,8 +1,5 @@
-import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {IconNavigationBack} from '../../../components/icons/IconNavigationBack';
-import {RowCenter, RowMiddle} from '../../../components/layouts/row/Row';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   closeSelectionPage,
@@ -14,7 +11,7 @@ import {
 import {OnSelectSelection, UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
 import {OnClick, OnClickWithId} from '../../../types/Types';
-import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
+import {SelectionMenu} from '../components/selection-menu/SelectionMenu';
 
 interface StateToProps {
   selection: UserSelection;
@@ -28,34 +25,7 @@ interface DispatchToProps {
   selectSavedSelection: OnClickWithId;
 }
 
-export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
-  const {
-    closeSelectionPage,
-    selection,
-    saveSelection,
-    updateSelection,
-    resetSelection,
-    selectSavedSelection,
-  } = props;
-
-  const key = `${selection.id}-${selection.isChanged}`;
-  return (
-    <RowCenter>
-      <IconNavigationBack onClick={closeSelectionPage}/>
-      <RowMiddle>
-        <InlineEditInput
-          key={key}
-          isChanged={selection.isChanged}
-          selection={selection}
-          saveSelection={saveSelection}
-          updateSelection={updateSelection}
-          resetSelection={resetSelection}
-          selectSavedSelection={selectSavedSelection}
-        />
-      </RowMiddle>
-    </RowCenter>
-  );
-};
+export type SelectionMenuProps = StateToProps & DispatchToProps;
 
 const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   selection: getUserSelection(userSelection),

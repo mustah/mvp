@@ -25,7 +25,7 @@
   .Subtitle-description {
     margin: 10px 0 0 8px;
     color: $lightest-black;
-    font-size: 12px;
+    font-size: $sm;
   }
 }
 
@@ -38,7 +38,7 @@
   }
 
   .Normal {
-    font-size: 16px;
+    font-size: $medium;
 
     &:first-letter {
       text-transform: uppercase;

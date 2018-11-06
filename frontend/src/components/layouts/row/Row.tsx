@@ -21,3 +21,6 @@ export const RowMiddle = (props: LayoutProps) =>
 
 export const RowBottom = (props: LayoutProps) =>
   <Row {...props} className={classNames(props.className, 'Row-bottom')}/>;
+
+export const RowIndented = (props: LayoutProps) =>
+  <Row {...props} className={classNames(props.className, 'Row-indented')}/>;

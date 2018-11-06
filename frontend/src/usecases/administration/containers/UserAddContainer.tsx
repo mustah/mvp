@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
-import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
+import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {PageTitle} from '../../../components/texts/Titles';
 import {AdminPageComponent} from '../../../containers/PageComponent';
@@ -62,7 +62,7 @@ class UserAdd extends React.Component<Props> {
 
         <Paper style={paperStyle}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
-            <WrapperIndent>
+            <RowIndented>
               <UserEditForm
                 organisations={organisations}
                 onSubmit={addUser}
@@ -70,7 +70,7 @@ class UserAdd extends React.Component<Props> {
                 isEditSelf={false}
                 languages={languages}
               />
-            </WrapperIndent>
+            </RowIndented>
           </Loader>
         </Paper>
       </AdminPageComponent>

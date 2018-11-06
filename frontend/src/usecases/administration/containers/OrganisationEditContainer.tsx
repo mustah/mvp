@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
-import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
+import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {PageTitle} from '../../../components/texts/Titles';
 import {AdminPageComponent} from '../../../containers/PageComponent';
@@ -101,7 +101,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
         </PageTitle>
 
         <Paper style={paperStyle}>
-          <WrapperIndent>
+          <RowIndented>
             <Loader
               isFetching={isFetchingOrganisations}
               error={organisationsError}
@@ -122,7 +122,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
                 />
               </Loader>
             </Loader>
-          </WrapperIndent>
+          </RowIndented>
         </Paper>
       </AdminPageComponent>
     );
