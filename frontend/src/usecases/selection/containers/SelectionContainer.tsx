@@ -34,5 +34,4 @@ const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToPr
   title: userSelection.id === -1 ? translate('selection') : userSelection.name,
 });
 
-export const SelectionContainer =
-  connect<StateToProps>(mapStateToProps)(SelectionContainerComponent);
+export const SelectionContainer = connect<StateToProps>(mapStateToProps)(SelectionContainerComponent);
