@@ -1,9 +1,13 @@
 import * as React from 'react';
-import {listItemStyle, listItemStyleWithActions, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
+import {
+  listItemStyle,
+  listItemStyleWithActions,
+  nestedListItemStyle,
+  sideBarInnerDivStyle,
+} from '../../../../app/themes';
 import {MediumButton} from '../../../../components/buttons/MediumButton';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
-import {Medium} from '../../../../state/ui/graph/measurement/measurementModels';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {FirstUpper} from '../../../../components/texts/Texts';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
@@ -11,6 +15,7 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {orUnknown} from '../../../../helpers/translations';
 import {firstUpper} from '../../../../services/translationService';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
+import {Medium} from '../../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import '../../../report/components/indicators/ReportIndicatorWidget.scss';
 import {SelectableListItem} from './SelectableListItem';
@@ -35,7 +40,11 @@ export interface ItemOptions {
 }
 
 export const renderSelectionTreeCities = ({
-  id, selectionTree, toggleSingleEntry, openListItems, ...other
+  id,
+  selectionTree,
+  toggleSingleEntry,
+  openListItems,
+  ...other
 }: RenderProps) => {
   const city = selectionTree.entities.cities[id];
 
@@ -150,6 +159,9 @@ const labelStyle: React.CSSProperties = {
   marginLeft: 4,
   paddingLeft: 0,
   paddingRight: 0,
+  cursor: 'normal',
+  width: 126,
+  overflow: 'hidden',
   textOverflow: 'ellipsis',
 };
 
@@ -192,6 +204,7 @@ const renderSelectableListItem = ({
         <RowCenter className="first-uppercase" style={listItemStyleWithActions.textStyle}>
           <OpenDialogInfoButton
             label={primaryText}
+            title={primaryText}
             autoScrollBodyContent={true}
             labelStyle={labelStyle}
           >
@@ -216,7 +229,7 @@ const renderSelectableListItem = ({
       className="TreeListItem first-uppercase"
       primaryText={content}
       key={id}
-      innerDivStyle={sideBarStyles.padding}
+      innerDivStyle={sideBarInnerDivStyle}
       initiallyOpen={openListItems.has(id)}
       nestedListStyle={nestedListItemStyle}
       nestedItems={nestedItems}

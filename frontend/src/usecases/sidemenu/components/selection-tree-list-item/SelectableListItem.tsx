@@ -7,18 +7,12 @@ interface Selectable {
   selectable: boolean;
 }
 
-export const SelectableListItem = (props: ListItemProps & Selectable) => {
-  const {selectable, ...listItemProps} = props;
-
+export const SelectableListItem = ({selectable, ...listItemProps}: ListItemProps & Selectable) => {
   if (selectable) {
     listItemProps.hoverColor = sideBarStyles.onHover.color;
   } else {
     listItemProps.disabled = true;
   }
 
-  return (
-    <ListItem
-      {...listItemProps}
-    />
-  );
+  return <ListItem {...listItemProps}/>;
 };

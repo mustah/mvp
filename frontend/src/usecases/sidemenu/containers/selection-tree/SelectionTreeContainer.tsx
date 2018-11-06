@@ -96,7 +96,7 @@ class SelectionTreeComponent extends React.Component<Props> {
          )];
 
     return (
-      <React.Fragment>
+      <>
         <SearchBox
           onChange={selectionTreeSearch}
           onClear={clearSearch}
@@ -114,7 +114,7 @@ class SelectionTreeComponent extends React.Component<Props> {
             nestedListStyle={nestedListItemStyle}
           />
         </List>
-      </React.Fragment>
+      </>
     );
   }
 }
