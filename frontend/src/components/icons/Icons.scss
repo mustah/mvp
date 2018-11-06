@@ -3,24 +3,23 @@
 .IconButton {
   cursor: pointer;
   border-radius: $border-radius !important;
-  background-color: $secondary-bg !important;
-  color: $secondary-fg !important;
 
-  &:hover {
-    background-color: $secondary-bg-hover !important;
-  }
+  svg {
+    color: $lightest-black !important;
 
-  svg:hover {
-    color: $secondary-fg-hover !important;
+    &:hover {
+      color: $black !important;
+    }
   }
 
   &.IconSelection {
     background-color: $white !important;
     border-radius: 20px !important;
     box-shadow: $box-shadow;
+    border: 2px solid $dark-blue !important;
   }
 
   &.IconSelection:hover {
-    background-color: $secondary-bg-hover !important;
+    border: 2px solid $blue !important;
   }
 }
