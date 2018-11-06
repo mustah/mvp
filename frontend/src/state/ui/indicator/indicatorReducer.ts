@@ -1,6 +1,10 @@
+import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
+import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
 import {SelectedReportEntriesPayload} from '../../../usecases/report/reportModels';
+import {RESET_SELECTION, SELECT_SAVED_SELECTION} from '../../user-selection/userSelectionActions';
+import {UserSelection} from '../../user-selection/userSelectionModels';
 import {Medium, Quantity} from '../graph/measurement/measurementModels';
 import {SET_REPORT_INDICATOR_WIDGETS, SET_SELECTED_QUANTITIES} from './indicatorActions';
 
@@ -18,7 +22,12 @@ export const initialState: IndicatorState = {
   selectedQuantities: [],
 };
 
-type ActionTypes = Action<Medium[]> | Action<Quantity[]> | Action<SelectedReportEntriesPayload>;
+type ActionTypes =
+  | Action<Medium[]>
+  | Action<Quantity[]>
+  | Action<SelectedReportEntriesPayload>
+  | Action<UserSelection>
+  | EmptyAction<string>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   switch (action.type) {
@@ -26,11 +35,11 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
       return {
         ...state,
         selectedIndicators: {
-          report: [...(action.payload as Medium[])],
+          report: [...((action as Action<Medium[]>).payload as Medium[])],
         },
       };
     case SET_SELECTED_ENTRIES:
-      const payload: SelectedReportEntriesPayload = action.payload as SelectedReportEntriesPayload;
+      const payload: SelectedReportEntriesPayload = (action as Action<SelectedReportEntriesPayload>).payload;
       if (!payload.ids.length) {
         return {...initialState};
       }
@@ -44,8 +53,12 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
     case SET_SELECTED_QUANTITIES:
       return {
         ...state,
-        selectedQuantities: action.payload as Quantity[],
+        selectedQuantities: (action as Action<Quantity[]>).payload as Quantity[],
       };
+    case SELECT_SAVED_SELECTION:
+    case RESET_SELECTION:
+    case LOGOUT_USER:
+      return {...initialState};
     default:
       return state;
   }
