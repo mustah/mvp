@@ -5,6 +5,8 @@ import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {SHOW_FAIL_MESSAGE} from '../../../state/ui/message/messageActions';
+import {UiState} from '../../../state/ui/uiReducer';
+import {uuid} from '../../../types/Types';
 import {
   addToReport,
   selectEntryAdd,
@@ -13,7 +15,7 @@ import {
   toggleSingleEntry,
 } from '../reportActions';
 
-type RelevantStateForSelectedItems = Pick<RootState, 'report' | 'selectionTree'>;
+type RelevantStateForSelectedItems = Pick<RootState, 'report' | 'selectionTree'> & {ui: Pick<UiState, 'indicator'>} ;
 
 const configureMockStore: (state: RelevantStateForSelectedItems) => any = configureStore([thunk]);
 
@@ -122,6 +124,12 @@ describe('reportActions', () => {
           ],
         },
       },
+      ui: {
+        indicator: {
+          selectedIndicators: {report: []},
+          selectedQuantities: []
+        },
+      }
     };
   });
 
@@ -206,6 +214,33 @@ describe('reportActions', () => {
         expect(type).toEqual(SET_SELECTED_ENTRIES);
         expect(indicatorsToSelect).toEqual([Medium.gas, Medium.water]);
         expect(quantitiesToSelect).toEqual([Quantity.volume]);
+      });
+
+      it('uses the selected quantities from previous state', () => {
+        const selectedListItems: uuid[] = [
+          '54c58358-9631-4de3-b76c-f018fbf0fc8b',
+          '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+        ];
+        const store = configureMockStore({
+          ...initialState,
+          report: {
+            selectedListItems,
+          },
+          ui: selectedUiQuantitiesFrom([Quantity.flow])
+        });
+
+        store.dispatch(toggleSingleEntry('9ac413ed-ba1f-48d5-9793-7e259841595f'));
+
+        expect(store.getActions()).toEqual([
+          {
+            type: SET_SELECTED_ENTRIES,
+            payload: {
+              ids: [...selectedListItems, '9ac413ed-ba1f-48d5-9793-7e259841595f'],
+              indicatorsToSelect: [Medium.gas, Medium.water],
+              quantitiesToSelect: [Quantity.flow]
+            }
+          }
+        ]);
       });
 
       it('prioritizes previous indicators when some meters are removed and some added', () => {
@@ -452,12 +487,36 @@ describe('reportActions', () => {
 
       store.dispatch(selectEntryAdd('22b8fd17-fd83-469e-b0ca-4ab3808beebb'));
 
-      const actions = store.getActions();
-      expect(actions).toHaveLength(1);
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: {
+            ids: [...initialState.report.selectedListItems, '22b8fd17-fd83-469e-b0ca-4ab3808beebb'],
+            indicatorsToSelect: [Medium.gas],
+            quantitiesToSelect: [Quantity.volume]
+          }
+        }
+      ]);
+    });
 
-      const {type, payload: {ids}} = actions[0];
-      expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toContain('22b8fd17-fd83-469e-b0ca-4ab3808beebb');
+    it('adds new id to selected with already selected non-default quantity', () => {
+      const store = configureMockStore({
+        ...initialState,
+        ui: selectedUiQuantitiesFrom([Quantity.flow]),
+      });
+
+      store.dispatch(selectEntryAdd('22b8fd17-fd83-469e-b0ca-4ab3808beebb'));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: {
+            ids: [...initialState.report.selectedListItems, '22b8fd17-fd83-469e-b0ca-4ab3808beebb'],
+            indicatorsToSelect: [Medium.gas],
+            quantitiesToSelect: [Quantity.flow]
+          }
+        }
+      ]);
     });
 
     it('does not dispatch when id already exist in selected', () => {
@@ -470,4 +529,11 @@ describe('reportActions', () => {
 
   });
 
+  const selectedUiQuantitiesFrom = (selectedQuantities: Quantity[]): Pick<UiState, 'indicator'> => ({
+    ...initialState.ui,
+    indicator: {
+      ...initialState.ui.indicator,
+      selectedQuantities
+    }
+  });
 });

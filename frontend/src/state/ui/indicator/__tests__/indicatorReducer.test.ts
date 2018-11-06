@@ -1,29 +1,33 @@
+import {logoutUser} from '../../../../usecases/auth/authActions';
 import {setSelectedEntries} from '../../../../usecases/report/reportActions';
+import {RESET_SELECTION, SELECT_SAVED_SELECTION} from '../../../user-selection/userSelectionActions';
+import {UserSelection} from '../../../user-selection/userSelectionModels';
+import {initialState as initialUserSelectionState} from '../../../user-selection/userSelectionReducer';
 import {Medium, Quantity} from '../../graph/measurement/measurementModels';
 import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 
 describe('indicatorReducer', () => {
 
-  it('deselects selected indicators and quantities when the last report item is deselected', () => {
-    const nonEmptyState: IndicatorState = {
-      ...initialState,
-      selectedIndicators: {
-        report: [Medium.districtHeating],
-      },
-      selectedQuantities: [Quantity.volume],
-    };
+  const state: IndicatorState = {
+    ...initialState,
+    selectedIndicators: {
+      report: [Medium.districtHeating],
+    },
+    selectedQuantities: [Quantity.volume],
+  };
 
-    const stateAfterDeselection = indicator(nonEmptyState, setSelectedEntries({
+  it('deselects selected indicators and quantities when the last report item is deselected', () => {
+    const newState: IndicatorState = indicator(state, setSelectedEntries({
       ids: [],
       indicatorsToSelect: [],
       quantitiesToSelect: [],
     }));
 
-    expect(stateAfterDeselection).toEqual(initialState);
+    expect(newState).toEqual(initialState);
   });
 
   it('selects indicator and quantity on demand', () => {
-    const stateAfterFirstReportItemIsSelected: IndicatorState = indicator(
+    const newState: IndicatorState = indicator(
       initialState,
       setSelectedEntries({
         ids: ['123'],
@@ -40,7 +44,30 @@ describe('indicatorReducer', () => {
       selectedQuantities: [Quantity.externalTemperature],
     };
 
-    expect(stateAfterFirstReportItemIsSelected).toEqual(expected);
+    expect(newState).toEqual(expected);
+  });
+
+  describe('reset state', () => {
+
+    it('reset state when user selection is cleared', () => {
+      const payload: UserSelection = initialUserSelectionState.userSelection;
+      const newState: IndicatorState = indicator(state, {type: RESET_SELECTION, payload});
+
+      expect(newState).toEqual(initialState);
+    });
+
+    it('reset state when another saved selection is selected', () => {
+      const payload: UserSelection = initialUserSelectionState.userSelection;
+      const newState: IndicatorState = indicator(state, {type: SELECT_SAVED_SELECTION, payload});
+
+      expect(newState).toEqual(initialState);
+    });
+
+    it('resets state when user is logged out', () => {
+      const newState: IndicatorState = indicator(state, logoutUser(undefined));
+
+      expect(newState).toEqual(initialState);
+    });
   });
 
 });

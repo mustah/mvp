@@ -5,8 +5,8 @@ import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementM
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
-import {SelectedEntriesPayload, setSelectedEntries} from '../reportActions';
-import {ReportState} from '../reportModels';
+import {setSelectedEntries} from '../reportActions';
+import {ReportState, SelectedReportEntriesPayload} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 
 describe('reportReducer', () => {
@@ -14,7 +14,7 @@ describe('reportReducer', () => {
   it('makes sure the selectedListItems is set to payload', () => {
     const state: ReportState = {selectedListItems: [4, 5]};
     const ids: uuid[] = [1];
-    const payload: SelectedEntriesPayload = {
+    const payload: SelectedReportEntriesPayload = {
       ids,
       quantitiesToSelect: [Quantity.energy],
       indicatorsToSelect: [Medium.districtHeating],
@@ -46,7 +46,7 @@ describe('reportReducer', () => {
   describe('change period', () => {
 
     it('should not clear selected list items', () => {
-      const payload: SelectedEntriesPayload = {
+      const payload: SelectedReportEntriesPayload = {
         ids: [1, 2, 3],
         quantitiesToSelect: [],
         indicatorsToSelect: [],
@@ -69,7 +69,7 @@ describe('reportReducer', () => {
       const end: Date = momentFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
-      const payload: SelectedEntriesPayload = {
+      const payload: SelectedReportEntriesPayload = {
         ids: [1, 2, 3],
         quantitiesToSelect: [],
         indicatorsToSelect: [],

@@ -3,7 +3,7 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
+import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyle} from '../../../../app/themes';
 import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
@@ -87,16 +87,18 @@ class SelectionTreeComponent extends React.Component<Props> {
     const cityIds: uuid[] = selectionTree.result.cities;
     const nestedItems = cityIds.length
       ? [...cityIds].sort().map(renderSelectionOverview)
-      : [(
-           <LoadingListItem
-             isFetching={isFetching}
-             text={translate('no meters')}
-             key="loading-list-item"
-           />
-         )];
+      : [
+        (
+          <LoadingListItem
+            isFetching={isFetching}
+            text={translate('no meters')}
+            key="loading-list-item"
+          />
+        )
+      ];
 
     return (
-      <React.Fragment>
+      <>
         <SearchBox
           onChange={selectionTreeSearch}
           onClear={clearSearch}
@@ -109,12 +111,12 @@ class SelectionTreeComponent extends React.Component<Props> {
             primaryText={translate('selection overview')}
             initiallyOpen={true}
             style={sideBarHeaderStyle}
-            hoverColor={sideBarStyles.onHover.color}
+            hoverColor={sideBarStyle.color}
             nestedItems={nestedItems}
             nestedListStyle={nestedListItemStyle}
           />
         </List>
-      </React.Fragment>
+      </>
     );
   }
 }

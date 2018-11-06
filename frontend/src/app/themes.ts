@@ -45,6 +45,9 @@ export const mvpTheme = getMuiTheme({
     bodyFontSize: fontSize.normal,
     bodyColor: darkBlack,
   },
+  listItem: {
+    nestedLevelDepth: 14,
+  }
 });
 
 export const drawerWidth = 84; // Should be the same as $main-menu-width in _variables.scss
@@ -60,11 +63,17 @@ export const iconSizeLarge: React.CSSProperties = {
   height: 28,
 };
 
-export const sideBarStyles: Styles = {
-  fontSize: {fontSize: fontSize.normal},
-  padding: {padding: '4px 0'},
-  selected: {color: colors.blue},
-  onHover: {color: colors.lightGrey},
+export const sideBarStyle: React.CSSProperties = {
+  color: colors.lightGrey,
+};
+
+export const selectedSideBarStyle: React.CSSProperties = {
+  color: colors.blue,
+  fontWeight: 'bold',
+};
+
+export const sideBarInnerDivStyle: React.CSSProperties = {
+  padding: '4px 0',
 };
 
 export const sideBarHeaderStyle: React.CSSProperties = {
@@ -98,15 +107,11 @@ export const listItemStyle: React.CSSProperties = {
 
 export const listItemStyleWithActions: React.CSSProperties = {
   ...listItemStyle,
-  textStyle: {
-    ...listItemStyle.textStyle,
-    maxWidth: 120,
-  },
 };
 
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
-  ...sideBarStyles.selected,
+  ...selectedSideBarStyle,
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {

@@ -11,7 +11,7 @@ import {
   listStyle,
   nestedListItemStyle,
   sideBarHeaderStyle,
-  sideBarStyles,
+  sideBarStyle,
 } from '../../../../app/themes';
 import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
 import {Row} from '../../../../components/layouts/row/Row';
@@ -71,7 +71,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
         <ListItem
           style={style}
           innerDivStyle={innerDivStyle}
-          hoverColor={sideBarStyles.onHover.color}
+          hoverColor={sideBarStyle.color}
           value={item}
           key={item.id}
         >
@@ -104,7 +104,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
           primaryText={firstUpperTranslated('saved selections')}
           initiallyOpen={true}
           style={sideBarHeaderStyle}
-          hoverColor={sideBarStyles.onHover.color}
+          hoverColor={sideBarStyle.color}
           nestedItems={listItems}
           nestedListStyle={nestedListItemStyle}
         />

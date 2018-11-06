@@ -12,17 +12,12 @@ import {
 } from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {Dispatcher, OnPayloadAction, payloadActionOf, uuid} from '../../types/Types';
+import {SelectedReportEntriesPayload} from './reportModels';
 
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 
-export interface SelectedEntriesPayload {
-  ids: uuid[];
-  indicatorsToSelect: Medium[];
-  quantitiesToSelect: Quantity[];
-}
-
-export const setSelectedEntries: OnPayloadAction<SelectedEntriesPayload> =
-  payloadActionOf<SelectedEntriesPayload>(SET_SELECTED_ENTRIES);
+export const setSelectedEntries: OnPayloadAction<SelectedReportEntriesPayload> =
+  payloadActionOf<SelectedReportEntriesPayload>(SET_SELECTED_ENTRIES);
 
 const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionTreeState): Set<Medium> => {
   const cityMedia: Medium[] = ids.filter(isSelectedCity)
@@ -40,6 +35,7 @@ interface DispatchWithinLimits {
   selectionTree: SelectionTreeState;
   previousIds: uuid[];
   ids: uuid[];
+  selectedQuantities: Quantity[];
 }
 
 const dispatchIfWithinLimits = ({
@@ -47,6 +43,7 @@ const dispatchIfWithinLimits = ({
   selectionTree,
   previousIds,
   ids,
+  selectedQuantities
 }: DispatchWithinLimits) => {
   const limit: number = 20;
   const newAmount: number = ids.filter(isSelectedMeter).length;
@@ -60,50 +57,51 @@ const dispatchIfWithinLimits = ({
 
   const orderedMedia: Medium[] = Object.keys(allQuantities) as Medium[];
   const previousMedia: Set<Medium> = mediaForSelection(previousIds, selectionTree);
-
   const currentlyActiveMedia: Set<Medium> = mediaForSelection(ids, selectionTree);
 
-  const activeIndicators: Medium[] =
-    orderedMedia.filter((medium: Medium) => previousMedia.has(medium) && currentlyActiveMedia.has(medium));
+  const activeMedia: Medium[] = orderedMedia
+    .filter((medium) => previousMedia.has(medium) && currentlyActiveMedia.has(medium));
 
   const maxSelectedIndicators = 2;
   orderedMedia
-    .filter((medium: Medium) => currentlyActiveMedia.has(medium))
-    .forEach((activeMedium: Medium) => {
-      if (activeIndicators.length < maxSelectedIndicators) {
-        activeIndicators.push(activeMedium);
+    .filter((medium) => currentlyActiveMedia.has(medium))
+    .forEach((activeMedium) => {
+      if (activeMedia.length < maxSelectedIndicators) {
+        activeMedia.push(activeMedium);
       }
     });
 
-  const indicatorsToSelect: Medium[] = orderedMedia.filter(
-    (medium: Medium) => activeIndicators.includes(medium),
-  );
+  const indicatorsToSelect: Medium[] = orderedMedia.filter((medium) => activeMedia.includes(medium));
 
-  const quantitiesToSelect: Quantity[] = Array.from(new Set(indicatorsToSelect.map(defaultQuantityForMedium)));
+  const quantitiesToSelect: Quantity[] = selectedQuantities.length
+    ? selectedQuantities
+    : Array.from(new Set(indicatorsToSelect.map(defaultQuantityForMedium)));
 
   dispatch(setSelectedEntries({ids, quantitiesToSelect, indicatorsToSelect}));
 };
 
 export const toggleSingleEntry = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {selectionTree, report: {selectedListItems}} = getState();
+    const {selectionTree, report: {selectedListItems}, ui: {indicator: {selectedQuantities}}} = getState();
     return dispatchIfWithinLimits({
       dispatch,
       selectionTree,
       previousIds: selectedListItems,
       ids: toggle(id, selectedListItems),
+      selectedQuantities,
     });
   };
 
 export const addToReport = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {selectionTree, report: {selectedListItems}} = getState();
+    const {selectionTree, report: {selectedListItems}, ui: {indicator: {selectedQuantities}}} = getState();
     if (!selectedListItems.includes(id)) {
       dispatchIfWithinLimits({
         dispatch,
         ids: [...selectedListItems, id],
         selectionTree,
         previousIds: selectedListItems,
+        selectedQuantities,
       });
     }
   };
@@ -121,7 +119,7 @@ const levelFromId = (id: string): Level => {
 
 export const toggleIncludingChildren = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {report: {selectedListItems}, selectionTree} = getState();
+    const {report: {selectedListItems}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
     const clustered: SelectionTree = getSelectionTree(selectionTree);
 
     const listItems: Set<uuid> = new Set(selectedListItems);
@@ -156,12 +154,13 @@ export const toggleIncludingChildren = (id: uuid) =>
       selectionTree,
       previousIds: selectedListItems,
       ids: Array.from(listItems),
+      selectedQuantities,
     });
   };
 
 export const selectEntryAdd = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {report: {selectedListItems}, selectionTree} = getState();
+    const {report: {selectedListItems}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
     const newSelectedListItems = new Set<uuid>(selectedListItems);
     const originalLength = newSelectedListItems.size;
     newSelectedListItems.add(id);
@@ -171,6 +170,7 @@ export const selectEntryAdd = (id: uuid) =>
         selectionTree,
         previousIds: selectedListItems,
         ids: Array.from(newSelectedListItems),
+        selectedQuantities
       });
     }
   };

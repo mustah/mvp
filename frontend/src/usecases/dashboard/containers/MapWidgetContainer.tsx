@@ -1,11 +1,10 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Dialog} from '../../../components/dialog/Dialog';
+import {MeterDetailsDialog} from '../../../components/dialog/DetailsDialog';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
-import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -74,11 +73,15 @@ const MapWidget =
     viewCenter,
   }: Props) => {
 
-    const selectedId = Maybe.maybe<uuid>(map.selectedMarker);
-    const dialog = selectedId.isJust() && map.isClusterDialogOpen && (
-      <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog} autoScrollBodyContent={true}>
-        <MeterDetailsContainer selectedId={selectedId}/>
-      </Dialog>
+    const {isClusterDialogOpen, selectedMarker} = map;
+    const selectedId = Maybe.maybe<uuid>(selectedMarker);
+    const dialog = selectedId.isJust() && isClusterDialogOpen && (
+      <MeterDetailsDialog
+        autoScrollBodyContent={true}
+        close={closeClusterDialog}
+        isOpen={isClusterDialogOpen}
+        selectedId={selectedId}
+      />
     );
 
     const wrapperProps: MapContentWrapperProps = {

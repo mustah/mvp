@@ -1,6 +1,7 @@
 module.exports = function(wallaby) {
   return {
     files: [
+      'package.json',
       'tsconfig.json',
       'src/**/*.js',
       'src/**/*.ts',
@@ -14,6 +15,12 @@ module.exports = function(wallaby) {
     },
 
     testFramework: 'jest',
+
+    setup: function(wallaby) {
+      const jestConfig = require('./package.json').jest;
+      delete jestConfig.transform;
+      wallaby.testFramework.configure(jestConfig);
+    },
 
     compilers: {
       'src/**/*.ts': wallaby.compilers.typeScript({

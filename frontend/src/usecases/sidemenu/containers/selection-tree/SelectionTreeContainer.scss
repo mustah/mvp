@@ -12,9 +12,9 @@
     padding: 0 !important;
     height: 2 * $iconPadding + $iconSize !important;
     width: 2 * $iconPadding + $iconSize !important;
-    margin-right: 11px !important;
+    margin-right: 8px !important;
 
-    &.ZoomButton, &.AddToListButton, &.InfoButton {
+    &.ZoomButton, &.AddToListButton, &.InfoButton, &.MediumButton {
       margin-right: 0 !important;
       height: $iconSize !important;
       width: $iconSize !important;
@@ -23,6 +23,12 @@
     svg {
       height: $iconSize !important;
       width: $iconSize !important;
+
+      &.Indicator-icon {
+        &:hover {
+          fill: $blue !important;
+        }
+      }
     }
   }
 }

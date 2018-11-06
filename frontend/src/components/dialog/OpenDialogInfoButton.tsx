@@ -10,6 +10,7 @@ interface Props extends InfoButtonProps {
   children: Children;
   label: string | number;
   labelStyle?: React.CSSProperties;
+  title?: string;
 }
 
 interface State {
@@ -23,9 +24,9 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
   state: State = {isOpen: false};
 
   render() {
-    const {color, iconStyle, label, labelStyle} = this.props;
+    const {color, iconStyle, label, labelStyle, title} = this.props;
     return (
-      <div>
+      <div title={title}>
         <ButtonInfoLink
           onClick={this.open}
           label={label}

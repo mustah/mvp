@@ -1,8 +1,8 @@
 import {LegendPayload} from 'recharts';
-import {Medium} from '../../state/ui/graph/measurement/measurementModels';
-import {ReportIndicatorProps} from './components/indicators/ReportIndicatorWidget';
 import {firstUpperTranslated} from '../../services/translationService';
+import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
+import {ReportIndicatorProps} from './components/indicators/ReportIndicatorWidget';
 
 export interface ReportState {
   selectedListItems: uuid[];
@@ -58,6 +58,12 @@ export interface ActiveDataPoint {
   strokeWidth: number;
   unit: string;
   value: number;
+}
+
+export interface SelectedReportEntriesPayload {
+  ids: uuid[];
+  indicatorsToSelect: Medium[];
+  quantitiesToSelect: Quantity[];
 }
 
 export const hardcodedIndicators = (): ReportIndicatorProps[] => ([
