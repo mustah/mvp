@@ -1,0 +1,22 @@
+@import "../../../app/variables";
+
+.Foldable {
+  .Foldable-title {
+    padding: 0 0 $sm-space $sm-space;
+
+    .Foldable-arrow {
+      &.isVisible {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .Foldable-content {
+    display: none;
+
+    &.isVisible {
+      display: block;
+    }
+  }
+}
+

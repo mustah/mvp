@@ -8,8 +8,8 @@ import {
 } from '../../../components/dropdown-selector/DropdownSelector';
 import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
+import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
-import {Subtitle} from '../../../components/texts/Titles';
 import {translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
 import {
@@ -79,73 +79,74 @@ export const SelectionContent = ({
 
   return (
     <Column className="SelectionContentBox">
-      <Subtitle>{translate('filter')}</Subtitle>
 
-      <Row className="SelectionDropdownOptions">
-        <SearchableDropdownSelector
-          fetchItems={fetchFacilities}
-          selectedItems={facilities}
-          selectionText={facilitySelectionText}
-          select={selectFacilities}
-        />
-        <OrganisationDropDown
-          fetchItems={fetchOrganisationsToSelect}
-          selectedItems={organisations}
-          selectionText={organisationSelectionText}
-          select={selectOrganisations}
-        />
-        <SearchableDropdownSelector
-          fetchItems={fetchCities}
-          selectedItems={cities}
-          selectionText={citySelectionText}
-          select={selectCity}
-          renderLabel={renderCityLabel}
-          rowHeight={44}
-          unknownItem={unknownCity as SelectionListItem}
-        />
-        <SearchableDropdownSelector
-          fetchItems={fetchAddresses}
-          selectedItems={addresses}
-          selectionText={addressSelectionText}
-          select={selectAddress}
-          renderLabel={renderAddressLabel}
-          rowHeight={44}
-          unknownItem={unknownAddress as SelectionListItem}
-        />
-        <ListingDropdownSelector
-          fetchItems={fetchMedia}
-          selectedItems={media}
-          selectionText={mediumSelectionText}
-          select={selectMedium}
-        />
-      </Row>
+      <Foldable title={translate('filter')}>
+        <Row className="SelectionDropdownOptions">
+          <SearchableDropdownSelector
+            fetchItems={fetchFacilities}
+            selectedItems={facilities}
+            selectionText={facilitySelectionText}
+            select={selectFacilities}
+          />
+          <OrganisationDropDown
+            fetchItems={fetchOrganisationsToSelect}
+            selectedItems={organisations}
+            selectionText={organisationSelectionText}
+            select={selectOrganisations}
+          />
+          <SearchableDropdownSelector
+            fetchItems={fetchCities}
+            selectedItems={cities}
+            selectionText={citySelectionText}
+            select={selectCity}
+            renderLabel={renderCityLabel}
+            rowHeight={44}
+            unknownItem={unknownCity as SelectionListItem}
+          />
+          <SearchableDropdownSelector
+            fetchItems={fetchAddresses}
+            selectedItems={addresses}
+            selectionText={addressSelectionText}
+            select={selectAddress}
+            renderLabel={renderAddressLabel}
+            rowHeight={44}
+            unknownItem={unknownAddress as SelectionListItem}
+          />
+          <ListingDropdownSelector
+            fetchItems={fetchMedia}
+            selectedItems={media}
+            selectionText={mediumSelectionText}
+            select={selectMedium}
+          />
+        </Row>
 
-      <Row className="SelectionDropdownOptions">
-        <ListingDropdownSelector
-          fetchItems={fetchReported}
-          selectedItems={reported}
-          selectionText={reportedSelectionText}
-          select={selectReported}
-        />
-        <ListingDropdownSelector
-          fetchItems={fetchAlarms}
-          selectedItems={alarms}
-          selectionText={alarmSelectionText}
-          select={selectAlarm}
-        />
-        <SearchableDropdownSelector
-          fetchItems={fetchSecondaryAddresses}
-          selectedItems={secondaryAddresses}
-          selectionText={secondaryAddressSelectionText}
-          select={selectSecondaryAddresses}
-        />
-        <SearchableDropdownSelector
-          fetchItems={fetchGatewaySerials}
-          selectedItems={gatewaySerials}
-          selectionText={gatewaySerialSelectionText}
-          select={selectGatewaySerials}
-        />
-      </Row>
+        <Row className="SelectionDropdownOptions">
+          <ListingDropdownSelector
+            fetchItems={fetchReported}
+            selectedItems={reported}
+            selectionText={reportedSelectionText}
+            select={selectReported}
+          />
+          <ListingDropdownSelector
+            fetchItems={fetchAlarms}
+            selectedItems={alarms}
+            selectionText={alarmSelectionText}
+            select={selectAlarm}
+          />
+          <SearchableDropdownSelector
+            fetchItems={fetchSecondaryAddresses}
+            selectedItems={secondaryAddresses}
+            selectionText={secondaryAddressSelectionText}
+            select={selectSecondaryAddresses}
+          />
+          <SearchableDropdownSelector
+            fetchItems={fetchGatewaySerials}
+            selectedItems={gatewaySerials}
+            selectionText={gatewaySerialSelectionText}
+            select={selectGatewaySerials}
+          />
+        </Row>
+      </Foldable>
 
       <SearchResultList/>
     </Column>
