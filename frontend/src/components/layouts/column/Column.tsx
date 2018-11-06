@@ -14,6 +14,3 @@ export const ColumnCenter = (props: LayoutProps) =>
 
 export const ColumnBottom = (props: LayoutProps) =>
   <Column {...props} className={classNames(props.className, 'Column-bottom')}/>;
-
-export const ColumnContent = (props: LayoutProps) =>
-  <Column {...props} className={classNames(props.className, 'Column-content')}/>;
