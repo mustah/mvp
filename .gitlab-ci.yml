@@ -71,6 +71,7 @@ before_script:
 docker:postgresql:
   <<: *no_cache
   stage: docker
+  dependencies: []
   tags:
     - shell
   script:
@@ -81,6 +82,7 @@ docker:postgresql:
 docker:test-upgrade:
   <<: *no_cache
   stage: docker
+  dependencies: []
   tags:
     - shell
   script:
@@ -91,6 +93,7 @@ docker:test-upgrade:
 docker:ci-utils:
   <<: *no_cache
   stage: docker
+  dependencies: []
   tags:
     - shell
   script:
@@ -101,6 +104,7 @@ docker:ci-utils:
 prepare:gradle-clean:
   <<: *cache_gradle
   stage: prepare
+  dependencies: []
   script:
     - gradle clean
   only:
@@ -113,6 +117,7 @@ prepare:gradle-clean:
 prepare:version:
   <<: *no_cache
   stage: prepare
+  dependencies: []
   image:
     name: alpine/git:latest
     entrypoint: ["/bin/sh", "-c"]
@@ -127,6 +132,7 @@ prepare:version:
 prepare:update-salt:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
+  dependencies: []
   stage: prepare
   only:
     - schedules
@@ -203,6 +209,7 @@ pre-test:docker-geoservice-app:
 test:system:
   <<: *cache_gradle_read_only
   stage: test
+  dependencies: []
   services:
     - name: $DOCKER_REGISTRY_URL/postgresql:latest
       alias: pg_host
@@ -221,6 +228,7 @@ test:jira_script:
   <<: *no_cache
   image: frolvlad/alpine-python3
   stage: test
+  dependencies: []
   before_script:
     - cd scripts/jira/
     - pip install -r requirements.txt
@@ -231,6 +239,7 @@ test:jira_script:
 test:integration:
   <<: *cache_gradle_read_only
   stage: test
+  dependencies: []
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-integration"
     when: on_failure
@@ -321,6 +330,7 @@ deploy:staging:
 post-staging:acceptance:
   <<: *acceptance_test
   stage: post-staging
+  dependencies: []
   only:
     - schedules
     - /^release-.*$/
@@ -359,6 +369,7 @@ deploy:production:
 post-prod:acceptance:
   <<: *acceptance_test
   stage: post-prod
+  dependencies: []
   only:
     - schedules
     - /^release-.*$/
@@ -373,6 +384,7 @@ post-prod:acceptance:
 finalize:tag-production-mvp-docker:
   <<: *no_cache
   stage: finalize
+  dependencies: []
   tags:
     - shell
   only:
@@ -406,6 +418,7 @@ finalize:create-jira-version:
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
   stage: finalize
+  dependencies: []
   tags:
     - shell
   only:
