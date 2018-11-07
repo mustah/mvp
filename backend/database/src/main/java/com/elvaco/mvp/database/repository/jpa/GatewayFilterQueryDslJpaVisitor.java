@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
@@ -38,7 +37,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQ
 
 class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
-  private final List<Predicate> predicates = new ArrayList<>();
+  private final Collection<Predicate> predicates = new ArrayList<>();
 
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
@@ -134,7 +133,7 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   Collection<Predicate> getPredicates() {
-    return predicates;
+    return new ArrayList<>(predicates);
   }
 
   @Override
