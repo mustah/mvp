@@ -45,6 +45,13 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assumeTrue(isPostgresDialect());
   }
 
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+    }
+  }
+
   @Test
   public void correctNumberOfValuesAreReturnedRelativeToStart() {
     var meter = newPhysicalMeterEntity();
