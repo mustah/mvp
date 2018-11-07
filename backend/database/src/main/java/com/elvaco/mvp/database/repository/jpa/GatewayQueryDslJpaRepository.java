@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.dto.LogicalMeterLocation;
@@ -55,32 +56,33 @@ class GatewayQueryDslJpaRepository
         GATEWAY_STATUS_LOG.stop
         ).skipNulls()
       ),
-      set(
+      set(Projections.constructor(
+        LogicalMeterLocation.class,
+        LOGICAL_METER.id,
         Projections.constructor(
-          LogicalMeterLocation.class,
-          LOGICAL_METER.id,
+          Location.class,
           LOCATION.latitude,
           LOCATION.longitude,
           LOCATION.confidence,
           LOCATION.country,
           LOCATION.city,
           LOCATION.streetAddress
+        )
         ).skipNulls()
       )
     );
 
-    JPQLQuery<GatewaySummaryDto> countQuery = createCountQuery().select(constructor)
+    var countQuery = createCountQuery()
+      .select(constructor)
       .distinct();
-    JPQLQuery<GatewaySummaryDto> selectQuery = createQuery().select(constructor)
+
+    var selectQuery = createQuery()
+      .select(constructor)
       .distinct();
 
     querydsl.applyPagination(pageable, selectQuery);
 
-    new GatewayFilterQueryDslJpaVisitor().visitAndApply(
-      filters,
-      countQuery,
-      selectQuery
-    );
+    new GatewayFilterQueryDslJpaVisitor().visitAndApply(filters, countQuery, selectQuery);
 
     ResultTransformer<List<GatewaySummaryDto>> transformer = GroupBy.groupBy(
       GATEWAY.id
@@ -123,7 +125,6 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Page<String> findSerials(Filters filters, Pageable pageable) {
-
     GatewayFilterQueryDslJpaVisitor visitor = new GatewayFilterQueryDslJpaVisitor();
 
     JPQLQuery<String> query = createQuery().select(GATEWAY.serial).distinct();

@@ -5,12 +5,14 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -40,36 +42,31 @@ public class LogicalMeterDtoMapper {
     return null;
   }
 
-  public PagedLogicalMeterDto toPagedDto(LogicalMeter logicalMeter) {
-    PagedLogicalMeterDto meterDto = new PagedLogicalMeterDto();
+  public PagedLogicalMeterDto toPagedDto(LogicalMeterSummaryDto logicalMeter) {
+    var meterDto = new PagedLogicalMeterDto();
     meterDto.id = logicalMeter.id;
-    meterDto.medium = logicalMeter.getMedium();
-    meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
+    meterDto.organisationId = logicalMeter.organisationId;
+    meterDto.medium = logicalMeter.medium;
+    meterDto.manufacturer = logicalMeter.manufacturer;
+    meterDto.facility = logicalMeter.externalId;
+    meterDto.address = logicalMeter.address;
+    meterDto.gatewaySerial = logicalMeter.gatewaySerial;
+
+    meterDto.alarm = Optional.ofNullable(logicalMeter.activeAlarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask))
       .orElse(null);
-    meterDto.isReported = Optional.ofNullable(logicalMeter.status).map(StatusType::isReported)
+
+    meterDto.isReported = Optional.ofNullable(logicalMeter.activeStatus)
+      .map(StatusType::isReported)
       .orElse(false);
-    meterDto.manufacturer = logicalMeter.getManufacturer();
-    meterDto.facility = logicalMeter.externalId;
 
-    Optional<PhysicalMeter> physicalMeter = logicalMeter.activePhysicalMeter();
-    meterDto.address = physicalMeter
-      .map(m -> m.address)
-      .orElse(null);
-    meterDto.readIntervalMinutes = physicalMeter
-      .map(m -> m.readIntervalMinutes)
-      .orElse(null);
-
-    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
-
-    meterDto.gatewaySerial = logicalMeter.gateways.stream()
-      .findFirst()
-      .map(gateway -> gateway.serial)
-      .orElse(null);
+    meterDto.readIntervalMinutes = logicalMeter.readIntervalMinutes;
+    meterDto.collectionPercentage = CollectionStats.of(
+      logicalMeter.missingReadingCount,
+      logicalMeter.expectedReadingCount
+    ).getCollectionPercentage();
 
     meterDto.location = toLocationDto(logicalMeter.location);
-
-    meterDto.organisationId = logicalMeter.organisationId;
 
     return meterDto;
   }

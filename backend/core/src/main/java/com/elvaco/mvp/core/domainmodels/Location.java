@@ -31,6 +31,22 @@ public class Location {
     this.address = address;
   }
 
+  public Location(
+    @Nullable Double latitude,
+    @Nullable Double longitude,
+    @Nullable Double confidence,
+    @Nullable String country,
+    @Nullable String city,
+    @Nullable String address
+  ) {
+    this(
+      GeoCoordinate.newOrNull(latitude, longitude, confidence),
+      country,
+      city,
+      address
+    );
+  }
+
   @Nullable
   public String getAddress() {
     return address;

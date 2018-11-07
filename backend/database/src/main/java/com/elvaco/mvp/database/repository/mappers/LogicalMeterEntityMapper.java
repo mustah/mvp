@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -17,28 +16,18 @@ import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
-import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
-import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs;
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModels;
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelsWithoutStatusLogs;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
 public class LogicalMeterEntityMapper {
-
-  public static LogicalMeter toDomainModelWithCollectionPercentage(
-    PagedLogicalMeter pagedLogicalMeter,
-    long expectedReadingCount
-  ) {
-    return newLogicalMeter(pagedLogicalMeter, expectedReadingCount);
-  }
 
   public static LogicalMeter toDomainModelWithoutStatuses(LogicalMeterEntity entity) {
     return newLogicalMeter(
@@ -56,10 +45,6 @@ public class LogicalMeterEntityMapper {
       null,
       null
     );
-  }
-
-  public static LogicalMeter toDomainModel(PagedLogicalMeter pagedLogicalMeter) {
-    return newLogicalMeter(pagedLogicalMeter, null);
   }
 
   public static LogicalMeter toDomainModel(
@@ -147,34 +132,6 @@ public class LogicalMeterEntityMapper {
       .collect(toSet());
 
     return logicalMeterEntity;
-  }
-
-  private static LogicalMeter newLogicalMeter(
-    PagedLogicalMeter entity,
-    @Nullable Long expectedReadingCount
-  ) {
-    List<Gateway> gateways = Optional.ofNullable(entity.gateway)
-      .map(gateway -> singletonList(GatewayEntityMapper.toDomainModelWithoutStatusLogs(gateway)))
-      .orElse(emptyList());
-
-    List<PhysicalMeter> physicalMeters = Optional.ofNullable(entity.activePhysicalMeter)
-      .map(meter -> singletonList(toDomainModelWithoutStatusLogs(meter)))
-      .orElse(emptyList());
-
-    return LogicalMeter.builder()
-      .id(entity.id)
-      .externalId(entity.externalId)
-      .organisationId(entity.organisationId)
-      .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(entity.meterDefinition))
-      .created(entity.created)
-      .physicalMeters(physicalMeters)
-      .gateways(gateways)
-      .location(LocationEntityMapper.toDomainModel(entity.location))
-      .expectedMeasurementCount(expectedReadingCount)
-      .missingMeasurementCount(entity.missingReadingCount)
-      .alarm(MeterAlarmLogEntityMapper.toActiveAlarm(entity.alarm))
-      .status(Optional.ofNullable(entity.status).map(logEntry -> logEntry.status).orElse(null))
-      .build();
   }
 
   private static LogicalMeter newLogicalMeter(

@@ -1,7 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Collection;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.FilterVisitor;
@@ -16,7 +16,7 @@ import com.querydsl.jpa.JPQLQuery;
 abstract class FilterQueryDslJpaVisitor implements FilterVisitor {
   static final Predicate FALSE_PREDICATE = Expressions.asBoolean(true).isFalse();
 
-  abstract List<Predicate> getPredicates();
+  abstract Collection<Predicate> getPredicates();
 
   abstract void applyJoins(JPQLQuery<?> q);
 

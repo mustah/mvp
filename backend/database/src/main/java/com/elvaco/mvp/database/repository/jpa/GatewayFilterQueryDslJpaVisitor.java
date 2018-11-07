@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,23 +38,22 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQ
 
 class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
+  private final List<Predicate> predicates = new ArrayList<>();
+
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
   private Predicate meterStatusLogPredicate = FALSE_PREDICATE;
-  private List<Predicate> predicates = new ArrayList<>();
 
   @Override
   public void visit(CityFilter cityFilter) {
-    Optional.ofNullable(
-      LocationPredicates.whereCityOrUnknown(cityFilter.values())
-    ).ifPresent(predicates::add);
+    Optional.ofNullable(LocationPredicates.whereCityOrUnknown(cityFilter.values()))
+      .ifPresent(predicates::add);
   }
 
   @Override
   public void visit(AddressFilter addressFilter) {
-    Optional.ofNullable(
-      LocationPredicates.whereAddressOrUnknown(addressFilter.values())
-    ).ifPresent(predicates::add);
+    Optional.ofNullable(LocationPredicates.whereAddressOrUnknown(addressFilter.values()))
+      .ifPresent(predicates::add);
   }
 
   @Override
@@ -90,12 +90,12 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(WildcardFilter wildcardFilter) {
-    String str = wildcardFilter.oneValue();
+    String value = wildcardFilter.oneValue();
 
-    predicates.add(GATEWAY.serial.startsWithIgnoreCase(str)
-      .or(GATEWAY.productModel.startsWithIgnoreCase(str))
-      .or(LOCATION.city.startsWithIgnoreCase(str))
-      .or(LOCATION.streetAddress.startsWithIgnoreCase(str)));
+    predicates.add(GATEWAY.serial.startsWithIgnoreCase(value)
+      .or(GATEWAY.productModel.startsWithIgnoreCase(value))
+      .or(LOCATION.city.startsWithIgnoreCase(value))
+      .or(LOCATION.streetAddress.startsWithIgnoreCase(value)));
   }
 
   @Override
@@ -133,7 +133,7 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
   }
 
   @Override
-  List<Predicate> getPredicates() {
+  Collection<Predicate> getPredicates() {
     return predicates;
   }
 

@@ -23,7 +23,6 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
-import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -57,6 +56,9 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -249,71 +251,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent()).hasSize(1);
-    assertThat(response.getContent().get(0).collectionPercentage).isEqualTo(50.0);
+    assertThat(response.getContent()).extracting("collectionPercentage").containsExactly(50.0);
   }
 
   @Test
   public void collectionStatusFiftyPercentWhenMeterHasStatuses() {
     assumeTrue(isPostgresDialect());
 
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(
-      YESTERDAY.minusMinutes(15)
-    );
+    var districtHeatingMeter = saveLogicalMeter(YESTERDAY.minusMinutes(15));
 
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
-      .logicalMeterId(districtHeatingMeter.id)
-      .externalId(randomUUID().toString())
-      .readIntervalMinutes(60)
-      .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(OK)
-        .start(YESTERDAY.minusMinutes(15))
-        .stop(YESTERDAY.plusHours(5))
-        .build()
-    );
-
-    saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
-        .status(StatusType.WARNING)
-        .start(YESTERDAY.plusHours(5))
-        .build()
-    );
-
-    addMeasurementsForMeter(
-      physicalMeter,
-      districtHeatingMeter.getQuantities(),
-      YESTERDAY,
-      Duration.ofHours(2),
-      60L,
-      1.0,
-      1.0
-    );
-
-    missingMeasurementJpaRepository.refreshLocked();
-
-    PagedLogicalMeterDto logicalMeterDto = asUser()
-      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusHours(4)), PagedLogicalMeterDto.class)
-      .getContent()
-      .get(0);
-
-    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(50.0);
-  }
-
-  @Test
-  public void collectionStatusFiftyPercentWhenMeterHasMultipleActiveStatusesWithinPeriod() {
-    assumeTrue(isPostgresDialect());
-
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(
-      YESTERDAY.minusMinutes(15)
-    );
-
-    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+    var physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
       .externalId(randomUUID().toString())
       .readIntervalMinutes(60)
@@ -343,18 +290,64 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       YESTERDAY,
       Duration.ofHours(2),
       60L,
-      1.0,
       1.0
     );
 
     missingMeasurementJpaRepository.refreshLocked();
 
-    PagedLogicalMeterDto logicalMeterDto = asUser()
-      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusHours(4)), PagedLogicalMeterDto.class)
-      .getContent()
-      .get(0);
+    var response = asUser()
+      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusHours(5)), PagedLogicalMeterDto.class);
 
-    assertThat(logicalMeterDto.collectionPercentage).isEqualTo(50.0);
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent()).extracting("collectionPercentage").containsExactly(40.0);
+  }
+
+  @Test
+  public void collectionStatusFiftyPercentWhenMeterHasMultipleActiveStatusesWithinPeriod() {
+    assumeTrue(isPostgresDialect());
+
+    var districtHeatingMeter = saveLogicalMeter(YESTERDAY.minusMinutes(15));
+
+    var physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(60)
+      .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter.id)
+        .status(OK)
+        .start(YESTERDAY.minusMinutes(15))
+        .build()
+    );
+
+    saveStatusLogForMeter(
+      StatusLogEntry.<UUID>builder()
+        .entityId(physicalMeter.id)
+        .status(StatusType.WARNING)
+        .start(YESTERDAY.plusHours(1))
+        .build()
+    );
+
+    addMeasurementsForMeter(
+      physicalMeter,
+      districtHeatingMeter.getQuantities(),
+      YESTERDAY,
+      Duration.ofHours(2),
+      60L,
+      1.0
+    );
+
+    missingMeasurementJpaRepository.refreshLocked();
+
+    var content = asUser()
+      .getPage(metersUrl(YESTERDAY, YESTERDAY.plusHours(4)), PagedLogicalMeterDto.class)
+      .getContent();
+
+    assertThat(content).extracting("collectionPercentage").containsExactly(50.0);
   }
 
   @Test
@@ -1659,9 +1652,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(RequestParameter.AFTER, start)
-          .parameter(RequestParameter.BEFORE, start.plusHours(9))
-          .parameter(RequestParameter.ALARM, "yes")
+          .parameter(AFTER, start)
+          .parameter(BEFORE, start.plusHours(9))
+          .parameter(ALARM, "yes")
           .build(),
         PagedLogicalMeterDto.class
       );
@@ -1705,9 +1698,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(RequestParameter.AFTER, start)
-          .parameter(RequestParameter.BEFORE, start.plusHours(9))
-          .parameter(RequestParameter.ALARM, "no")
+          .parameter(AFTER, start)
+          .parameter(BEFORE, start.plusHours(9))
+          .parameter(ALARM, "no")
           .build(),
         PagedLogicalMeterDto.class
       );
@@ -1779,7 +1772,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
       .getPage(
-        metersUrl(start, start.plusHours(1)),
+        metersUrl(start.plusHours(4), start.plusHours(5)),
         PagedLogicalMeterDto.class
       );
 
@@ -1824,14 +1817,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).alarm)
       .isEqualTo(new AlarmDto(activeAlarm.id, activeAlarm.mask));
-  }
-
-  private UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
-    return Url.builder()
-      .path("/meters")
-      .parameter(RequestParameter.AFTER, after)
-      .parameter(RequestParameter.BEFORE, before)
-      .build();
   }
 
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
@@ -1892,7 +1877,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       start,
       periodDuration,
       minuteInterval,
-      1.0,
       0
     );
   }
@@ -1903,11 +1887,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ZonedDateTime start,
     Duration periodDuration,
     Long minuteInterval,
-    double value,
     double valueIncrementation
   ) {
     ZonedDateTime now = start;
-    double incrementedValue = value;
+    double incrementedValue = 1.0;
     while (now.isBefore(start.plus(periodDuration))) {
       addMeasurementsForMeterQuantities(physicalMeter, quantities, now, incrementedValue);
       now = now.plusMinutes(minuteInterval);
@@ -1996,6 +1979,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .medium("Heat")
       .manufacturer("ELV1");
+  }
+
+  private static UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
+    return Url.builder()
+      .path("/meters")
+      .parameter(AFTER, after)
+      .parameter(BEFORE, before)
+      .build();
   }
 
   private static GatewayEntity newGatewayEntity(UUID organisationId, String serial) {

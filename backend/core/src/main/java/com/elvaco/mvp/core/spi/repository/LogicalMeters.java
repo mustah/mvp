@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -25,7 +26,7 @@ public interface LogicalMeters {
 
   Page<String> findFacilities(RequestParameters parameters, Pageable pageable);
 
-  Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
+  Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeter> findAllWithDetails(RequestParameters parameters);
 
