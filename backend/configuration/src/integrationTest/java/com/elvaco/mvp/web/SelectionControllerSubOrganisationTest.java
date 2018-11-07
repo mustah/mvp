@@ -6,7 +6,6 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
-import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import org.junit.Test;
@@ -18,6 +17,7 @@ import static com.elvaco.mvp.testing.fixture.LocationTestData.oslo;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.FACILITIES_JSON_STRING;
+import static com.elvaco.mvp.testing.fixture.UserTestData.subOrgUser;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +50,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .location(oslo().build())
       .build());
 
-    var user = user().organisation(subOrganisation).build();
+    var user = subOrgUser().organisation(subOrganisation).build();
 
     var url = Url.builder()
       .path("/selections/addresses")
@@ -91,7 +91,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .location(stockholm().build())
       .build());
 
-    var user = user().organisation(subOrganisation).build();
+    var user = subOrgUser().organisation(subOrganisation).build();
 
     var url = Url.builder()
       .path("/selections/cities")
@@ -121,13 +121,5 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .ownerUserId(context().superAdmin.id)
       .organisationId(context().organisationId())
       .selectionParameters(toJsonNode(CITIES_JSON_STRING));
-  }
-
-  private static UserBuilder user() {
-    return new UserBuilder()
-      .name("sub-org-user")
-      .email("sub-org-user@sub.org.com")
-      .password("password-god")
-      .asUser();
   }
 }
