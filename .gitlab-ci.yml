@@ -177,11 +177,11 @@ pre-test:docker-mvp-app:
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: pre-test
-  tags:
-    - shell
   dependencies:
     - assemble
     - prepare:version
+  tags:
+    - shell
   script:
     - cat .version
     - git describe --tags --abbrev=7
@@ -194,11 +194,11 @@ pre-test:docker-geoservice-app:
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
   stage: pre-test
-  tags:
-    - shell
   dependencies:
     - assemble
     - prepare:version
+  tags:
+    - shell
   script:
     - cat .version
     - git describe --tags --abbrev=7
@@ -274,12 +274,12 @@ publish:mvp_artifactory:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
+  dependencies:
+    - assemble
   only:
     - schedules
     - /^release-.*$/
     - tags
-  dependencies:
-    - assemble
   script:
     - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
     - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
@@ -291,12 +291,12 @@ publish:geoservice_artifactory:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
+  dependencies:
+    - assemble
   only:
     - schedules
     - /^release-.*$/
     - tags
-  dependencies:
-    - assemble
   script:
     - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
     - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
