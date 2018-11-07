@@ -1,10 +1,7 @@
 package com.elvaco.mvp.database.util;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
@@ -23,7 +20,9 @@ import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.TransformedUnit;
 import tec.units.ri.unit.Units;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.Map.entry;
+import static java.util.stream.Collectors.toList;
 
 public class UnitConverter {
 
@@ -156,27 +155,15 @@ public class UnitConverter {
     return cleanedUnit.isCompatible(cleanedSecondUnit);
   }
 
-  private static String replace(String it) {
-    StringBuilder sb = new StringBuilder();
-    List<String> keys = UnitConverter.REPLACEMENTS.keySet()
+  private static String replace(String valueAndUnit) {
+    var replacements = REPLACEMENTS.keySet()
       .stream()
-      .sorted(Comparator.comparingInt(String::length))
-      .collect(Collectors.toList());
+      .sorted(comparingInt(String::length))
+      .collect(toList());
 
-    next:
-    while (it.length() > 0) {
-      for (String k : keys) {
-        if (it.startsWith(k)) {
-          // we have a match!
-          sb.append(UnitConverter.REPLACEMENTS.get(k));
-          it = it.substring(k.length());
-          continue next;
-        }
-      }
-      // no match, advance one character
-      sb.append(it.charAt(0));
-      it = it.substring(1);
+    for (var replacement : replacements) {
+      valueAndUnit = valueAndUnit.replace(replacement, REPLACEMENTS.get(replacement));
     }
-    return sb.toString();
+    return valueAndUnit;
   }
 }

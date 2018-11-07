@@ -105,6 +105,11 @@ public class UnitConverterTest {
   }
 
   @Test
+  public void isSameDimension_Disallows_ValuesIncluded() {
+    assertThat(isSameDimension("1 K", "1 K")).isFalse();
+  }
+
+  @Test
   public void isSameDimension_Disallows_UnitsFromDifferentDimensions() {
     assertThat(isSameDimension("h", "m")).isFalse();
   }
