@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -60,6 +61,7 @@ class RabbitMqConfig {
   private final GeocodeService geocodeService;
   private final PropertiesUseCases propertiesUseCases;
   private final MeterAlarmLogs meterAlarmLogs;
+  private final UnitConverter unitConverter;
 
   @Bean
   MeasurementMessageConsumer measurementMessageConsumer() {
@@ -68,7 +70,8 @@ class RabbitMqConfig {
       physicalMeterUseCases,
       organisationUseCases,
       measurementUseCases,
-      gatewayUseCases
+      gatewayUseCases,
+      unitConverter
     );
   }
 

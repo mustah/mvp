@@ -12,4 +12,5 @@ dependencies {
   testCompile "junit:junit:${junitVersion}"
   testCompile "org.assertj:assertj-core:${assertjVersion}"
   testCompile project(':backend:testing')
+  testCompile project(':backend:unit-converter')
 }

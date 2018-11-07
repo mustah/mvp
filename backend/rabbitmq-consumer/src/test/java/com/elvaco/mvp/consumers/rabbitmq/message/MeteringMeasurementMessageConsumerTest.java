@@ -44,6 +44,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+import com.elvaco.mvp.unitconverter.UomUnitConverter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -121,7 +122,8 @@ public class MeteringMeasurementMessageConsumerTest {
         new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
       ),
       new MeasurementUseCases(measurements),
-      new GatewayUseCases(gateways, authenticatedUser)
+      new GatewayUseCases(gateways, authenticatedUser),
+      UomUnitConverter.singleton()
     );
   }
 
@@ -246,7 +248,7 @@ public class MeteringMeasurementMessageConsumerTest {
     messageConsumer.accept(newMeasurementMessage(new ValueDto(
       MEASUREMENT_TIMESTAMP,
       2.0,
-      "m³/h",
+      "°C",
       "Flow temp."
     )));
 
@@ -272,13 +274,66 @@ public class MeteringMeasurementMessageConsumerTest {
       new ValueDto(
         MEASUREMENT_TIMESTAMP,
         1.0,
-        "W",
+        "kWh",
         "Energy"
       )
     ));
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0).quantity).isEqualTo("Energy");
+  }
+
+  @Test
+  public void invalidUnitForQuantityIsDiscarded_validUnitsAreRetained() {
+    var organisation = saveDefaultOrganisation();
+    logicalMeters.save(
+      LogicalMeter.builder()
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .build());
+
+    messageConsumer.accept(newMeasurementMessage(
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        3.0,
+        "kWh",
+        "External temperature"
+      ),
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        1.0,
+        "kWh",
+        "Energy"
+      )
+    ));
+    List<Measurement> createdMeasurements = measurements.allMocks();
+    assertThat(createdMeasurements).extracting(m -> m.unit).containsExactly("kWh");
+    assertThat(createdMeasurements).extracting(m -> m.quantity).containsExactly("Energy");
+  }
+
+  @Test
+  public void differentUnitOfSameDimensionIsAccepted() {
+    var organisation = saveDefaultOrganisation();
+    logicalMeters.save(
+      LogicalMeter.builder()
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .build());
+
+    messageConsumer.accept(newMeasurementMessage(
+      new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "K", "External temp"),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 2.0, "m³/s", "Volume flow"),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 3.0, "Wh", "Energy"),
+      new ValueDto(MEASUREMENT_TIMESTAMP.plusHours(1), 4.0, "MWh", "Energy"),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 5.0, "kW", "Power"),
+      new ValueDto(MEASUREMENT_TIMESTAMP.plusHours(1), 6.0, "MW", "Power"),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 7.0, "°C", "Difference temp.")
+    ));
+
+    List<Measurement> createdMeasurements = measurements.allMocks();
+    assertThat(createdMeasurements).extracting(m -> m.value).containsExactlyInAnyOrder(
+      1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0
+    );
   }
 
   @Test
@@ -388,18 +443,19 @@ public class MeteringMeasurementMessageConsumerTest {
 
   @Test
   public void measurementUnitIsUpdated() {
-    messageConsumer.accept(measurementMessageWithUnit("kW"));
+    messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     List<Measurement> all = measurements.allMocks();
+
     assertThat(all).hasSize(1);
-    assertThat(all.get(0).unit).isEqualTo("kW");
+    assertThat(all.get(0).unit).isEqualTo("kWh");
     assertThat(all.get(0).value).isEqualTo(1.0);
 
-    messageConsumer.accept(measurementMessageWithUnit("MW"));
+    messageConsumer.accept(measurementMessageWithUnit("MWh"));
 
     all = measurements.allMocks();
     assertThat(all).hasSize(1);
-    assertThat(all.get(0).unit).isEqualTo("MW");
+    assertThat(all.get(0).unit).isEqualTo("MWh");
     assertThat(all.get(0).value).isEqualTo(1.0);
   }
 

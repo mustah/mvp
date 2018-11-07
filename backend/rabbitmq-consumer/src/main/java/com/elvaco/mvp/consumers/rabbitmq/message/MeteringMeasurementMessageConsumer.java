@@ -13,6 +13,8 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -23,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
-import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantityName;
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantity;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
 import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
@@ -39,6 +41,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   private final OrganisationUseCases organisationUseCases;
   private final MeasurementUseCases measurementUseCases;
   private final GatewayUseCases gatewayUseCases;
+  private final UnitConverter unitConverter;
 
   @Override
   public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto measurementMessage) {
@@ -126,17 +129,31 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   }
 
   private Optional<Measurement> createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
-    Optional<String> quantityName = mappedQuantityName(value.quantity);
-    if (!quantityName.isPresent()) {
-      log.warn("Discarding unknown quantity '{}' for value {}", value.quantity, value);
+    Optional<Quantity> quantity = mappedQuantity(value.quantity);
+    if (!quantity.isPresent()) {
+      log.warn(
+        "Discarding measurement with unknown quantity for facility '{}': {}",
+        physicalMeter.externalId,
+        value
+      );
       return Optional.empty();
     }
+    if (!unitConverter.isSameDimension(quantity.get().presentationUnit(), value.unit)) {
+      log.warn(
+        "Discarding measurement with invalid unit for facility '{}', expecting '{}', got {}",
+        physicalMeter.externalId,
+        quantity.get().presentationUnit(),
+        value
+      );
+      return Optional.empty();
+    }
+
     return Optional.of(Measurement.builder()
       .physicalMeter(physicalMeter)
       .created(value.timestamp.atZone(METERING_TIMEZONE))
       .value(value.value)
       .unit(value.unit)
-      .quantity(quantityName.get())
+      .quantity(quantity.get().name)
       .build());
   }
 
