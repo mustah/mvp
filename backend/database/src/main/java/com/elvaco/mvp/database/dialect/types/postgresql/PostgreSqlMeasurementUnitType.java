@@ -33,11 +33,13 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
       PGobject value = (PGobject) rs.getObject(names[0]);
       if (value != null && value.getValue() != null) {
         return MeasurementUnit.from(value.getValue());
+      } else {
+        return null;
       }
-    } catch (Exception ex) {
+    } catch (HibernateException | SQLException ex) {
       log.warn("Unable to get value for '{}'.", names, ex);
+      throw ex;
     }
-    return null;
   }
 
   @Override

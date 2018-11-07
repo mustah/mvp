@@ -94,13 +94,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Before
   public void setUp() {
     start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-
     hotWaterMeterDefinition = meterDefinitions.save(HOT_WATER_METER);
   }
 
   @After
   public void tearDown() {
-    measurementJpaRepository.deleteAll();
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+    }
     meterAlarmLogJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();

@@ -15,6 +15,7 @@ public class MeasurementUnit implements Serializable {
   private static final long serialVersionUID = -8237162225719810274L;
   private static final Pattern UNIT_EXPONENT_RE = Pattern.compile("(.*)\\^([\\d]+)");
   private static final Map<String, String> DIGIT_TO_EXPONENT_MAP = new HashMap<>();
+
   private String unit;
   private double value;
 

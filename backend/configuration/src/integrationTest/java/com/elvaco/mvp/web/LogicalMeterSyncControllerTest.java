@@ -67,8 +67,11 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @After
   public void tearDown() {
-    logicalMeterJpaRepository.deleteAll();
     propertiesJpaRepository.deleteAll();
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
     organisations.deleteById(otherOrganisation.id);
   }
 

@@ -25,6 +25,7 @@ import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import org.assertj.core.data.Offset;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,10 +75,16 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
   }
 
+  @After
+  public void tearDown() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+    }
+  }
+
   @Override
   protected void afterRemoveEntitiesHook() {
     if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
       organisationJpaRepository.delete(otherOrganisation);
     }
   }
