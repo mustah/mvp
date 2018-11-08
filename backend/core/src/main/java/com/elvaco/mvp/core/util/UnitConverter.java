@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.util;
+package com.elvaco.mvp.core.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import javax.measure.quantity.Energy;
 import javax.measure.quantity.Power;
 import javax.measure.quantity.Pressure;
 
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import tec.units.ri.AbstractUnit;
 import tec.units.ri.format.SimpleUnitFormat;
 import tec.units.ri.function.RationalConverter;
@@ -109,9 +109,9 @@ public class UnitConverter {
     REPLACEMENTS.put("*", "");
   }
 
-  public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
+  public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String targetUnit) {
     valueAndUnit = replace(valueAndUnit);
-    target = replace(target);
+    targetUnit = replace(targetUnit);
 
     Quantity<?> sourceQuantity;
     try {
@@ -125,10 +125,10 @@ public class UnitConverter {
 
     Quantity<?> resultQuantity;
     try {
-      Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
-      resultQuantity = sourceQuantity.to(targetUnit);
+      Unit parsedTargetUnit = SimpleUnitFormat.getInstance().parse(targetUnit);
+      resultQuantity = sourceQuantity.to(parsedTargetUnit);
     } catch (ParserException ex) {
-      throw new RuntimeException("ERROR: unit \"" + target + "\" is not known");
+      throw new RuntimeException("ERROR: unit \"" + targetUnit + "\" is not known");
     }
     return new MeasurementUnit(
       resultQuantity.getUnit().toString(),

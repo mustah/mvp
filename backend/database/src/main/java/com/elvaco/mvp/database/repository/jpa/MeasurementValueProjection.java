@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 
 public interface MeasurementValueProjection {
 

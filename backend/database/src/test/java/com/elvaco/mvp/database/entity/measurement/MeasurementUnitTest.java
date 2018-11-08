@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.measurement;
 
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

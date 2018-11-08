@@ -8,7 +8,7 @@ import javax.measure.Unit;
 import javax.measure.format.ParserException;
 import javax.measure.quantity.Energy;
 
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

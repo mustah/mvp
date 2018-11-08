@@ -1,14 +1,14 @@
-package com.elvaco.mvp.database.util;
+package com.elvaco.mvp.core.util;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 
-import static com.elvaco.mvp.database.util.UnitConverter.isSameDimension;
-import static com.elvaco.mvp.database.util.UnitConverter.toMeasurementUnit;
+import static com.elvaco.mvp.core.util.UnitConverter.isSameDimension;
+import static com.elvaco.mvp.core.util.UnitConverter.toMeasurementUnit;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 

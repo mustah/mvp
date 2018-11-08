@@ -4,6 +4,7 @@ dependencies {
   compile 'com.google.code.findbugs:jsr305:3.0.2'
   compile 'ch.qos.logback:logback-classic:1.1.11'
   compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
+  compile 'tec.units:unit-ri:1.0.3'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
