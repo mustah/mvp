@@ -46,8 +46,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    measurementJpaRepository.deleteAll();
     if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
       missingMeasurementJpaRepository.refreshLocked();
     }
   }

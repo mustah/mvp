@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -35,7 +35,7 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(
+    Page<LogicalMeterSummaryDto> page = logicalMeterUseCases.findAll(
       requestParametersOf(requestParams, LOGICAL_METER_ID),
       new PageableAdapter(pageable)
     );

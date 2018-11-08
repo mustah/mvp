@@ -6,10 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
-import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +37,7 @@ public interface LogicalMeterJpaRepository {
 
   List<LogicalMeterEntity> findAll(RequestParameters parameters, Sort sort);
 
-  Page<PagedLogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
+  Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 

@@ -53,8 +53,6 @@ class GatewayMapQueryDslJpaRepository
 
     new GatewayFilterQueryDslJpaVisitor().visitAndApply(filters, query);
 
-    return new HashSet<>(query
-      .distinct()
-      .fetch());
+    return new HashSet<>(query.distinct().fetch());
   }
 }

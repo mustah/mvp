@@ -7,15 +7,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
-
 import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyMap;
@@ -78,7 +80,7 @@ public final class LogicalMeterHelper {
         }
       });
 
-      if (physicalMeters.size() > 0) {
+      if (!physicalMeters.isEmpty()) {
         physicalMeterQuantityMap.put(quantity, physicalMeters);
       }
     });
@@ -94,6 +96,17 @@ public final class LogicalMeterHelper {
     }
     return (long) Math.floor((double) Duration.between(selectionPeriod.start, selectionPeriod.stop)
       .toMinutes() / readIntervalMinutes);
+  }
+
+  public static Function<LogicalMeterSummaryDto, LogicalMeterSummaryDto> withExpectedReadoutsFor(
+    SelectionPeriod period
+  ) {
+    return logicalMeterSummaryDto -> logicalMeterSummaryDto.toBuilder()
+      .expectedReadingCount(
+        Optional.ofNullable(logicalMeterSummaryDto.readIntervalMinutes)
+          .map(readInterval -> calculateExpectedReadOuts(readInterval, period))
+          .orElse(0L))
+      .build();
   }
 
   public static ZonedDateTime getNextReadoutDate(ZonedDateTime date, Long interval) {

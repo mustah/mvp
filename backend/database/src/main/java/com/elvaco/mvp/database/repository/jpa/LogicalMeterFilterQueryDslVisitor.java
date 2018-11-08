@@ -1,7 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
@@ -19,6 +19,8 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
+import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
+import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationPredicates;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPQLQuery;
@@ -34,10 +36,12 @@ import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.PHYS
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
 class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
+
+  private final Collection<Predicate> predicates = new ArrayList<>();
+
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
   private Predicate missingMeasurementPredicate = FALSE_PREDICATE;
-  private List<Predicate> predicates = new ArrayList<>();
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -125,21 +129,31 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   }
 
   @Override
-  List<Predicate> getPredicates() {
-    return predicates;
+  Collection<Predicate> getPredicates() {
+    return new ArrayList<>(predicates);
   }
 
   @Override
   void applyJoins(JPQLQuery<?> q) {
+    var meterStatusLogJoin = new QPhysicalMeterStatusLogEntity("meter_status_log_join");
+    var meterAlarmLogJoin = new QMeterAlarmLogEntity("meter_alarm_log_join");
+
     q.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION)
+      .leftJoin(LOGICAL_METER.location, LOCATION)
       .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
       .on(missingMeasurementPredicate)
-      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
-      .on(statusLogPredicate)
-      .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
-      .on(alarmLogPredicate);
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG).on(statusLogPredicate)
+      .leftJoin(PHYSICAL_METER.statusLogs, meterStatusLogJoin)
+      .on(meterStatusLogJoin.start.gt(METER_STATUS_LOG.start)
+        .or(meterStatusLogJoin.start.eq(METER_STATUS_LOG.start))
+        .and(meterStatusLogJoin.id.gt(METER_STATUS_LOG.id)))
+      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG).on(alarmLogPredicate)
+      .leftJoin(PHYSICAL_METER.alarms, meterAlarmLogJoin)
+      .on(meterAlarmLogJoin.start.gt(ALARM_LOG.start)
+        .or(meterAlarmLogJoin.start.eq(ALARM_LOG.start))
+        .and(meterAlarmLogJoin.id.gt(ALARM_LOG.id)))
+      .where(meterAlarmLogJoin.id.isNull().and(meterStatusLogJoin.id.isNull()));
   }
 }

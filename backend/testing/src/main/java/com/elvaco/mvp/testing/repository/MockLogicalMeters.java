@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -72,7 +73,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+  public Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
     throw new NotImplementedYet();
   }
 

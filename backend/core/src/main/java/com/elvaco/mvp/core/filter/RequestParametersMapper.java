@@ -2,15 +2,12 @@ package com.elvaco.mvp.core.filter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -92,21 +89,13 @@ public final class RequestParametersMapper {
 
   public static Filters toFilters(RequestParameters requestParameters) {
     Collection<VisitableFilter> filters = new ArrayList<>();
-    Optional<SelectionPeriod> selectionPeriod = requestParameters.getPeriod();
-    selectionPeriod.ifPresent(selectionPeriod1 -> filters.add(new PeriodFilter(
-      Collections.singletonList(selectionPeriod1),
-      EQUAL,
-      selectionPeriod1
-    )));
-
+    requestParameters.getPeriod().ifPresent(period ->
+      filters.add(new PeriodFilter(List.of(period), EQUAL, period))
+    );
     filters.addAll(
-      requestParameters.entrySet()
-        .stream()
-        .filter(rp -> !rp.getValue().isEmpty() && !isIgnored(rp.getKey()))
-        .map(rp -> parameterToFilter(
-          rp.getKey(),
-          rp.getValue()
-        )).collect(toList())
+      requestParameters.entrySet().stream()
+        .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))
+        .map(param -> parameterToFilter(param.getKey(), param.getValue())).collect(toList())
     );
     return new Filters(filters);
   }

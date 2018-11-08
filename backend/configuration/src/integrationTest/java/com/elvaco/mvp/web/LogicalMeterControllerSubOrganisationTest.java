@@ -9,18 +9,16 @@ import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
+import static com.elvaco.mvp.testing.fixture.UserTestData.subOrgUser;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore
 public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
 
   @Autowired
@@ -36,7 +34,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .selectionParameters(toJsonNode(CITIES_JSON_STRING))
       .build());
 
-    organisations.save(Organisation.builder()
+    var subOrganisation = organisations.save(Organisation.builder()
       .name("sub-org")
       .slug("sub-org")
       .externalId("sub-org")
@@ -64,14 +62,14 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .logicalMeterId(logicalMeterWithCity.id)
       .build());
 
-    Url url = Url.builder()
+    var user = subOrgUser().organisation(subOrganisation).build();
+
+    var content = as(user).getPage(Url.builder()
       .path("/meters")
-      .build();
+      .build(), PagedLogicalMeterDto.class)
+      .getContent();
 
-    Page<PagedLogicalMeterDto> result = asSuperAdmin()
-      .getPage(url, PagedLogicalMeterDto.class);
-
-    assertThat(result.getContent()).extracting("id").containsExactly(logicalMeterWithCity.id);
+    assertThat(content).extracting("id").containsExactly(logicalMeterWithCity.id);
   }
 
   private PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilder() {

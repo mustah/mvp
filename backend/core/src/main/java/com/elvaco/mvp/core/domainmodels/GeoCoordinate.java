@@ -22,12 +22,23 @@ public class GeoCoordinate {
     @Nullable Double longitude,
     @Nullable Double confidence
   ) {
-    if (confidence == null || confidence > 1.0 || confidence < 0.0) {
+    if (isInvalidConfidence(confidence)) {
       throw new IllegalArgumentException("Confidence should be between 0.0 and 1.0 (inclusive)");
     }
     this.latitude = latitude;
     this.longitude = longitude;
     this.confidence = confidence;
+  }
+
+  @Nullable
+  static GeoCoordinate newOrNull(
+    @Nullable Double latitude,
+    @Nullable Double longitude,
+    @Nullable Double confidence
+  ) {
+    return isInvalidConfidence(confidence)
+      ? null
+      : new GeoCoordinate(latitude, longitude, confidence);
   }
 
   @Nullable
@@ -47,5 +58,9 @@ public class GeoCoordinate {
 
   public boolean isHighConfidence() {
     return confidence != null && confidence >= HIGH_CONFIDENCE;
+  }
+
+  private static boolean isInvalidConfidence(Double confidence) {
+    return (confidence == null || confidence > 1.0 || confidence < 0.0);
   }
 }

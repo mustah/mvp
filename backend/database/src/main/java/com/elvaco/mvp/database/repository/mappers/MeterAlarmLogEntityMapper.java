@@ -39,14 +39,6 @@ public class MeterAlarmLogEntityMapper {
   }
 
   @Nullable
-  static AlarmLogEntry toActiveAlarm(MeterAlarmLogEntity alarm) {
-    return Optional.ofNullable(alarm)
-      .map(MeterAlarmLogEntityMapper::toDomainModel)
-      .filter(AlarmLogEntry::isActive)
-      .orElse(null);
-  }
-
-  @Nullable
   static AlarmLogEntry toLatestActiveAlarm(List<PhysicalMeter> physicalMeters) {
     return physicalMeters.stream()
       .findFirst()

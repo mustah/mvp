@@ -93,4 +93,12 @@ public class UserTestData {
       .password("letmein")
       .roles(ADMIN, USER);
   }
+
+  public static UserBuilder subOrgUser() {
+    return new UserBuilder()
+      .name("sub-org-user")
+      .email("sub-org-user@sub.org.com")
+      .password("password-god")
+      .asUser();
+  }
 }

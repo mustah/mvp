@@ -4,14 +4,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.database.dialect.types.MeasurementUnitType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
-
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.postgresql.util.PGobject;
 
+@Slf4j
 public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
 
   @Override
@@ -19,6 +21,7 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
     return new int[] {Types.OTHER};
   }
 
+  @Nullable
   @Override
   public Object nullSafeGet(
     ResultSet rs,
@@ -26,11 +29,17 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
     SharedSessionContractImplementor session,
     Object owner
   ) throws HibernateException, SQLException {
-    PGobject value = (PGobject) rs.getObject(names[0]);
-    if (value == null || value.getValue() == null) {
-      return null;
+    try {
+      PGobject value = (PGobject) rs.getObject(names[0]);
+      if (value != null && value.getValue() != null) {
+        return MeasurementUnit.from(value.getValue());
+      } else {
+        return null;
+      }
+    } catch (HibernateException | SQLException ex) {
+      log.warn("Unable to get value for '{}'.", names, ex);
+      throw ex;
     }
-    return MeasurementUnit.from(value.getValue());
   }
 
   @Override

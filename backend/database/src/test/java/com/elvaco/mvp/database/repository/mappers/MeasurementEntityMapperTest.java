@@ -1,7 +1,7 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.List;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -21,9 +21,8 @@ public class MeasurementEntityMapperTest {
 
   @BeforeClass
   public static void setup() {
-    QuantityAccess.singleton().loadAll(Arrays.asList(
-      new Quantity(1,"Volume",VOLUME.getPresentationInformation())
-    ));
+    QuantityAccess.singleton()
+      .loadAll(List.of(new Quantity(1, "Volume", VOLUME.getPresentationInformation())));
   }
 
   @Test

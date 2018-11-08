@@ -10,13 +10,13 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PagedLogicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
@@ -29,7 +29,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithCollectionPercentage;
 import static com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper.toDomainModelWithoutStatuses;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -100,8 +99,8 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    org.springframework.data.domain.Page<PagedLogicalMeter> pagedLogicalMeters =
+  public Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
+    return new PageAdapter<>(
       logicalMeterJpaRepository.findAll(
         parameters,
         PageRequest.of(
@@ -109,22 +108,8 @@ public class LogicalMeterRepository implements LogicalMeters {
           pageable.getPageSize(),
           sortingMapper.getAsQSort(pageable.getSort())
         )
-      );
-
-    return parameters.getPeriod()
-      .map(selectionPeriod ->
-        new PageAdapter<>(
-          pagedLogicalMeters.map(source ->
-            toDomainModelWithCollectionPercentage(
-              source,
-              source.expectedReadingCount(selectionPeriod)
-            )
-          )
-        )
       )
-      .orElseGet(() ->
-        new PageAdapter<>(pagedLogicalMeters.map(LogicalMeterEntityMapper::toDomainModel))
-      );
+    );
   }
 
   @Override

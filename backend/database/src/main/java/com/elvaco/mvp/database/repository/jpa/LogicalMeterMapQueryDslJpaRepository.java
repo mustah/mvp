@@ -35,7 +35,6 @@ class LogicalMeterMapQueryDslJpaRepository
   }
 
   private Set<MapMarker> findAllMapMarkers(Filters filters) {
-    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
     JPQLQuery<MapMarker> query = createQuery()
       .select(Projections.constructor(
         MapMarker.class,
@@ -47,7 +46,8 @@ class LogicalMeterMapQueryDslJpaRepository
       ));
 
     filters.add(new LocationConfidenceFilter(HIGH_CONFIDENCE, EQUAL));
-    visitor.visitAndApply(filters, query);
+
+    new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
 
     return new HashSet<>(query.distinct().fetch());
   }

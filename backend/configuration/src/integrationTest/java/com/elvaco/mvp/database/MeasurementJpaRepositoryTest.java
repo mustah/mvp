@@ -17,6 +17,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,8 +35,8 @@ import static org.junit.Assume.assumeTrue;
 @Transactional
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
-  private static final OffsetDateTime START_TIME = OffsetDateTime.parse(
-    "2018-01-01T00:00:00+00:00");
+  private static final OffsetDateTime START_TIME =
+    OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
 
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
@@ -45,10 +46,17 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assumeTrue(isPostgresDialect());
   }
 
+  @After
+  public void tearDown() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+    }
+  }
+
   @Test
   public void correctNumberOfValuesAreReturnedRelativeToStart() {
     var meter = newPhysicalMeterEntity();
-    generateSeries(meter, 10, START_TIME, Duration.ofHours(1), 2.0, "W");
+    generateSeries(meter, Duration.ofHours(1));
     var fiveHoursIn = START_TIME.plusHours(5);
     var lastHourWithMeasurements = START_TIME.plusHours(9);
 
@@ -708,17 +716,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     newMeasurement(meter, when, value, unit, "Energy");
   }
 
-  private void generateSeries(
-    PhysicalMeterEntity meter,
-    int count,
-    OffsetDateTime startDate,
-    Duration interval,
-    double value,
-    String unit
-  ) {
-    OffsetDateTime when = startDate;
-    for (int i = 0; i < count; i++) {
-      newMeasurement(meter, when, value, unit);
+  private void generateSeries(PhysicalMeterEntity meter, Duration interval) {
+    OffsetDateTime when = START_TIME;
+    for (int i = 0; i < 10; i++) {
+      newMeasurement(meter, START_TIME, 2.0, "W");
       when = when.plus(interval);
     }
   }

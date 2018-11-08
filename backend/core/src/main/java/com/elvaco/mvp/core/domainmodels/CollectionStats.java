@@ -1,6 +1,8 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.Collection;
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -31,5 +33,17 @@ public class CollectionStats {
       }
     }
     return new CollectionStats(missing, expected);
+  }
+
+  public static CollectionStats of(@Nullable Long missing, @Nullable Long expected) {
+    return new CollectionStats(
+      Optional.ofNullable(missing).orElse(0L),
+      Optional.ofNullable(expected).orElse(0L)
+    );
+  }
+
+  @Nullable
+  public Double getCollectionPercentage() {
+    return Double.valueOf(collectionPercentage).isNaN() ? null : collectionPercentage;
   }
 }

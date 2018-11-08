@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.ToString;
 @Builder
 @ToString
 @EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class AlarmLogEntry implements Identifiable<Long> {
 
   @Nullable

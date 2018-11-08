@@ -21,6 +21,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     );
   }
 
-  @Override
-  protected void afterRemoveEntitiesHook() {
+  @After
+  public void tearDown() {
     if (isPostgresDialect()) {
       measurementJpaRepository.deleteAll();
       organisationJpaRepository.delete(otherOrganisation);
