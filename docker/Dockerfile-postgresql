@@ -1,4 +1,7 @@
 FROM postgres:10
 ENV POSTGRES_USER mvp
 ENV POSTGRES_PASSWORD mvp
-RUN apt-get update -y && apt-get install -y postgresql-10-unit
+RUN apt-get update -y && \
+	apt-get install -y wget && \
+	wget http://apt.postgresql.org/pub/repos/apt/pool/main/p/postgresql-unit/postgresql-10-unit_6.0-1.pgdg70%2b1_amd64.deb && \
+	dpkg -i *.deb
