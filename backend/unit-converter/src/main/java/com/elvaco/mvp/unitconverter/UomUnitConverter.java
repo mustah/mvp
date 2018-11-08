@@ -1,4 +1,4 @@
-package com.elvaco.mvp.core.util;
+package com.elvaco.mvp.unitconverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +11,7 @@ import javax.measure.quantity.Power;
 import javax.measure.quantity.Pressure;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import tec.units.ri.AbstractUnit;
 import tec.units.ri.format.SimpleUnitFormat;
 import tec.units.ri.function.RationalConverter;
@@ -24,22 +25,19 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Map.entry;
 import static java.util.stream.Collectors.toList;
 
-public class UnitConverter {
+public class UomUnitConverter implements UnitConverter {
 
   private static final Map<String, String> REPLACEMENTS = new HashMap<>();
-
   private static final Unit<Energy> WATTHOUR = new TransformedUnit<>(
     "Wh",
     Units.JOULE,
     new RationalConverter(3600, 1)
   );
-
   private static final Unit<Pressure> BAR = new TransformedUnit<>(
     "bar",
     Units.PASCAL,
     new RationalConverter(100000, 1)
   );
-
   private static final Unit<Dimensionless> DIMENSIONLESS = new AlternateUnit<>(
     AbstractUnit.ONE,
     "Dimensionless"
@@ -109,7 +107,13 @@ public class UnitConverter {
     REPLACEMENTS.put("*", "");
   }
 
-  public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String targetUnit) {
+  private UomUnitConverter() {}
+
+  public static UomUnitConverter singleton() {
+    return SingletonHolder.INSTANCE;
+  }
+
+  public MeasurementUnit toMeasurementUnit(String valueAndUnit, String targetUnit) {
     valueAndUnit = replace(valueAndUnit);
     targetUnit = replace(targetUnit);
 
@@ -136,11 +140,7 @@ public class UnitConverter {
     );
   }
 
-  public static double toValue(double value, String fromUnit, String toUnit) {
-    return toMeasurementUnit(value + " " + fromUnit, toUnit).getValue();
-  }
-
-  public static boolean isSameDimension(String firstUnit, String secondUnit) {
+  public boolean isSameDimension(String firstUnit, String secondUnit) {
     var instance = SimpleUnitFormat.getInstance();
     Unit<?> cleanedUnit;
     Unit<?> cleanedSecondUnit;
@@ -155,6 +155,10 @@ public class UnitConverter {
     return cleanedUnit.isCompatible(cleanedSecondUnit);
   }
 
+  public double toValue(double value, String fromUnit, String toUnit) {
+    return toMeasurementUnit(value + " " + fromUnit, toUnit).getValue();
+  }
+
   private static String replace(String valueAndUnit) {
     var replacements = REPLACEMENTS.keySet()
       .stream()
@@ -165,5 +169,9 @@ public class UnitConverter {
       valueAndUnit = valueAndUnit.replace(replacement, REPLACEMENTS.get(replacement));
     }
     return valueAndUnit;
+  }
+
+  private static final class SingletonHolder {
+    private static final UomUnitConverter INSTANCE = new UomUnitConverter();
   }
 }

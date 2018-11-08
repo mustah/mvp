@@ -1,18 +1,18 @@
-package com.elvaco.mvp.core.util;
+package com.elvaco.mvp.unitconverter;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.Before;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.util.UnitConverter.isSameDimension;
-import static com.elvaco.mvp.core.util.UnitConverter.toMeasurementUnit;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UnitConverterTest {
+public class UomUnitConverterTest {
 
   private Map<String, String> meteringUnits = new TreeMap<>(Map.ofEntries(
     entry("sec", "1 s"),
@@ -70,12 +70,18 @@ public class UnitConverterTest {
     //entry("m3 minute(s)", "???"),
     entry("%", "1 %")
   ));
+  private UnitConverter converter;
+
+  @Before
+  public void setUp() {
+    this.converter = UomUnitConverter.singleton();
+  }
 
   @Test
   public void toMeasurementUnit_AllKnownUnits() {
     SoftAssertions.assertSoftly(softly -> {
       meteringUnits.forEach((unit, expected) -> {
-        MeasurementUnit result = toMeasurementUnit(
+        MeasurementUnit result = converter.toMeasurementUnit(
           "1 " + unit,
           unit
         );
@@ -86,41 +92,41 @@ public class UnitConverterTest {
 
   @Test
   public void isSameDimension_Allows_SameUnit() {
-    assertThat(isSameDimension("K", "K")).isTrue();
+    assertThat(converter.isSameDimension("K", "K")).isTrue();
   }
 
   @Test
   public void isSameDimension_Allows_DifferentUnitsSameDimension() {
-    assertThat(isSameDimension("K", "°C")).isTrue();
+    assertThat(converter.isSameDimension("K", "°C")).isTrue();
   }
 
   @Test
   public void isSameDimenssion_Allows_SameUnitDifferentPrefix() {
-    assertThat(isSameDimension("Wh", "MWh")).isTrue();
+    assertThat(converter.isSameDimension("Wh", "MWh")).isTrue();
   }
 
   @Test
   public void isSameDimenssion_Allows_DifferentUnitsDifferentPrefixSameDimension() {
-    assertThat(isSameDimension("kK", "°C")).isTrue();
+    assertThat(converter.isSameDimension("kK", "°C")).isTrue();
   }
 
   @Test
   public void isSameDimension_Disallows_ValuesIncluded() {
-    assertThat(isSameDimension("1 K", "1 K")).isFalse();
+    assertThat(converter.isSameDimension("1 K", "1 K")).isFalse();
   }
 
   @Test
   public void isSameDimension_Disallows_UnitsFromDifferentDimensions() {
-    assertThat(isSameDimension("h", "m")).isFalse();
+    assertThat(converter.isSameDimension("h", "m")).isFalse();
   }
 
   @Test
   public void isSameDimension_Disallows_NonExistingUnits_Matching() {
-    assertThat(isSameDimension("lalalala", "lalalala")).isFalse();
+    assertThat(converter.isSameDimension("lalalala", "lalalala")).isFalse();
   }
 
   @Test
   public void isSameDimension_Disallows_NonExistingUnits_NotMatching() {
-    assertThat(isSameDimension("lalalala", "dadadada")).isFalse();
+    assertThat(converter.isSameDimension("lalalala", "dadadada")).isFalse();
   }
 }
