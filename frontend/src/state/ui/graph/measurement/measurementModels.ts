@@ -78,7 +78,7 @@ export interface MeasurementResponses extends Measurements {
   cities: CityApiResponse;
 }
 
-export const enum Quantity {
+export enum Quantity {
   volume = 'Volume',
   flow = 'Flow',
   energy = 'Energy',

@@ -26,6 +26,8 @@ export const BoldFirstUpper = (props: TextProps) =>
 
 export const Large = (props: TextProps) => (<Normal {...props} className={classNames('Large', props.className)}/>);
 
+export const Medium = (props: TextProps) => (<Normal {...props} className={classNames('Medium', props.className)}/>);
+
 export const Small = (props: TextProps) => (<Normal {...props} className={classNames('Small', props.className)}/>);
 
 export const Xlarge = (props: TextProps) => (<Normal {...props} className={classNames('Xlarge', props.className)}/>);

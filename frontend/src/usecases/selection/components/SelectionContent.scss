@@ -7,6 +7,24 @@
 }
 
 .SelectionDropdownOptions {
-  padding-left: $space;
+  padding-left: 38px;
 }
 
+.Foldable {
+  &.Thresholds {
+    margin-top: $space;
+
+    .Thresholds-container {
+      padding-left: 16px;
+
+      .Unit {
+        padding-top: 12px;
+        color: $lightest-black;
+      }
+    }
+
+    .Foldable-title {
+      padding-bottom: 0;
+    }
+  }
+}

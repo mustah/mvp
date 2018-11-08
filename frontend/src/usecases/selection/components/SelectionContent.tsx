@@ -8,7 +8,7 @@ import {
 } from '../../../components/dropdown-selector/DropdownSelector';
 import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
-import {Foldable} from '../../../components/layouts/foldable/Foldable';
+import {Foldable, FoldableProps} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
 import {translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
@@ -29,11 +29,13 @@ import {ParameterName, SelectionListItem} from '../../../state/user-selection/us
 import {SelectionContentProps} from '../containers/SelectionContentContainer';
 import './SelectionContent.scss';
 import {SearchResultList} from './SelectionResultList';
+import {Thresholds} from './thresholds/Thresholds';
 
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
 const OrganisationDropDown = connectedSuperAdminOnly<SearchableProps>(SearchableDropdownSelector);
+const FoldableThresholds = connectedSuperAdminOnly<FoldableProps>(Foldable);
 
 export const SelectionContent = ({
   addresses,
@@ -67,16 +69,6 @@ export const SelectionContent = ({
   const selectGatewaySerials = (item: SelectionListItem) =>
     toggleParameter({item, parameter: ParameterName.gatewaySerials});
 
-  const alarmSelectionText = translate('alarm') + ': ';
-  const citySelectionText = translate('city') + ': ';
-  const addressSelectionText = translate('address') + ': ';
-  const reportedSelectionText = translate('reported') + ': ';
-  const mediumSelectionText = translate('medium') + ': ';
-  const facilitySelectionText = translate('facility') + ': ';
-  const organisationSelectionText = translate('organisation') + ': ';
-  const secondaryAddressSelectionText = translate('secondary address') + ': ';
-  const gatewaySerialSelectionText = translate('gateway serial') + ': ';
-
   return (
     <Column className="SelectionContentBox">
 
@@ -85,19 +77,19 @@ export const SelectionContent = ({
           <SearchableDropdownSelector
             fetchItems={fetchFacilities}
             selectedItems={facilities}
-            selectionText={facilitySelectionText}
+            selectionText={`${translate('facility')}: `}
             select={selectFacilities}
           />
           <OrganisationDropDown
             fetchItems={fetchOrganisationsToSelect}
             selectedItems={organisations}
-            selectionText={organisationSelectionText}
+            selectionText={`${translate('organisation')}: `}
             select={selectOrganisations}
           />
           <SearchableDropdownSelector
             fetchItems={fetchCities}
             selectedItems={cities}
-            selectionText={citySelectionText}
+            selectionText={`${translate('city')}: `}
             select={selectCity}
             renderLabel={renderCityLabel}
             rowHeight={44}
@@ -106,7 +98,7 @@ export const SelectionContent = ({
           <SearchableDropdownSelector
             fetchItems={fetchAddresses}
             selectedItems={addresses}
-            selectionText={addressSelectionText}
+            selectionText={`${translate('address')}: `}
             select={selectAddress}
             renderLabel={renderAddressLabel}
             rowHeight={44}
@@ -115,7 +107,7 @@ export const SelectionContent = ({
           <ListingDropdownSelector
             fetchItems={fetchMedia}
             selectedItems={media}
-            selectionText={mediumSelectionText}
+            selectionText={`${translate('medium')}: `}
             select={selectMedium}
           />
         </Row>
@@ -124,29 +116,33 @@ export const SelectionContent = ({
           <ListingDropdownSelector
             fetchItems={fetchReported}
             selectedItems={reported}
-            selectionText={reportedSelectionText}
+            selectionText={`${translate('reported')}: `}
             select={selectReported}
           />
           <ListingDropdownSelector
             fetchItems={fetchAlarms}
             selectedItems={alarms}
-            selectionText={alarmSelectionText}
+            selectionText={`${translate('alarm')}: `}
             select={selectAlarm}
           />
           <SearchableDropdownSelector
             fetchItems={fetchSecondaryAddresses}
             selectedItems={secondaryAddresses}
-            selectionText={secondaryAddressSelectionText}
+            selectionText={`${translate('secondary address')}: `}
             select={selectSecondaryAddresses}
           />
           <SearchableDropdownSelector
             fetchItems={fetchGatewaySerials}
             selectedItems={gatewaySerials}
-            selectionText={gatewaySerialSelectionText}
+            selectionText={`${translate('gateway serial')}: `}
             select={selectGatewaySerials}
           />
         </Row>
       </Foldable>
+
+      <FoldableThresholds title={translate('thresholds')} containerClassName="Thresholds" isVisible={false}>
+        <Thresholds className="Thresholds-container"/>
+      </FoldableThresholds>
 
       <SearchResultList/>
     </Column>

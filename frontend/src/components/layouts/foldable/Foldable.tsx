@@ -7,12 +7,16 @@ import {Column} from '../column/Column';
 import {RowMiddle} from '../row/Row';
 import './Foldable.scss';
 
-interface Props extends ClassNamed, WithChildren {
-  title: string;
+interface Visible {
+  isVisible: boolean;
 }
 
-interface ToggleVisibilityProps {
-  isVisible: boolean;
+export interface FoldableProps extends ClassNamed, WithChildren, Partial<Visible> {
+  title: string;
+  containerClassName?: string;
+}
+
+interface ToggleVisibilityProps extends Visible {
   showHide: Callback;
 }
 
@@ -22,11 +26,17 @@ const useToggleVisibility = (initialState: boolean): ToggleVisibilityProps => {
   return {isVisible, showHide};
 };
 
-export const Foldable = ({children, className, title}: Props) => {
-  const {isVisible, showHide} = useToggleVisibility(true);
+export const Foldable = ({
+  children,
+  className,
+  containerClassName,
+  title,
+  isVisible: initialVisibility = true
+}: FoldableProps) => {
+  const {isVisible, showHide} = useToggleVisibility(initialVisibility);
 
   return (
-    <Column className="Foldable">
+    <Column className={classNames('Foldable', containerClassName)}>
       <RowMiddle className="Foldable-title">
         <IconRightArrow onClick={showHide} className={classNames('Foldable-arrow', {isVisible})}/>
         <BoldFirstUpper className="Medium">{title}</BoldFirstUpper>

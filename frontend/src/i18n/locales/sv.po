@@ -191,6 +191,12 @@ msgstr "medium"
 msgid "alarm"
 msgstr "larm"
 
+msgid "thresholds"
+msgstr "gränsvärden"
+
+msgid "meter value"
+msgstr "mätvärde"
+
 msgid "collection percentage"
 msgstr "insamling %"
 

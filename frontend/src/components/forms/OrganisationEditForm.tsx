@@ -6,7 +6,7 @@ import {UserSelection} from '../../state/user-selection/userSelectionModels';
 import {CallbackWithData, CallbackWithDataAndUrlParameters, IdNamed, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
-import {TextFieldInput} from '../inputs/InputText';
+import {TextFieldInput} from '../inputs/TextFieldInput';
 import {Column} from '../layouts/column/Column';
 import './OrganisationEditForm.scss';
 
