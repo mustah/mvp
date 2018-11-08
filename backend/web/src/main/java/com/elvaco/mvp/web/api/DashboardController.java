@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web.api;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
@@ -37,16 +36,14 @@ public class DashboardController {
     return singletonList(
       dashboardUseCases.findCollectionStats(parameters)
         .map(collectionStats -> {
-          // TODO[!must!] remove after Energidagen!
-          double k = ThreadLocalRandom.current().nextDouble(0.98, 1.02);
-          double missing = collectionStats.expected - (k * collectionStats.expected);
           return new WidgetDto(
             WidgetType.COLLECTION.name,
             collectionStats.expected,
-            Math.max(Math.floor(missing), 0)
+            collectionStats.missing
           );
         })
         .orElse(new WidgetDto(WidgetType.COLLECTION.name, 0, 0))
     );
   }
 }
+

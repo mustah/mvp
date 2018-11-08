@@ -1,7 +1,9 @@
 package com.elvaco.mvp.web;
 
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +24,6 @@ import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +35,14 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
-// TODO[!must!] remove after "Energidagen"!!!
-@Ignore
 public class DashboardControllerTest extends IntegrationTest {
 
-  private final ZonedDateTime startDate = ZonedDateTime.parse("2018-08-04T00:00:00.00Z");
-  private final ZonedDateTime beforeDate = ZonedDateTime.parse("2018-08-07T00:00:00.00Z");
+  private final ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("UTC"))
+    .minusDays(10)
+    .truncatedTo(ChronoUnit.DAYS);
+  private final ZonedDateTime beforeDate = ZonedDateTime.now(ZoneId.of("UTC"))
+    .minusDays(7)
+    .truncatedTo(ChronoUnit.DAYS);
 
   private double readingCount = 0.0;
   private double readingFailedCount = 0.0;
