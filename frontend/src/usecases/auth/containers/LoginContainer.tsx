@@ -9,7 +9,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {getLoginLogoPath} from '../../../app/routes';
 import {ButtonLogin} from '../../../components/buttons/ButtonLogin';
 import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
-import {TextFieldInput} from '../../../components/inputs/InputText';
+import {TextFieldInput} from '../../../components/inputs/TextFieldInput';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';

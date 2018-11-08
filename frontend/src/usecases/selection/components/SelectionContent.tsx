@@ -8,7 +8,7 @@ import {
 } from '../../../components/dropdown-selector/DropdownSelector';
 import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
-import {Foldable} from '../../../components/layouts/foldable/Foldable';
+import {Foldable, FoldableProps} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
 import {translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
@@ -29,11 +29,13 @@ import {ParameterName, SelectionListItem} from '../../../state/user-selection/us
 import {SelectionContentProps} from '../containers/SelectionContentContainer';
 import './SelectionContent.scss';
 import {SearchResultList} from './SelectionResultList';
+import {Thresholds} from './thresholds/Thresholds';
 
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
 const unknownAddress: Address = mapSelectedIdToAddress('unknown,unknown,unknown');
 
 const OrganisationDropDown = connectedSuperAdminOnly<SearchableProps>(SearchableDropdownSelector);
+const FoldableThresholds = connectedSuperAdminOnly<FoldableProps>(Foldable);
 
 export const SelectionContent = ({
   addresses,
@@ -137,6 +139,10 @@ export const SelectionContent = ({
           />
         </Row>
       </Foldable>
+
+      <FoldableThresholds title={translate('thresholds')} containerClassName="Thresholds" isVisible={false}>
+        <Thresholds className="Thresholds-container"/>
+      </FoldableThresholds>
 
       <SearchResultList/>
     </Column>

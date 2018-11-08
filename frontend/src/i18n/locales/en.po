@@ -191,6 +191,12 @@ msgstr "type"
 msgid "alarm"
 msgstr "alarm"
 
+msgid "thresholds"
+msgstr "thresholds"
+
+msgid "meter value"
+msgstr "meter value"
+
 msgid "collection percentage"
 msgstr "collection %"
 

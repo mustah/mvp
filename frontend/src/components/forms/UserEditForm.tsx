@@ -7,7 +7,7 @@ import {Language} from '../../state/language/languageModels';
 import {IdNamed, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
-import {TextFieldInput} from '../inputs/InputText';
+import {TextFieldInput} from '../inputs/TextFieldInput';
 import {Column} from '../layouts/column/Column';
 import './UserEditForm.scss';
 

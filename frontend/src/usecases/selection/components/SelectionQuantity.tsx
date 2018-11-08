@@ -94,9 +94,7 @@ export class SelectionQuantity extends React.Component<{}, State> {
 
     return (
       <div>
-        <IconInput
-          onClick={this.showDiffStuff}
-        />
+        <IconInput onClick={this.showDiffStuff}/>
         <Dialog
           actions={quantityActions}
           open={showDiffTempDialog}
