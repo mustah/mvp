@@ -20,25 +20,26 @@ echo ""
 function check_application_startup () {
 	APPLICATION=$1
 	slept=0
-	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
-	status=$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)
+	containerId=$(docker ps|grep mvp_${APPLICATION}_1| awk '{ print $1 }')
+	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
+	status=$(docker inspect --format='{{.State.Status}}' ${containerId})
 	while [[ "$healthStatus" = 'starting' || "$healthStatus" = 'unhealthy' ]] && [[ "$status" != 'exited' ]]; do
 		slept=$((slept+1))
 		echo -n "."
 		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
 			echo ""
-			docker-compose logs ${APPLICATION}
-			docker inspect mvp_${APPLICATION}_1
+			docker logs ${containerId}
+			docker inspect ${containerId}
 			echo ":: Bailing out after $MAX_WAIT_FOR_MVP_APPLICATION seconds.."
 			exit 1
 		fi
 		sleep 1
-		healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
-		status=$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)
+		healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
+		status=$(docker inspect --format='{{.State.Status}}' ${containerId})
 	done
-	docker-compose logs ${APPLICATION}
-	docker inspect mvp_${APPLICATION}_1
-	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)
+	docker logs ${containerId}
+	docker inspect ${containerId}
+	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
 	test "${healthStatus}" = 'healthy' || (echo ${healthStatus} && exit 1)
 }
 
