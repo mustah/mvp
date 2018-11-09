@@ -9,7 +9,6 @@ stages:
   - assemble
   - pre-test
   - test
-  - publish
   - deploy-staging
   - post-staging
   - deploy-prod
@@ -268,40 +267,6 @@ test:upgrade:
       alias: docker-host
   script:
     - ./scripts/upgrade-test.sh $MVP_UPGRADE_FROM_TAG $MVP_UPGRADE_TO_TAG $TEST_HOST
-
-publish:mvp_artifactory:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: publish
-  dependencies:
-    - assemble
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  script:
-    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-    - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
-    - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
-    - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
-    - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
-
-publish:geoservice_artifactory:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: publish
-  dependencies:
-    - assemble
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  script:
-    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-    - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
-    - export GEOSERVICE_SHA1SUM=$(sha1sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
-    - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
-    - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
 
 deploy:staging:
   <<: *auto_deploy
