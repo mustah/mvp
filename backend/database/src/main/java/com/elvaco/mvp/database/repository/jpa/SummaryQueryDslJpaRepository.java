@@ -5,15 +5,16 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.filter.Filters;
-import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.querydsl.core.types.ExpressionUtils.allOf;
 import static com.querydsl.core.types.ExpressionUtils.isNotNull;
 
@@ -34,7 +35,8 @@ class SummaryQueryDslJpaRepository
    */
   @Override
   public MeterSummary summary(RequestParameters parameters) {
-    Filters filters = RequestParametersMapper.toFilters(parameters);
+    Filters filters = toFilters(parameters);
+
     long meters = countMeters(filters);
     long cities = countCities(filters);
     long addresses = countAddresses(filters);
@@ -58,9 +60,7 @@ class SummaryQueryDslJpaRepository
   private long countAddresses(Filters filters) {
     JPQLQuery<?> query = createQuery()
       .select(Expressions.list(LOCATION.country, LOCATION.city, LOCATION.streetAddress));
-
     new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
-
     return (long) query.where(hasAddress()).distinct().fetch().size();
   }
 

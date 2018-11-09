@@ -6,18 +6,19 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.MapMarker;
+import com.elvaco.mvp.core.filter.ComparisonMode;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
-import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.domainmodels.GeoCoordinate.HIGH_CONFIDENCE;
-import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
+import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 
 @Repository
 class LogicalMeterMapQueryDslJpaRepository
@@ -31,10 +32,6 @@ class LogicalMeterMapQueryDslJpaRepository
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
-    return findAllMapMarkers(RequestParametersMapper.toFilters(parameters));
-  }
-
-  private Set<MapMarker> findAllMapMarkers(Filters filters) {
     JPQLQuery<MapMarker> query = createQuery()
       .select(Projections.constructor(
         MapMarker.class,
@@ -45,7 +42,9 @@ class LogicalMeterMapQueryDslJpaRepository
         LOCATION.longitude
       ));
 
-    filters.add(new LocationConfidenceFilter(HIGH_CONFIDENCE, EQUAL));
+    Filters filters = toFilters(parameters);
+
+    filters.add(new LocationConfidenceFilter(HIGH_CONFIDENCE, ComparisonMode.EQUAL));
 
     new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
 

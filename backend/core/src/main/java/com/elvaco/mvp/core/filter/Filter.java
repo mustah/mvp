@@ -18,14 +18,14 @@ abstract class Filter<T> implements VisitableFilter {
   }
 
   public Collection<T> values() {
-    return values;
+    return new ArrayList<>(values);
   }
 
   public T oneValue() {
     return new ArrayList<>(values).get(0);
   }
 
-  public ComparisonMode mode() {
+  public ComparisonMode comparisonMode() {
     return comparisonMode;
   }
 }
