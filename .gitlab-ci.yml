@@ -41,7 +41,6 @@ before_script:
       - .yarn
       - frontend/dist
       - frontend/node_modules
-      - .version
 
 .cache_gradle_read_only: &cache_gradle_read_only
   <<: *cache_gradle
@@ -174,13 +173,15 @@ assemble:
 pre-test:docker-mvp-app:
   <<: *no_cache
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_SHA}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: pre-test
   dependencies:
     - assemble
     - prepare:version
   tags:
     - shell
+  before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export DOCKER_IMAGE_NAME="$DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_SHA}"
   script:
     - cat .version
     - git describe --tags --abbrev=7
@@ -191,13 +192,15 @@ pre-test:docker-mvp-app:
 pre-test:docker-geoservice-app:
   <<: *no_cache
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_SHA}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
   stage: pre-test
   dependencies:
     - assemble
     - prepare:version
   tags:
     - shell
+  before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export DOCKER_IMAGE_NAME="$DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_SHA}"
   script:
     - cat .version
     - git describe --tags --abbrev=7
@@ -254,11 +257,12 @@ test:upgrade:
   variables:
     DOCKER_DRIVER: overlay2
     MVP_UPGRADE_FROM_TAG: production
-    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_SHA}
+    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_NAME}
     TEST_HOST: docker-host
   stage: test
   dependencies: []
   before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_UPGRADE_TO_TAG=${CI_COMMIT_SHA}
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   after_script:
     - docker-compose down -v
