@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import lombok.AllArgsConstructor;

@@ -19,3 +19,5 @@ include 'backend:rabbitmq-producer'
 include 'backend:geoservice'
 include 'backend:data-generator'
 include 'acceptance_tests'
+include 'backend:unit-converter'
+

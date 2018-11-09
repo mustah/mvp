@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import lombok.experimental.UtilityClass;

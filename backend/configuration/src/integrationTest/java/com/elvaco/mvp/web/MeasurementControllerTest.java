@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -79,13 +79,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void tearDown() {
     if (isPostgresDialect()) {
       measurementJpaRepository.deleteAll();
-    }
-  }
-
-  @Override
-  protected void afterRemoveEntitiesHook() {
-    if (isPostgresDialect()) {
-      organisationJpaRepository.delete(otherOrganisation);
     }
   }
 
@@ -539,6 +532,13 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(responseEntity.getBody().message).contains("Invalid quantity 'Floop' for Gas meter");
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      organisationJpaRepository.delete(otherOrganisation);
+    }
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {

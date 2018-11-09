@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+dependencies {
+  compile project(':backend:core')
+  compile 'tec.units:unit-ri:1.0.3'
+
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+  testCompile "junit:junit:${junitVersion}"
+  testCompile "org.assertj:assertj-core:${assertjVersion}"
+  testCompile project(':backend:testing')
+}

@@ -2,9 +2,9 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs;

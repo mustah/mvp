@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.entity.measurement;
+package com.elvaco.mvp.core.domainmodels;
 
 import java.io.Serializable;
 import java.util.HashMap;
