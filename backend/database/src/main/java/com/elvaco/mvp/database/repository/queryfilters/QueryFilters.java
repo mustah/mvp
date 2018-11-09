@@ -9,11 +9,8 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.user.QOrganisationEntity;
@@ -21,10 +18,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
-import static com.elvaco.mvp.database.entity.gateway.QGatewayEntity.gatewayEntity;
-import static com.elvaco.mvp.database.entity.measurement.QMissingMeasurementEntity.missingMeasurementEntity;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisationEntity;
@@ -34,17 +28,12 @@ import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisati
  */
 public abstract class QueryFilters {
 
-  protected static final QMissingMeasurementEntity MISSING_MEASUREMENT = missingMeasurementEntity;
-  protected static final QGatewayEntity GATEWAY = gatewayEntity;
   protected static final QOrganisationEntity ORGANISATION = organisationEntity;
   protected static final QLogicalMeterEntity LOGICAL_METER = logicalMeterEntity;
   protected static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
-  protected static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;
   protected static final QLocationEntity LOCATION = QLocationEntity.locationEntity;
   protected static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG =
     physicalMeterStatusLogEntity;
-
-  private static final Predicate[] NO_PREDICATE = new Predicate[0];
 
   public abstract Optional<Predicate> buildPredicateFor(
     RequestParameter parameter,
@@ -83,19 +72,6 @@ public abstract class QueryFilters {
     }
 
     return applyAndPredicates(predicates);
-  }
-
-  /**
-   * Should mainly be used in JOIN ON statements.
-   *
-   * @param parameters to build the predicate from.
-   *
-   * @return non {@code null} predicate.
-   */
-  public final Predicate[] toPredicate(RequestParameters parameters) {
-    return Optional.ofNullable(toExpression(parameters))
-      .map(predicate -> new Predicate[] {predicate})
-      .orElse(NO_PREDICATE);
   }
 
   private Predicate applyAndPredicates(List<Predicate> predicates) {
