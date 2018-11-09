@@ -174,7 +174,7 @@ assemble:
 pre-test:docker-mvp-app:
   <<: *no_cache
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_SHA}
   stage: pre-test
   dependencies:
     - assemble
@@ -191,7 +191,7 @@ pre-test:docker-mvp-app:
 pre-test:docker-geoservice-app:
   <<: *no_cache
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_SHA}
   stage: pre-test
   dependencies:
     - assemble
@@ -254,7 +254,7 @@ test:upgrade:
   variables:
     DOCKER_DRIVER: overlay2
     MVP_UPGRADE_FROM_TAG: production
-    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_NAME}
+    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_SHA}
     TEST_HOST: docker-host
   stage: test
   dependencies: []
@@ -282,14 +282,15 @@ deploy:staging:
     url: https://evo-staging.elvaco.se
   before_script:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
-    - export MVP_VERSION=$(cat .version)
+    - test "$CI_COMMIT_REF_NAME" != "develop" && export MVP_VERSION=$(cat .version)
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_VERSION=$CI_COMMIT_SHA
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
 
 post-staging:acceptance:
   <<: *acceptance_test
@@ -321,14 +322,15 @@ deploy:production:
     url: https://evo.elvaco.se
   before_script:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
-    - export MVP_VERSION=$(cat .version)
+    - test "$CI_COMMIT_REF_NAME" != "develop" && export MVP_VERSION=$(cat .version)
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_VERSION=$CI_COMMIT_SHA
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.cleanup-obsoleted-config $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
 
 post-prod:acceptance:
   <<: *acceptance_test
@@ -347,6 +349,8 @@ post-prod:acceptance:
 
 finalize:tag-production-mvp-docker:
   <<: *no_cache
+  variables:
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
   stage: finalize
   dependencies: []
   tags:
@@ -355,11 +359,31 @@ finalize:tag-production-mvp-docker:
     - schedules
     - tags
   before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export DOCKER_IMAGE_NAME="$DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_SHA}"
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   script:
-    - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_NAME}
-    - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_NAME} ${DOCKER_REGISTRY_URL}/mvp:production
+    - docker pull ${DOCKER_IMAGE_NAME}
+    - docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY_URL}/mvp:production
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
+
+finalize:tag-production-geoservice-docker:
+  <<: *no_cache
+  variables:
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
+  stage: finalize
+  dependencies: []
+  tags:
+    - shell
+  only:
+    - schedules
+    - tags
+  before_script:
+    - test "$CI_COMMIT_REF_NAME" == "develop" && export DOCKER_IMAGE_NAME="$DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_SHA}"
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  script:
+    - docker pull ${DOCKER_IMAGE_NAME}
+    - docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY_URL}/geoservice:production
+    - docker push ${DOCKER_REGISTRY_URL}/geoservice:production
 
 finalize:create-jira-version:
   <<: *no_cache
@@ -378,19 +402,3 @@ finalize:create-jira-version:
     - pip install -r scripts/jira/requirements.txt
   script:
     - python3 scripts/jira/fixversion.py --version $(cat .version) --jira_user $JIRA_USER --jira_token $JIRA_TOKEN
-
-finalize:tag-production-geoservice-docker:
-  <<: *no_cache
-  stage: finalize
-  dependencies: []
-  tags:
-    - shell
-  only:
-    - schedules
-    - tags
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-  script:
-    - docker pull ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_NAME}
-    - docker tag ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_NAME} ${DOCKER_REGISTRY_URL}/geoservice:production
-    - docker push ${DOCKER_REGISTRY_URL}/geoservice:production
