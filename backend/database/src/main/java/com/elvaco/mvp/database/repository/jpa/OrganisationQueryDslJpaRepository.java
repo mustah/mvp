@@ -6,7 +6,6 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,8 +18,6 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 class OrganisationQueryDslJpaRepository
   extends BaseQueryDslRepository<OrganisationEntity, UUID>
   implements OrganisationJpaRepository {
-
-  private static final Predicate[] NO_PREDICATE = new Predicate[0];
 
   @Autowired
   OrganisationQueryDslJpaRepository(EntityManager entityManager) {
@@ -39,18 +36,13 @@ class OrganisationQueryDslJpaRepository
 
   @Override
   public List<OrganisationEntity> findAllByOrderByNameAsc() {
-    return createQuery(NO_PREDICATE).select(path).fetch();
+    return createQuery().select(path).fetch();
   }
 
   @Override
-  public Page<OrganisationEntity> findAllMainOrganisations(
-    Predicate predicate,
-    Pageable pageable
-  ) {
-    Predicate withoutParentOrganisation = ExpressionUtils.allOf(
-      predicate,
-      ORGANISATION.parent.isNull()
-    );
+  public Page<OrganisationEntity> findAllMainOrganisations(Predicate predicate, Pageable pageable) {
+    Predicate withoutParentOrganisation = ORGANISATION.parent.isNull().and(predicate);
+
     var countQuery = createCountQuery(withoutParentOrganisation).select(path);
     var query = createQuery(withoutParentOrganisation).select(path);
     var all = querydsl.applyPagination(pageable, query).fetch();
