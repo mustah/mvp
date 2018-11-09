@@ -38,6 +38,11 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   private static final OffsetDateTime START_TIME =
     OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
 
+  public static final String MINUTE_RESOLUTION = "1 minute";
+  public static final String HOUR_RESOLUTION = "1 hour";
+  public static final String DAY_RESOLUTION = "1 day";
+  public static final String MONTH_RESOLUTION = "1 month";
+
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
 
@@ -63,7 +68,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "W",
         fiveHoursIn,
@@ -83,7 +88,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
+        singletonList(meter.id), HOUR_RESOLUTION, "Energy", "W", START_TIME, oneHourLater);
 
     assertThat(results).hasSize(2);
     assertThat(results).allMatch(v -> v.getDoubleValue() == 2.0);
@@ -97,7 +102,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "kW",
         START_TIME,
@@ -119,7 +124,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "day",
+        DAY_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -143,7 +148,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "month",
+        MONTH_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -166,7 +171,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository.getAverageForPeriod(
       singletonList(meter.id),
-      "hour",
+      HOUR_RESOLUTION,
       "Energy",
       "W",
       START_TIME,
@@ -193,7 +198,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -216,7 +221,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(firstMeter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -235,7 +240,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "hour",
+        HOUR_RESOLUTION,
         Quantity.TEMPERATURE.name,
         "°C",
         START_TIME,
@@ -253,7 +258,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> resultsWithHourResolution = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -263,7 +268,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> resultsWithDayResolution = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "day",
+        DAY_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -273,7 +278,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> resultsWithMonthResolution = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "month",
+        MONTH_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -304,7 +309,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
         singletonList(meter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "W",
         START_TIME,
@@ -327,7 +332,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "MWh",
       START_TIME,
       START_TIME.plusMinutes(2),
-      "minute"
+      MINUTE_RESOLUTION
     );
 
     assertThat(result).extracting(MeasurementValueProjection::getMeasurementUnit).containsExactly(
@@ -351,7 +356,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "kWh",
       START_TIME,
       START_TIME.plusHours(1),
-      "hour"
+      HOUR_RESOLUTION
     );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -376,7 +381,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "m³",
         START_TIME,
         START_TIME.plusHours(2),
-        "hour"
+        HOUR_RESOLUTION
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -404,7 +409,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "m³",
         START_TIME,
         START_TIME.plusHours(4),
-        "hour"
+        HOUR_RESOLUTION
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -433,7 +438,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "m³",
         START_TIME,
         START_TIME.plusHours(2),
-        "hour"
+        HOUR_RESOLUTION
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -458,7 +463,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "m³",
         START_TIME,
         START_TIME.plusHours(2),
-        "hour"
+        HOUR_RESOLUTION
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -484,7 +489,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "m³",
         START_TIME,
         START_TIME.plusHours(2),
-        "hour"
+        HOUR_RESOLUTION
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -510,7 +515,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "m³",
         START_TIME,
         START_TIME.plusHours(2),
-        "hour"
+        HOUR_RESOLUTION
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getDoubleValue).containsExactly(
@@ -547,7 +552,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getAverageForPeriodConsumption(
         Arrays.asList(firstMeter.id, secondMeter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "kWh",
         START_TIME.plusHours(1),
@@ -576,7 +581,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> result = measurementJpaRepository
       .getAverageForPeriodConsumption(
         Arrays.asList(firstMeter.id, secondMeter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "kWh",
         START_TIME.plusHours(1),
@@ -603,7 +608,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> result = measurementJpaRepository.getAverageForPeriod(
       Arrays.asList(firstMeter.id, secondMeter.id),
-      "hour",
+      HOUR_RESOLUTION,
       "Energy",
       "kWh",
       START_TIME.plusHours(1),
@@ -633,7 +638,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getAverageForPeriodConsumption(
         Arrays.asList(firstMeter.id, secondMeter.id),
-        "hour",
+        HOUR_RESOLUTION,
         "Energy",
         "kWh",
         START_TIME.plusHours(1),
