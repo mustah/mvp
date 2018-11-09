@@ -29,6 +29,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -89,21 +92,21 @@ public class MeasurementRepository implements Measurements {
       case CONSUMPTION:
         averageForPeriod = measurementJpaRepository.getAverageForPeriodConsumption(
           meterIds,
-          resolution.toString(),
+          getResolution(resolution),
           seriesQuantity.name,
           seriesQuantity.presentationUnit(),
-          OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-          OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
+          getIntervalStart(from, resolution),
+          getIntervalStart(to, resolution)
         );
         break;
       default:
         averageForPeriod = measurementJpaRepository.getAverageForPeriod(
           meterIds,
-          resolution.toString(),
+          getResolution(resolution),
           seriesQuantity.name,
           seriesQuantity.presentationUnit(),
-          OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-          OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
+          getIntervalStart(from, resolution),
+          getIntervalStart(to, resolution)
         );
         break;
     }
@@ -130,9 +133,9 @@ public class MeasurementRepository implements Measurements {
             meterId,
             seriesQuantity.name,
             seriesQuantity.presentationUnit(),
-            OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-            OffsetDateTime.ofInstant(to.toInstant(), to.getZone()),
-            resolution.toString()
+            getIntervalStart(from, resolution),
+            getIntervalStart(to, resolution),
+            getResolution(resolution)
           );
           break;
         default:
@@ -140,9 +143,9 @@ public class MeasurementRepository implements Measurements {
             meterId,
             seriesQuantity.name,
             seriesQuantity.presentationUnit(),
-            OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-            OffsetDateTime.ofInstant(to.toInstant(), to.getZone()),
-            resolution.toString()
+            getIntervalStart(from, resolution),
+            getIntervalStart(to, resolution),
+            getResolution(resolution)
           );
       }
 
@@ -202,5 +205,33 @@ public class MeasurementRepository implements Measurements {
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(id.quantity)),
       PhysicalMeterEntityMapper.toEntity(id.physicalMeter)
     );
+  }
+
+  protected static OffsetDateTime getIntervalStart(
+    ZonedDateTime zonedDateTime,
+    TemporalResolution resolution
+  ) {
+    switch (resolution) {
+      case day:
+        return OffsetDateTime.ofInstant(
+          zonedDateTime.truncatedTo(DAYS).toInstant(),
+          zonedDateTime.getZone()
+        );
+      case month:
+        return OffsetDateTime.ofInstant(
+          zonedDateTime.truncatedTo(DAYS).with(firstDayOfMonth()).toInstant(),
+          zonedDateTime.getZone()
+        );
+      case hour:
+      default:
+        return OffsetDateTime.ofInstant(
+          zonedDateTime.truncatedTo(HOURS).toInstant(),
+          zonedDateTime.getZone()
+        );
+    }
+  }
+
+  private String getResolution(TemporalResolution resolution) {
+    return "1 ".concat(resolution.toString());
   }
 }
