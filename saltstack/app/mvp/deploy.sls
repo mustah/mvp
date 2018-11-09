@@ -1,6 +1,5 @@
 {% set module = "mvp" %}
 {% set systemd_unit = "elvaco-" + module + ".service" %}
-{% set mvp_branch = salt['pillar.get']('mvp-branch', 'master') %}
 {% set module_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
 
 include:
@@ -77,7 +76,7 @@ create_docker_network_for_{{module}}:
 
 download_{{module}}_image:
   docker_image.present:
-    - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
+    - name: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
     - force: True
     - require:
       - create_docker_network_for_{{module}}
@@ -86,7 +85,7 @@ docker_{{module}}:
   docker_container.running:
     - name: evo
     - user: mvp
-    - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{mvp_branch}}
+    - image: gitlab.elvaco.se:4567/elvaco/mvp/{{module}}:{{module_version}}
     - networks:
       - elvaco_mvp
     - detach: True
