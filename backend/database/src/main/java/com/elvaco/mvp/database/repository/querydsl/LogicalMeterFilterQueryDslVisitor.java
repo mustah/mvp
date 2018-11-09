@@ -40,7 +40,6 @@ public class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor 
 
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
-  private Predicate missingMeasurementPredicate = FALSE_PREDICATE;
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -74,8 +73,6 @@ public class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor 
     SelectionPeriod period = periodFilter.getPeriod();
     alarmLogPredicate = withinPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
     statusLogPredicate = withinPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
-    missingMeasurementPredicate = MISSING_MEASUREMENT.id.expectedTime.lt(period.stop)
-      .and(MISSING_MEASUREMENT.id.expectedTime.goe(period.start));
   }
 
   @Override
@@ -130,18 +127,11 @@ public class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor 
   }
 
   @Override
-  protected Collection<Predicate> getPredicates() {
-    return new ArrayList<>(predicates);
-  }
-
-  @Override
   protected void applyJoins(JPQLQuery<?> q) {
     q.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION)
       .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
-      .on(missingMeasurementPredicate)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .on(statusLogPredicate)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG_JOIN)
@@ -155,5 +145,10 @@ public class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor 
         .or(METER_ALARM_LOG_JOIN.start.eq(ALARM_LOG.start))
         .and(METER_ALARM_LOG_JOIN.id.gt(ALARM_LOG.id)))
       .where(METER_ALARM_LOG_JOIN.id.isNull().and(METER_STATUS_LOG_JOIN.id.isNull()));
+  }
+
+  @Override
+  protected Collection<Predicate> getPredicates() {
+    return new ArrayList<>(predicates);
   }
 }

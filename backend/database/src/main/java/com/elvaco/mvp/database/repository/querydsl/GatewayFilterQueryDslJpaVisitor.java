@@ -125,11 +125,6 @@ public class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
   }
 
   @Override
-  protected Collection<Predicate> getPredicates() {
-    return new ArrayList<>(predicates);
-  }
-
-  @Override
   protected void applyJoins(JPQLQuery<?> q) {
     q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
       .on(statusLogPredicate)
@@ -140,5 +135,10 @@ public class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
       .on(alarmLogPredicate)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .on(meterStatusLogPredicate);
+  }
+
+  @Override
+  protected Collection<Predicate> getPredicates() {
+    return new ArrayList<>(predicates);
   }
 }

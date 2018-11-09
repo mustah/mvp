@@ -10,11 +10,13 @@ import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
+import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
+import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SelectionQueryFilters;
 import com.querydsl.core.group.GroupBy;
@@ -159,7 +161,9 @@ class LogicalMeterQueryDslJpaRepository
       .groupBy(groupByExpressions)
       .distinct();
 
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query, countQuery);
+    Filters filters = toFilters(parameters);
+    new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query, countQuery);
+    new MissingMeasurementFilterQueryDslVisitor().visitAndApply(filters, query, countQuery);
 
     querydsl.applyPagination(pageable, query);
 
@@ -203,7 +207,9 @@ class LogicalMeterQueryDslJpaRepository
         PHYSICAL_METER.readIntervalMinutes
       ));
 
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query);
+    Filters filters = toFilters(parameters);
+    new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
+    new MissingMeasurementFilterQueryDslVisitor().visitAndApply(filters, query);
 
     return query.groupBy(LOGICAL_METER.id, PHYSICAL_METER.readIntervalMinutes)
       .distinct()
