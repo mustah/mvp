@@ -39,7 +39,6 @@ before_script:
     paths:
       - .gradle/
       - .yarn
-      - frontend/dist
       - frontend/node_modules
 
 .cache_gradle_read_only: &cache_gradle_read_only
@@ -146,6 +145,9 @@ build:frontend:
     - prepare:version
   script:
     - gradle frontend:bundle
+  artifacts:
+    paths:
+      - frontend/dist
 
 build:compile:
   <<: *cache_gradle
@@ -153,13 +155,20 @@ build:compile:
   dependencies:
     - prepare:version
   script:
-    - gradle compileJava checkstyle spotbugsMain test
+    - gradle classes checkstyle spotbugsMain test
+  artifacts:
+    paths:
+      - backend/*/build/libs
+      - backend/*/build/classes
+      - acceptance_tests/build/libs/*.jar
 
 assemble:
   <<: *cache_gradle
   stage: assemble
   dependencies:
     - prepare:version
+    - build:compile
+    - build:frontend
   script:
     - gradle assemble
   artifacts:
@@ -211,7 +220,8 @@ pre-test:docker-geoservice-app:
 test:system:
   <<: *cache_gradle_read_only
   stage: test
-  dependencies: []
+  dependencies:
+    - build:compile
   services:
     - name: $DOCKER_REGISTRY_URL/postgresql:latest
       alias: pg_host
@@ -241,7 +251,8 @@ test:jira_script:
 test:integration:
   <<: *cache_gradle_read_only
   stage: test
-  dependencies: []
+  dependencies:
+    - build:compile
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-integration"
     when: on_failure
@@ -299,7 +310,8 @@ deploy:staging:
 post-staging:acceptance:
   <<: *acceptance_test
   stage: post-staging
-  dependencies: []
+  dependencies:
+    - build:compile
   only:
     - schedules
     - /^release-.*$/
@@ -339,7 +351,8 @@ deploy:production:
 post-prod:acceptance:
   <<: *acceptance_test
   stage: post-prod
-  dependencies: []
+  dependencies:
+    - build:compile
   only:
     - schedules
     - /^release-.*$/
