@@ -3,6 +3,7 @@ package com.elvaco.mvp.unitconverter;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.Quantity;
+import javax.measure.UnconvertibleException;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
 import javax.measure.quantity.Dimensionless;
@@ -11,6 +12,7 @@ import javax.measure.quantity.Power;
 import javax.measure.quantity.Pressure;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import tec.units.ri.AbstractUnit;
 import tec.units.ri.format.SimpleUnitFormat;
@@ -113,26 +115,25 @@ public class UomUnitConverter implements UnitConverter {
     return SingletonHolder.INSTANCE;
   }
 
-  public MeasurementUnit toMeasurementUnit(String valueAndUnit, String targetUnit) {
+  public MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     valueAndUnit = replace(valueAndUnit);
-    targetUnit = replace(targetUnit);
+    target = replace(target);
 
     Quantity<?> sourceQuantity;
     try {
       sourceQuantity = Quantities.getQuantity(valueAndUnit);
     } catch (ParserException | IllegalArgumentException iex) {
-      throw new RuntimeException(
-        "ERROR: value or unit \"" + valueAndUnit + "\" could not be parsed",
-        iex
-      );
+      throw new UnitConversionError(iex.getMessage());
     }
 
     Quantity<?> resultQuantity;
     try {
-      Unit parsedTargetUnit = SimpleUnitFormat.getInstance().parse(targetUnit);
-      resultQuantity = sourceQuantity.to(parsedTargetUnit);
+      Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
+      resultQuantity = sourceQuantity.to(targetUnit);
     } catch (ParserException ex) {
-      throw new RuntimeException("ERROR: unit \"" + targetUnit + "\" is not known");
+      throw UnitConversionError.unknownUnit(target);
+    } catch (UnconvertibleException ex) {
+      throw new UnitConversionError(valueAndUnit, target);
     }
     return new MeasurementUnit(
       resultQuantity.getUnit().toString(),
