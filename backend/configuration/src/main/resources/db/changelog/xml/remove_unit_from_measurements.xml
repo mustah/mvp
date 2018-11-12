@@ -1,0 +1,78 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="Remove unit from measurements" author="erimel">
+        <renameColumn tableName="quantity" oldColumnName="unit" newColumnName="display_unit"/>
+
+        <addColumn tableName="quantity">
+            <column name="storage_unit" type="varchar(255)" valueComputed="display_unit"/>
+        </addColumn>
+
+        <renameColumn tableName="quantity_aud" schemaName="evoaudit" oldColumnName="UNIT" newColumnName="DISPLAY_UNIT"/>
+        <renameColumn tableName="quantity_aud" schemaName="evoaudit" oldColumnName="UNIT_MOD" newColumnName="DISPLAY_UNIT_MOD"/>
+
+        <addColumn tableName="quantity_aud" schemaName="evoaudit">
+            <column name="STORAGE_UNIT" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="quantity_aud" schemaName="evoaudit">
+            <column name="STORAGE_UNIT_MOD" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+
+  <changeSet  id="Create new table without posgres units" author="erimel">
+    <sqlFile dbms="postgresql"
+      path="../sql/postgresql/disable_trigger_reject_mixed_measurement_dimensions.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+    <dropUniqueConstraint tableName="measurement"
+                          constraintName="measurement_physical_meter_id_created_quantity_key"/>
+    <createTable tableName="new_measurement">
+      <column name="physical_meter_id" type="UUID">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="now()" name="created" type="TIMESTAMP WITH TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="quantity" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="DOUBLE">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <sqlFile
+      path="../sql/postgresql/copy_measurements_to_measurements_new_without_unit.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+      dbms="postgresql"
+    />
+
+    <dropTable tableName="measurement" cascadeConstraints="true"/>
+    <renameTable oldTableName="new_measurement" newTableName="measurement"/>
+    <addUniqueConstraint columnNames="physical_meter_id, created, quantity"
+                         constraintName="measurement_physical_meter_id_created_quantity_key"
+                         tableName="measurement"/>
+
+    <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="measurement"
+                             constraintName="measurement_physical_meter_id_fkey"
+                             deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                             referencedColumnNames="id" referencedTableName="physical_meter"/>
+
+    <!-- recreate missing_measurement view (no data) -->
+    <sqlFile
+      path="../sql/postgresql/create_missing_measurement_materialized_view_v2.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+      dbms="postgresql"
+    />
+    <sql dbms="postgresql">refresh materialized view missing_measurement;</sql>
+    <sql dbms="postgresql">drop function if exists ensure_no_mixed_dimensions();</sql>
+
+
+  </changeSet>
+</databaseChangeLog>
