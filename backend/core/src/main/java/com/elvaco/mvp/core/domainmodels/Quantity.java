@@ -14,40 +14,40 @@ import static java.util.Collections.unmodifiableList;
 public class Quantity implements Identifiable<Integer> {
 
   public static final Quantity VOLUME = new Quantity("Volume")
-    .withDefaultPresentation("m³", SeriesDisplayMode.CONSUMPTION);
+    .withUnits("m³", SeriesDisplayMode.CONSUMPTION);
 
   public static final Quantity VOLUME_FLOW = new Quantity("Flow")
-    .withDefaultPresentation("m³/h", SeriesDisplayMode.READOUT);
+    .withUnits("m³/h", SeriesDisplayMode.READOUT);
 
   public static final Quantity TEMPERATURE = new Quantity("Temperature")
-    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+    .withUnits("°C", SeriesDisplayMode.READOUT);
 
   public static final Quantity EXTERNAL_TEMPERATURE = new Quantity("External temperature")
-    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+    .withUnits("°C", SeriesDisplayMode.READOUT);
 
   public static final Quantity HUMIDITY = new Quantity("Relative humidity")
-    .withDefaultPresentation("%", SeriesDisplayMode.READOUT);
+    .withUnits("%", SeriesDisplayMode.READOUT);
 
   public static final Quantity ENERGY = new Quantity("Energy")
-    .withDefaultPresentation("kWh", SeriesDisplayMode.CONSUMPTION);
+    .withUnits("kWh", SeriesDisplayMode.CONSUMPTION);
 
   public static final Quantity POWER = new Quantity("Power")
-    .withDefaultPresentation("W", SeriesDisplayMode.READOUT);
+    .withUnits("W", SeriesDisplayMode.READOUT);
 
   public static final Quantity FORWARD_TEMPERATURE = new Quantity("Forward temperature")
-    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+    .withUnits("°C", SeriesDisplayMode.READOUT);
 
   public static final Quantity RETURN_TEMPERATURE = new Quantity("Return temperature")
-    .withDefaultPresentation("°C", SeriesDisplayMode.READOUT);
+    .withUnits("°C", SeriesDisplayMode.READOUT);
 
   public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity("Difference temperature")
-    .withDefaultPresentation("K", SeriesDisplayMode.READOUT);
+    .withUnits("K", SeriesDisplayMode.READOUT);
 
   public static final Quantity ENERGY_RETURN = new Quantity("Energy return")
-    .withDefaultPresentation("kWh", SeriesDisplayMode.CONSUMPTION);
+    .withUnits("kWh", SeriesDisplayMode.CONSUMPTION);
 
   public static final Quantity REACTIVE_ENERGY = new Quantity("Reactive energy")
-    .withDefaultPresentation("kWh", SeriesDisplayMode.CONSUMPTION);
+    .withUnits("kWh", SeriesDisplayMode.CONSUMPTION);
 
   public static final List<Quantity> QUANTITIES = unmodifiableList(asList(
     VOLUME,
@@ -70,20 +70,31 @@ public class Quantity implements Identifiable<Integer> {
 
   @Nullable
   public final Integer id;
+  public final String storageUnit;
   private final QuantityPresentationInformation presentationInformation;
+
+  public Quantity(
+    @Nullable Integer id,
+    String name,
+    QuantityPresentationInformation presentationInformation,
+    String storageUnit
+  ) {
+    this.id = id;
+    this.name = name;
+    this.presentationInformation = presentationInformation;
+    this.storageUnit = storageUnit;
+  }
 
   public Quantity(
     @Nullable Integer id,
     String name,
     QuantityPresentationInformation presentationInformation
   ) {
-    this.id = id;
-    this.name = name;
-    this.presentationInformation = presentationInformation;
+    this(id, name, presentationInformation, null);
   }
 
   public Quantity(String name, QuantityPresentationInformation presentationInformation) {
-    this(null, name, presentationInformation);
+    this(null, name, presentationInformation, null);
   }
 
   public Quantity(String name, @Nullable String unit) {
@@ -119,16 +130,24 @@ public class Quantity implements Identifiable<Integer> {
     return presentationInformation.displayMode;
   }
 
-  public Quantity complementedBy(QuantityPresentationInformation presentationInformation) {
+  public Quantity complementedBy(
+    QuantityPresentationInformation presentationInformation,
+    String storageUnit
+  ) {
+    String displayUnit = this.presentationInformation.getUnit()
+      .orElse(presentationInformation.getUnit().orElseThrow(IllegalArgumentException::new));
+
+    SeriesDisplayMode displayMode = seriesDisplayMode() == SeriesDisplayMode.UNKNOWN
+      ? presentationInformation.displayMode
+      : seriesDisplayMode();
+
+    String defaultedStorageUnit = this.storageUnit == null ? storageUnit : this.storageUnit;
+
     return new Quantity(
+      id,
       name,
-      new QuantityPresentationInformation(
-        this.presentationInformation.getUnit()
-          .orElse(presentationInformation.getUnit().orElseThrow(IllegalArgumentException::new)),
-        seriesDisplayMode() == SeriesDisplayMode.UNKNOWN
-          ? presentationInformation.displayMode
-          : seriesDisplayMode()
-      )
+      new QuantityPresentationInformation(displayUnit, displayMode),
+      defaultedStorageUnit
     );
   }
 
@@ -138,11 +157,12 @@ public class Quantity implements Identifiable<Integer> {
     return id;
   }
 
-  private Quantity withDefaultPresentation(String unit, SeriesDisplayMode displayMode) {
+  private Quantity withUnits(String unit, SeriesDisplayMode displayMode) {
     return new Quantity(
       id,
       name,
-      new QuantityPresentationInformation(unit, displayMode)
+      new QuantityPresentationInformation(unit, displayMode),
+      unit
     );
   }
 }

@@ -8,7 +8,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -471,6 +470,14 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     );
   }
 
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+      organisationJpaRepository.delete(otherOrganisation);
+    }
+  }
+
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
     return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
@@ -485,7 +492,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
-      new MeasurementUnit(unit, value),
+      value,
       meter
     ));
   }

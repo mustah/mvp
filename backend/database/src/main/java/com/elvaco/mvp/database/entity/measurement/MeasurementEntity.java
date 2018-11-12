@@ -9,13 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,14 +28,13 @@ public class MeasurementEntity extends IdentifiableType<MeasurementPk> {
   @EmbeddedId
   public MeasurementPk id;
 
-  @Type(type = "measurement-unit")
   @Column(nullable = false)
-  public MeasurementUnit value;
+  public double value;
 
   public MeasurementEntity(
     ZonedDateTime created,
     QuantityEntity quantity,
-    MeasurementUnit value,
+    double value,
     PhysicalMeterEntity physicalMeter
   ) {
     this.id = new MeasurementPk(created, quantity, physicalMeter);

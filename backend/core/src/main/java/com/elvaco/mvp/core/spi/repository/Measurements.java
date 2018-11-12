@@ -15,8 +15,6 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 
 public interface Measurements {
 
-  Optional<Measurement> findById(Measurement.Id id);
-
   Measurement save(Measurement measurement);
 
   void createOrUpdate(
@@ -29,7 +27,7 @@ public interface Measurements {
 
   List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
-    Quantity seriesQuantity,
+    Quantity quantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
@@ -37,7 +35,7 @@ public interface Measurements {
 
   List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
-    Quantity seriesQuantity,
+    Quantity quantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution

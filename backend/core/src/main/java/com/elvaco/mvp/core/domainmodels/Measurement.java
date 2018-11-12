@@ -16,7 +16,7 @@ public class Measurement implements Identifiable<Measurement.Id> {
 
   public final ZonedDateTime created;
   public final String quantity;
-  public final double value;
+  public final Double value;
   public final String unit;
   public final PhysicalMeter physicalMeter;
 

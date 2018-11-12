@@ -116,7 +116,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         throw new RuntimeException("You need to add support for mocking the medium " + meter
           .medium + " in DemoDataHelper");
       }
-      consumingMediumMeterReading = measurements.get(0).value.getValue();
+      consumingMediumMeterReading = measurements.get(0).value;
 
       measurementEntities.addAll(measurements);
     }

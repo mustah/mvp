@@ -22,6 +22,7 @@ import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.LocationRepository;
@@ -91,6 +92,7 @@ class DataProviderConfig {
   private final QuantityJpaRepository quantityJpaRepository;
   private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
+  private final UnitConverter unitConverter;
 
   @Bean
   Users users() {
@@ -122,7 +124,7 @@ class DataProviderConfig {
 
   @Bean
   Measurements measurements() {
-    return new MeasurementRepository(measurementJpaRepository);
+    return new MeasurementRepository(measurementJpaRepository, unitConverter);
   }
 
   @Bean

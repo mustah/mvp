@@ -158,8 +158,10 @@ public class LogicalMeterHelperTest {
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_customQuantityUnit() {
     Quantity volumeInSquareKilometers = new Quantity(
+      null,
       Quantity.VOLUME.name,
-      new QuantityPresentationInformation("km³", SeriesDisplayMode.CONSUMPTION)
+      new QuantityPresentationInformation("km³", SeriesDisplayMode.CONSUMPTION),
+      "m³"
     );
     LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
 

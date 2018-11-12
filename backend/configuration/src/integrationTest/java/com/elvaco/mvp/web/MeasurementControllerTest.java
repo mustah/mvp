@@ -2,23 +2,20 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
-import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
-import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
@@ -33,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
+import static com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper.toEntity;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -44,12 +42,6 @@ import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerTest extends IntegrationTest {
 
-  private static final MeterDefinition BUTTER_METER_DEFINITION = new MeterDefinition(
-    MeterDefinitionType.UNKNOWN_METER_TYPE,
-    "Butter",
-    new HashSet<>(asList(Quantity.DIFFERENCE_TEMPERATURE, Quantity.ENERGY)),
-    false
-  );
   private static final Offset<Double> OFFSET = within(0.000_000_000_000_1);
 
   private static final int ENERGY_VALUE = 9999;
@@ -85,16 +77,16 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementsRetrievableAtEndpoint() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity physicalButterMeter = newButterMeter(date);
+    PhysicalMeterEntity heatMeter = newHeatMeter(date);
     newDiffTempMeasurementCelcius(
-      physicalButterMeter,
+      heatMeter,
       date
     );
 
     List<MeasurementDto> measurements = asUser()
       .getList(
         "/measurements?resolution=hour"
-          + "&meters=" + physicalButterMeter.logicalMeterId
+          + "&meters=" + heatMeter.logicalMeterId
           + "&after=" + date
           + "&before=" + date.plusHours(1),
         MeasurementDto.class
@@ -111,13 +103,13 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementUnitScaled() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementCelcius(butterMeter, date);
+    PhysicalMeterEntity heatMeter = newHeatMeter(date);
+    newDiffTempMeasurementCelcius(heatMeter, date);
 
     List<MeasurementSeriesDto> measurements = asUser()
       .getList(
         "/measurements?quantities=Difference+temperature:K"
-          + "&meters=" + butterMeter.logicalMeterId
+          + "&meters=" + heatMeter.logicalMeterId
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1),
@@ -133,7 +125,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void canNotSeeMeasurementsFromMeterBelongingToOtherOrganisation() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity otherOrganisationsMeter = newButterMeterBelongingTo(
+    PhysicalMeterEntity otherOrganisationsMeter = newHeatMeterBelongingTo(
       otherOrganisation,
       date
     );
@@ -156,7 +148,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void superAdminCanSeeAllMeasurements() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
 
-    PhysicalMeterEntity firstOrganisationsMeter = newButterMeterBelongingTo(
+    PhysicalMeterEntity firstOrganisationsMeter = newHeatMeterBelongingTo(
       otherOrganisation,
       date
     );
@@ -165,7 +157,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       date
     );
 
-    PhysicalMeterEntity secondOrganisationsMeter = newButterMeterBelongingTo(
+    PhysicalMeterEntity secondOrganisationsMeter = newHeatMeterBelongingTo(
       context().organisationEntity,
       date
     );
@@ -188,15 +180,15 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeterByQuantityInPeriod() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter();
-    newDiffTempMeasurementCelcius(butterMeter, date.minusHours(1));
-    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(1));
-    newEnergyMeasurement(butterMeter, date.minusHours(1));
+    PhysicalMeterEntity heatMeter = newHeatMeter();
+    newDiffTempMeasurementCelcius(heatMeter, date.minusHours(1));
+    newDiffTempMeasurementCelcius(heatMeter, date.plusHours(1));
+    newEnergyMeasurement(heatMeter, date.minusHours(1));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
         + "quantities=Difference+temperature"
-        + "&meters=" + butterMeter.logicalMeterId
+        + "&meters=" + heatMeter.logicalMeterId
         + "&after=" + date
         + "&before=" + date.plusHours(1)
         + "&resolution=hour");
@@ -212,55 +204,57 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeterInPeriod() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementCelcius(butterMeter, date);
-    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(2));
+    PhysicalMeterEntity heatMeter = newHeatMeter(date);
+    newDiffTempMeasurementCelcius(heatMeter, date);
+    newDiffTempMeasurementCelcius(heatMeter, date.plusHours(2));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
-        + "meters=" + butterMeter.logicalMeterId
+        + "meters=" + heatMeter.logicalMeterId
         + "&after=" + date
         + "&before=" + date.plusHours(1)
         + "&resolution=hour");
 
-    assertThat(contents).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        butterMeter.logicalMeterId.toString(),
-        "Difference temperature",
-        "K",
-        butterMeter.externalId,
-        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
-        asList(
-          new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
-          new MeasurementValueDto(date.plusHours(1).toInstant(), null)
+    assertThat(contents)
+      .hasSize(MeterDefinition.DISTRICT_HEATING_METER.quantities.size())
+      .contains(
+        new MeasurementSeriesDto(
+          heatMeter.logicalMeterId.toString(),
+          "Difference temperature",
+          "K",
+          heatMeter.externalId,
+          MeterDefinition.DISTRICT_HEATING_METER.medium,
+          asList(
+            new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
+            new MeasurementValueDto(date.plusHours(1).toInstant(), null)
+          )
+        ),
+        new MeasurementSeriesDto(
+          heatMeter.logicalMeterId.toString(),
+          "Energy",
+          "kWh",
+          heatMeter.externalId,
+          MeterDefinition.DISTRICT_HEATING_METER.medium,
+          asList(
+            new MeasurementValueDto(date.toInstant(), null),
+            new MeasurementValueDto(date.plusHours(1).toInstant(), null)
+          )
         )
-      ),
-      new MeasurementSeriesDto(
-        butterMeter.logicalMeterId.toString(),
-        "Energy",
-        "kWh",
-        butterMeter.externalId,
-        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
-        asList(
-          new MeasurementValueDto(date.toInstant(), null),
-          new MeasurementValueDto(date.plusHours(1).toInstant(), null)
-        )
-      )
-    );
+      );
   }
 
   @Test
   public void fetchMeasurementsForMeterByQuantityInPeriodWithNonDefaultUnit() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementCelcius(butterMeter, date.minusHours(1));
-    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(1));
+    PhysicalMeterEntity heatMeter = newHeatMeter(date);
+    newDiffTempMeasurementCelcius(heatMeter, date.minusHours(1));
+    newDiffTempMeasurementCelcius(heatMeter, date.plusHours(1));
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?quantities=Difference+temperature:K"
         + "&after=" + date
         + "&before=" + date.plusHours(1)
-        + "&meters=" + butterMeter.logicalMeterId.toString()
+        + "&meters=" + heatMeter.logicalMeterId.toString()
         + "&resolution=hour");
 
     assertThat(contents).hasSize(1);
@@ -276,37 +270,37 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterUsingTwoDifferentQuantities() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
 
-    PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementCelcius(butterMeter, date);
-    newDiffTempMeasurementCelcius(butterMeter, date.plusHours(1));
-    newEnergyMeasurement(butterMeter, date);
+    PhysicalMeterEntity heatMeter = newHeatMeter(date);
+    newDiffTempMeasurementCelcius(heatMeter, date);
+    newDiffTempMeasurementCelcius(heatMeter, date.plusHours(1));
+    newEnergyMeasurement(heatMeter, date);
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
         "/measurements?quantities=Difference+temperature:K,Energy:kWh"
-          + "&meters=" + butterMeter.logicalMeterId.toString()
+          + "&meters=" + heatMeter.logicalMeterId.toString()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1));
 
     assertThat(contents).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        butterMeter.logicalMeterId.toString(),
+        heatMeter.logicalMeterId.toString(),
         "Difference temperature",
         "K",
-        butterMeter.externalId,
-        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
+        heatMeter.externalId,
+        MeterDefinition.DISTRICT_HEATING_METER.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
           new MeasurementValueDto(date.plusHours(1).toInstant(), DIFF_TEMP_VALUE_KELVIN)
         )
       ),
       new MeasurementSeriesDto(
-        butterMeter.logicalMeterId.toString(),
+        heatMeter.logicalMeterId.toString(),
         "Energy",
         "kWh",
-        butterMeter.externalId,
-        MeasurementControllerTest.BUTTER_METER_DEFINITION.medium,
+        heatMeter.externalId,
+        MeterDefinition.DISTRICT_HEATING_METER.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), null),
           new MeasurementValueDto(date.plusHours(1).toInstant(), null)
@@ -318,32 +312,32 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementSeriesAreLabeledWithMeterExternalId() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter(date);
-    newDiffTempMeasurementCelcius(butterMeter, date);
+    PhysicalMeterEntity heatMeter = newHeatMeter(date);
+    newDiffTempMeasurementCelcius(heatMeter, date);
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
         "/measurements?quantities=Difference+temperature"
-          + "&meters=" + butterMeter.logicalMeterId.toString()
+          + "&meters=" + heatMeter.logicalMeterId.toString()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1));
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
-    assertThat(dto.label).isEqualTo(butterMeter.externalId);
+    assertThat(dto.label).isEqualTo(heatMeter.externalId);
   }
 
   @Test
   public void unknownUnitSuppliedForScaling() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter();
-    newDiffTempMeasurementCelcius(butterMeter, date);
+    PhysicalMeterEntity heatMeter = newHeatMeter();
+    newDiffTempMeasurementCelcius(heatMeter, date);
 
     ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantities=Difference+temperature:unknownUnit"
-          + "&meters=" + butterMeter.logicalMeterId.toString()
+          + "&meters=" + heatMeter.logicalMeterId.toString()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1),
@@ -358,13 +352,13 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void wrongDimensionForQuantitySuppliedForScaling() {
     ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity butterMeter = newButterMeter();
-    newDiffTempMeasurementCelcius(butterMeter, date);
+    PhysicalMeterEntity heatMeter = newHeatMeter();
+    newDiffTempMeasurementCelcius(heatMeter, date);
 
     ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantities=Difference+temperature:kWh"
-          + "&meters=" + butterMeter.logicalMeterId.toString()
+          + "&meters=" + heatMeter.logicalMeterId.toString()
           + "&after=" + date
           + "&before=" + date.plusHours(1)
           + "&resolution=hour",
@@ -413,11 +407,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         MeasurementSeriesDto.class
       ).getBody();
 
-    assertThat(list.size()).isEqualTo(1);
-
-    MeasurementSeriesDto seriesDto = list.get(0);
-
-    assertThat(seriesDto).isEqualTo(
+    assertThat(list).containsExactly(
       new MeasurementSeriesDto(
         meter.logicalMeterId.toString(),
         "Volume",
@@ -449,16 +439,16 @@ public class MeasurementControllerTest extends IntegrationTest {
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
     newMeasurement(meter, when.plusHours(2), "Volume", 55.0, "m³");
 
-    MeasurementSeriesDto seriesDto = asUser()
+    List<MeasurementSeriesDto> seriesDto = asUser()
       .getList(String.format(
         "/measurements?resolution=hour&quantities=Volume&meters=%s"
           + "&after=%s&before=%s",
         consumptionMeter.getId(),
         when,
         when.plusHours(1)
-      ), MeasurementSeriesDto.class).getBody().get(0);
+      ), MeasurementSeriesDto.class).getBody();
 
-    assertThat(seriesDto).isEqualTo(
+    assertThat(seriesDto).containsExactly(
       new MeasurementSeriesDto(
         meter.logicalMeterId.toString(),
         "Volume",
@@ -484,7 +474,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     newMeasurement(meter, when.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, when.plusHours(2), "Volume", 5.0, "m^3");
 
-    MeasurementSeriesDto response = asUser()
+    List<MeasurementSeriesDto> response = asUser()
       .getList(String.format(
         "/measurements"
           + "?after=" + when
@@ -492,11 +482,12 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "&quantities=" + Quantity.VOLUME.name
           + "&meters=%s",
         logicalMeter.getId()
-      ), MeasurementSeriesDto.class).getBody().get(0);
+      ), MeasurementSeriesDto.class).getBody();
 
     ZonedDateTime periodStartHour = when.truncatedTo(ChronoUnit.HOURS);
 
-    assertThat(response.values)
+    assertThat(response)
+      .flatExtracting("values")
       .containsExactly(
         new MeasurementValueDto(
           periodStartHour.toInstant(),
@@ -542,7 +533,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
+    return toEntity(meterDefinitions.save(meterDefinition));
   }
 
   private void newEnergyMeasurement(
@@ -566,12 +557,14 @@ public class MeasurementControllerTest extends IntegrationTest {
     double value,
     String unit
   ) {
-    measurementJpaRepository.save(new MeasurementEntity(
-      created,
-      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
-      new MeasurementUnit(unit, value),
-      meter
-    ));
+    measurementRepository.save(Measurement.builder()
+      .created(created)
+      .quantity(QuantityAccess.singleton().getByName(quantity).name)
+      .physicalMeter(PhysicalMeterEntityMapper.toDomainModel(meter))
+      .value(value)
+      .unit(unit)
+      .build()
+    );
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
@@ -586,18 +579,18 @@ public class MeasurementControllerTest extends IntegrationTest {
     ));
   }
 
-  private PhysicalMeterEntity newButterMeterBelongingTo(
+  private PhysicalMeterEntity newHeatMeterBelongingTo(
     OrganisationEntity organisationEntity,
     ZonedDateTime created
   ) {
     return newPhysicalMeterEntity(organisationEntity, created);
   }
 
-  private PhysicalMeterEntity newButterMeter() {
+  private PhysicalMeterEntity newHeatMeter() {
     return newPhysicalMeterEntity(context().organisationEntity, ZonedDateTime.now());
   }
 
-  private PhysicalMeterEntity newButterMeter(ZonedDateTime created) {
+  private PhysicalMeterEntity newHeatMeter(ZonedDateTime created) {
     return newPhysicalMeterEntity(context().organisationEntity, created);
   }
 
@@ -611,7 +604,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       logicalMeterId.toString(),
       organisationEntity.id,
       created,
-      saveMeterDefinition(MeasurementControllerTest.BUTTER_METER_DEFINITION)
+      toEntity(MeterDefinition.DISTRICT_HEATING_METER)
     ));
 
     UUID physicalMeterId = randomUUID();

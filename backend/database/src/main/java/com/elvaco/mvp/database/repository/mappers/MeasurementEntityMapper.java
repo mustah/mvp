@@ -2,9 +2,9 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
+import com.elvaco.mvp.unitconverter.UomUnitConverter;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs;
@@ -16,8 +16,12 @@ public class MeasurementEntityMapper {
     return Measurement.builder()
       .created(entity.id.created)
       .quantity(entity.id.quantity.name)
-      .value(entity.value.getValue())
-      .unit(entity.value.getUnit())
+      .value(UomUnitConverter.singleton().toValue(
+        entity.value,
+        entity.id.quantity.storageUnit,
+        entity.id.quantity.displayUnit
+      ))
+      .unit(entity.id.quantity.displayUnit)
       .physicalMeter(toDomainModelWithoutStatusLogs(entity.id.physicalMeter))
       .build();
   }
@@ -29,7 +33,11 @@ public class MeasurementEntityMapper {
         QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(domainModel.quantity)),
         PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
       ),
-      new MeasurementUnit(domainModel.unit, domainModel.value)
+      UomUnitConverter.singleton().toValue(
+        domainModel.value,
+        domainModel.unit,
+        QuantityAccess.singleton().getByName(domainModel.quantity).storageUnit
+      )
     );
   }
 }
