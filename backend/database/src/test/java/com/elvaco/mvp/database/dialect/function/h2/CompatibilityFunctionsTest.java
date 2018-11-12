@@ -1,10 +1,10 @@
 package com.elvaco.mvp.database.dialect.function.h2;
 
+import com.elvaco.mvp.unitconverter.UomUnitConverter;
 import org.junit.Test;
 
 import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.jsonbContains;
 import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.jsonbExists;
-import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.toMeasurementUnit;
 import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.unitAt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -20,7 +20,7 @@ public class CompatibilityFunctionsTest {
   // Verify that the aliases that we've defined for PostgreSql also work here
   @Test
   public void unitAliasForCelsius() {
-    assertEquals("14 ℃", unitAt("14 Celsius", "℃"));
+    assertEquals("14 °C", unitAt("14 Celsius", "℃"));
   }
 
   @Test
@@ -36,6 +36,28 @@ public class CompatibilityFunctionsTest {
   @Test
   public void unitAliasForCubicMetersNoCaret() {
     assertEquals("43 ㎥", unitAt("43 m3", "㎥"));
+  }
+
+  @Test
+  public void unitAliasForCubicMetersNoCaretTargetM3() {
+    assertEquals("43 ㎥", unitAt("43 m3", "m3"));
+  }
+
+  @Test
+  public void unitAliasForWattHour() {
+    assertEquals("1000 Wh", unitAt("1000 Wh", "Wh"));
+  }
+
+  public void unitAliasFor1kWattHour() {
+    assertEquals("1000 Wh", unitAt("1 kWh", "Wh"));
+  }
+
+  public void unitAliasFor1WattHour() {
+    assertEquals("3600 J", unitAt("1 Wh", "J"));
+  }
+
+  public void unitAliasFor3600JToWat() {
+    assertEquals("0.001 kWh", unitAt("3600 J", "kWh"));
   }
 
   /* Most test cases taken from
@@ -126,6 +148,7 @@ public class CompatibilityFunctionsTest {
 
   @Test
   public void measurementUnits() {
-    assertThat(toMeasurementUnit("150 °C", "K").toString()).isEqualTo("423.15 K");
+    assertThat(UomUnitConverter.singleton().toMeasurementUnit("150 °C", "K").toString()).isEqualTo(
+      "423.15 K");
   }
 }
