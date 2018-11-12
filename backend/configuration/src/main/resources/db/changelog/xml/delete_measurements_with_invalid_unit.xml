@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet id="Delete measurements with invalid unit" author="Åsa Godin">
+    <sqlFile path="../sql/postgresql/delete_measurements_with_invalid_unit.sql"
+             relativeToChangelogFile="true"
+             encoding="utf8"
+             dbms="postgresql"
+             splitStatements="false"
+             stripComments="true"
+    />
+  </changeSet>
+</databaseChangeLog>

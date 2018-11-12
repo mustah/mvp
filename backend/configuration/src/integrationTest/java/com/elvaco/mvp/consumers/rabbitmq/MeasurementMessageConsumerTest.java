@@ -25,18 +25,19 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.ME
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.offset;
 import static org.junit.Assume.assumeTrue;
 
 public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
 
+  private static final ZonedDateTime CREATED = ZonedDateTime.of(
+    LocalDateTime.parse("2018-03-07T16:13:09"),
+    METERING_TIMEZONE
+  );
   @Autowired
   private MeasurementMessageConsumer measurementMessageConsumer;
-
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
-
   @Autowired
   private CacheManager cacheManager;
 
@@ -58,65 +59,62 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
   @Transactional
   @Test
   public void lastReceivedDuplicateMeasurementIsUsed() {
-    ZonedDateTime created = ZonedDateTime.of(
-      LocalDateTime.parse("2018-03-07T16:13:09"),
-      METERING_TIMEZONE
-    );
-    LocalDateTime when = created.toLocalDateTime();
+    LocalDateTime when = CREATED.toLocalDateTime();
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 1.0))));
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
-    MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.id.created).isEqualTo(created);
-    assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
+    assertThat(all.get(0).id.created).isEqualTo(CREATED);
+    assertThat(all.get(0).value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
   @Test
   public void duplicateMeasurementsInMessage_lastMeasurementInMessageIsUsed() {
-    ZonedDateTime created = ZonedDateTime.of(
-      LocalDateTime.parse("2018-03-07T16:13:09"),
-      METERING_TIMEZONE
-    );
-    LocalDateTime when = created.toLocalDateTime();
-    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
-      newValueDto(when, 1.0),
-      newValueDto(when, 2.0)
+    var when = CREATED.toLocalDateTime();
+    var measurementMessage = newMeasurementMessage(asList(
+      newValueDto(when, 1.0, "kWh"),
+      newValueDto(when, 2.0, "kWh")
     ));
 
     measurementMessageConsumer.accept(measurementMessage);
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
-    MeasurementEntity found = all.get(0);
     assertThat(all).hasSize(1);
-    assertThat(found.id.created).isEqualTo(created);
-    assertThat(found.value.getValue()).isCloseTo(7.2, offset(0.1));
+    assertThat(all.get(0).id.created).isEqualTo(CREATED);
+    assertThat(all.get(0).value.getValue()).isCloseTo(7.2, offset(0.1));
   }
 
   @Transactional
   @Test
-  public void mixedDimensionsForMeterQuantity() {
-    LocalDateTime when = LocalDateTime.now();
-    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
-      newValueDto(when, 2.0, "kWh"),
-      newValueDto(when.plusMinutes(1), 1.0, "m³")
-    ));
+  public void invaludUnitForQuantityIsDiscarded() {
+    var measurementMessage = newMeasurementMessage(
+      asList(
+        new ValueDto(CREATED.toLocalDateTime(), 1.0, "m³", "Volume"),
+        new ValueDto(CREATED.toLocalDateTime(), 2.0, "kWh", "Volume"),
+        new ValueDto(CREATED.toLocalDateTime(), 3.0, "m³", "Energy")
+      ));
 
-    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage))
-      .hasMessageContaining("Mixing dimensions for meter quantity is not allowed");
+    measurementMessageConsumer.accept(measurementMessage);
+
+    List<MeasurementEntity> all = measurementJpaRepository.findAll();
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).id.quantity.name).isEqualTo("Volume");
+    assertThat(all.get(0).value.getValue()).isCloseTo(1.0, offset(0.1));
   }
 
   @Transactional
   @Test
   public void emptyUnitMeasurementIsDiscarded() {
-    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(
+    var measurementMessage = newMeasurementMessage(
       singletonList(new ValueDto(LocalDateTime.now(), 1.0, "", "Volume"))
     );
 
-    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage))
-      .isInstanceOf(IllegalArgumentException.class);
+    measurementMessageConsumer.accept(measurementMessage);
+
+    List<MeasurementEntity> all = measurementJpaRepository.findAll();
+    assertThat(all).hasSize(0);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {

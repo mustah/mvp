@@ -55,9 +55,9 @@ public class MeteringMessageMapper {
     return MeterDefinition.UNKNOWN_METER;
   }
 
-  static Optional<String> mappedQuantityName(String quantityName) {
+  static Optional<Quantity> mappedQuantity(String quantityName) {
     Quantity quantity = METER_TO_MVP_QUANTITIES.get(quantityName);
-    return Optional.ofNullable(quantity).map(q -> q.name);
+    return Optional.ofNullable(quantity);
   }
 
   static String mapToEvoMedium(String medium) {
