@@ -15,6 +15,8 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
+import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SelectionQueryFilters;
 import com.querydsl.core.group.GroupBy;
@@ -63,7 +65,7 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
-    JPQLQuery<LogicalMeterEntity> query = createQuery().select(path);
+    var query = createQuery().select(path);
     new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query);
     return Optional.ofNullable(query.distinct().fetchOne());
   }
@@ -159,7 +161,9 @@ class LogicalMeterQueryDslJpaRepository
       .groupBy(groupByExpressions)
       .distinct();
 
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query, countQuery);
+    Filters filters = toFilters(parameters);
+    new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query, countQuery);
+    new MissingMeasurementFilterQueryDslVisitor().visitAndApply(filters, query, countQuery);
 
     querydsl.applyPagination(pageable, query);
 
@@ -195,9 +199,7 @@ class LogicalMeterQueryDslJpaRepository
   public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
     RequestParameters parameters
   ) {
-    Filters filters = toFilters(parameters);
-    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
-    JPQLQuery<LogicalMeterCollectionStats> query = createQuery()
+    var query = createQuery()
       .select(Projections.constructor(
         LogicalMeterCollectionStats.class,
         LOGICAL_METER.id,
@@ -205,7 +207,10 @@ class LogicalMeterQueryDslJpaRepository
         PHYSICAL_METER.readIntervalMinutes
       ));
 
-    visitor.visitAndApply(filters, query);
+    Filters filters = toFilters(parameters);
+    new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
+    new MissingMeasurementFilterQueryDslVisitor().visitAndApply(filters, query);
+
     return query.groupBy(LOGICAL_METER.id, PHYSICAL_METER.readIntervalMinutes)
       .distinct()
       .fetch();
@@ -257,16 +262,13 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private JPQLQuery<LogicalMeterEntity> findAllQuery(RequestParameters parameters) {
-    Filters filters = toFilters(parameters);
-    LogicalMeterFilterQueryDslVisitor visitor = new LogicalMeterFilterQueryDslVisitor();
-    JPQLQuery<LogicalMeterEntity> query = createQuery().select(path);
-    visitor.visitAndApply(filters, query);
+    var query = createQuery().select(path);
+    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query);
     return query;
   }
 
   private LogicalMeterEntity fetchOne(Predicate... predicate) {
-    JPQLQuery<LogicalMeterEntity> query = createQuery(predicate).select(path);
-    return query.distinct().fetchOne();
+    return createQuery(predicate).select(path).distinct().fetchOne();
   }
 
   private static void joinLocation(JPQLQuery<String> query, RequestParameters parameters) {

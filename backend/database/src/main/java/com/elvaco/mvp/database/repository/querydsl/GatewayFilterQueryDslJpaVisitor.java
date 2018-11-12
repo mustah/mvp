@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.jpa;
+package com.elvaco.mvp.database.repository.querydsl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,16 +26,9 @@ import com.querydsl.jpa.JPQLQuery;
 
 import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
 import static com.elvaco.mvp.core.filter.ComparisonMode.WILDCARD;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.ALARM_LOG;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATEWAY;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATEWAY_STATUS_LOG;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOCATION;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOGICAL_METER;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_STATUS_LOG;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.PHYSICAL_METER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
-class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
+public class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   private final Collection<Predicate> predicates = new ArrayList<>();
 
@@ -80,9 +73,9 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(SerialFilter serialFilter) {
-    if (serialFilter.mode() == EQUAL) {
+    if (serialFilter.comparisonMode() == EQUAL) {
       predicates.add(GATEWAY.serial.in(serialFilter.values()));
-    } else if (serialFilter.mode() == WILDCARD) {
+    } else if (serialFilter.comparisonMode() == WILDCARD) {
       predicates.add(GATEWAY.serial.containsIgnoreCase(serialFilter.oneValue()));
     }
   }
@@ -132,12 +125,7 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
   }
 
   @Override
-  Collection<Predicate> getPredicates() {
-    return new ArrayList<>(predicates);
-  }
-
-  @Override
-  void applyJoins(JPQLQuery<?> q) {
+  protected void applyJoins(JPQLQuery<?> q) {
     q.leftJoin(GATEWAY.statusLogs, GATEWAY_STATUS_LOG)
       .on(statusLogPredicate)
       .leftJoin(GATEWAY.meters, LOGICAL_METER)
@@ -147,5 +135,10 @@ class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
       .on(alarmLogPredicate)
       .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .on(meterStatusLogPredicate);
+  }
+
+  @Override
+  protected Collection<Predicate> getPredicates() {
+    return new ArrayList<>(predicates);
   }
 }

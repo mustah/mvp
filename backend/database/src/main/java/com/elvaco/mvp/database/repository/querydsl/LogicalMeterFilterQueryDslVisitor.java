@@ -1,7 +1,8 @@
-package com.elvaco.mvp.database.repository.jpa;
+package com.elvaco.mvp.database.repository.querydsl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
@@ -25,32 +26,31 @@ import com.elvaco.mvp.database.repository.queryfilters.LocationPredicates;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPQLQuery;
 
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.ALARM_LOG;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.GATEWAY;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOCATION;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.LOGICAL_METER;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_DEFINITION;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.METER_STATUS_LOG;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.MISSING_MEASUREMENT;
-import static com.elvaco.mvp.database.repository.jpa.BaseQueryDslRepository.PHYSICAL_METER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
-class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
+public class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
+
+  private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG_JOIN =
+    new QPhysicalMeterStatusLogEntity("meter_status_log_join");
+
+  private static final QMeterAlarmLogEntity METER_ALARM_LOG_JOIN =
+    new QMeterAlarmLogEntity("meter_alarm_log_join");
 
   private final Collection<Predicate> predicates = new ArrayList<>();
 
   private Predicate alarmLogPredicate = FALSE_PREDICATE;
   private Predicate statusLogPredicate = FALSE_PREDICATE;
-  private Predicate missingMeasurementPredicate = FALSE_PREDICATE;
 
   @Override
   public void visit(CityFilter cityFilter) {
-    predicates.add(LocationPredicates.whereCityOrUnknown(cityFilter.values()));
+    Optional.ofNullable(LocationPredicates.whereCityOrUnknown(cityFilter.values()))
+      .ifPresent(predicates::add);
   }
 
   @Override
   public void visit(AddressFilter addressFilter) {
-    predicates.add(LocationPredicates.whereAddressOrUnknown(addressFilter.values()));
+    Optional.ofNullable(LocationPredicates.whereAddressOrUnknown(addressFilter.values()))
+      .ifPresent(predicates::add);
   }
 
   @Override
@@ -73,8 +73,6 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
     SelectionPeriod period = periodFilter.getPeriod();
     alarmLogPredicate = withinPeriod(period, ALARM_LOG.start, ALARM_LOG.stop);
     statusLogPredicate = withinPeriod(period, METER_STATUS_LOG.start, METER_STATUS_LOG.stop);
-    missingMeasurementPredicate = MISSING_MEASUREMENT.id.expectedTime.lt(period.stop)
-      .and(MISSING_MEASUREMENT.id.expectedTime.goe(period.start));
   }
 
   @Override
@@ -129,31 +127,28 @@ class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
   }
 
   @Override
-  Collection<Predicate> getPredicates() {
-    return new ArrayList<>(predicates);
-  }
-
-  @Override
-  void applyJoins(JPQLQuery<?> q) {
-    var meterStatusLogJoin = new QPhysicalMeterStatusLogEntity("meter_status_log_join");
-    var meterAlarmLogJoin = new QMeterAlarmLogEntity("meter_alarm_log_join");
-
+  protected void applyJoins(JPQLQuery<?> q) {
     q.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .leftJoin(LOGICAL_METER.gateways, GATEWAY)
       .leftJoin(LOGICAL_METER.meterDefinition, METER_DEFINITION)
       .leftJoin(LOGICAL_METER.location, LOCATION)
-      .leftJoin(PHYSICAL_METER.missingMeasurements, MISSING_MEASUREMENT)
-      .on(missingMeasurementPredicate)
-      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG).on(statusLogPredicate)
-      .leftJoin(PHYSICAL_METER.statusLogs, meterStatusLogJoin)
-      .on(meterStatusLogJoin.start.gt(METER_STATUS_LOG.start)
-        .or(meterStatusLogJoin.start.eq(METER_STATUS_LOG.start))
-        .and(meterStatusLogJoin.id.gt(METER_STATUS_LOG.id)))
-      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG).on(alarmLogPredicate)
-      .leftJoin(PHYSICAL_METER.alarms, meterAlarmLogJoin)
-      .on(meterAlarmLogJoin.start.gt(ALARM_LOG.start)
-        .or(meterAlarmLogJoin.start.eq(ALARM_LOG.start))
-        .and(meterAlarmLogJoin.id.gt(ALARM_LOG.id)))
-      .where(meterAlarmLogJoin.id.isNull().and(meterStatusLogJoin.id.isNull()));
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
+      .on(statusLogPredicate)
+      .leftJoin(PHYSICAL_METER.statusLogs, METER_STATUS_LOG_JOIN)
+      .on(METER_STATUS_LOG_JOIN.start.gt(METER_STATUS_LOG.start)
+        .or(METER_STATUS_LOG_JOIN.start.eq(METER_STATUS_LOG.start))
+        .and(METER_STATUS_LOG_JOIN.id.gt(METER_STATUS_LOG.id)))
+      .leftJoin(PHYSICAL_METER.alarms, ALARM_LOG)
+      .on(alarmLogPredicate)
+      .leftJoin(PHYSICAL_METER.alarms, METER_ALARM_LOG_JOIN)
+      .on(METER_ALARM_LOG_JOIN.start.gt(ALARM_LOG.start)
+        .or(METER_ALARM_LOG_JOIN.start.eq(ALARM_LOG.start))
+        .and(METER_ALARM_LOG_JOIN.id.gt(ALARM_LOG.id)))
+      .where(METER_ALARM_LOG_JOIN.id.isNull().and(METER_STATUS_LOG_JOIN.id.isNull()));
+  }
+
+  @Override
+  protected Collection<Predicate> getPredicates() {
+    return new ArrayList<>(predicates);
   }
 }

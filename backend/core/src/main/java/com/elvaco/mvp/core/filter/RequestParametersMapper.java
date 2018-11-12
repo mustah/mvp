@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
+import static com.elvaco.mvp.core.filter.ComparisonMode.WILDCARD;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
@@ -43,7 +44,7 @@ public final class RequestParametersMapper {
   static {
     PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, EQUAL));
     PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, ComparisonMode.WILDCARD));
+    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, WILDCARD));
     PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, EQUAL));
     PARAMETER_TO_FILTER.put(MEDIUM, (values) -> new MediumFilter(values, EQUAL));
     PARAMETER_TO_FILTER.put(FACILITY, (values) -> new FacilityFilter(values, EQUAL));
@@ -61,43 +62,37 @@ public final class RequestParametersMapper {
     );
     PARAMETER_TO_FILTER.put(
       GATEWAY_ID,
-      (values) -> new GatewayIdFilter(
-        values.stream().map(UUID::fromString).collect(toList()),
-        EQUAL
-      )
+      (values) -> new GatewayIdFilter(toUuids(values), EQUAL)
     );
     PARAMETER_TO_FILTER.put(
       LOGICAL_METER_ID,
-      (values) -> new LogicalMeterIdFilter(
-        values.stream().map(UUID::fromString).collect(toList()),
-        EQUAL
-      )
+      (values) -> new LogicalMeterIdFilter(toUuids(values), EQUAL)
     );
     PARAMETER_TO_FILTER.put(
       ORGANISATION,
-      (values) -> new OrganisationIdFilter(
-        values.stream().map(UUID::fromString).collect(toList()),
-        EQUAL
-      )
+      (values) -> new OrganisationIdFilter(toUuids(values), EQUAL)
     );
     PARAMETER_TO_FILTER.put(
       RequestParameter.WILDCARD,
-      (values) -> new WildcardFilter(values, ComparisonMode.WILDCARD)
+      (values) -> new WildcardFilter(values, WILDCARD)
     );
     PARAMETER_TO_FILTER.put(ALARM, (values) -> new AlarmFilter(values, EQUAL));
   }
 
   public static Filters toFilters(RequestParameters requestParameters) {
     Collection<VisitableFilter> filters = new ArrayList<>();
-    requestParameters.getPeriod().ifPresent(period ->
-      filters.add(new PeriodFilter(List.of(period), EQUAL, period))
-    );
+    requestParameters.getPeriod()
+      .ifPresent(period -> filters.add(new PeriodFilter(List.of(period), EQUAL, period)));
     filters.addAll(
       requestParameters.entrySet().stream()
         .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))
         .map(param -> parameterToFilter(param.getKey(), param.getValue())).collect(toList())
     );
     return new Filters(filters);
+  }
+
+  private static List<UUID> toUuids(List<String> ids) {
+    return ids.stream().map(UUID::fromString).collect(toList());
   }
 
   private static boolean isIgnored(RequestParameter parameter) {

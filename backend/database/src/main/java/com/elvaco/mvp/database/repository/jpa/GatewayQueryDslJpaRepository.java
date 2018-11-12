@@ -10,11 +10,9 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.dto.LogicalMeterLocation;
 import com.elvaco.mvp.core.filter.Filters;
-import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.querydsl.core.ResultTransformer;
-import com.querydsl.core.group.GroupBy;
+import com.elvaco.mvp.database.repository.querydsl.GatewayFilterQueryDslJpaVisitor;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
@@ -24,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
+import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -39,8 +39,6 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
-    Filters filters = RequestParametersMapper.toFilters(parameters);
-
     ConstructorExpression<GatewaySummaryDto> constructor = Projections.constructor(
       GatewaySummaryDto.class,
       GATEWAY.id,
@@ -82,11 +80,13 @@ class GatewayQueryDslJpaRepository
 
     querydsl.applyPagination(pageable, selectQuery);
 
-    new GatewayFilterQueryDslJpaVisitor().visitAndApply(filters, countQuery, selectQuery);
+    new GatewayFilterQueryDslJpaVisitor().visitAndApply(
+      toFilters(parameters),
+      countQuery,
+      selectQuery
+    );
 
-    ResultTransformer<List<GatewaySummaryDto>> transformer = GroupBy.groupBy(
-      GATEWAY.id
-    ).list(constructor);
+    var transformer = groupBy(GATEWAY.id).list(constructor);
     List<GatewaySummaryDto> pagedGateways = selectQuery.transform(transformer);
 
     return getPage(pagedGateways, pageable, countQuery::fetchCount);
@@ -125,12 +125,10 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Page<String> findSerials(Filters filters, Pageable pageable) {
-    GatewayFilterQueryDslJpaVisitor visitor = new GatewayFilterQueryDslJpaVisitor();
-
     JPQLQuery<String> query = createQuery().select(GATEWAY.serial).distinct();
     JPQLQuery<String> countQuery = createCountQuery().select(GATEWAY.serial).distinct();
 
-    visitor.visitAndApply(filters, query, countQuery);
+    new GatewayFilterQueryDslJpaVisitor().visitAndApply(filters, query, countQuery);
     List<String> all = querydsl.applyPagination(pageable, query).fetch();
     return getPage(all, pageable, countQuery::fetchCount);
   }
