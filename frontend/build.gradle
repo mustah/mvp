@@ -38,3 +38,4 @@ task yarn_install(type: YarnTask) {
 
 check.dependsOn([yarn_install, yarn_test])
 bundle.dependsOn(yarn_install)
+clean.dependsOn(cleanBundle)
