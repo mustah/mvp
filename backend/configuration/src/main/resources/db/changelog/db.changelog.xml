@@ -44,6 +44,7 @@
   <include file="xml/add_user_selection_to_suborganisations.xml" relativeToChangelogFile="true"/>
   <include file="xml/delete_measurements_with_invalid_unit.xml" relativeToChangelogFile="true"/>
   <include file="xml/remove_unit_from_measurements.xml" relativeToChangelogFile="true"/>
+  <include file="xml/replace_missing_read_interval_with_hour.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

@@ -72,6 +72,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private static final String ORGANISATION_SLUG = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
   private static final Location LOCATION_KUNGSBACKA = locationWithoutCoordinates().build();
+  private static final long EXPECTED_DEFAULT_READ_INTERVAL = 60L;
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -416,27 +417,6 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
-  public void expectedIntervalIsSetForCreatedPhysicalMeter() {
-    MeteringReferenceInfoMessageDto message = messageBuilder()
-      .cron(HOUR_CRON).build();
-
-    messageHandler.accept(message);
-
-    PhysicalMeter createdMeter = physicalMeters.findAll().get(0);
-    assertThat(createdMeter.readIntervalMinutes).isEqualTo(60);
-  }
-
-  @Test
-  public void expectedIntervalIsUpdatedForCreatedPhysicalMeter() {
-    messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
-    messageHandler.accept(messageBuilder().cron(HOUR_CRON).build());
-
-    List<PhysicalMeter> all = physicalMeters.findAll();
-    assertThat(all).hasSize(1);
-    assertThat(all.get(0).readIntervalMinutes).isEqualTo(60);
-  }
-
-  @Test
   public void emptyExternalIdIsRejected() {
     MeteringReferenceInfoMessageDto message = messageBuilder().medium("medium")
       .manufacturer("manufacturer")
@@ -607,72 +587,109 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
-  public void createMeterWithoutCron_UseFallback() {
+  public void readInterval_CreateMeterWithoutCron_UseFallback() {
     messageHandler.accept(messageBuilder().cron(null).build());
 
-    Organisation organisation = findOrganisation();
-
-    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
-
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(EXPECTED_DEFAULT_READ_INTERVAL);
   }
 
   @Test
-  public void readIntervalShouldNotBeReset_WhenSecondMessageHasNoCron() {
+  public void readInterval_ShouldNotBeReset_WhenSecondMessageHasNoCron() {
     messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
     messageHandler.accept(messageBuilder().cron(null).build());
 
-    Organisation organisation = findOrganisation();
-
-    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
-
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(15);
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(15L);
   }
 
   @Test
-  public void readIntervalShouldNotBeReset_WhenSecondMessageHasEmptyCron() {
+  public void readInterval_ShouldNotBeReset_WhenSecondMessageHasEmptyCron() {
     messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
     messageHandler.accept(messageBuilder().cron("").build());
 
-    Organisation organisation = findOrganisation();
-
-    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
-
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(15);
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(15L);
   }
 
   @Test
-  public void readIntervalShouldBeUpdated_WhenSecondMessageHasCron() {
-    messageHandler.accept(messageBuilder().cron(null).build());
-
-    Organisation organisation = findOrganisation();
-
-    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
-
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
-
+  public void readInterval_IsSetForCreatedPhysicalMeter() {
     messageHandler.accept(messageBuilder().cron(HOUR_CRON).build());
 
-    physicalMeter = findPhysicalMeterByOrganisationId(organisation);
-
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(60);
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(60L);
   }
 
   @Test
-  public void readIntervalShouldUseFallback_WhenConsecutiveReadIntervalsAreMissing() {
+  public void readInterval_IsNotUpdatedForPhysicalMeterWithZeroAsReadInterval() {
+    UUID logicalMeterId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
+    physicalMeters.save(
+      physicalMeter()
+        .readIntervalMinutes(0)
+        .logicalMeterId(logicalMeterId)
+        .organisation(organisation)
+        .build()
+    );
+
+    logicalMeters.save(LogicalMeter.builder()
+      .id(logicalMeterId)
+      .externalId(EXTERNAL_ID)
+      .organisationId(organisation.id)
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .created(ZonedDateTime.now())
+      .location(UNKNOWN_LOCATION)
+      .build());
+
     messageHandler.accept(messageBuilder().cron(null).build());
 
-    Organisation organisation = findOrganisation();
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(0L);
+  }
 
-    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+  @Test
+  public void readInterval_IsUpdatedForCreatedPhysicalMeter() {
+    messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
+    messageHandler.accept(messageBuilder().cron(HOUR_CRON).build());
 
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(60L);
+  }
+
+  @Test
+  public void readInterval_ShouldBeUpdated_WhenSecondMessageHasCron() {
+    messageHandler.accept(messageBuilder().cron(null).build());
+
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(EXPECTED_DEFAULT_READ_INTERVAL);
+
+    messageHandler.accept(messageBuilder().cron(FIFTEEN_MINUTE_CRON).build());
+
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(15L);
+  }
+
+  @Test
+  public void readInterval_ShouldUseFallback_WhenConsecutiveReadIntervalsAreMissing() {
+    messageHandler.accept(messageBuilder().cron(null).build());
+
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(EXPECTED_DEFAULT_READ_INTERVAL);
 
     messageHandler.accept(messageBuilder().cron(null).build());
 
-    physicalMeter = findPhysicalMeterByOrganisationId(organisation);
-
-    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
+    assertThat(physicalMeters.findAll())
+      .extracting("readIntervalMinutes")
+      .containsExactly(EXPECTED_DEFAULT_READ_INTERVAL);
   }
 
   @Test
@@ -844,18 +861,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
     private String organisationExternalId = ORGANISATION_EXTERNAL_ID;
     private String jobId = "";
 
-    private MeteringReferenceInfoMessageDtoBuilder physicalMeterId(String physicalMeterId) {
-      this.physicalMeterId = physicalMeterId;
-      return this;
-    }
-
     public MeteringReferenceInfoMessageDtoBuilder medium(String medium) {
       this.medium = medium;
-      return this;
-    }
-
-    private MeteringReferenceInfoMessageDtoBuilder mbusDeviceType(Integer mbusDeviceType) {
-      this.mbusDeviceType = mbusDeviceType;
       return this;
     }
 
@@ -866,6 +873,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     public MeteringReferenceInfoMessageDtoBuilder cron(String cron) {
       this.cron = cron;
+      return this;
+    }
+
+    private MeteringReferenceInfoMessageDtoBuilder physicalMeterId(String physicalMeterId) {
+      this.physicalMeterId = physicalMeterId;
+      return this;
+    }
+
+    private MeteringReferenceInfoMessageDtoBuilder mbusDeviceType(Integer mbusDeviceType) {
+      this.mbusDeviceType = mbusDeviceType;
       return this;
     }
 

@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import com.cronutils.model.Cron;
 import com.cronutils.model.definition.CronDefinition;
@@ -20,7 +21,7 @@ public class CronHelper {
   private static final ZonedDateTime PREDICTABLE_TIME = ZonedDateTime.parse("1970-02-02T00:00:00Z")
     .truncatedTo(ChronoUnit.SECONDS);
 
-  public static Optional<Duration> toReportInterval(String cronExpression) {
+  public static Optional<Duration> toReportInterval(@Nullable String cronExpression) {
     return Optional.ofNullable(cronExpression)
       .filter(expression -> !expression.trim().isEmpty())
       .map(CRON_PARSER::parse)
