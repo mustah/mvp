@@ -3,7 +3,6 @@ package com.elvaco.mvp.testing.repository;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,11 +20,6 @@ import static java.util.Collections.emptyList;
 
 public class MockMeasurements extends MockRepository<Measurement.Id, Measurement>
   implements Measurements {
-
-  @Override
-  public Optional<Measurement> findById(Measurement.Id id) {
-    return filter(measurement -> Objects.equals(measurement.getId(), id)).findFirst();
-  }
 
   @Override
   public Measurement save(Measurement measurement) {
@@ -55,7 +49,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   @Override
   public List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
-    Quantity seriesQuantity,
+    Quantity quantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
@@ -66,7 +60,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   @Override
   public List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
-    Quantity seriesQuantity,
+    Quantity quantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution

@@ -69,7 +69,7 @@ public class LogicalMeterEntityMapperTest {
       "an-external-id",
       organisationId,
       created,
-      newMeterDefinitionEntity("Speed", "mps", "speed-o-meter")
+      newMeterDefinitionEntity("Speed", "kmh", "speed-o-meter")
     );
     logicalMeterEntity.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
@@ -89,7 +89,8 @@ public class LogicalMeterEntityMapperTest {
       singleton(new Quantity(
         1,
         "Speed",
-        new QuantityPresentationInformation("mps", SeriesDisplayMode.READOUT)
+        new QuantityPresentationInformation("kmh", SeriesDisplayMode.READOUT),
+        "kmh"
       )),
       false
     );
@@ -127,7 +128,8 @@ public class LogicalMeterEntityMapperTest {
       singleton(new Quantity(
         1,
         "Energy",
-        new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
+         new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT),
+        "kWh"
       )),
       false
     );
@@ -198,7 +200,13 @@ public class LogicalMeterEntityMapperTest {
   ) {
     return new MeterDefinitionEntity(
       MeterDefinitionType.UNKNOWN_METER_TYPE,
-      singleton(new QuantityEntity(1, quantityName, quantityUnit, SeriesDisplayMode.READOUT)),
+      singleton(new QuantityEntity(
+        1,
+        quantityName,
+        quantityUnit,
+        quantityUnit,
+        SeriesDisplayMode.READOUT
+      )),
       name,
       false
     );

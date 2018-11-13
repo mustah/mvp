@@ -44,7 +44,8 @@ public class QuantityTest {
   @Test
   public void complementComplete() {
     assertThat(Quantity.POWER.complementedBy(
-      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT)
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT),
+      Quantity.POWER.storageUnit
     )).isEqualTo(Quantity.POWER);
   }
 
@@ -55,9 +56,15 @@ public class QuantityTest {
       new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT)
     );
     assertThat(quantity.complementedBy(
-      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT)
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT),
+      "kW"
     )).isEqualTo(
-      new Quantity("a", new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT))
+      new Quantity(
+        null,
+        "a",
+        new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT),
+        "kW"
+      )
     );
   }
 
@@ -68,9 +75,15 @@ public class QuantityTest {
       new QuantityPresentationInformation("W", SeriesDisplayMode.UNKNOWN)
     );
     assertThat(quantity.complementedBy(
-      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT)
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT),
+      "W"
     )).isEqualTo(
-      new Quantity("a", new QuantityPresentationInformation("W", SeriesDisplayMode.READOUT))
+      new Quantity(
+        null,
+        "a",
+        new QuantityPresentationInformation("W", SeriesDisplayMode.READOUT),
+        "W"
+      )
     );
   }
 
@@ -82,7 +95,8 @@ public class QuantityTest {
     );
     assertThatThrownBy(() -> {
       Quantity ignored = quantity.complementedBy(
-        new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT)
+        new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT),
+        null
       );
     }).isInstanceOf(IllegalArgumentException.class);
   }

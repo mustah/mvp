@@ -36,7 +36,9 @@ public class QuantityEntity extends IdentifiableType<Integer> {
   @NaturalId
   public String name;
 
-  public String unit;
+  public String displayUnit;
+
+  public String storageUnit;
 
   @Enumerated(EnumType.ORDINAL)
   public SeriesDisplayMode seriesDisplayMode;

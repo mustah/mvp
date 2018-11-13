@@ -23,7 +23,6 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
-import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
@@ -76,9 +75,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     .truncatedTo(ChronoUnit.DAYS);
 
   private MeterDefinition hotWaterMeterDefinition;
-
-  @Autowired
-  private Measurements measurements;
 
   @Autowired
   private MeterDefinitions meterDefinitions;

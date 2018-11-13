@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -141,7 +140,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
-      new MeasurementUnit(unit, value),
+      value,
       meter
     ));
   }

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
@@ -12,15 +13,20 @@ public class QuantityEntityMapper {
     return new Quantity(
       quantityEntity.id,
       quantityEntity.name,
-      new QuantityPresentationInformation(quantityEntity.unit, quantityEntity.seriesDisplayMode)
+      new QuantityPresentationInformation(
+        quantityEntity.displayUnit,
+        quantityEntity.seriesDisplayMode
+      ),
+      quantityEntity.storageUnit
     );
   }
 
   public static QuantityEntity toEntity(Quantity quantity) {
     return new QuantityEntity(
-      quantity.id,
+      QuantityAccess.singleton().getId(quantity),
       quantity.name,
       quantity.presentationUnit(),
+      QuantityAccess.singleton().getStorageUnit(quantity),
       quantity.seriesDisplayMode()
     );
   }

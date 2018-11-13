@@ -3,6 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -53,6 +54,7 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
   public void tearDown() {
     cacheManager.getCacheNames().stream()
       .map(name -> cacheManager.getCache(name))
+      .filter(Objects::nonNull)
       .forEach(Cache::clear);
   }
 
@@ -66,7 +68,7 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).id.created).isEqualTo(CREATED);
-    assertThat(all.get(0).value.getValue()).isCloseTo(7.2, offset(0.1));
+    assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
   }
 
   @Transactional
@@ -83,7 +85,7 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).id.created).isEqualTo(CREATED);
-    assertThat(all.get(0).value.getValue()).isCloseTo(7.2, offset(0.1));
+    assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
   }
 
   @Transactional
@@ -101,7 +103,7 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).id.quantity.name).isEqualTo("Volume");
-    assertThat(all.get(0).value.getValue()).isCloseTo(1.0, offset(0.1));
+    assertThat(all.get(0).value).isCloseTo(1.0, offset(0.1));
   }
 
   @Transactional

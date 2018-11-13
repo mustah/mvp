@@ -39,12 +39,16 @@ public final class LogicalMeterHelper {
     Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
     quantities.forEach((quantity) -> {
       LogicalMeter firstMeter = logicalMeters.get(0);
+
+      Quantity lookedUpQuantity = firstMeter.getQuantity(quantity.name)
+        .orElseThrow(() -> new InvalidQuantityForMeterType(
+          quantity.name,
+          firstMeter.meterDefinition.medium
+        ));
+
       Quantity complementedQuantity = quantity.complementedBy(
-        firstMeter.getQuantity(quantity.name)
-          .orElseThrow(() -> new InvalidQuantityForMeterType(
-            quantity.name,
-            firstMeter.meterDefinition.medium
-          )).getPresentationInformation()
+        lookedUpQuantity.getPresentationInformation(),
+        lookedUpQuantity.storageUnit
       );
 
       List<PhysicalMeter> physicalMeters = new ArrayList<>();

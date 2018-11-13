@@ -18,7 +18,7 @@ public interface MeasurementJpaRepository
 
   @Query(nativeQuery = true, value = ""
     + " SELECT"
-    + "   cast(unit_at(avg(consumption), :unit) AS TEXT) AS value,"
+    + "   avg(consumption) AS value,"
     + "   interval_start AS when"
     + " FROM"
     + "   (SELECT"
@@ -44,14 +44,13 @@ public interface MeasurementJpaRepository
     @Param("meter_ids") List<UUID> meterIds,
     @Param("resolution") String resolution,
     @Param("quantity") String quantity,
-    @Param("unit") String unit,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to
   );
 
   @Query(nativeQuery = true, value = ""
     + " SELECT"
-    + "   cast(unit_at(avg(value), :unit) as TEXT) as value,"
+    + "   avg(value) as value,"
     + "   date_serie.date as when"
     + " FROM"
     + "     (SELECT generate_series("
@@ -69,7 +68,6 @@ public interface MeasurementJpaRepository
     @Param("meter_ids") List<UUID> meterIds,
     @Param("resolution") String resolution,
     @Param("quantity") String quantity,
-    @Param("unit") String unit,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to
   );
@@ -77,8 +75,7 @@ public interface MeasurementJpaRepository
   @Query(nativeQuery = true, value = ""
     + "   SELECT measurement_serie.value, measurement_serie.when from "
     + "   (SELECT"
-    + "     CAST (unit_at( lead(value) over (ORDER BY created ASC) - value , :unit) AS TEXT)"
-    + "     AS value,"
+    + "     lead(value) over (ORDER BY created ASC) - value AS value,"
     + "     date_serie.date AS when"
     + "   FROM"
     + "     ("
@@ -86,7 +83,7 @@ public interface MeasurementJpaRepository
     //          Series of all expected measurements from startTime up to (stopTime + 1) intervals.
     //          Consider stopTime as inclusive, hence +1 to the stopTime
     + "         generate_series("
-    + "              cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
+    + "           cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
     + "              cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC' + cast(:resolution AS INTERVAL),"
     + "              cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
     + "     ) AS date_serie"
@@ -105,7 +102,6 @@ public interface MeasurementJpaRepository
   List<MeasurementValueProjection> getSeriesForPeriodConsumption(
     @Param("meter_id") UUID physicalMeterId,
     @Param("quantity") String quantity,
-    @Param("unit") String unit,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to,
     @Param("resolution") String resolution
@@ -113,7 +109,7 @@ public interface MeasurementJpaRepository
 
   @Query(nativeQuery = true, value = ""
     + " SELECT"
-    + "   cast(unit_at(value, :unit) as TEXT) as value,"
+    + "   value,"
     + "   date_serie.date as when"
     + " FROM"
     + "   (SELECT generate_series("
@@ -130,7 +126,6 @@ public interface MeasurementJpaRepository
   List<MeasurementValueProjection> getSeriesForPeriod(
     @Param("meter_id") UUID physicalMeterId,
     @Param("quantity") String quantity,
-    @Param("unit") String unit,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to,
     @Param("resolution") String resolution
@@ -138,7 +133,7 @@ public interface MeasurementJpaRepository
 
   @Query(nativeQuery = true, value = "select"
     + "     measurement.created,"
-    + "     unit_at(measurement.value, quantity.unit) as value,"
+    + "     measurement.value,"
     + "     measurement.quantity,"
     + "     physical_meter_id"
     + " from logical_meter"
@@ -147,8 +142,6 @@ public interface MeasurementJpaRepository
     + "  = physical_meter.logical_meter_id"
     + " inner join measurement"
     + "     on physical_meter.id = measurement.physical_meter_id"
-    + " inner join quantity"
-    + "     on measurement.quantity = quantity.id"
     + " where logical_meter.id = :logical_meter_id"
     + " and logical_meter.organisation_id = :organisation_id"
     + " order by created desc"
@@ -189,28 +182,27 @@ public interface MeasurementJpaRepository
   @Query(nativeQuery = true, value =
     "INSERT INTO measurement (physical_meter_id, created, quantity, value)"
       + " VALUES "
-      + "(:physical_meter_id, :created, :quantity, cast(concat(:value, ' ', :unit) as unit))"
+      + "(:physical_meter_id, :created, :quantity, :value)"
       + " ON CONFLICT (physical_meter_id, created, quantity)"
       + "  DO UPDATE SET"
       + "    physical_meter_id = :physical_meter_id,"
       + "    created = :created,"
       + "    quantity = :quantity,"
-      + "    value = cast(concat(:value, ' ', :unit) as unit)"
+      + "    value = :value"
   )
   void createOrUpdate(
     @Param("physical_meter_id") UUID physicalMeterId,
     @Param("created") ZonedDateTime created,
     @Param("quantity") Integer quantity,
-    @Param("unit") String unit,
     @Param("value") double value
   );
 
   @Query(nativeQuery = true, value = "select"
     + "     measurement.created,"
-    + "     unit_at(measurement.value, quantity.unit) as value,"
+    + "     measurement.value,"
     + "     measurement.quantity,"
     + "     physical_meter_id"
-    + " from measurement left join quantity on measurement.quantity = quantity.id"
+    + " from measurement"
     + " where physical_meter_id = :physical_meter_id"
     + " and created > :from"
     + " and created <= :to"

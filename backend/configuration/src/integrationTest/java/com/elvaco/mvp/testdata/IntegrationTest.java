@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Users;
@@ -89,6 +90,9 @@ public abstract class IntegrationTest {
 
   @Autowired
   protected Users users;
+
+  @Autowired
+  protected Measurements measurements;
 
   @Autowired
   protected Organisations organisations;

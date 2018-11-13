@@ -8,6 +8,7 @@ dependencyManagement {
 dependencies {
   compile project(':backend:core')
   compile project(':backend:adapters')
+  compile project(':backend:unit-converter')
 
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
   compile 'org.springframework.boot:spring-boot-starter-jdbc'
@@ -15,7 +16,7 @@ dependencies {
   compile 'org.hibernate:hibernate-validator:6.0.10.Final'
   compile 'org.hibernate:hibernate-envers:5.2.16.Final'
   compile 'org.postgresql:postgresql'
-  compile 'tec.uom:uom-se:1.0.8'
+  compile 'tec.units:unit-ri:1.0.3'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.8.9'
   compile 'com.querydsl:querydsl-root:4.2.1'
   compile 'com.querydsl:querydsl-apt:4.2.1:jpa'

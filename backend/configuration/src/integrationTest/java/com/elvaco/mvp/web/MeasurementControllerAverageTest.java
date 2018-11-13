@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -21,7 +20,6 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,21 +60,13 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     );
   }
 
-  @After
-  public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      organisationJpaRepository.delete(otherOrganisation);
-    }
-  }
-
   @Test
   public void averageOfOneMeterTwoHours() {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Power", 1.0, "W");
-    newMeasurement(meter, date.plusHours(1), "Power", 2.0, "W");
+    newMeasurement(meter, date, "Power", 1.0);
+    newMeasurement(meter, date.plusHours(1), "Power", 2.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -108,13 +98,13 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
     var logicalMeter1 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter1 = newPhysicalMeterEntity(logicalMeter1.id);
-    newMeasurement(meter1, date, "Power", 1.0, "W");
-    newMeasurement(meter1, date.plusHours(1), "Power", 2.0, "W");
+    newMeasurement(meter1, date, "Power", 1.0);
+    newMeasurement(meter1, date.plusHours(1), "Power", 2.0);
 
     var logicalMeter2 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter2 = newPhysicalMeterEntity(logicalMeter2.id);
-    newMeasurement(meter2, date, "Power", 3.0, "W");
-    newMeasurement(meter2, date.plusHours(1), "Power", 4.0, "W");
+    newMeasurement(meter2, date, "Power", 3.0);
+    newMeasurement(meter2, date.plusHours(1), "Power", 4.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -148,13 +138,13 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     var logicalMeter1 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter1 = newPhysicalMeterEntity(logicalMeter1.id);
-    newMeasurement(meter1, date, "Energy", 1.0, "kWh");
-    newMeasurement(meter1, date.plusHours(1), "Energy", 12.0, "kWh");
+    newMeasurement(meter1, date, "Energy", 1.0);
+    newMeasurement(meter1, date.plusHours(1), "Energy", 12.0);
 
     var logicalMeter2 = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter2 = newPhysicalMeterEntity(logicalMeter2.id);
-    newMeasurement(meter2, date, "Energy", 3.0, "kWh");
-    newMeasurement(meter2, date.plusHours(1), "Energy", 8.0, "kWh");
+    newMeasurement(meter2, date, "Energy", 3.0);
+    newMeasurement(meter2, date.plusHours(1), "Energy", 8.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -188,11 +178,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Power", 2.0, "W");
-    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0, "W");
+    newMeasurement(meter, date, "Power", 2.0);
+    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0);
 
-    newMeasurement(meter, date, "Difference temperature", 20.0, "K");
-    newMeasurement(meter, date.plusSeconds(2), "Difference temperature", 40.0, "K");
+    newMeasurement(meter, date, "Difference temperature", 20.0);
+    newMeasurement(meter, date.plusSeconds(2), "Difference temperature", 40.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
 
@@ -232,9 +222,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date.plusSeconds(1), "Power", 2.0, "W");
-    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0, "W");
-    newMeasurement(meter, date.plusSeconds(3), "Power", 6.0, "W");
+    newMeasurement(meter, date.plusSeconds(1), "Power", 2.0);
+    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0);
+    newMeasurement(meter, date.plusSeconds(3), "Power", 6.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       String.format(
@@ -389,7 +379,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Power", 40000.0, "W");
+    newMeasurement(meter, date, "Power", 40000.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
@@ -418,9 +408,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-03-06T00:00:00Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date.plusSeconds(1), "Power", 1.0, "W");
-    newMeasurement(meter, date.plusDays(1).plusSeconds(2), "Power", 2.0, "W");
-    newMeasurement(meter, date.plusDays(1).plusSeconds(3), "Power", 4.0, "W");
+    newMeasurement(meter, date.plusSeconds(1), "Power", 1.0);
+    newMeasurement(meter, date.plusDays(1).plusSeconds(2), "Power", 2.0);
+    newMeasurement(meter, date.plusDays(1).plusSeconds(3), "Power", 4.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
@@ -456,9 +446,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-01-01T00:00:00Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Power", 1.0, "W");
-    newMeasurement(meter, date.plusMonths(1), "Power", 2.0, "W");
-    newMeasurement(meter, date.plusMonths(2), "Power", 4.0, "W");
+    newMeasurement(meter, date, "Power", 1.0);
+    newMeasurement(meter, date.plusMonths(1), "Power", 2.0);
+    newMeasurement(meter, date.plusMonths(2), "Power", 4.0);
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(String.format(
@@ -588,7 +578,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Power", 1.0, "W");
+    newMeasurement(meter, date, "Power", 1.0);
 
     List<MeasurementSeriesDto> response = asUser()
       .getList(
@@ -616,7 +606,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var before = ZonedDateTime.parse("2018-02-01T23:59:10Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, after.plusHours(2), "Power", 1.0, "W");
+    newMeasurement(meter, after.plusHours(2), "Power", 1.0);
 
     MeasurementSeriesDto response = asUser()
       .getList(String.format(
@@ -635,9 +625,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     var logicalMeter = newLogicalMeterEntity(GAS_METER);
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Volume", 1.0, "m^3");
-    newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
+    newMeasurement(meter, date, "Volume", 1.0);
+    newMeasurement(meter, date.plusHours(1), "Volume", 2.0);
+    newMeasurement(meter, date.plusHours(2), "Volume", 5.0);
 
     MeasurementSeriesDto response = asUser()
       .getList(
@@ -666,9 +656,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     var logicalMeter = newLogicalMeterEntity(GAS_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Volume", 1.0, "m^3");
-    newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
+    newMeasurement(meter, date, "Volume", 1.0);
+    newMeasurement(meter, date.plusHours(1), "Volume", 2.0);
+    newMeasurement(meter, date.plusHours(2), "Volume", 5.0);
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .get(String.format(
@@ -690,9 +680,9 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     var logicalMeter = newLogicalMeterEntity(GAS_METER);
     var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Volume", 1.0, "m^3");
-    newMeasurement(meter, date.plusHours(1), "Volume", 2.0, "m^3");
-    newMeasurement(meter, date.plusHours(2), "Volume", 5.0, "m^3");
+    newMeasurement(meter, date, "Volume", 1.0);
+    newMeasurement(meter, date.plusHours(1), "Volume", 2.0);
+    newMeasurement(meter, date.plusHours(2), "Volume", 5.0);
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .get(
@@ -709,6 +699,14 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       + "meter");
   }
 
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+      organisationJpaRepository.delete(otherOrganisation);
+    }
+  }
+
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
     return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
@@ -717,13 +715,12 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     PhysicalMeterEntity meter,
     ZonedDateTime created,
     String quantity,
-    double value,
-    String unit
+    double value
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
       QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
-      new MeasurementUnit(unit, value),
+      value,
       meter
     ));
   }
