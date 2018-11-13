@@ -397,16 +397,16 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    var facilitiesUrl = facilitiesUrl()
-      .parameter(Q, "bcd");
-
-    var response = asUser().getPage(facilitiesUrl.build(), IdNamedDto.class);
+    var response = asUser().getPage(
+      Url.builder().path("/selections/facilities").parameter(Q, "bcd").build(),
+      IdNamedDto.class
+    );
 
     assertThat(response).hasSize(1);
     assertThat(response).extracting("name").containsExactly("abcdef");
 
     var emptySearchResponse = asUser().getPage(
-      facilitiesUrl.parameter(Q, "qwerty").build(),
+      Url.builder().path("/selections/facilities").parameter(Q, "qwerty").build(),
       IdNamedDto.class
     );
     assertThat(emptySearchResponse).isEmpty();
@@ -433,17 +433,18 @@ public class SelectionControllerTest extends IntegrationTest {
       .address("123456")
       .build());
 
-    var urlBuilder = Url.builder()
+    var response = asUser().getPage(Url.builder()
       .path("/selections/secondary-addresses")
-      .parameter(Q, "2345");
-
-    var response = asUser().getPage(urlBuilder.build(), IdNamedDto.class);
+      .parameter(Q, "1234")
+      .build(), IdNamedDto.class);
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("123456");
 
-    var emptySearchResponse = asUser()
-      .getPage(urlBuilder.parameter(Q, "000000").build(), IdNamedDto.class);
+    var emptySearchResponse = asUser().getPage(Url.builder()
+      .path("/selections/secondary-addresses")
+      .parameter(Q, "000000")
+      .build(), IdNamedDto.class);
 
     assertThat(emptySearchResponse).isEmpty();
   }
@@ -456,15 +457,13 @@ public class SelectionControllerTest extends IntegrationTest {
       .productModel("3100")
       .build());
 
-    var urlBuilder = gatewaySerialsUrl()
-      .parameter(Q, "3456");
-
-    var response = asUser().getPage(urlBuilder.build(), IdNamedDto.class);
+    var response = asUser().getPage(Url.builder().path("/selections/gateway-serials")
+      .parameter(Q, "3456").build(), IdNamedDto.class);
 
     assertThat(response).hasSize(1);
     assertThat(response.getContent().get(0).name).isEqualTo("1234567");
     assertThat(asUser().getPage(
-      gatewaySerialsUrl().parameter(Q, "90909090").build(),
+      Url.builder().path("/selections/gateway-serials").parameter(Q, "90909090").build(),
       IdNamedDto.class
     )).isEmpty();
   }
