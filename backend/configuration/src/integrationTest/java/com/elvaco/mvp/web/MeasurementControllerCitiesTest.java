@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -457,12 +458,65 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     );
   }
 
-  @Override
-  protected void afterRemoveEntitiesHook() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      organisationJpaRepository.delete(otherOrganisation);
-    }
+  @Test
+  public void averageForCityIsSameAsAverageForAllMetersInCity() {
+    LocationBuilder locationBuilder = new LocationBuilder()
+      .country("sweden")
+      .city("stockholm");
+
+    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+
+    PhysicalMeterEntity meterOne = newConnectedMeterWithMeasurements(
+      locationBuilder.address("stora gatan 1").build(),
+      measurement(start, "Power", 1.0, "W"),
+      measurement(start.plusHours(1), "Power", 2.0, "W")
+    );
+
+    PhysicalMeterEntity meterTwo = newConnectedMeterWithMeasurements(
+      locationBuilder.address("stora gatan 2").build(),
+      measurement(start, "Power", 3.0, "W"),
+      measurement(start.plusHours(1), "Power", 4.0, "W")
+    );
+
+    ResponseEntity<List<MeasurementSeriesDto>> cityAverageResponse = asUser()
+      .getList(
+        "/measurements/cities"
+          + "?after=" + start
+          + "&before=" + start.plusHours(1)
+          + "&quantities=" + Quantity.POWER.name + ":W"
+          + "&city=sweden,stockholm"
+          + "&resolution=hour",
+        MeasurementSeriesDto.class
+      );
+
+    ResponseEntity<List<MeasurementSeriesDto>> metersAverageResponse = asUser()
+      .getList(
+        "/measurements/average"
+          + "?after=" + start
+          + "&before=" + start.plusHours(1)
+          + "&quantities=" + Quantity.POWER.name + ":W"
+          + "&meters=" + String.join(
+          ",",
+          List.of(meterOne.logicalMeterId, meterTwo.logicalMeterId)
+            .stream()
+            .map(UUID::toString)
+            .collect(
+              Collectors.toList())
+        )
+          + "&resolution=hour",
+        MeasurementSeriesDto.class
+      );
+
+    assertThat(cityAverageResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(metersAverageResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    List<MeasurementValueDto> expected = List.of(
+      new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 2.0),
+      new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 3.0)
+    );
+
+    assertThat(cityAverageResponse.getBody()).extracting("values").containsExactly(expected);
+    assertThat(metersAverageResponse.getBody()).extracting("values").containsExactly(expected);
   }
 
   PhysicalMeterEntity newConnectedMeterWithMeasurements(
@@ -476,6 +530,14 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       m -> newMeasurement(meter, m.created, m.quantity, m.value, m.unit)
     );
     return meter;
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+      organisationJpaRepository.delete(otherOrganisation);
+    }
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
