@@ -2,6 +2,7 @@ package com.elvaco.mvp.web;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.web.MeasurementControllerCitiesTest.MeasurementPojo.measurement;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
@@ -74,19 +78,17 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .address("street 1")
       .city("stockholm");
 
-    LogicalMeterEntity stockholmSweden = newLogicalMeterEntityWithLocation(
-      locationBuilder.country("sweden").build()
-    );
-    LogicalMeterEntity stockholmEngland = newLogicalMeterEntityWithLocation(
-      locationBuilder.country("england").build()
+    newConnectedMeterWithMeasurements(
+      locationBuilder.country("sweden").build(),
+      measurement(ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W"),
+      measurement(ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W")
     );
 
-    PhysicalMeterEntity swedenMeter = newPhysicalMeterEntity(stockholmSweden.id);
-    newMeasurement(swedenMeter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(swedenMeter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
-    PhysicalMeterEntity englandMeter = newPhysicalMeterEntity(stockholmEngland.id);
-    newMeasurement(englandMeter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(englandMeter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.country("england").build(),
+      measurement(ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W"),
+      measurement(ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W")
+    );
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
       "/measurements/cities"
@@ -114,21 +116,19 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .country("sweden")
       .city("stockholm");
 
-    PhysicalMeterEntity storaGatan1 = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      locationBuilder.address("stora gatan 1").build()
-    ).id);
-
-    PhysicalMeterEntity storaGatan2 = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      locationBuilder.address("stora gatan 2").build()
-    ).id);
-
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
-    newMeasurement(storaGatan1, start, "Power", 1.0, "W");
-    newMeasurement(storaGatan1, start.plusHours(1), "Power", 2.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.address("stora gatan 1").build(),
+      measurement(start, "Power", 1.0, "W"),
+      measurement(start.plusHours(1), "Power", 2.0, "W")
+    );
 
-    newMeasurement(storaGatan2, start, "Power", 3.0, "W");
-    newMeasurement(storaGatan2, start.plusHours(1), "Power", 4.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.address("stora gatan 2").build(),
+      measurement(start, "Power", 3.0, "W"),
+      measurement(start.plusHours(1), "Power", 4.0, "W")
+    );
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -168,34 +168,26 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .city("stockholm")
       .address("stora gatan 1");
 
-    PhysicalMeterEntity physical1 = newPhysicalMeterEntity(
-      newLogicalMeterEntityWithLocation(
-        locationBuilder.build()
-      ).id
-    );
-
-    PhysicalMeterEntity physical2 = newPhysicalMeterEntity(
-      newLogicalMeterEntityWithLocation(
-        locationBuilder.address("stora gatan 2").build()
-      ).id
-    );
-
-    PhysicalMeterEntity physicalIrrelevant = newPhysicalMeterEntity(
-      newLogicalMeterEntityWithLocation(
-        locationBuilder.city("båstad").build()
-      ).id
-    );
-
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
-    newMeasurement(physical1, start, "Power", 1.0, "W");
-    newMeasurement(physical1, start.plusHours(1), "Power", 2.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.build(),
+      measurement(start, "Power", 1.0, "W"),
+      measurement(start.plusHours(1), "Power", 2.0, "W")
+    );
 
-    newMeasurement(physical2, start, "Power", 3.0, "W");
-    newMeasurement(physical2, start.plusHours(1), "Power", 4.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.address("stora gatan 2").build(),
+      measurement(start, "Power", 3.0, "W"),
+      measurement(start.plusHours(1), "Power", 4.0, "W")
+    );
 
-    newMeasurement(physicalIrrelevant, start, "Power", 10.0, "W");
-    newMeasurement(physicalIrrelevant, start.plusHours(1), "Power", 10.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.city("båstad").build(),
+      measurement(start, "Power", 10.0, "W"),
+      measurement(start.plusHours(1), "Power", 10.0, "W")
+
+    );
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -356,13 +348,12 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .city("stockholm")
       .address("stora gatan 1");
 
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(
-      newLogicalMeterEntityWithLocation(locationBuilder.build()).id
-    );
-
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.build(),
+      measurement(start, "Power", 1.0, "W")
 
-    newMeasurement(meter, start, "Power", 1.0, "W");
+    );
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -407,23 +398,19 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .city("stockholm")
       .address("stora gatan 1");
 
-    LogicalMeterEntity meter1 = newLogicalMeterEntityWithLocation(
-      locationBuilder.build()
-    );
-    PhysicalMeterEntity physical1 = newPhysicalMeterEntity(meter1.id);
-
-    LogicalMeterEntity meter3 = newLogicalMeterEntityWithLocation(
-      locationBuilder.city("båstad").build()
-    );
-    PhysicalMeterEntity physical3 = newPhysicalMeterEntity(meter3.id);
-
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
-    newMeasurement(physical1, start, "Power", 1.0, "W");
-    newMeasurement(physical1, start.plusHours(1), "Power", 2.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.build(),
+      measurement(start, "Power", 1.0, "W"),
+      measurement(start.plusHours(1), "Power", 2.0, "W")
+    );
 
-    newMeasurement(physical3, start, "Power", 10.0, "W");
-    newMeasurement(physical3, start.plusHours(1), "Power", 10.0, "W");
+    newConnectedMeterWithMeasurements(
+      locationBuilder.city("båstad").build(),
+      measurement(start, "Power", 10.0, "W"),
+      measurement(start.plusHours(1), "Power", 10.0, "W")
+    );
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -476,6 +463,19 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       measurementJpaRepository.deleteAll();
       organisationJpaRepository.delete(otherOrganisation);
     }
+  }
+
+  PhysicalMeterEntity newConnectedMeterWithMeasurements(
+    Location location,
+    MeasurementPojo... measurements
+  ) {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
+      location
+    ).id);
+    Arrays.stream(measurements).forEach(
+      m -> newMeasurement(meter, m.created, m.quantity, m.value, m.unit)
+    );
+    return meter;
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
@@ -548,5 +548,23 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       emptySet(),
       emptySet()
     ));
+  }
+
+  @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+  static class MeasurementPojo {
+
+    public final String unit;
+    public final ZonedDateTime created;
+    public final double value;
+    public final String quantity;
+
+    static MeasurementPojo measurement(
+      ZonedDateTime created,
+      String quantity,
+      double value,
+      String unit
+    ) {
+      return new MeasurementPojo(unit, created, value, quantity);
+    }
   }
 }
