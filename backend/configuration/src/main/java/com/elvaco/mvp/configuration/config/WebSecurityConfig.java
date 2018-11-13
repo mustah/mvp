@@ -1,5 +1,9 @@
 package com.elvaco.mvp.configuration.config;
 
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.security.TokenAuthenticationFilter;
 import com.elvaco.mvp.web.security.TokenAuthenticationProvider;
@@ -12,8 +16,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
@@ -70,5 +76,21 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private TokenAuthenticationFilter tokenAuthenticationFilter() {
     return new TokenAuthenticationFilter(tokenService);
+  }
+
+  private static class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+    private static final String FORM_BASED = "FormBased";
+
+    @Override
+    public void commence(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      AuthenticationException authException
+    ) throws IOException {
+      response.setHeader(WWW_AUTHENTICATE, FORM_BASED);
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    }
   }
 }

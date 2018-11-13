@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
+import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;

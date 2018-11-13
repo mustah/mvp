@@ -1,3 +1,7 @@
+plugins {
+  id "nu.studer.jooq" version "3.0.2"
+}
+
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
 
@@ -13,6 +17,8 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
   compile 'org.springframework.boot:spring-boot-starter-jdbc'
   compile 'org.springframework.security:spring-security-core'
+  compile 'org.springframework:spring-context'
+  compile 'org.springframework:spring-jdbc'
   compile 'org.hibernate:hibernate-validator:6.0.10.Final'
   compile 'org.hibernate:hibernate-envers:5.2.16.Final'
   compile 'org.postgresql:postgresql'
@@ -21,12 +27,44 @@ dependencies {
   compile 'com.querydsl:querydsl-root:4.2.1'
   compile 'com.querydsl:querydsl-apt:4.2.1:jpa'
   compile 'com.querydsl:querydsl-jpa:4.2.1'
+  compile "org.jooq:jooq:${jooqVersion}"
+  compile "org.jooq:jooq-codegen:${jooqVersion}"
+
+  jooqRuntime 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
+  jooqRuntime 'com.sun.activation:javax.activation:1.2.0'
+  jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile "junit:junit:${junitVersion}"
   testCompile "org.assertj:assertj-core:${assertjVersion}"
   testCompile project(':backend:testing')
+}
+
+jooq {
+  prod(sourceSets.main) {
+    jdbc {
+      driver = 'org.postgresql.Driver'
+      url = 'jdbc:postgresql://localhost:5432/mvp'
+      user = 'appuser'
+      password = 'RWZ8tKUzDdbncg2J'
+      schema = 'public'
+    }
+    generator {
+      database {
+        name = 'org.jooq.meta.postgres.PostgresDatabase'
+        inputSchema = 'public'
+      }
+      generate {
+        relations = true
+        deprecated = false
+        records = true
+      }
+      target {
+        packageName = 'com.elvaco.mvp.database.entity'
+      }
+    }
+  }
 }
 
 compileJava {

@@ -2,6 +2,7 @@ package com.elvaco.mvp.configuration.config;
 
 import java.util.function.Function;
 
+import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.web.service.GeocodeSpringService;
 import org.springframework.beans.factory.annotation.Value;

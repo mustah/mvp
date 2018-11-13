@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import com.elvaco.mvp.configuration.config.RabbitConsumerProperties;
+import com.elvaco.mvp.configuration.config.properties.RabbitConsumerProperties;
 import com.rabbitmq.client.Channel;
 import org.junit.After;
 import org.junit.Before;
