@@ -38,6 +38,8 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.ma
 @AllArgsConstructor
 public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessageConsumer {
 
+  private static final Long DEFAULT_READ_INTERVAL_MINUTES = 60L;
+
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
   private final OrganisationUseCases organisationUseCases;
@@ -164,6 +166,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .orElseGet(() -> PhysicalMeter.builder()
         .organisation(organisation)
         .address(address)
+        .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
         .externalId(facilityId)
         .build());
 
@@ -173,15 +176,20 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         .manufacturer(meterDto.manufacturer)
         .revision(meterDto.revision)
         .mbusDeviceType(meterDto.mbusDeviceType)
-        .readIntervalMinutes(CronHelper.toReportInterval(meterDto.cron)
-          .map(Duration::toMinutes)
-          .orElse(physicalMeter.readIntervalMinutes))
+        .readIntervalMinutes(readInterval(meterDto, physicalMeter))
         .logicalMeterId(Optional.ofNullable(logicalMeter)
           .map(LogicalMeter::getId)
           .orElse(physicalMeter.logicalMeterId))
         .build()
         .replaceActiveStatus(StatusType.from(meterDto.status), ZonedDateTime.now())
     );
+  }
+
+  private Long readInterval(MeterDto meterDto, PhysicalMeter physicalMeter) {
+    return CronHelper.toReportInterval(meterDto.cron)
+      .map(Duration::toMinutes)
+      .map(d -> d == 0 ? DEFAULT_READ_INTERVAL_MINUTES : d)
+      .orElse(physicalMeter.readIntervalMinutes);
   }
 
   @Nullable
