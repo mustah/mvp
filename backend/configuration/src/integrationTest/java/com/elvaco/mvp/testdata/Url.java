@@ -1,6 +1,8 @@
 package com.elvaco.mvp.testdata;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,29 @@ public class Url implements UrlTemplate {
       values.add(value);
       parameters.put(parameter, values);
       return this;
+    }
+
+    public UrlBuilder parameter(String parameter, Collection<?> values) {
+      UrlBuilder b = this;
+      for (Object v : values) {
+        b = b.parameter(parameter, v);
+      }
+      return b;
+    }
+
+    public UrlBuilder period(ZonedDateTime start, ZonedDateTime stop) {
+      return parameter(RequestParameter.BEFORE, stop).parameter(RequestParameter.AFTER, start);
+    }
+
+    public UrlBuilder city(String city) {
+      return parameter(RequestParameter.CITY, city);
+    }
+
+    public UrlBuilder resolution(String resolution) {
+      return parameter(
+        RequestParameter.RESOLUTION,
+        resolution
+      );
     }
 
     public UrlBuilder sortBy(Object value) {
