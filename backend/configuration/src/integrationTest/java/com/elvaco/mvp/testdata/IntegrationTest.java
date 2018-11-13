@@ -80,9 +80,6 @@ public abstract class IntegrationTest {
   protected MeasurementJpaRepositoryImpl measurementJpaRepository;
 
   @Autowired
-  protected Measurements measurementRepository;
-
-  @Autowired
   protected MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
 
   @Autowired
@@ -93,6 +90,9 @@ public abstract class IntegrationTest {
 
   @Autowired
   protected Users users;
+
+  @Autowired
+  protected Measurements measurements;
 
   @Autowired
   protected Organisations organisations;

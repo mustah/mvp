@@ -36,7 +36,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meter = newPhysicalMeter();
     newMeasurement(meter, START_TIME, 2.0, "kW");
 
-    List<MeasurementValue> results = measurementRepository
+    List<MeasurementValue> results = measurements
       .findAverageForPeriod(
         List.of(meter.id),
         Quantity.POWER,
@@ -56,7 +56,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     newMeasurement(meter, START_TIME, 2.0, "W");
     newMeasurement(meter, oneHourLater, 0.002, "kW");
 
-    List<MeasurementValue> results = measurementRepository
+    List<MeasurementValue> results = measurements
       .findAverageForPeriod(
         singletonList(meter.id),
         Quantity.POWER,
@@ -74,7 +74,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meter = newPhysicalMeter();
     newMeasurement(meter, START_TIME, 2.0, "kW");
 
-    List<MeasurementValue> results = measurementRepository
+    List<MeasurementValue> results = measurements
       .findAverageForPeriod(
         singletonList(meter.id),
         Quantity.POWER,
@@ -102,7 +102,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     String unit,
     String quantity
   ) {
-    measurementRepository.save(
+    measurements.save(
       Measurement.builder()
         .unit(unit)
         .value(value)

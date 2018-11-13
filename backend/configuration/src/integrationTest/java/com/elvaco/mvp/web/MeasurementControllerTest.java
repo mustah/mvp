@@ -557,7 +557,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     double value,
     String unit
   ) {
-    measurementRepository.save(Measurement.builder()
+    measurements.save(Measurement.builder()
       .created(created)
       .quantity(QuantityAccess.singleton().getByName(quantity).name)
       .physicalMeter(PhysicalMeterEntityMapper.toDomainModel(meter))
