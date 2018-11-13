@@ -15,22 +15,22 @@ public class MeasurementRepositoryTest {
 
   @Test
   public void intervalStartForDayInterval() {
-    OffsetDateTime result = getIntervalStart(DATE, TemporalResolution.day);
-    assertThat(result).isEqualTo(ZonedDateTime.parse("2018-10-04T00:00:00.000Z")
+    OffsetDateTime startInterval = getIntervalStart(DATE, TemporalResolution.day);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T00:00:00.000Z")
       .toOffsetDateTime());
   }
 
   @Test
   public void intervalStartForHourInterval() {
-    OffsetDateTime result = getIntervalStart(DATE, TemporalResolution.hour);
-    assertThat(result).isEqualTo(ZonedDateTime.parse("2018-10-04T21:00:00.000Z")
+    OffsetDateTime startInterval = getIntervalStart(DATE, TemporalResolution.hour);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-04T21:00:00.000Z")
       .toOffsetDateTime());
   }
 
   @Test
   public void intervalStartForMonthInterval() {
-    OffsetDateTime result = getIntervalStart(DATE, TemporalResolution.month);
-    assertThat(result).isEqualTo(ZonedDateTime.parse("2018-10-01T00:00:00.000Z")
+    OffsetDateTime startInterval = getIntervalStart(DATE, TemporalResolution.month);
+    assertThat(startInterval).isEqualTo(ZonedDateTime.parse("2018-10-01T00:00:00.000Z")
       .toOffsetDateTime());
   }
 }
