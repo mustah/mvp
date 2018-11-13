@@ -81,7 +81,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .city("stockholm");
 
     newConnectedMeterWithMeasurements(
-      locationBuilder.country("sweden").build(),
+      locationBuilder.country("sverige").build(),
       measurement(ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0),
       measurement(ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0)
     );
@@ -99,7 +99,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           ZonedDateTime.parse("2018-03-06T06:59:59.999Z")
         )
         .parameter("quantities", Quantity.POWER.name)
-        .city("sweden,stockholm")
+        .city("sverige,stockholm")
         .city("england,stockholm")
         .resolution("hour")
         .build(),
@@ -110,16 +110,14 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     assertThat(response.getBody())
       .extracting("id")
       .containsExactlyInAnyOrder(
-        "city-sweden,stockholm-Power",
+        "city-sverige,stockholm-Power",
         "city-england,stockholm-Power"
       );
   }
 
   @Test
   public void oneCityAverage() {
-    LocationBuilder locationBuilder = new LocationBuilder()
-      .country("sweden")
-      .city("stockholm");
+    LocationBuilder locationBuilder = LocationTestData.stockholm();
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
@@ -140,7 +138,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
           .parameter("quantities", Quantity.POWER.name + ":W")
-          .city("sweden,stockholm")
+          .city("sverige,stockholm")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -150,10 +148,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactly(
       new MeasurementSeriesDto(
-        "city-sweden,stockholm-Power",
+        "city-sverige,stockholm-Power",
         Quantity.POWER.name,
         "W",
-        "sweden,stockholm",
+        "sverige,stockholm",
         "stockholm",
         null,
         null,
@@ -167,9 +165,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageOnlyIncludesRequestedCity() {
-    LocationBuilder locationBuilder = new LocationBuilder()
-      .country("sweden")
-      .city("stockholm")
+    LocationBuilder locationBuilder = LocationTestData.stockholm()
       .address("stora gatan 1");
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
@@ -198,7 +194,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
           .parameter("quantities", Quantity.POWER.name + ":W")
-          .city("sweden,stockholm")
+          .city("sverige,stockholm")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -215,7 +211,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   @Test
   public void cityAverageCanContainBothMetersWithRequestedQuantitesAndOtherMeters() {
     Location kiruna = new LocationBuilder()
-      .country("sweden")
+      .country("sverige")
       .city("kiruna")
       .address("stora gatan 1")
       .build();
@@ -243,8 +239,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", "External+temperature")
-          .city("sweden,kiruna")
+          .parameter("quantities", "External temperature")
+          .city("sverige,kiruna")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -254,10 +250,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "city-sweden,kiruna-External temperature",
+        "city-sverige,kiruna-External temperature",
         Quantity.EXTERNAL_TEMPERATURE.name,
         Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
-        "sweden,kiruna",
+        "sverige,kiruna",
         "kiruna",
         null,
         null,
@@ -272,7 +268,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   @Test
   public void cityAverageOfTwoQuantitiesBelongingToDifferentMedia() {
     LocationBuilder locationBuilder = new LocationBuilder()
-      .country("sweden")
+      .country("sverige")
       .address("stora gatan 1");
 
     PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
@@ -299,8 +295,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
           .parameter("quantities", "External temperature,Volume")
-          .city("sweden,knivsta")
-          .city("sweden,umeå")
+          .city("sverige,knivsta")
+          .city("sverige,umeå")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -310,10 +306,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "city-sweden,knivsta-External temperature",
+        "city-sverige,knivsta-External temperature",
         Quantity.EXTERNAL_TEMPERATURE.name,
         Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
-        "sweden,knivsta",
+        "sverige,knivsta",
         "knivsta",
         null,
         null,
@@ -323,10 +319,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         )
       ),
       new MeasurementSeriesDto(
-        "city-sweden,umeå-Volume",
+        "city-sverige,umeå-Volume",
         Quantity.VOLUME.name,
         Quantity.VOLUME.presentationUnit(),
-        "sweden,umeå",
+        "sverige,umeå",
         "umeå",
         null,
         null,
@@ -340,10 +336,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageIsEmptyWhenCityOnlyContainNonMatchingQuantities() {
-    LocationBuilder locationBuilder = new LocationBuilder()
-      .country("sweden")
-      .city("stockholm")
-      .address("stora gatan 1");
+    LocationBuilder locationBuilder = LocationTestData.stockholm().address("stora gatan 1");
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
     newConnectedMeterWithMeasurements(
@@ -357,7 +350,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
           .parameter("quantities", "Relative humidity")
-          .city("sweden,stockholm")
+          .city("sverige,stockholm")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -376,7 +369,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
           .parameter("quantities", Quantity.VOLUME.name)
-          .city("sweden,stockholm")
+          .city("sverige,stockholm")
           .resolution("hour").build(),
         MeasurementSeriesDto.class
       );
@@ -387,10 +380,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void twoCityAverages() {
-    LocationBuilder locationBuilder = new LocationBuilder()
-      .country("sweden")
-      .city("stockholm")
-      .address("stora gatan 1");
+    LocationBuilder locationBuilder = LocationTestData.stockholm().address("stora gatan 1");
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
@@ -411,8 +401,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
           .parameter("quantities", Quantity.POWER.name + ":W")
-          .city("sweden,stockholm")
-          .city("sweden,båstad")
+          .city("sverige,stockholm")
+          .city("sverige,båstad")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -422,10 +412,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "city-sweden,stockholm-Power",
+        "city-sverige,stockholm-Power",
         Quantity.POWER.name,
         "W",
-        "sweden,stockholm",
+        "sverige,stockholm",
         "stockholm",
         null,
         null,
@@ -435,10 +425,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         )
       ),
       new MeasurementSeriesDto(
-        "city-sweden,båstad-Power",
+        "city-sverige,båstad-Power",
         Quantity.POWER.name,
         "W",
-        "sweden,båstad",
+        "sverige,båstad",
         "båstad",
         null,
         null,
@@ -470,7 +460,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     Url cityAverageUrl = measurementsCitiesUrl()
       .period(start, start.plusHours(1))
-      .city("sweden,stockholm")
+      .city("sverige,stockholm")
       .resolution("hour")
       .parameter("quantities", Quantity.POWER.name + ":W")
       .build();
