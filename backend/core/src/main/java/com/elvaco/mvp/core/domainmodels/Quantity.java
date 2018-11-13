@@ -70,6 +70,7 @@ public class Quantity implements Identifiable<Integer> {
 
   @Nullable
   public final Integer id;
+  @Nullable
   public final String storageUnit;
   private final QuantityPresentationInformation presentationInformation;
 
@@ -77,7 +78,7 @@ public class Quantity implements Identifiable<Integer> {
     @Nullable Integer id,
     String name,
     QuantityPresentationInformation presentationInformation,
-    String storageUnit
+    @Nullable String storageUnit
   ) {
     this.id = id;
     this.name = name;
