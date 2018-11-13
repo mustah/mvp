@@ -5,6 +5,7 @@ import {Maybe} from '../helpers/Maybe';
 import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 
 export type uuid = string | number;
+export type UnixTimestamp = number;
 
 export type EncodedUriParameters = string;
 

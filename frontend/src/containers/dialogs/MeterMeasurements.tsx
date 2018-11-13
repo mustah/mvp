@@ -6,8 +6,8 @@ import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/with
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
-import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Normal} from '../../components/texts/Texts';
+import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {isDefined} from '../../helpers/commonUtils';
 import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
@@ -22,7 +22,7 @@ import {
   Quantity,
   Reading
 } from '../../state/ui/graph/measurement/measurementModels';
-import {Children, Fetching} from '../../types/Types';
+import {Children, Fetching, UnixTimestamp} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
@@ -30,17 +30,17 @@ import {groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
 const renderValue = ({value, unit}: Measurement): string =>
   value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
 
-const renderCreated = (created: number): Children =>
+const renderCreated = (created: UnixTimestamp): Children =>
   created
     ? timestamp(created * 1000)
     : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
-    (readings: Map<number, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
+    (readings: Map<UnixTimestamp, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
       const rows: Array<React.ReactElement<any>> = [];
 
-      readings.forEach((reading: Reading, timestamp: number) => {
+      readings.forEach((reading: Reading, timestamp: UnixTimestamp) => {
         const measurements = quantities
           .map((quantity: Quantity) => reading.measurements[quantity])
           .filter(isDefined)
@@ -62,7 +62,7 @@ const readoutColumnStyle: React.CSSProperties = {
 };
 
 interface ReadingsProps {
-  readings: Map<number, Reading>;
+  readings: Map<UnixTimestamp, Reading>;
   quantities: Quantity[];
 }
 
