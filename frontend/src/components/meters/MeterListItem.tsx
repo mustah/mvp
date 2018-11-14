@@ -9,10 +9,17 @@ interface Props {
   meter: Meter;
 }
 
+const labelStyle: React.CSSProperties = {
+  textOverflow: 'ellipsis',
+  maxWidth: 170,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+};
+
 export const MeterListItem = ({meter}: Props) => {
   const selectedId = Maybe.just<uuid>(meter.id);
   return (
-    <OpenDialogInfoButton label={meter.facility} autoScrollBodyContent={true}>
+    <OpenDialogInfoButton label={meter.facility} autoScrollBodyContent={true} labelStyle={labelStyle}>
       <MeterDetailsContainer selectedId={selectedId}/>
     </OpenDialogInfoButton>
   );
