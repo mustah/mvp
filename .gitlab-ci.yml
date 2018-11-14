@@ -293,7 +293,7 @@ deploy:staging:
     - /^release-.*$/
     - tags
   environment:
-    name: staging
+    name: evo-staging.elvaco.se
     url: https://evo-staging.elvaco.se
   before_script:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
@@ -334,7 +334,7 @@ deploy:production:
   when: manual
   allow_failure: false #block the pipeline from continuing until we've deployed to prod
   environment:
-    name: production
+    name: evo.elvaco.se
     url: https://evo.elvaco.se
   before_script:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
