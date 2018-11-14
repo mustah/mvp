@@ -4,12 +4,12 @@ import {bindActionCreators} from 'redux';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
-import {Normal} from '../../components/texts/Texts';
+import {Error} from '../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {isDefined} from '../../helpers/commonUtils';
 import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
-import {firstUpperTranslated, translate} from '../../services/translationService';
+import {translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {fetchMeasurementsPaged} from '../../state/ui/graph/measurement/measurementActions';
 import {
@@ -28,15 +28,18 @@ import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} 
 const renderValue = ({value, unit}: Measurement): string =>
   value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
 
-const renderCreated = (created: UnixTimestamp): Children =>
-  created
+const renderCreated = (created: UnixTimestamp, hasValues: boolean): Children =>
+  hasValues
     ? timestamp(created * 1000)
-    : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
+    : <Error>{timestamp(created * 1000)}</Error>;
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
     (readings: Readings): Array<React.ReactElement<HTMLTableRowElement>> => {
       const rows: Array<React.ReactElement<any>> = [];
+
+      const rowSpanOfMissingMeasurements = quantities.length;
+      const missingMeasurements = <td key={1} colSpan={rowSpanOfMissingMeasurements}/>;
 
       const orderedReadingTimestamps: UnixTimestamp[] = Array.from(readings.keys()).sort().reverse();
       orderedReadingTimestamps
@@ -47,11 +50,11 @@ const renderReadingRows =
               .map((quantity: Quantity) => reading.measurements![quantity])
               .filter(isDefined)
               .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>)
-            : <td key={1}>{translate('measurement')}</td>;
+            : missingMeasurements;
 
           rows.push((
             <tr key={timestamp}>
-              <td key="created">{renderCreated(timestamp)}</td>
+              <td key="created">{renderCreated(timestamp, !!reading.measurements)}</td>
               {row}
             </tr>
           ));

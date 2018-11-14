@@ -9,27 +9,32 @@ interface TextProps {
   title?: string;
 }
 
-export const Normal = (props: TextProps) => {
-  const {className, children} = props;
-  return (
-    <div {...props} className={classNames('Normal', className)}>{children}</div>
-  );
-};
+export const Normal = ({className, children, ...props}: TextProps) =>
+  <div {...props} className={classNames('Normal', className)}>{children}</div>;
 
-export const FirstUpper = (props: TextProps) =>
-  (<Normal {...props} className={classNames('first-uppercase', props.className)}/>);
+export const FirstUpper = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('first-uppercase', className)}/>;
 
-export const Bold = (props: TextProps) => (<Normal {...props} className={classNames('Bold', props.className)}/>);
+export const Bold = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Bold', className)}/>;
 
-export const BoldFirstUpper = (props: TextProps) =>
-  (<Bold {...props} className={classNames('first-uppercase', props.className)}/>);
+export const BoldFirstUpper = ({className, ...props}: TextProps) =>
+  <Bold {...props} className={classNames('first-uppercase', className)}/>;
 
-export const Large = (props: TextProps) => (<Normal {...props} className={classNames('Large', props.className)}/>);
+export const Large = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Large', className)}/>;
 
-export const Medium = (props: TextProps) => (<Normal {...props} className={classNames('Medium', props.className)}/>);
+export const Medium = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Medium', className)}/>;
 
-export const Small = (props: TextProps) => (<Normal {...props} className={classNames('Small', props.className)}/>);
+export const Small = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Small', className)}/>;
 
-export const Xlarge = (props: TextProps) => (<Normal {...props} className={classNames('Xlarge', props.className)}/>);
+export const Xlarge = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Xlarge', className)}/>;
 
-export const Xsmall = (props: TextProps) => (<Normal {...props} className={classNames('Xsmall', props.className)}/>);
+export const Xsmall = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Xsmall', className)}/>;
+
+export const Error = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('Error', className)}/>;

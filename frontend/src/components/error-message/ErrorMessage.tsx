@@ -5,6 +5,5 @@ interface ErrorMessageProps {
   message?: string;
 }
 
-export const ErrorMessage = ({message}: ErrorMessageProps) => (
-  message && <div className="Error-message">{message}</div> || null
-);
+export const ErrorMessage = ({message}: ErrorMessageProps) =>
+  message && <div className="Error-message">{message}</div> || null;
