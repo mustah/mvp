@@ -17,7 +17,7 @@ import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.core.domainmodels.GeoCoordinate.HIGH_CONFIDENCE;
+import static com.elvaco.mvp.core.domainmodels.GeoCoordinate.CONFIDENCE_THRESHOLD;
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 
 @Repository
@@ -44,7 +44,7 @@ class LogicalMeterMapQueryDslJpaRepository
 
     Filters filters = toFilters(parameters);
 
-    filters.add(new LocationConfidenceFilter(HIGH_CONFIDENCE, ComparisonMode.EQUAL));
+    filters.add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD, ComparisonMode.EQUAL));
 
     new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
 
