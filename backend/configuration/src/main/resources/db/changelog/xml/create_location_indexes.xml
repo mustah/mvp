@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="create location country_city_street_address index" author="Must Tahir">
+    <createIndex
+      indexName="location_country_city_street_address_index"
+      tableName="location"
+      schemaName="public"
+    >
+      <column name="country"/>
+      <column name="city"/>
+      <column name="street_address"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
