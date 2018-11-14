@@ -19,8 +19,13 @@ export interface Reading {
   measurements: MeasurementsByQuantity;
 }
 
-export type ExistingReadings = Map<UnixTimestamp, Reading>;
-export type Readings = Map<UnixTimestamp, Overwrite<Reading, {measurements?: MeasurementsByQuantity}>>;
+export interface ExistingReadings {
+  [key: number]: Reading;
+}
+
+export interface Readings {
+  [key: number]: Overwrite<Reading, {measurements?: MeasurementsByQuantity}>;
+}
 
 const emptyMeasurementResponse: MeasurementResponses = {
   measurements: [],

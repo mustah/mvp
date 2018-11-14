@@ -23,7 +23,7 @@ export interface MeasurementTableData {
 
 export const groupMeasurementsByDate =
   (measurementPage: NormalizedPaginated<Measurement>, medium: Medium): MeasurementTableData => {
-    const readings: ExistingReadings = new Map<number, Reading>();
+    const readings: ExistingReadings = {};
 
     const quantities: Quantity[] = orderedQuantities(medium);
     const quantitiesFoundInResponse: Set<Quantity> = new Set<Quantity>();
@@ -33,11 +33,11 @@ export const groupMeasurementsByDate =
         const measurement: Measurement = measurementPage.entities.measurements[id];
 
         const reading: Reading =
-          readings.get(measurement.created) || {id: measurement.created, measurements: {}};
+          readings[measurement.created] || {id: measurement.created, measurements: {}};
 
         reading.measurements[measurement.quantity] = measurement;
         quantitiesFoundInResponse.add(measurement.quantity);
-        readings.set(measurement.created, reading);
+        readings[measurement.created] = reading;
       });
     }
 
@@ -56,25 +56,29 @@ interface ReadingArguments {
 
 export const fillMissingMeasurements =
   ({numberOfRows, receivedData, readIntervalMinutes, lastDate}: ReadingArguments): Readings => {
-    const readings: Readings = new Map(receivedData);
-
     if (!readIntervalMinutes) {
-      return readings;
+      return receivedData;
     }
+
+    const readings: Readings = {...receivedData};
 
     const end: UnixTimestamp = startOfLatestInterval(lastDate, readIntervalMinutes).valueOf() / 1000;
 
-    const firstMeasurementInData: UnixTimestamp = Math.min(...Array.from(receivedData.keys()));
+    const timestamps = Object.keys(receivedData);
+    const firstMeasurementInData: UnixTimestamp = timestamps.reduce(
+      (first, current) => Math.min(Number(first), Number(current)),
+      Number.MAX_SAFE_INTEGER
+    );
 
     for (let row = 0; row < numberOfRows; row++) {
       const currentTimestamp: UnixTimestamp = end - (row * readIntervalMinutes * 60);
 
-      if (receivedData.size && currentTimestamp < firstMeasurementInData) {
+      if (timestamps.length && currentTimestamp < firstMeasurementInData) {
         break;
       }
 
-      if (!readings.get(currentTimestamp)) {
-        readings.set(currentTimestamp, {id: currentTimestamp});
+      if (!readings[currentTimestamp]) {
+        readings[currentTimestamp] = {id: currentTimestamp};
       }
     }
 

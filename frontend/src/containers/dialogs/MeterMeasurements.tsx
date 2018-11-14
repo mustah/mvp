@@ -36,15 +36,15 @@ const renderCreated = (created: UnixTimestamp, hasValues: boolean): Children =>
 const renderReadingRows =
   (quantities: Quantity[]) =>
     (readings: Readings): Array<React.ReactElement<HTMLTableRowElement>> => {
-      const rows: Array<React.ReactElement<any>> = [];
-
       const rowSpanOfMissingMeasurements = quantities.length;
       const missingMeasurements = <td key={1} colSpan={rowSpanOfMissingMeasurements}/>;
 
-      const orderedReadingTimestamps: UnixTimestamp[] = Array.from(readings.keys()).sort().reverse();
-      orderedReadingTimestamps
-        .forEach((timestamp: UnixTimestamp) => {
-          const reading = readings.get(timestamp)!;
+      return Object.keys(readings)
+        .map((key: string) => Number(key))
+        .sort()
+        .reverse()
+        .map((timestamp: UnixTimestamp) => {
+          const reading = readings[timestamp];
           const row = reading.measurements
             ? quantities
               .map((quantity: Quantity) => reading.measurements![quantity])
@@ -52,15 +52,13 @@ const renderReadingRows =
               .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>)
             : missingMeasurements;
 
-          rows.push((
+          return (
             <tr key={timestamp}>
               <td key="created">{renderCreated(timestamp, !!reading.measurements)}</td>
               {row}
             </tr>
-          ));
+          );
         });
-
-      return rows;
     };
 
 const readoutColumnStyle: React.CSSProperties = {

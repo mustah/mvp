@@ -112,7 +112,7 @@ describe('dialogHelper', () => {
 
       const actual: MeasurementTableData = groupMeasurementsByDate(normalizedMeasurements, Medium.unknown);
       const expected: MeasurementTableData = {
-        readings: new Map(),
+        readings: {},
         quantities: [],
       };
 
@@ -137,19 +137,20 @@ describe('dialogHelper', () => {
       const normalizedMeasurements: NormalizedPaginated<Measurement> = measurementDataFormatter(apiResponse);
 
       const actual: MeasurementTableData = groupMeasurementsByDate(normalizedMeasurements, Medium.districtHeating);
-      const readings: ExistingReadings = new Map();
-      readings.set(1538114400, {
-        id: 1538114400,
-        measurements: {
-          ['Difference temperature' as Quantity]: {
-            created: 1538114400,
-            id: 'Difference temperature_2018-09-28T06:00:00Z',
-            quantity: 'Difference temperature',
-            unit: 'K',
-            value: 4.71,
+      const readings: ExistingReadings = {
+        1538114400: {
+          id: 1538114400,
+          measurements: {
+            ['Difference temperature' as Quantity]: {
+              created: 1538114400,
+              id: 'Difference temperature_2018-09-28T06:00:00Z',
+              quantity: 'Difference temperature',
+              unit: 'K',
+              value: 4.71,
+            },
           },
-        },
-      });
+        }
+      };
       const expected: MeasurementTableData = {
         readings,
         quantities: [
@@ -216,35 +217,35 @@ describe('dialogHelper', () => {
     });
 
     it('fill empty readings to specified amount of lines', () => {
-      const receivedData: ExistingReadings = new Map();
+      const receivedData: ExistingReadings = {};
 
       const emptyReadings: Readings = fillMissingMeasurements({
         numberOfRows: 100,
         receivedData,
         lastDate: now,
-        readIntervalMinutes: 60
+        readIntervalMinutes: 60,
       });
 
-      const expected: Readings = new Map();
+      const expected: Readings = {};
       for (let i = 0; i < 100; i++) {
         const timestamp: UnixTimestamp = (now.valueOf() / 1000) - i * ONE_HOUR_IN_SECONDS;
-        expected.set(timestamp, {id: timestamp});
+        expected[timestamp] = {id: timestamp};
       }
 
       expect(emptyReadings).toEqual(expected);
     });
 
     it('adds missing measurements between existing for an hourly meter', () => {
-      const receivedData: ExistingReadings = new Map();
-      receivedData.set(0, {
+      const receivedData: ExistingReadings = {};
+      receivedData[0] = {
         id: 0,
         measurements: measurement(0),
-      });
+      };
       const twoHoursLater: number = 2 * ONE_HOUR_IN_SECONDS;
-      receivedData.set(twoHoursLater, {
+      receivedData[twoHoursLater] = {
         id: twoHoursLater,
         measurements: measurement(twoHoursLater),
-      });
+      };
 
       const emptyReadings: Readings = fillMissingMeasurements({
         numberOfRows: 3,
@@ -253,22 +254,22 @@ describe('dialogHelper', () => {
         receivedData,
       });
 
-      const expected: Readings = new Map(receivedData);
+      const expected: Readings = {...receivedData};
       const oneHourLater: number = ONE_HOUR_IN_SECONDS;
-      expected.set(oneHourLater, {
+      expected[oneHourLater] = {
         id: oneHourLater,
-      });
+      };
 
       expect(emptyReadings).toEqual(expected);
     });
 
     it('does not add trailing missing measurements, because that data may just not have been asked for', () => {
-      const receivedData: ExistingReadings = new Map();
+      const receivedData: ExistingReadings = {};
       const twoHoursLater: number = 2 * ONE_HOUR_IN_SECONDS;
-      receivedData.set(twoHoursLater, {
+      receivedData[twoHoursLater] = {
         id: twoHoursLater,
         measurements: measurement(twoHoursLater),
-      });
+      };
 
       const somethingHigherThanOne = 3;
 
@@ -279,17 +280,17 @@ describe('dialogHelper', () => {
         receivedData,
       });
 
-      const expected: Readings = new Map(receivedData);
+      const expected: Readings = {...receivedData};
 
       expect(emptyReadings).toEqual(expected);
     });
 
     it('rounds the date to exact intervals', () => {
-      const receivedData: ExistingReadings = new Map();
-      receivedData.set(0, {
+      const receivedData: ExistingReadings = {};
+      receivedData[0] = {
         id: 0,
         measurements: measurement(0),
-      });
+      };
 
       const oddSeconds = 34;
       const emptyReadings: Readings = fillMissingMeasurements({
@@ -299,11 +300,11 @@ describe('dialogHelper', () => {
         receivedData,
       });
 
-      const expected: Readings = new Map(receivedData);
+      const expected: Readings = {...receivedData};
       const oneHourLater: number = ONE_HOUR_IN_SECONDS;
-      expected.set(oneHourLater, {
+      expected[oneHourLater] = {
         id: oneHourLater,
-      });
+      };
 
       expect(emptyReadings).toEqual(expected);
     });
@@ -311,7 +312,7 @@ describe('dialogHelper', () => {
     describe('readIntervalMinutes === undefined', () => {
 
       it('does not add to empty map', () => {
-        const receivedData: ExistingReadings = new Map();
+        const receivedData: ExistingReadings = {};
 
         const emptyReadings: Readings = fillMissingMeasurements({
           numberOfRows: 100,
@@ -319,16 +320,17 @@ describe('dialogHelper', () => {
           lastDate: now,
         });
 
-        const expected: Readings = new Map();
+        const expected: Readings = {};
         expect(emptyReadings).toEqual(expected);
       });
 
       it('keeps inserted map', () => {
-        const receivedData: ExistingReadings = new Map();
-        receivedData.set(0, {
-          id: 0,
-          measurements: measurement(0),
-        });
+        const receivedData: ExistingReadings = {
+          0: {
+            id: 0,
+            measurements: measurement(0),
+          }
+        };
 
         const emptyReadings: Readings = fillMissingMeasurements({
           numberOfRows: 100,
@@ -336,7 +338,7 @@ describe('dialogHelper', () => {
           lastDate: now,
         });
 
-        const expected: Readings = new Map(receivedData);
+        const expected: Readings = {...receivedData};
         expect(emptyReadings).toEqual(expected);
       });
 
@@ -345,7 +347,7 @@ describe('dialogHelper', () => {
     describe('readIntervalMinutes === 0', () => {
 
       it('does not add to empty map', () => {
-        const receivedData: ExistingReadings = new Map();
+        const receivedData: ExistingReadings = {};
 
         const emptyReadings: Readings = fillMissingMeasurements({
           numberOfRows: 100,
@@ -354,16 +356,17 @@ describe('dialogHelper', () => {
           readIntervalMinutes: 0
         });
 
-        const expected: Readings = new Map();
+        const expected: Readings = {};
         expect(emptyReadings).toEqual(expected);
       });
 
       it('keeps inserted map', () => {
-        const receivedData: ExistingReadings = new Map();
-        receivedData.set(0, {
-          id: 0,
-          measurements: measurement(0),
-        });
+        const receivedData: ExistingReadings = {
+          0: {
+            id: 0,
+            measurements: measurement(0),
+          }
+        };
 
         const emptyReadings: Readings = fillMissingMeasurements({
           numberOfRows: 100,
@@ -372,7 +375,7 @@ describe('dialogHelper', () => {
           readIntervalMinutes: 0
         });
 
-        const expected: Readings = new Map(receivedData);
+        const expected: Readings = {...receivedData};
         expect(emptyReadings).toEqual(expected);
       });
 
