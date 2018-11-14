@@ -1,21 +1,30 @@
+import {Overwrite} from 'react-redux-typescript';
 import {Maybe} from '../../../../helpers/Maybe';
-import {ErrorResponse, Identifiable, uuid} from '../../../../types/Types';
+import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {TabName} from '../../tabs/tabsModels';
 
 export interface Measurement extends Identifiable {
-  created: number;
+  created: UnixTimestamp;
   value?: number;
   quantity: Quantity;
   unit: string;
 }
 
-export type MeasurementsByQuantity = Partial<{[key in Quantity]: Measurement}>;
+export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;
 
 export interface Reading {
-  id: uuid;
+  id: UnixTimestamp;
   measurements: MeasurementsByQuantity;
+}
+
+export interface ExistingReadings {
+  [key: number]: Reading;
+}
+
+export interface Readings {
+  [key: number]: Overwrite<Reading, {measurements?: MeasurementsByQuantity}>;
 }
 
 const emptyMeasurementResponse: MeasurementResponses = {
@@ -93,7 +102,7 @@ export enum Quantity {
   externalTemperature = 'External temperature',
 }
 
-export const quantityUnits: {[q in Quantity]: string} = {
+export const quantityUnits: { [q in Quantity]: string } = {
   [Quantity.energy]: 'kWh',
   [Quantity.energyReturn]: 'kWh',
   [Quantity.energyReactive]: 'kWh',
@@ -129,7 +138,7 @@ const mediumTypes: {[key: string]: Medium} = {
 
 export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
 
-export const allQuantities: {[m in Medium]: Quantity[]} = {
+export const allQuantities: { [m in Medium]: Quantity[] } = {
   [Medium.districtHeating]: [
     Quantity.energy,
     Quantity.volume,

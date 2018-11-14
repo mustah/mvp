@@ -1,17 +1,15 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
-import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
+import {Error} from '../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
-import {Normal} from '../../components/texts/Texts';
 import {isDefined} from '../../helpers/commonUtils';
 import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
-import {firstUpperTranslated, translate} from '../../services/translationService';
+import {translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {fetchMeasurementsPaged} from '../../state/ui/graph/measurement/measurementActions';
 import {
@@ -20,41 +18,47 @@ import {
   Measurement,
   MeterMeasurementsState,
   Quantity,
-  Reading
+  Readings
 } from '../../state/ui/graph/measurement/measurementModels';
-import {Children, Fetching} from '../../types/Types';
+import {Children, Fetching, UnixTimestamp} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
-import {groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
+import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
 
 const renderValue = ({value, unit}: Measurement): string =>
   value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
 
-const renderCreated = (created: number): Children =>
-  created
+const renderCreated = (created: UnixTimestamp, hasValues: boolean): Children =>
+  hasValues
     ? timestamp(created * 1000)
-    : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
+    : <Error>{timestamp(created * 1000)}</Error>;
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
-    (readings: Map<number, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
-      const rows: Array<React.ReactElement<any>> = [];
+    (readings: Readings): Array<React.ReactElement<HTMLTableRowElement>> => {
+      const rowSpanOfMissingMeasurements = quantities.length;
+      const missingMeasurements = <td key={1} colSpan={rowSpanOfMissingMeasurements}/>;
 
-      readings.forEach((reading: Reading, timestamp: number) => {
-        const measurements = quantities
-          .map((quantity: Quantity) => reading.measurements[quantity])
-          .filter(isDefined)
-          .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>);
+      return Object.keys(readings)
+        .map((key: string) => Number(key))
+        .sort()
+        .reverse()
+        .map((timestamp: UnixTimestamp) => {
+          const reading = readings[timestamp];
+          const row = reading.measurements
+            ? quantities
+              .map((quantity: Quantity) => reading.measurements![quantity])
+              .filter(isDefined)
+              .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>)
+            : missingMeasurements;
 
-        rows.push((
-          <tr key={timestamp}>
-            <td key="created">{renderCreated(timestamp)}</td>
-            {measurements}
-          </tr>
-        ));
-      });
-
-      return rows;
+          return (
+            <tr key={timestamp}>
+              <td key="created">{renderCreated(timestamp, !!reading.measurements)}</td>
+              {row}
+            </tr>
+          );
+        });
     };
 
 const readoutColumnStyle: React.CSSProperties = {
@@ -62,7 +66,7 @@ const readoutColumnStyle: React.CSSProperties = {
 };
 
 interface ReadingsProps {
-  readings: Map<number, Reading>;
+  readings: Readings;
   quantities: Quantity[];
 }
 
@@ -95,11 +99,9 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
   </Column>
 );
 
-type WrapperProps = Fetching & WithEmptyContentProps & ReadingsProps;
+type WrapperProps = Fetching & ReadingsProps;
 
-const enhance = compose<ReadingsProps, WrapperProps>(withLargeLoader, withEmptyContent);
-
-const MeasurementsTableComponent = enhance(MeasurementsTable);
+const MeasurementsTableComponent = withLargeLoader<ReadingsProps>(MeasurementsTable);
 
 type Props = OwnProps & DispatchToProps;
 
@@ -126,18 +128,23 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
 
   render() {
     const {isFetching, measurementPages} = this.state;
-    const {meter: {medium}} = this.props;
+    const {meter: {medium, readIntervalMinutes}} = this.props;
 
     const {readings, quantities}: MeasurementTableData = groupMeasurementsByDate(
       measurementPages,
       getMediumType(medium),
     );
 
+    const paddedReadings: Readings = fillMissingMeasurements({
+      receivedData: readings,
+      readIntervalMinutes,
+      lastDate: new Date(),
+      numberOfRows: 100
+    });
+
     const wrapperProps: WrapperProps = {
       isFetching,
-      hasContent: readings.size > 0,
-      noContentText: firstUpperTranslated('measurement', {count: 2}),
-      readings,
+      readings: paddedReadings,
       quantities,
     };
 
