@@ -340,7 +340,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void doNotIncludeMeterMapMarkerWithLowConfidence() {
+  public void doIncludeMeterMapMarkerWithLowConfidence() {
     saveLogicalMeterWith(kungsbacka()
       .confidence(0.5)
       .build(), context().user);
@@ -349,20 +349,20 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .get("/map-markers/meters", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().markers).isEmpty();
+    assertThat(response.getBody().markers).hasSize(1);
   }
 
   @Test
-  public void findMeterMapMarker_EmptyBodyForLowConfidence() {
+  public void findMeterMapMarker_HasBodyForLowConfidence() {
     LogicalMeter logicalMeter = saveLogicalMeterWith(kungsbacka()
-      .confidence(0.5)
+      .confidence(0.0)
       .build(), context().user);
 
     ResponseEntity<MapMarkerWithStatusDto> response = asUser()
       .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-    assertThat(response.getBody()).isNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
   }
 
   @Test
@@ -426,7 +426,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void doNotIncludeGatewayMapMarkerWithLowConfidence() {
+  public void doIncludeGatewayMapMarkerWithLowConfidence() {
     Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.OK);
 
     logicalMeters.save(LogicalMeter.builder()
@@ -435,7 +435,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .created(NOW)
       .gateway(gateway)
       .location(kungsbacka()
-        .confidence(0.5)
+        .confidence(0.0)
         .build())
       .build());
 
@@ -443,7 +443,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .get("/map-markers/gateways", MapMarkersDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().markers).isEmpty();
+    assertThat(response.getBody().markers).hasSize(1);
   }
 
   private LogicalMeter saveLogicalMeter() {
