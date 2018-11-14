@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
-import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
@@ -20,12 +18,12 @@ import {
   Measurement,
   MeterMeasurementsState,
   Quantity,
-  Reading
+  Readings
 } from '../../state/ui/graph/measurement/measurementModels';
 import {Children, Fetching, UnixTimestamp} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
-import {groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
+import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
 
 const renderValue = ({value, unit}: Measurement): string =>
   value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
@@ -37,22 +35,27 @@ const renderCreated = (created: UnixTimestamp): Children =>
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
-    (readings: Map<UnixTimestamp, Reading>): Array<React.ReactElement<HTMLTableRowElement>> => {
+    (readings: Readings): Array<React.ReactElement<HTMLTableRowElement>> => {
       const rows: Array<React.ReactElement<any>> = [];
 
-      readings.forEach((reading: Reading, timestamp: UnixTimestamp) => {
-        const measurements = quantities
-          .map((quantity: Quantity) => reading.measurements[quantity])
-          .filter(isDefined)
-          .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>);
+      const orderedReadingTimestamps: UnixTimestamp[] = Array.from(readings.keys()).sort().reverse();
+      orderedReadingTimestamps
+        .forEach((timestamp: UnixTimestamp) => {
+          const reading = readings.get(timestamp)!;
+          const row = reading.measurements
+            ? quantities
+              .map((quantity: Quantity) => reading.measurements![quantity])
+              .filter(isDefined)
+              .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>)
+            : <td key={1}>{translate('measurement')}</td>;
 
-        rows.push((
-          <tr key={timestamp}>
-            <td key="created">{renderCreated(timestamp)}</td>
-            {measurements}
-          </tr>
-        ));
-      });
+          rows.push((
+            <tr key={timestamp}>
+              <td key="created">{renderCreated(timestamp)}</td>
+              {row}
+            </tr>
+          ));
+        });
 
       return rows;
     };
@@ -62,7 +65,7 @@ const readoutColumnStyle: React.CSSProperties = {
 };
 
 interface ReadingsProps {
-  readings: Map<UnixTimestamp, Reading>;
+  readings: Readings;
   quantities: Quantity[];
 }
 
@@ -95,11 +98,9 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
   </Column>
 );
 
-type WrapperProps = Fetching & WithEmptyContentProps & ReadingsProps;
+type WrapperProps = Fetching & ReadingsProps;
 
-const enhance = compose<ReadingsProps, WrapperProps>(withLargeLoader, withEmptyContent);
-
-const MeasurementsTableComponent = enhance(MeasurementsTable);
+const MeasurementsTableComponent = withLargeLoader<ReadingsProps>(MeasurementsTable);
 
 type Props = OwnProps & DispatchToProps;
 
@@ -126,18 +127,23 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
 
   render() {
     const {isFetching, measurementPages} = this.state;
-    const {meter: {medium}} = this.props;
+    const {meter: {medium, readIntervalMinutes}} = this.props;
 
     const {readings, quantities}: MeasurementTableData = groupMeasurementsByDate(
       measurementPages,
       getMediumType(medium),
     );
 
+    const paddedReadings: Readings = fillMissingMeasurements({
+      receivedData: readings,
+      readIntervalMinutes,
+      lastDate: new Date(),
+      numberOfRows: 100
+    });
+
     const wrapperProps: WrapperProps = {
       isFetching,
-      hasContent: readings.size > 0,
-      noContentText: firstUpperTranslated('measurement', {count: 2}),
-      readings,
+      readings: paddedReadings,
       quantities,
     };
 

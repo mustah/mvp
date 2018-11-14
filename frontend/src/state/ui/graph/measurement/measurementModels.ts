@@ -1,3 +1,4 @@
+import {Overwrite} from 'react-redux-typescript';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
@@ -17,6 +18,9 @@ export interface Reading {
   id: UnixTimestamp;
   measurements: MeasurementsByQuantity;
 }
+
+export type ExistingReadings = Map<UnixTimestamp, Reading>;
+export type Readings = Map<UnixTimestamp, Overwrite<Reading, {measurements?: MeasurementsByQuantity}>>;
 
 const emptyMeasurementResponse: MeasurementResponses = {
   measurements: [],

@@ -4,18 +4,20 @@ import 'moment/locale/sv';
 import {DateRange, Period} from '../components/dates/dateModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
+import StartOf = moment.unitOfTime.StartOf;
 
-/**
- * We work with Date and Period, to not expose moment() to our application.
- */
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
 export const momentFrom = (input?: moment.MomentInput): moment.Moment => moment(input).tz('UTC');
 
+const intervalMinutesToString = (minutes: number): StartOf => minutes === 60 ? 'hour' : 'day';
+export const startOfLatestInterval = (now: moment.MomentInput, intervalInMinutes: number): Date =>
+  momentFrom(now).startOf(intervalMinutesToString(intervalInMinutes)).toDate();
+
 export const changeLocale = (language: string): string => moment.locale(language);
 
 /**
- * Calculate absolute start- and end dates based on an input date and a relative time period.*
+ * Calculate absolute start- and end dates based on an input date and a relative time period.
  */
 const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
   const zonedDate = momentFrom(now);

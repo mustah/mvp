@@ -1,9 +1,17 @@
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
 import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
-import {Measurement, Medium, Quantity, Reading} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  ExistingReadings,
+  Measurement,
+  MeasurementsByQuantity,
+  Medium,
+  Quantity,
+  Readings
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {measurementDataFormatter} from '../../../state/ui/graph/measurement/measurementSchema';
-import {groupMeasurementsByDate, MeasurementTableData} from '../dialogHelper';
+import {UnixTimestamp} from '../../../types/Types';
+import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} from '../dialogHelper';
 
 describe('dialogHelper', () => {
 
@@ -104,7 +112,7 @@ describe('dialogHelper', () => {
 
       const actual: MeasurementTableData = groupMeasurementsByDate(normalizedMeasurements, Medium.unknown);
       const expected: MeasurementTableData = {
-        readings: new Map<number, Reading>(),
+        readings: new Map(),
         quantities: [],
       };
 
@@ -129,7 +137,7 @@ describe('dialogHelper', () => {
       const normalizedMeasurements: NormalizedPaginated<Measurement> = measurementDataFormatter(apiResponse);
 
       const actual: MeasurementTableData = groupMeasurementsByDate(normalizedMeasurements, Medium.districtHeating);
-      const readings = new Map<number, Reading>();
+      const readings: ExistingReadings = new Map();
       readings.set(1538114400, {
         id: 1538114400,
         measurements: {
@@ -187,6 +195,165 @@ describe('dialogHelper', () => {
       ];
 
       expect(quantities).toEqual(orderedQuantities);
+    });
+
+  });
+
+  describe('fillMissingMeasurements', () => {
+
+    const ONE_HOUR_IN_SECONDS: number = 60 * 60;
+
+    const now: Date = new Date('01 Jan 2010 00:00:00 UTC');
+
+    const measurement = (timestampAndValue: UnixTimestamp): MeasurementsByQuantity => ({
+      [Quantity.power]: {
+        id: timestampAndValue,
+        created: timestampAndValue,
+        value: timestampAndValue,
+        quantity: Quantity.power,
+        unit: 'W',
+      },
+    });
+
+    it('fill empty readings to specified amount of lines', () => {
+      const receivedData: ExistingReadings = new Map();
+
+      const emptyReadings: Readings = fillMissingMeasurements({
+        numberOfRows: 100,
+        receivedData,
+        lastDate: now,
+        readIntervalMinutes: 60
+      });
+
+      const expected: Readings = new Map();
+      for (let i = 0; i < 100; i++) {
+        const timestamp: UnixTimestamp = (now.valueOf() / 1000) - i * ONE_HOUR_IN_SECONDS;
+        expected.set(timestamp, {id: timestamp});
+      }
+
+      expect(emptyReadings).toEqual(expected);
+    });
+
+    it('adds missing measurements between existing for an hourly meter', () => {
+      const receivedData: ExistingReadings = new Map();
+      receivedData.set(0, {
+        id: 0,
+        measurements: measurement(0),
+      });
+      const twoHoursLater: number = 2 * ONE_HOUR_IN_SECONDS;
+      receivedData.set(twoHoursLater, {
+        id: twoHoursLater,
+        measurements: measurement(twoHoursLater),
+      });
+
+      const emptyReadings: Readings = fillMissingMeasurements({
+        numberOfRows: 3,
+        lastDate: new Date(2 * ONE_HOUR_IN_SECONDS * 1000),
+        readIntervalMinutes: 60,
+        receivedData,
+      });
+
+      const expected: Readings = new Map(receivedData);
+      const oneHourLater: number = 1 * ONE_HOUR_IN_SECONDS;
+      expected.set(oneHourLater, {
+        id: oneHourLater,
+      });
+
+      expect(emptyReadings).toEqual(expected);
+    });
+
+    it('rounds the date to exact intervals', () => {
+      const receivedData: ExistingReadings = new Map();
+      receivedData.set(0, {
+        id: 0,
+        measurements: measurement(0),
+      });
+
+      const oddSeconds = 34;
+      const emptyReadings: Readings = fillMissingMeasurements({
+        numberOfRows: 2,
+        lastDate: new Date((oddSeconds + ONE_HOUR_IN_SECONDS) * 1000),
+        readIntervalMinutes: 60,
+        receivedData,
+      });
+
+      const expected: Readings = new Map(receivedData);
+      const oneHourLater: number = 1 * ONE_HOUR_IN_SECONDS;
+      expected.set(oneHourLater, {
+        id: oneHourLater,
+      });
+
+      expect(emptyReadings).toEqual(expected);
+    });
+
+    describe('readIntervalMinutes === undefined', () => {
+
+      it('does not add to empty map', () => {
+        const receivedData: ExistingReadings = new Map();
+
+        const emptyReadings: Readings = fillMissingMeasurements({
+          numberOfRows: 100,
+          receivedData,
+          lastDate: now,
+        });
+
+        const expected: Readings = new Map();
+        expect(emptyReadings).toEqual(expected);
+      });
+
+      it('keeps inserted map', () => {
+        const receivedData: ExistingReadings = new Map();
+        receivedData.set(0, {
+          id: 0,
+          measurements: measurement(0),
+        });
+
+        const emptyReadings: Readings = fillMissingMeasurements({
+          numberOfRows: 100,
+          receivedData,
+          lastDate: now,
+        });
+
+        const expected: Readings = new Map(receivedData);
+        expect(emptyReadings).toEqual(expected);
+      });
+
+    });
+
+    describe('readIntervalMinutes === 0', () => {
+
+      it('does not add to empty map', () => {
+        const receivedData: ExistingReadings = new Map();
+
+        const emptyReadings: Readings = fillMissingMeasurements({
+          numberOfRows: 100,
+          receivedData,
+          lastDate: now,
+          readIntervalMinutes: 0
+        });
+
+        const expected: Readings = new Map();
+        expect(emptyReadings).toEqual(expected);
+      });
+
+      it('keeps inserted map', () => {
+        const receivedData: ExistingReadings = new Map();
+        receivedData.set(0, {
+          id: 0,
+          measurements: measurement(0),
+        });
+
+        const emptyReadings: Readings = fillMissingMeasurements({
+          numberOfRows: 100,
+          receivedData,
+          lastDate: now,
+          readIntervalMinutes: 0
+        });
+
+        const expected: Readings = new Map(receivedData);
+        expect(emptyReadings).toEqual(expected);
+      });
+
     });
 
   });
