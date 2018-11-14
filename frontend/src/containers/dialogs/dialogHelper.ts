@@ -64,8 +64,15 @@ export const fillMissingMeasurements =
 
     const end: UnixTimestamp = startOfLatestInterval(lastDate, readIntervalMinutes).valueOf() / 1000;
 
+    const firstMeasurementInData: UnixTimestamp = Math.min(...Array.from(receivedData.keys()));
+
     for (let row = 0; row < numberOfRows; row++) {
       const currentTimestamp: UnixTimestamp = end - (row * readIntervalMinutes * 60);
+
+      if (receivedData.size && currentTimestamp < firstMeasurementInData) {
+        break;
+      }
+
       if (!readings.get(currentTimestamp)) {
         readings.set(currentTimestamp, {id: currentTimestamp});
       }

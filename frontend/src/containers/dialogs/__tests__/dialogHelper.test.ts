@@ -254,10 +254,32 @@ describe('dialogHelper', () => {
       });
 
       const expected: Readings = new Map(receivedData);
-      const oneHourLater: number = 1 * ONE_HOUR_IN_SECONDS;
+      const oneHourLater: number = ONE_HOUR_IN_SECONDS;
       expected.set(oneHourLater, {
         id: oneHourLater,
       });
+
+      expect(emptyReadings).toEqual(expected);
+    });
+
+    it('does not add trailing missing measurements, because that data may just not have been asked for', () => {
+      const receivedData: ExistingReadings = new Map();
+      const twoHoursLater: number = 2 * ONE_HOUR_IN_SECONDS;
+      receivedData.set(twoHoursLater, {
+        id: twoHoursLater,
+        measurements: measurement(twoHoursLater),
+      });
+
+      const somethingHigherThanOne = 3;
+
+      const emptyReadings: Readings = fillMissingMeasurements({
+        numberOfRows: somethingHigherThanOne,
+        lastDate: new Date(2 * ONE_HOUR_IN_SECONDS * 1000),
+        readIntervalMinutes: 60,
+        receivedData,
+      });
+
+      const expected: Readings = new Map(receivedData);
 
       expect(emptyReadings).toEqual(expected);
     });
@@ -278,7 +300,7 @@ describe('dialogHelper', () => {
       });
 
       const expected: Readings = new Map(receivedData);
-      const oneHourLater: number = 1 * ONE_HOUR_IN_SECONDS;
+      const oneHourLater: number = ONE_HOUR_IN_SECONDS;
       expected.set(oneHourLater, {
         id: oneHourLater,
       });
