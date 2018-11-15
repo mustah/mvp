@@ -768,10 +768,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-dates@^17.1.2":
-  version "17.1.2"
-  resolved "https://registry.yarnpkg.com/@types/react-dates/-/react-dates-17.1.2.tgz#f4851c8e572bb9a36e26e301ce2cc335f6f7a668"
-  integrity sha512-uyTYbPtdTFLOqH1Vx3vuC3NjZP4YlpHXQs4IqAEnLsqMbRpnneZsFwF1Y8jaeCazGVZL/JnRcLxZtCyu4kx+mA==
+"@types/react-dates@17.1.3":
+  version "17.1.3"
+  resolved "https://registry.yarnpkg.com/@types/react-dates/-/react-dates-17.1.3.tgz#43943965e3c76abe3935b21de070581714f4729d"
+  integrity sha512-nyXF+igFVwlNIPH81H9E1PF/h1prZc4ww3vNJ6CkB0ZcdpXFldR3bwFdAu6YxEbNfXH2wt7QYmXInUQiCDlHRw==
   dependencies:
     "@types/react" "*"
     moment ">=2.17.1"
@@ -4407,10 +4407,10 @@ hyphenate-style-name@^1.0.2:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.2.tgz#31160a36930adaf1fc04c6074f7eb41465d4ec4b"
   integrity sha1-MRYKNpMK2vH8BMYHT360FGXU7Es=
 
-i18next-conv@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-7.0.0.tgz#fdf29ea37d8b507b8d66030dea477b7f03dffd09"
-  integrity sha512-psuqQyJc9aMMOOKRGo7SMKNAdY2gVRPdPWiR73cvA0NT3qnc8A4WgJ92zr8Tj592xk8+2vc0ZtxfAXR9o5Lq+g==
+i18next-conv@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-8.0.1.tgz#00e8b2260b5ebc0a0d587f12119485ff7696da8e"
+  integrity sha512-gZnFt3MMont23iIXb//i+TyZataV0hsJYisiArBOIScJxr6Ke6l9ccpqVJ8Vq0rC0MNNMZxI4sYUXhGm/J2Fzw==
   dependencies:
     bluebird "^3.5.2"
     chalk "^2.4.1"
@@ -6375,10 +6375,10 @@ node-releases@^1.0.1:
   dependencies:
     semver "^5.3.0"
 
-node-sass@^4.9.4:
-  version "4.9.4"
-  resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-4.9.4.tgz#349bd7f1c89422ffe7e1e4b60f2055a69fbc5512"
-  integrity sha512-MXyurANsUoE4/6KmfMkwGcBzAnJQ5xJBGW7Ei6ea8KnUKuzHr/SguVBIi3uaUAHtZCPUYkvlJ3Ef5T5VAwVpaA==
+node-sass@4.10.0:
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-4.10.0.tgz#dcc2b364c0913630945ccbf7a2bbf1f926effca4"
+  integrity sha512-fDQJfXszw6vek63Fe/ldkYXmRYK/QS6NbvM3i5oEo9ntPDy4XX7BcKZyTKv+/kSSxRtXXc7l+MSwEmYc0CSy6Q==
   dependencies:
     async-foreach "^0.1.3"
     chalk "^1.1.1"
@@ -7923,10 +7923,10 @@ react-addons-shallow-compare@^15.6.2:
     fbjs "^0.8.4"
     object-assign "^4.1.0"
 
-react-dates@^18.2.0:
-  version "18.2.0"
-  resolved "https://registry.yarnpkg.com/react-dates/-/react-dates-18.2.0.tgz#5f81b385449f242b297bcb06c84cae1283e5d2bc"
-  integrity sha512-nXI+ZnbqBDwFc0WwehFw9Og2sL8T+WhlMJvScBgXcTM5ezmuXoeII94xYT8FKmvtrN86GHaj3cap1jDHi3/Ebg==
+react-dates@18.2.2:
+  version "18.2.2"
+  resolved "https://registry.yarnpkg.com/react-dates/-/react-dates-18.2.2.tgz#77f8fc55ebd462673e0476d64ed926d98504d6a4"
+  integrity sha512-esJhsXmQdSFVKU39fzRTXD8ViXj3JT26JNWDh2STQZni8AfdWTqM2OHa2YbrHsqqhDj5mlfc8inX99WzOeJ69g==
   dependencies:
     airbnb-prop-types "^2.10.0"
     consolidated-events "^1.1.1 || ^2.0.0"
@@ -7943,15 +7943,15 @@ react-dates@^18.2.0:
     react-with-styles "^3.2.0"
     react-with-styles-interface-css "^4.0.2"
 
-react-dom@^16.7.0-alpha.0:
-  version "16.7.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.7.0-alpha.0.tgz#8379158d4c76d63c989f325f45dfa5762582584f"
-  integrity sha512-/XUn1ldxmoV2B7ov0rWT5LMZaaHMlF9GGLkUsmPRxmWTJwRDOuAPXidSaSlmR/VOhDSI1s+v3+KzFqhhDFJxYA==
+react-dom@16.7.0-alpha.2:
+  version "16.7.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.7.0-alpha.2.tgz#16632880ed43676315991d8b412cce6975a30282"
+  integrity sha512-o0mMw8jBlwHjGZEy/vvKd/6giAX0+skREMOTs3/QHmgi+yAhUClp4My4Z9lsKy3SXV+03uPdm1l/QM7NTcGuMw==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    scheduler "^0.11.0-alpha.0"
+    scheduler "^0.12.0-alpha.2"
 
 react-event-listener@^0.6.2:
   version "0.6.4"
@@ -8237,10 +8237,10 @@ recharts-scale@^0.4.2:
   dependencies:
     decimal.js-light "^2.4.1"
 
-recharts@1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/recharts/-/recharts-1.3.5.tgz#e11575bf3de924e514a6401a0d97e04c457e92c2"
-  integrity sha512-WAqyXOQ6Wt0QoFofX0YsSZ6nQozoo0/uot30WclsWVms7f89aXqdZFZbonrJP/fcliHl1ISmDjvIpNiTQCp9XA==
+recharts@1.3.6:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/recharts/-/recharts-1.3.6.tgz#01562de309fdd78eccc867fb67a7e1b6415c3bcb"
+  integrity sha512-e7JS9wF1PQfxAGnIfvLAw1BaEfW9yVDPOEC1oStuB/0wAyz4gCppg12DQtnM0yMcyxQs3uHnq+GR7M80zTqVOw==
   dependencies:
     classnames "~2.2.5"
     core-js "~2.5.1"
@@ -8782,6 +8782,14 @@ scheduler@^0.11.0-alpha.0:
   version "0.11.0-alpha.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.11.0-alpha.0.tgz#7b132c726608993471db07866f2d59a52b9e190b"
   integrity sha512-0tUDHYSyni/EHkMMBysVXVwfanCWWbLsulnDB1tGrQiWWrVuRVoclWCPHCYC/1iR5Rj34EQhxh3/F36V+F+ZpA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+
+scheduler@^0.12.0-alpha.2:
+  version "0.12.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.12.0-alpha.2.tgz#2a8bc8dc6ecdb75fa6480ceeedc1f187c9539970"
+  integrity sha512-bfqFzGH18MjjhePIzYQNR0uGQ1wMCX6Q83c2s+3fzyuqKT6zBI2wNQTpq01q72C7QItAp8if5w2LfMiXnI2SYw==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
