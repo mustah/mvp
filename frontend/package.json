@@ -117,7 +117,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.7.0-alpha.0",
     "react-dates": "18.2.2",
-    "react-dom": "^16.7.0-alpha.0",
+    "react-dom": "16.7.0-alpha.2",
     "react-leaflet": "^1.7.1",
     "react-leaflet-control": "^1.4.1",
     "react-leaflet-markercluster": "^1.1.8",
