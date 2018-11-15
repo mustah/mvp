@@ -174,7 +174,7 @@ public class DashboardControllerTest extends IntegrationTest {
     for (PhysicalMeterEntity meter : physicalMeters) {
       measurementJpaRepository.saveAll(createMeasurements(
         meter,
-        startDate,
+        startDate.minusHours(1),
         meter.readIntervalMinutes,
         dayCount * TimeUnit.DAYS.toMinutes(1) / meter.readIntervalMinutes
       ));
