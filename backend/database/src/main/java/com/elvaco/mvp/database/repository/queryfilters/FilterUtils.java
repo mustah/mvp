@@ -45,7 +45,7 @@ public final class FilterUtils {
     return ZonedDateTime.parse(values.get(0));
   }
 
-  private static boolean isYes(String v) {
+  public static boolean isYes(String v) {
     return "yes".equalsIgnoreCase(v);
   }
 }

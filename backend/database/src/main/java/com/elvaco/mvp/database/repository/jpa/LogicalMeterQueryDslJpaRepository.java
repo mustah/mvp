@@ -15,6 +15,10 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+import com.elvaco.mvp.database.entity.tables.LogicalMeter;
+import com.elvaco.mvp.database.entity.tables.MeterDefinition;
+import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqPredicates;
+import com.elvaco.mvp.database.repository.jooq.MeterAlarmJooqPredicates;
 import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
@@ -26,6 +30,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPADeleteClause;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,9 +49,12 @@ class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
+  private final DSLContext dsl;
+
   @Autowired
-  LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
+  LogicalMeterQueryDslJpaRepository(EntityManager entityManager, DSLContext dsl) {
     super(entityManager, LogicalMeterEntity.class);
+    this.dsl = dsl;
   }
 
   @Override
@@ -178,21 +186,27 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
-    var query = createQuery()
-      .select(Projections.constructor(
-        LogicalMeterWithLocation.class,
-        LOGICAL_METER.id,
-        LOGICAL_METER.organisationId,
-        LOGICAL_METER.externalId,
-        LOCATION.country,
-        LOCATION.city,
-        LOCATION.streetAddress,
-        METER_DEFINITION.medium
-      ));
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    var location = com.elvaco.mvp.database.entity.tables.Location.LOCATION;
+    var meterDefinition = MeterDefinition.METER_DEFINITION;
 
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query);
+    var query = dsl
+      .selectDistinct(
+        logicalMeter.ID,
+        logicalMeter.ORGANISATION_ID,
+        logicalMeter.EXTERNAL_ID,
+        location.COUNTRY,
+        location.CITY,
+        location.STREET_ADDRESS,
+        meterDefinition.MEDIUM
+      ).from(logicalMeter);
 
-    return query.distinct().fetch();
+    Filters filters = toFilters(parameters);
+
+    new LogicalMeterJooqPredicates().apply(filters, query);
+    new MeterAlarmJooqPredicates().apply(filters, query);
+
+    return query.fetchInto(LogicalMeterWithLocation.class);
   }
 
   @Override

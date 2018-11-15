@@ -16,4 +16,4 @@ spring:
     url: jdbc:postgresql://localhost:5432/mvp
 
 jooq:
-  sql-dialect: "Postgres"
+  sql-dialect: 'POSTGRES'
