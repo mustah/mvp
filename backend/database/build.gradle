@@ -4,6 +4,15 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.liquibase.gradle'
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+
+import com.bmuschko.gradle.docker.domain.LivenessProbe
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerLivenessContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
 
 dependencyManagement {
   imports {mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")}
@@ -32,8 +41,10 @@ dependencies {
 
   jooqRuntime 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
   jooqRuntime 'com.sun.activation:javax.activation:1.2.0'
-  jooqRuntime 'postgresql:postgresql:9.1-901.jdbc4'
+  jooqRuntime 'org.postgresql:postgresql'
 
+  liquibaseRuntime 'org.liquibase:liquibase-core:3.6.1'
+  liquibaseRuntime 'org.postgresql:postgresql'
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile "junit:junit:${junitVersion}"
@@ -41,13 +52,52 @@ dependencies {
   testCompile project(':backend:testing')
 }
 
+docker {
+  registryCredentials {
+    url = 'gitlab.elvaco.se:4567'
+    username = 'gitlab+deploy-token-1'
+    password = 'VXFC8kiSQcJaLdyhdp-u'
+  }
+}
+
+ext {
+  postgresDockerPort = "18127"
+}
+
+task pullPostgresImage(type: DockerPullImage) {
+  repository = 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql'
+  tag = 'latest'
+}
+
+task createPostgresContainer(type: DockerCreateContainer) {
+  dependsOn pullPostgresImage
+  targetImageId pullPostgresImage.getImageId()
+  portBindings = ["${postgresDockerPort}:5432"]
+  autoRemove = true
+}
+
+task startPostgresContainer(type: DockerStartContainer) {
+  dependsOn createPostgresContainer
+  targetContainerId createPostgresContainer.getContainerId()
+}
+
+task startAndWaitOnLivePostgresContainer(type: DockerLivenessContainer) {
+  dependsOn startPostgresContainer
+  livenessProbe = new LivenessProbe(60000, 100, 'database system is ready to accept connections')
+  targetContainerId createPostgresContainer.getContainerId()
+}
+
+task stopPostgresContainer(type: DockerStopContainer) {
+  targetContainerId createPostgresContainer.getContainerId()
+}
+
 jooq {
   prod(sourceSets.main) {
     jdbc {
       driver = 'org.postgresql.Driver'
-      url = 'jdbc:postgresql://localhost:5432/mvp'
-      user = 'appuser'
-      password = 'RWZ8tKUzDdbncg2J'
+      url = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+      user = 'jooq_appuser'
+      password = 'jooq_password'
       schema = 'public'
     }
     generator {
@@ -66,6 +116,26 @@ jooq {
     }
   }
 }
+
+liquibase {
+  activities {
+    main {
+      changeLogFile "$rootProject.projectDir/backend/configuration/src/main/resources/db/changelog/db.changelog.xml"
+      url "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+      username 'mvp'
+      password 'mvp'
+      parameters = [
+        'application_user'    : 'jooq_appuser',
+        'application_password': 'jooq_password',
+        'application_database': 'mvp'
+      ]
+    }
+  }
+}
+
+update.dependsOn(startAndWaitOnLivePostgresContainer)
+generateProdJooqSchemaSource.dependsOn(update)
+generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
 
 compileJava {
   options.compilerArgs << "-s"
