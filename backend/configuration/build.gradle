@@ -1,11 +1,26 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
 
 applicationName = 'mvp'
 
 dependencyManagement {
   imports {mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"}
+}
+
+docker {
+  registryCredentials {
+    url = 'gitlab.elvaco.se:4567'
+    username = 'gitlab+deploy-token-1'
+    password = 'VXFC8kiSQcJaLdyhdp-u'
+  }
 }
 
 mainClassName = "com.elvaco.mvp.MvpApplication"
@@ -47,6 +62,11 @@ idea {
   }
 }
 
+ext {
+  postgresDockerPort = "30991"
+  rabbitDockerPort = "35672"
+}
+
 sourceSets {
   integrationTest {
     java {
@@ -76,35 +96,77 @@ task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
-  doFirst {
-    exec {
-      executable "docker-compose"
-      args "up", "-d", "postgresql", "rabbitmq"
-    }
-  }
+task pullPostgresImage(type: DockerPullImage) {
+  repository = 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql'
+  tag = 'latest'
+}
+
+task pullRabbitImage(type: DockerPullImage) {
+  repository = 'gitlab.elvaco.se:4567/elvaco/mvp/rabbitmq'
+  tag = 'latest'
+}
+
+task createPostgresContainer(type: DockerCreateContainer) {
+  dependsOn pullPostgresImage
+  targetImageId pullPostgresImage.getImageId()
+  portBindings = ["${postgresDockerPort}:5432"]
+  autoRemove = true
+}
+
+task createRabbitContainer(type: DockerCreateContainer) {
+  dependsOn pullRabbitImage
+  targetImageId pullRabbitImage.getImageId()
+  portBindings = ["${rabbitDockerPort}:5672"]
+  autoRemove = true
+}
+
+task startPostgresContainer(type: DockerStartContainer) {
+  dependsOn createPostgresContainer
+  targetContainerId createPostgresContainer.getContainerId()
+}
+
+task startRabbitContainer(type: DockerStartContainer) {
+  dependsOn createRabbitContainer
+  targetContainerId createRabbitContainer.getContainerId()
+}
+
+task startAndWaitOnHealthyPostgresContainer(type: DockerWaitHealthyContainer) {
+  dependsOn startPostgresContainer
+  timeout = 60
+  targetContainerId createPostgresContainer.getContainerId()
+}
+
+task startAndWaitOnHealthyRabbitContainer(type: DockerWaitHealthyContainer) {
+  dependsOn startRabbitContainer
+  timeout = 60
+  targetContainerId createRabbitContainer.getContainerId()
+}
+
+task stopPostgresContainer(type: DockerStopContainer) {
+  targetContainerId createPostgresContainer.getContainerId()
+}
+
+task stopRabbitContainer(type: DockerStopContainer) {
+  targetContainerId createRabbitContainer.getContainerId()
+}
+
+task systemTest(type: Test,
+                dependsOn: ['test', startAndWaitOnHealthyPostgresContainer, startAndWaitOnHealthyRabbitContainer],
+                group: 'verification') {
   systemProperty "spring.profiles.active", "postgresql"
-  systemProperty "spring.datasource.url", "jdbc:postgresql://localhost:5432/mvp"
+  def dbUrl = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+  systemProperty "spring.liquibase.url", dbUrl
+  systemProperty "spring.datasource.url", dbUrl
+  systemProperty "spring.rabbitmq.host", "localhost"
+  systemProperty "spring.rabbitmq.port", rabbitDockerPort
   testClassesDir = sourceSets.integrationTest.output.classesDir
   classpath = sourceSets.integrationTest.runtimeClasspath
+  finalizedBy stopPostgresContainer
+  finalizedBy stopRabbitContainer
 }
-
-task cleanUpDockerServices {
-  onlyIf {
-    final def doCleanup = System.getenv('MVP_SYSTEM_TEST_DO_CLEANUP')
-    return doCleanup == null || !doCleanup.equalsIgnoreCase('false')
-  }
-  doLast {
-    exec {
-      executable "docker-compose"
-      args "down", "-v"
-    }
-  }
-}
-systemTest.finalizedBy cleanUpDockerServices
 
 configurations {
-  integrationTestCompile.extendsFrom(testCompile,testCompileOnly)
+  integrationTestCompile.extendsFrom(testCompile, testCompileOnly)
   integrationTestRuntime.extendsFrom testRuntime
 }
 
