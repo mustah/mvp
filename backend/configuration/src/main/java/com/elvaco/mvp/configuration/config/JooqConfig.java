@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
 import org.jooq.SQLDialect;
+import org.jooq.conf.SettingsTools;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
@@ -33,6 +34,7 @@ class JooqConfig {
   @Bean
   org.jooq.Configuration configuration() {
     return new DefaultConfiguration()
+      .set(SettingsTools.defaultSettings().withRenderSchema(false))
       .set(new DataSourceConnectionProvider(dataSource))
       .set(new DefaultExecuteListenerProvider(new ExceptionTranslator()))
       .set(SQLDialect.valueOf(jooqProperties.getSqlDialect()));
