@@ -75,7 +75,7 @@ public class RequestQueue {
       return;
     }
 
-    requestRepo.findByOrderByCreatedAsc(new PageRequest(0, numberOfItems))
+    requestRepo.findByOrderByCreatedAsc(PageRequest.of(0, numberOfItems))
       .forEach(request -> {
         AddressGeoEntity found = addressGeoEntityRepository.findByAddress(request.getAddress());
         if (!request.isForce() && found != null) {
