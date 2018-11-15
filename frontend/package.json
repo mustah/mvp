@@ -82,7 +82,7 @@
     "fuse-box": "3.6.0",
     "fuse-box-typechecker": "^2.11.0",
     "graceful-fs": "^4.1.15",
-    "i18next-conv": "^7.0.0",
+    "i18next-conv": "8.0.1",
     "i18next-scanner": "^2.6.6",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",

@@ -4407,10 +4407,10 @@ hyphenate-style-name@^1.0.2:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.2.tgz#31160a36930adaf1fc04c6074f7eb41465d4ec4b"
   integrity sha1-MRYKNpMK2vH8BMYHT360FGXU7Es=
 
-i18next-conv@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-7.0.0.tgz#fdf29ea37d8b507b8d66030dea477b7f03dffd09"
-  integrity sha512-psuqQyJc9aMMOOKRGo7SMKNAdY2gVRPdPWiR73cvA0NT3qnc8A4WgJ92zr8Tj592xk8+2vc0ZtxfAXR9o5Lq+g==
+i18next-conv@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-8.0.1.tgz#00e8b2260b5ebc0a0d587f12119485ff7696da8e"
+  integrity sha512-gZnFt3MMont23iIXb//i+TyZataV0hsJYisiArBOIScJxr6Ke6l9ccpqVJ8Vq0rC0MNNMZxI4sYUXhGm/J2Fzw==
   dependencies:
     bluebird "^3.5.2"
     chalk "^2.4.1"
