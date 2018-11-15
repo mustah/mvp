@@ -164,7 +164,7 @@ class RabbitMqConfig {
   @Bean
   Queue deadLetterQueue() {
     return QueueBuilder
-      .nonDurable("dead-letter-" + consumerProperties.getQueueName())
+      .durable("dead-letter-" + consumerProperties.getQueueName())
       .build();
   }
 
