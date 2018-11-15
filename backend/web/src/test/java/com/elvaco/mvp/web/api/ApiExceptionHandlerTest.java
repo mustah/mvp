@@ -1,5 +1,7 @@
 package com.elvaco.mvp.web.api;
 
+import java.io.IOException;
+
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +52,14 @@ public class ApiExceptionHandlerTest {
     assertThat(response.getBody().message).isEqualTo(message);
   }
 
+  @Test
+  public void clientAbortException() {
+    ResponseEntity<ErrorMessageDto> response =
+      apiExceptionHandler.handle(new ClientAbortException());
+
+    assertThat(response).isNull();
+  }
+
   @ResponseStatus(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
   private static class BandwidthExceededException extends Exception {
 
@@ -57,6 +67,12 @@ public class ApiExceptionHandlerTest {
 
     private BandwidthExceededException(String message) {
       super(message);
+    }
+  }
+
+  private static class ClientAbortException extends IOException {
+    public ClientAbortException() {
+      super(new NullPointerException("Test"));
     }
   }
 }

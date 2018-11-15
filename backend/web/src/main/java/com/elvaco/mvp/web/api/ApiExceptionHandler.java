@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.api;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -57,9 +58,23 @@ public class ApiExceptionHandler {
   @ExceptionHandler
   @ResponseBody
   public ResponseEntity<ErrorMessageDto> handle(Exception exception) {
-    log.warn("Exception occurred while processing request", exception);
-    ApiExceptionInformation exceptionInformation = resolveHttpStatus(exception);
-    return new ResponseEntity<>(exceptionInformation.dto, exceptionInformation.status);
+    return handleGeneralException(exception);
+  }
+
+  @ExceptionHandler(IOException.class)
+  @ResponseBody
+  public ResponseEntity<ErrorMessageDto> handle(IOException exception) {
+    if (exception.getClass().getSimpleName().equals("ClientAbortException")) {
+      log.info(
+        "Ignoring '{}' caused by '{}'",
+        exception.getClass().getName(),
+        exception.getCause().getMessage()
+      );
+      log.debug("Exception occurred while processing request", exception);
+      return null;
+    } else {
+      return handleGeneralException(exception);
+    }
   }
 
   @ExceptionHandler(Unauthorized.class)
@@ -138,6 +153,12 @@ public class ApiExceptionHandler {
     );
     log.warn("Forbidden", exception);
     return new ResponseEntity<>(dto, HttpStatus.FORBIDDEN);
+  }
+
+  private ResponseEntity<ErrorMessageDto> handleGeneralException(Exception exception) {
+    log.warn("Exception occurred while processing request", exception);
+    ApiExceptionInformation exceptionInformation = resolveHttpStatus(exception);
+    return new ResponseEntity<>(exceptionInformation.dto, exceptionInformation.status);
   }
 
   private static ApiExceptionInformation resolveHttpStatus(Exception exception) {
