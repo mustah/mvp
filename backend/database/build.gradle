@@ -60,15 +60,19 @@ docker {
     password = 'VXFC8kiSQcJaLdyhdp-u'
   }
 }
-
 ext {
+  database = [:]
+  database.changeLogFile = "$rootProject.projectDir/backend/configuration/src/main/resources/db/changelog/db.changelog.xml"
+
+  database.appuser = 'jooq_appuser'
+  database.apppw = 'jooq_password'
   postgresDockerPort = "18127"
-  generatedSourcesDir = "$buildDir/generated"
   if (project.hasProperty('isCI')) {
-    postgresJdbcUrl = "jdbc:postgresql://pg_host:5432/mvp"
+    database.url = "jdbc:postgresql://pg_host:5432/mvp"
   } else {
-    postgresJdbcUrl = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+    database.url = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
   }
+  generatedSourcesDir = "$buildDir/generated"
 }
 
 task pullPostgresImage(type: DockerPullImage) {
@@ -102,9 +106,9 @@ jooq {
   prod(sourceSets.main) {
     jdbc {
       driver = 'org.postgresql.Driver'
-      url = postgresJdbcUrl
-      user = 'jooq_appuser'
-      password = 'jooq_password'
+      url = database.url
+      user = database.appuser
+      password = database.apppw
       schema = 'public'
     }
     generator {
@@ -128,19 +132,21 @@ jooq {
 liquibase {
   activities {
     main {
-      changeLogFile "$rootProject.projectDir/backend/configuration/src/main/resources/db/changelog/db.changelog.xml"
-      url postgresJdbcUrl
+      changeLogFile database.changeLogFile
+      url database.url
       username 'mvp'
       password 'mvp'
       parameters = [
-        'application_user'    : 'jooq_appuser',
-        'application_password': 'jooq_password',
+        'application_user'    : database.appuser,
+        'application_password': database.apppw,
         'application_database': 'mvp'
       ]
     }
   }
 }
 
+update.inputs.file(database.changeLogFile)
+update.outputs.upToDateWhen {true}
 if (!project.hasProperty('isCI')) {
   update.dependsOn(startAndWaitOnLivePostgresContainer)
   generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)

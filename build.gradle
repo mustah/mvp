@@ -76,6 +76,7 @@ subprojects { subproject ->
 
     checkstyle {
       ignoreFailures = false
+      configDir = file("$rootDir/backend/config/checkstyle/")
       configFile = file("$rootDir/backend/config/checkstyle/checkstyle.xml")
       toolVersion = '8.5'
     }
