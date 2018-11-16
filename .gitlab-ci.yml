@@ -152,10 +152,13 @@ build:frontend:
 build:compile:
   <<: *cache_gradle
   stage: build
+  services:
+    - name: $DOCKER_REGISTRY_URL/postgresql:latest
+      alias: pg_host
   dependencies:
     - prepare:version
   script:
-    - gradle classes checkstyle spotbugsMain test
+    - gradle classes checkstyle spotbugsMain test -PisCI
   artifacts:
     paths:
       - backend/*/build/libs

@@ -64,6 +64,11 @@ docker {
 ext {
   postgresDockerPort = "18127"
   generatedSourcesDir = "$buildDir/generated"
+  if (project.hasProperty('isCI')) {
+    postgresJdbcUrl = "jdbc:postgresql://pg_host:5432/mvp"
+  } else {
+    postgresJdbcUrl = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+  }
 }
 
 task pullPostgresImage(type: DockerPullImage) {
@@ -97,7 +102,7 @@ jooq {
   prod(sourceSets.main) {
     jdbc {
       driver = 'org.postgresql.Driver'
-      url = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+      url = postgresJdbcUrl
       user = 'jooq_appuser'
       password = 'jooq_password'
       schema = 'public'
@@ -124,7 +129,7 @@ liquibase {
   activities {
     main {
       changeLogFile "$rootProject.projectDir/backend/configuration/src/main/resources/db/changelog/db.changelog.xml"
-      url "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+      url postgresJdbcUrl
       username 'mvp'
       password 'mvp'
       parameters = [
@@ -136,9 +141,12 @@ liquibase {
   }
 }
 
-update.dependsOn(startAndWaitOnLivePostgresContainer)
+if (!project.hasProperty('isCI')) {
+  update.dependsOn(startAndWaitOnLivePostgresContainer)
+  generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
+}
+
 generateProdJooqSchemaSource.dependsOn(update)
-generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
 
 compileJava {
   options.compilerArgs << "-s"
