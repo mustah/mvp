@@ -67,8 +67,10 @@ subprojects { subproject ->
       module {
         outputDir = file("$buildDir/classes/main")
         testOutputDir = file("$buildDir/classes/test")
-        generatedSourceDirs += file("$buildDir/generated/")
-        sourceDirs += file("$buildDir/generated/")
+        generatedSourceDirs += file("$buildDir/generated/querydsl")
+        generatedSourceDirs += file("$buildDir/generated/jooq")
+        sourceDirs += file("$buildDir/generated/querydsl")
+        sourceDirs += file("$buildDir/generated/jooq")
       }
     }
 

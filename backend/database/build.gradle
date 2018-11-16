@@ -1,5 +1,6 @@
 plugins {
   id "nu.studer.jooq" version "3.0.2"
+  id 'org.liquibase.gradle' version '2.0.1'
 }
 
 apply plugin: 'java'
@@ -62,6 +63,7 @@ docker {
 
 ext {
   postgresDockerPort = "18127"
+  generatedSourcesDir = "$buildDir/generated"
 }
 
 task pullPostgresImage(type: DockerPullImage) {
@@ -111,6 +113,7 @@ jooq {
         records = true
       }
       target {
+        directory = "${generatedSourcesDir}/jooq"
         packageName = 'com.elvaco.mvp.database.entity'
       }
     }
@@ -139,8 +142,8 @@ generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
 
 compileJava {
   options.compilerArgs << "-s"
-  options.compilerArgs << "$buildDir/generated"
+  options.compilerArgs << "${generatedSourcesDir}/querydsl"
   doFirst {
-    file(new File(buildDir, "/generated")).mkdirs()
+    file(generatedSourcesDir).mkdirs()
   }
 }
