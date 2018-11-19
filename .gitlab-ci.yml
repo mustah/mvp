@@ -173,7 +173,7 @@ assemble:
     - build:compile
     - build:frontend
   script:
-    - gradle assemble
+    - gradle assemble -PisCI
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
