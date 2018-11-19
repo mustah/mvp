@@ -5,10 +5,10 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.ORGANISATION;
@@ -47,12 +47,12 @@ public class JooqTest extends IntegrationTest {
         .set(MVP_USER.NAME, "tester")
         .set(MVP_USER.EMAIL, "tester@tester.com")
         .set(MVP_USER.PASSWORD, "tester")
-        .set(MVP_USER.ORGANISATION_ID, orgId)
+        .set(MVP_USER.ORGANISATION_ID, randomUUID())
         .set(MVP_USER.LANGUAGE, Language.en.name())
         .execute();
 
       fail();
-    } catch (DataAccessException ignore) {
+    } catch (DataIntegrityViolationException ignore) {
       rollback = true;
     }
 

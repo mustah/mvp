@@ -17,6 +17,7 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
 @RequiredArgsConstructor
@@ -38,7 +39,9 @@ class JooqConfig {
       .set(SettingsTools.defaultSettings()
         .withRenderSchema(false)
         .withRenderNameStyle(RenderNameStyle.AS_IS))
-      .set(new DataSourceConnectionProvider(dataSource))
+      .set(new DataSourceConnectionProvider(
+        new TransactionAwareDataSourceProxy(dataSource))
+      )
       .set(new DefaultExecuteListenerProvider(new ExceptionTranslator()))
       .set(SQLDialect.valueOf(jooqProperties.getSqlDialect()));
   }
