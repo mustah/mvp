@@ -12,6 +12,7 @@ import com.bmuschko.gradle.docker.domain.LivenessProbe
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.container.extras.DockerLivenessContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
 
@@ -60,6 +61,7 @@ docker {
     password = 'VXFC8kiSQcJaLdyhdp-u'
   }
 }
+
 ext {
   database = [:]
   database.changeLogFile = "$rootProject.projectDir/backend/configuration/src/main/resources/db/changelog/db.changelog.xml"
@@ -73,6 +75,7 @@ ext {
     database.url = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
   }
   generatedSourcesDir = "$buildDir/generated"
+  
 }
 
 task pullPostgresImage(type: DockerPullImage) {
@@ -84,7 +87,6 @@ task createPostgresContainer(type: DockerCreateContainer) {
   dependsOn pullPostgresImage
   targetImageId pullPostgresImage.getImageId()
   portBindings = ["${postgresDockerPort}:5432"]
-  autoRemove = true
 }
 
 task startPostgresContainer(type: DockerStartContainer) {
@@ -98,8 +100,14 @@ task startAndWaitOnLivePostgresContainer(type: DockerLivenessContainer) {
   targetContainerId createPostgresContainer.getContainerId()
 }
 
+task removePostgresContainer(type: DockerRemoveContainer) {
+  targetContainerId createPostgresContainer.getContainerId()
+  removeVolumes.set(true)
+}
+
 task stopPostgresContainer(type: DockerStopContainer) {
   targetContainerId createPostgresContainer.getContainerId()
+  finalizedBy removePostgresContainer
 }
 
 jooq {

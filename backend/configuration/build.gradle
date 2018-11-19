@@ -4,6 +4,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
 
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
@@ -112,7 +113,6 @@ task createPostgresContainer(type: DockerCreateContainer) {
   dependsOn pullPostgresImage
   targetImageId pullPostgresImage.getImageId()
   portBindings = ["${postgresDockerPort}:5432"]
-  autoRemove = true
 }
 
 task createRabbitContainer(type: DockerCreateContainer) {
@@ -144,8 +144,14 @@ task startAndWaitOnHealthyRabbitContainer(type: DockerWaitHealthyContainer) {
   targetContainerId createRabbitContainer.getContainerId()
 }
 
+task removePostgresContainer(type: DockerRemoveContainer) {
+  targetContainerId createPostgresContainer.getContainerId()
+  removeVolumes.set(true)
+}
+
 task stopPostgresContainer(type: DockerStopContainer) {
   targetContainerId createPostgresContainer.getContainerId()
+  finalizedBy removePostgresContainer
 }
 
 task stopRabbitContainer(type: DockerStopContainer) {
