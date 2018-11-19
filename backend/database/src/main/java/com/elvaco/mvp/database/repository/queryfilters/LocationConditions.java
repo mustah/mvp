@@ -6,7 +6,7 @@ import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.
 import lombok.experimental.UtilityClass;
 import org.jooq.Condition;
 
-import static com.elvaco.mvp.database.entity.tables.Location.LOCATION;
+import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static org.jooq.impl.DSL.noCondition;
 
 @UtilityClass

@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.database.entity.tables.MvpUser.MVP_USER;
-import static com.elvaco.mvp.database.entity.tables.Organisation.ORGANISATION;
+import static com.elvaco.mvp.database.entity.jooq.Tables.ORGANISATION;
+import static com.elvaco.mvp.database.entity.jooq.tables.MvpUser.MVP_USER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;

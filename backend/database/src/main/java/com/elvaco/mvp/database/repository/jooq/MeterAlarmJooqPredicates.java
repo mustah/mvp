@@ -4,8 +4,8 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
-import static com.elvaco.mvp.database.entity.tables.MeterAlarmLog.METER_ALARM_LOG;
-import static com.elvaco.mvp.database.entity.tables.PhysicalMeter.PHYSICAL_METER;
+import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
+import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 
 public class MeterAlarmJooqPredicates extends EmptyJooqFilterVisitor {
 

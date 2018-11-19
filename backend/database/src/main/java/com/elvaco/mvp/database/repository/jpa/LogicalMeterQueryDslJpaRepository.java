@@ -12,11 +12,11 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter;
+import com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.entity.tables.LogicalMeter;
-import com.elvaco.mvp.database.entity.tables.MeterDefinition;
 import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqPredicates;
 import com.elvaco.mvp.database.repository.jooq.MeterAlarmJooqPredicates;
 import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
@@ -187,7 +187,7 @@ class LogicalMeterQueryDslJpaRepository
   @Override
   public List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
     var logicalMeter = LogicalMeter.LOGICAL_METER;
-    var location = com.elvaco.mvp.database.entity.tables.Location.LOCATION;
+    var location = com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
     var meterDefinition = MeterDefinition.METER_DEFINITION;
 
     var query = dsl

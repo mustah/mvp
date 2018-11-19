@@ -123,7 +123,7 @@ jooq {
       }
       target {
         directory = "${generatedSourcesDir}/jooq"
-        packageName = 'com.elvaco.mvp.database.entity'
+        packageName = 'com.elvaco.mvp.database.entity.jooq'
       }
     }
   }
@@ -146,7 +146,6 @@ liquibase {
 }
 
 update.inputs.file(database.changeLogFile)
-update.outputs.upToDateWhen {true}
 if (!project.hasProperty('isCI')) {
   update.dependsOn(startAndWaitOnLivePostgresContainer)
   generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
