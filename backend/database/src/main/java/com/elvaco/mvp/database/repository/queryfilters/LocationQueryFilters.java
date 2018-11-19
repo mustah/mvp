@@ -27,11 +27,11 @@ public class LocationQueryFilters extends QueryFilters {
       case CITY:
         return LocationPredicates.whereCityOrNull(values);
       case Q_CITY:
-        return LOCATION.city.contains(values.get(0).toLowerCase());
+        return LOCATION.city.lower().contains(values.get(0).toLowerCase());
       case ADDRESS:
         return LocationPredicates.whereAddressOrNull(values);
       case Q_ADDRESS:
-        return LOCATION.streetAddress.contains(values.get(0).toLowerCase());
+        return LOCATION.streetAddress.lower().contains(values.get(0).toLowerCase());
       case ORGANISATION:
         return LOGICAL_METER.organisationId.in(toUuids(values));
       case FACILITY:

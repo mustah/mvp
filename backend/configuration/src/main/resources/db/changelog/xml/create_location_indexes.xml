@@ -15,4 +15,54 @@
     </createIndex>
   </changeSet>
 
+  <changeSet id="drop location country_city_street_address index" author="Must Tahir">
+    <dropIndex
+      indexName="location_country_city_street_address_index"
+      tableName="location"
+      schemaName="public"
+    />
+  </changeSet>
+
+  <changeSet
+    id="create lower case location country index"
+    author="Must Tahir"
+    dbms="postgresql"
+  >
+    <createIndex
+      indexName="lower_case_location_country_index"
+      tableName="location"
+      schemaName="public"
+    >
+      <column name="(lower(country)::text)"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet
+    id="create lower case location city index"
+    author="Must Tahir"
+    dbms="postgresql"
+  >
+    <createIndex
+      indexName="lower_case_location_city_index"
+      tableName="location"
+      schemaName="public"
+    >
+      <column name="(lower(city)::text)"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet
+    id="create lower case location street address index"
+    author="Must Tahir"
+    dbms="postgresql"
+  >
+    <createIndex
+      indexName="lower_case_location_street_address_index"
+      tableName="location"
+      schemaName="public"
+    >
+      <column name="(lower(street_address)::text)"/>
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>

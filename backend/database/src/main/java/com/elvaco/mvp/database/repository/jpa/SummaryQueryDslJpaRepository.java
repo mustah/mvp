@@ -65,14 +65,14 @@ class SummaryQueryDslJpaRepository
   }
 
   private static Predicate hasCity() {
-    return allOf(isNotNull(LOCATION.country), isNotNull(LOCATION.city));
+    return allOf(isNotNull(LOCATION.country.lower()), isNotNull(LOCATION.city.lower()));
   }
 
   private static Predicate hasAddress() {
     return allOf(
-      isNotNull(LOCATION.country),
-      isNotNull(LOCATION.city),
-      isNotNull(LOCATION.streetAddress)
+      isNotNull(LOCATION.country.lower()),
+      isNotNull(LOCATION.city.lower()),
+      isNotNull(LOCATION.streetAddress.lower())
     );
   }
 }

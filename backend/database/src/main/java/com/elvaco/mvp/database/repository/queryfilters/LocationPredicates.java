@@ -66,8 +66,8 @@ public class LocationPredicates {
   @Nullable
   private static Predicate countriesAndCities(Parameters parameters) {
     if (parameters.hasCountriesAndCities()) {
-      return LOCATION.country.in(parameters.countries)
-        .and(LOCATION.city.in(parameters.cities));
+      return LOCATION.country.lower().in(parameters.countries)
+        .and(LOCATION.city.lower().in(parameters.cities));
     }
     return null;
   }
@@ -75,9 +75,9 @@ public class LocationPredicates {
   @Nullable
   private static Predicate address(Parameters parameters) {
     if (parameters.hasAddresses()) {
-      return LOCATION.country.in(parameters.countries)
-        .and(LOCATION.city.in(parameters.cities))
-        .and(LOCATION.streetAddress.in(parameters.addresses));
+      return LOCATION.country.lower().in(parameters.countries)
+        .and(LOCATION.city.lower().in(parameters.cities))
+        .and(LOCATION.streetAddress.lower().in(parameters.addresses));
     }
     return null;
   }
