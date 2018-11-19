@@ -77,38 +77,6 @@ ext {
   generatedSourcesDir = "$buildDir/generated"
 }
 
-task pullPostgresImage(type: DockerPullImage) {
-  repository = 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql'
-  tag = 'latest'
-}
-
-task createPostgresContainer(type: DockerCreateContainer) {
-  dependsOn pullPostgresImage
-  targetImageId pullPostgresImage.getImageId()
-  portBindings = ["${postgresDockerPort}:5432"]
-}
-
-task startPostgresContainer(type: DockerStartContainer) {
-  dependsOn createPostgresContainer
-  targetContainerId createPostgresContainer.getContainerId()
-}
-
-task startAndWaitOnLivePostgresContainer(type: DockerLivenessContainer) {
-  dependsOn startPostgresContainer
-  livenessProbe = new LivenessProbe(60000, 100, 'database system is ready to accept connections')
-  targetContainerId createPostgresContainer.getContainerId()
-}
-
-task removePostgresContainer(type: DockerRemoveContainer) {
-  targetContainerId createPostgresContainer.getContainerId()
-  removeVolumes.set(true)
-}
-
-task stopPostgresContainer(type: DockerStopContainer) {
-  targetContainerId createPostgresContainer.getContainerId()
-  finalizedBy removePostgresContainer
-}
-
 jooq {
   prod(sourceSets.main) {
     jdbc {
@@ -152,8 +120,41 @@ liquibase {
   }
 }
 
-update.inputs.file(database.changeLogFile)
 if (!project.hasProperty('isCI')) {
+
+  task pullPostgresImage(type: DockerPullImage) {
+    repository = 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql'
+    tag = 'latest'
+  }
+
+  task createPostgresContainer(type: DockerCreateContainer) {
+    dependsOn pullPostgresImage
+    targetImageId pullPostgresImage.getImageId()
+    containerName.set('evo-postgresql-liquibase-jooq')
+    portBindings = ["${postgresDockerPort}:5432"]
+  }
+
+  task startPostgresContainer(type: DockerStartContainer) {
+    dependsOn createPostgresContainer
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+  }
+
+  task startAndWaitOnLivePostgresContainer(type: DockerLivenessContainer) {
+    dependsOn startPostgresContainer
+    livenessProbe = new LivenessProbe(60000, 100, 'database system is ready to accept connections')
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+  }
+
+  task removePostgresContainer(type: DockerRemoveContainer) {
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+    removeVolumes.set(true)
+  }
+
+  task stopPostgresContainer(type: DockerStopContainer) {
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+    finalizedBy removePostgresContainer
+  }
+
   update.dependsOn(startAndWaitOnLivePostgresContainer)
   generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
 }

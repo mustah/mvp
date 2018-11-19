@@ -163,6 +163,7 @@ build:compile:
     paths:
       - backend/*/build/libs
       - backend/*/build/classes
+      - backend/*/build/generated
       - acceptance_tests/build/libs/*.jar
 
 assemble:
@@ -173,7 +174,7 @@ assemble:
     - build:compile
     - build:frontend
   script:
-    - gradle assemble -PisCI
+    - gradle assemble -x update -x generateProdJooqSchemaSource -PisCI
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
@@ -231,7 +232,7 @@ test:system:
     - name: rabbitmq
       alias: rabbit_host
   script:
-    - gradle systemTestCI
+    - gradle -PisCI -x update -x generateProdJooqSchemaSource systemTest
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-system"
     when: on_failure
@@ -263,7 +264,7 @@ test:integration:
       - backend/configuration/build/reports/tests/integrationTest/*
     expire_in: 2 days
   script:
-    - gradle integrationTest
+    - gradle -PisCI -x update -x generateProdJooqSchemaSource integrationTest
 
 test:upgrade:
   <<: *no_cache

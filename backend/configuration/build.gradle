@@ -98,70 +98,74 @@ task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
-  systemProperty "spring.liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
-  systemProperty "spring.profiles.active", "postgresql"
-  systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
-  systemProperty "spring.datasource.username", "appuser"
-  systemProperty "spring.datasource.password", "RWZ8tKUzDdbncg2J"
-  systemProperty "spring.rabbitmq.host", "rabbit_host"
-  systemProperty "spring.rabbitmq.username", "guest"
-  systemProperty "spring.rabbitmq.password", "guest"
-  testClassesDir = sourceSets.integrationTest.output.classesDir
-  classpath = sourceSets.integrationTest.runtimeClasspath
-}
+if (!project.hasProperty('isCI')) {
+  containers.each {final containerDef ->
+    def pullTaskName = "pull${containerDef.name}Image"
+    def createTaskName = "create${containerDef.name}Container"
+    def startTaskName = "start${containerDef.name}Container"
+    def removeTaskName = "remove${containerDef.name}Container"
+    def pullTask = tasks.create(name: pullTaskName, type: DockerPullImage) {
+      repository = containerDef.image
+      tag = 'latest'
+    }
 
-containers.each {final containerDef ->
-  def pullTaskName = "pull${containerDef.name}Image"
-  def createTaskName = "create${containerDef.name}Container"
-  def startTaskName = "start${containerDef.name}Container"
-  def removeTaskName = "remove${containerDef.name}Container"
-  def pullTask = tasks.create(name: pullTaskName, type: DockerPullImage) {
-    repository = containerDef.image
-    tag = 'latest'
+    def createTask = tasks.create(name: createTaskName, type: DockerCreateContainer) {
+      dependsOn pullTask
+      targetImageId pullTask.getImageId()
+      portBindings = ["${containerDef.port}:5432"]
+    }
+
+    tasks.create(name: startTaskName, type: DockerStartContainer) {
+      dependsOn createTaskName
+      targetContainerId createTask.getContainerId()
+    }
+
+    tasks.create(name: "startAndWaitOnHealthy${containerDef.name}Container",
+                 type: DockerWaitHealthyContainer) {
+      dependsOn startTaskName
+      timeout = 60
+      targetContainerId createTask.getContainerId()
+    }
+
+    tasks.create(name: removeTaskName, type: DockerRemoveContainer) {
+      targetContainerId createTask.getContainerId()
+      removeVolumes.set(true)
+    }
+
+    tasks.create(name: "stop${containerDef.name}Container", type: DockerStopContainer) {
+      targetContainerId createTask.getContainerId()
+      finalizedBy removeTaskName
+    }
   }
 
-  def createTask = tasks.create(name: createTaskName, type: DockerCreateContainer) {
-    dependsOn pullTask
-    targetImageId pullTask.getImageId()
-    portBindings = ["${containerDef.port}:5432"]
-  }
 
-  tasks.create(name: startTaskName, type: DockerStartContainer) {
-    dependsOn createTaskName
-    targetContainerId createTask.getContainerId()
+  task systemTest(type: Test,
+                  dependsOn: ['test', startAndWaitOnHealthyPostgresContainer, startAndWaitOnHealthyRabbitContainer],
+                  group: 'verification') {
+    systemProperty "spring.profiles.active", "postgresql"
+    def dbUrl = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+    systemProperty "spring.liquibase.url", dbUrl
+    systemProperty "spring.datasource.url", dbUrl
+    systemProperty "spring.rabbitmq.host", "localhost"
+    systemProperty "spring.rabbitmq.port", rabbitDockerPort
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    finalizedBy stopPostgresContainer
+    finalizedBy stopRabbitContainer
   }
-
-  tasks.create(name: "startAndWaitOnHealthy${containerDef.name}Container", type: DockerWaitHealthyContainer) {
-    dependsOn startTaskName
-    timeout = 60
-    targetContainerId createTask.getContainerId()
+} else {
+  task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
+    systemProperty "spring.liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
+    systemProperty "spring.profiles.active", "postgresql"
+    systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
+    systemProperty "spring.datasource.username", "appuser"
+    systemProperty "spring.datasource.password", "RWZ8tKUzDdbncg2J"
+    systemProperty "spring.rabbitmq.host", "rabbit_host"
+    systemProperty "spring.rabbitmq.username", "guest"
+    systemProperty "spring.rabbitmq.password", "guest"
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
   }
-
-  tasks.create(name: removeTaskName, type: DockerRemoveContainer) {
-    targetContainerId createTask.getContainerId()
-    removeVolumes.set(true)
-  }
-
-  tasks.create(name: "stop${containerDef.name}Container", type: DockerStopContainer) {
-    targetContainerId createTask.getContainerId()
-    finalizedBy removeTaskName
-  }
-}
-
-task systemTest(type: Test,
-                dependsOn: ['test', startAndWaitOnHealthyPostgresContainer, startAndWaitOnHealthyRabbitContainer],
-                group: 'verification') {
-  systemProperty "spring.profiles.active", "postgresql"
-  def dbUrl = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
-  systemProperty "spring.liquibase.url", dbUrl
-  systemProperty "spring.datasource.url", dbUrl
-  systemProperty "spring.rabbitmq.host", "localhost"
-  systemProperty "spring.rabbitmq.port", rabbitDockerPort
-  testClassesDir = sourceSets.integrationTest.output.classesDir
-  classpath = sourceSets.integrationTest.runtimeClasspath
-  finalizedBy stopPostgresContainer
-  finalizedBy stopRabbitContainer
 }
 
 configurations {
