@@ -68,6 +68,18 @@ idea {
 ext {
   postgresDockerPort = "30991"
   rabbitDockerPort = "35672"
+  containers = [
+    [
+      name : 'Postgres',
+      image: 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql',
+      port : postgresDockerPort
+    ],
+    [
+      name : 'Rabbit',
+      image: 'gitlab.elvaco.se:4567/elvaco/mvp/rabbitmq',
+      port : rabbitDockerPort
+    ]
+  ]
 }
 
 sourceSets {
@@ -99,63 +111,42 @@ task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-task pullPostgresImage(type: DockerPullImage) {
-  repository = 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql'
-  tag = 'latest'
-}
+containers.each {final containerDef ->
+  def pullTaskName = "pull${containerDef.name}Image"
+  def createTaskName = "create${containerDef.name}Container"
+  def startTaskName = "start${containerDef.name}Container"
+  def removeTaskName = "remove${containerDef.name}Container"
+  def pullTask = tasks.create(name: pullTaskName, type: DockerPullImage) {
+    repository = containerDef.image
+    tag = 'latest'
+  }
 
-task pullRabbitImage(type: DockerPullImage) {
-  repository = 'gitlab.elvaco.se:4567/elvaco/mvp/rabbitmq'
-  tag = 'latest'
-}
+  def createTask = tasks.create(name: createTaskName, type: DockerCreateContainer) {
+    dependsOn pullTask
+    targetImageId pullTask.getImageId()
+    portBindings = ["${containerDef.port}:5432"]
+  }
 
-task createPostgresContainer(type: DockerCreateContainer) {
-  dependsOn pullPostgresImage
-  targetImageId pullPostgresImage.getImageId()
-  portBindings = ["${postgresDockerPort}:5432"]
-}
+  tasks.create(name: startTaskName, type: DockerStartContainer) {
+    dependsOn createTaskName
+    targetContainerId createTask.getContainerId()
+  }
 
-task createRabbitContainer(type: DockerCreateContainer) {
-  dependsOn pullRabbitImage
-  targetImageId pullRabbitImage.getImageId()
-  portBindings = ["${rabbitDockerPort}:5672"]
-  autoRemove = true
-}
+  tasks.create(name: "startAndWaitOnHealthy${containerDef.name}Container", type: DockerWaitHealthyContainer) {
+    dependsOn startTaskName
+    timeout = 60
+    targetContainerId createTask.getContainerId()
+  }
 
-task startPostgresContainer(type: DockerStartContainer) {
-  dependsOn createPostgresContainer
-  targetContainerId createPostgresContainer.getContainerId()
-}
+  tasks.create(name: removeTaskName, type: DockerRemoveContainer) {
+    targetContainerId createTask.getContainerId()
+    removeVolumes.set(true)
+  }
 
-task startRabbitContainer(type: DockerStartContainer) {
-  dependsOn createRabbitContainer
-  targetContainerId createRabbitContainer.getContainerId()
-}
-
-task startAndWaitOnHealthyPostgresContainer(type: DockerWaitHealthyContainer) {
-  dependsOn startPostgresContainer
-  timeout = 60
-  targetContainerId createPostgresContainer.getContainerId()
-}
-
-task startAndWaitOnHealthyRabbitContainer(type: DockerWaitHealthyContainer) {
-  dependsOn startRabbitContainer
-  timeout = 60
-  targetContainerId createRabbitContainer.getContainerId()
-}
-
-task removePostgresContainer(type: DockerRemoveContainer) {
-  targetContainerId createPostgresContainer.getContainerId()
-  removeVolumes.set(true)
-}
-
-task stopPostgresContainer(type: DockerStopContainer) {
-  targetContainerId createPostgresContainer.getContainerId()
-  finalizedBy removePostgresContainer
-}
-
-task stopRabbitContainer(type: DockerStopContainer) {
-  targetContainerId createRabbitContainer.getContainerId()
+  tasks.create(name: "stop${containerDef.name}Container", type: DockerStopContainer) {
+    targetContainerId createTask.getContainerId()
+    finalizedBy removeTaskName
+  }
 }
 
 task systemTest(type: Test,

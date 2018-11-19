@@ -10,9 +10,9 @@ apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
 
 import com.bmuschko.gradle.docker.domain.LivenessProbe
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
-import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.container.extras.DockerLivenessContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
 
@@ -75,7 +75,6 @@ ext {
     database.url = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
   }
   generatedSourcesDir = "$buildDir/generated"
-  
 }
 
 task pullPostgresImage(type: DockerPullImage) {
