@@ -33,17 +33,17 @@
     }
   }
 
-  td.first {
-    padding-left: $space;
-  }
-
-  td.icon {
-    padding: 0 2px;
-  }
-
   td {
     padding: $sm-space;
     border-bottom: 1px solid $light-grey;
+
+    &.first {
+      padding-left: $space;
+    }
+
+    &.icon {
+      padding: 0 2px;
+    }
 
     &.actionDropdown {
       width: 0;

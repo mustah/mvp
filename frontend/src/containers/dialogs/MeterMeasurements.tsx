@@ -3,11 +3,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
+import {renderCreated} from '../../components/table/cellContentHelper';
 import '../../components/table/Table.scss';
-import {Error} from '../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {isDefined} from '../../helpers/commonUtils';
-import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -20,18 +19,13 @@ import {
   Quantity,
   Readings
 } from '../../state/ui/graph/measurement/measurementModels';
-import {Children, Fetching, UnixTimestamp} from '../../types/Types';
+import {Fetching, UnixTimestamp} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
 
 const renderValue = ({value, unit}: Measurement): string =>
   value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
-
-const renderCreated = (created: UnixTimestamp, hasValues: boolean): Children =>
-  hasValues
-    ? timestamp(created * 1000)
-    : <Error>{timestamp(created * 1000)}</Error>;
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
@@ -54,7 +48,7 @@ const renderReadingRows =
 
           return (
             <tr key={timestamp}>
-              <td key="created">{renderCreated(timestamp, !!reading.measurements)}</td>
+              {renderCreated(timestamp, !!reading.measurements)}
               {row}
             </tr>
           );
