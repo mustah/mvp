@@ -11,6 +11,7 @@ import {maxZoom} from '../helper/mapHelper';
 import {Bounds} from '../mapModels';
 import {LowConfidenceInfo} from './LowConfidenceInfo';
 import './Map.scss';
+import {useFallbackTilesUrl} from '../helper/fallbackTilesUrlHook';
 
 interface Props {
   height?: number;
@@ -40,6 +41,7 @@ export const Map = ({
   lowConfidenceText,
   bounds,
 }: Props) => {
+  const {tilesUrl, updateTilesUrl} = useFallbackTilesUrl();
   const style = {height, width};
   const centerProps: MapProps = {zoom: 7};
 
@@ -65,7 +67,7 @@ export const Map = ({
         {...centerProps}
       >
         <LowConfidenceInfo>{lowConfidenceText}</LowConfidenceInfo>
-        <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
+        <TileLayer url={tilesUrl} ontileerror={updateTilesUrl}/>
         {children}
       </LeafletMap>
     </Column>
