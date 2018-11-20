@@ -1,6 +1,11 @@
 package com.elvaco.mvp.configuration.config;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import javax.annotation.Nullable;
+
 import com.elvaco.mvp.adapters.spring.AmqpMessagePublisher;
+import com.elvaco.mvp.configuration.config.properties.RabbitConsumerProperties;
 import com.elvaco.mvp.consumers.rabbitmq.message.AlarmMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
@@ -10,7 +15,10 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringReferenceInfoMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Role;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
@@ -28,7 +36,10 @@ import com.elvaco.mvp.core.util.MessageThrottler;
 import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+import com.elvaco.mvp.web.security.MvpUserDetails;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -45,7 +56,11 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import static java.util.UUID.randomUUID;
 
 @RequiredArgsConstructor
 @Configuration
@@ -224,5 +239,57 @@ class RabbitMqConfig {
     container.setPrefetchCount(consumerProperties.getPrefetchCount());
     container.setTxSize(consumerProperties.getTxSize());
     return container;
+  }
+
+  @Slf4j
+  @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+  private static class AuthenticatedMessageListener {
+
+    private final MessageListener messageListener;
+    private final Organisation rootOrganisation;
+
+    /**
+     * This is used through reflection in com.elvaco.mvp.configuration.config.RabbitMqConfig.
+     *
+     * @param message Message received from queue.
+     *
+     * @return A serialized json string containing response information to be placed on the response
+     *   queue. When this is {@code null} no message will be places on the response routing queue.
+     */
+    @Nullable
+    @SuppressWarnings("unused")
+    public String handleMessage(byte[] message) {
+      try {
+        SecurityContextHolder.getContext().setAuthentication(
+          new UsernamePasswordAuthenticationToken(new MvpUserDetails(meteringUser(), ""), null)
+        );
+        String encodedMessage = toEncodedMessage(message);
+
+        AuthenticatedMessageListener.log.debug(
+          "Received message from RabbitMQ: {}",
+          encodedMessage
+        );
+
+        return messageListener.onMessage(encodedMessage);
+      } finally {
+        SecurityContextHolder.clearContext();
+      }
+    }
+
+    private User meteringUser() {
+      return new User(
+        randomUUID(),
+        "Metering Message RabbitMQ Consumer",
+        "noone@example.com",
+        "",
+        Language.sv,
+        rootOrganisation,
+        List.of(Role.SUPER_ADMIN)
+      );
+    }
+
+    private static String toEncodedMessage(byte[] message) {
+      return new String(message, StandardCharsets.UTF_8);
+    }
   }
 }

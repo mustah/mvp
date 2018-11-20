@@ -86,3 +86,6 @@ mvp:
 
 geo-service:
   url: http://localhost:8081
+
+jooq:
+  sql-dialect: 'H2'

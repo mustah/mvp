@@ -1,5 +1,20 @@
+plugins {
+  id "nu.studer.jooq" version "3.0.2"
+  id 'org.liquibase.gradle' version '2.0.1'
+}
+
 apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.liquibase.gradle'
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+
+import com.bmuschko.gradle.docker.domain.LivenessProbe
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerLivenessContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
 
 dependencyManagement {
   imports {mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")}
@@ -13,6 +28,8 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
   compile 'org.springframework.boot:spring-boot-starter-jdbc'
   compile 'org.springframework.security:spring-security-core'
+  compile 'org.springframework:spring-context'
+  compile 'org.springframework:spring-jdbc'
   compile 'org.hibernate:hibernate-validator:6.0.10.Final'
   compile 'org.hibernate:hibernate-envers:5.2.16.Final'
   compile 'org.postgresql:postgresql'
@@ -21,7 +38,15 @@ dependencies {
   compile 'com.querydsl:querydsl-root:4.2.1'
   compile 'com.querydsl:querydsl-apt:4.2.1:jpa'
   compile 'com.querydsl:querydsl-jpa:4.2.1'
+  compile "org.jooq:jooq:${jooqVersion}"
+  compile "org.jooq:jooq-codegen:${jooqVersion}"
 
+  jooqRuntime 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
+  jooqRuntime 'com.sun.activation:javax.activation:1.2.0'
+  jooqRuntime 'org.postgresql:postgresql'
+
+  liquibaseRuntime 'org.liquibase:liquibase-core:3.6.1'
+  liquibaseRuntime 'org.postgresql:postgresql'
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile "junit:junit:${junitVersion}"
@@ -29,10 +54,117 @@ dependencies {
   testCompile project(':backend:testing')
 }
 
+docker {
+  registryCredentials {
+    url = 'gitlab.elvaco.se:4567'
+    username = 'gitlab+deploy-token-1'
+    password = 'VXFC8kiSQcJaLdyhdp-u'
+  }
+}
+
+ext {
+  database = [:]
+  database.changeLogFile = "$rootProject.projectDir/backend/configuration/src/main/resources/db/changelog/db.changelog.xml"
+
+  database.appuser = 'jooq_appuser'
+  database.apppw = 'jooq_password'
+  postgresDockerPort = "18127"
+  if (project.hasProperty('isCI')) {
+    database.url = "jdbc:postgresql://pg_host:5432/mvp"
+  } else {
+    database.url = "jdbc:postgresql://localhost:${postgresDockerPort}/mvp"
+  }
+  generatedSourcesDir = "$buildDir/generated"
+}
+
+jooq {
+  prod(sourceSets.main) {
+    jdbc {
+      driver = 'org.postgresql.Driver'
+      url = database.url
+      user = database.appuser
+      password = database.apppw
+      schema = 'public'
+    }
+    generator {
+      database {
+        name = 'org.jooq.meta.postgres.PostgresDatabase'
+        inputSchema = 'public'
+      }
+      generate {
+        relations = true
+        deprecated = false
+        records = true
+      }
+      target {
+        directory = "${generatedSourcesDir}/jooq"
+        packageName = 'com.elvaco.mvp.database.entity.jooq'
+      }
+    }
+  }
+}
+
+liquibase {
+  activities {
+    main {
+      changeLogFile database.changeLogFile
+      url database.url
+      username 'mvp'
+      password 'mvp'
+      parameters = [
+        'application_user'    : database.appuser,
+        'application_password': database.apppw,
+        'application_database': 'mvp'
+      ]
+    }
+  }
+}
+
+if (!project.hasProperty('isCI')) {
+
+  task pullPostgresImage(type: DockerPullImage) {
+    repository = 'gitlab.elvaco.se:4567/elvaco/mvp/postgresql'
+    tag = 'latest'
+  }
+
+  task createPostgresContainer(type: DockerCreateContainer) {
+    dependsOn pullPostgresImage
+    targetImageId pullPostgresImage.getImageId()
+    containerName.set('evo-postgresql-liquibase-jooq')
+    portBindings = ["${postgresDockerPort}:5432"]
+  }
+
+  task startPostgresContainer(type: DockerStartContainer) {
+    dependsOn createPostgresContainer
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+  }
+
+  task startAndWaitOnLivePostgresContainer(type: DockerLivenessContainer) {
+    dependsOn startPostgresContainer
+    livenessProbe = new LivenessProbe(60000, 100, 'database system is ready to accept connections')
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+  }
+
+  task removePostgresContainer(type: DockerRemoveContainer) {
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+    removeVolumes.set(true)
+  }
+
+  task stopPostgresContainer(type: DockerStopContainer) {
+    targetContainerId 'evo-postgresql-liquibase-jooq'
+    finalizedBy removePostgresContainer
+  }
+
+  update.dependsOn(startAndWaitOnLivePostgresContainer)
+  generateProdJooqSchemaSource.finalizedBy(stopPostgresContainer)
+}
+
+generateProdJooqSchemaSource.dependsOn(update)
+
 compileJava {
   options.compilerArgs << "-s"
-  options.compilerArgs << "$buildDir/generated"
+  options.compilerArgs << "${generatedSourcesDir}/querydsl"
   doFirst {
-    file(new File(buildDir, "/generated")).mkdirs()
+    file(generatedSourcesDir).mkdirs()
   }
 }

@@ -4,10 +4,7 @@ import java.util.Collection;
 
 public class CityFilter extends Filter<String> {
 
-  CityFilter(
-    Collection<String> values,
-    ComparisonMode comparisonMode
-  ) {
+  CityFilter(Collection<String> values, ComparisonMode comparisonMode) {
     super(values, comparisonMode);
   }
 

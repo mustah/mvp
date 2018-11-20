@@ -18,11 +18,11 @@ import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
-class LocationParametersParser {
+public class LocationParametersParser {
 
   private static final String DELIMITER = ",";
 
-  static Parameters toCityParameters(Collection<String> cityIds) {
+  public static Parameters toCityParameters(Collection<String> cityIds) {
     var parameters = new Parameters();
     toCityParams(cityIds).forEach(cityParam -> {
       parameters.addCountry(cityParam.country);
@@ -31,7 +31,7 @@ class LocationParametersParser {
     return parameters;
   }
 
-  static Parameters toAddressParameters(Collection<String> addressIds) {
+  public static Parameters toAddressParameters(Collection<String> addressIds) {
     var parameters = new Parameters();
     toAddressParams(addressIds).forEach(addressParam -> {
       parameters.addCountry(addressParam.country);

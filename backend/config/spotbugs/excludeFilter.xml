@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
   <Match>
+    <Class name="~com.elvaco.mvp.database.entity.jooq.*"/>
+  </Match>
+  <Match>
     <Class name="~com.elvaco.*\.*Dto"/>
     <Bug code="UrF,UuF,UwF"/>
   </Match>
@@ -8,7 +11,6 @@
     <Class name="~com.elvaco.*\.*Test"/>
     <Bug code="NP"/>
   </Match>
-
   <Match>
     <Bug code="Dm"/>
   </Match>

@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import javax.persistence.EntityManagerFactory;
 
-import com.elvaco.mvp.configuration.config.MvpProperties;
+import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;

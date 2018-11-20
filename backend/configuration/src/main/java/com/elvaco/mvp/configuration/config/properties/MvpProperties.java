@@ -1,12 +1,12 @@
-package com.elvaco.mvp.configuration.config;
+package com.elvaco.mvp.configuration.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "mvp")
 @Getter
 @Setter
+@ConfigurationProperties(prefix = "mvp")
 public class MvpProperties {
 
   private RootOrganisation rootOrganisation;
@@ -22,7 +22,7 @@ public class MvpProperties {
 
   @Getter
   @Setter
-  static class Superadmin {
+  public static class Superadmin {
     private String email = "mvpadmin@elvaco.se";
     private String password = "changeme";
   }

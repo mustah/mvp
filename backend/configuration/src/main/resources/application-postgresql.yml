@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgresql:5432/mvp
+    url: jdbc:postgresql://localhost:5432/mvp
     driverClassName: org.postgresql.Driver
     username: appuser
     password: 'RWZ8tKUzDdbncg2J'
@@ -14,3 +14,6 @@ spring:
     # Not specifying this causes liquibase's autoconfiguration to use the Spring datasource, which
     # prevents us from overriding the user/password
     url: jdbc:postgresql://localhost:5432/mvp
+
+jooq:
+  sql-dialect: 'POSTGRES'

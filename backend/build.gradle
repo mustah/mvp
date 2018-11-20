@@ -5,11 +5,18 @@ buildscript {
     lombokVersion = '1.18.2'
     assertjVersion = '3.11.1'
     junitVersion = '4.12'
+    jooqVersion = '3.11.7'
     set('hibernate.version', '5.2.16.Final')
+    set('jooq.version', "${jooqVersion}")
   }
 
   dependencies {
-    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+
+    classpath 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+    classpath 'com.sun.xml.bind:jaxb-impl:2.3.0.1'
+    classpath 'javax.activation:activation:1.1.1'
+    classpath 'javax.xml.bind:jaxb-api:2.3.0'
   }
 }
 

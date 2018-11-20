@@ -3,22 +3,16 @@ package com.elvaco.mvp.web;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.oslo;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings("ConstantConditions")
 public class SelectionTreeControllerTest extends IntegrationTest {
-
-  @After
-  public void tearDown() {
-    logicalMeterJpaRepository.deleteAll();
-  }
 
   @Test
   public void getResponseOk() {
@@ -33,7 +27,7 @@ public class SelectionTreeControllerTest extends IntegrationTest {
       .location(stockholm().build())
       .build());
 
-    ResponseEntity<SelectionTreeDto> response = asSuperAdmin()
+    var response = asSuperAdmin()
       .get("/selection-tree", SelectionTreeDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -57,11 +51,11 @@ public class SelectionTreeControllerTest extends IntegrationTest {
       .location(stockholm().build())
       .build());
 
-    var response = asSuperAdmin()
+    var cities = asSuperAdmin()
       .get("/selection-tree?city=sverige,kungsbacka", SelectionTreeDto.class)
-      .getBody();
+      .getBody()
+      .cities;
 
-    var cities = response.cities;
     assertThat(cities).hasSize(1);
     assertThat(cities.get(0).addresses).extracting("name")
       .containsExactlyInAnyOrder("kabelgatan 1", "kabelgatan 2");
