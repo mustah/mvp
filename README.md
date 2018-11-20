@@ -8,6 +8,13 @@ subsequently test.
 Some of them requires Docker, see the bottom of this file for instructions on
 that.
 
+### Build and generate jooq java classes
+To create the generated classes needed for jooq, just run the gradle task:
+
+`gradle generateProdJooqSchemaSource`
+
+This will create all the classes needed to build the sql queries with jooq in java.
+
 ### Only PostgreSQL in docker with docker-compose on localhost
 This execution mode is supported by
 [docker-compose](https://docs.docker.com/compose/), which is a tool for running
