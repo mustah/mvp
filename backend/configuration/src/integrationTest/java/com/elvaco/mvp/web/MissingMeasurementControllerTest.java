@@ -190,7 +190,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       uuid.toString(),
       context().organisationEntity.id,
       created,
-      meterDefinition
+      meterDefinition,
+      DEFAULT_UTC_OFFSET
     ));
   }
 

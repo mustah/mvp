@@ -94,6 +94,7 @@ public class LogicalMeterEntityMapper {
       .organisationId(logicalMeter.organisationId)
       .meterDefinition(MeterDefinition.fromMedium(Medium.from(logicalMeter.medium)))
       .location(LocationEntityMapper.toDomainModel(logicalMeter.location))
+      .utcOffset(logicalMeter.utcOffset)
       .build();
   }
 
@@ -106,6 +107,7 @@ public class LogicalMeterEntityMapper {
       .created(entity.created)
       .physicalMeters(toDomainModelsWithoutStatusLogs(entity.physicalMeters))
       .location(LocationEntityMapper.toDomainModel(entity.location))
+      .utcOffset(entity.utcOffset)
       .build();
   }
 
@@ -115,7 +117,8 @@ public class LogicalMeterEntityMapper {
       logicalMeter.externalId,
       logicalMeter.organisationId,
       logicalMeter.created,
-      MeterDefinitionEntityMapper.toEntity(logicalMeter.meterDefinition)
+      MeterDefinitionEntityMapper.toEntity(logicalMeter.meterDefinition),
+      logicalMeter.utcOffset
     );
 
     logicalMeterEntity.location = LocationEntityMapper.toEntity(
@@ -152,6 +155,7 @@ public class LogicalMeterEntityMapper {
       .expectedMeasurementCount(expectedMeasurementCount)
       .missingMeasurementCount(missingMeasurementCount)
       .alarm(MeterAlarmLogEntityMapper.toLatestActiveAlarm(physicalMeters))
+      .utcOffset(entity.utcOffset)
       .build();
   }
 

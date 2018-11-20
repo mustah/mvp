@@ -774,7 +774,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
-      meterDefinitionEntity
+      meterDefinitionEntity,
+      DEFAULT_UTC_OFFSET
     );
 
     return logicalMeterJpaRepository.save(meter);

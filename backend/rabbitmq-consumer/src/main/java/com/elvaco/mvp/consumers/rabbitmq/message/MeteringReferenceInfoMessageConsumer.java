@@ -77,7 +77,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       meterDto,
       location,
       organisation.id,
-      facility.id
+      facility.id,
+      "+01" //TODO: facility.utcOffset when metering supports that
     );
 
     Optional<PhysicalMeter> physicalMeter = Optional.ofNullable(meterDto)
@@ -128,7 +129,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     @Nullable MeterDto meterDto,
     Location location,
     UUID organisationId,
-    String facilityId
+    String facilityId,
+    String utcOffset
   ) {
     Optional<MeterDto> meter = Optional.ofNullable(meterDto);
 
@@ -140,12 +142,15 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .map(logicalMeter -> logicalMeter.toBuilder()
         .location(location)
         .meterDefinition(meterDefinition)
+        //NOTE: if utcOffset change we do not recalculate historical measurement_stat.
+        .utcOffset(utcOffset)
         .build())
       .orElseGet(() -> meter.map(dto -> LogicalMeter.builder()
         .externalId(facilityId)
         .organisationId(organisationId)
         .meterDefinition(meterDefinition)
         .location(location)
+        .utcOffset(utcOffset)
         .build())
         .orElse(null));
   }

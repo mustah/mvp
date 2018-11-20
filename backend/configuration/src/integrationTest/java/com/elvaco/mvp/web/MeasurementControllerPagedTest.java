@@ -153,7 +153,8 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
-      meterDefinitionEntity
+      meterDefinitionEntity,
+      DEFAULT_UTC_OFFSET
     ));
   }
 
@@ -167,7 +168,8 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       logicalMeterId.toString(),
       organisationEntity.id,
       created,
-      saveMeterDefinition(MeasurementControllerPagedTest.BUTTER_METER_DEFINITION)
+      saveMeterDefinition(MeasurementControllerPagedTest.BUTTER_METER_DEFINITION),
+      DEFAULT_UTC_OFFSET
     ));
 
     var physicalMeterId = randomUUID();

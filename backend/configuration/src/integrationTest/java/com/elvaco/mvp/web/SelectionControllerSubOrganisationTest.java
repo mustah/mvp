@@ -38,18 +38,21 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .externalId("ex1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("ex2")
       .organisationId(context().organisationId())
       .location(stockholm().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("ex3")
       .organisationId(context().organisationId())
       .location(oslo().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var user = subOrgUser().organisation(subOrganisation).build();
@@ -77,6 +80,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .externalId("ex1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var user = subOrgUser().organisation(subOrganisation).build();
@@ -104,12 +108,14 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .externalId("demo1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("demo2")
       .organisationId(context().organisationId())
       .location(stockholm().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var user = subOrgUser().organisation(subOrganisation).build();
@@ -137,18 +143,21 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
       .externalId("demo1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("demo2")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("demo3")
       .organisationId(context().organisationId())
       .location(stockholm().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var user = subOrgUser().organisation(subOrganisation).build();

@@ -1,0 +1,63 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create measurement_stat_data table" author="Anton Löfgren">
+
+    <createTable tableName="measurement_stat_data">
+      <column name="stat_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="physical_meter_id" type="uuid">
+        <constraints
+          nullable="false"
+          foreignKeyName="measurement_stat_data_physical_meter_id_fkey"
+          references="physical_meter(id)"
+          deleteCascade="true"
+        />
+      </column>
+      <column name="quantity" type="int">
+        <constraints
+          nullable="false"
+          foreignKeyName="measurement_stat_data_quantity_id_fkey"
+          references="quantity(id)"
+        />
+      </column>
+      <column name="min" type="double">
+        <constraints nullable="false"/>
+      </column>
+      <column name="max" type="double">
+        <constraints nullable="false"/>
+      </column>
+      <column name="expected_count" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="received_count" type="int">
+        <constraints nullable="false"/>
+      </column>
+      <column name="average" type="double">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addUniqueConstraint
+      tableName="measurement_stat_data"
+      columnNames="quantity, stat_date, physical_meter_id"
+      schemaName="public"
+    />
+  </changeSet>
+  <changeSet id="Create utcOffset field in logical meter" author="erimel">
+    <addColumn tableName="logical_meter">
+      <column name="utc_offset" type="${text_type}" defaultValue="+01">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addColumn tableName="logical_meter_aud" schemaName="evoaudit">
+      <column name="utc_offset" type="${text_type}"/>
+      <column name="utc_offset_mod" type="BOOLEAN"/>
+    </addColumn>
+    <!-- Now that all rows are updated, we can drop the default value -->
+    <dropDefaultValue tableName="logical_meter" columnName="utc_offset"/>
+  </changeSet>
+</databaseChangeLog>

@@ -20,11 +20,13 @@ public class SelectionTreeControllerTest extends IntegrationTest {
       .externalId("extId1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("extId2")
       .organisationId(context().organisationId())
       .location(stockholm().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var response = asSuperAdmin()
@@ -39,16 +41,19 @@ public class SelectionTreeControllerTest extends IntegrationTest {
       .externalId("extId1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("extId2")
       .organisationId(context().organisationId())
       .location(kungsbacka().address("kabelgatan 2").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("extId3")
       .organisationId(context().organisationId())
       .location(stockholm().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var cities = asSuperAdmin()
@@ -67,21 +72,25 @@ public class SelectionTreeControllerTest extends IntegrationTest {
       .externalId("extId1")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("extId2")
       .organisationId(context().organisationId())
       .location(kungsbacka().address("kabelgatan 2").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("extId3")
       .organisationId(context().organisationId())
       .location(kungsbacka().address("kabelgatan 3").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("extId4")
       .organisationId(context().organisationId())
       .location(oslo().address("kabelgatan 2").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var response = asSuperAdmin()

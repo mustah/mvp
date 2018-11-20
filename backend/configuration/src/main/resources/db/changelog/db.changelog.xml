@@ -47,6 +47,8 @@
   <include file="xml/replace_missing_read_interval_with_hour.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_location_indexes.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_missing_measurement_materialized_view_v3.xml" relativeToChangelogFile="true"/>
+  <include file="xml/create_measurement_stat_data_table.xml" relativeToChangelogFile="true"/>
+  <include file="xml/create_measurement_stat_data_triggers.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

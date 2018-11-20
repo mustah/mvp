@@ -132,7 +132,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       .medium("")
       .manufacturer("")
       .logicalMeterId(null)
-      .readIntervalMinutes(0)
+      .readIntervalMinutes(60)
       .revision(1)
       .mbusDeviceType(1)
       .statuses(emptySet())

@@ -199,6 +199,7 @@ class LogicalMeterQueryDslJpaRepository
         logicalMeter.ID,
         logicalMeter.ORGANISATION_ID,
         logicalMeter.EXTERNAL_ID,
+        logicalMeter.UTC_OFFSET,
         location.COUNTRY,
         location.CITY,
         location.STREET_ADDRESS,

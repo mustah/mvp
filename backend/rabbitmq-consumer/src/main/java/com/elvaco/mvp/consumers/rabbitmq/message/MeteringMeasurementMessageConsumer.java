@@ -71,6 +71,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           .externalId(facilityId)
           .organisationId(organisation.id)
           .meterDefinition(MeterDefinition.fromMedium(medium))
+          .utcOffset("+01") //TODO: facility.utcOffset when metering supports that
           .build();
       });
 

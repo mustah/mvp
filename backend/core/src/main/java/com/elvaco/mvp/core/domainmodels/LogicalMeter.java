@@ -47,6 +47,7 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final AlarmLogEntry alarm;
   @Nullable
   public final StatusType status;
+  public final String utcOffset;
 
   @Override
   public UUID getId() {

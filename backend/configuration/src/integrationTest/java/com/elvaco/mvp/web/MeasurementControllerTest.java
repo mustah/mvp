@@ -575,7 +575,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
-      meterDefinitionEntity
+      meterDefinitionEntity,
+      DEFAULT_UTC_OFFSET
     ));
   }
 
@@ -604,7 +605,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       logicalMeterId.toString(),
       organisationEntity.id,
       created,
-      toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      DEFAULT_UTC_OFFSET
     ));
 
     UUID physicalMeterId = randomUUID();
