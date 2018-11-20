@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.util.CollectionUtils;
 
 import static com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
+import static com.elvaco.mvp.core.exception.InvalidUserSelection.misconfiguredParentOrganisationSelection;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
@@ -55,6 +56,13 @@ public interface RequestParameters {
     ensureOrganisation(currentUser);
 
     var selectionParameters = Optional.ofNullable(currentUser.selectionParameters());
+
+    if (!selectionParameters.isPresent() && currentUser.getParentOrganisationId() != null) {
+      throw misconfiguredParentOrganisationSelection(
+        currentUser.getParentOrganisationId(),
+        currentUser.getOrganisationId()
+      );
+    }
 
     selectionParameters.map(SelectionParametersDto::getFacilityIds)
       .filter(CollectionUtils::isNotEmpty)

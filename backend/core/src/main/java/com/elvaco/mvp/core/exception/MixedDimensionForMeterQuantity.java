@@ -4,7 +4,7 @@ public class MixedDimensionForMeterQuantity extends RuntimeException {
 
   public MixedDimensionForMeterQuantity(String gotDimension, String expectedDimension) {
     super(String.format(
-      "Mixing dimensions for meter quantity is not allowed (got: '%s', expected: '%s'",
+      "Mixing dimensions for meter quantity is not allowed (got: '%s', expected: '%s')",
       gotDimension,
       expectedDimension
     ));
