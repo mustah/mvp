@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.api;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.mapper.MeterSummaryDtoMapper.toDto;
 
 @RequiredArgsConstructor
@@ -20,6 +20,6 @@ public class SummaryController {
   public MeterSummaryDto meterLocationSummary(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return toDto(logicalMeterUseCases.summary(requestParametersOf(requestParams)));
+    return toDto(logicalMeterUseCases.summary(RequestParametersAdapter.of(requestParams)));
   }
 }

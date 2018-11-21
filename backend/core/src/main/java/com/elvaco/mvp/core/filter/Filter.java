@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 abstract class Filter<T> implements VisitableFilter {
+
   private final Collection<T> values;
   private final ComparisonMode comparisonMode;
 

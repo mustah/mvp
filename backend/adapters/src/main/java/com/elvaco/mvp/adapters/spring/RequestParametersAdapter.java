@@ -9,11 +9,17 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static com.elvaco.mvp.core.exception.InvalidUserSelection.misconfiguredParentOrganisationSelection;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
+import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -22,23 +28,26 @@ public class RequestParametersAdapter implements RequestParameters {
 
   private final MultiValueMap<RequestParameter, String> delegate;
 
+  @Nullable
+  private final RequestParameters subOrganisationParameters;
+
   private RequestParametersAdapter(
-    @Nullable MultiValueMap<RequestParameter, String> multiValueMap
+    @Nullable MultiValueMap<RequestParameter, String> multiValueMap,
+    @Nullable RequestParameters subOrganisationParameters
   ) {
     this.delegate = multiValueMap != null ? multiValueMap : new LinkedMultiValueMap<>();
+    this.subOrganisationParameters = subOrganisationParameters;
   }
 
   public RequestParametersAdapter() {
-    this(new LinkedMultiValueMap<>());
+    this(new LinkedMultiValueMap<>(), null);
   }
 
-  public static RequestParameters requestParametersOf(
-    @Nullable Map<String, List<String>> multiValueMap
-  ) {
-    return requestParametersOf(multiValueMap, null);
+  public static RequestParameters of(@Nullable Map<String, List<String>> multiValueMap) {
+    return of(multiValueMap, null);
   }
 
-  public static RequestParameters requestParametersOf(
+  public static RequestParameters of(
     Map<String, List<String>> multiValueMap,
     @Nullable RequestParameter idParameter
   ) {
@@ -48,7 +57,7 @@ public class RequestParametersAdapter implements RequestParameters {
 
     if (multiValueMap.containsKey("id")) {
       multiValueMap.put(
-        Optional.ofNullable(idParameter).map((param) -> param.toString())
+        Optional.ofNullable(idParameter).map(RequestParameter::toString)
           .orElseThrow(() -> new IllegalArgumentException(
               "Ambiguous parameter 'id' can not be mapped"
             )
@@ -62,7 +71,7 @@ public class RequestParametersAdapter implements RequestParameters {
       Optional.ofNullable(RequestParameter.from(entry.getKey()))
         .ifPresent(parameter -> typedParams.put(parameter, entry.getValue()));
     }
-    return new RequestParametersAdapter(typedParams);
+    return new RequestParametersAdapter(typedParams, null);
   }
 
   @Override
@@ -98,12 +107,10 @@ public class RequestParametersAdapter implements RequestParameters {
 
   @Override
   public RequestParameters transform(RequestParameter from, RequestParameter into) {
-    if (!hasParam(from)) {
-      return this;
+    if (hasParam(from)) {
+      delegate.put(into, getValues(from));
+      delegate.remove(from);
     }
-
-    delegate.put(into, getValues(from));
-    delegate.remove(from);
     return this;
   }
 
@@ -134,6 +141,26 @@ public class RequestParametersAdapter implements RequestParameters {
     return delegate.isEmpty();
   }
 
+  @Override
+  public Optional<RequestParameters> implicitParameters() {
+    return Optional.ofNullable(subOrganisationParameters);
+  }
+
+  @Override
+  public RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser) {
+    ensureOrganisation(currentUser);
+
+    var selectionParameters = Optional.ofNullable(currentUser.selectionParameters());
+
+    if (!selectionParameters.isPresent() && currentUser.getParentOrganisationId() != null) {
+      throw misconfiguredParentOrganisationSelection(
+        currentUser.getParentOrganisationId(),
+        currentUser.getOrganisationId()
+      );
+    }
+    return selectionParameters.map(this::applySubOrganisationParameters).orElse(this);
+  }
+
   public MultiValueMap<RequestParameter, String> multiValueMap() {
     return delegate;
   }
@@ -141,5 +168,19 @@ public class RequestParametersAdapter implements RequestParameters {
   @Override
   public String toString() {
     return entrySet().toString();
+  }
+
+  private RequestParameters applySubOrganisationParameters(SelectionParametersDto parameters) {
+    var subOrganisationParameters = new RequestParametersAdapter()
+      .setIfNotEmpty(FACILITY, parameters.getFacilityIds())
+      .setIfNotEmpty(CITY, parameters.getCityIds());
+    return new RequestParametersAdapter(delegate, subOrganisationParameters);
+  }
+
+  private RequestParametersAdapter setIfNotEmpty(RequestParameter parameter, List<String> values) {
+    if (isNotEmpty(values)) {
+      setAll(parameter, values);
+    }
+    return this;
   }
 }

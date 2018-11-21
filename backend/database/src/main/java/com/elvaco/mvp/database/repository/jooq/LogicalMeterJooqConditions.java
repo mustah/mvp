@@ -27,21 +27,21 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.addressOrUnknownFrom;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.cityOrUnknownFrom;
+import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownAddresses;
+import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownCities;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
-public class LogicalMeterJooqPredicates extends JooqFilterVisitor {
+public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
 
   @Override
   public void visit(CityFilter cityFilter) {
-    addCondition(cityOrUnknownFrom(toCityParameters(cityFilter.values())));
+    addCondition(withUnknownCities(toCityParameters(cityFilter.values())));
   }
 
   @Override
   public void visit(AddressFilter addressFilter) {
-    addCondition(addressOrUnknownFrom(toAddressParameters(addressFilter.values())));
+    addCondition(withUnknownAddresses(toAddressParameters(addressFilter.values())));
   }
 
   @Override

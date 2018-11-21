@@ -10,8 +10,9 @@ public class Filters implements VisitableFilter {
     this.filters = filters;
   }
 
-  public void add(VisitableFilter filter) {
+  public Filters add(VisitableFilter filter) {
     filters.add(filter);
+    return this;
   }
 
   @Override

@@ -24,11 +24,9 @@ import com.elvaco.mvp.database.repository.queryfilters.LocationPredicates;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPQLQuery;
 
-import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
-import static com.elvaco.mvp.core.filter.ComparisonMode.WILDCARD;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
-public class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
+public class GatewayFilterQueryDslJpaVisitor extends EmptyFilterQueryDslJpaVisitor {
 
   private final Collection<Predicate> predicates = new ArrayList<>();
 
@@ -73,10 +71,10 @@ public class GatewayFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(SerialFilter serialFilter) {
-    if (serialFilter.comparisonMode() == EQUAL) {
-      predicates.add(GATEWAY.serial.in(serialFilter.values()));
-    } else if (serialFilter.comparisonMode() == WILDCARD) {
+    if (serialFilter.comparisonMode().isWildcard()) {
       predicates.add(GATEWAY.serial.containsIgnoreCase(serialFilter.oneValue()));
+    } else {
+      predicates.add(GATEWAY.serial.in(serialFilter.values()));
     }
   }
 

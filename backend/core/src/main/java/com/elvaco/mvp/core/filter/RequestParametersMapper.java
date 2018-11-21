@@ -27,6 +27,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MANUFACTURER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_ADDRESS;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
@@ -77,18 +79,27 @@ public final class RequestParametersMapper {
       (values) -> new WildcardFilter(values, WILDCARD)
     );
     PARAMETER_TO_FILTER.put(ALARM, (values) -> new AlarmFilter(values, EQUAL));
+    PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, WILDCARD));
+    PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, WILDCARD));
   }
 
   public static Filters toFilters(RequestParameters requestParameters) {
-    Collection<VisitableFilter> filters = new ArrayList<>();
+    Collection<VisitableFilter> visitableFilters = new ArrayList<>();
     requestParameters.getPeriod()
-      .ifPresent(period -> filters.add(new PeriodFilter(List.of(period), EQUAL, period)));
-    filters.addAll(
+      .ifPresent(period -> visitableFilters.add(new PeriodFilter(List.of(period), EQUAL, period)));
+    visitableFilters.addAll(
       requestParameters.entrySet().stream()
         .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))
-        .map(param -> parameterToFilter(param.getKey(), param.getValue())).collect(toList())
+        .map(param -> parameterToFilter(param.getKey(), param.getValue()))
+        .collect(toList())
     );
-    return new Filters(filters);
+
+    var filters = new Filters(visitableFilters);
+
+    return requestParameters.implicitParameters()
+      .map(RequestParametersMapper::toFilters)
+      .map(filters::add)
+      .orElse(filters);
   }
 
   private static List<UUID> toUuids(List<String> ids) {

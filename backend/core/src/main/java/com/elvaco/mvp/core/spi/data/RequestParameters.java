@@ -9,23 +9,14 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.util.CollectionUtils;
 
-import static com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
-import static com.elvaco.mvp.core.exception.InvalidUserSelection.misconfiguredParentOrganisationSelection;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
-import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
-import static java.util.stream.Collectors.toList;
 
 public interface RequestParameters {
 
@@ -52,32 +43,9 @@ public interface RequestParameters {
 
   boolean isEmpty();
 
-  default RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser) {
-    ensureOrganisation(currentUser);
+  Optional<RequestParameters> implicitParameters();
 
-    var selectionParameters = Optional.ofNullable(currentUser.selectionParameters());
-
-    if (!selectionParameters.isPresent() && currentUser.getParentOrganisationId() != null) {
-      throw misconfiguredParentOrganisationSelection(
-        currentUser.getParentOrganisationId(),
-        currentUser.getOrganisationId()
-      );
-    }
-
-    selectionParameters.map(SelectionParametersDto::getFacilityIds)
-      .filter(CollectionUtils::isNotEmpty)
-      .map(retainAllFor(FACILITY))
-      .ifPresent(facilities -> setAll(FACILITY, facilities));
-
-    selectionParameters.map(SelectionParametersDto::getCityIds)
-      .filter(CollectionUtils::isNotEmpty)
-      .map(retainAllFor(CITY))
-      .ifPresent(cities -> setAll(CITY, cities));
-
-    selectionParameters.ifPresent(selectionParameter -> removeUnknownCityParameter());
-
-    return this;
-  }
+  RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser);
 
   default Optional<ZonedDateTime> getAsZonedDateTime(RequestParameter param) {
     try {
@@ -100,28 +68,12 @@ public interface RequestParameters {
     return hasParam(param) ? Optional.of(this) : Optional.empty();
   }
 
-  private void removeUnknownCityParameter() {
-    setAll(CITY, getValues(CITY).stream()
-      .filter(cityId -> !Location.UNKNOWN_CITY_ID.equals(cityId))
-      .collect(toList()));
-  }
-
-  private void ensureOrganisation(AuthenticatedUser currentUser) {
+  default void ensureOrganisation(AuthenticatedUser currentUser) {
     if (!currentUser.isSuperAdmin()) {
       var organisationId = currentUser.getParentOrganisationId() != null
         ? currentUser.getParentOrganisationId()
         : currentUser.getOrganisationId();
       replace(ORGANISATION, organisationId.toString());
     }
-  }
-
-  private Function<List<String>, List<String>> retainAllFor(RequestParameter parameter) {
-    return selectionParameters -> {
-      var fromParameters = getValues(parameter);
-      if (isNotEmpty(fromParameters)) {
-        selectionParameters.retainAll(fromParameters);
-      }
-      return selectionParameters;
-    };
   }
 }

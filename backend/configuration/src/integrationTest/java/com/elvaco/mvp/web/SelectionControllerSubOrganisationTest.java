@@ -11,6 +11,8 @@ import com.elvaco.mvp.web.dto.geoservice.CityDto;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.oslo;
@@ -28,7 +30,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
 
   @Test
   public void excludeAddresses_NotIncluded_InSelectionParameters() {
-    var userSelection = userSelections.save(userSelection().build());
+    var userSelection = userSelections.save(subOrganisationUserSelection().build());
 
     var subOrganisation = createSubOrganisation(userSelection);
 
@@ -66,8 +68,66 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
   }
 
   @Test
+  public void noCities_WhenCityParameterNotIncluded_InSelectionParameters() {
+    var userSelection = userSelections.save(subOrganisationUserSelection().build());
+
+    var subOrganisation = createSubOrganisation(userSelection);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("ex1")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().build())
+      .build());
+
+    var user = subOrgUser().organisation(subOrganisation).build();
+
+    var url = Url.builder()
+      .path("/selections/cities")
+      .parameter(CITY, "sverige,borås")
+      .sortBy("city,asc")
+      .build();
+
+    var response = as(user).getPage(url, CityDto.class);
+
+    assertThat(response.getContent()).isEmpty();
+  }
+
+  @Test
+  public void noFacilities_WhenFacilityParameterNotIncluded_InSelectionParameters() {
+    var userSelection = userSelections.save(subOrganisationUserSelection()
+      .selectionParameters(toJsonNode(FACILITIES_JSON_STRING))
+      .build());
+
+    var subOrganisation = createSubOrganisation(userSelection);
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("demo1")
+      .organisationId(context().organisationId())
+      .location(kungsbacka().build())
+      .build());
+
+    logicalMeters.save(LogicalMeter.builder()
+      .externalId("demo2")
+      .organisationId(context().organisationId())
+      .location(stockholm().build())
+      .build());
+
+    var user = subOrgUser().organisation(subOrganisation).build();
+
+    var url = Url.builder()
+      .path("/selections/facilities")
+      .parameter(FACILITY, "ext1")
+      .sortBy("externalId,asc")
+      .build();
+
+    var response = as(user).getPage(url, CityDto.class);
+
+    assertThat(response.getContent()).isEmpty();
+  }
+
+  @Test
   public void excludeCities_NotIncluded_ByTheFacilityIds_InSelectionParameters() {
-    var userSelection = userSelections.save(userSelection()
+    var userSelection = userSelections.save(subOrganisationUserSelection()
       .selectionParameters(toJsonNode(FACILITIES_JSON_STRING))
       .build());
 
@@ -114,7 +174,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
     );
   }
 
-  private UserSelection.UserSelectionBuilder userSelection() {
+  private UserSelection.UserSelectionBuilder subOrganisationUserSelection() {
     return UserSelection.builder()
       .id(randomUUID())
       .name("a-user-selection")

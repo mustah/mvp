@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
@@ -103,5 +105,16 @@ public class MockRequestParameters implements RequestParameters {
   @Override
   public boolean isEmpty() {
     return map.isEmpty();
+  }
+
+  @Override
+  public Optional<RequestParameters> implicitParameters() {
+    return Optional.empty();
+  }
+
+  @Override
+  public RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser) {
+    ensureOrganisation(currentUser);
+    return this;
   }
 }
