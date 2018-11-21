@@ -5,10 +5,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
@@ -29,12 +34,16 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
 public final class RequestParametersMapper {
@@ -81,6 +90,27 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(ALARM, (values) -> new AlarmFilter(values, EQUAL));
     PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, WILDCARD));
     PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, WILDCARD));
+    PARAMETER_TO_FILTER.put(
+      RESOLUTION,
+      (values) -> new ResolutionFilter(Set.of(
+        values.stream()
+          .map(TemporalResolution::fromString)
+          .flatMap(Optional::stream)
+          .findAny()
+          .orElseThrow(() -> new IllegalArgumentException("Invalid value for resolution"))
+      ), EQUAL)
+    );
+    PARAMETER_TO_FILTER.put(
+      QUANTITY,
+      (values) -> {
+        Set<Quantity> quantities = values.stream()
+          .map(quantity -> Stream.of(quantity.split(","))) // TODO stop calling things with CSV
+          .flatMap(identity())
+          .map(Quantity::of)
+          .collect(toSet());
+        return new QuantityFilter(quantities, EQUAL);
+      }
+    );
   }
 
   public static Filters toFilters(RequestParameters requestParameters) {

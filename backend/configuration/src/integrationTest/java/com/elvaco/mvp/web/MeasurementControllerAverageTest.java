@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -14,6 +15,7 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -27,6 +29,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
+import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
@@ -637,7 +642,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void findsAverageConsumptionForGasMeters_WithMeterIds() {
+  public void findsAverageConsumptionForGasMeters_ByMeterIds() {
     var date = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     var logicalMeter = newLogicalMeterEntity(GAS_METER);
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
@@ -668,7 +673,49 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void findsAverageConsumptionForGasMeters_WithMedium() {
+  public void findsAverage_ByCity() {
+    var date = ZonedDateTime.parse("2018-02-01T01:00:00Z");
+
+    var kungsbackaLogical = newLogicalMeterEntity(ROOM_TEMP_METER, kungsbacka().build());
+    newMeasurement(
+      newPhysicalMeterEntity(kungsbackaLogical.id),
+      date,
+      Quantity.EXTERNAL_TEMPERATURE.name,
+      1.0
+    );
+
+    var stockholmLogical = newLogicalMeterEntity(ROOM_TEMP_METER, stockholm().build());
+    newMeasurement(
+      newPhysicalMeterEntity(stockholmLogical.id),
+      date,
+      Quantity.EXTERNAL_TEMPERATURE.name,
+      2.0
+    );
+
+    var response = asUser()
+      .getList(
+        "/measurements/average"
+          + "?after={after}"
+          + "&before={before}"
+          + "&quantity={quantity}"
+          + "&city={country},{city}",
+        MeasurementSeriesDto.class,
+        date,
+        date,
+        Quantity.EXTERNAL_TEMPERATURE.name,
+        kungsbackaLogical.location.country,
+        kungsbackaLogical.location.city
+      ).getBody();
+
+    ZonedDateTime periodStartHour = date.truncatedTo(ChronoUnit.HOURS);
+
+    assertThat(response)
+      .flatExtracting("values")
+      .containsExactly(new MeasurementValueDto(periodStartHour.toInstant(), 1.0));
+  }
+
+  @Test
+  public void findsAverageConsumptionForGasMeters_ByMedium() {
     var date = ZonedDateTime.parse("2018-02-01T01:00:00Z");
     var logicalMeter = newLogicalMeterEntity(GAS_METER);
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
@@ -776,13 +823,24 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
     UUID uuid = randomUUID();
     MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
-    return logicalMeterJpaRepository.save(new LogicalMeterEntity(
+    LogicalMeterEntity meter = new LogicalMeterEntity(
       uuid,
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
       meterDefinitionEntity
-    ));
+    );
+
+    return logicalMeterJpaRepository.save(meter);
+  }
+
+  private LogicalMeterEntity newLogicalMeterEntity(
+    MeterDefinition meterDefinition,
+    Location location
+  ) {
+    var meter = newLogicalMeterEntity(meterDefinition);
+    meter.location = LocationEntityMapper.toEntity(meter.id, location);
+    return logicalMeterJpaRepository.save(meter);
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity(UUID logicalMeterId) {

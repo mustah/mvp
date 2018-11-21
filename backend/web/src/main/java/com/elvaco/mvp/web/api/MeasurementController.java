@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
@@ -24,22 +25,27 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
+import com.elvaco.mvp.web.exception.MissingParameter;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static com.elvaco.mvp.core.util.QuantityHelper.complementWithUnits;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptyList;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -56,20 +62,30 @@ public class MeasurementController {
 
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(
-    @RequestParam List<UUID> meters,
-    @RequestParam(name = "quantities") Set<Quantity> quantities,
+    @RequestParam MultiValueMap<String, String> requestParams,
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
     ZonedDateTime stop = beforeOrNow(before);
+    RequestParameters parameters = requestParametersOf(requestParams, LOGICAL_METER_ID);
+
+    Set<Quantity> quantities = parameters.getValues(QUANTITY).stream()
+      .map(quantity -> Stream.of(quantity.split(","))) // TODO stop calling things with CSV
+      .flatMap(identity())
+      .map(Quantity::of)
+      .collect(toSet());
+    if (quantities.isEmpty()) {
+      throw new MissingParameter(QUANTITY);
+    }
+
     return measurementSeriesOf(
       after,
       stop,
       resolutionOrDefault(after, stop, resolution),
       quantities,
-      findLogicalMetersByIds(meters),
+      logicalMeterUseCases.findAllBy(parameters),
       (quantity, measurementValue) -> new LabeledMeasurementValue(
         String.format("average-%s", quantity.name),
         label,
@@ -97,7 +113,7 @@ public class MeasurementController {
     // measurements, which is a bit too much.
     List<LogicalMeter> logicalMeters = findLogicalMetersByIds(meters);
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
-      .collect(toMap(LogicalMeter::getId, Function.identity()));
+      .collect(toMap(LogicalMeter::getId, identity()));
 
     Set<Quantity> quantities = maybeQuantities
       .orElseGet(() -> logicalMeters.stream()

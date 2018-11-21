@@ -12,6 +12,8 @@ import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
+import com.elvaco.mvp.core.filter.QuantityFilter;
+import com.elvaco.mvp.core.filter.ResolutionFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
@@ -62,4 +64,10 @@ abstract class EmptyFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {}
+
+  @Override
+  public void visit(ResolutionFilter resolutionFilter) {}
+
+  @Override
+  public void visit(QuantityFilter quantityFilter) {}
 }

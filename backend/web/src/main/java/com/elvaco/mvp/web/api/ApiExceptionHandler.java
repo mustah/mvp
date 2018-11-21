@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
+import com.elvaco.mvp.web.exception.MissingParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -113,17 +114,17 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(PredicateConstructionFailure.class)
   public ResponseEntity<ErrorMessageDto> handle(PredicateConstructionFailure exception) {
-    return badRequest(exception.getMessage());
+    return badRequest(exception);
   }
 
   @ExceptionHandler(UnitConversionError.class)
   public ResponseEntity<ErrorMessageDto> handle(UnitConversionError exception) {
-    return badRequest(exception.getMessage());
+    return badRequest(exception);
   }
 
   @ExceptionHandler(InvalidQuantityForMeterType.class)
   public ResponseEntity<ErrorMessageDto> handle(InvalidQuantityForMeterType exception) {
-    return badRequest(exception.getMessage());
+    return badRequest(exception);
   }
 
   @ExceptionHandler(EmailAddressAlreadyExists.class)
@@ -155,6 +156,11 @@ public class ApiExceptionHandler {
     return new ResponseEntity<>(dto, HttpStatus.FORBIDDEN);
   }
 
+  @ExceptionHandler(MissingParameter.class)
+  public ResponseEntity<ErrorMessageDto> handle(MissingParameter exception) {
+    return badRequest(exception);
+  }
+
   private ResponseEntity<ErrorMessageDto> handleGeneralException(Exception exception) {
     log.warn("Exception occurred while processing request", exception);
     ApiExceptionInformation exceptionInformation = resolveHttpStatus(exception);
@@ -176,6 +182,10 @@ public class ApiExceptionHandler {
       return "parameter";
     }
     return TYPE_TO_HUMAN_TYPE_MAP.getOrDefault(javaType.getName(), "parameter");
+  }
+
+  private static ResponseEntity<ErrorMessageDto> badRequest(Exception e) {
+    return badRequest(e.getMessage());
   }
 
   private static ResponseEntity<ErrorMessageDto> badRequest(String message) {
