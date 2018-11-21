@@ -163,13 +163,13 @@ describe('measurementActions', () => {
         );
 
         expect(externalTemperature.pathname).toEqual('/measurements');
-        expect(externalTemperature.searchParams.get('quantities')).toEqual(Quantity.externalTemperature);
+        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
         expect(externalTemperature.searchParams.get('meters')).toEqual(roomSensorMeter.id);
         expect(externalTemperature.searchParams.get('before')).toBeTruthy();
         expect(externalTemperature.searchParams.get('after')).toBeTruthy();
 
         expect(volume.pathname).toEqual('/measurements');
-        expect(volume.searchParams.get('quantities')).toEqual(Quantity.volume);
+        expect(volume.searchParams.get('quantity')).toEqual(Quantity.volume);
         expect(volume.searchParams.get('meters')).toEqual(gasMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
@@ -208,14 +208,14 @@ describe('measurementActions', () => {
           (url: string) => new URL(`${mockHost}${url}`),
         );
 
-        expect(externalTemperature.pathname).toEqual('/measurements/cities');
-        expect(externalTemperature.searchParams.get('quantities')).toEqual(Quantity.externalTemperature);
+        expect(externalTemperature.pathname).toEqual('/measurements/average');
+        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
         expect(externalTemperature.searchParams.get('city')).toEqual(roomSensorMeter.id);
         expect(externalTemperature.searchParams.get('before')).toBeTruthy();
         expect(externalTemperature.searchParams.get('after')).toBeTruthy();
 
-        expect(volume.pathname).toEqual('/measurements/cities');
-        expect(volume.searchParams.get('quantities')).toEqual(Quantity.volume);
+        expect(volume.pathname).toEqual('/measurements/average');
+        expect(volume.searchParams.get('quantity')).toEqual(Quantity.volume);
         expect(volume.searchParams.get('city')).toEqual(gasMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
@@ -256,8 +256,8 @@ describe('measurementActions', () => {
 
         const [url] = requestedUrls.map((url: string) => new URL(`${mockHost}${url}`));
 
-        expect(url.pathname).toEqual('/measurements/cities');
-        expect(url.searchParams.get('quantities')).toEqual(Quantity.power);
+        expect(url.pathname).toEqual('/measurements/average');
+        expect(url.searchParams.get('quantity')).toEqual(Quantity.power);
         expect(url.searchParams.getAll('city')).toEqual([
           firstDistrictHeating.id, secondDistrictHeating.id,
         ]);
@@ -299,13 +299,13 @@ describe('measurementActions', () => {
         const [city, meter] = requestedUrls.map((url: string) => new URL(`${mockHost}${url}`));
 
         expect(meter.pathname).toEqual('/measurements');
-        expect(meter.searchParams.get('quantities')).toEqual(Quantity.power);
+        expect(meter.searchParams.get('quantity')).toEqual(Quantity.power);
         expect(meter.searchParams.get('meters')).toEqual(mockedMeter.id);
         expect(meter.searchParams.get('before')).toBeTruthy();
         expect(meter.searchParams.get('after')).toBeTruthy();
 
-        expect(city.pathname).toEqual('/measurements/cities');
-        expect(city.searchParams.get('quantities')).toEqual(Quantity.power);
+        expect(city.pathname).toEqual('/measurements/average');
+        expect(city.searchParams.get('quantity')).toEqual(Quantity.power);
         expect(city.searchParams.get('city')).toEqual(mockedCity.id);
         expect(city.searchParams.get('before')).toBeTruthy();
         expect(city.searchParams.get('after')).toBeTruthy();
@@ -340,7 +340,7 @@ describe('measurementActions', () => {
           .map((url: string) => new URL(`${mockHost}${url}`));
 
         expect(averageUrl.pathname).toEqual('/measurements/average');
-        expect(averageUrl.searchParams.get('quantities')).toEqual(Quantity.externalTemperature);
+        expect(averageUrl.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
         expect(averageUrl.searchParams.get('meters')).toEqual(
           `${firstRoomSensor.id},${secondRoomSensor.id}`,
         );

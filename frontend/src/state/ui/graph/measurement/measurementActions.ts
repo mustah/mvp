@@ -37,7 +37,7 @@ const measurementMeterUri = (
   timePeriod: Period,
   customDateRange: Maybe<DateRange>,
 ): string =>
-  `quantities=${quantity}` +
+  `quantity=${quantity}` +
   `&meters=${meters.join(',')}` +
   `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
 
@@ -47,7 +47,7 @@ const measurementCityUri = (
   timePeriod: Period,
   customDateRange: Maybe<DateRange>,
 ): string =>
-  `quantities=${quantity}` +
+  `quantity=${quantity}` +
   `&${cities.map((city) => `city=${city}`).join('&')}` +
   `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
 
@@ -130,7 +130,7 @@ const requestsPerQuantity = (
     .filter((quantity: Quantity) => cityByQuantity[quantity]!.size)
     .map((quantity: Quantity) =>
       restClient.getParallel(makeUrl(
-        EndPoints.measurements.concat('/cities'),
+        EndPoints.measurements.concat('/average'),
         measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
       )));
 
