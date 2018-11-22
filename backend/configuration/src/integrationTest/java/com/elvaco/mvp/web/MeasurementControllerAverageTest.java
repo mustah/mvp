@@ -66,6 +66,45 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
+  public void oneMeter_OnlyIncludesAskedForMeters() {
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
+
+    var interestingLogicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var interestingPhysicalMeter = newPhysicalMeterEntity(interestingLogicalMeter.id);
+    newMeasurement(interestingPhysicalMeter, date, "Power", 1.0);
+    newMeasurement(interestingPhysicalMeter, date.plusHours(1), "Power", 2.0);
+
+    var uninterestingLogicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    var uninterestingPhysicalMeter = newPhysicalMeterEntity(uninterestingLogicalMeter.id);
+    newMeasurement(uninterestingPhysicalMeter, date, "Power", 99.0);
+    newMeasurement(uninterestingPhysicalMeter, date.plusHours(1), "Power", 100.0);
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
+      String.format(
+        "/measurements/average"
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
+          + "&quantity=" + Quantity.POWER.name
+          + "&logicalMeterId=%s"
+          + "&resolution=hour",
+        interestingLogicalMeter.id.toString()
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(
+      singletonList(new MeasurementSeriesDto(
+        SERIES_ID_AVERAGE_POWER,
+        Quantity.POWER.name,
+        Quantity.POWER.presentationUnit(),
+        AVERAGE,
+        asList(
+          new MeasurementValueDto(date.toInstant(), 1.0),
+          new MeasurementValueDto(date.plusHours(1).toInstant(), 2.0)
+        )
+      )));
+  }
+
+  @Test
   public void oneMeter_TwoHours() {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
@@ -79,7 +118,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date.plusHours(1)
           + "&quantity=" + Quantity.POWER.name
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
@@ -117,9 +156,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date.plusHours(1)
           + "&quantity=" + Quantity.POWER.name
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
-        String.join(",", asList(logicalMeter1.id.toString(), logicalMeter2.id.toString()))
+        logicalMeter1.id.toString(),
+        logicalMeter2.id.toString()
       ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -157,9 +198,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date.plusHours(1)
           + "&quantity=" + Quantity.ENERGY.name + ":kWh"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
-        String.join(",", asList(logicalMeter1.id.toString(), logicalMeter2.id.toString()))
+        logicalMeter1.id.toString(),
+        logicalMeter2.id.toString()
       ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -195,7 +238,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         + "?after=" + date
         + "&before=" + date.plusMinutes(1)
         + "&quantity={powerQuantity},{diffTempQuantity}"
-        + "&meters={meterId}"
+        + "&logicalMeterId={meterId}"
         + "&resolution=hour",
       MeasurementSeriesDto.class,
       Quantity.POWER.name,
@@ -237,7 +280,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date
           + "&quantity=" + Quantity.POWER.name
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
@@ -264,7 +307,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         + "?after=2018-03-06T05:00:00.000Z"
         + "&before=2018-03-06T06:00:00.000Z"
         + "&quantity={quantiy}"
-        + "&meters={meterId}"
+        + "&logicalMeterId={meterId}"
         + "&resolution=hour",
       MeasurementSeriesDto.class,
       Quantity.POWER.name,
@@ -277,7 +320,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after={after}"
           + "&before={before}"
           + "&quantity={quantiy}"
-          + "&meters={meterId}"
+          + "&logicalMeterId={meterId}"
           + "&resolution=hour",
         MeasurementSeriesDto.class,
         "2018-03-06T03:00:00.000-02:00",
@@ -319,7 +362,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date.plusHours(1)
           + "&quantity=" + Quantity.POWER.name
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         logicalMeterWithoutPhysical.id.toString()
       ), ErrorMessageDto.class);
@@ -346,7 +389,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date
           + "&quantity=" + Quantity.POWER.name
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
@@ -375,7 +418,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date
           + "&quantity=" + Quantity.POWER.name + ":kW"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
@@ -406,7 +449,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date.minusDays(1)
           + "&before=" + date.plusDays(2).minusNanos(1)
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=day",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
@@ -444,7 +487,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date.plusHours(5)
           + "&before=" + date.plusMonths(2)
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=month",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
@@ -467,28 +510,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void invalidParameterValuesReturnsHttp400_quantity() {
-    var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
-    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
-    newPhysicalMeterEntity(logicalMeter.id);
-
-    ResponseEntity<ErrorMessageDto> response = asUser()
-      .get(String.format(
-        "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(1)
-          + "&quantity=SomeUnknownQuantity"
-          + "&meters=%s"
-          + "&resolution=hour",
-        logicalMeter.id.toString()
-      ), ErrorMessageDto.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getBody().message).isEqualTo("Invalid quantity 'SomeUnknownQuantity' for "
-      + "District heating meter");
-  }
-
-  @Test
   public void invalidParameterValuesReturnsHttp400_after() {
     var response = asUser()
       .get(String.format(
@@ -496,7 +517,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=thisIsNotAValidTimestamp"
           + "&before=2018-03-07T12:32:05.999Z"
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=month",
         randomUUID().toString()
       ), ErrorMessageDto.class);
@@ -514,7 +535,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=2018-03-07T12:32:05.999Z"
           + "&before=thisIsNotAValidTimestamp"
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=month",
         randomUUID().toString()
       ), ErrorMessageDto.class);
@@ -532,7 +553,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=2018-03-07T12:32:05.999Z"
           + "&before=2018-03-07T12:32:05.999Z"
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=NotAValidResolution",
         randomUUID().toString()
       ), ErrorMessageDto.class);
@@ -543,16 +564,37 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void invalidParameterValuesReturnsEmptyList_meters() {
+  public void invalidParameterValuesReturnsHttp400_logicalMeterId() {
     var response = asUser()
-      .getList(String.format(
+      .get(String.format(
         "/measurements/average"
           + "?after=2018-03-07T12:32:05.999Z"
           + "&before=2018-03-07T12:32:05.999Z"
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=month",
         "NotAValidUUID"
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo("Invalid UUID string: NotAValidUUID");
+  }
+
+  @Test
+  public void invalidParameterValues_ReturnsEmptyList_quantity() {
+    var date = ZonedDateTime.parse("2018-03-06T05:00:00.000Z");
+    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+    newPhysicalMeterEntity(logicalMeter.id);
+
+    var response = asUser()
+      .getList(String.format(
+        "/measurements/average"
+          + "?after=" + date
+          + "&before=" + date.plusHours(1)
+          + "&quantity=SomeUnknownQuantity"
+          + "&logicalMeterId=%s"
+          + "&resolution=hour",
+        logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -566,7 +608,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         "/measurements/average"
           + "?to=2018-03-07T12:32:05.999Z"
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         randomUUID().toString()
       ), ErrorMessageDto.class);
@@ -583,7 +625,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         "/measurements/average"
           + "?after=2018-03-07T12:32:05.999Z"
           + "&before=2018-03-07T12:32:05.999Z"
-          + "&meters=%s"
+          + "&logicalMeterId=%s"
           + "&resolution=hour",
         randomUUID().toString()
       ), ErrorMessageDto.class);
@@ -606,7 +648,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         "/measurements/average"
           + "?after={now}"
           + "&quantity={powerQuantity}:W"
-          + "&meters={meterId}"
+          + "&logicalMeterId={meterId}"
           + "&resolution=hour",
         MeasurementSeriesDto.class,
         date,
@@ -635,7 +677,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + after
           + "&before=" + before
           + "&quantity=" + Quantity.POWER.name + ":W"
-          + "&meters=%s",
+          + "&logicalMeterId=%s",
         logicalMeter.getId()
       ), MeasurementSeriesDto.class).getBody().get(0);
     assertThat(response.values).hasSize(23);
@@ -656,7 +698,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
           + "?after=" + date
           + "&before=" + date.plusHours(3)
           + "&quantity=" + Quantity.VOLUME.name
-          + "&meters=" + logicalMeter.getId(),
+          + "&logicalMeterId=" + logicalMeter.getId(),
         MeasurementSeriesDto.class
       ).getBody();
 
@@ -746,30 +788,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void twoMetersAndTwoQuantities_WhereOneQuantityIsNotPresent_OnOneMeter() {
-    var date = ZonedDateTime.parse("2018-02-01T01:12:00Z");
-
-    var logicalMeter = newLogicalMeterEntity(GAS_METER);
-    var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Volume", 1.0);
-    newMeasurement(meter, date.plusHours(1), "Volume", 2.0);
-    newMeasurement(meter, date.plusHours(2), "Volume", 5.0);
-
-    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
-      .get(String.format(
-        "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(4)
-          + "&quantity=Volume,Power"
-          + "&meters=%s",
-        logicalMeter.getId()
-      ), ErrorMessageDto.class);
-
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(responseEntity.getBody().message).contains("Invalid quantity 'Power' for Gas meter");
-  }
-
-  @Test
   public void twoQuantities_WhereOneIsNotPresent() {
     var date = ZonedDateTime.parse("2018-02-01T01:12:00Z");
 
@@ -779,19 +797,20 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     newMeasurement(meter, date.plusHours(1), "Volume", 2.0);
     newMeasurement(meter, date.plusHours(2), "Volume", 5.0);
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
-      .get(
+    var responseEntity = asUser()
+      .getList(
         "/measurements/average"
           + "?after=" + date
           + "&before=" + date.plusHours(4)
           + "&quantity=" + Quantity.VOLUME.name + ",Flarbb"
-          + "&meters=" + logicalMeter.getId(),
-        ErrorMessageDto.class
+          + "&logicalMeterId=" + logicalMeter.getId(),
+        MeasurementSeriesDto.class
       );
 
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(responseEntity.getBody().message).contains("Invalid quantity 'Flarbb' for Gas "
-      + "meter");
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(responseEntity.getBody())
+      .extracting("quantity")
+      .containsExactly("Volume");
   }
 
   @Override

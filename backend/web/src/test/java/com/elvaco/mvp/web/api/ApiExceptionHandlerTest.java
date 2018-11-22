@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -58,6 +59,29 @@ public class ApiExceptionHandlerTest {
       apiExceptionHandler.handle(new ClientAbortException());
 
     assertThat(response).isNull();
+  }
+
+  @Test
+  public void aopCaughtTypeError_InvalidDataAccessApiUsageException_uuid() {
+    String message = "Invalid UUID string: NotAValidUUID; nested exception is "
+      + "java.lang.IllegalArgumentException: Invalid UUID string: NotAValidUUID";
+
+    ResponseEntity<ErrorMessageDto> response =
+      apiExceptionHandler.handle(new InvalidDataAccessApiUsageException(message));
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo("Invalid UUID string: NotAValidUUID");
+  }
+
+  @Test
+  public void aopCaughtTypeError_InvalidDataAccessApiUsageException_SomethingElse() {
+    String message = "A message";
+
+    ResponseEntity<ErrorMessageDto> response =
+      apiExceptionHandler.handle(new InvalidDataAccessApiUsageException(message));
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(message);
   }
 
   @ResponseStatus(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)

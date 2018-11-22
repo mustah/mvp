@@ -65,26 +65,17 @@ export interface AverageResponsePart {
   values: MeasurementValues;
 }
 
-export interface CityResponsePart {
-  id: string;
-  quantity: Quantity;
-  unit: string;
-  label: string;
-  city: string;
-  values: MeasurementValues;
-}
-
 export type MeasurementApiResponse = MeasurementResponsePart[];
-export type AverageApiResponse = AverageResponsePart[];
-export type CityApiResponse = CityResponsePart[];
 
 export interface Measurements {
   measurements: MeasurementApiResponse;
 }
 
+type AverageApiResponse = AverageResponsePart[];
+
 export interface MeasurementResponses extends Measurements {
   average: AverageApiResponse;
-  cities: CityApiResponse;
+  cities: AverageApiResponse;
 }
 
 export enum Quantity {

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
@@ -16,6 +18,7 @@ import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.exception.MissingParameter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,6 +35,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 @ControllerAdvice
 public class ApiExceptionHandler {
 
+  static final Pattern STRIP_AFTER_SEMI_COLON = Pattern.compile("([^;]+);");
   static final String INTERNAL_ERROR_MESSAGE = "Internal server error, please contact support.";
 
   private static final ApiExceptionInformation INTERNAL_SERVER_ERROR =
@@ -110,6 +114,16 @@ public class ApiExceptionHandler {
       value
     );
     return badRequest(message);
+  }
+
+  /**
+   * Thrown for example when we try to map strings to UUID in the JPA layer,
+   * and Spring's AOP wraps the exception.
+   */
+  @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidDataAccessApiUsageException exception) {
+    Matcher matcher = STRIP_AFTER_SEMI_COLON.matcher(exception.getMessage());
+    return badRequest(matcher.find() ? matcher.group(1) : exception.getMessage());
   }
 
   @ExceptionHandler(PredicateConstructionFailure.class)

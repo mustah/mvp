@@ -5,7 +5,6 @@ import {shallowEqual} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
-import {DateRange, Period} from '../../../components/dates/dateModels';
 import {componentOrNothing} from '../../../components/hoc/hocs';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
@@ -28,7 +27,7 @@ import {Normalized} from '../../../state/domain-models/domainModels';
 import {SelectedTreeEntities, SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
-import {fetchMeasurements} from '../../../state/ui/graph/measurement/measurementActions';
+import {fetchMeasurements, MeasurementOptions} from '../../../state/ui/graph/measurement/measurementActions';
 import {
   initialState,
   MeasurementResponses,
@@ -40,7 +39,7 @@ import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicator
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
+import {SelectedParameters} from '../../../state/user-selection/userSelectionModels';
 import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
@@ -57,14 +56,13 @@ interface SelectedIds {
 }
 
 interface StateToProps extends SelectedIds {
-  customDateRange: Maybe<DateRange>;
   enabledIndicatorTypes: Set<Medium>;
-  period: Period;
   selectedIndicators: Medium[];
   selectedQuantities: Quantity[];
   selectionTreeEntities: SelectionTreeEntities;
   selectedTab: TabName;
   legendItems: Normalized<LegendItem>;
+  selectionParameters: SelectedParameters;
 }
 
 export interface ReportContainerState {
@@ -202,20 +200,18 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
     selectionTreeEntities,
     selectedIndicators,
     selectedListItems,
-    period: timePeriod,
-    customDateRange,
-    selectedQuantities: quantities,
+    selectedQuantities,
     logout,
-  }: Props) =>
+    selectionParameters,
+  }: Props): MeasurementOptions =>
     ({
-      quantities,
-      customDateRange,
+      quantities: selectedQuantities,
       logout,
       selectedListItems,
       selectedIndicators,
       selectionTreeEntities,
-      timePeriod,
       updateState: this.updateState,
+      selectionParameters,
     })
 }
 
@@ -223,7 +219,7 @@ const mapStateToProps =
   ({
     report: {selectedListItems},
     selectionTree: {entities},
-    userSelection: {userSelection},
+    userSelection: {userSelection: {selectionParameters}},
     ui: {
       indicator: {
         selectedIndicators: {report},
@@ -233,18 +229,16 @@ const mapStateToProps =
     },
   }: RootState): StateToProps & SelectedIndicatorWidgetProps => {
     const selectedTreeState: SelectedTreeEntities = {selectedListItems, entities};
-    const {period, customDateRange} = getSelectedPeriod(userSelection);
     return ({
-      customDateRange,
       enabledIndicatorTypes: getMedia(selectedTreeState),
       legendItems: getLegendItems(selectedTreeState),
-      period,
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
       selectedIndicatorTypes: report,
       selectionTreeEntities: entities,
       selectedTab: getSelectedTab(tabs.report),
+      selectionParameters,
     });
   };
 

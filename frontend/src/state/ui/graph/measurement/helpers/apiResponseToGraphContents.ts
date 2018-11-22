@@ -2,13 +2,7 @@ import * as chroma from 'chroma-js';
 import {firstUpper} from '../../../../../services/translationService';
 import {Dictionary} from '../../../../../types/Types';
 import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../../usecases/report/reportModels';
-import {
-  AverageResponsePart,
-  CityResponsePart,
-  MeasurementResponsePart,
-  MeasurementResponses,
-  Quantity,
-} from '../measurementModels';
+import {AverageResponsePart, MeasurementResponsePart, MeasurementResponses, Quantity} from '../measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -100,16 +94,16 @@ export const mapApiResponseToGraphData =
 
     const legendsCities: Dictionary<ProprietaryLegendProps> = cities.reduce((
       prev,
-      {quantity, city},
+      {quantity, label},
     ) => (
-      prev[`${quantity}-${city}`]
+      prev[`${quantity}-${label}`]
         ? prev
         : {
           ...prev,
-          [`city-${quantity}-${city}`]: {
+          [`city-${quantity}-${label}`]: {
             type: 'line',
             color: cityColorScale[cityIndex++],
-            value: `${firstUpper(city)} ${quantity}`,
+            value: `${firstUpper(label)} ${quantity}`,
           },
         }), {});
 
@@ -197,7 +191,7 @@ export const mapApiResponseToGraphData =
 
     cities.forEach(
       (
-        {id, quantity, values, unit, city}: CityResponsePart,
+        {id, quantity, values, unit, label}: AverageResponsePart,
         index: number,
       ) => {
         if (!graphContents.axes.left) {
@@ -210,13 +204,13 @@ export const mapApiResponseToGraphData =
         if (!yAxisId) {
           return;
         }
-        const dataKey: string = `${firstUpper(city)} ${quantity}`;
+        const dataKey: string = `${firstUpper(label)} ${quantity}`;
         graphContents.lines.push({
           id,
           dataKey,
-          key: `city-${quantity}-${city}`,
+          key: `city-${quantity}-${label}`,
           name: dataKey,
-          city,
+          city: label,
           stroke: cityColorScale[index],
           strokeWidth: thickStroke,
           yAxisId,

@@ -37,7 +37,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
@@ -70,7 +69,7 @@ public class MeasurementController {
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
     ZonedDateTime stop = beforeOrNow(before);
-    RequestParameters parameters = requestParametersOf(requestParams, LOGICAL_METER_ID);
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
 
     Set<Quantity> quantities = parameters.getValues(QUANTITY).stream()
       .map(quantity -> Stream.of(quantity.split(","))) // TODO stop calling things with CSV
@@ -101,7 +100,7 @@ public class MeasurementController {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
-    @RequestParam List<UUID> meters,
+    @RequestParam List<UUID> logicalMeterId,
     @RequestParam(name = "quantities") Optional<Set<Quantity>> maybeQuantities,
     @RequestParam(defaultValue = "1970-01-01T00:00:00Z")
     @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
@@ -113,7 +112,7 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(meters);
+    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterId);
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, identity()));
 
