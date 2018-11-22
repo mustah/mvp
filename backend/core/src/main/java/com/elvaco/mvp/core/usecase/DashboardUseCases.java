@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.CollectionStats;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import static java.util.stream.Collectors.toList;
 public class DashboardUseCases {
 
   private final LogicalMeters logicalMeters;
+  private final AuthenticatedUser currentUser;
 
   public static Optional<CollectionStats> sumCollectionStats(
     List<CollectionStats> collectionStats
@@ -29,10 +31,10 @@ public class DashboardUseCases {
       return Optional.empty();
     }
 
-    List<CollectionStats> meterStats =
-      logicalMeters.findMissingMeterReadingsCounts(parameters).stream()
-        .map(entry -> new CollectionStats(entry.missingReadingCount, entry.readInterval))
-        .collect(toList());
+    List<CollectionStats> meterStats = logicalMeters
+      .findMissingMeterReadingsCounts(parameters.ensureOrganisationFilters(currentUser)).stream()
+      .map(entry -> new CollectionStats(entry.missingReadingCount, entry.readInterval))
+      .collect(toList());
 
     return sumCollectionStats(meterStats);
   }

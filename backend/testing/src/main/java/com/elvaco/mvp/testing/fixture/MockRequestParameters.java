@@ -32,14 +32,14 @@ public class MockRequestParameters implements RequestParameters {
 
   @Override
   public RequestParameters add(RequestParameter param, String value) {
+    map.computeIfPresent(param, (s, strings) -> {
+      strings.add(value);
+      return strings;
+    });
     map.computeIfAbsent(param, v -> {
       List<String> values = new ArrayList<>();
       values.add(value);
       return values;
-    });
-    map.computeIfPresent(param, (s, strings) -> {
-      strings.add(value);
-      return strings;
     });
     return this;
   }
@@ -51,6 +51,7 @@ public class MockRequestParameters implements RequestParameters {
 
   @Override
   public RequestParameters setAll(RequestParameter param, List<String> values) {
+    map.put(param, values);
     return this;
   }
 

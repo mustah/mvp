@@ -88,8 +88,8 @@ class UseCaseConfig {
   }
 
   @Bean
-  DashboardUseCases dashboardUseCases() {
-    return new DashboardUseCases(logicalMeters);
+  DashboardUseCases dashboardUseCases(AuthenticatedUser currentUser) {
+    return new DashboardUseCases(logicalMeters, currentUser);
   }
 
   @Bean

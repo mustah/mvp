@@ -11,7 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -19,15 +22,27 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
+import com.elvaco.mvp.testing.fixture.UserTestData;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
+import static com.elvaco.mvp.testing.fixture.OrganisationTestData.MARVEL;
+import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_STRING;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -35,6 +50,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
+@SuppressWarnings("ALL")
 public class DashboardControllerTest extends IntegrationTest {
 
   private final ZonedDateTime startDate = ZonedDateTime.now(ZoneId.of("UTC"))
@@ -71,15 +87,44 @@ public class DashboardControllerTest extends IntegrationTest {
     assertThat(widget.type).isEqualTo(WidgetType.COLLECTION.name);
   }
 
+  // TODO[!must!] refactor this test class to not use *JpaRepository classes anymore!
+  // TODO[!must!] we should use the core repository classes to build and created entities.
+  @Ignore
+  @Test
+  public void findCollectionStatsEnsureOrganisationFiltersAreApplied() {
+    UserSelection selection = UserSelection.builder()
+      .selectionParameters(toJsonNode(CITIES_JSON_STRING))
+      .organisationId(MARVEL.id)
+      .build();
+
+    Organisation organisation = MARVEL.toBuilder()
+      .selection(selection)
+      .parent(ELVACO)
+      .build();
+
+    User user = UserTestData.subOrgUser().organisation(organisation).build();
+
+    var url = Url.builder()
+      .path("/dashboards/current")
+      .parameter(CITY, "norge,oslo")
+      .parameter(BEFORE, "2018-01-01T00:00:00Z")
+      .parameter(AFTER, "2018-12-31T00:00:00Z")
+      .build();
+
+    var response = as(user).get(url, DashboardDto.class);
+
+    assertThat(response.getBody().widgets).isEmpty();
+  }
+
   @Test
   public void findAllWithCollectionStatusForMediumGas() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
+      MeterDefinitionEntityMapper.toEntity(GAS_METER),
       startDate
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.GAS_METER)
+      newPhysicalMeterEntity(logicalMeter.id, GAS_METER)
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(15));
@@ -110,12 +155,12 @@ public class DashboardControllerTest extends IntegrationTest {
   @Test
   public void findAllWithCollectionStatusRoomSensor() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      MeterDefinitionEntityMapper.toEntity(DISTRICT_HEATING_METER),
       startDate
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeterEntity(logicalMeter.id, MeterDefinition.DISTRICT_HEATING_METER)
+      newPhysicalMeterEntity(logicalMeter.id, DISTRICT_HEATING_METER)
     );
 
     newActiveStatusLogs(physicalMeters, startDate);
@@ -224,10 +269,10 @@ public class DashboardControllerTest extends IntegrationTest {
     MeterDefinitionEntity meterDefinitionEntity,
     ZonedDateTime created
   ) {
-    UUID uuid = randomUUID();
+    UUID id = randomUUID();
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      randomUUID(),
-      uuid.toString(),
+      id,
+      id.toString(),
       context().organisationEntity.id,
       created,
       meterDefinitionEntity
@@ -238,12 +283,12 @@ public class DashboardControllerTest extends IntegrationTest {
     UUID logicalMeterId,
     MeterDefinition meterDefinition
   ) {
-    UUID uuid = randomUUID();
+    UUID id = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
-      uuid,
+      id,
       context().organisationEntity,
       "",
-      uuid.toString(),
+      id.toString(),
       meterDefinition.medium,
       "",
       logicalMeterId,
