@@ -12,7 +12,6 @@ import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity.meterAlarmLogEntity;
 import static java.util.stream.Collectors.toList;
 
@@ -20,10 +19,6 @@ import static java.util.stream.Collectors.toList;
 public final class FilterUtils {
 
   private static final QMeterAlarmLogEntity ALARM_LOG = meterAlarmLogEntity;
-
-  public static boolean isOrganisationQuery(RequestParameters parameters) {
-    return parameters.hasParam(ORGANISATION);
-  }
 
   public static boolean isLocationQuery(RequestParameters parameters) {
     return parameters.hasParam(CITY) || parameters.hasParam(ADDRESS);
