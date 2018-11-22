@@ -7,7 +7,7 @@ import org.jooq.SelectJoinStep;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 
-public class MeterAlarmJooqPredicates extends EmptyJooqFilterVisitor {
+public class MeterAlarmJooqConditions extends EmptyJooqFilterVisitor {
 
   @Override
   public void visit(PeriodFilter periodFilter) {

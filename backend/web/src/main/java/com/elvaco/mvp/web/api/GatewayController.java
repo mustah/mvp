@@ -3,9 +3,9 @@ package com.elvaco.mvp.web.api;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_ID;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/gateways")
@@ -39,7 +39,7 @@ public class GatewayController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams, RequestParameter.GATEWAY_ID);
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams, GATEWAY_ID);
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<GatewaySummaryDto> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())

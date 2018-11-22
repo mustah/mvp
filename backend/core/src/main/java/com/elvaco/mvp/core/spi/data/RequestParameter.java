@@ -28,15 +28,19 @@ public enum RequestParameter {
   SORT("sort"),
   STATUS("status"),
   Q("q"),
-  Q_FACILITY(null),
-  Q_ADDRESS(null),
-  Q_ORGANISATION(null),
-  Q_SECONDARY_ADDRESS(null),
-  Q_SERIAL(null),
-  Q_CITY(null),
+  Q_FACILITY(),
+  Q_ADDRESS(),
+  Q_ORGANISATION(),
+  Q_SECONDARY_ADDRESS(),
+  Q_SERIAL(),
+  Q_CITY(),
   WILDCARD("w");
 
   private final String name;
+
+  RequestParameter() {
+    this(null);
+  }
 
   @Nullable
   public static RequestParameter from(String name) {

@@ -17,8 +17,8 @@ import com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqPredicates;
-import com.elvaco.mvp.database.repository.jooq.MeterAlarmJooqPredicates;
+import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.MeterAlarmJooqConditions;
 import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
@@ -203,8 +203,8 @@ class LogicalMeterQueryDslJpaRepository
 
     Filters filters = toFilters(parameters);
 
-    new LogicalMeterJooqPredicates().apply(filters, query);
-    new MeterAlarmJooqPredicates().apply(filters, query);
+    new LogicalMeterJooqConditions().apply(filters, query);
+    new MeterAlarmJooqConditions().apply(filters, query);
 
     return query.fetchInto(LogicalMeterWithLocation.class);
   }

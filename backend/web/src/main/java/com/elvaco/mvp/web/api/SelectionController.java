@@ -1,7 +1,7 @@
 package com.elvaco.mvp.web.api;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -20,7 +20,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
 
@@ -32,7 +31,6 @@ public class SelectionController {
   private final LocationUseCases locationUseCases;
   private final GatewayUseCases gatewayUseCases;
   private final OrganisationUseCases organisationUseCases;
-  private final AuthenticatedUser authenticatedUser;
 
   @GetMapping("meter-alarms")
   public org.springframework.data.domain.Page<IdNamedDto> meterAlarms() {
@@ -49,7 +47,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_CITY
     );
@@ -66,7 +64,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_ADDRESS
     );
@@ -83,7 +81,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_FACILITY
     );
@@ -100,7 +98,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_SECONDARY_ADDRESS
     );
@@ -117,7 +115,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_SERIAL
     );
@@ -134,7 +132,7 @@ public class SelectionController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams).transform(
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).transform(
       RequestParameter.Q,
       RequestParameter.Q_ORGANISATION
     );

@@ -28,7 +28,7 @@ import com.querydsl.jpa.JPQLQuery;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.alarmQueryFilter;
 
-public class LogicalMeterFilterQueryDslVisitor extends FilterQueryDslJpaVisitor {
+public class LogicalMeterFilterQueryDslVisitor extends EmptyFilterQueryDslJpaVisitor {
 
   private static final QPhysicalMeterStatusLogEntity METER_STATUS_LOG_JOIN =
     new QPhysicalMeterStatusLogEntity("meter_status_log_join");

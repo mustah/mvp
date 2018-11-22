@@ -70,11 +70,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .name("a-user-selection")
       .ownerUserId(context().superAdmin.id)
       .organisationId(context().organisationId())
-      .selectionParameters(
-        toJsonNode(
-          parentOrganisationsSelection
-        )
-      )
+      .selectionParameters(toJsonNode(parentOrganisationsSelection))
       .build());
 
     var subOrganisation = organisations.save(Organisation.builder()

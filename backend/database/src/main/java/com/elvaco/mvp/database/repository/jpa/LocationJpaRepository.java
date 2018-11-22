@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Address;
@@ -11,13 +12,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface LocationJpaRepository {
 
-  Page<LocationEntity> findAll(RequestParameters parameters, Pageable pageable);
-
   Page<City> findAllCities(RequestParameters parameters, Pageable pageable);
 
   Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable);
 
-  <S extends LocationEntity> S save(S entity);
+  Optional<LocationEntity> findById(UUID logicalMeterId);
 
-  LocationEntity findByLogicalMeterId(UUID logicalMeterId);
+  <S extends LocationEntity> S save(S entity);
 }

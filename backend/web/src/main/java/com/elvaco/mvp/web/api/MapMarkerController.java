@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.api;
 import java.util.Set;
 import java.util.UUID;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MapMarker;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static java.util.stream.Collectors.groupingBy;
 
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class MapMarkerController {
   public MapMarkersDto meterMapMarkers(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams);
     return toMapMarkersDto(mapUseCases.findAllMeterMapMarkers(parameters));
   }
 
@@ -42,7 +42,7 @@ public class MapMarkerController {
   public MapMarkersDto gatewayMapMarkers(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = requestParametersOf(requestParams);
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams);
     return toMapMarkersDto(mapUseCases.findAllGatewayMapMarkers(parameters));
   }
 

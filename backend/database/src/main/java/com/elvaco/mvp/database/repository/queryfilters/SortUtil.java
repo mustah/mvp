@@ -1,10 +1,16 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
+import org.jooq.Field;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Streamable;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static java.util.stream.Collectors.toList;
@@ -22,6 +28,17 @@ public class SortUtil {
 
   public static Sort getSortOrUnsorted(RequestParameters parameters) {
     return getSort(parameters).orElse(Sort.unsorted());
+  }
+
+  public static Collection<SortField<?>> resolveSortFields(
+    RequestParameters parameters,
+    Map<String, Field<String>> sortFieldsMap
+  ) {
+    return getSort(parameters).stream()
+      .flatMap(Streamable::stream)
+      .map(order -> sortFieldsMap.get(order.getProperty())
+        .sort(SortOrder.valueOf(order.getDirection().name())))
+      .collect(toList());
   }
 
   private static Sort.Direction getDirection(String s) {

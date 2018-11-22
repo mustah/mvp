@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.GATEWAY_SERIAL;
@@ -30,7 +29,7 @@ public class RequestParametersAdapterTest {
 
   @Test
   public void isEmptyWhenCreatedWithNullMultiMap() {
-    assertThat(requestParametersOf(null).isEmpty()).isTrue();
+    assertThat(RequestParametersAdapter.of(null).isEmpty()).isTrue();
   }
 
   @Test
@@ -66,7 +65,7 @@ public class RequestParametersAdapterTest {
     multiValueMap.add("id", "b");
 
     RequestParametersAdapter requestParameters =
-      (RequestParametersAdapter) requestParametersOf(multiValueMap, LOGICAL_METER_ID);
+      (RequestParametersAdapter) RequestParametersAdapter.of(multiValueMap, LOGICAL_METER_ID);
 
     assertThat(requestParameters.multiValueMap())
       .isEqualTo(ImmutableMultimap.builder()
@@ -114,7 +113,7 @@ public class RequestParametersAdapterTest {
     requestParams.put("gatewaySerial", asList("testing", "to"));
 
     RequestParametersAdapter adapter =
-      (RequestParametersAdapter) requestParametersOf(requestParams)
+      (RequestParametersAdapter) RequestParametersAdapter.of(requestParams)
         .setAll(pathVariables);
 
     assertThat(adapter.multiValueMap())
@@ -137,7 +136,7 @@ public class RequestParametersAdapterTest {
     requestParams.put("city", asList("x", "y", "z"));
 
     RequestParametersAdapter adapter =
-      (RequestParametersAdapter) requestParametersOf(requestParams)
+      (RequestParametersAdapter) RequestParametersAdapter.of(requestParams)
         .setAll(pathVariables);
 
     assertThat(adapter.multiValueMap())
@@ -184,10 +183,10 @@ public class RequestParametersAdapterTest {
   @Test
   public void entrySetShouldBeEmptyWhenThereAreNoParameters() {
     assertThat(new RequestParametersAdapter().entrySet()).isEmpty();
-    assertThat(requestParametersOf(null).entrySet()).isEmpty();
+    assertThat(RequestParametersAdapter.of(null).entrySet()).isEmpty();
 
     Map<String, List<String>> multiValueMap = null;
-    assertThat(requestParametersOf(multiValueMap).entrySet()).isEmpty();
+    assertThat(RequestParametersAdapter.of(multiValueMap).entrySet()).isEmpty();
   }
 
   @Test
