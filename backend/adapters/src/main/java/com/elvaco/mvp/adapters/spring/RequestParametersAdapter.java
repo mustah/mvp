@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static com.elvaco.mvp.core.exception.InvalidUserSelection.misconfiguredParentOrganisationSelection;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
 import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
@@ -150,15 +149,10 @@ public class RequestParametersAdapter implements RequestParameters {
   public RequestParameters ensureOrganisationFilters(AuthenticatedUser currentUser) {
     ensureOrganisation(currentUser);
 
-    var selectionParameters = Optional.ofNullable(currentUser.selectionParameters());
-
-    if (!selectionParameters.isPresent() && currentUser.getParentOrganisationId() != null) {
-      throw misconfiguredParentOrganisationSelection(
-        currentUser.getParentOrganisationId(),
-        currentUser.getOrganisationId()
-      );
-    }
-    return selectionParameters.map(this::applySubOrganisationParameters).orElse(this);
+    return currentUser.subOrganisationParameters()
+      .selectionParameters()
+      .map(this::applySubOrganisationParameters)
+      .orElse(this);
   }
 
   public MultiValueMap<RequestParameter, String> multiValueMap() {
