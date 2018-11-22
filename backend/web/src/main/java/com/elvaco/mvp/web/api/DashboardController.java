@@ -35,13 +35,11 @@ public class DashboardController {
   private List<WidgetDto> findCollectionWidget(RequestParameters parameters) {
     return singletonList(
       dashboardUseCases.findCollectionStats(parameters)
-        .map(collectionStats -> {
-          return new WidgetDto(
-            WidgetType.COLLECTION.name,
-            collectionStats.expected,
-            collectionStats.missing
-          );
-        })
+        .map(collectionStats -> new WidgetDto(
+          WidgetType.COLLECTION.name,
+          collectionStats.expected,
+          collectionStats.missing
+        ))
         .orElse(new WidgetDto(WidgetType.COLLECTION.name, 0, 0))
     );
   }
