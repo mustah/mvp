@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -21,6 +22,7 @@ import com.elvaco.mvp.core.exception.NoPhysicalMeters;
 import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
 public final class LogicalMeterHelper {
@@ -73,7 +75,20 @@ public final class LogicalMeterHelper {
     }
 
     Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
-    quantities.forEach((quantity) -> {
+    var lookedUpQuantities = quantities.stream()
+      .map(quantity -> {
+        var storedQuantity = QuantityAccess.singleton().getByName(quantity.name);
+        if (storedQuantity == null) {
+          return quantity;
+        }
+        return quantity.complementedBy(
+          storedQuantity.getPresentationInformation(),
+          storedQuantity.storageUnit
+        );
+      })
+      .collect(toSet());
+
+    lookedUpQuantities.forEach((quantity) -> {
       List<PhysicalMeter> physicalMeters = new ArrayList<>();
       logicalMeters.forEach(logicalMeter -> {
         if (logicalMeter.physicalMeters.isEmpty()) {

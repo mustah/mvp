@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -15,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
-
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
@@ -202,15 +203,10 @@ public class LogicalMeterHelperTest {
 
   @Test
   public void groupByQuantity_twoMetersTwoQuantitiesForDifferentMediums() {
-    LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
-    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
-
-    Map<Quantity, List<PhysicalMeter>> actual = groupByQuantity(
-      asList(meterOne, meterTwo),
-      new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
-    );
-
-    assertThat(actual)
+    assertThat(groupByQuantity(
+      List.of(newMeter(DISTRICT_HEATING_METER), newMeter(HOT_WATER_METER)),
+      Set.of(Quantity.ENERGY, Quantity.VOLUME)
+    ))
       .hasEntrySatisfying(
         Quantity.VOLUME, physicalMeters -> assertThat(physicalMeters).hasSize(2)
       )
@@ -221,15 +217,20 @@ public class LogicalMeterHelperTest {
 
   @Test
   public void groupByQuantity_excludesQuantitiesWithoutMeters() {
-    LogicalMeter meterOne = newMeter(ROOM_TEMP_METER);
-    LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
+    assertThat(groupByQuantity(
+      List.of(newMeter(ROOM_TEMP_METER), newMeter(HOT_WATER_METER)),
+      Set.of(Quantity.ENERGY)
+    )).isEmpty();
+  }
 
-    Map<Quantity, List<PhysicalMeter>> actual = groupByQuantity(
-      asList(meterOne, meterTwo),
-      new HashSet<>(asList(Quantity.ENERGY))
-    );
+  @Test
+  public void groupByQuantity_looksUpUnits() {
+    QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
 
-    assertThat(actual).isEmpty();
+    assertThat(groupByQuantity(
+      List.of(newMeter(ROOM_TEMP_METER)),
+      Set.of(new Quantity("Relative humidity"))
+    )).containsKeys(Quantity.HUMIDITY);
   }
 
   private LogicalMeter newMeter(MeterDefinition meterDefinition) {
