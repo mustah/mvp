@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
@@ -86,13 +87,14 @@ public class MeasurementController {
       resolutionOrDefault(after, stop, resolution),
       quantities,
       logicalMeterUseCases.findAllBy(parameters),
-      (quantity, measurementValue) -> new LabeledMeasurementValue(
-        String.format("average-%s", quantity.name),
-        label,
-        measurementValue.when,
-        measurementValue.value,
-        quantity
-      )
+      (quantity, measurementValue) -> LabeledMeasurementValue.builder()
+        .id(String.format("average-%s", quantity.name))
+        .label(label)
+        .when(measurementValue.when)
+        .value(measurementValue.value)
+        .quantity(quantity)
+        .city(singleCityOrNull(parameters))
+        .build()
     );
   }
 
@@ -220,7 +222,7 @@ public class MeasurementController {
   ) {
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
 
-    mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
+    groupByQuantity(logicalMeters, quantities)
       .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
         measurementUseCases.averageForPeriod(
           physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
@@ -271,6 +273,12 @@ public class MeasurementController {
   private List<LogicalMeter> findLogicalMetersByCityId(String cityId) {
     RequestParameters parameters = new RequestParametersAdapter().add(CITY, cityId);
     return logicalMeterUseCases.findAllBy(parameters);
+  }
+
+  @Nullable
+  private static String singleCityOrNull(RequestParameters requestParameters) {
+    var cities = requestParameters.getValues(CITY);
+    return cities.isEmpty() || cities.size() > 1 ? null : cities.iterator().next();
   }
 
   private static ZonedDateTime beforeOrNow(ZonedDateTime before) {

@@ -6,13 +6,18 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import lombok.Builder;
 
+@Builder
 public class LabeledMeasurementValue {
 
   public final String id;
   public final String label;
+  @Nullable
   public final String city;
+  @Nullable
   public final String address;
+  @Nullable
   public final String medium;
   public final Instant when;
   public final Double value;
@@ -36,23 +41,6 @@ public class LabeledMeasurementValue {
     this.when = when;
     this.value = value;
     this.quantity = quantity;
-  }
-
-  public LabeledMeasurementValue(
-    String id,
-    String label,
-    Instant when,
-    Double value,
-    Quantity quantity
-  ) {
-    this(id, label, null, null, null, when, value, quantity);
-  }
-
-  public static LabeledMeasurementValue of(
-    Measurement measurement,
-    UUID logicalMeterId
-  ) {
-    return of(measurement, logicalMeterId, null, null, null);
   }
 
   public static LabeledMeasurementValue of(
