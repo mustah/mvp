@@ -113,9 +113,11 @@ describe('urlFactory', () => {
       reported: [toIdNamed('true')],
     });
 
+    const space: string = '%20';
+
     const expectedParameters = [
-      'address=address%202',
-      'address=storgatan%205',
+      `address=address${space}2`,
+      `address=storgatan${space}5`,
       'city=got', 'city=sto',
       'city=mmx',
       'reported=true',
