@@ -14,17 +14,17 @@ import {
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters} from '../../types/Types';
-import {SelectionItem} from './userSelectionModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
   SelectedParameters,
   SelectionInterval,
+  SelectionItem,
   SelectionListItem,
   UriLookupState,
   UriLookupStatePaginated,
   UserSelection,
-  UserSelectionState,
+  UserSelectionState
 } from './userSelectionModels';
 
 const getSelectionParameters = (state: UserSelectionState): SelectedParameters =>
@@ -90,7 +90,7 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     ({query}) => query!,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, {dateRange, ...rest}, currentPeriod) =>
+    (query, {dateRange, threshold, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),

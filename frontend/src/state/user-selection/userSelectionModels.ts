@@ -2,6 +2,7 @@ import {DateRange, Period} from '../../components/dates/dateModels';
 import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
 import {Address, City} from '../domain-models/location/locationModels';
+import {Quantity} from '../ui/graph/measurement/measurementModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
@@ -17,9 +18,17 @@ export const enum ParameterName {
   gatewayIds = 'gatewayIds',
   manufacturers = 'manufacturers',
   productModels = 'productModels',
+  threshold = 'threshold',
 }
 
 export type SelectionItem = IdNamed | City | Address;
+
+export interface ThresholdQuery {
+  value: string;
+  comparator: string;
+  quantity: Quantity;
+  unit: string;
+}
 
 export interface SelectionParameter {
   item: SelectionItem;
@@ -43,6 +52,7 @@ export interface SelectedParameters {
   organisations?: IdNamed[];
   reported?: IdNamed[];
   secondaryAddresses?: IdNamed[];
+  threshold?: ThresholdQuery;
 }
 
 export interface OldSelectionParameters {

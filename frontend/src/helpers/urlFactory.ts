@@ -1,6 +1,10 @@
-import {SelectionItem} from '../state/user-selection/userSelectionModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
-import {ParameterName, SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
+import {
+  ParameterName,
+  SelectedParameters,
+  SelectionInterval,
+  SelectionItem
+} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, Omit, uuid} from '../types/Types';
 import {toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
@@ -26,6 +30,7 @@ const frontendToApiParameters: ParameterNames = {
   productModels: 'productModel',
   reported: 'reported',
   secondaryAddresses: 'secondaryAddress',
+  threshold: 'threshold',
 };
 
 const gatewayParameters: ParameterNames = {
@@ -48,41 +53,40 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
 
 export const toQueryApiParameters = (query?: string): string[] => query ? [`w=${query}`] : [];
 
+type ParametersThatAreLists = Omit<SelectedParameters, 'dateRange' | 'threshold'>;
 export type EntityApiParametersFactory =
-  (selectionParameters: Omit<SelectedParameters, 'dateRange'>) => EncodedUriParameters[];
+  (selectionParameters: ParametersThatAreLists) => EncodedUriParameters[];
 
 export const toEntityApiParametersMeters =
-  (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
-    toEntityApiParameters(selectionParameters, meterParameters);
+  (selectionParameters: ParametersThatAreLists): EncodedUriParameters[] =>
+    listsToParametersById(selectionParameters, meterParameters);
 
 export const toEntityApiParametersGateways =
-  (selectionParameters: Omit<SelectedParameters, 'dateRange'>): EncodedUriParameters[] =>
-    toEntityApiParameters(selectionParameters, gatewayParameters);
+  (selectionParameters: ParametersThatAreLists): EncodedUriParameters[] =>
+    listsToParametersById(selectionParameters, gatewayParameters);
 
-const makeParameter = (parameterNames: ParameterNames, parameter: string, id: uuid): string =>
-  `${parameterNames[parameter]}=${encodeURIComponent(id.toString())}`;
+const makeParameter = (parameterNames: ParameterNames, parameter: string, value: string): string =>
+  `${parameterNames[parameter]}=${encodeURIComponent(value)}`;
 
-const toEntityApiParameters = (
-  selectionParameters: Omit<SelectedParameters, 'dateRange'>,
-  parameterNames: ParameterNames,
-): EncodedUriParameters[] =>
-  Object.keys(selectionParameters)
-    .reduce((prev: EncodedUriParameters[], parameter: string) =>
-      [
-        ...prev,
-        ...selectionParameters[parameter]
-          .filter(({id}: SelectionItem) => id !== undefined)
-          .filter((_) => parameterNames[parameter] !== undefined)
-          .map(({id}: SelectionItem) => makeParameter(parameterNames, parameter, id)),
-      ], []);
+const listsToParametersById =
+  (selectionParameters: ParametersThatAreLists, parameterNames: ParameterNames): EncodedUriParameters[] =>
+    Object.keys(selectionParameters)
+      .reduce((prev: EncodedUriParameters[], parameter: string) =>
+        [
+          ...prev,
+          ...selectionParameters[parameter]
+            .filter(({id}: SelectionItem) => id !== undefined)
+            .filter((_) => parameterNames[parameter] !== undefined)
+            .map(({id}: SelectionItem) => makeParameter(parameterNames, parameter, id.toString())),
+        ], []);
 
-const toMeterIdParameters = (id: uuid) => makeParameter(meterParameters, 'meterIds', id);
+const toMeterIdParameters = (id: uuid) => makeParameter(meterParameters, 'meterIds', id.toString());
 
 export const toMeterIdsApiParameters = (ids: uuid[]): string =>
   encodedUriParametersFrom(ids.map(toMeterIdParameters));
 
 export const toGatewayIdsApiParameters = (ids: uuid[], gatewayId: uuid): string =>
-  encodedUriParametersFrom([makeParameter(meterParameters, 'gatewayIds', gatewayId)]);
+  encodedUriParametersFrom([makeParameter(meterParameters, 'gatewayIds', gatewayId.toString())]);
 
 export const makeApiParametersOf =
   (selectionInterval: SelectionInterval): EncodedUriParameters =>

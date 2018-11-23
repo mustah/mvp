@@ -1,4 +1,5 @@
 import {routerActions} from 'react-router-redux';
+import {shallowEqual} from 'recompose';
 import {Dispatch} from 'redux';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {getId} from '../../helpers/collections';
@@ -16,28 +17,49 @@ import {
   ParameterName,
   SelectionItem,
   SelectionParameter,
+  ThresholdQuery,
   UserSelection
 } from './userSelectionModels';
 import {userSelectionsDataFormatter} from './userSelectionSchema';
 import {getUserSelection} from './userSelectionSelectors';
 
 export const SELECT_PERIOD = 'SELECT_PERIOD';
+export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
+
+export const selectPeriod = payloadActionOf<Period>(SELECT_PERIOD);
 
 export const ADD_PARAMETER_TO_SELECTION = 'ADD_PARAMETER_TO_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
-export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
 
 export const addParameterToSelection = payloadActionOf<SelectionParameter>(ADD_PARAMETER_TO_SELECTION);
 const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELECT_SELECTION);
-
 export const resetSelection = emptyActionOf(RESET_SELECTION);
-export const selectPeriod = payloadActionOf<Period>(SELECT_PERIOD);
+const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
+
+export const SET_THRESHOLD = 'SET_THRESHOLD';
+const actuallySetThreshold = payloadActionOf<ThresholdQuery>(SET_THRESHOLD);
+export const setThreshold =
+  (threshold: ThresholdQuery | undefined) =>
+    (dispatch, getState: GetState) => {
+      const newThresholdIsComplete: boolean =
+        threshold !== undefined &&
+        Object.keys(threshold).every(key => (threshold[key] as string).length > 0);
+
+      const oldThreshold: ThresholdQuery | undefined =
+        getState().userSelection.userSelection.selectionParameters.threshold;
+
+      if (
+        (oldThreshold === undefined && newThresholdIsComplete) ||
+        (oldThreshold !== undefined && threshold === undefined) ||
+        (oldThreshold !== undefined && threshold !== undefined && !shallowEqual(threshold, oldThreshold))
+      ) {
+        dispatch(actuallySetThreshold(threshold as ThresholdQuery));
+      }
+    };
 
 export const clearUserSelectionErrors = clearError(EndPoints.userSelections);
-
-const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
 
 export const closeSelectionPage = () => (dispatch) => dispatch(routerActions.goBack());
 

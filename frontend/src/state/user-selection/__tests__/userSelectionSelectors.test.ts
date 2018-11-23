@@ -3,12 +3,14 @@ import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
+import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
-import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
+import {addParameterToSelection, selectPeriod, setThreshold} from '../userSelectionActions';
 import {
   ParameterName,
   SelectionParameter,
+  ThresholdQuery,
   UriLookupStatePaginated,
   UserSelection,
   UserSelectionState,
@@ -155,10 +157,8 @@ describe('userSelectionSelectors', () => {
         userSelection: {
           ...twoOrganisations.userSelection,
           selectionParameters: {
+            ...twoOrganisations.userSelection.selectionParameters,
             organisations: [{...anOrganisation}],
-            dateRange: {
-              period: Period.latest,
-            },
           },
         },
       };
@@ -324,6 +324,30 @@ describe('userSelectionSelectors', () => {
       });
 
       expect(uriParameters).toEqual(`alarm=no&${latestUrlParameters}`);
+    });
+
+    it('includes a threshold query', () => {
+      const payload: ThresholdQuery = {
+        comparator: '>=',
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: 3,
+      };
+
+      const state: UserSelectionState = userSelection(
+        initialState,
+        setThreshold(payload),
+      );
+
+      const uriParameters: EncodedUriParameters = getMeterParameters({
+        userSelection: state.userSelection,
+        start,
+      });
+
+      const space: string = '%20';
+      const gte: string = '%3E%3D';
+
+      expect(uriParameters).toEqual(`thresholds=Power${space}${gte}${space}3${space}kW`);
     });
 
   });

@@ -2,7 +2,6 @@ import {EmptyAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
 import {Action, IdNamed} from '../../types/Types';
-import {SelectionItem} from './userSelectionModels';
 import {
   domainModelsDeleteSuccess,
   domainModelsPostSuccess,
@@ -15,12 +14,15 @@ import {
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_CUSTOM_DATE_RANGE,
+  SET_THRESHOLD,
 } from './userSelectionActions';
 import {
   ParameterName,
+  SelectionItem,
   SelectionParameter,
+  ThresholdQuery,
   UserSelection,
-  UserSelectionState,
+  UserSelectionState
 } from './userSelectionModels';
 
 export const initialState: UserSelectionState = {
@@ -109,18 +111,10 @@ const removeSelected = (
   };
 };
 
-type ActionTypes =
-  | EmptyAction<string>
-  | Action<SelectionParameter>
-  | Action<UserSelection>
-  | Action<Period>
-  | Action<DateRange>;
-
 const updateCustomDateRange = (
   state: UserSelectionState,
-  action: Action<DateRange>,
+  {payload}: Action<DateRange>,
 ): UserSelectionState => {
-  const {payload} = action;
   const {userSelection} = state;
   return {
     ...state,
@@ -139,6 +133,29 @@ const updateCustomDateRange = (
   };
 };
 
+const applyThreshold = (
+  state: UserSelectionState,
+  threshold: ThresholdQuery,
+): UserSelectionState => ({
+  ...state,
+  userSelection: {
+    ...state.userSelection,
+    isChanged: true,
+    selectionParameters: {
+      ...state.userSelection.selectionParameters,
+      threshold,
+    }
+  }
+});
+
+type ActionTypes =
+  | EmptyAction<string>
+  | Action<SelectionParameter>
+  | Action<UserSelection>
+  | Action<Period>
+  | Action<DateRange>
+  | Action<ThresholdQuery>;
+
 export const userSelection = (
   state: UserSelectionState = initialState,
   action: ActionTypes,
@@ -154,6 +171,8 @@ export const userSelection = (
       return updatePeriod(state, action as Action<Period>);
     case SET_CUSTOM_DATE_RANGE:
       return updateCustomDateRange(state, action as Action<DateRange>);
+    case SET_THRESHOLD:
+      return applyThreshold(state, (action as Action<ThresholdQuery>).payload);
     case SELECT_SAVED_SELECTION:
     case domainModelsPostSuccess(EndPoints.userSelections):
     case domainModelsPutSuccess(EndPoints.userSelections):
