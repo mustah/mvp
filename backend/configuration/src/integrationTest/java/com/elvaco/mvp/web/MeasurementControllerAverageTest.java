@@ -19,6 +19,7 @@ import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
@@ -673,7 +674,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   public void findsAverage_ByCity() {
     var date = ZonedDateTime.parse("2018-02-01T01:00:00Z");
 
-    var kungsbackaLogical = newLogicalMeterEntity(ROOM_TEMP_METER, kungsbacka().build());
+    var kungsbacka = kungsbacka().build();
+    var kungsbackaLogical = newLogicalMeterEntity(ROOM_TEMP_METER, kungsbacka);
     newMeasurement(
       newPhysicalMeterEntity(kungsbackaLogical.id),
       date,
@@ -691,17 +693,13 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
     var response = asUser()
       .getList(
-        "/measurements/average"
-          + "?after={after}"
-          + "&before={before}"
-          + "&quantity={quantity}"
-          + "&city={country},{city}",
-        MeasurementSeriesDto.class,
-        date,
-        date,
-        Quantity.EXTERNAL_TEMPERATURE.name,
-        kungsbackaLogical.location.country,
-        kungsbackaLogical.location.city
+        Url.builder()
+          .path("/measurements/average")
+          .period(date, date)
+          .quantity(Quantity.EXTERNAL_TEMPERATURE)
+          .city(kungsbacka)
+          .build(),
+        MeasurementSeriesDto.class
       ).getBody();
 
     ZonedDateTime periodStartHour = date.truncatedTo(ChronoUnit.HOURS);
