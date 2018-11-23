@@ -47,7 +47,7 @@ public class RequestParametersAdapter implements RequestParameters {
   }
 
   public static RequestParameters of(
-    Map<String, List<String>> multiValueMap,
+    @Nullable Map<String, List<String>> multiValueMap,
     @Nullable RequestParameter idParameter
   ) {
     if (multiValueMap == null) {

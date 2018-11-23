@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
@@ -23,23 +23,25 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
-import com.elvaco.mvp.web.dto.geoservice.CityDto;
+import com.elvaco.mvp.web.exception.MissingParameter;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
-import static com.elvaco.mvp.core.util.QuantityHelper.complementWithUnits;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptyList;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -56,34 +58,54 @@ public class MeasurementController {
 
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(
-    @RequestParam List<UUID> meters,
-    @RequestParam(name = "quantities") Set<Quantity> quantities,
+    @RequestParam MultiValueMap<String, String> requestParams,
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
   ) {
     ZonedDateTime stop = beforeOrNow(before);
-    return measurementSeriesOf(
-      after,
-      stop,
-      resolutionOrDefault(after, stop, resolution),
-      quantities,
-      findLogicalMetersByIds(meters),
-      (quantity, measurementValue) -> new LabeledMeasurementValue(
-        String.format("average-%s", quantity.name),
-        label,
-        measurementValue.when,
-        measurementValue.value,
-        quantity
-      )
-    );
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
+
+    Set<Quantity> quantities = parameters.getValues(QUANTITY).stream()
+      .map(Quantity::of)
+      .collect(toSet());
+
+    if (quantities.isEmpty()) {
+      throw new MissingParameter(QUANTITY);
+    }
+
+    List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
+    List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
+
+    groupByQuantity(logicalMeters, quantities)
+      .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
+        measurementUseCases.averageForPeriod(
+          physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
+          quantity,
+          after,
+          stop,
+          resolutionOrDefault(after, stop, resolution)
+        ).stream()
+          .map((measurementValue) -> LabeledMeasurementValue.builder()
+            .id(String.format("average-%s", quantity.name))
+            .label(label)
+            .when(measurementValue.when)
+            .value(measurementValue.value)
+            .quantity(quantity)
+            .city(singleCityOrNull(parameters))
+            .build()
+          )
+          .collect(toList())
+      ));
+
+    return toSeries(foundMeasurements);
   }
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
-    @RequestParam List<UUID> meters,
+    @RequestParam List<UUID> logicalMeterId,
     @RequestParam(name = "quantities") Optional<Set<Quantity>> maybeQuantities,
     @RequestParam(defaultValue = "1970-01-01T00:00:00Z")
     @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
@@ -95,9 +117,9 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(meters);
+    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterId);
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
-      .collect(toMap(LogicalMeter::getId, Function.identity()));
+      .collect(toMap(LogicalMeter::getId, identity()));
 
     Set<Quantity> quantities = maybeQuantities
       .orElseGet(() -> logicalMeters.stream()
@@ -138,43 +160,6 @@ public class MeasurementController {
     return toSeries(foundMeasurements);
   }
 
-  @GetMapping("/cities")
-  public List<MeasurementSeriesDto> cities(
-    @RequestParam(name = "city") List<CityDto> cities,
-    @RequestParam(name = "quantities") Set<Quantity> quantities,
-    @RequestParam(defaultValue = "1970-01-01T00:00:00Z") @DateTimeFormat(iso = DATE_TIME)
-      ZonedDateTime after,
-    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
-    @RequestParam(required = false) TemporalResolution resolution
-  ) {
-    ZonedDateTime stop = beforeOrNow(before);
-    TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
-    Set<Quantity> complementedQuantities = complementWithUnits(quantities);
-
-    return cities.stream()
-      .flatMap((city) -> {
-        String cityId = String.format("%s,%s", city.country, city.name);
-        return measurementSeriesOfCity(
-          after,
-          stop,
-          temporalResolution,
-          complementedQuantities,
-          findLogicalMetersByCityId(cityId),
-          (quantity, measurementValue) -> new LabeledMeasurementValue(
-            String.format("city-%s,%s-%s", city.country, city.name, quantity.name),
-            cityId,
-            city.name,
-            null,
-            null,
-            measurementValue.when,
-            measurementValue.value,
-            quantity
-          )
-        ).stream();
-      })
-      .collect(toList());
-  }
-
   @GetMapping("/paged")
   public org.springframework.data.domain.Page<MeasurementDto> pagedMeasurements(
     @RequestParam UUID logicalMeterId,
@@ -194,67 +179,16 @@ public class MeasurementController {
       .map(MeasurementDtoMapper::toDto);
   }
 
-  private List<MeasurementSeriesDto> measurementSeriesOf(
-    ZonedDateTime after,
-    ZonedDateTime before,
-    TemporalResolution resolution,
-    Set<Quantity> quantities,
-    List<LogicalMeter> logicalMeters,
-    BiFunction<Quantity, MeasurementValue, LabeledMeasurementValue> valueMapper
-  ) {
-    List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
-
-    mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
-      .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
-        measurementUseCases.averageForPeriod(
-          physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
-          quantity,
-          after,
-          before,
-          resolution
-        ).stream()
-          .map((measurementValue) -> valueMapper.apply(quantity, measurementValue))
-          .collect(toList())
-      ));
-
-    return toSeries(foundMeasurements);
-  }
-
-  private List<MeasurementSeriesDto> measurementSeriesOfCity(
-    ZonedDateTime after,
-    ZonedDateTime before,
-    TemporalResolution resolution,
-    Set<Quantity> quantities,
-    List<LogicalMeter> logicalMeters,
-    BiFunction<Quantity, MeasurementValue, LabeledMeasurementValue> valueMapper
-  ) {
-    List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
-
-    groupByQuantity(logicalMeters, quantities)
-      .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
-        measurementUseCases.averageForPeriod(
-          physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
-          quantity,
-          after,
-          before,
-          resolution
-        ).stream()
-          .map((measurementValue) -> valueMapper.apply(quantity, measurementValue))
-          .collect(toList())
-      ));
-
-    return toSeries(foundMeasurements);
-  }
-
   private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {
     RequestParameters parameters = new RequestParametersAdapter()
       .setAll(LOGICAL_METER_ID, logicalMeterIds.stream().map(UUID::toString).collect(toList()));
     return logicalMeterUseCases.findAllBy(parameters);
   }
 
-  private List<LogicalMeter> findLogicalMetersByCityId(String cityId) {
-    RequestParameters parameters = new RequestParametersAdapter().add(CITY, cityId);
-    return logicalMeterUseCases.findAllBy(parameters);
+  @Nullable
+  private static String singleCityOrNull(RequestParameters requestParameters) {
+    var cities = requestParameters.getValues(CITY);
+    return cities.isEmpty() || cities.size() > 1 ? null : cities.iterator().next();
   }
 
   private static ZonedDateTime beforeOrNow(ZonedDateTime before) {

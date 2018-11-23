@@ -7,6 +7,7 @@ import {dropDownStyle} from '../../app/themes';
 import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
 import {orUnknown} from '../../helpers/translations';
+import {firstUpper} from '../../services/translationService';
 import {Address, City} from '../../state/domain-models/location/locationModels';
 import {FetchByPage, PagedResponse} from '../../state/domain-models/selections/selectionsApiActions';
 import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
@@ -288,7 +289,12 @@ export const renderCityLabel = (index: number, filteredList: SelectionListItem[]
 
 export const renderAddressLabel = (index: number, filteredList: SelectionListItem[]) => {
   const address = filteredList[index] as Address;
-  return <LabelWithSubtitle name={translatedNameOf(address)} subTitle={translatedNameOf(address.country)}/>;
+  return (
+    <LabelWithSubtitle
+      name={translatedNameOf(address)}
+      subTitle={`${firstUpper(translatedNameOf(address.city))}, ${firstUpper(translatedNameOf(address.country))}`}
+    />
+  );
 };
 
 const DropdownSelector = (props: SearchableProps) => (

@@ -2,9 +2,9 @@ import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
 import {Period} from '../../../../../components/dates/dateModels';
 import {idGenerator} from '../../../../../helpers/idGenerator';
-import {Maybe} from '../../../../../helpers/Maybe';
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
+import {toIdNamed, uuid} from '../../../../../types/Types';
 import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
@@ -41,10 +41,10 @@ describe('measurementActions', () => {
       });
     };
 
-    const mockCity = (medium: Medium | Medium[], addresses: string[] = []): SelectionTreeCity => {
-      const id = `sweden,${idGenerator.uuid().toString()}`;
+    const mockCity = (medium: Medium | Medium[], id: uuid | undefined = undefined): SelectionTreeCity => {
+      id = id ? id.toString() : `sweden,${idGenerator.uuid().toString()}`;
       return ({
-        addresses,
+        addresses: [],
         city: id,
         id,
         medium: Array.isArray(medium) ? medium : [medium],
@@ -63,10 +63,13 @@ describe('measurementActions', () => {
         selectedIndicators: [],
         quantities: [],
         selectedListItems: [],
-        timePeriod: Period.currentMonth,
-        customDateRange: Maybe.nothing(),
         updateState,
         logout,
+        selectionParameters: {
+          dateRange: {
+            period: Period.currentMonth,
+          }
+        },
       };
     });
 
@@ -163,19 +166,19 @@ describe('measurementActions', () => {
         );
 
         expect(externalTemperature.pathname).toEqual('/measurements');
-        expect(externalTemperature.searchParams.get('quantities')).toEqual(Quantity.externalTemperature);
-        expect(externalTemperature.searchParams.get('meters')).toEqual(roomSensorMeter.id);
+        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
+        expect(externalTemperature.searchParams.get('logicalMeterId')).toEqual(roomSensorMeter.id);
         expect(externalTemperature.searchParams.get('before')).toBeTruthy();
         expect(externalTemperature.searchParams.get('after')).toBeTruthy();
 
         expect(volume.pathname).toEqual('/measurements');
-        expect(volume.searchParams.get('quantities')).toEqual(Quantity.volume);
-        expect(volume.searchParams.get('meters')).toEqual(gasMeter.id);
+        expect(volume.searchParams.get('quantity')).toEqual(Quantity.volume);
+        expect(volume.searchParams.get('logicalMeterId')).toEqual(gasMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
       });
 
-      it('requests quantities for cities', async () => {
+      it('requests quantities for cities, and sets correct label', async () => {
         const mockRestClient = new MockAdapter(axios);
         authenticate('test');
 
@@ -185,8 +188,8 @@ describe('measurementActions', () => {
           return [200, 'some data'];
         });
 
-        const roomSensorMeter = mockCity(Medium.roomSensor);
-        const gasMeter = mockCity(Medium.gas);
+        const roomSensorMeter = mockCity(Medium.roomSensor, 'sweden,Borgholm');
+        const gasMeter = mockCity(Medium.gas, 'sweden,Byxelkrok');
 
         await fetchMeasurements({
           ...defaultParameters,
@@ -208,24 +211,26 @@ describe('measurementActions', () => {
           (url: string) => new URL(`${mockHost}${url}`),
         );
 
-        expect(externalTemperature.pathname).toEqual('/measurements/cities');
-        expect(externalTemperature.searchParams.get('quantities')).toEqual(Quantity.externalTemperature);
+        expect(externalTemperature.pathname).toEqual('/measurements/average');
+        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
         expect(externalTemperature.searchParams.get('city')).toEqual(roomSensorMeter.id);
         expect(externalTemperature.searchParams.get('before')).toBeTruthy();
         expect(externalTemperature.searchParams.get('after')).toBeTruthy();
+        expect(externalTemperature.searchParams.get('label')).toEqual('Borgholm');
 
-        expect(volume.pathname).toEqual('/measurements/cities');
-        expect(volume.searchParams.get('quantities')).toEqual(Quantity.volume);
+        expect(volume.pathname).toEqual('/measurements/average');
+        expect(volume.searchParams.get('quantity')).toEqual(Quantity.volume);
         expect(volume.searchParams.get('city')).toEqual(gasMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
+        expect(volume.searchParams.get('label')).toEqual('Byxelkrok');
       });
 
     });
 
     describe('fetch cities', () => {
 
-      it('requests cities when no meters are selected', async () => {
+      it('requests per city and average', async () => {
         const mockRestClient = new MockAdapter(axios);
         authenticate('test');
 
@@ -252,17 +257,21 @@ describe('measurementActions', () => {
           },
         });
 
-        expect(requestedUrls).toHaveLength(1);
+        expect(requestedUrls).toHaveLength(2);
 
-        const [url] = requestedUrls.map((url: string) => new URL(`${mockHost}${url}`));
+        const [firstUrl, secondUrl] = requestedUrls.map((url: string) => new URL(`${mockHost}${url}`));
 
-        expect(url.pathname).toEqual('/measurements/cities');
-        expect(url.searchParams.get('quantities')).toEqual(Quantity.power);
-        expect(url.searchParams.getAll('city')).toEqual([
-          firstDistrictHeating.id, secondDistrictHeating.id,
-        ]);
-        expect(url.searchParams.get('before')).toBeTruthy();
-        expect(url.searchParams.get('after')).toBeTruthy();
+        expect(firstUrl.pathname).toEqual('/measurements/average');
+        expect(firstUrl.searchParams.get('quantity')).toEqual(Quantity.power);
+        expect(firstUrl.searchParams.get('city')).toEqual(firstDistrictHeating.id);
+        expect(firstUrl.searchParams.get('before')).toBeTruthy();
+        expect(firstUrl.searchParams.get('after')).toBeTruthy();
+
+        expect(secondUrl.pathname).toEqual('/measurements/average');
+        expect(secondUrl.searchParams.get('quantity')).toEqual(Quantity.power);
+        expect(secondUrl.searchParams.get('city')).toEqual(secondDistrictHeating.id);
+        expect(secondUrl.searchParams.get('before')).toBeTruthy();
+        expect(secondUrl.searchParams.get('after')).toBeTruthy();
       });
 
       it('requests cities when meters are selected too', async () => {
@@ -299,16 +308,58 @@ describe('measurementActions', () => {
         const [city, meter] = requestedUrls.map((url: string) => new URL(`${mockHost}${url}`));
 
         expect(meter.pathname).toEqual('/measurements');
-        expect(meter.searchParams.get('quantities')).toEqual(Quantity.power);
-        expect(meter.searchParams.get('meters')).toEqual(mockedMeter.id);
+        expect(meter.searchParams.get('quantity')).toEqual(Quantity.power);
+        expect(meter.searchParams.get('logicalMeterId')).toEqual(mockedMeter.id);
         expect(meter.searchParams.get('before')).toBeTruthy();
         expect(meter.searchParams.get('after')).toBeTruthy();
 
-        expect(city.pathname).toEqual('/measurements/cities');
-        expect(city.searchParams.get('quantities')).toEqual(Quantity.power);
+        expect(city.pathname).toEqual('/measurements/average');
+        expect(city.searchParams.get('quantity')).toEqual(Quantity.power);
         expect(city.searchParams.get('city')).toEqual(mockedCity.id);
         expect(city.searchParams.get('before')).toBeTruthy();
         expect(city.searchParams.get('after')).toBeTruthy();
+      });
+
+      it('current selection affects the *average* request URL', async () => {
+        const mockRestClient = new MockAdapter(axios);
+        authenticate('test');
+
+        const requestedUrls: string[] = [];
+        mockRestClient.onGet().reply((config) => {
+          requestedUrls.push(config.url!);
+          return [200, 'some data'];
+        });
+
+        const mockedCity = mockCity(Medium.districtHeating, 'sweden,göteborg');
+
+        await fetchMeasurements({
+          ...defaultParameters,
+          selectedIndicators: [Medium.districtHeating],
+          quantities: [Quantity.power],
+          selectedListItems: [mockedCity.id],
+          selectionTreeEntities: {
+            ...defaultParameters.selectionTreeEntities,
+            cities: {
+              [mockedCity.id]: mockedCity,
+            },
+          },
+          selectionParameters: {
+            ...defaultParameters.selectionParameters,
+            media: [{...toIdNamed('Gas')}],
+          }
+        });
+
+        expect(requestedUrls).toHaveLength(1);
+
+        const [city] = requestedUrls.map((url: string) => new URL(`${mockHost}${url}`));
+
+        expect(city.pathname).toEqual('/measurements/average');
+        expect(city.searchParams.get('quantity')).toEqual(Quantity.power);
+        expect(city.searchParams.get('city')).toEqual('sweden,göteborg');
+        expect(city.searchParams.get('label')).toEqual('Göteborg');
+        expect(city.searchParams.get('before')).toBeTruthy();
+        expect(city.searchParams.get('after')).toBeTruthy();
+        expect(city.searchParams.get('medium')).toEqual('Gas');
       });
 
     });
@@ -340,9 +391,9 @@ describe('measurementActions', () => {
           .map((url: string) => new URL(`${mockHost}${url}`));
 
         expect(averageUrl.pathname).toEqual('/measurements/average');
-        expect(averageUrl.searchParams.get('quantities')).toEqual(Quantity.externalTemperature);
-        expect(averageUrl.searchParams.get('meters')).toEqual(
-          `${firstRoomSensor.id},${secondRoomSensor.id}`,
+        expect(averageUrl.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
+        expect(averageUrl.searchParams.getAll('logicalMeterId')).toEqual(
+          [firstRoomSensor.id, secondRoomSensor.id]
         );
         expect(averageUrl.searchParams.get('before')).toBeTruthy();
         expect(averageUrl.searchParams.get('after')).toBeTruthy();

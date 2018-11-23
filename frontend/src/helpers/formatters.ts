@@ -1,4 +1,5 @@
 import {default as numeral} from 'numeral';
+import {firstUpper} from '../services/translationService';
 import {momentFrom} from './dateHelpers';
 
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
@@ -29,3 +30,8 @@ export const roundMeasurement = (num: number | string): string =>
 
 export const round = (num: number | string, format: string): string =>
   isNaN(Number(num)) ? num : numeral(num).format(format);
+
+export const cityWithoutCountry = (city: string): string => {
+  const cityMatchParts = city.match(/[^,]+,(.+)/);
+  return firstUpper(cityMatchParts === null ? city : cityMatchParts[1]);
+};

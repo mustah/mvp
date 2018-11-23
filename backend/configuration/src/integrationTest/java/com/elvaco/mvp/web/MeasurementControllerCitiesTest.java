@@ -23,7 +23,6 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
-import com.elvaco.mvp.testing.fixture.LocationTestData;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import lombok.AccessLevel;
@@ -35,11 +34,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static com.elvaco.mvp.web.MeasurementControllerCitiesTest.MeasurementPojo.measurement;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerCitiesTest extends IntegrationTest {
@@ -75,49 +76,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   }
 
   @Test
-  public void averagesForDifferentCitiesHaveUniqueIds() {
-    LocationBuilder locationBuilder = new LocationBuilder()
-      .address("street 1")
-      .city("stockholm");
-
-    newConnectedMeterWithMeasurements(
-      locationBuilder.country("sverige").build(),
-      measurement(ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0),
-      measurement(ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0)
-    );
-
-    newConnectedMeterWithMeasurements(
-      locationBuilder.country("england").build(),
-      measurement(ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0),
-      measurement(ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0)
-    );
-
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
-      measurementsCitiesUrl()
-        .period(
-          ZonedDateTime.parse("2018-03-06T05:00:00.000Z"),
-          ZonedDateTime.parse("2018-03-06T06:59:59.999Z")
-        )
-        .parameter("quantities", Quantity.POWER.name)
-        .city("sverige,stockholm")
-        .city("england,stockholm")
-        .resolution("hour")
-        .build(),
-      MeasurementSeriesDto.class
-    );
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody())
-      .extracting("id")
-      .containsExactlyInAnyOrder(
-        "city-sverige,stockholm-Power",
-        "city-england,stockholm-Power"
-      );
-  }
-
-  @Test
   public void oneCityAverage() {
-    LocationBuilder locationBuilder = LocationTestData.stockholm();
+    LocationBuilder locationBuilder = stockholm();
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
@@ -137,7 +97,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", Quantity.POWER.name + ":W")
+          .parameter("quantity", Quantity.POWER.name + ":W")
+          .parameter("label", "Stockholm")
           .city("sverige,stockholm")
           .resolution("hour")
           .build(),
@@ -148,11 +109,11 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactly(
       new MeasurementSeriesDto(
-        "city-sverige,stockholm-Power",
+        "average-Power",
         Quantity.POWER.name,
         "W",
+        "Stockholm",
         "sverige,stockholm",
-        "stockholm",
         null,
         null,
         asList(
@@ -165,35 +126,31 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageOnlyIncludesRequestedCity() {
-    LocationBuilder locationBuilder = LocationTestData.stockholm()
-      .address("stora gatan 1");
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+    var start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
     newConnectedMeterWithMeasurements(
-      locationBuilder.build(),
+      stockholm().address("stora gatan 1").build(),
       measurement(start, "Power", 1.0),
       measurement(start.plusHours(1), "Power", 2.0)
     );
 
     newConnectedMeterWithMeasurements(
-      locationBuilder.address("stora gatan 2").build(),
+      stockholm().address("stora gatan 2").build(),
       measurement(start, "Power", 3.0),
       measurement(start.plusHours(1), "Power", 4.0)
     );
 
     newConnectedMeterWithMeasurements(
-      locationBuilder.city("båstad").build(),
+      stockholm().address("stora gatan 1").city("båstad").build(),
       measurement(start, "Power", 10.0),
       measurement(start.plusHours(1), "Power", 10.0)
-
     );
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
+    var response = asUser()
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", Quantity.POWER.name + ":W")
+          .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
           .resolution("hour")
           .build(),
@@ -202,10 +159,18 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertThat(response.getBody())
-      .extracting("city")
-      .hasSize(1)
-      .allMatch("stockholm"::equals);
+    var measurementSeries = response.getBody();
+
+    assertSoftly(softly -> {
+      softly.assertThat(measurementSeries)
+        .extracting("city")
+        .containsExactly("sverige,stockholm");
+
+      softly.assertThat(measurementSeries)
+        .flatExtracting("values")
+        .extracting("value")
+        .containsExactly(2.0, 3.0);
+    });
   }
 
   @Test
@@ -239,7 +204,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", "External temperature")
+          .parameter("quantity", "External temperature")
           .city("sverige,kiruna")
           .resolution("hour")
           .build(),
@@ -250,85 +215,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        "city-sverige,kiruna-External temperature",
+        "average-External temperature",
         Quantity.EXTERNAL_TEMPERATURE.name,
         Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
+        "average",
         "sverige,kiruna",
-        "kiruna",
         null,
         null,
         asList(
           new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
           new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 2.0)
-        )
-      )
-    );
-  }
-
-  @Test
-  public void cityAverageOfTwoQuantitiesBelongingToDifferentMedia() {
-    LocationBuilder locationBuilder = new LocationBuilder()
-      .country("sverige")
-      .address("stora gatan 1");
-
-    PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      locationBuilder.city("knivsta").build(),
-      MeterDefinition.ROOM_TEMP_METER
-    ).id);
-
-    PhysicalMeterEntity gas = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      locationBuilder.city("umeå").build(),
-      MeterDefinition.GAS_METER
-    ).id);
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
-
-    newMeasurement(roomTemperature, start, Quantity.EXTERNAL_TEMPERATURE.name, 1.0);
-    newMeasurement(roomTemperature, start.plusHours(1), Quantity.EXTERNAL_TEMPERATURE.name, 2.0
-    );
-
-    newMeasurement(gas, start, Quantity.VOLUME.name, 10.0);
-    newMeasurement(gas, start.plusHours(1), Quantity.VOLUME.name, 11.0);
-
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
-      .getList(
-        measurementsCitiesUrl()
-          .period(start, start.plusHours(1))
-          .parameter("quantities", "External temperature,Volume")
-          .city("sverige,knivsta")
-          .city("sverige,umeå")
-          .resolution("hour")
-          .build(),
-        MeasurementSeriesDto.class
-      );
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    assertThat(response.getBody()).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        "city-sverige,knivsta-External temperature",
-        Quantity.EXTERNAL_TEMPERATURE.name,
-        Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
-        "sverige,knivsta",
-        "knivsta",
-        null,
-        null,
-        asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 2.0)
-        )
-      ),
-      new MeasurementSeriesDto(
-        "city-sverige,umeå-Volume",
-        Quantity.VOLUME.name,
-        Quantity.VOLUME.presentationUnit(),
-        "sverige,umeå",
-        "umeå",
-        null,
-        null,
-        asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), null)
         )
       )
     );
@@ -336,7 +232,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageIsEmptyWhenCityOnlyContainNonMatchingQuantities() {
-    LocationBuilder locationBuilder = LocationTestData.stockholm().address("stora gatan 1");
+    LocationBuilder locationBuilder = stockholm().address("stora gatan 1");
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
     newConnectedMeterWithMeasurements(
@@ -349,7 +245,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", "Relative humidity")
+          .parameter("quantity", "Relative humidity")
           .city("sverige,stockholm")
           .resolution("hour")
           .build(),
@@ -368,7 +264,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", Quantity.VOLUME.name)
+          .parameter("quantity", Quantity.VOLUME.name)
           .city("sverige,stockholm")
           .resolution("hour").build(),
         MeasurementSeriesDto.class
@@ -379,19 +275,19 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   }
 
   @Test
-  public void twoCityAverages() {
-    LocationBuilder locationBuilder = LocationTestData.stockholm().address("stora gatan 1");
+  public void twoCitiesArePartOfSingleAverage() {
+    LocationBuilder stockholmStoraGatan1 = stockholm().address("stora gatan 1");
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
     newConnectedMeterWithMeasurements(
-      locationBuilder.build(),
+      stockholmStoraGatan1.build(),
       measurement(start, "Power", 1.0),
       measurement(start.plusHours(1), "Power", 2.0)
     );
 
     newConnectedMeterWithMeasurements(
-      locationBuilder.city("båstad").build(),
+      stockholmStoraGatan1.city("båstad").build(),
       measurement(start, "Power", 10.0),
       measurement(start.plusHours(1), "Power", 10.0)
     );
@@ -400,7 +296,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .getList(
         measurementsCitiesUrl()
           .period(start, start.plusHours(1))
-          .parameter("quantities", Quantity.POWER.name + ":W")
+          .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
           .city("sverige,båstad")
           .resolution("hour")
@@ -410,31 +306,18 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertThat(response.getBody()).containsExactlyInAnyOrder(
+    assertThat(response.getBody()).containsExactly(
       new MeasurementSeriesDto(
-        "city-sverige,stockholm-Power",
+        "average-Power",
         Quantity.POWER.name,
         "W",
-        "sverige,stockholm",
-        "stockholm",
+        "average",
+        null,
         null,
         null,
         asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 2.0)
-        )
-      ),
-      new MeasurementSeriesDto(
-        "city-sverige,båstad-Power",
-        Quantity.POWER.name,
-        "W",
-        "sverige,båstad",
-        "båstad",
-        null,
-        null,
-        asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 10.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 10.0)
+          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 5.5),
+          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 6.0)
         )
       )
     );
@@ -442,7 +325,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void averageForCityIsSameAsAverageForAllMetersInCity() {
-    LocationBuilder locationBuilder = LocationTestData.stockholm();
+    LocationBuilder locationBuilder = stockholm();
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
@@ -462,13 +345,13 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .period(start, start.plusHours(1))
       .city("sverige,stockholm")
       .resolution("hour")
-      .parameter("quantities", Quantity.POWER.name + ":W")
+      .parameter("quantity", Quantity.POWER.name + ":W")
       .build();
 
     Url metersAverageUrl = Url.builder().path("/measurements/average")
       .period(start, start.plusHours(1))
       .resolution("hour")
-      .parameter("quantities", Quantity.POWER.name + ":W")
+      .parameter("quantity", Quantity.POWER.name + ":W")
       .parameter("meters", List.of(meterOne.logicalMeterId, meterTwo.logicalMeterId)).build();
 
     ResponseEntity<List<MeasurementSeriesDto>> cityAverageResponse = asUser()
@@ -586,7 +469,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   }
 
   private Url.UrlBuilder measurementsCitiesUrl() {
-    return Url.builder().path("/measurements/cities");
+    return Url.builder().path("/measurements/average");
   }
 
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

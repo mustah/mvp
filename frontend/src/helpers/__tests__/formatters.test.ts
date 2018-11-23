@@ -1,5 +1,5 @@
 import {momentFrom} from '../dateHelpers';
-import {formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
+import {cityWithoutCountry, formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
 
 describe('formatters', () => {
 
@@ -103,6 +103,18 @@ describe('formatters', () => {
     it('super admin should not see an indicator when percentage <= 100', () => {
       expect(formatCollectionPercentage(84.2, 15, true)).toBe('84.2%');
     });
+  });
+
+  describe('cityWithoutCountry', () => {
+
+    it('uses the input value if it does not look like a country,city', () => {
+      expect(cityWithoutCountry('stockholm')).toEqual('Stockholm');
+    });
+
+    it('removes the country if the country comes first', () => {
+      expect(cityWithoutCountry('sweden,stockholm')).toEqual('Stockholm');
+    });
+
   });
 
 });

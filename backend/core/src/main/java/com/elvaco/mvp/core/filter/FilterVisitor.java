@@ -31,4 +31,8 @@ public interface FilterVisitor {
   void visit(ManufacturerFilter manufacturerFilter);
 
   void visit(LogicalMeterIdFilter logicalMeterIdFilter);
+
+  void visit(ResolutionFilter resolutionFilter);
+
+  void visit(QuantityFilter quantityFilter);
 }

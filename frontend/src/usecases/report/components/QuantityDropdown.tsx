@@ -27,7 +27,7 @@ const quantityMenuItem =
     (quantity: Quantity) => (
       <MenuItem
         checked={selectedQuantities.includes(quantity)}
-        disabled={!canToggleMedia(selectedQuantities, quantity)}
+        disabled={!selectedQuantities.includes(quantity) && !canToggleMedia(selectedQuantities, quantity)}
         key={quantity}
         primaryText={quantity}
         value={quantity}

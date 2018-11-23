@@ -11,7 +11,6 @@ import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
-import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.ManufacturerFilter;
 import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
@@ -116,10 +115,6 @@ public class GatewayFilterQueryDslJpaVisitor extends EmptyFilterQueryDslJpaVisit
   @Override
   public void visit(ManufacturerFilter manufacturerFilter) {
     predicates.add(PHYSICAL_METER.manufacturer.in(manufacturerFilter.values()));
-  }
-
-  @Override
-  public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {
   }
 
   @Override

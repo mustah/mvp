@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import lombok.Builder;
 
@@ -89,6 +91,20 @@ public class Url implements UrlTemplate {
 
     public UrlBuilder city(String city) {
       return parameter(RequestParameter.CITY, city);
+    }
+
+    public UrlBuilder city(Location location) {
+      return parameter(
+        RequestParameter.CITY,
+        location.getCountryOrUnknown() + ", " + location.getCityOrUnknown()
+      );
+    }
+
+    public UrlBuilder quantity(Quantity quantity) {
+      return parameter(
+        RequestParameter.QUANTITY,
+        quantity.name
+      );
     }
 
     public UrlBuilder resolution(String resolution) {

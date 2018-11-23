@@ -1,13 +1,12 @@
 import {flatMap, map} from 'lodash';
-import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
-import {toPeriodApiParameters} from '../../../../helpers/dateHelpers';
+import {cityWithoutCountry} from '../../../../helpers/formatters';
 import {Maybe} from '../../../../helpers/Maybe';
-import {makeUrl} from '../../../../helpers/urlFactory';
+import {makeApiParametersOf, makeUrl, toEntityApiParametersMeters} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {EncodedUriParameters, uuid} from '../../../../types/Types';
+import {EncodedUriParameters, toIdNamed, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
@@ -17,6 +16,7 @@ import {
   SelectionTreeEntities,
   SelectionTreeMeter,
 } from '../../../selection-tree/selectionTreeModels';
+import {SelectedParameters} from '../../../user-selection/userSelectionModels';
 import {
   allQuantities,
   initialMeterMeasurementsState,
@@ -34,22 +34,21 @@ import {measurementDataFormatter} from './measurementSchema';
 const measurementMeterUri = (
   quantity: Quantity,
   meters: uuid[],
-  timePeriod: Period,
-  customDateRange: Maybe<DateRange>,
+  selectionParameters: SelectedParameters,
 ): string =>
-  `quantities=${quantity}` +
-  `&meters=${meters.join(',')}` +
-  `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
+  `quantity=${quantity}` +
+  `&${meters.map((id: uuid) => `logicalMeterId=${id}`).join('&')}` +
+  `&${makeApiParametersOf(selectionParameters.dateRange)}`;
 
 const measurementCityUri = (
   quantity: Quantity,
-  cities: uuid[],
-  timePeriod: Period,
-  customDateRange: Maybe<DateRange>,
+  city: uuid,
+  {dateRange, cities, ...parameters}: SelectedParameters,
 ): string =>
-  `quantities=${quantity}` +
-  `&${cities.map((city) => `city=${city}`).join('&')}` +
-  `&${toPeriodApiParameters({period: timePeriod, customDateRange}).join('&')}`;
+  `quantity=${quantity}` +
+  `&${makeApiParametersOf(dateRange)}` +
+  `&${toEntityApiParametersMeters({cities: [toIdNamed(city.toString())], ...parameters}).join('&')}` +
+  `&label=${cityWithoutCountry(city.toString())}`;
 
 interface GraphDataResponse {
   data: MeasurementApiResponse;
@@ -64,37 +63,25 @@ export const isSelectedCity = (listItem: uuid): boolean =>
 
 type OnUpdateGraph = (state: ReportContainerState) => void;
 
-export interface MeasurementOptions {
-  selectionTreeEntities: SelectionTreeEntities;
-  selectedIndicators: Medium[];
-  quantities: Quantity[];
-  selectedListItems: uuid[];
-  timePeriod: Period;
-  customDateRange: Maybe<DateRange>;
-  updateState: OnUpdateGraph;
-  logout: OnLogout;
-}
+type GraphDataRequests = Array<Promise<GraphDataResponse>>;
 
 interface GroupedRequests {
-  average: Array<Promise<GraphDataResponse>>;
-  meters: Array<Promise<GraphDataResponse>>;
-  cities: Array<Promise<GraphDataResponse>>;
+  average: GraphDataRequests;
+  meters: GraphDataRequests;
+  cities: GraphDataRequests;
 }
 
 const requestsPerQuantity = (
   quantities: Quantity[],
   selectionTreeEntities: SelectionTreeEntities,
   selectedListItems: uuid[],
-  timePeriod: Period,
-  customDateRange: Maybe<DateRange>,
+  selectionParameters: SelectedParameters,
 ): GroupedRequests => {
-
   const meterByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
-  const cityByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
   quantities.forEach((quantity: Quantity) => {
     meterByQuantity[quantity] = new Set();
-    cityByQuantity[quantity] = new Set();
   });
+  const quantitiesByCity: {[key: string]: Set<Quantity>} = {};
 
   const requests: GroupedRequests = {
     average: [],
@@ -108,10 +95,12 @@ const requestsPerQuantity = (
     .filter(isDefined)
     .forEach(({medium, id}: SelectionTreeCity) => {
       medium.forEach((singleMedium: Medium) => {
-        const cityQuantities: Quantity[] = allQuantities[singleMedium];
+        const quantitiesInCity: Quantity[] = allQuantities[singleMedium];
         quantities
-          .filter((quantity: Quantity) => cityQuantities.includes(quantity))
-          .forEach((quantity: Quantity) => cityByQuantity[quantity]!.add(id));
+          .filter((quantity: Quantity) => quantitiesInCity.includes(quantity))
+          .forEach((quantity: Quantity) => quantitiesByCity[id]
+            ? quantitiesByCity[id].add(quantity)
+            : quantitiesByCity[id] = new Set<Quantity>([quantity]));
       });
     });
 
@@ -126,20 +115,26 @@ const requestsPerQuantity = (
         .forEach((quantity: Quantity) => meterByQuantity[quantity]!.add(id));
     });
 
-  requests.cities = Object.keys(cityByQuantity)
-    .filter((quantity: Quantity) => cityByQuantity[quantity]!.size)
-    .map((quantity: Quantity) =>
-      restClient.getParallel(makeUrl(
-        EndPoints.measurements.concat('/cities'),
-        measurementCityUri(quantity, Array.from(cityByQuantity[quantity]!), timePeriod, customDateRange),
-      )));
+  requests.cities = Object.keys(quantitiesByCity)
+    .reduce(
+      (accumulator: GraphDataRequests, city: uuid) => [
+        ...accumulator,
+        ...Array.from(quantitiesByCity[city]).map((quantity: Quantity) =>
+          restClient.getParallel(makeUrl(
+            EndPoints.measurements.concat('/average'),
+            measurementCityUri(quantity, city, selectionParameters),
+          ))
+        )
+      ],
+      []
+    );
 
   requests.meters = Object.keys(meterByQuantity)
     .filter((quantity) => meterByQuantity[quantity]!.size)
     .map((quantity: Quantity) =>
       restClient.getParallel(makeUrl(
         EndPoints.measurements,
-        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
+        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), selectionParameters),
       )));
 
   requests.average = Object.keys(meterByQuantity)
@@ -147,7 +142,7 @@ const requestsPerQuantity = (
     .map((quantity: Quantity) =>
       restClient.getParallel(makeUrl(
         EndPoints.measurements.concat('/average'),
-        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), timePeriod, customDateRange),
+        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), selectionParameters),
       )));
 
   return requests;
@@ -158,23 +153,31 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
   values: averageEntity.values.filter(({value}) => value !== undefined),
 });
 
+export interface MeasurementOptions {
+  selectionTreeEntities: SelectionTreeEntities;
+  selectedIndicators: Medium[];
+  quantities: Quantity[];
+  selectedListItems: uuid[];
+  updateState: OnUpdateGraph;
+  logout: OnLogout;
+  selectionParameters: SelectedParameters;
+}
+
 export const fetchMeasurements =
   async ({
     selectionTreeEntities,
     selectedIndicators,
     quantities,
     selectedListItems,
-    timePeriod,
-    customDateRange,
     updateState,
     logout,
+    selectionParameters,
   }: MeasurementOptions): Promise<void> => {
     const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
       quantities,
       selectionTreeEntities,
       selectedListItems,
-      timePeriod,
-      customDateRange,
+      selectionParameters,
     );
 
     if (
