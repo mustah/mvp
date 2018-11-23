@@ -19,7 +19,7 @@ import com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
 import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
@@ -51,11 +51,17 @@ class LogicalMeterQueryDslJpaRepository
   implements LogicalMeterJpaRepository {
 
   private final DSLContext dsl;
+  private final JooqFilterVisitor logicalMeterJooqConditions;
 
   @Autowired
-  LogicalMeterQueryDslJpaRepository(EntityManager entityManager, DSLContext dsl) {
+  LogicalMeterQueryDslJpaRepository(
+    EntityManager entityManager,
+    DSLContext dsl,
+    JooqFilterVisitor logicalMeterJooqConditions
+  ) {
     super(entityManager, LogicalMeterEntity.class);
     this.dsl = dsl;
+    this.logicalMeterJooqConditions = logicalMeterJooqConditions;
   }
 
   @Override
@@ -145,14 +151,17 @@ class LogicalMeterQueryDslJpaRepository
       meterAlarmLog.STOP,
       meterAlarmLog.MASK,
       meterAlarmLog.DESCRIPTION
-    ).from(logicalMeter);
+    )
+      // one row for each logical/physical meter, until meter replacement is implemented
+      .distinctOn(logicalMeter.ID, physicalMeter.ID)
+      .from(logicalMeter);
 
     var countQuery = dsl.select(logicalMeter.ID).from(logicalMeter);
 
     var filters = toFilters(parameters);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, selectQuery);
-    new LogicalMeterJooqConditions(dsl).apply(filters, countQuery);
+    logicalMeterJooqConditions.apply(filters, selectQuery);
+    logicalMeterJooqConditions.apply(filters, countQuery);
 
     List<LogicalMeterSummaryDto> logicalMeters = selectQuery
       .limit(pageable.getPageSize())
@@ -186,7 +195,7 @@ class LogicalMeterQueryDslJpaRepository
 
     Filters filters = toFilters(parameters);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    logicalMeterJooqConditions.apply(filters, query);
 
     return query.fetchInto(LogicalMeterWithLocation.class);
   }

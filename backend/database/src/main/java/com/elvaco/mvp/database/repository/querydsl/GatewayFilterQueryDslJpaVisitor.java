@@ -70,7 +70,7 @@ public class GatewayFilterQueryDslJpaVisitor extends EmptyFilterQueryDslJpaVisit
 
   @Override
   public void visit(SerialFilter serialFilter) {
-    if (serialFilter.comparisonMode().isWildcard()) {
+    if (serialFilter.isWildcard()) {
       predicates.add(GATEWAY.serial.containsIgnoreCase(serialFilter.oneValue()));
     } else {
       predicates.add(GATEWAY.serial.in(serialFilter.values()));

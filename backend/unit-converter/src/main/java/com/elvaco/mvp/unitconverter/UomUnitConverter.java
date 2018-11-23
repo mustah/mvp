@@ -109,12 +109,7 @@ public class UomUnitConverter implements UnitConverter {
     REPLACEMENTS.put("*", "");
   }
 
-  private UomUnitConverter() {}
-
-  public static UomUnitConverter singleton() {
-    return SingletonHolder.INSTANCE;
-  }
-
+  @Override
   public MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     valueAndUnit = replace(valueAndUnit);
     target = replace(target);
@@ -141,6 +136,13 @@ public class UomUnitConverter implements UnitConverter {
     );
   }
 
+  @Override
+  public MeasurementUnit toMeasurementUnit(
+    MeasurementUnit measurementUnit, String targetUnit
+  ) {
+    return toMeasurementUnit(measurementUnit.toString(), targetUnit);
+  }
+
   public boolean isSameDimension(String firstUnit, String secondUnit) {
     var instance = SimpleUnitFormat.getInstance();
     Unit<?> cleanedUnit;
@@ -156,6 +158,7 @@ public class UomUnitConverter implements UnitConverter {
     return cleanedUnit.isCompatible(cleanedSecondUnit);
   }
 
+  @Override
   public double toValue(double value, String fromUnit, String toUnit) {
     return toMeasurementUnit(value + " " + fromUnit, toUnit).getValue();
   }
@@ -170,9 +173,5 @@ public class UomUnitConverter implements UnitConverter {
       valueAndUnit = valueAndUnit.replace(replacement, REPLACEMENTS.get(replacement));
     }
     return valueAndUnit;
-  }
-
-  private static final class SingletonHolder {
-    private static final UomUnitConverter INSTANCE = new UomUnitConverter();
   }
 }

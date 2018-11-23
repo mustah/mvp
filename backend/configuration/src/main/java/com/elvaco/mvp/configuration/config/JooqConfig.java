@@ -3,6 +3,11 @@ package com.elvaco.mvp.configuration.config;
 import javax.sql.DataSource;
 
 import com.elvaco.mvp.configuration.config.properties.JooqProperties;
+import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
+import com.elvaco.mvp.core.util.MeasurementThresholdParser;
+import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
@@ -17,8 +22,12 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @RequiredArgsConstructor
 @Configuration
@@ -31,6 +40,19 @@ class JooqConfig {
   @Bean
   DSLContext dsl() {
     return new DefaultDSLContext(configuration());
+  }
+
+  @Bean
+  @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  JooqFilterVisitor logicalMeterJooqConditions(
+    DSLContext dsl,
+    QuantityProvider quantityProvider,
+    UnitConverter unitConverter
+  ) {
+    return new LogicalMeterJooqConditions(
+      dsl,
+      new MeasurementThresholdParser(quantityProvider, unitConverter)
+    );
   }
 
   @Bean
@@ -47,6 +69,8 @@ class JooqConfig {
   }
 
   private static class ExceptionTranslator extends DefaultExecuteListener {
+
+    private static final long serialVersionUID = -5095612289357251572L;
 
     @Override
     public void exception(ExecuteContext context) {

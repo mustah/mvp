@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.ManufacturerFilter;
+import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
 import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -70,4 +71,7 @@ abstract class EmptyFilterQueryDslJpaVisitor extends FilterQueryDslJpaVisitor {
 
   @Override
   public void visit(QuantityFilter quantityFilter) {}
+
+  @Override
+  public void visit(MeasurementThresholdFilter thresholdFilter) {}
 }

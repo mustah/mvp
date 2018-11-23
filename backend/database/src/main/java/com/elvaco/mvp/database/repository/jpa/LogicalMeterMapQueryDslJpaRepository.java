@@ -6,7 +6,6 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.MapMarker;
-import com.elvaco.mvp.core.filter.ComparisonMode;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -44,7 +43,7 @@ class LogicalMeterMapQueryDslJpaRepository
 
     Filters filters = toFilters(parameters);
 
-    filters.add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD, ComparisonMode.EQUAL));
+    filters.add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD));
 
     new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
 

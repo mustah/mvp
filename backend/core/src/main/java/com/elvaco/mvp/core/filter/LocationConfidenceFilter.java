@@ -4,8 +4,8 @@ import static java.util.Collections.singletonList;
 
 public class LocationConfidenceFilter extends Filter<Double> {
 
-  public LocationConfidenceFilter(double value, ComparisonMode comparisonMode) {
-    super(singletonList(value), comparisonMode);
+  public LocationConfidenceFilter(double value) {
+    super(singletonList(value));
   }
 
   @Override

@@ -5,9 +5,8 @@ import java.util.UUID;
 
 public abstract class IdFilter extends Filter<UUID> {
   protected IdFilter(
-    Collection<UUID> values,
-    ComparisonMode comparisonMode
+    Collection<UUID> values
   ) {
-    super(values, comparisonMode);
+    super(values);
   }
 }

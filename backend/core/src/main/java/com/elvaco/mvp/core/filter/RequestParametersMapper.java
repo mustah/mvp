@@ -17,8 +17,6 @@ import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
 
-import static com.elvaco.mvp.core.filter.ComparisonMode.EQUAL;
-import static com.elvaco.mvp.core.filter.ComparisonMode.WILDCARD;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
@@ -40,6 +38,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -51,43 +50,47 @@ public final class RequestParametersMapper {
   private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(BEFORE, AFTER, SORT);
 
   static {
-    PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, WILDCARD));
-    PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(MEDIUM, (values) -> new MediumFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(FACILITY, (values) -> new FacilityFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(MANUFACTURER, (values) -> new ManufacturerFilter(values, EQUAL));
+    PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, false));
+    PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, false));
+    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, true));
+    PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, false));
+    PARAMETER_TO_FILTER.put(MEDIUM, MediumFilter::new);
+    PARAMETER_TO_FILTER.put(FACILITY, FacilityFilter::new);
+    PARAMETER_TO_FILTER.put(MANUFACTURER, ManufacturerFilter::new);
     PARAMETER_TO_FILTER.put(
       SECONDARY_ADDRESS,
-      (values) -> new SecondaryAddressFilter(values, EQUAL)
+      SecondaryAddressFilter::new
     );
     PARAMETER_TO_FILTER.put(
       REPORTED,
       (values) -> new MeterStatusFilter(
-        values.stream().map(StatusType::from).collect(toList()),
-        EQUAL
+        values.stream().map(StatusType::from).collect(toList())
       )
     );
     PARAMETER_TO_FILTER.put(
       GATEWAY_ID,
-      (values) -> new GatewayIdFilter(toUuids(values), EQUAL)
+      (values) -> new GatewayIdFilter(toUuids(values))
     );
     PARAMETER_TO_FILTER.put(
       LOGICAL_METER_ID,
-      (values) -> new LogicalMeterIdFilter(toUuids(values), EQUAL)
+      (values) -> new LogicalMeterIdFilter(toUuids(values))
     );
     PARAMETER_TO_FILTER.put(
       ORGANISATION,
-      (values) -> new OrganisationIdFilter(toUuids(values), EQUAL)
+      (values) -> new OrganisationIdFilter(toUuids(values))
     );
     PARAMETER_TO_FILTER.put(
       RequestParameter.WILDCARD,
-      (values) -> new WildcardFilter(values, WILDCARD)
+      WildcardFilter::new
     );
-    PARAMETER_TO_FILTER.put(ALARM, (values) -> new AlarmFilter(values, EQUAL));
-    PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, WILDCARD));
-    PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, WILDCARD));
+    PARAMETER_TO_FILTER.put(
+      THRESHOLD,
+      (values) ->
+        new MeasurementThresholdFilter(values.get(0))
+    );
+    PARAMETER_TO_FILTER.put(ALARM, AlarmFilter::new);
+    PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, true));
+    PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, true));
     PARAMETER_TO_FILTER.put(
       RESOLUTION,
       (values) -> new ResolutionFilter(Set.of(
@@ -96,18 +99,18 @@ public final class RequestParametersMapper {
           .flatMap(Optional::stream)
           .findAny()
           .orElseThrow(() -> new IllegalArgumentException("Invalid value for resolution"))
-      ), EQUAL)
+      ))
     );
     PARAMETER_TO_FILTER.put(
       QUANTITY,
-      (values) -> new QuantityFilter(values.stream().map(Quantity::of).collect(toSet()), EQUAL)
+      (values) -> new QuantityFilter(values.stream().map(Quantity::of).collect(toSet()))
     );
   }
 
   public static Filters toFilters(RequestParameters requestParameters) {
     Collection<VisitableFilter> visitableFilters = new ArrayList<>();
     requestParameters.getPeriod()
-      .ifPresent(period -> visitableFilters.add(new PeriodFilter(List.of(period), EQUAL, period)));
+      .ifPresent(period -> visitableFilters.add(new PeriodFilter(List.of(period), period)));
     visitableFilters.addAll(
       requestParameters.entrySet().stream()
         .filter(param -> !param.getValue().isEmpty() && !isIgnored(param.getKey()))

@@ -1,7 +1,9 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.sql.Date;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
@@ -10,6 +12,7 @@ import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.ManufacturerFilter;
+import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
 import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -17,6 +20,7 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
+import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -27,6 +31,7 @@ import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
@@ -52,8 +57,9 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   );
 
   private final DSLContext dsl;
-
+  private final MeasurementThresholdParser measurementThresholdParser;
   private Condition physicalMeterStatusLogCondition = falseCondition();
+  private Condition measurementStatsCondition = falseCondition();
   private Condition missingMeasurementCondition = falseCondition();
   private Condition meterAlarmLogCondition = falseCondition();
 
@@ -97,6 +103,12 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
           .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+
+    measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(
+      Date.valueOf(period.start.toLocalDate())
+    ).and(MEASUREMENT_STAT_DATA.STAT_DATE.lessOrEqual(
+      Date.valueOf(period.stop.toLocalDate()))
+    ).and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.eq(PHYSICAL_METER.ID));
 
     meterAlarmLogCondition = METER_ALARM_LOG.START.between(
       period.start.toOffsetDateTime(),
@@ -156,6 +168,37 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   }
 
   @Override
+  public void visit(MeasurementThresholdFilter thresholdFilter) {
+    String thresholdExpression = thresholdFilter.oneValue();
+    MeasurementThreshold threshold = measurementThresholdParser.parse(thresholdExpression);
+    Condition thresholdCondition = MEASUREMENT_STAT_DATA.QUANTITY.eq(threshold.quantity.getId());
+
+    Condition valueCond;
+    double convertedValue = threshold.getConvertedValue();
+    switch (threshold.operator) {
+      case LESS_THAN:
+        valueCond = MEASUREMENT_STAT_DATA.MIN.lt(convertedValue);
+        break;
+      case LESS_THAN_OR_EQUAL:
+        valueCond = MEASUREMENT_STAT_DATA.MIN.lessOrEqual(convertedValue);
+        break;
+      case GREATER_THAN:
+        valueCond = MEASUREMENT_STAT_DATA.MAX.gt(convertedValue);
+        break;
+      case GREATER_THAN_OR_EQUAL:
+        valueCond = MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(convertedValue);
+        break;
+      default:
+        throw new UnsupportedOperationException(String.format(
+          "Measurement threshold operator '%s' is not supported",
+          threshold.operator.name()
+        ));
+    }
+
+    addCondition(thresholdCondition.and(valueCond));
+  }
+
+  @Override
   protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
     return query.leftJoin(PHYSICAL_METER)
       .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
@@ -197,6 +240,9 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
         ).from(MISSING_MEASUREMENT)
         .where(missingMeasurementCondition)
         .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID).asTable("mm"))
-      .on(PHYSICAL_METER.ID.eq(field("mm.physical_meter_id", UUID.class)));
+      .on(PHYSICAL_METER.ID.eq(field("mm.physical_meter_id", UUID.class)))
+
+      .leftJoin(MEASUREMENT_STAT_DATA)
+      .on(measurementStatsCondition);
   }
 }

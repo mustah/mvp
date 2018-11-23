@@ -4,12 +4,19 @@ import java.util.Collection;
 
 public class AddressFilter extends Filter<String> {
 
-  AddressFilter(Collection<String> values, ComparisonMode comparisonMode) {
-    super(values, comparisonMode);
+  private final boolean isWildcard;
+
+  AddressFilter(Collection<String> values, boolean isWildcard) {
+    super(values);
+    this.isWildcard = isWildcard;
   }
 
   @Override
   public void accept(FilterVisitor visitor) {
     visitor.visit(this);
+  }
+
+  public boolean isWildcard() {
+    return isWildcard;
   }
 }

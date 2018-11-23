@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.jpa;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
 import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -17,6 +18,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_ME
 class SummaryJooqJpaRepository implements SummaryJpaRepository {
 
   private final DSLContext dsl;
+  private final JooqFilterVisitor logicalMeterJooqConditions;
 
   @Override
   public MeterSummary summary(RequestParameters parameters) {
@@ -32,7 +34,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   private long countMeters(Filters filters) {
     var query = dsl.selectDistinct().from(LOGICAL_METER);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    logicalMeterJooqConditions.apply(filters, query);
 
     return dsl.fetchCount(query);
   }
@@ -40,7 +42,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   private long countCities(Filters filters) {
     var query = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY).from(LOGICAL_METER);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    logicalMeterJooqConditions.apply(filters, query);
 
     return dsl.fetchCount(query
       .where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull())));
@@ -50,7 +52,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
     var query = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY, LOCATION.STREET_ADDRESS)
       .from(LOGICAL_METER);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    logicalMeterJooqConditions.apply(filters, query);
 
     return dsl.fetchCount(query
       .where(LOCATION.COUNTRY.isNotNull()
