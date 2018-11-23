@@ -37,8 +37,8 @@ export const Foldable = ({
 
   return (
     <Column className={classNames('Foldable', containerClassName)}>
-      <RowMiddle className="Foldable-title">
-        <IconRightArrow onClick={showHide} className={classNames('Foldable-arrow', {isVisible})}/>
+      <RowMiddle onClick={showHide} className={classNames('Foldable-title', 'clickable')}>
+        <IconRightArrow className={classNames('Foldable-arrow', {isVisible})}/>
         <BoldFirstUpper className="Medium">{title}</BoldFirstUpper>
       </RowMiddle>
       <div className={classNames('Foldable-content', className, {isVisible})}>
