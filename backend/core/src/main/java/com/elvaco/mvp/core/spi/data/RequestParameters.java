@@ -70,10 +70,10 @@ public interface RequestParameters {
 
   default void ensureOrganisation(AuthenticatedUser currentUser) {
     if (!currentUser.isSuperAdmin()) {
-      var organisationId = currentUser.getParentOrganisationId() != null
-        ? currentUser.getParentOrganisationId()
-        : currentUser.getOrganisationId();
-      replace(ORGANISATION, organisationId.toString());
+      replace(
+        ORGANISATION,
+        currentUser.subOrganisationParameters().getEffectiveOrganisationId().toString()
+      );
     }
   }
 }

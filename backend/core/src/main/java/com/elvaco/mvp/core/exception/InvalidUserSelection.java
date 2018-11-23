@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class InvalidUserSelection extends RuntimeException {
 
-  public InvalidUserSelection(String message) {
+  private InvalidUserSelection(String message) {
     super(message);
   }
 

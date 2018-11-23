@@ -78,8 +78,9 @@ public class LogicalMeterUseCases {
     if (currentUser.isSuperAdmin()) {
       return logicalMeters.findById(logicalMeterId).map(lm -> lm.organisationId);
     } else {
-      return Optional.ofNullable(currentUser.getParentOrganisationId())
-        .or(() -> Optional.of(currentUser.getOrganisationId()));
+      return Optional.ofNullable(
+        currentUser.subOrganisationParameters().getEffectiveOrganisationId()
+      );
     }
   }
 

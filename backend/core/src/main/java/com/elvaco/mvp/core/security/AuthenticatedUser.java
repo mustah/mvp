@@ -2,11 +2,9 @@ package com.elvaco.mvp.core.security;
 
 import java.io.Serializable;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.SubOrganisationParameters;
 import com.elvaco.mvp.core.domainmodels.Usernamed;
-
-import static com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
 
 public interface AuthenticatedUser extends Usernamed, Serializable {
 
@@ -18,11 +16,7 @@ public interface AuthenticatedUser extends Usernamed, Serializable {
 
   UUID getOrganisationId();
 
-  @Nullable
-  UUID getParentOrganisationId();
-
-  @Nullable
-  SelectionParametersDto selectionParameters();
+  SubOrganisationParameters subOrganisationParameters();
 
   String getToken();
 
