@@ -1,4 +1,4 @@
-import {SelectionItem} from '../state/domain-models/domainModels';
+import {SelectionItem} from '../state/user-selection/userSelectionModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {ParameterName, SelectedParameters, SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, Omit, uuid} from '../types/Types';

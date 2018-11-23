@@ -8,10 +8,16 @@ import {migrateUserSelection, oldParameterNames} from '../../reducers/stateMigra
 import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
 import {emptyActionOf, ErrorResponse, payloadActionOf, uuid} from '../../types/Types';
-import {NormalizedState, SelectionItem} from '../domain-models/domainModels';
+import {NormalizedState} from '../domain-models/domainModels';
 import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
-import {OldSelectionParameters, ParameterName, SelectionParameter, UserSelection} from './userSelectionModels';
+import {
+  OldSelectionParameters,
+  ParameterName,
+  SelectionItem,
+  SelectionParameter,
+  UserSelection
+} from './userSelectionModels';
 import {userSelectionsDataFormatter} from './userSelectionSchema';
 import {getUserSelection} from './userSelectionSelectors';
 

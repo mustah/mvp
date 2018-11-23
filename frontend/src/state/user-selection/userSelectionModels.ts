@@ -1,7 +1,7 @@
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
-import {SelectionItem} from '../domain-models/domainModels';
+import {Address, City} from '../domain-models/location/locationModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
@@ -18,6 +18,8 @@ export const enum ParameterName {
   manufacturers = 'manufacturers',
   productModels = 'productModels',
 }
+
+export type SelectionItem = IdNamed | City | Address;
 
 export interface SelectionParameter {
   item: SelectionItem;

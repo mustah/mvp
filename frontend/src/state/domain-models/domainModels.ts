@@ -1,7 +1,6 @@
-import {ErrorResponse, Identifiable, IdNamed, uuid} from '../../types/Types';
+import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
-import {Address, City} from './location/locationModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
@@ -31,8 +30,6 @@ export interface NormalizedState<T extends Identifiable> extends DomainModel<T> 
   total: number;
   error?: ErrorResponse;
 }
-
-export type SelectionItem = IdNamed | City | Address;
 
 export interface DomainModelsState {
   gatewayMapMarkers: NormalizedState<MapMarker>;

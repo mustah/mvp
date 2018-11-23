@@ -2,7 +2,7 @@ import {EmptyAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
 import {Action, IdNamed} from '../../types/Types';
-import {SelectionItem} from '../domain-models/domainModels';
+import {SelectionItem} from './userSelectionModels';
 import {
   domainModelsDeleteSuccess,
   domainModelsPostSuccess,

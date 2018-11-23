@@ -14,7 +14,7 @@ import {
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters} from '../../types/Types';
-import {SelectionItem} from '../domain-models/domainModels';
+import {SelectionItem} from './userSelectionModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
