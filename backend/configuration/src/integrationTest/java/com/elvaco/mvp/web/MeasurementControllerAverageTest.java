@@ -221,51 +221,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   @Test
-  public void multipleQuantities() {
-    var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
-
-    var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
-    var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Power", 2.0);
-    newMeasurement(meter, date.plusSeconds(2), "Power", 4.0);
-
-    newMeasurement(meter, date, "Difference temperature", 20.0);
-    newMeasurement(meter, date.plusSeconds(2), "Difference temperature", 40.0);
-
-    ResponseEntity<List<MeasurementSeriesDto>> response = asUser().getList(
-
-      "/measurements/average"
-        + "?after=" + date
-        + "&before=" + date.plusMinutes(1)
-        + "&quantity={powerQuantity},{diffTempQuantity}"
-        + "&logicalMeterId={meterId}"
-        + "&resolution=hour",
-      MeasurementSeriesDto.class,
-      Quantity.POWER.name,
-      Quantity.DIFFERENCE_TEMPERATURE.name,
-      logicalMeter.id.toString()
-    );
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).containsExactlyInAnyOrder(
-      new MeasurementSeriesDto(
-        SERIES_ID_AVERAGE_POWER,
-        Quantity.POWER.name,
-        Quantity.POWER.presentationUnit(),
-        AVERAGE,
-        singletonList(new MeasurementValueDto(date.toInstant(), 2.0))
-      ),
-      new MeasurementSeriesDto(
-        SERIES_ID_AVERAGE_DIFF_TEMP,
-        Quantity.DIFFERENCE_TEMPERATURE.name,
-        Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
-        AVERAGE,
-        singletonList(new MeasurementValueDto(date.toInstant(), 20.0))
-      )
-    );
-  }
-
-  @Test
   public void oneMeterOneHour_ShoulOnlyInclude_ValueAtIntervalStart() {
     var date = ZonedDateTime.parse("2018-03-06T05:00:00Z");
     var logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
@@ -785,32 +740,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         new MeasurementValueDto(periodStartHour.plusHours(2).toInstant(), null),
         new MeasurementValueDto(periodStartHour.plusHours(3).toInstant(), null)
       );
-  }
-
-  @Test
-  public void twoQuantities_WhereOneIsNotPresent() {
-    var date = ZonedDateTime.parse("2018-02-01T01:12:00Z");
-
-    var logicalMeter = newLogicalMeterEntity(GAS_METER);
-    var meter = newPhysicalMeterEntity(logicalMeter.id);
-    newMeasurement(meter, date, "Volume", 1.0);
-    newMeasurement(meter, date.plusHours(1), "Volume", 2.0);
-    newMeasurement(meter, date.plusHours(2), "Volume", 5.0);
-
-    var responseEntity = asUser()
-      .getList(
-        "/measurements/average"
-          + "?after=" + date
-          + "&before=" + date.plusHours(4)
-          + "&quantity=" + Quantity.VOLUME.name + ",Flarbb"
-          + "&logicalMeterId=" + logicalMeter.getId(),
-        MeasurementSeriesDto.class
-      );
-
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(responseEntity.getBody())
-      .extracting("quantity")
-      .containsExactly("Volume");
   }
 
   @Override

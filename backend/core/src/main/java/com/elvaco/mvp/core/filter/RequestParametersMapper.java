@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -41,7 +40,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -102,14 +100,7 @@ public final class RequestParametersMapper {
     );
     PARAMETER_TO_FILTER.put(
       QUANTITY,
-      (values) -> {
-        Set<Quantity> quantities = values.stream()
-          .map(quantity -> Stream.of(quantity.split(","))) // TODO stop calling things with CSV
-          .flatMap(identity())
-          .map(Quantity::of)
-          .collect(toSet());
-        return new QuantityFilter(quantities, EQUAL);
-      }
+      (values) -> new QuantityFilter(values.stream().map(Quantity::of).collect(toSet()), EQUAL)
     );
   }
 

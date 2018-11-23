@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
@@ -69,8 +68,6 @@ public class MeasurementController {
     RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
 
     Set<Quantity> quantities = parameters.getValues(QUANTITY).stream()
-      .map(quantity -> Stream.of(quantity.split(","))) // TODO stop calling things with CSV
-      .flatMap(identity())
       .map(Quantity::of)
       .collect(toSet());
 
