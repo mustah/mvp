@@ -23,6 +23,7 @@ import static com.elvaco.mvp.testing.fixture.UserSelectionTestData.CITIES_JSON_S
 import static com.elvaco.mvp.testing.fixture.UserTestData.subOrgUser;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
 
@@ -31,6 +32,8 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
 
   @Test
   public void excludeMetersWithUnknownCities() {
+    assumeTrue(isPostgresDialect());
+
     var logicalMeterId = randomUUID();
     var user = subOrganisationUser(CITIES_JSON_STRING, logicalMeterId);
 

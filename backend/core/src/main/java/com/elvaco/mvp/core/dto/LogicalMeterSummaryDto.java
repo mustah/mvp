@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.dto;
 
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -38,4 +39,55 @@ public class LogicalMeterSummaryDto {
   public final Long readIntervalMinutes;
   @Nullable
   public Long expectedReadingCount;
+
+  public LogicalMeterSummaryDto(
+    UUID id,
+    UUID organisationId,
+    String externalId,
+    OffsetDateTime created,
+    String medium,
+    String gatewaySerial,
+    String activeStatus,
+    @Nullable Long missingReadingCount,
+    @Nullable String manufacturer,
+    @Nullable String address,
+    @Nullable Long readIntervalMinutes,
+    Double latitude,
+    Double longitude,
+    Double confidence,
+    String country,
+    String city,
+    String streetAddress,
+    Long alarmId,
+    UUID alarmPhysicalMeterId,
+    OffsetDateTime start,
+    OffsetDateTime lastSeen,
+    OffsetDateTime stop,
+    Integer mask,
+    String description
+  ) {
+    this.id = id;
+    this.organisationId = organisationId;
+    this.externalId = externalId;
+    this.created = created.toZonedDateTime();
+    this.medium = medium;
+    this.gatewaySerial = gatewaySerial;
+    this.activeStatus = StatusType.from(activeStatus);
+    this.missingReadingCount = missingReadingCount;
+    this.manufacturer = manufacturer;
+    this.address = address;
+    this.readIntervalMinutes = readIntervalMinutes;
+    this.location = new Location(latitude, longitude, confidence, country, city, streetAddress);
+    this.activeAlarm = alarmId != null
+      ? AlarmLogEntry.builder()
+      .id(alarmId)
+      .entityId(alarmPhysicalMeterId)
+      .start(start.toZonedDateTime())
+      .lastSeen(lastSeen.toZonedDateTime())
+      .stop(stop != null ? stop.toZonedDateTime() : null)
+      .mask(mask)
+      .description(description)
+      .build()
+      : null;
+  }
 }

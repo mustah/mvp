@@ -58,6 +58,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -89,6 +90,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    assumeTrue(isPostgresDialect());
     start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
     hotWaterMeterDefinition = meterDefinitions.save(HOT_WATER_METER);
   }
@@ -143,7 +145,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void locationIsAttachedToPagedMeter() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
@@ -212,8 +214,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusFiftyPercent() {
-    assumeTrue(isPostgresDialect());
-
     LogicalMeter districtHeatingMeter = saveLogicalMeter(
       YESTERDAY.minusMinutes(15)
     );
@@ -253,8 +253,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusFiftyPercentWhenMeterHasStatuses() {
-    assumeTrue(isPostgresDialect());
-
     var districtHeatingMeter = saveLogicalMeter(YESTERDAY.minusMinutes(15));
 
     var physicalMeter = physicalMeters.save(physicalMeter()
@@ -302,8 +300,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusFiftyPercentWhenMeterHasMultipleActiveStatusesWithinPeriod() {
-    assumeTrue(isPostgresDialect());
-
     var districtHeatingMeter = saveLogicalMeter(YESTERDAY.minusMinutes(15));
 
     var physicalMeter = physicalMeters.save(physicalMeter()
@@ -505,8 +501,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusTwoOutOfThreeMissing() {
-    assumeTrue(isPostgresDialect());
-
     LogicalMeter districtHeatingMeter = saveLogicalMeter(
       YESTERDAY.minusMinutes(15)
     );
@@ -545,8 +539,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusMeterChangeWithIntervalUpdate() {
-    assumeTrue(isPostgresDialect());
-
     LogicalMeter districtHeatingMeter = saveLogicalMeter(
       YESTERDAY.minusMinutes(15)
     );
@@ -778,17 +770,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .build()
     );
 
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, "2005-01-10T01:00:00.00Z")
+      .parameter(BEFORE, "2015-01-01T23:00:00.00Z")
+      .parameter(REPORTED, StatusType.ERROR.name)
+      .build();
+
     Page<PagedLogicalMeterDto> response = asUser()
-      .getPage(
-        "/meters?after=2005-01-10T01:00:00.00Z&before=2015-01-01T23:00:00.00Z&reported=error",
-        PagedLogicalMeterDto.class
-      );
+      .getPage(url, PagedLogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getNumberOfElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    assertThat(response.getContent().get(0).id).isEqualTo(firstLogicalMeter.id);
+    assertThat(response.getContent()).extracting("id").containsExactly(firstLogicalMeter.id);
   }
 
   @Test
@@ -1317,7 +1313,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesFacilityStart() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
       .externalId("abcdef")
@@ -1336,7 +1332,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesCityStart() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
@@ -1356,7 +1352,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesCityStart_caseInsensitive() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
@@ -1376,7 +1372,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesAddressStart() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
@@ -1396,7 +1392,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesAddressStart_caseInsensitive() {
-    UUID meterId = UUID.randomUUID();
+    UUID meterId = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
@@ -1535,7 +1531,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchReturnsAllMatches() {
-    UUID meterIdOne = UUID.randomUUID();
+    UUID meterIdOne = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterIdOne)
       .externalId(meterIdOne.toString())
@@ -1550,7 +1546,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .logicalMeterId(meterIdOne)
       .build());
 
-    UUID meterIdTwo = UUID.randomUUID();
+    UUID meterIdTwo = randomUUID();
     logicalMeters.save(LogicalMeter.builder()
       .id(meterIdTwo)
       .externalId("street facility")
@@ -1767,15 +1763,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .description("testing")
       .build());
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    var response = asUser()
       .getPage(
         metersUrl(start.plusHours(4), start.plusHours(5)),
         PagedLogicalMeterDto.class
       );
 
-    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
-    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
-    assertThat(paginatedLogicalMeters.getContent().get(0).alarm).isNull();
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent().get(0).alarm).isNull();
   }
 
   @Test
