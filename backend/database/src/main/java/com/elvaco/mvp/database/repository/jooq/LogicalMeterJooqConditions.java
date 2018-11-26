@@ -154,7 +154,6 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
           .select(max(PHYSICAL_METER_STATUS_LOG.ID))
           .from(PHYSICAL_METER_STATUS_LOG)
           .where(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(physicalMeterStatusLogCondition))))
-        .or(PHYSICAL_METER_STATUS_LOG.ID.isNull()));
+            .and(physicalMeterStatusLogCondition)))));
   }
 }
