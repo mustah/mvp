@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet
+    id="create missing measurement physical_meter_id expected_time index"
+    author="Must Tahir"
+  >
+    <createIndex
+      indexName="missing_measurement_physical_meter_id_expected_time_idx"
+      tableName="missing_measurement"
+      schemaName="public">
+      <column name="physical_meter_id"/>
+      <column name="expected_time"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
