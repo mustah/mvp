@@ -57,6 +57,7 @@ public class LogicalMeterDtoMapper {
       .orElse(null);
 
     meterDto.isReported = Optional.ofNullable(logicalMeter.activeStatus)
+      .filter(StatusType::isNotUnknown)
       .map(StatusType::isReported)
       .orElse(false);
 

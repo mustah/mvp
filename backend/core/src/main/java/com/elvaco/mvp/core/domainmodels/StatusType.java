@@ -1,10 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-
-import static java.util.Collections.unmodifiableMap;
 
 public enum StatusType {
 
@@ -35,9 +32,11 @@ public enum StatusType {
     return this != OK;
   }
 
+  public boolean isNotUnknown() {
+    return this != UNKNOWN;
+  }
+
   private static Map<String, StatusType> statusTypeAliasMap() {
-    Map<String, StatusType> map = new HashMap<>();
-    map.put("ErrorReported", ERROR);
-    return unmodifiableMap(map);
+    return Map.of("ErrorReported", ERROR);
   }
 }

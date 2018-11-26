@@ -76,10 +76,10 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   public void visit(PeriodFilter periodFilter) {
     var period = periodFilter.getPeriod();
 
-    physicalMeterStatusLogCondition = PHYSICAL_METER_STATUS_LOG.START.between(
-      period.start.toOffsetDateTime(),
-      period.stop.toOffsetDateTime()
-    ).or(PHYSICAL_METER_STATUS_LOG.STOP.isNull());
+    physicalMeterStatusLogCondition =
+      PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
+        .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
+          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
   }
 
   @Override
@@ -93,7 +93,7 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
     addCondition(LOGICAL_METER.EXTERNAL_ID.lower().startsWith(value)
       .or(METER_DEFINITION.MEDIUM.lower().startsWith(value))
       .or(LOCATION.CITY.lower().startsWith(value))
-      .or(LOCATION.COUNTRY.lower().startsWith(value))
+      .or(LOCATION.STREET_ADDRESS.lower().startsWith(value))
       .or(PHYSICAL_METER.MANUFACTURER.lower().startsWith(value))
       .or(PHYSICAL_METER.ADDRESS.lower().startsWith(value)));
   }
@@ -146,14 +146,15 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
         .and(GATEWAY.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
       .leftJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
+      .leftJoin(LOCATION)
+      .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
       .leftJoin(PHYSICAL_METER_STATUS_LOG)
       .on(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
         .and(PHYSICAL_METER_STATUS_LOG.ID.equal(dsl
           .select(max(PHYSICAL_METER_STATUS_LOG.ID))
           .from(PHYSICAL_METER_STATUS_LOG)
           .where(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(physicalMeterStatusLogCondition)))))
-      .leftJoin(LOCATION)
-      .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID));
+            .and(physicalMeterStatusLogCondition))))
+        .or(PHYSICAL_METER_STATUS_LOG.ID.isNull()));
   }
 }
