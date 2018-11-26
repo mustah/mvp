@@ -529,7 +529,8 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     return LogicalMeter.builder()
       .id(meterId)
       .externalId(meterId.toString())
-      .organisationId(context().organisationId());
+      .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET);
   }
 
   @SafeVarargs

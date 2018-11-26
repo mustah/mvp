@@ -88,6 +88,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
     var logicalMeterWithUnknownCity = logicalMeters.save(LogicalMeter.builder()
       .externalId("ex1")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(physicalMeterBuilder()
@@ -99,6 +100,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .externalId("ex2")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(physicalMeterBuilder()

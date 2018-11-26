@@ -343,6 +343,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     return LogicalMeter.builder()
       .externalId(randomUUID().toString())
       .organisationId(organisationId)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build();
   }
 

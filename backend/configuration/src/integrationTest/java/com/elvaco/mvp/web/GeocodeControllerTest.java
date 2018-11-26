@@ -42,6 +42,7 @@ public class GeocodeControllerTest extends IntegrationTest {
       .id(logicalMeterId)
       .externalId("test-123")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var geoResponse = new GeoResponseDto(
@@ -70,6 +71,7 @@ public class GeocodeControllerTest extends IntegrationTest {
       .id(logicalMeterId)
       .externalId("test-123")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var geoResponse = new GeoResponseDto(
@@ -105,6 +107,7 @@ public class GeocodeControllerTest extends IntegrationTest {
       .id(logicalMeterId)
       .externalId("test-123")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     var geoResponse = new GeoResponseDto(

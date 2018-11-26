@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.access;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
@@ -41,7 +40,7 @@ public final class QuantityAccess {
     if (preloadedQty == null) {
       return quantity.id;
     }
-    if (!Objects.equals(preloadedQty.id, quantity.id)) {
+    if (quantity.id != null && !quantity.id.equals(preloadedQty.id)) {
       throw new RuntimeException("Supplied Qunatity.Id does not match previously stored Id");
     }
     return preloadedQty.id;

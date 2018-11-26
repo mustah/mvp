@@ -265,6 +265,7 @@ public class SummaryControllerTest extends IntegrationTest {
       .externalId("externalId-" + randomUUID())
       .organisationId(context().organisationId())
       .location(location)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build();
   }
 

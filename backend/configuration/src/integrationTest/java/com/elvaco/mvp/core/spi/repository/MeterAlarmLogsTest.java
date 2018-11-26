@@ -132,6 +132,7 @@ public class MeterAlarmLogsTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .created(ZonedDateTime.now())
       .meterDefinition(MeterDefinition.GAS_METER)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()

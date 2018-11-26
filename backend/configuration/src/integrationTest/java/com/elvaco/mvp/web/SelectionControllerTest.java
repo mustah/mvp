@@ -386,6 +386,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("abcdef")
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -422,6 +423,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
         .location(kungsbacka().address("Stora vägen 24").build())
+        .utcOffset(DEFAULT_UTC_OFFSET)
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -477,6 +479,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -510,6 +513,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(kungsbacka().address("Stora vägen 24").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -542,6 +546,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
 
@@ -551,6 +556,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
 
@@ -560,6 +566,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(stockholm().country("norge").city("oslo").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
 
@@ -582,6 +589,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
 
@@ -591,6 +599,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(MeterDefinition.HOT_WATER_METER)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
 
@@ -613,6 +622,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .externalId("1234")
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .utcOffset(DEFAULT_UTC_OFFSET)
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -629,7 +639,9 @@ public class SelectionControllerTest extends IntegrationTest {
       .id(logicalMeterId2)
       .externalId("5678")
       .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER).build()
+      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .utcOffset(DEFAULT_UTC_OFFSET)
+      .build()
     );
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -658,6 +670,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .externalId("1234")
         .organisationId(context().organisationId())
         .meterDefinition(MeterDefinition.HOT_WATER_METER)
+        .utcOffset(DEFAULT_UTC_OFFSET)
         .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -824,6 +837,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .city(city)
         .address(address)
         .build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
   }

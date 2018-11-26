@@ -50,8 +50,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(locations = "classpath:it.properties")
 public abstract class IntegrationTest {
 
+  public static final String DEFAULT_UTC_OFFSET = "+01";
   private static final long MAX_WAIT_TIME = TimeUnit.SECONDS.toNanos(15);
-
   @Autowired
   protected MvpProperties mvpProperties;
 

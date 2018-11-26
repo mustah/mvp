@@ -151,6 +151,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     PagedLogicalMeterDto logicalMeterDto = asUser()
@@ -395,6 +396,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .meterDefinition(DISTRICT_HEATING_METER)
       .created(start)
       .gateway(gateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build()
     );
 
@@ -833,6 +835,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .organisationId(context().organisationId2())
       .meterDefinition(hotWaterMeterDefinition)
       .location(UNKNOWN_LOCATION)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .id(randomUUID())
@@ -840,6 +843,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .meterDefinition(hotWaterMeterDefinition)
       .location(UNKNOWN_LOCATION)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> response = restClient()
@@ -871,11 +875,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId(facility)
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("another-mapped-meter")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -929,6 +935,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId("my-mapped-meter")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -942,11 +949,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId("my-mapped-meter")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     logicalMeters.save(LogicalMeter.builder()
       .externalId("123-123-123")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -960,18 +969,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId("my-mapped-meter")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("123-123-123")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("123-456")
       .organisationId(context().organisationId())
       .location(kungsbacka().confidence(0.74).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -985,18 +997,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId("123")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("123-123-123")
       .organisationId(context().organisationId())
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("456")
       .organisationId(context().organisationId())
       .location(kungsbacka().confidence(0.74).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
@@ -1006,6 +1021,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .longitude(null)
         .latitude(null)
         .confidence(null).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -1075,14 +1091,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter.LogicalMeterBuilder logicalMeter = LogicalMeter.builder()
       .organisationId(context().organisationId());
 
-    logicalMeters.save(logicalMeter.externalId("abc").build());
+    logicalMeters.save(logicalMeter.externalId("abc")
+      .utcOffset(DEFAULT_UTC_OFFSET)
+      .build());
 
     logicalMeters.save(logicalMeter.externalId("123")
       .location(kungsbacka().confidence(0.75).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(logicalMeter.externalId("456")
       .location(kungsbacka().confidence(0.80).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(logicalMeter.externalId("789")
@@ -1090,6 +1110,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         .longitude(null)
         .latitude(null)
         .confidence(null).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -1119,6 +1140,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       LogicalMeter.builder()
         .organisationId(context().organisationId())
         .externalId("users-meter")
+        .utcOffset(DEFAULT_UTC_OFFSET)
         .build()
     );
 
@@ -1303,6 +1325,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .organisationId(context().organisation().id)
       .meterDefinition(DISTRICT_HEATING_METER)
       .created(start)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     JsonNode logicalMeterJson = asUser()
@@ -1318,6 +1341,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId("abcdef")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
@@ -1338,6 +1362,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().city("ringhals").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
@@ -1358,6 +1383,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().city("ringhals").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
@@ -1378,6 +1404,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().city("ringhals").address("storgatan 34").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
@@ -1398,6 +1425,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().city("ringhals").address("storgatan 34").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
@@ -1419,6 +1447,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(UNKNOWN_LOCATION)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1448,6 +1477,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .externalId(meterId.toString())
       .meterDefinition(HOT_WATER_METER)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
@@ -1468,6 +1498,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(logicalMeterId)
       .externalId("external")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1492,8 +1523,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .organisationId(context().organisationId());
 
-    logicalMeters.save(builder.externalId("first facility").build());
-    logicalMeters.save(builder.externalId("second facility").build());
+    logicalMeters.save(builder.externalId("first facility")
+      .utcOffset(DEFAULT_UTC_OFFSET)
+      .build());
+    logicalMeters.save(builder.externalId("second facility")
+      .utcOffset(DEFAULT_UTC_OFFSET)
+      .build());
 
     Page<PagedLogicalMeterDto> page = asUser()
       .getPage("/meters?w=secon", PagedLogicalMeterDto.class);
@@ -1511,6 +1546,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId("street facility")
       .organisationId(context().organisationId())
       .location(new LocationBuilder().city("city town").address("street road 1").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1537,6 +1573,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterIdOne.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().address("street 1").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1551,6 +1588,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterIdTwo)
       .externalId("street facility")
       .organisationId(context().organisationId())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1577,6 +1615,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().address("street 1").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -1818,7 +1857,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       meterExternalId,
       context().organisationId(),
       ZonedDateTime.now(),
-      MeterDefinitionEntityMapper.toEntity(UNKNOWN_METER)
+      MeterDefinitionEntityMapper.toEntity(UNKNOWN_METER),
+      DEFAULT_UTC_OFFSET
     );
 
     logicalMeterJpaRepository.save(logicalMeterEntity);
@@ -1933,7 +1973,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterId)
       .externalId(meterId.toString())
       .organisationId(context().organisationId())
-      .meterDefinition(meterDefinition);
+      .meterDefinition(meterDefinition)
+      .utcOffset(DEFAULT_UTC_OFFSET);
   }
 
   private StatusLogEntry<UUID> saveStatusLogForMeter(StatusLogEntry<UUID> statusLog) {

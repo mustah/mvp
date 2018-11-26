@@ -386,6 +386,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .created(NOW)
       .gateway(gateway)
       .location(kungsbacka().address("super 1").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     ResponseEntity<MapMarkersDto> cityAddressResponse = asSuperAdmin()
@@ -416,6 +417,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .organisationId(context().organisationId2())
       .created(NOW)
       .gateway(gateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     ResponseEntity<MapMarkersDto> response = asSuperAdmin()
@@ -437,6 +439,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .location(kungsbacka()
         .confidence(0.0)
         .build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     ResponseEntity<MapMarkersDto> response = asSuperAdmin()
@@ -478,6 +481,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .created(NOW)
       .gateway(gateway)
       .location(location)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
   }
 
@@ -487,6 +491,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .organisationId(user.organisation.id)
       .created(NOW)
       .location(location)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
   }
 
@@ -500,6 +505,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .organisationId(user.organisation.id)
       .created(NOW)
       .location(location)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     savePhysicalMeterWith(logicalMeter, status);
     return logicalMeter;

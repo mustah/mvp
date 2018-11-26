@@ -244,6 +244,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .location(new LocationBuilder().city("stockholm").build())
       .gateway(gateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
@@ -251,6 +252,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .location(new LocationBuilder().city("kungsbacka").build())
       .gateway(gateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     Page<GatewayDto> content = asSuperAdmin()
       .getPage("/gateways?id=" + gateway.id.toString(), GatewayDto.class);
@@ -269,6 +271,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
       .gateways(List.of(gateway1, gateway2))
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -288,6 +291,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("external-1234")
       .organisationId(dailyPlanet.id)
       .gateways(List.of(gateway1, gateway2))
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -308,6 +312,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gasGateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
@@ -315,6 +320,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(districtHeatingGateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -335,6 +341,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gateway1234)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     LogicalMeter meter5678 = logicalMeters.save(LogicalMeter.builder()
@@ -342,6 +349,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gateway5678)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(
@@ -377,12 +385,14 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId("aaa")
       .organisationId(dailyPlanet.id)
       .gateway(aaaGateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("bbb")
       .organisationId(dailyPlanet.id)
       .gateway(bbbGateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -404,12 +414,14 @@ public class GatewayControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gatewayElv)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     LogicalMeter meterKam = logicalMeters.save(LogicalMeter.builder()
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gatewayKam)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(
@@ -447,6 +459,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateways(List.of(gateway1, gateway2))
       .location(UNKNOWN_LOCATION)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
@@ -454,6 +467,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(gateway3))
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -471,6 +485,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateways(singletonList(saveGateway(dailyPlanet.id)))
       .location(kungsbacka().confidence(lowConfidence).build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -487,6 +502,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
         .gateway(gateway1)
+        .utcOffset(DEFAULT_UTC_OFFSET)
         .build()
     );
     PhysicalMeter physicalMeter = physicalMeters.save(
@@ -522,6 +538,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
         .gateway(gateway1)
+        .utcOffset(DEFAULT_UTC_OFFSET)
         .build()
     );
     PhysicalMeter physicalMeter = physicalMeters.save(
@@ -560,6 +577,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway1)
       .location(unknownAddress)
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
@@ -567,6 +585,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway2)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     Page<GatewayDto> content = asSuperAdmin()
@@ -604,6 +623,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=kungsb", GatewayDto.class);
@@ -624,6 +644,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Kungsb", GatewayDto.class);
@@ -646,6 +667,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
       .location(kungsbacka().address("teknikgatan 2t").build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=tekni", GatewayDto.class);
@@ -668,6 +690,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
       .location(kungsbacka().build())
+      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Kabel", GatewayDto.class);

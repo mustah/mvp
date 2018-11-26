@@ -428,7 +428,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
-      meterDefinitionEntity
+      meterDefinitionEntity,
+      DEFAULT_UTC_OFFSET
     ));
 
     locationJpaRepository.save(new LocationEntity(

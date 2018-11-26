@@ -77,13 +77,16 @@ public class LogicalMeterEntity extends IdentifiableType<UUID> {
   @PrimaryKeyJoinColumn
   @Fetch(FetchMode.JOIN)
   public LocationEntity location;
+  @Column
+  public String utcOffset;
 
   public LogicalMeterEntity(
     UUID id,
     String externalId,
     UUID organisationId,
     ZonedDateTime created,
-    MeterDefinitionEntity meterDefinition
+    MeterDefinitionEntity meterDefinition,
+    String utcOffset
   ) {
     this.id = id;
     this.externalId = externalId;
@@ -91,6 +94,7 @@ public class LogicalMeterEntity extends IdentifiableType<UUID> {
     this.created = created;
     this.meterDefinition = meterDefinition;
     this.location = new LocationEntity(id);
+    this.utcOffset = utcOffset;
   }
 
   @Override

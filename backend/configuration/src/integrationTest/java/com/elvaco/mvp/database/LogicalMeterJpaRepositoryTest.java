@@ -48,7 +48,8 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       "Some external ID",
       context().organisationId(),
       ZonedDateTime.now(),
-      meterDefinitionEntity
+      meterDefinitionEntity,
+      DEFAULT_UTC_OFFSET
     );
     logicalMeterEntity.location = new LocationEntity(logicalMeterId, 1.0, 2.0, 1.0);
 

@@ -275,7 +275,8 @@ public class DashboardControllerTest extends IntegrationTest {
       id.toString(),
       context().organisationEntity.id,
       created,
-      meterDefinitionEntity
+      meterDefinitionEntity,
+      DEFAULT_UTC_OFFSET
     ));
   }
 
