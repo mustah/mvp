@@ -203,8 +203,8 @@ class LogicalMeterQueryDslJpaRepository
 
     Filters filters = toFilters(parameters);
 
-    new LogicalMeterJooqConditions().apply(filters, query);
-    new MeterAlarmJooqConditions().apply(filters, query);
+    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    new MeterAlarmJooqConditions(dsl).apply(filters, query);
 
     return query.fetchInto(LogicalMeterWithLocation.class);
   }

@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,17 @@ import org.springframework.http.ResponseEntity;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 public class SummaryControllerTest extends IntegrationTest {
 
   @Autowired
   private MeterStatusLogs meterStatusLogs;
+
+  @Before
+  public void setUp() {
+    assumeTrue(isPostgresDialect());
+  }
 
   @Test
   public void whenNoMetersGetEmptySummaryInfo() {

@@ -16,6 +16,9 @@ import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
+import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
@@ -31,8 +34,15 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions
 import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownCities;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
+import static org.jooq.impl.DSL.falseCondition;
+import static org.jooq.impl.DSL.max;
 
+@RequiredArgsConstructor
 public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
+
+  private final DSLContext dsl;
+
+  private Condition physicalMeterStatusLogCondition = falseCondition();
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -66,12 +76,10 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   public void visit(PeriodFilter periodFilter) {
     var period = periodFilter.getPeriod();
 
-    var withinDateRange = PHYSICAL_METER_STATUS_LOG.START.between(
+    physicalMeterStatusLogCondition = PHYSICAL_METER_STATUS_LOG.START.between(
       period.start.toOffsetDateTime(),
       period.stop.toOffsetDateTime()
     ).or(PHYSICAL_METER_STATUS_LOG.STOP.isNull());
-
-    addCondition(withinDateRange);
   }
 
   @Override
@@ -128,18 +136,24 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   @Override
   protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
     return query.leftJoin(PHYSICAL_METER)
-      .on(PHYSICAL_METER.LOGICAL_METER_ID.eq(LOGICAL_METER.ID)
-        .and(PHYSICAL_METER.ORGANISATION_ID.eq(LOGICAL_METER.ORGANISATION_ID))
+      .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
+        .and(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID))
       )
       .leftJoin(GATEWAYS_METERS)
-      .on(GATEWAYS_METERS.LOGICAL_METER_ID.eq(LOGICAL_METER.ID))
+      .on(GATEWAYS_METERS.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
       .leftJoin(GATEWAY)
-      .on(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID))
+      .on(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID)
+        .and(GATEWAY.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
       .leftJoin(METER_DEFINITION)
-      .on(METER_DEFINITION.TYPE.eq(LOGICAL_METER.METER_DEFINITION_TYPE))
+      .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
       .leftJoin(PHYSICAL_METER_STATUS_LOG)
-      .on(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.eq(PHYSICAL_METER.ID))
+      .on(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+        .and(PHYSICAL_METER_STATUS_LOG.ID.equal(dsl
+          .select(max(PHYSICAL_METER_STATUS_LOG.ID))
+          .from(PHYSICAL_METER_STATUS_LOG)
+          .where(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+            .and(physicalMeterStatusLogCondition)))))
       .leftJoin(LOCATION)
-      .on(LOCATION.LOGICAL_METER_ID.eq(LOGICAL_METER.ID));
+      .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID));
   }
 }
