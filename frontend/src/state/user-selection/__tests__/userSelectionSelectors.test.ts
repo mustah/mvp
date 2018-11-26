@@ -1,3 +1,4 @@
+import {urlOfParameters} from '../../../__tests__/urlOfParameters';
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
@@ -6,7 +7,7 @@ import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
-import {addParameterToSelection, selectPeriod, setThreshold} from '../userSelectionActions';
+import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {
   ParameterName,
   SelectionParameter,
@@ -327,27 +328,33 @@ describe('userSelectionSelectors', () => {
     });
 
     it('includes a threshold query', () => {
-      const payload: ThresholdQuery = {
+      const threshold: ThresholdQuery = {
         comparator: '>=',
         quantity: Quantity.power,
         unit: 'kW',
-        value: 3,
+        value: '3',
       };
 
-      const state: UserSelectionState = userSelection(
-        initialState,
-        setThreshold(payload),
-      );
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
 
-      const uriParameters: EncodedUriParameters = getMeterParameters({
+      const parameters: EncodedUriParameters = getMeterParameters({
         userSelection: state.userSelection,
         start,
       });
 
-      const space: string = '%20';
-      const gte: string = '%3E%3D';
+      const url: URL = urlOfParameters(parameters);
 
-      expect(uriParameters).toEqual(`thresholds=Power${space}${gte}${space}3${space}kW`);
+      expect(decodeURIComponent(url.searchParams.get('threshold') as string))
+        .toEqual(`Power >= 3 kW`);
     });
 
   });

@@ -347,7 +347,7 @@ describe('userSelectionActions', () => {
         ...rootStateNoSaved.userSelection.userSelection,
         selectionParameters: {
           ...rootStateNoSaved.userSelection.userSelection.selectionParameters,
-          threshold: threshold,
+          threshold,
         }
       }
     });

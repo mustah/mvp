@@ -11,6 +11,7 @@ import {
   toEntityApiParametersMeters,
   toPaginationApiParameters,
   toQueryApiParameters,
+  toThresholdParameter,
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters} from '../../types/Types';
@@ -92,6 +93,7 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     getCurrentPeriod,
     (query, {dateRange, threshold, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
+        ...toThresholdParameter(threshold),
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toQueryApiParameters(query),

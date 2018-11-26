@@ -3,7 +3,8 @@ import {
   ParameterName,
   SelectedParameters,
   SelectionInterval,
-  SelectionItem
+  SelectionItem,
+  ThresholdQuery
 } from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, Omit, uuid} from '../types/Types';
 import {toPeriodApiParameters} from './dateHelpers';
@@ -56,6 +57,15 @@ export const toQueryApiParameters = (query?: string): string[] => query ? [`w=${
 type ParametersThatAreLists = Omit<SelectedParameters, 'dateRange' | 'threshold'>;
 export type EntityApiParametersFactory =
   (selectionParameters: ParametersThatAreLists) => EncodedUriParameters[];
+
+export const toThresholdParameter = (threshold: ThresholdQuery | undefined): EncodedUriParameters[] =>
+  threshold
+    ? [
+      'threshold=' + encodeURIComponent(
+        `${threshold.quantity} ${threshold.comparator} ${threshold.value} ${threshold.unit}`
+      )
+    ]
+    : [];
 
 export const toEntityApiParametersMeters =
   (selectionParameters: ParametersThatAreLists): EncodedUriParameters[] =>

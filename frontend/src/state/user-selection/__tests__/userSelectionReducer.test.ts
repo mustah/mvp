@@ -14,7 +14,7 @@ import {
   SELECT_SAVED_SELECTION,
   setCustomDateRange,
 } from '../userSelectionActions';
-import {ParameterName, SelectionParameter, UserSelection, UserSelectionState,} from '../userSelectionModels';
+import {ParameterName, SelectionParameter, UserSelection, UserSelectionState, } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
 
 describe('userSelectionReducer', () => {

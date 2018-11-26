@@ -45,7 +45,7 @@ export const setThreshold =
     (dispatch, getState: GetState) => {
       const newThresholdIsComplete: boolean =
         threshold !== undefined &&
-        Object.keys(threshold).every(key => (threshold[key] as string).length > 0);
+        Object.keys(threshold).every((key) => (threshold[key] as string).length > 0);
 
       const oldThreshold: ThresholdQuery | undefined =
         getState().userSelection.userSelection.selectionParameters.threshold;
