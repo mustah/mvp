@@ -9,15 +9,15 @@ import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
+import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.max;
-import static org.jooq.impl.DSL.noCondition;
 
 @RequiredArgsConstructor
 public class MeterAlarmJooqConditions extends EmptyJooqFilterVisitor {
 
   private final DSLContext dsl;
 
-  private Condition meterAlarmLogCondition = noCondition();
+  private Condition meterAlarmLogCondition = falseCondition();
 
   @Override
   public void visit(PeriodFilter periodFilter) {

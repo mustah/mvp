@@ -34,15 +34,15 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions
 import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownCities;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
+import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.max;
-import static org.jooq.impl.DSL.noCondition;
 
 @RequiredArgsConstructor
 public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
 
   private final DSLContext dsl;
 
-  private Condition physicalMeterStatusLogCondition = noCondition();
+  private Condition physicalMeterStatusLogCondition = falseCondition();
 
   @Override
   public void visit(CityFilter cityFilter) {
