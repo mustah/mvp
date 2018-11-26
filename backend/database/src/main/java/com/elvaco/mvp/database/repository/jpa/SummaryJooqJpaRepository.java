@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.MeterAlarmJooqConditions;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -30,29 +31,32 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   }
 
   private long countMeters(Filters filters) {
-    var countQuery = dsl.selectDistinct().from(LOGICAL_METER);
+    var query = dsl.selectDistinct().from(LOGICAL_METER);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, countQuery);
+    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    new MeterAlarmJooqConditions(dsl).apply(filters, query);
 
-    return dsl.fetchCount(countQuery);
+    return dsl.fetchCount(query);
   }
 
   private long countCities(Filters filters) {
-    var countQuery = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY).from(LOGICAL_METER);
+    var query = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY).from(LOGICAL_METER);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, countQuery);
+    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    new MeterAlarmJooqConditions(dsl).apply(filters, query);
 
-    return dsl.fetchCount(countQuery
+    return dsl.fetchCount(query
       .where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull())));
   }
 
   private long countAddresses(Filters filters) {
-    var countQuery = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY, LOCATION.STREET_ADDRESS)
+    var query = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY, LOCATION.STREET_ADDRESS)
       .from(LOGICAL_METER);
 
-    new LogicalMeterJooqConditions(dsl).apply(filters, countQuery);
+    new LogicalMeterJooqConditions(dsl).apply(filters, query);
+    new MeterAlarmJooqConditions(dsl).apply(filters, query);
 
-    return dsl.fetchCount(countQuery
+    return dsl.fetchCount(query
       .where(LOCATION.COUNTRY.isNotNull()
         .and(LOCATION.CITY.isNotNull())
         .and(LOCATION.STREET_ADDRESS.isNotNull())));

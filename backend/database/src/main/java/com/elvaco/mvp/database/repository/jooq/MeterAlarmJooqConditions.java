@@ -37,7 +37,6 @@ public class MeterAlarmJooqConditions extends EmptyJooqFilterVisitor {
           .select(max(METER_ALARM_LOG.ID))
           .from(METER_ALARM_LOG)
           .where(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(meterAlarmLogCondition))))
-        .or(METER_ALARM_LOG.ID.isNull()));
+            .and(meterAlarmLogCondition)))));
   }
 }
