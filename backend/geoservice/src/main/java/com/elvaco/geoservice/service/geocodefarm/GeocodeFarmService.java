@@ -63,7 +63,6 @@ public class GeocodeFarmService implements AddressToGeoService {
       url,
       GeocodingFarmResult.class,
       address.street + " " + address.city + " " + address.country,
-      address,
       countryCode
     );
 
