@@ -97,7 +97,7 @@ public class BasicTest {
     request.setCountry("Sweden");
     request.setCallbackUrl(callbackUrl());
     request.setErrorCallbackUrl(callbackUrl());
-
+    request.setForce(true);
     geoController.requestByAddress(request);
 
     sleep();
@@ -112,7 +112,7 @@ public class BasicTest {
     request.setForce(true);
     geoController.requestByAddress(request);
     sleep();
-    assertThat(mockedGeoService.getRequestCount()).isEqualTo(1);
+    assertThat(mockedGeoService.getRequestCount()).isEqualTo(2);
   }
 
   @Test
