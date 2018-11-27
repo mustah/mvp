@@ -1,0 +1,39 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="create meter alarm log index" author="Must Tahir">
+    <createIndex
+      indexName="meter_alarm_log_physical_meter_id_start_stop_idx"
+      tableName="meter_alarm_log"
+      schemaName="public">
+      <column name="physical_meter_id"/>
+      <column name="start"/>
+      <column name="stop"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="create physical meter status log index" author="Must Tahir">
+    <createIndex
+      indexName="physical_meter_status_log_physical_meter_id_start_stop"
+      tableName="physical_meter_status_log"
+      schemaName="public">
+      <column name="physical_meter_id"/>
+      <column name="start"/>
+      <column name="stop"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="create physical meter-logical meter-organisation index" author="Must Tahir">
+    <createIndex
+      indexName="physical_meter_logical_meter_id_organisation_id_physical_meter_id_idx"
+      tableName="physical_meter"
+      schemaName="public">
+      <column name="logical_meter_id"/>
+      <column name="organisation_id"/>
+      <column name="id"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
