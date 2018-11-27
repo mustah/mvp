@@ -14,15 +14,12 @@ import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
 import com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter;
 import com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog;
 import com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition;
-import com.elvaco.mvp.database.entity.jooq.tables.MissingMeasurement;
 import com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter;
 import com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
-import com.elvaco.mvp.database.repository.jooq.MeterAlarmJooqConditions;
-import com.elvaco.mvp.database.repository.jooq.MissingMeasurementJooqConditions;
 import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
@@ -34,7 +31,6 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +39,7 @@ import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.withExpectedReadoutsFor;
+import static com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions.MISSING_MEASUREMENT_COUNT;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
@@ -117,17 +114,16 @@ class LogicalMeterQueryDslJpaRepository
     var meterDefinition = MeterDefinition.METER_DEFINITION;
     var meterAlarmLog = MeterAlarmLog.METER_ALARM_LOG;
     var physicalMeterStatusLog = PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
-    var missingMeasurement = MissingMeasurement.MISSING_MEASUREMENT;
 
-    var selectQuery = dsl.selectDistinct(
+    var selectQuery = dsl.select(
       logicalMeter.ID,
       logicalMeter.ORGANISATION_ID,
       logicalMeter.EXTERNAL_ID,
       logicalMeter.CREATED,
       meterDefinition.MEDIUM,
       gateway.SERIAL,
+      MISSING_MEASUREMENT_COUNT,
       physicalMeterStatusLog.STATUS,
-      DSL.count(missingMeasurement),
       physicalMeter.MANUFACTURER,
       physicalMeter.ADDRESS,
       physicalMeter.READ_INTERVAL_MINUTES,
@@ -146,37 +142,14 @@ class LogicalMeterQueryDslJpaRepository
       meterAlarmLog.DESCRIPTION
     ).from(logicalMeter);
 
-    var countQuery = dsl.selectDistinct(logicalMeter.ID).from(logicalMeter);
+    var countQuery = dsl.select(logicalMeter.ID).from(logicalMeter);
 
     var filters = toFilters(parameters);
 
     new LogicalMeterJooqConditions(dsl).apply(filters, selectQuery);
-    new MeterAlarmJooqConditions(dsl).apply(filters, selectQuery);
-    new MissingMeasurementJooqConditions().apply(filters, selectQuery);
-
     new LogicalMeterJooqConditions(dsl).apply(filters, countQuery);
-    new MeterAlarmJooqConditions(dsl).apply(filters, countQuery);
 
     List<LogicalMeterSummaryDto> logicalMeters = selectQuery
-      .groupBy(
-        logicalMeter.ID,
-        logicalMeter.ORGANISATION_ID,
-        logicalMeter.EXTERNAL_ID,
-        logicalMeter.CREATED,
-        location.LATITUDE,
-        location.LONGITUDE,
-        location.CONFIDENCE,
-        location.COUNTRY,
-        location.CITY,
-        location.STREET_ADDRESS,
-        meterDefinition.MEDIUM,
-        gateway.SERIAL,
-        physicalMeter.MANUFACTURER,
-        physicalMeter.ADDRESS,
-        physicalMeter.READ_INTERVAL_MINUTES,
-        meterAlarmLog.ID,
-        physicalMeterStatusLog.ID
-      )
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(LogicalMeterSummaryDto.class);
@@ -209,7 +182,6 @@ class LogicalMeterQueryDslJpaRepository
     Filters filters = toFilters(parameters);
 
     new LogicalMeterJooqConditions(dsl).apply(filters, query);
-    new MeterAlarmJooqConditions(dsl).apply(filters, query);
 
     return query.fetchInto(LogicalMeterWithLocation.class);
   }

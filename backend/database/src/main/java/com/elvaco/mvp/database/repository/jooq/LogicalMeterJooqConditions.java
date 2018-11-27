@@ -1,5 +1,7 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.util.UUID;
+
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
@@ -19,6 +21,7 @@ import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
@@ -26,6 +29,7 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
@@ -34,15 +38,24 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions
 import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownCities;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
+import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.falseCondition;
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 
 @RequiredArgsConstructor
 public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
 
+  public static final Field<Long> MISSING_MEASUREMENT_COUNT = field(
+    "missing_measurement_count",
+    Long.class
+  );
+
   private final DSLContext dsl;
 
   private Condition physicalMeterStatusLogCondition = falseCondition();
+  private Condition missingMeasurementCondition = falseCondition();
+  private Condition meterAlarmLogCondition = falseCondition();
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -76,10 +89,19 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   public void visit(PeriodFilter periodFilter) {
     var period = periodFilter.getPeriod();
 
+    missingMeasurementCondition =
+      MISSING_MEASUREMENT.EXPECTED_TIME.greaterOrEqual(period.start.toOffsetDateTime())
+        .and(MISSING_MEASUREMENT.EXPECTED_TIME.lessThan(period.stop.toOffsetDateTime()));
+
     physicalMeterStatusLogCondition =
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
           .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+
+    meterAlarmLogCondition = METER_ALARM_LOG.START.between(
+      period.start.toOffsetDateTime(),
+      period.stop.toOffsetDateTime()
+    ).or(METER_ALARM_LOG.STOP.isNull());
   }
 
   @Override
@@ -139,21 +161,42 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
       .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
         .and(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID))
       )
+
       .leftJoin(GATEWAYS_METERS)
       .on(GATEWAYS_METERS.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
       .leftJoin(GATEWAY)
       .on(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID)
         .and(GATEWAY.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
+
       .leftJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
+
       .leftJoin(LOCATION)
       .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
+
       .leftJoin(PHYSICAL_METER_STATUS_LOG)
       .on(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
         .and(PHYSICAL_METER_STATUS_LOG.ID.equal(dsl
           .select(max(PHYSICAL_METER_STATUS_LOG.ID))
           .from(PHYSICAL_METER_STATUS_LOG)
           .where(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(physicalMeterStatusLogCondition)))));
+            .and(physicalMeterStatusLogCondition)))))
+
+      .leftJoin(METER_ALARM_LOG)
+      .on(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+        .and(METER_ALARM_LOG.ID.equal(dsl
+          .select(max(METER_ALARM_LOG.ID))
+          .from(METER_ALARM_LOG)
+          .where(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+            .and(meterAlarmLogCondition)))))
+
+      .leftJoin(dsl
+        .select(
+          count().as(MISSING_MEASUREMENT_COUNT),
+          MISSING_MEASUREMENT.PHYSICAL_METER_ID
+        ).from(MISSING_MEASUREMENT)
+        .where(missingMeasurementCondition)
+        .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID).asTable("mm"))
+      .on(PHYSICAL_METER.ID.eq(field("mm.physical_meter_id", UUID.class)));
   }
 }
