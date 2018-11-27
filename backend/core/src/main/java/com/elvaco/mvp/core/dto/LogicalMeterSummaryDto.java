@@ -47,8 +47,8 @@ public class LogicalMeterSummaryDto {
     OffsetDateTime created,
     String medium,
     String gatewaySerial,
-    String activeStatus,
     @Nullable Long missingReadingCount,
+    @Nullable String activeStatus,
     @Nullable String manufacturer,
     @Nullable String address,
     @Nullable Long readIntervalMinutes,
@@ -58,13 +58,13 @@ public class LogicalMeterSummaryDto {
     String country,
     String city,
     String streetAddress,
-    Long alarmId,
-    UUID alarmPhysicalMeterId,
-    OffsetDateTime start,
-    OffsetDateTime lastSeen,
-    OffsetDateTime stop,
-    Integer mask,
-    String description
+    @Nullable Long alarmId,
+    @Nullable UUID alarmPhysicalMeterId,
+    @Nullable OffsetDateTime start,
+    @Nullable OffsetDateTime lastSeen,
+    @Nullable OffsetDateTime stop,
+    @Nullable Integer mask,
+    @Nullable String description
   ) {
     this.id = id;
     this.organisationId = organisationId;

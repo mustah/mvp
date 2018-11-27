@@ -1,5 +1,7 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.util.UUID;
+
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
@@ -21,11 +23,13 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
@@ -43,6 +47,7 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   private final DSLContext dsl;
 
   private Condition physicalMeterStatusLogCondition = falseCondition();
+  private Condition missingMeasurementCondition = falseCondition();
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -75,6 +80,10 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   @Override
   public void visit(PeriodFilter periodFilter) {
     var period = periodFilter.getPeriod();
+
+    missingMeasurementCondition = MISSING_MEASUREMENT.EXPECTED_TIME
+      .greaterOrEqual(period.start.toOffsetDateTime())
+      .and(MISSING_MEASUREMENT.EXPECTED_TIME.lessThan(period.stop.toOffsetDateTime()));
 
     physicalMeterStatusLogCondition =
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
@@ -154,6 +163,13 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
           .select(max(PHYSICAL_METER_STATUS_LOG.ID))
           .from(PHYSICAL_METER_STATUS_LOG)
           .where(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(physicalMeterStatusLogCondition)))));
+            .and(physicalMeterStatusLogCondition)))))
+      .leftJoin(dsl.select(
+        DSL.count().as("missing_measurement_count"),
+        MISSING_MEASUREMENT.PHYSICAL_METER_ID
+      ).from(MISSING_MEASUREMENT)
+        .where(missingMeasurementCondition)
+        .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID).asTable("m"))
+      .on(PHYSICAL_METER.ID.eq(DSL.field("m.physical_meter_id", UUID.class)));
   }
 }
