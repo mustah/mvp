@@ -2,8 +2,10 @@ import {default as moment} from 'moment-timezone';
 import 'moment/locale/en-gb';
 import 'moment/locale/sv';
 import {DateRange, Period} from '../components/dates/dateModels';
+import {SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
+import {BackendParameter, BackendParameters} from './urlFactory';
 import StartOf = moment.unitOfTime.StartOf;
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
@@ -67,7 +69,7 @@ const currentDateRange = (
 export const yyyymmdd = 'YYYY-MM-DD';
 const yyyymmddhhMm = `${yyyymmdd} HH:mm`;
 
-const hhmmss = `HH:mm:ss.sss`;
+const hhmmss = 'HH:mm:ss.sss';
 const apiFormat = `${yyyymmdd}T${hhmmss}+01:00`;
 
 const toApiParameters = ({start, end}: DateRange): EncodedUriParameters[] => [
@@ -87,6 +89,17 @@ export const toPeriodApiParameters = ({
   customDateRange,
 }: CurrentPeriod): EncodedUriParameters[] =>
   toApiParameters(currentDateRange(start, period, customDateRange));
+
+export const queryParametersOfDateRange = ({
+  period,
+  customDateRange,
+}: SelectionInterval): BackendParameters => {
+  const {start, end}: DateRange = currentDateRange(undefined, period, Maybe.maybe(customDateRange));
+  return {
+    [BackendParameter.after]: momentFrom(start).format(apiFormat),
+    [BackendParameter.before]: momentFrom(end).format(apiFormat),
+  };
+};
 
 const toFriendlyIso8601 = ({start, end}: DateRange): string =>
   `${momentFrom(start).format(yyyymmdd)} - ${momentFrom(end).format(yyyymmdd)}`;

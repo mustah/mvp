@@ -10,6 +10,7 @@ import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {
   ParameterName,
+  RelationalOperator,
   SelectionParameter,
   ThresholdQuery,
   UriLookupStatePaginated,
@@ -58,9 +59,6 @@ describe('userSelectionSelectors', () => {
   });
 
   describe('getPaginatedMeterParameters', () => {
-
-    const urlForParameters = (parameters: EncodedUriParameters): URL =>
-      new URL(`${'https://blabla.com'}/?${parameters}`);
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
@@ -165,8 +163,38 @@ describe('userSelectionSelectors', () => {
       };
 
       const parameters: EncodedUriParameters = getPaginatedMeterParameters(stateWithOrganisation);
-      const url: URL = urlForParameters(parameters);
+      const url: URL = urlOfParameters(parameters);
       expect(url.searchParams.getAll(meterParameters.organisations)).toEqual([anOrganisation.id]);
+    });
+
+    it('includes a threshold query', () => {
+      const threshold: ThresholdQuery = {
+        relationalOperator: '>=' as RelationalOperator,
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: '3',
+      };
+
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
+
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters({
+        ...initialUriLookupState,
+        userSelection: state.userSelection,
+        start,
+      });
+
+      const url: URL = urlOfParameters(parameters);
+
+      expect(decodeURIComponent(url.searchParams.get('threshold') as string)).toEqual('Power >= 3 kW');
     });
   });
 
@@ -329,7 +357,7 @@ describe('userSelectionSelectors', () => {
 
     it('includes a threshold query', () => {
       const threshold: ThresholdQuery = {
-        comparator: '>=',
+        relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
         unit: 'kW',
         value: '3',
@@ -353,8 +381,7 @@ describe('userSelectionSelectors', () => {
 
       const url: URL = urlOfParameters(parameters);
 
-      expect(decodeURIComponent(url.searchParams.get('threshold') as string))
-        .toEqual(`Power >= 3 kW`);
+      expect(decodeURIComponent(url.searchParams.get('threshold') as string)).toEqual('Power >= 3 kW');
     });
 
   });

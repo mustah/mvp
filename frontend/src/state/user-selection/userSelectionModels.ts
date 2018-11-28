@@ -23,12 +23,24 @@ export const enum ParameterName {
 
 export type SelectionItem = IdNamed | City | Address;
 
+export enum RelationalOperator {
+  lt = '<',
+  lte = '<=',
+  gt = '>',
+  gte = '>=',
+}
+
 export interface ThresholdQuery {
   value: string;
-  comparator: string;
+  relationalOperator: RelationalOperator;
   quantity: Quantity;
   unit: string;
 }
+
+export const isValidThreshold = (threshold: undefined | ThresholdQuery) =>
+  threshold !== undefined &&
+  Object.keys(threshold).length === 4 &&
+  Object.keys(threshold).every((key) => threshold[key] && (threshold[key] as string).length > 0);
 
 export interface SelectionParameter {
   item: SelectionItem;
@@ -96,3 +108,5 @@ export type OnSelectSelection = (selection: UserSelection) => void;
 export type SelectionListItem = SelectionItem & Selected;
 
 export type OnSelectParameter = (selectionParameter: SelectionParameter) => void;
+
+export type OnChangeThreshold = (threshold: ThresholdQuery) => void;

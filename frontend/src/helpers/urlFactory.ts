@@ -1,37 +1,63 @@
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {
+  isValidThreshold,
   ParameterName,
   SelectedParameters,
   SelectionInterval,
   SelectionItem,
   ThresholdQuery
 } from '../state/user-selection/userSelectionModels';
-import {EncodedUriParameters, Omit, uuid} from '../types/Types';
-import {toPeriodApiParameters} from './dateHelpers';
+import {EncodedUriParameters, IdNamed, Omit, uuid} from '../types/Types';
+import {queryParametersOfDateRange, toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
 
 type ParameterNames = {
-  [key in ParameterName]: string;
+  [key in ParameterName]: BackendParameter;
 };
 
 interface MeterParameterNames extends ParameterNames {
   meterIds: string;
 }
 
+export type BackendParameters = Partial<{
+  [key in BackendParameter]: string | string [];
+}>;
+
+export enum BackendParameter {
+  after = 'after',
+  address = 'address',
+  alarm = 'alarm',
+  before = 'before',
+  city = 'city',
+  facility = 'facility',
+  gatewayId = 'gatewayId',
+  gatewaySerial = 'gatewaySerial',
+  label = 'label',
+  logicalMeterId = 'logicalMeterId',
+  manufacturer = 'manufacturer',
+  medium = 'medium',
+  organisation = 'organisation',
+  productModel = 'productModel',
+  reported = 'reported',
+  quantity = 'quantity',
+  secondaryAddress = 'secondaryAddress',
+  threshold = 'threshold',
+}
+
 const frontendToApiParameters: ParameterNames = {
-  addresses: 'address',
-  alarms: 'alarm',
-  cities: 'city',
-  facilities: 'facility',
-  gatewayIds: 'gatewayId',
-  gatewaySerials: 'gatewaySerial',
-  manufacturers: 'manufacturer',
-  media: 'medium',
-  organisations: 'organisation',
-  productModels: 'productModel',
-  reported: 'reported',
-  secondaryAddresses: 'secondaryAddress',
-  threshold: 'threshold',
+  addresses: BackendParameter.address,
+  alarms: BackendParameter.alarm,
+  cities: BackendParameter.city,
+  facilities: BackendParameter.facility,
+  gatewayIds: BackendParameter.gatewayId,
+  gatewaySerials: BackendParameter.gatewaySerial,
+  manufacturers: BackendParameter.manufacturer,
+  media: BackendParameter.medium,
+  organisations: BackendParameter.organisation,
+  productModels: BackendParameter.productModel,
+  reported: BackendParameter.reported,
+  secondaryAddresses: BackendParameter.secondaryAddress,
+  threshold: BackendParameter.threshold,
 };
 
 const gatewayParameters: ParameterNames = {
@@ -42,6 +68,53 @@ export const meterParameters: ParameterNames & MeterParameterNames = {
   ...frontendToApiParameters,
   meterIds: 'id',
 };
+
+const frontendValueToBackendParameter =
+  (frontendParameter: keyof SelectedParameters, value: any): BackendParameters => {
+    if (frontendParameter === 'threshold') {
+      return isValidThreshold(value)
+        ? {
+          [BackendParameter.threshold]: thresholdAsString(value as ThresholdQuery)
+        }
+        : {};
+    }
+
+    if (frontendParameter === 'dateRange') {
+      return queryParametersOfDateRange(value as SelectionInterval);
+    }
+
+    const backendParameter = frontendToApiParameters[frontendParameter];
+    if (backendParameter && value.length) {
+      return {
+        [backendParameter]: (value as IdNamed[]).map((value: IdNamed) => value.id.toString()),
+      };
+    }
+
+    return {};
+  };
+
+export const queryParametersOfSelectedParameters = (parameters: SelectedParameters): BackendParameters =>
+  Object.keys(parameters)
+    .reduce(
+      (allParameters: BackendParameters, frontendParameter: keyof SelectedParameters) => ({
+        ...allParameters,
+        ...frontendValueToBackendParameter(
+          frontendParameter,
+          parameters[frontendParameter]
+        )
+      }),
+      {}
+    );
+
+export const encodeBackendParameters = (parameters: BackendParameters): EncodedUriParameters =>
+  Object.keys(parameters)
+    .map((parameter: BackendParameter): EncodedUriParameters => {
+      const value: string | string[] = parameters[parameter]!;
+      return Array.isArray(value)
+        ? value.map((singleValue: string) => `${parameter}=${encodeURIComponent(singleValue)}`).join('&')
+        : `${parameter}=${encodeURIComponent(value)}`;
+    })
+    .join('&');
 
 export const encodedUriParametersFrom = (
   uriParams: EncodedUriParameters[],
@@ -58,13 +131,12 @@ type ParametersThatAreLists = Omit<SelectedParameters, 'dateRange' | 'threshold'
 export type EntityApiParametersFactory =
   (selectionParameters: ParametersThatAreLists) => EncodedUriParameters[];
 
+const thresholdAsString = (threshold: ThresholdQuery): string =>
+  `${threshold.quantity} ${threshold.relationalOperator} ${threshold.value} ${threshold.unit}`;
+
 export const toThresholdParameter = (threshold: ThresholdQuery | undefined): EncodedUriParameters[] =>
-  threshold
-    ? [
-      'threshold=' + encodeURIComponent(
-        `${threshold.quantity} ${threshold.comparator} ${threshold.value} ${threshold.unit}`
-      )
-    ]
+  isValidThreshold(threshold)
+    ? ['threshold=' + encodeURIComponent(thresholdAsString(threshold!))]
     : [];
 
 export const toEntityApiParametersMeters =
@@ -99,11 +171,8 @@ export const toGatewayIdsApiParameters = (ids: uuid[], gatewayId: uuid): string 
   encodedUriParametersFrom([makeParameter(meterParameters, 'gatewayIds', gatewayId.toString())]);
 
 export const makeApiParametersOf =
-  (selectionInterval: SelectionInterval): EncodedUriParameters =>
-    toPeriodApiParameters({
-      period: selectionInterval.period,
-      customDateRange: Maybe.maybe(selectionInterval.customDateRange),
-    }).join('&');
+  ({period, customDateRange}: SelectionInterval): EncodedUriParameters =>
+    toPeriodApiParameters({period, customDateRange: Maybe.maybe(customDateRange)}).join('&');
 
 export const makeUrl =
   (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>

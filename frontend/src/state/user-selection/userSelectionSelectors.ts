@@ -77,8 +77,9 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
     ({pagination}) => pagination,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, pagination, {dateRange, ...rest}, currentPeriod) =>
+    (query, pagination, {dateRange, threshold, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
+        ...toThresholdParameter(threshold),
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),

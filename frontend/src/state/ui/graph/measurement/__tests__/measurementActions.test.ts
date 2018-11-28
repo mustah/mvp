@@ -9,6 +9,7 @@ import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {SelectionTreeCity, SelectionTreeMeter} from '../../../../selection-tree/selectionTreeModels';
+import {RelationalOperator} from '../../../../user-selection/userSelectionModels';
 import {mapApiResponseToGraphData} from '../helpers/apiResponseToGraphContents';
 import {fetchMeasurements, MeasurementOptions} from '../measurementActions';
 import {initialState, MeasurementApiResponse, Medium, Quantity} from '../measurementModels';
@@ -346,6 +347,12 @@ describe('measurementActions', () => {
           selectionParameters: {
             ...defaultParameters.selectionParameters,
             media: [{...toIdNamed('Gas')}],
+            threshold: {
+              relationalOperator: '>=' as RelationalOperator,
+              value: '7',
+              unit: 'W',
+              quantity: Quantity.power,
+            }
           }
         });
 
@@ -360,6 +367,7 @@ describe('measurementActions', () => {
         expect(city.searchParams.get('before')).toBeTruthy();
         expect(city.searchParams.get('after')).toBeTruthy();
         expect(city.searchParams.get('medium')).toEqual('Gas');
+        expect(city.searchParams.get('threshold')).toEqual('Power >= 7 W');
       });
 
     });

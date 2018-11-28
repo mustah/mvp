@@ -13,6 +13,7 @@ import {NormalizedState} from '../domain-models/domainModels';
 import {clearError, deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
 import {
+  isValidThreshold,
   OldSelectionParameters,
   ParameterName,
   SelectionItem,
@@ -43,17 +44,13 @@ const actuallySetThreshold = payloadActionOf<ThresholdQuery>(SET_THRESHOLD);
 export const setThreshold =
   (threshold: ThresholdQuery | undefined) =>
     (dispatch, getState: GetState) => {
-      const newThresholdIsComplete: boolean =
-        threshold !== undefined &&
-        Object.keys(threshold).every((key) => (threshold[key] as string).length > 0);
-
       const oldThreshold: ThresholdQuery | undefined =
         getState().userSelection.userSelection.selectionParameters.threshold;
 
       if (
-        (oldThreshold === undefined && newThresholdIsComplete) ||
-        (oldThreshold !== undefined && threshold === undefined) ||
-        (oldThreshold !== undefined && threshold !== undefined && !shallowEqual(threshold, oldThreshold))
+        (!isValidThreshold(oldThreshold) && isValidThreshold(threshold)) ||
+        (isValidThreshold(oldThreshold) && threshold === undefined) ||
+        (isValidThreshold(oldThreshold) && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
       ) {
         dispatch(actuallySetThreshold(threshold as ThresholdQuery));
       }

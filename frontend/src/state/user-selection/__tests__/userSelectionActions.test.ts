@@ -27,6 +27,7 @@ import {
 import {
   OldSelectionParameters,
   ParameterName,
+  RelationalOperator,
   SelectedParameters,
   SelectionParameter,
   ThresholdQuery,
@@ -338,7 +339,8 @@ describe('userSelectionActions', () => {
 
   describe('setThreshold', () => {
 
-    type IncompleteThresholdQuery = Partial<ThresholdQuery>;
+    type IncompleteThresholdQuery =
+      Partial<{ [key in keyof ThresholdQuery]: string | undefined | ThresholdQuery[key] }>;
     type UsersInput = ThresholdQuery | undefined | IncompleteThresholdQuery;
 
     const userSelectionStateFromThreshold = (threshold: ThresholdQuery): UserSelectionState => ({
@@ -353,14 +355,25 @@ describe('userSelectionActions', () => {
     });
 
     const empty = undefined;
-    const ok: ThresholdQuery = {value: '2', unit: 'kW', quantity: Quantity.power, comparator: '>='};
+    const ok: ThresholdQuery = {
+      value: '2',
+      unit: 'kW',
+      quantity: Quantity.power,
+      relationalOperator: '>=' as RelationalOperator,
+    };
     const anotherOk: ThresholdQuery = {...ok, value: '3'};
-    const incomplete: IncompleteThresholdQuery = {value: '', unit: '', quantity: Quantity.power, comparator: '>='};
+    const incomplete: IncompleteThresholdQuery = {
+      value: '',
+      unit: undefined,
+      quantity: undefined,
+      relationalOperator: '>=' as RelationalOperator,
+    };
+    const anotherIncomplete: IncompleteThresholdQuery = {...incomplete, value: '3'};
 
     const triggersChange: boolean = true;
     const skipsAction: boolean = false;
 
-    const testCases: Array<[ThresholdQuery | undefined, UsersInput, boolean]> = [
+    const testCases: Array<[UsersInput, UsersInput, boolean]> = [
       [empty, ok, triggersChange],
       [empty, incomplete, skipsAction],
       [empty, empty, skipsAction],
@@ -369,6 +382,10 @@ describe('userSelectionActions', () => {
       [ok, incomplete, triggersChange],
       [ok, empty, triggersChange],
       [ok, ok, skipsAction],
+
+      [incomplete, ok, triggersChange],
+      [incomplete, anotherIncomplete, skipsAction],
+      [incomplete, empty, skipsAction],
     ];
 
     test.each(testCases)(

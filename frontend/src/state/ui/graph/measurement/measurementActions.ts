@@ -3,10 +3,10 @@ import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
 import {cityWithoutCountry} from '../../../../helpers/formatters';
 import {Maybe} from '../../../../helpers/Maybe';
-import {makeApiParametersOf, makeUrl, toEntityApiParametersMeters} from '../../../../helpers/urlFactory';
+import {encodeBackendParameters, makeUrl, queryParametersOfSelectedParameters} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {EncodedUriParameters, toIdNamed, uuid} from '../../../../types/Types';
+import {EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
@@ -34,21 +34,25 @@ import {measurementDataFormatter} from './measurementSchema';
 const measurementMeterUri = (
   quantity: Quantity,
   meters: uuid[],
-  selectionParameters: SelectedParameters,
-): string =>
-  `quantity=${quantity}` +
-  `&${meters.map((id: uuid) => `logicalMeterId=${id}`).join('&')}` +
-  `&${makeApiParametersOf(selectionParameters.dateRange)}`;
+  {dateRange}: SelectedParameters,
+): EncodedUriParameters =>
+  encodeBackendParameters({
+    ...queryParametersOfSelectedParameters({dateRange}),
+    quantity,
+    logicalMeterId: meters.map((id: uuid): string => id.toString()),
+  });
 
 const measurementCityUri = (
   quantity: Quantity,
   city: uuid,
-  {dateRange, cities, ...parameters}: SelectedParameters,
-): string =>
-  `quantity=${quantity}` +
-  `&${makeApiParametersOf(dateRange)}` +
-  `&${toEntityApiParametersMeters({cities: [toIdNamed(city.toString())], ...parameters}).join('&')}` +
-  `&label=${cityWithoutCountry(city.toString())}`;
+  selectedParameters: SelectedParameters,
+): EncodedUriParameters =>
+  encodeBackendParameters({
+    ...queryParametersOfSelectedParameters(selectedParameters),
+    quantity,
+    city: city.toString(),
+    label: cityWithoutCountry(city.toString()),
+  });
 
 interface GraphDataResponse {
   data: MeasurementApiResponse;

@@ -5,7 +5,12 @@ import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {Quantity, quantityUnits} from '../../../../state/ui/graph/measurement/measurementModels';
-import {ClassNamed, Styled} from '../../../../types/Types';
+import {
+  OnChangeThreshold,
+  RelationalOperator,
+  ThresholdQuery
+} from '../../../../state/user-selection/userSelectionModels';
+import {CallbackWith, ClassNamed, Styled} from '../../../../types/Types';
 import '../SelectionResultList.scss';
 import {DropDownMenu} from './DropDownMenu';
 
@@ -29,43 +34,69 @@ const textFieldStyle: React.CSSProperties = {
   marginTop: 8,
 };
 
-// TODO[!must!] this will be the map to use when creating the search parameters! Please do not remove the unused
-// properties here right now.
-enum Operator {
-  lt = '<',
-  lte = '<=',
-  gt = '>',
-  gte = '>=',
-}
-
-interface Value {
-  value: Operator | Quantity;
-  text: string;
-}
-
-const makeMenuItem = ({value, text}: Value) => (
-  <MenuItem key={text} primaryText={text} value={value}/>
+const makeMenuItem = (text) => (
+  <MenuItem key={text} primaryText={text} value={text}/>
 );
 
-const operatorMenuItems = Object.keys(Operator)
-  .map((key): Value => ({value: key as Operator, text: Operator[key]}))
+const operatorMenuItems = Object.keys(RelationalOperator)
+  .map((key) => RelationalOperator[key])
   .map(makeMenuItem);
 
 const quantityMenuItems = Object.keys(Quantity)
-  .map((key): Value => ({value: key as Quantity, text: Quantity[key]}))
-  .sort((a, b) => a.text.localeCompare(b.text))
+  .sort((a, b) => a.localeCompare(b))
+  .map((key) => Quantity[key])
   .map(makeMenuItem);
 
-type Props = ClassNamed & Styled;
+interface ThresholdProps {
+  query?: ThresholdQuery;
+  onChange: OnChangeThreshold;
+}
 
-export const Thresholds = ({className}: Props) => {
-  const [quantity, selectQuantity] = React.useState<Quantity | undefined>(undefined);
-  const [operator, selectOperator] = React.useState<Operator | undefined>(undefined);
-  const [meterValue, selectMeterValue] = React.useState('');
+type RenderableThresholdQuery = Partial<{
+  [key in keyof ThresholdQuery]: ThresholdQuery[key] | undefined | string
+}>;
 
-  const onChangeQuantity = (event, index, newValue: string) => selectQuantity(newValue as Quantity);
-  const onChangeOperator = (event, index, newValue: string) => selectOperator(newValue as Operator);
-  const onChangeMeterValue = (event, newValue: string) => selectMeterValue(newValue);
+type Props = ThresholdProps & ClassNamed & Styled;
+
+const propertyState = (
+  initialQuery: RenderableThresholdQuery,
+  onChange: OnChangeThreshold
+): [RenderableThresholdQuery, CallbackWith<RenderableThresholdQuery>] => {
+  const [value, updateProperty] = React.useState<RenderableThresholdQuery>(initialQuery);
+  const fireActionAndUpdateState = (query: RenderableThresholdQuery) => {
+    onChange(query as ThresholdQuery);
+    updateProperty(query);
+  };
+  return [value, fireActionAndUpdateState];
+};
+
+export const Thresholds = (props: Props) => {
+  const {query, onChange, className} = props;
+  const [currentQuery, setQuery] = propertyState(
+    query
+      ? query
+      : {
+        value: '',
+        quantity: undefined,
+        relationalOperator: undefined,
+        unit: undefined,
+      },
+    onChange
+  );
+  const {quantity, relationalOperator, value, unit} = currentQuery;
+
+  const onChangeQuantity = (event, index, newValue: string) => setQuery({
+    ...currentQuery,
+    quantity: newValue as Quantity,
+    unit: quantityUnits[newValue as Quantity]
+  });
+
+  const onChangeRelationalOperator = (event, index, newValue: string) => setQuery({
+    ...currentQuery,
+    relationalOperator: newValue as RelationalOperator,
+  });
+
+  const onChangeValue = (event, newValue: string) => setQuery({...currentQuery, value: newValue});
 
   return (
     <Row className={className}>
@@ -78,8 +109,8 @@ export const Thresholds = ({className}: Props) => {
       </DropDownMenu>
 
       <DropDownMenu
-        onChange={onChangeOperator}
-        value={operator}
+        onChange={onChangeRelationalOperator}
+        value={relationalOperator}
         style={operatorDropDownStyle}
       >
         {operatorMenuItems}
@@ -87,13 +118,13 @@ export const Thresholds = ({className}: Props) => {
 
       <RowMiddle>
         <TextFieldInput
+          onChange={onChangeValue}
+          value={value}
+          style={textFieldStyle}
           autoComplete="off"
           hintText={firstUpperTranslated('meter value')}
-          value={meterValue}
-          onChange={onChangeMeterValue}
-          style={textFieldStyle}
         />
-        {quantity && <Medium className="Unit">{quantityUnits[Quantity[quantity]]}</Medium>}
+        {<Medium className="Unit">{unit}</Medium>}
       </RowMiddle>
     </Row>
   );
