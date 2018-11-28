@@ -67,9 +67,10 @@ class MeterDetailsInfo extends React.Component<Props> {
   render() {
     const {
       meter: {
+        address,
         readIntervalMinutes,
         collectionPercentage,
-        location: {address, city, country},
+        location,
         id,
         manufacturer,
         medium,
@@ -106,10 +107,10 @@ class MeterDetailsInfo extends React.Component<Props> {
               <BoldFirstUpper>{medium}</BoldFirstUpper>
             </Info>
             <Info label={translate('city')}>
-              <CityInfo name={orUnknown(city)} subTitle={orUnknown(country)}/>
+              <CityInfo name={orUnknown(location.city)} subTitle={orUnknown(location.country)}/>
             </Info>
             <Info label={translate('address')}>
-              <BoldFirstUpper>{orUnknown(address)}</BoldFirstUpper>
+              <BoldFirstUpper>{orUnknown(location.address)}</BoldFirstUpper>
             </Info>
             <SuperAdminInfo label={translate('organisation')}>
               <BoldFirstUpper>{organisationName}</BoldFirstUpper>
