@@ -194,7 +194,7 @@ describe('userSelectionSelectors', () => {
 
       const url: URL = urlOfParameters(parameters);
 
-      expect(decodeURIComponent(url.searchParams.get('threshold') as string)).toEqual('Power >= 3 kW');
+      expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
   });
 
@@ -381,7 +381,7 @@ describe('userSelectionSelectors', () => {
 
       const url: URL = urlOfParameters(parameters);
 
-      expect(decodeURIComponent(url.searchParams.get('threshold') as string)).toEqual('Power >= 3 kW');
+      expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
 
   });
