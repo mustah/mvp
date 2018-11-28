@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeteringAlarmMessageConsumerTest {
 
   private static final LocalDateTime START_TIME = LocalDateTime.parse("2017-09-22T08:45:49");
-  private static final ZonedDateTime NOW = ZonedDateTime.now();
 
   private PhysicalMeterUseCases physicalMeterUseCases;
   private AlarmMessageConsumer messageConsumer;

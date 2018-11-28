@@ -224,23 +224,13 @@ public class MeasurementThresholdParserTest {
     }
 
     @Override
-    public MeasurementUnit toMeasurementUnit(String valueAndUnit, String targetUnit) {
-      throw new UnsupportedOperationException();
+    public MeasurementUnit convert(MeasurementUnit measurementUnit, String targetUnit) {
+      return new MeasurementUnit(targetUnit, valueConverter.apply(measurementUnit.getValue()));
     }
 
     @Override
     public boolean isSameDimension(String firstUnit, String secondUnit) {
       return dimensionDecisionSupplier.getAsBoolean();
-    }
-
-    @Override
-    public double toValue(double value, String fromUnit, String toUnit) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public MeasurementUnit toMeasurementUnit(MeasurementUnit measurementUnit, String targetUnit) {
-      return new MeasurementUnit(targetUnit, valueConverter.apply(measurementUnit.getValue()));
     }
   }
 }

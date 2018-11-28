@@ -1,33 +1,47 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
-import static com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper.toDomainModel;
-import static com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper.toEntity;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementEntityMapperTest {
 
-  @BeforeClass
-  public static void setup() {
-    QuantityAccess.singleton()
-      .loadAll(List.of(new Quantity(
+  private MeasurementEntityMapper entityMapper;
+
+  @Before
+  public void setUp() {
+    entityMapper = new MeasurementEntityMapper(
+      new UnitConverter() {
+        @Override
+        public MeasurementUnit convert(
+          MeasurementUnit measurementUnit, String targetUnit
+        ) {
+          return measurementUnit;
+        }
+
+        @Override
+        public boolean isSameDimension(String firstUnit, String secondUnit) {
+          return false;
+        }
+      },
+      (name) -> new Quantity(
         1,
         "Volume",
         VOLUME.getPresentationInformation(),
         VOLUME.storageUnit
-      )));
+      )
+    );
   }
 
   @Test
@@ -48,9 +62,9 @@ public class MeasurementEntityMapperTest {
       )
       .build();
 
-    MeasurementEntity entity = toEntity(measurement);
+    MeasurementEntity entity = entityMapper.toEntity(measurement);
     assertThat(entity.id.quantity.name).isEqualTo("Volume");
     assertThat(entity.value).isEqualTo(2.0);
-    assertThat(toDomainModel(entity)).isEqualTo(measurement);
+    assertThat(entityMapper.toDomainModel(entity)).isEqualTo(measurement);
   }
 }

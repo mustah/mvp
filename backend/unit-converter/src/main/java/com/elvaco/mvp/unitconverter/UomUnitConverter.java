@@ -110,7 +110,28 @@ public class UomUnitConverter implements UnitConverter {
   }
 
   @Override
-  public MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
+  public MeasurementUnit convert(
+    MeasurementUnit measurementUnit, String targetUnit
+  ) {
+    return convertString(measurementUnit.toString(), targetUnit);
+  }
+
+  public boolean isSameDimension(String firstUnit, String secondUnit) {
+    var instance = SimpleUnitFormat.getInstance();
+    Unit<?> cleanedUnit;
+    Unit<?> cleanedSecondUnit;
+
+    try {
+      cleanedUnit = instance.parse(replace(firstUnit));
+      cleanedSecondUnit = instance.parse(replace(secondUnit));
+    } catch (ParserException ex) {
+      return false;
+    }
+
+    return cleanedUnit.isCompatible(cleanedSecondUnit);
+  }
+
+  private MeasurementUnit convertString(String valueAndUnit, String target) {
     valueAndUnit = replace(valueAndUnit);
     target = replace(target);
 
@@ -134,33 +155,6 @@ public class UomUnitConverter implements UnitConverter {
       resultQuantity.getUnit().toString(),
       resultQuantity.getValue().doubleValue()
     );
-  }
-
-  @Override
-  public MeasurementUnit toMeasurementUnit(
-    MeasurementUnit measurementUnit, String targetUnit
-  ) {
-    return toMeasurementUnit(measurementUnit.toString(), targetUnit);
-  }
-
-  public boolean isSameDimension(String firstUnit, String secondUnit) {
-    var instance = SimpleUnitFormat.getInstance();
-    Unit<?> cleanedUnit;
-    Unit<?> cleanedSecondUnit;
-
-    try {
-      cleanedUnit = instance.parse(replace(firstUnit));
-      cleanedSecondUnit = instance.parse(replace(secondUnit));
-    } catch (ParserException ex) {
-      return false;
-    }
-
-    return cleanedUnit.isCompatible(cleanedSecondUnit);
-  }
-
-  @Override
-  public double toValue(double value, String fromUnit, String toUnit) {
-    return toMeasurementUnit(value + " " + fromUnit, toUnit).getValue();
   }
 
   private static String replace(String valueAndUnit) {

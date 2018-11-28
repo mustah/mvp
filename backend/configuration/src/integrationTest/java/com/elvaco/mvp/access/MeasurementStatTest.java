@@ -8,10 +8,12 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.jooq.tables.MeasurementStatData;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -38,11 +40,20 @@ public class MeasurementStatTest extends IntegrationTest {
   @Autowired
   private DSLContext dsl;
 
+  @Autowired
+  private QuantityProvider quantityProvider;
+
+  @Autowired
+  private UnitConverter unitConverter;
+
+  private MeasurementEntityMapper measurementEntityMapper;
+
   private MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
 
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
+    measurementEntityMapper = new MeasurementEntityMapper(unitConverter, quantityProvider);
   }
 
   @Test
@@ -128,7 +139,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build()
     );
 
-    measurementJpaRepository.delete(MeasurementEntityMapper.toEntity(measurement));
+    measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
     MeasurementStatDto stat = fetchMeasurementStats();
 
@@ -176,7 +187,7 @@ public class MeasurementStatTest extends IntegrationTest {
       measurementFor(meter).created(TIME).value(1.0).build()
     );
 
-    measurementJpaRepository.delete(MeasurementEntityMapper.toEntity(measurement));
+    measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
     assertThat(dsl.select()
       .from(statData)

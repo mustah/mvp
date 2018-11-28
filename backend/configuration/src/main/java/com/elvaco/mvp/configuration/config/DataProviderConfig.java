@@ -5,7 +5,6 @@ import java.util.UUID;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
-import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
@@ -96,15 +95,11 @@ class DataProviderConfig {
   private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
   private final UnitConverter unitConverter;
+  private final QuantityProvider quantityProvider;
 
   @Bean
   Users users() {
     return new UserRepository(userJpaRepository, passwordEncoder::encode);
-  }
-
-  @Bean
-  QuantityProvider quantityProvider() {
-    return QuantityAccess.singleton();
   }
 
   @Bean
@@ -131,8 +126,12 @@ class DataProviderConfig {
   }
 
   @Bean
-  Measurements measurements() {
-    return new MeasurementRepository(measurementJpaRepository, unitConverter);
+  Measurements measurements(QuantityProvider quantityProvider) {
+    return new MeasurementRepository(
+      measurementJpaRepository,
+      quantityProvider,
+      unitConverter
+    );
   }
 
   @Bean

@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
@@ -17,11 +17,11 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,11 +31,23 @@ import static java.time.temporal.ChronoUnit.HOURS;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.stream.Collectors.toList;
 
-@RequiredArgsConstructor
 public class MeasurementRepository implements Measurements {
 
   private final MeasurementJpaRepository measurementJpaRepository;
+  private final QuantityProvider quantityProvider;
   private final com.elvaco.mvp.core.unitconverter.UnitConverter unitConverter;
+  private final MeasurementEntityMapper measurementEntityMapper;
+
+  public MeasurementRepository(
+    MeasurementJpaRepository measurementJpaRepository,
+    QuantityProvider quantityProvider,
+    UnitConverter unitConverter
+  ) {
+    this.measurementJpaRepository = measurementJpaRepository;
+    this.quantityProvider = quantityProvider;
+    this.unitConverter = unitConverter;
+    this.measurementEntityMapper = new MeasurementEntityMapper(unitConverter, quantityProvider);
+  }
 
   protected static OffsetDateTime getIntervalStart(
     ZonedDateTime zonedDateTime,
@@ -64,8 +76,8 @@ public class MeasurementRepository implements Measurements {
   @Override
   public Measurement save(Measurement measurement) {
     try {
-      return MeasurementEntityMapper.toDomainModel(
-        measurementJpaRepository.save(MeasurementEntityMapper.toEntity(measurement))
+      return measurementEntityMapper.toDomainModel(
+        measurementJpaRepository.save(measurementEntityMapper.toEntity(measurement))
       );
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex);
@@ -85,7 +97,7 @@ public class MeasurementRepository implements Measurements {
       measurementJpaRepository.createOrUpdate(
         physicalMeter.id,
         created,
-        QuantityAccess.singleton().getByName(quantity).getId(),
+        quantityProvider.getByName(quantity).getId(),
         measurementUnit.getValue()
       );
     } catch (DataIntegrityViolationException ex) {
@@ -175,7 +187,7 @@ public class MeasurementRepository implements Measurements {
     String quantity
   ) {
     return measurementJpaRepository.findBy(physicalMeterId, quantity, created)
-      .map(MeasurementEntityMapper::toDomainModel);
+      .map(measurementEntityMapper::toDomainModel);
   }
 
   @Override
@@ -186,7 +198,7 @@ public class MeasurementRepository implements Measurements {
       pageable.getPageSize(),
       pageable.getOffset()
     ).stream()
-      .map(MeasurementEntityMapper::toDomainModel)
+      .map(measurementEntityMapper::toDomainModel)
       .collect(toList());
 
     return new PageAdapter<>(
@@ -203,21 +215,20 @@ public class MeasurementRepository implements Measurements {
     UUID physicalMeterId, ZonedDateTime after, ZonedDateTime beforeOrEquals
   ) {
     return measurementJpaRepository.firstForPhysicalMeter(physicalMeterId, after, beforeOrEquals)
-      .map(MeasurementEntityMapper::toDomainModel);
+      .map(measurementEntityMapper::toDomainModel);
   }
 
   private MeasurementValue projectionToMeasurementValue(
     MeasurementValueProjection projection,
     Quantity quantity
   ) {
-    Quantity savedQuantity = QuantityAccess.singleton().getByName(quantity.name);
+    Quantity savedQuantity = quantityProvider.getByName(quantity.name);
     Double value = projection.getValue() == null
       ? null
-      : unitConverter.toValue(
-        projection.getValue(),
-        savedQuantity.storageUnit,
+      : unitConverter.convert(
+        new MeasurementUnit(savedQuantity.storageUnit, projection.getValue()),
         quantity.presentationUnit()
-      );
+      ).getValue();
     return new MeasurementValue(value, projection.getInstant());
   }
 

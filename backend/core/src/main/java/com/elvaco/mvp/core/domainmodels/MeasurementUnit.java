@@ -44,6 +44,10 @@ public class MeasurementUnit implements Serializable {
     return new MeasurementUnit(parts[1], value);
   }
 
+  public static MeasurementUnit of(String unit, double value) {
+    return new MeasurementUnit(unit, value);
+  }
+
   public double getValue() {
     return value;
   }

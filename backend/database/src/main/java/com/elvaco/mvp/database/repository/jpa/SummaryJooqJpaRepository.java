@@ -4,7 +4,6 @@ import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
-import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;

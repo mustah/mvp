@@ -47,7 +47,7 @@ public class MeasurementThresholdParser {
       ));
     }
 
-    MeasurementUnit convertedUnitValue = unitConverter.toMeasurementUnit(
+    MeasurementUnit convertedUnitValue = unitConverter.convert(
       parsedUnitValue,
       quantity.storageUnit
     );

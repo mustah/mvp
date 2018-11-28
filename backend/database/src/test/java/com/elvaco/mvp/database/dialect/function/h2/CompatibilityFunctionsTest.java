@@ -1,64 +1,14 @@
 package com.elvaco.mvp.database.dialect.function.h2;
 
-import com.elvaco.mvp.unitconverter.UomUnitConverter;
 import org.junit.Test;
 
 import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.jsonbContains;
 import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.jsonbExists;
-import static com.elvaco.mvp.database.dialect.function.h2.CompatibilityFunctions.unitAt;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CompatibilityFunctionsTest {
-  @Test
-  public void convertDegreeScale() {
-    assertEquals("287.15 K", unitAt("14 Celsius", "K"));
-  }
-
-  // Verify that the aliases that we've defined for PostgreSql also work here
-  @Test
-  public void unitAliasForCelsius() {
-    assertEquals("14 °C", unitAt("14 Celsius", "℃"));
-  }
-
-  @Test
-  public void unitAliasForKelvin() {
-    assertEquals("287.15 K", unitAt("287.15 Kelvin", "K"));
-  }
-
-  @Test
-  public void unitAliasForCubicMeters() {
-    assertEquals("43 ㎥", unitAt("43 m^3", "㎥"));
-  }
-
-  @Test
-  public void unitAliasForCubicMetersNoCaret() {
-    assertEquals("43 ㎥", unitAt("43 m3", "㎥"));
-  }
-
-  @Test
-  public void unitAliasForCubicMetersNoCaretTargetM3() {
-    assertEquals("43 ㎥", unitAt("43 m3", "m3"));
-  }
-
-  @Test
-  public void unitAliasForWattHour() {
-    assertEquals("1000 Wh", unitAt("1000 Wh", "Wh"));
-  }
-
-  public void unitAliasFor1kWattHour() {
-    assertEquals("1000 Wh", unitAt("1 kWh", "Wh"));
-  }
-
-  public void unitAliasFor1WattHour() {
-    assertEquals("3600 J", unitAt("1 Wh", "J"));
-  }
-
-  public void unitAliasFor3600JToWat() {
-    assertEquals("0.001 kWh", unitAt("3600 J", "kWh"));
-  }
 
   /* Most test cases taken from
   https://www.postgresql.org/docs/9.5/static/datatype-json.html#JSON-CONTAINMENT */
@@ -144,11 +94,5 @@ public class CompatibilityFunctionsTest {
     assertFalse(jsonbExists("{\"foo\": {\"bar\": \"baz\"}}", "xyzzy"));
     assertFalse(jsonbExists("{\"foo\": {\"bar\": \"baz\"}}", "bar"));
     assertFalse(jsonbExists("[[\"bar\"]]", "bar"));
-  }
-
-  @Test
-  public void measurementUnits() {
-    assertThat(UomUnitConverter.singleton().toMeasurementUnit("150 °C", "K").toString()).isEqualTo(
-      "423.15 K");
   }
 }

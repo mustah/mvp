@@ -9,16 +9,11 @@ import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.BooleanType;
-import org.hibernate.type.CustomType;
 
 public class MvpH2Dialect extends H2Dialect {
 
   public MvpH2Dialect() {
     super();
-    registerFunction(
-      "unit_at",
-      new SQLFunctionTemplate(new CustomType(new H2MeasurementUnitType()), "unit_at(?1, ?2)")
-    );
     registerFunction(
       "jsonb_contains",
       new SQLFunctionTemplate(BooleanType.INSTANCE, "jsonb_contains(?1, ?2)")
