@@ -5,7 +5,7 @@ import {DateRange, Period} from '../components/dates/dateModels';
 import {SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
-import {BackendParameter, BackendParameters} from './urlFactory';
+import {RequestParameter, RequestParameters} from './urlFactory';
 import StartOf = moment.unitOfTime.StartOf;
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
@@ -93,11 +93,11 @@ export const toPeriodApiParameters = ({
 export const queryParametersOfDateRange = ({
   period,
   customDateRange,
-}: SelectionInterval): BackendParameters => {
+}: SelectionInterval): RequestParameters => {
   const {start, end}: DateRange = currentDateRange(undefined, period, Maybe.maybe(customDateRange));
   return {
-    [BackendParameter.after]: momentFrom(start).format(apiFormat),
-    [BackendParameter.before]: momentFrom(end).format(apiFormat),
+    [RequestParameter.after]: momentFrom(start).format(apiFormat),
+    [RequestParameter.before]: momentFrom(end).format(apiFormat),
   };
 };
 

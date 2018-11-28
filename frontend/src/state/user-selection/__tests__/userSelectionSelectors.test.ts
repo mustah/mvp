@@ -1,4 +1,4 @@
-import {urlOfParameters} from '../../../__tests__/urlOfParameters';
+import {urlFromParameters} from '../../../__tests__/urlFromParameters';
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
@@ -163,7 +163,7 @@ describe('userSelectionSelectors', () => {
       };
 
       const parameters: EncodedUriParameters = getPaginatedMeterParameters(stateWithOrganisation);
-      const url: URL = urlOfParameters(parameters);
+      const url: URL = urlFromParameters(parameters);
       expect(url.searchParams.getAll(meterParameters.organisations)).toEqual([anOrganisation.id]);
     });
 
@@ -192,7 +192,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      const url: URL = urlOfParameters(parameters);
+      const url: URL = urlFromParameters(parameters);
 
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
@@ -379,7 +379,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      const url: URL = urlOfParameters(parameters);
+      const url: URL = urlFromParameters(parameters);
 
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });

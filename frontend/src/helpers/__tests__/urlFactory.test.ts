@@ -7,10 +7,10 @@ import {momentFrom, toPeriodApiParameters} from '../dateHelpers';
 import {idGenerator} from '../idGenerator';
 import {Maybe} from '../Maybe';
 import {
-  BackendParameters,
-  encodeBackendParameters,
+  RequestParameters,
+  encodeRequestParameters,
   encodedUriParametersFrom,
-  queryParametersOfSelectedParameters,
+  requestParametersFrom,
   toEntityApiParametersGateways,
   toEntityApiParametersMeters,
   toGatewayIdsApiParameters,
@@ -26,7 +26,7 @@ describe('urlFactory', () => {
 
   const cities: IdNamed[] = [toIdNamed('got'), toIdNamed('sto'), toIdNamed('mmx')];
 
-  describe('queryParametersOfSelectedParameters', () => {
+  describe('requestParametersFrom', () => {
 
     it('transforms selected parameters url parameters', () => {
       const facilityId: string = idGenerator.uuid().toString();
@@ -44,7 +44,7 @@ describe('urlFactory', () => {
         facilities: [toIdNamed(facilityId)]
       };
 
-      const actualUrlParameters: BackendParameters = queryParametersOfSelectedParameters(selectedParameters);
+      const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
 
       expect(actualUrlParameters).toHaveProperty('threshold', 'Power < 3 kW');
       expect(actualUrlParameters).toHaveProperty('medium', ['District heating']);
@@ -59,16 +59,16 @@ describe('urlFactory', () => {
         facilities: []
       };
 
-      const actualUrlParameters: BackendParameters = queryParametersOfSelectedParameters(selectedParameters);
+      const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
 
       expect(actualUrlParameters).not.toHaveProperty('facility');
     });
 
   });
 
-  describe('encodeBackendParameters', () => {
+  describe('encodeRequestParameters', () => {
 
-    it('encodes queryParameters map to encoded key-value string', () => {
+    it('encodes map to encoded key-value string', () => {
       const nowInApiFormat = momentFrom().format(`YYYY-MM-DDTHH:mm:ss.sss+01:00`);
       const facilityId: string = idGenerator.uuid().toString();
 
@@ -90,7 +90,7 @@ describe('urlFactory', () => {
         `&threshold=${encodeURIComponent(threshold)}&medium=${encodeURIComponent(medium[0])}` +
         `&facility=${facilityId}`;
 
-      const actualQueryString: EncodedUriParameters = encodeBackendParameters(queryParameters);
+      const actualQueryString: EncodedUriParameters = encodeRequestParameters(queryParameters);
       expect(actualQueryString).toEqual(expected);
     });
 

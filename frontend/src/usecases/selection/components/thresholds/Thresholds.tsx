@@ -70,19 +70,16 @@ const propertyState = (
   return [value, fireActionAndUpdateState];
 };
 
+const emptyQuery: RenderableThresholdQuery = {
+  value: '',
+  quantity: undefined,
+  relationalOperator: undefined,
+  unit: undefined,
+};
+
 export const Thresholds = (props: Props) => {
-  const {query, onChange, className} = props;
-  const [currentQuery, setQuery] = propertyState(
-    query
-      ? query
-      : {
-        value: '',
-        quantity: undefined,
-        relationalOperator: undefined,
-        unit: undefined,
-      },
-    onChange
-  );
+  const {query = emptyQuery, onChange, className} = props;
+  const [currentQuery, setQuery] = propertyState(query, onChange);
   const {quantity, relationalOperator, value, unit} = currentQuery;
 
   const onChangeQuantity = (event, index, newValue: string) => setQuery({
@@ -124,7 +121,7 @@ export const Thresholds = (props: Props) => {
           autoComplete="off"
           hintText={firstUpperTranslated('meter value')}
         />
-        {<Medium className="Unit">{unit}</Medium>}
+        <Medium className="Unit">{unit}</Medium>
       </RowMiddle>
     </Row>
   );

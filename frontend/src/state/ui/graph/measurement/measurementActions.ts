@@ -3,7 +3,7 @@ import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
 import {cityWithoutCountry} from '../../../../helpers/formatters';
 import {Maybe} from '../../../../helpers/Maybe';
-import {encodeBackendParameters, makeUrl, queryParametersOfSelectedParameters} from '../../../../helpers/urlFactory';
+import {encodeRequestParameters, makeUrl, requestParametersFrom} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {EncodedUriParameters, uuid} from '../../../../types/Types';
@@ -36,8 +36,8 @@ const measurementMeterUri = (
   meters: uuid[],
   {dateRange}: SelectedParameters,
 ): EncodedUriParameters =>
-  encodeBackendParameters({
-    ...queryParametersOfSelectedParameters({dateRange}),
+  encodeRequestParameters({
+    ...requestParametersFrom({dateRange}),
     quantity,
     logicalMeterId: meters.map((id: uuid): string => id.toString()),
   });
@@ -47,8 +47,8 @@ const measurementCityUri = (
   city: uuid,
   selectedParameters: SelectedParameters,
 ): EncodedUriParameters =>
-  encodeBackendParameters({
-    ...queryParametersOfSelectedParameters(selectedParameters),
+  encodeRequestParameters({
+    ...requestParametersFrom(selectedParameters),
     quantity,
     city: city.toString(),
     label: cityWithoutCountry(city.toString()),
