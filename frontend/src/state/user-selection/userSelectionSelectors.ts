@@ -11,20 +11,21 @@ import {
   toEntityApiParametersMeters,
   toPaginationApiParameters,
   toQueryApiParameters,
+  toThresholdParameter,
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters} from '../../types/Types';
-import {SelectionItem} from '../domain-models/domainModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
   SelectedParameters,
   SelectionInterval,
+  SelectionItem,
   SelectionListItem,
   UriLookupState,
   UriLookupStatePaginated,
   UserSelection,
-  UserSelectionState,
+  UserSelectionState
 } from './userSelectionModels';
 
 const getSelectionParameters = (state: UserSelectionState): SelectedParameters =>
@@ -76,8 +77,9 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
     ({pagination}) => pagination,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, pagination, {dateRange, ...rest}, currentPeriod) =>
+    (query, pagination, {dateRange, threshold, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
+        ...toThresholdParameter(threshold),
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
@@ -90,8 +92,9 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     ({query}) => query!,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, {dateRange, ...rest}, currentPeriod) =>
+    (query, {dateRange, threshold, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
+        ...toThresholdParameter(threshold),
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toQueryApiParameters(query),

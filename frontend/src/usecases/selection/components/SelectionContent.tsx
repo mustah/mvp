@@ -47,7 +47,9 @@ export const SelectionContent = ({
   organisations,
   reported,
   secondaryAddresses,
+  threshold,
   toggleParameter,
+  onChangeThreshold,
 }: SelectionContentProps) => {
 
   const selectCity = (item: SelectionListItem) =>
@@ -140,8 +142,12 @@ export const SelectionContent = ({
         </Row>
       </Foldable>
 
-      <FoldableThresholds title={translate('thresholds')} containerClassName="Thresholds" isVisible={false}>
-        <Thresholds className="Thresholds-container"/>
+      <FoldableThresholds
+        title={translate('thresholds')}
+        containerClassName="Thresholds"
+        isVisible={threshold !== undefined}
+      >
+        <Thresholds onChange={onChangeThreshold} query={threshold} className="Thresholds-container"/>
       </FoldableThresholds>
 
       <SearchResultList/>

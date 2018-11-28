@@ -1,7 +1,8 @@
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
-import {SelectionItem} from '../domain-models/domainModels';
+import {Address, City} from '../domain-models/location/locationModels';
+import {Quantity} from '../ui/graph/measurement/measurementModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
@@ -17,7 +18,29 @@ export const enum ParameterName {
   gatewayIds = 'gatewayIds',
   manufacturers = 'manufacturers',
   productModels = 'productModels',
+  threshold = 'threshold',
 }
+
+export type SelectionItem = IdNamed | City | Address;
+
+export enum RelationalOperator {
+  lt = '<',
+  lte = '<=',
+  gt = '>',
+  gte = '>=',
+}
+
+export interface ThresholdQuery {
+  value: string;
+  relationalOperator: RelationalOperator;
+  quantity: Quantity;
+  unit: string;
+}
+
+export const isValidThreshold = (threshold: undefined | ThresholdQuery) =>
+  threshold !== undefined &&
+  Object.keys(threshold).length === 4 &&
+  Object.keys(threshold).every((key) => threshold[key] && (threshold[key] as string).length > 0);
 
 export interface SelectionParameter {
   item: SelectionItem;
@@ -41,6 +64,7 @@ export interface SelectedParameters {
   organisations?: IdNamed[];
   reported?: IdNamed[];
   secondaryAddresses?: IdNamed[];
+  threshold?: ThresholdQuery;
 }
 
 export interface OldSelectionParameters {
@@ -84,3 +108,5 @@ export type OnSelectSelection = (selection: UserSelection) => void;
 export type SelectionListItem = SelectionItem & Selected;
 
 export type OnSelectParameter = (selectionParameter: SelectionParameter) => void;
+
+export type OnChangeThreshold = (threshold: ThresholdQuery) => void;

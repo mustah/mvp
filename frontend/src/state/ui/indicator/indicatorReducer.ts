@@ -3,7 +3,7 @@ import {Action} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
 import {SelectedReportEntriesPayload} from '../../../usecases/report/reportModels';
-import {RESET_SELECTION, SELECT_SAVED_SELECTION} from '../../user-selection/userSelectionActions';
+import {RESET_SELECTION, SELECT_SAVED_SELECTION, SET_THRESHOLD} from '../../user-selection/userSelectionActions';
 import {UserSelection} from '../../user-selection/userSelectionModels';
 import {Medium, Quantity} from '../graph/measurement/measurementModels';
 import {SET_REPORT_INDICATOR_WIDGETS, SET_SELECTED_QUANTITIES} from './indicatorActions';
@@ -55,6 +55,7 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
         ...state,
         selectedQuantities: (action as Action<Quantity[]>).payload as Quantity[],
       };
+    case SET_THRESHOLD:
     case SELECT_SAVED_SELECTION:
     case RESET_SELECTION:
     case LOGOUT_USER:

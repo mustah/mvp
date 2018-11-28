@@ -1,14 +1,18 @@
+import {urlFromParameters} from '../../../__tests__/urlFromParameters';
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
+import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {
   ParameterName,
+  RelationalOperator,
   SelectionParameter,
+  ThresholdQuery,
   UriLookupStatePaginated,
   UserSelection,
   UserSelectionState,
@@ -55,9 +59,6 @@ describe('userSelectionSelectors', () => {
   });
 
   describe('getPaginatedMeterParameters', () => {
-
-    const urlForParameters = (parameters: EncodedUriParameters): URL =>
-      new URL(`${'https://blabla.com'}/?${parameters}`);
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
@@ -155,17 +156,45 @@ describe('userSelectionSelectors', () => {
         userSelection: {
           ...twoOrganisations.userSelection,
           selectionParameters: {
+            ...twoOrganisations.userSelection.selectionParameters,
             organisations: [{...anOrganisation}],
-            dateRange: {
-              period: Period.latest,
-            },
           },
         },
       };
 
       const parameters: EncodedUriParameters = getPaginatedMeterParameters(stateWithOrganisation);
-      const url: URL = urlForParameters(parameters);
+      const url: URL = urlFromParameters(parameters);
       expect(url.searchParams.getAll(meterParameters.organisations)).toEqual([anOrganisation.id]);
+    });
+
+    it('includes a threshold query', () => {
+      const threshold: ThresholdQuery = {
+        relationalOperator: '>=' as RelationalOperator,
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: '3',
+      };
+
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
+
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters({
+        ...initialUriLookupState,
+        userSelection: state.userSelection,
+        start,
+      });
+
+      const url: URL = urlFromParameters(parameters);
+
+      expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
   });
 
@@ -324,6 +353,35 @@ describe('userSelectionSelectors', () => {
       });
 
       expect(uriParameters).toEqual(`alarm=no&${latestUrlParameters}`);
+    });
+
+    it('includes a threshold query', () => {
+      const threshold: ThresholdQuery = {
+        relationalOperator: '>=' as RelationalOperator,
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: '3',
+      };
+
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
+
+      const parameters: EncodedUriParameters = getMeterParameters({
+        userSelection: state.userSelection,
+        start,
+      });
+
+      const url: URL = urlFromParameters(parameters);
+
+      expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
 
   });

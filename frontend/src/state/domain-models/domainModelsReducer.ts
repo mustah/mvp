@@ -13,6 +13,7 @@ import {
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_CUSTOM_DATE_RANGE,
+  SET_THRESHOLD,
 } from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
@@ -188,6 +189,7 @@ export const resetReducer = <S>(
   initialState: S,
 ): S => {
   switch (type) {
+    case SET_THRESHOLD:
     case SELECT_SAVED_SELECTION:
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:

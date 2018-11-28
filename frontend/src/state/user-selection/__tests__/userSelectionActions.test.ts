@@ -8,6 +8,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {IdNamed, toIdNamed} from '../../../types/Types';
 import {putRequestOf} from '../../domain-models/domainModelsActions';
 import {mapSelectedIdToCity} from '../../domain-models/selections/selectionsApiActions';
+import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
   closeSelectionPage,
@@ -17,16 +18,21 @@ import {
   selectPeriod,
   selectSavedSelection,
   SET_CUSTOM_DATE_RANGE,
+  SET_THRESHOLD,
   setCustomDateRange,
+  setThreshold,
   shouldMigrateSelectionParameters,
   toggleParameter,
 } from '../userSelectionActions';
 import {
   OldSelectionParameters,
   ParameterName,
+  RelationalOperator,
   SelectedParameters,
   SelectionParameter,
+  ThresholdQuery,
   UserSelection,
+  UserSelectionState,
 } from '../userSelectionModels';
 import {initialState} from '../userSelectionReducer';
 
@@ -85,7 +91,7 @@ describe('userSelectionActions', () => {
     },
   };
 
-  describe('close selection page', () => {
+  describe('closeSelectionPage', () => {
 
     it('closes selection page and navigates back to previous page', () => {
       store.dispatch(closeSelectionPage());
@@ -107,7 +113,7 @@ describe('userSelectionActions', () => {
     });
   });
 
-  describe('from saved selections', () => {
+  describe('selectSavedSelection', () => {
 
     it('sets new selection', () => {
       store = configureMockStore(rootState);
@@ -220,102 +226,106 @@ describe('userSelectionActions', () => {
 
   });
 
-  describe('toggle cities selection', () => {
+  describe('toggleParameter', () => {
 
-    it('deselects selected city', () => {
-      const stateWithSelection: Partial<RootState> = {
-        userSelection: {
+    describe('toggle cities selection', () => {
+
+      it('deselects selected city', () => {
+        const stateWithSelection: Partial<RootState> = {
           userSelection: {
-            ...initialState.userSelection,
-            selectionParameters: {
-              ...initialState.userSelection.selectionParameters,
-              [ParameterName.cities]: [stockholm],
+            userSelection: {
+              ...initialState.userSelection,
+              selectionParameters: {
+                ...initialState.userSelection.selectionParameters,
+                [ParameterName.cities]: [stockholm],
+              },
             },
           },
-        },
-      };
-      store = configureMockStore(stateWithSelection);
+        };
+        store = configureMockStore(stateWithSelection);
 
-      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
-      store.dispatch(toggleParameter(payload));
+        const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+        store.dispatch(toggleParameter(payload));
 
-      expect(store.getActions()).toEqual([
-        {type: DESELECT_SELECTION, payload},
-      ]);
+        expect(store.getActions()).toEqual([
+          {type: DESELECT_SELECTION, payload},
+        ]);
+      });
+
+      it('set selection', async () => {
+        const selection: IdNamed = {...gothenburg};
+        const parameter: SelectionParameter = {item: {...selection}, parameter: ParameterName.cities};
+        store = configureMockStore(rootStateNoSaved);
+
+        store.dispatch(toggleParameter(parameter));
+
+        expect(store.getActions()).toEqual([
+          {type: ADD_PARAMETER_TO_SELECTION, payload: parameter},
+        ]);
+      });
+
+      it('set several selections', () => {
+        const p1: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+        const p2: SelectionParameter = {item: {...gothenburg}, parameter: ParameterName.cities};
+        store = configureMockStore(rootStateNoSaved);
+
+        store.dispatch(toggleParameter(p1));
+        store.dispatch(toggleParameter(p2));
+
+        expect(store.getActions()).toEqual([
+          {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
+          {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
+        ]);
+      });
+
     });
 
-    it('set selection', async () => {
-      const selection: IdNamed = {...gothenburg};
-      const parameter: SelectionParameter = {item: {...selection}, parameter: ParameterName.cities};
-      store = configureMockStore(rootStateNoSaved);
+    describe('toggle gateway serials', () => {
 
-      store.dispatch(toggleParameter(parameter));
+      it('adds non-existing gateways serials', () => {
+        const p1: SelectionParameter = {
+          item: {id: '123', name: '123'},
+          parameter: ParameterName.gatewaySerials,
+        };
+        const p2: SelectionParameter = {
+          item: {id: 'abc', name: 'abc'},
+          parameter: ParameterName.gatewaySerials,
+        };
+        store = configureMockStore(rootStateNoSaved);
 
-      expect(store.getActions()).toEqual([
-        {type: ADD_PARAMETER_TO_SELECTION, payload: parameter},
-      ]);
-    });
+        store.dispatch(toggleParameter(p1));
+        store.dispatch(toggleParameter(p2));
 
-    it('set several selections', () => {
-      const p1: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
-      const p2: SelectionParameter = {item: {...gothenburg}, parameter: ParameterName.cities};
-      store = configureMockStore(rootStateNoSaved);
+        expect(store.getActions()).toEqual([
+          {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
+          {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
+        ]);
+      });
 
-      store.dispatch(toggleParameter(p1));
-      store.dispatch(toggleParameter(p2));
+      it('adds selected parameter when selected gateway serials are undefined', () => {
+        const oldRootState = {...rootState};
+        delete oldRootState.userSelection.userSelection.selectionParameters[ParameterName.gatewaySerials];
 
-      expect(store.getActions()).toEqual([
-        {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
-        {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
-      ]);
+        const p1: SelectionParameter = {
+          item: {id: '123', name: '123'},
+          parameter: ParameterName.gatewaySerials,
+        };
+        store = configureMockStore(oldRootState);
+
+        store.dispatch(toggleParameter(p1));
+
+        expect(store.getActions()).toEqual([
+          {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
+        ]);
+      });
+
     });
 
   });
 
-  describe('toggle gateway serials', () => {
+  describe('selectPeriod', () => {
 
-    it('adds non-existing gateways serials', () => {
-      const p1: SelectionParameter = {
-        item: {id: '123', name: '123'},
-        parameter: ParameterName.gatewaySerials,
-      };
-      const p2: SelectionParameter = {
-        item: {id: 'abc', name: 'abc'},
-        parameter: ParameterName.gatewaySerials,
-      };
-      store = configureMockStore(rootStateNoSaved);
-
-      store.dispatch(toggleParameter(p1));
-      store.dispatch(toggleParameter(p2));
-
-      expect(store.getActions()).toEqual([
-        {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
-        {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
-      ]);
-    });
-
-    it('adds selected parameter when selected gateway serials are undefined', () => {
-      const oldRootState = {...rootState};
-      delete oldRootState.userSelection.userSelection.selectionParameters[ParameterName.gatewaySerials];
-
-      const p1: SelectionParameter = {
-        item: {id: '123', name: '123'},
-        parameter: ParameterName.gatewaySerials,
-      };
-      store = configureMockStore(oldRootState);
-
-      store.dispatch(toggleParameter(p1));
-
-      expect(store.getActions()).toEqual([
-        {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
-      ]);
-    });
-
-  });
-
-  describe('select period', () => {
-
-    it('select period', async () => {
+    it('selectsPeriod', async () => {
       const period = Period.previousMonth;
       store = configureMockStore(rootStateNoSaved);
 
@@ -325,6 +335,74 @@ describe('userSelectionActions', () => {
         {type: SELECT_PERIOD, payload: period},
       ]);
     });
+  });
+
+  describe('setThreshold', () => {
+
+    type IncompleteThresholdQuery =
+      Partial<{ [key in keyof ThresholdQuery]: string | undefined | ThresholdQuery[key] }>;
+    type UsersInput = ThresholdQuery | undefined | IncompleteThresholdQuery;
+
+    const userSelectionStateFromThreshold = (threshold: ThresholdQuery): UserSelectionState => ({
+      ...rootStateNoSaved.userSelection,
+      userSelection: {
+        ...rootStateNoSaved.userSelection.userSelection,
+        selectionParameters: {
+          ...rootStateNoSaved.userSelection.userSelection.selectionParameters,
+          threshold,
+        }
+      }
+    });
+
+    const empty = undefined;
+    const ok: ThresholdQuery = {
+      value: '2',
+      unit: 'kW',
+      quantity: Quantity.power,
+      relationalOperator: '>=' as RelationalOperator,
+    };
+    const anotherOk: ThresholdQuery = {...ok, value: '3'};
+    const incomplete: IncompleteThresholdQuery = {
+      value: '',
+      unit: undefined,
+      quantity: undefined,
+      relationalOperator: '>=' as RelationalOperator,
+    };
+    const anotherIncomplete: IncompleteThresholdQuery = {...incomplete, value: '3'};
+
+    const triggersChange: boolean = true;
+    const skipsAction: boolean = false;
+
+    const testCases: Array<[UsersInput, UsersInput, boolean]> = [
+      [empty, ok, triggersChange],
+      [empty, incomplete, skipsAction],
+      [empty, empty, skipsAction],
+
+      [ok, anotherOk, triggersChange],
+      [ok, incomplete, triggersChange],
+      [ok, empty, triggersChange],
+      [ok, ok, skipsAction],
+
+      [incomplete, ok, triggersChange],
+      [incomplete, anotherIncomplete, skipsAction],
+      [incomplete, empty, skipsAction],
+    ];
+
+    test.each(testCases)(
+      'old state of %p and action of (%p) triggers? %p',
+      (currentThresholdQuery, newThreshold, shouldTriggerAction) => {
+        const currentState: UserSelectionState = userSelectionStateFromThreshold(currentThresholdQuery);
+        store = configureMockStore({...rootStateNoSaved, userSelection: currentState});
+
+        store.dispatch(setThreshold(newThreshold));
+
+        expect(store.getActions()).toEqual(
+          shouldTriggerAction
+            ? [{type: SET_THRESHOLD, payload: newThreshold}]
+            : []
+        );
+      }
+    );
   });
 
 });

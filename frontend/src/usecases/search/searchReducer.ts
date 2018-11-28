@@ -7,6 +7,7 @@ import {
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
+  SET_THRESHOLD,
 } from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
@@ -47,6 +48,7 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
       return {...state, ...(action as Action<QueryParameter>).payload};
     case LOCATION_CHANGE:
       return resetValidationQuery(state, (action as Action<Location>).payload);
+    case SET_THRESHOLD:
     case SELECT_SAVED_SELECTION:
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:

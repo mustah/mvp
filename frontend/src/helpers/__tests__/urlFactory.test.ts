@@ -1,11 +1,16 @@
 import {Period} from '../../components/dates/dateModels';
+import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
-import {SelectedParameters} from '../../state/user-selection/userSelectionModels';
-import {IdNamed, toIdNamed} from '../../types/Types';
+import {RelationalOperator, SelectedParameters} from '../../state/user-selection/userSelectionModels';
+import {EncodedUriParameters, IdNamed, toIdNamed} from '../../types/Types';
 import {momentFrom, toPeriodApiParameters} from '../dateHelpers';
+import {idGenerator} from '../idGenerator';
 import {Maybe} from '../Maybe';
 import {
+  RequestParameters,
+  encodeRequestParameters,
   encodedUriParametersFrom,
+  requestParametersFrom,
   toEntityApiParametersGateways,
   toEntityApiParametersMeters,
   toGatewayIdsApiParameters,
@@ -20,6 +25,76 @@ describe('urlFactory', () => {
   const selectedParameters = (parameters: Partial<SelectedParams>): SelectedParams => parameters as SelectedParams;
 
   const cities: IdNamed[] = [toIdNamed('got'), toIdNamed('sto'), toIdNamed('mmx')];
+
+  describe('requestParametersFrom', () => {
+
+    it('transforms selected parameters url parameters', () => {
+      const facilityId: string = idGenerator.uuid().toString();
+      const selectedParameters: SelectedParameters = {
+        dateRange: {
+          period: Period.latest,
+        },
+        threshold: {
+          quantity: Quantity.power,
+          unit: 'kW',
+          value: '3',
+          relationalOperator: '<' as RelationalOperator,
+        },
+        media: [toIdNamed('District heating')],
+        facilities: [toIdNamed(facilityId)]
+      };
+
+      const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
+
+      expect(actualUrlParameters).toHaveProperty('threshold', 'Power < 3 kW');
+      expect(actualUrlParameters).toHaveProperty('medium', ['District heating']);
+      expect(actualUrlParameters).toHaveProperty('facility', [facilityId]);
+    });
+
+    it('does not include parameters that does not have values', () => {
+      const selectedParameters: SelectedParameters = {
+        dateRange: {
+          period: Period.latest,
+        },
+        facilities: []
+      };
+
+      const actualUrlParameters: RequestParameters = requestParametersFrom(selectedParameters);
+
+      expect(actualUrlParameters).not.toHaveProperty('facility');
+    });
+
+  });
+
+  describe('encodeRequestParameters', () => {
+
+    it('encodes map to encoded key-value string', () => {
+      const nowInApiFormat = momentFrom().format(`YYYY-MM-DDTHH:mm:ss.sss+01:00`);
+      const facilityId: string = idGenerator.uuid().toString();
+
+      const after = nowInApiFormat;
+      const before = nowInApiFormat;
+      const threshold = 'Power < 3 kW';
+      const medium = ['District heating'];
+      const facility = [facilityId];
+      const queryParameters = {
+        after,
+        before,
+        threshold,
+        medium,
+        facility,
+      };
+
+      const expected: EncodedUriParameters =
+        `after=${encodeURIComponent(after)}&before=${encodeURIComponent(before)}` +
+        `&threshold=${encodeURIComponent(threshold)}&medium=${encodeURIComponent(medium[0])}` +
+        `&facility=${facilityId}`;
+
+      const actualQueryString: EncodedUriParameters = encodeRequestParameters(queryParameters);
+      expect(actualQueryString).toEqual(expected);
+    });
+
+  });
 
   describe('toEntityApiParameters', () => {
     it('returns empty parameters string when nothing is selected', () => {
@@ -113,9 +188,11 @@ describe('urlFactory', () => {
       reported: [toIdNamed('true')],
     });
 
+    const space: string = '%20';
+
     const expectedParameters = [
-      'address=address%202',
-      'address=storgatan%205',
+      `address=address${space}2`,
+      `address=storgatan${space}5`,
       'city=got', 'city=sto',
       'city=mmx',
       'reported=true',
