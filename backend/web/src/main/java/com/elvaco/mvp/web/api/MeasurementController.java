@@ -106,7 +106,7 @@ public class MeasurementController {
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
     @RequestParam List<UUID> logicalMeterId,
-    @RequestParam(name = "quantities") Optional<Set<Quantity>> maybeQuantities,
+    @RequestParam(name = "quantity") Optional<Set<Quantity>> maybeQuantities,
     @RequestParam(defaultValue = "1970-01-01T00:00:00Z")
     @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
     @RequestParam(required = false)
