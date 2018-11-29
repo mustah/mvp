@@ -1,6 +1,11 @@
 {% set module = "geoservice" %}
 {% set systemd_unit = "elvaco-" + module + ".service" %}
 {% set module_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
+{% if "mvp-prod" in salt['grains.get']('env') %}
+{% set stability = 'production' %}
+{% else %}
+{% set stability = 'staging' %}
+{% endif %}
 
 include:
   - docker
@@ -91,6 +96,8 @@ docker_{{module}}:
     - restart_policy: always
     - log_driver: journald
     - log_opt: tag={{module}}
+    - environment:
+      - _JAVA_OPTIONS: -Delastic.apm.environment={{stability}}
     - binds:
       - /opt/elvaco/{{module}}-current/config/:/app/config:ro
     - require:
