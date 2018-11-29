@@ -1,12 +1,12 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
@@ -21,11 +21,12 @@ public class LocationDtoMapper {
 
   static final IdNamedDto UNKNOWN_LOCATION = new IdNamedDto("unknown");
 
-  public static LocationWithId toLocationWithId(GeoResponseDto geoResponse, UUID logicalMeterId) {
+  public static LocationWithId toLocationWithId(GeoResponseDto geoResponse, PrimaryKey pk) {
     AddressDto address = geoResponse.address;
     GeoPositionDto geoData = geoResponse.geoData;
     return new LocationBuilder()
-      .id(logicalMeterId)
+      .id(pk.getId())
+      .organisationId(pk.getOrganisationId())
       .country(address.country)
       .city(address.city)
       .address(address.street)

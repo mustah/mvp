@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -100,9 +101,9 @@ public class LogicalMeterEntityMapper {
 
   public static LogicalMeter toSimpleDomainModel(LogicalMeterEntity entity) {
     return LogicalMeter.builder()
-      .id(entity.id)
+      .id(entity.getLogicalMeterId())
+      .organisationId(entity.getOrganisationId())
       .externalId(entity.externalId)
-      .organisationId(entity.organisationId)
       .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(entity.meterDefinition))
       .created(entity.created)
       .physicalMeters(toDomainModelsWithoutStatusLogs(entity.physicalMeters))
@@ -121,10 +122,8 @@ public class LogicalMeterEntityMapper {
       logicalMeter.utcOffset
     );
 
-    logicalMeterEntity.location = LocationEntityMapper.toEntity(
-      logicalMeter.id,
-      logicalMeter.location
-    );
+    var pk = new Pk(logicalMeter.id, logicalMeter.organisationId);
+    logicalMeterEntity.location = LocationEntityMapper.toEntity(pk, logicalMeter.location);
 
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
       .map(PhysicalMeterEntityMapper::toEntity)
@@ -144,9 +143,9 @@ public class LogicalMeterEntityMapper {
     @Nullable Long missingMeasurementCount
   ) {
     return LogicalMeter.builder()
-      .id(entity.id)
+      .id(entity.getLogicalMeterId())
+      .organisationId(entity.getOrganisationId())
       .externalId(entity.externalId)
-      .organisationId(entity.organisationId)
       .meterDefinition(MeterDefinitionEntityMapper.toDomainModel(entity.meterDefinition))
       .created(entity.created)
       .physicalMeters(physicalMeters)

@@ -86,8 +86,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         findOrCreatePhysicalMeter(
           meter,
           facility.id,
-          organisation,
-          logicalMeter
+          logicalMeter,
+          organisation.id
         ));
 
     Optional<Gateway> gateway = Optional.ofNullable(findOrCreateGateway(
@@ -120,7 +120,11 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
   private void removePropertyAfterForceUpdate(LocationWithId location, UUID organisationId) {
     if (location.shouldForceUpdate) {
-      propertiesUseCases.deleteBy(FeatureType.UPDATE_GEOLOCATION, location.getId(), organisationId);
+      propertiesUseCases.deleteBy(
+        FeatureType.UPDATE_GEOLOCATION,
+        location.getId().getId(),
+        organisationId
+      );
     }
   }
 
@@ -158,8 +162,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
     MeterDto meterDto,
     String facilityId,
-    Organisation organisation,
-    @Nullable LogicalMeter logicalMeter
+    @Nullable LogicalMeter logicalMeter,
+    UUID organisationId
   ) {
     String address = meterDto.id;
     if (address == null) {
@@ -167,9 +171,9 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     }
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
-      .findByWithStatuses(organisation.id, facilityId, address)
+      .findByWithStatuses(organisationId, facilityId, address)
       .orElseGet(() -> PhysicalMeter.builder()
-        .organisation(organisation)
+        .organisationId(organisationId)
         .address(address)
         .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
         .externalId(facilityId)

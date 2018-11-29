@@ -394,7 +394,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("abcdef")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -431,7 +431,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -487,7 +487,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -521,7 +521,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -630,7 +630,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -649,7 +649,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("5678")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -678,7 +678,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123456")
       .build());
 
@@ -687,7 +687,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .externalId("1234")
       .readIntervalMinutes(60)
       .medium(Medium.DISTRICT_HEATING.medium)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("78910")
       .build());
 
@@ -803,7 +803,7 @@ public class SelectionControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter
   ) {
     return physicalMeters.save(PhysicalMeter.builder()
-      .organisation(organisation)
+      .organisationId(organisation.id)
       .address(address)
       .externalId(logicalMeter.externalId)
       .medium("Gas")

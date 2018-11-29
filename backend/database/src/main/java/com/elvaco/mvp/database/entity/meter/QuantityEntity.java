@@ -43,6 +43,7 @@ public class QuantityEntity extends IdentifiableType<Integer> {
   @Enumerated(EnumType.ORDINAL)
   public SeriesDisplayMode seriesDisplayMode;
 
+  @Override
   public Integer getId() {
     return id;
   }

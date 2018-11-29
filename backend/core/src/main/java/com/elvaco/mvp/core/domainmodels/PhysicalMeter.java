@@ -23,7 +23,7 @@ import static java.util.UUID.randomUUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PhysicalMeter implements Identifiable<UUID> {
 
-  public final Organisation organisation;
+  public final UUID organisationId;
   public final String address;
   public final String externalId;
   public final String medium;

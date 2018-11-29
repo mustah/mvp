@@ -205,7 +205,7 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   private PhysicalMeterBuilder physicalMeter() {
     return PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("someId")
       .externalId("an-external-id")
       .medium("Heat")

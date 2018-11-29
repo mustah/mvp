@@ -12,8 +12,8 @@ public class GatewayEntityMapper {
 
   public static Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
     return Gateway.builder()
-      .id(entity.id)
-      .organisationId(entity.organisationId)
+      .id(entity.primaryKey.id)
+      .organisationId(entity.primaryKey.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
       .build();
@@ -21,8 +21,8 @@ public class GatewayEntityMapper {
 
   public static Gateway toDomainModel(GatewayEntity entity) {
     return Gateway.builder()
-      .id(entity.id)
-      .organisationId(entity.organisationId)
+      .id(entity.primaryKey.id)
+      .organisationId(entity.primaryKey.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
       .statusLogs(entity.statusLogs.stream()

@@ -897,7 +897,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .medium("Heat")
       .manufacturer("ELV1")
       .logicalMeterId(logicalMeter.id)
@@ -911,7 +911,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter anotherLogicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .medium("Heat")
       .manufacturer("ELV1")
       .logicalMeterId(anotherLogicalMeter.id)
@@ -1132,7 +1132,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeters.save(physicalMeter()
       .logicalMeterId(anotherOrganisationsMeter.id)
       .externalId("someone-elses-meter")
-      .organisation(context().organisation2())
+      .organisationId(context().organisationId2())
       .build()
     );
 
@@ -1147,7 +1147,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeters.save(physicalMeter()
       .logicalMeterId(usersMeter.id)
       .externalId("users-meter")
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .build()
     );
 
@@ -1181,14 +1181,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeters.save(physicalMeter()
       .logicalMeterId(anotherOrganisationsMeter.id)
       .externalId("someone-elses-meter")
-      .organisation(context().organisation2())
+      .organisationId(context().organisationId2())
       .build()
     );
 
     physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
       .externalId("super-admins-meter")
-      .organisation(context().superAdmin.organisation)
+      .organisationId(context().superAdmin.organisation.id)
       .build()
     );
 
@@ -1451,7 +1451,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .externalId(randomUUID().toString())
       .manufacturer("ELV")
       .address("1234")
@@ -1502,7 +1502,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .externalId(randomUUID().toString())
       .manufacturer("ELV")
       .address("032123")
@@ -1550,7 +1550,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("12345")
       .externalId(randomUUID().toString())
       .manufacturer("stre")
@@ -1577,7 +1577,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("12345")
       .externalId(randomUUID().toString())
       .logicalMeterId(meterIdOne)
@@ -1592,7 +1592,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("12345")
       .externalId(randomUUID().toString())
       .logicalMeterId(meterIdTwo)
@@ -1619,7 +1619,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("12345")
       .externalId(randomUUID().toString())
       .logicalMeterId(meterId)
@@ -2008,7 +2008,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private PhysicalMeterBuilder physicalMeter() {
     return PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("111-222-333-444-1")
       .externalId(randomUUID().toString())
       .medium("Heat")

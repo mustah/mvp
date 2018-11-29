@@ -100,7 +100,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .externalId(csvData.facilityId)
               .medium(csvData.medium)
               .manufacturer(csvData.meterManufacturer)
-              .organisation(rootOrganisation)
+              .organisationId(rootOrganisation.id)
               .readIntervalMinutes(counter.incrementAndGet() > 10 ? 1440 : 60)
               .build();
             Gateway gateway = Gateway.builder()

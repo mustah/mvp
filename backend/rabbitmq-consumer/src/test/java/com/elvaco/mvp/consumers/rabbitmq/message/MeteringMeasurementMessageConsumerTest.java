@@ -342,7 +342,7 @@ public class MeteringMeasurementMessageConsumerTest {
 
     PhysicalMeter expectedPhysicalMeter = physicalMeters.save(
       physicalMeter()
-        .organisation(organisation)
+        .organisationId(organisation.id)
         .medium("Electricity")
         .build()
     );
@@ -398,7 +398,7 @@ public class MeteringMeasurementMessageConsumerTest {
       .unit("kWh")
       .physicalMeter(PhysicalMeter.builder()
         .id(physicalMeter.id)
-        .organisation(organisation)
+        .organisationId(organisation.id)
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
         .medium(Medium.UNKNOWN_MEDIUM.medium)
@@ -415,21 +415,7 @@ public class MeteringMeasurementMessageConsumerTest {
     messageConsumer.accept(newMeasurementMessage(ORGANISATION_EXTERNAL_ID));
 
     List<Measurement> createdMeasurements = measurements.allMocks();
-    assertThat(createdMeasurements.get(0).physicalMeter.organisation).isEqualTo(ORGANISATION);
-  }
-
-  @Test
-  public void createdOrganisationIsSlugged() {
-    MeteringMeasurementMessageDto message = newMeasurementMessage(
-      "Some Organisation"
-    );
-
-    messageConsumer.accept(message);
-
-    List<Measurement> createdMeasurements = measurements.allMocks();
-    assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0).physicalMeter.organisation.slug)
-      .isEqualTo("some-organisation");
+    assertThat(createdMeasurements.get(0).physicalMeter.organisationId).isEqualTo(ORGANISATION.id);
   }
 
   @Test
@@ -571,7 +557,7 @@ public class MeteringMeasurementMessageConsumerTest {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
     physicalMeters.save(physicalMeter()
-      .organisation(organisation)
+      .organisationId(organisation.id)
       .medium("Hot water")
       .revision(1)
       .build());
@@ -594,7 +580,7 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueFor_ExistingEntities_CreateNewPhysicalMeter() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
-    physicalMeters.save(physicalMeter().organisation(organisation).build());
+    physicalMeters.save(physicalMeter().organisationId(organisation.id).build());
     logicalMeters.save(
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
@@ -616,7 +602,10 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueFor_ExistingEntities_CreateNewLogicalMeter() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
-    physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
+    physicalMeters.save(physicalMeter()
+      .organisationId(organisation.id)
+      .medium("Hot water")
+      .build());
     logicalMeters.save(
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
@@ -642,7 +631,10 @@ public class MeteringMeasurementMessageConsumerTest {
       .productModel("")
       .build());
 
-    physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
+    physicalMeters.save(physicalMeter()
+      .organisationId(organisation.id)
+      .medium("Hot water")
+      .build());
     logicalMeters.save(
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)

@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -24,9 +23,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "gateway_status_log",
-  uniqueConstraints = @UniqueConstraint(columnNames = {"gatewayId", "start", "status"})
-)
+@Table(name = "gateway_status_log")
 public class GatewayStatusLogEntity extends IdentifiableType<Long> {
 
   private static final long serialVersionUID = -365050443321687201L;
@@ -35,8 +32,7 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  @Column(nullable = false)
-  public UUID gatewayId;
+  public GatewayPrimaryKey gatewayId;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -50,12 +46,13 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
   public GatewayStatusLogEntity(
     @Nullable Long id,
     UUID gatewayId,
+    UUID organisationId,
     StatusType status,
     ZonedDateTime start,
     ZonedDateTime stop
   ) {
     this.id = id;
-    this.gatewayId = gatewayId;
+    this.gatewayId = new GatewayPrimaryKey(gatewayId, organisationId);
     this.status = status;
     this.start = start;
     this.stop = stop;
@@ -64,5 +61,13 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
   @Override
   public Long getId() {
     return id;
+  }
+
+  public UUID getGatewayId() {
+    return gatewayId.getId();
+  }
+
+  public UUID getOrganisationId() {
+    return gatewayId.getOrganisationId();
   }
 }

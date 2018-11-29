@@ -6,6 +6,8 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Pk;
+import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -17,13 +19,11 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
 public class GeocodeControllerTest extends IntegrationTest {
 
   @Autowired
@@ -54,13 +54,15 @@ public class GeocodeControllerTest extends IntegrationTest {
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
 
-    var response = restClient()
+    var response = asSuperAdmin()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
-    var expected = toLocationWithId(geoResponse, logicalMeterId);
+    var pk = new EntityPrimaryKey(logicalMeterId, context().organisationId());
+
+    var expected = toLocationWithId(geoResponse, new Pk(pk.id, pk.organisationId));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(findLocationBy(logicalMeterId)).isEqualTo(expected);
+    assertThat(findLocationBy(pk)).isEqualTo(expected);
   }
 
   @Test
@@ -83,20 +85,23 @@ public class GeocodeControllerTest extends IntegrationTest {
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
 
-    var response = restClient()
+    var response = asSuperAdmin()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
+    var pk = new EntityPrimaryKey(logicalMeterId, context().organisationId());
+
     LocationWithId expected = new LocationBuilder()
-      .id(logicalMeterId)
+      .id(pk.getId())
+      .organisationId(pk.getOrganisationId())
       .coordinate(new GeoCoordinate(11.23332, 12.12323, 1.0))
       .country("sweden")
       .city("växjö")
       .address("drottninggatan 3")
       .buildLocationWithId();
 
-    assertThat(findLocationBy(logicalMeterId)).isEqualTo(expected);
+    assertThat(findLocationBy(pk)).isEqualTo(expected);
   }
 
   @Test
@@ -119,10 +124,12 @@ public class GeocodeControllerTest extends IntegrationTest {
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
 
-    var response = restClient()
+    var response = asSuperAdmin()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
-    LocationWithId actual = findLocationBy(logicalMeterId);
+    var pk = new EntityPrimaryKey(logicalMeterId, context().organisationId());
+
+    LocationWithId actual = findLocationBy(pk);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(actual.getCountry()).isNull();
     assertThat(actual.getCity()).isNull();
@@ -130,8 +137,8 @@ public class GeocodeControllerTest extends IntegrationTest {
 
   @Test
   public void justLogAndReturnsStatusOk() {
-    UUID logicalMeterId = randomUUID();
-    GeoResponseErrorDto payload = new GeoResponseErrorDto(
+    var logicalMeterId = randomUUID();
+    var payload = new GeoResponseErrorDto(
       1,
       "No geolocation found",
       new AddressDto(
@@ -140,14 +147,14 @@ public class GeocodeControllerTest extends IntegrationTest {
         "kabelgatan 1"
       )
     );
-    ResponseEntity<?> response = restClient()
+    var response = asSuperAdmin()
       .post("/geocodes/error/" + logicalMeterId, payload, GeoResponseErrorDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
-  private LocationWithId findLocationBy(UUID logicalMeterId) {
-    return locationJpaRepository.findById(logicalMeterId)
+  private LocationWithId findLocationBy(EntityPrimaryKey id) {
+    return locationJpaRepository.findById(id)
       .map(LocationEntityMapper::toLocationWithId)
       .get();
   }

@@ -182,7 +182,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
     return physicalMeterUseCases.save(PhysicalMeter.builder()
       .address("meter-123")
       .externalId("external-123")
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .build());
   }
 

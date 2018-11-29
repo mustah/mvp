@@ -42,7 +42,7 @@ public class MeasurementEntityMapperTest {
         .externalId("external-id")
         .medium("Hot water")
         .manufacturer("ELV")
-        .organisation(ELVACO)
+        .organisationId(ELVACO.id)
         .readIntervalMinutes(15)
         .build()
       )

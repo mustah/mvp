@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -43,7 +44,7 @@ public class LogicalMeterEntityMapperTest {
       .organisationId(ELVACO.id)
       .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
       .physicalMeter(PhysicalMeter.builder()
-        .organisation(ELVACO)
+        .organisationId(ELVACO.id)
         .address("1234")
         .externalId("an-external-ID")
         .medium("My medium")
@@ -74,7 +75,13 @@ public class LogicalMeterEntityMapperTest {
       newMeterDefinitionEntity("Speed", "kmh", "speed-o-meter"),
       TZ
     );
-    logicalMeterEntity.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
+
+    logicalMeterEntity.location = LocationEntity.builder()
+      .pk(new EntityPrimaryKey(meterId, organisationId))
+      .latitude(3.1)
+      .longitude(2.1)
+      .confidence(1.0)
+      .build();
 
     LogicalMeter logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
@@ -133,7 +140,7 @@ public class LogicalMeterEntityMapperTest {
       singleton(new Quantity(
         1,
         "Energy",
-         new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT),
+        new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT),
         "kWh"
       )),
       false
@@ -167,7 +174,12 @@ public class LogicalMeterEntityMapperTest {
       newMeterDefinitionEntity("Energy", "kWh", "Energy meter"),
       TZ
     );
-    logicalMeterEntityExpected.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
+    logicalMeterEntityExpected.location = LocationEntity.builder()
+      .pk(new EntityPrimaryKey(meterId, ELVACO.id))
+      .latitude(3.1)
+      .longitude(2.1)
+      .confidence(1.0)
+      .build();
 
     MeterDefinition meterDefinition = new MeterDefinition(
       MeterDefinitionType.UNKNOWN_METER_TYPE,

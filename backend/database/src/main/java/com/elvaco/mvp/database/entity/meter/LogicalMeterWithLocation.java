@@ -25,7 +25,12 @@ public class LogicalMeterWithLocation {
     this.organisationId = organisationId;
     this.externalId = externalId;
     this.utcOffset = utcOffset;
-    this.location = new LocationEntity(id, country, city, address);
+    this.location = LocationEntity.builder()
+      .pk(new EntityPrimaryKey(id, organisationId))
+      .country(country)
+      .city(city)
+      .streetAddress(address)
+      .build();
     this.medium = medium;
   }
 }

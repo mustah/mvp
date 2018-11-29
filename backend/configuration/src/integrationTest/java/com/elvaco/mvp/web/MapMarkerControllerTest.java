@@ -460,7 +460,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
         .externalId(logicalMeter.externalId)
         .address("v1")
         .manufacturer("ELV")
-        .organisation(context().organisation())
+        .organisationId(context().organisationId())
         .build()
     );
 
@@ -521,6 +521,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     gatewayStatusLogs.save(
       StatusLogEntry.<UUID>builder()
         .entityId(gateway.id)
+        .organisationId(organisationId)
         .status(status)
         .start(NOW)
         .build()

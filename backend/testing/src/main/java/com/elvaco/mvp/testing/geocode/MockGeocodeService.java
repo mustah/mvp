@@ -16,7 +16,7 @@ public class MockGeocodeService implements GeocodeService {
 
   @Override
   public void fetchCoordinates(LocationWithId location) {
-    this.requestId = location.getId();
+    this.requestId = location.getId().getId();
     this.location = location;
   }
 }

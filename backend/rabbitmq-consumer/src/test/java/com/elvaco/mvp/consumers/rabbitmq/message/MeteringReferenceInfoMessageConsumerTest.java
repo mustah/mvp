@@ -163,7 +163,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
     assertThat(savedPhysicalMeter).isEqualTo(PhysicalMeter.builder()
       .id(savedPhysicalMeter.id)
-      .organisation(organisation)
+      .organisationId(organisation.id)
       .address(ADDRESS)
       .externalId(EXTERNAL_ID)
       .medium(HOT_WATER_MEDIUM)
@@ -243,10 +243,10 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(allPhysicalMeters).hasSize(1);
     assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
     assertThat(organisations.findAll()).hasSize(1);
-    PhysicalMeter meter = allPhysicalMeters.get(0);
-    assertThat(meter.organisation).isEqualTo(organisation);
+    PhysicalMeter physicalMeter = allPhysicalMeters.get(0);
+    assertThat(physicalMeter.organisationId).isEqualTo(organisation.id);
 
-    LogicalMeter logicalMeter = logicalMeters.findById(meter.logicalMeterId).get();
+    LogicalMeter logicalMeter = logicalMeters.findById(physicalMeter.logicalMeterId).get();
     assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.HOT_WATER_METER);
     assertThat(gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID)
       .isPresent()).isTrue();
@@ -382,7 +382,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     UUID logicalMeterId = randomUUID();
     physicalMeters.save(
       physicalMeter()
-        .organisation(organisation)
+        .organisationId(organisation.id)
         .logicalMeterId(logicalMeterId)
         .build()
     );
@@ -408,7 +408,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("", "Organisation code"));
-    physicalMeters.save(physicalMeter().organisation(organisation).build());
+    physicalMeters.save(physicalMeter().organisationId(organisation.id).build());
 
     messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM).build());
 
@@ -632,7 +632,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       physicalMeter()
         .readIntervalMinutes(0)
         .logicalMeterId(logicalMeterId)
-        .organisation(organisation)
+        .organisationId(organisation.id)
         .build()
     );
 

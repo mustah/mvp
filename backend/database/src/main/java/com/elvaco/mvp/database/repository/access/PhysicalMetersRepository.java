@@ -44,7 +44,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       "physicalMeter.organisationIdExternalIdAddress",
       "physicalMeter.organisationIdExternalIdAddress.withStatuses"
     },
-    key = "#physicalMeter.organisation.id + #physicalMeter.externalId + #physicalMeter.address"
+    key = "#physicalMeter.organisationId + #physicalMeter.externalId + #physicalMeter.address"
   )
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     try {

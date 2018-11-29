@@ -12,18 +12,19 @@ public class GatewayStatusLogEntityMapper {
   public static StatusLogEntry<UUID> toDomainModel(GatewayStatusLogEntity entity) {
     return StatusLogEntry.<UUID>builder()
       .id(entity.id)
-      .entityId(entity.gatewayId)
+      .entityId(entity.getGatewayId())
+      .organisationId(entity.getOrganisationId())
       .status(entity.status)
       .start(entity.start)
       .stop(entity.stop)
       .build();
-
   }
 
   public static GatewayStatusLogEntity toEntity(StatusLogEntry<UUID> statusLog) {
     return new GatewayStatusLogEntity(
       statusLog.id,
       statusLog.entityId,
+      statusLog.organisationId,
       statusLog.status,
       statusLog.start,
       statusLog.stop

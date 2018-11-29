@@ -7,9 +7,9 @@ import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -29,6 +29,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import static javax.persistence.CascadeType.ALL;
 
@@ -40,25 +41,29 @@ import static javax.persistence.CascadeType.ALL;
   uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
 )
 @Audited
-public class LogicalMeterEntity extends IdentifiableType<UUID> {
+public class LogicalMeterEntity extends IdentifiableType<EntityPrimaryKey> {
 
   private static final long serialVersionUID = 5528298891965340483L;
 
-  @Id
-  public UUID id;
+  @EmbeddedId
+  public EntityPrimaryKey primaryKey;
 
-  @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
-  @Fetch(FetchMode.SUBSELECT)
+  @OneToMany(mappedBy = "logicalMeterPrimaryKey", fetch = FetchType.EAGER)
   @Cascade(CascadeType.MERGE)
   public Set<PhysicalMeterEntity> physicalMeters = new HashSet<>();
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @NotAudited
+  @ManyToMany(fetch = FetchType.EAGER, cascade = ALL)
   @JoinTable(
     name = "gateways_meters",
-    joinColumns = @JoinColumn(name = "logical_meter_id", referencedColumnName = "id"),
-    inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
-  )
-  @Fetch(FetchMode.SUBSELECT)
+    joinColumns = {
+      @JoinColumn(name = "logical_meter_id", referencedColumnName = "id"),
+      @JoinColumn(name = "organisation_id", referencedColumnName = "organisationId")
+    },
+    inverseJoinColumns = {
+      @JoinColumn(name = "gateway_id", referencedColumnName = "id"),
+      @JoinColumn(name = "hibernate_organisation_id", referencedColumnName = "organisationId")
+    })
   public Set<GatewayEntity> gateways = new HashSet<>();
 
   @ManyToOne(optional = false)
@@ -70,35 +75,41 @@ public class LogicalMeterEntity extends IdentifiableType<UUID> {
   @Column(nullable = false)
   public String externalId;
 
-  @Column(nullable = false)
-  public UUID organisationId;
-
   @OneToOne(cascade = ALL, orphanRemoval = true)
   @PrimaryKeyJoinColumn
   @Fetch(FetchMode.JOIN)
   public LocationEntity location;
+
   @Column
   public String utcOffset;
 
   public LogicalMeterEntity(
-    UUID id,
+    UUID primaryKey,
     String externalId,
     UUID organisationId,
     ZonedDateTime created,
     MeterDefinitionEntity meterDefinition,
     String utcOffset
   ) {
-    this.id = id;
+    EntityPrimaryKey pk = new EntityPrimaryKey(primaryKey, organisationId);
+    this.primaryKey = pk;
     this.externalId = externalId;
-    this.organisationId = organisationId;
     this.created = created;
     this.meterDefinition = meterDefinition;
-    this.location = new LocationEntity(id);
+    this.location = LocationEntity.builder().pk(pk).build();
     this.utcOffset = utcOffset;
   }
 
   @Override
-  public UUID getId() {
-    return id;
+  public EntityPrimaryKey getId() {
+    return primaryKey;
+  }
+
+  public UUID getLogicalMeterId() {
+    return primaryKey.id;
+  }
+
+  public UUID getOrganisationId() {
+    return primaryKey.organisationId;
   }
 }

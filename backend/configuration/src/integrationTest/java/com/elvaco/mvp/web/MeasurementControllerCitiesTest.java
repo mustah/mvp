@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -184,12 +185,12 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
       kiruna,
       MeterDefinition.ROOM_TEMP_METER
-    ).id);
+    ).getLogicalMeterId());
 
     PhysicalMeterEntity gas = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
       kiruna,
       MeterDefinition.GAS_METER
-    ).id);
+    ).getLogicalMeterId());
 
     ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
 
@@ -348,11 +349,14 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .parameter("quantity", Quantity.POWER.name + ":W")
       .build();
 
-    Url metersAverageUrl = Url.builder().path("/measurements/average")
+    Url metersAverageUrl = Url
+      .builder()
+      .path("/measurements/average")
       .period(start, start.plusHours(1))
       .resolution("hour")
       .parameter("quantity", Quantity.POWER.name + ":W")
-      .parameter("meters", List.of(meterOne.logicalMeterId, meterTwo.logicalMeterId)).build();
+      .parameter("meters", List.of(meterOne.getLogicalMeterId(), meterTwo.getLogicalMeterId()))
+      .build();
 
     ResponseEntity<List<MeasurementSeriesDto>> cityAverageResponse = asUser()
       .getList(cityAverageUrl, MeasurementSeriesDto.class
@@ -390,7 +394,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   ) {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
       location
-    ).id);
+    ).getLogicalMeterId());
     Arrays.stream(measurements).forEach(
       m -> newMeasurement(meter, m.created, m.quantity, m.value)
     );
@@ -432,12 +436,12 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       DEFAULT_UTC_OFFSET
     ));
 
-    locationJpaRepository.save(new LocationEntity(
-      meter.id,
-      location.getCountry(),
-      location.getCity(),
-      location.getAddress()
-    ));
+    locationJpaRepository.save(LocationEntity.builder()
+      .pk(new EntityPrimaryKey(meter.getLogicalMeterId(), context().organisationId()))
+      .country(location.getCountry())
+      .city(location.getCity())
+      .streetAddress(location.getAddress())
+      .build());
 
     return meter;
   }
@@ -455,7 +459,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     UUID uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context().organisationEntity,
+      context().organisationId(),
       "",
       uuid.toString(),
       "",

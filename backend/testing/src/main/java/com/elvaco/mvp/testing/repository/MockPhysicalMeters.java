@@ -34,7 +34,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
     String externalId,
     String address
   ) {
-    return filter(physicalMeter -> physicalMeter.organisation.id.equals(organisationId))
+    return filter(physicalMeter -> physicalMeter.organisationId.equals(organisationId))
       .filter(physicalMeter -> physicalMeter.externalId.equals(externalId))
       .filter(physicalMeter -> physicalMeter.address.equals(address))
       .findFirst();
@@ -53,7 +53,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   protected PhysicalMeter copyWithId(UUID id, PhysicalMeter entity) {
     return PhysicalMeter.builder()
       .id(id)
-      .organisation(entity.organisation)
+      .organisationId(entity.organisationId)
       .address(entity.address)
       .externalId(entity.externalId)
       .medium(entity.medium)

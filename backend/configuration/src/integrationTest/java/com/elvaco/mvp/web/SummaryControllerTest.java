@@ -83,7 +83,7 @@ public class SummaryControllerTest extends IntegrationTest {
 
     var physicalMeterWithAlarm = physicalMeters.save(
       PhysicalMeter.builder()
-        .organisation(context().organisation())
+        .organisationId(context().organisationId())
         .address("111-222-333-444-1")
         .externalId(randomUUID().toString())
         .medium(Medium.GAS.medium)
@@ -223,7 +223,7 @@ public class SummaryControllerTest extends IntegrationTest {
       .externalId(logicalMeter.externalId)
       .address("v1")
       .manufacturer("ELV")
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .build();
 
     physicalMeters.save(physicalMeter);

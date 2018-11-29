@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 public class LocationBuilder {
 
   private UUID id;
+  private UUID organisationId;
   private String country;
   private String city;
   private String address;
@@ -21,6 +22,16 @@ public class LocationBuilder {
       .country(location.getCountry())
       .city(location.getCity())
       .address(location.getAddress());
+  }
+
+  public LocationBuilder id(UUID id) {
+    this.id = id;
+    return this;
+  }
+
+  public LocationBuilder organisationId(UUID organisationId) {
+    this.organisationId = organisationId;
+    return this;
   }
 
   public LocationBuilder country(String country) {
@@ -58,11 +69,6 @@ public class LocationBuilder {
     return this;
   }
 
-  public LocationBuilder id(UUID id) {
-    this.id = id;
-    return this;
-  }
-
   public LocationBuilder forceUpdate() {
     return shouldForceUpdate(true);
   }
@@ -79,7 +85,15 @@ public class LocationBuilder {
 
   public LocationWithId buildLocationWithId() {
     buildCoordinates();
-    return new LocationWithId(id, coordinate, country, city, address, shouldForceUpdate);
+    return new LocationWithId(
+      id,
+      organisationId,
+      coordinate,
+      country,
+      city,
+      address,
+      shouldForceUpdate
+    );
   }
 
   private void buildCoordinates() {

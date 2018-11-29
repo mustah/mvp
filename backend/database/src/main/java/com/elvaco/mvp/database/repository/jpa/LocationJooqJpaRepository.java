@@ -1,12 +1,12 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.Map;
-import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.Address;
 import com.elvaco.mvp.core.domainmodels.City;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.repository.jooq.LocationJooqConditions;
 import org.jooq.DSLContext;
@@ -24,7 +24,7 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 
 @Repository
 class LocationJooqJpaRepository
-  extends SimpleJpaRepository<LocationEntity, UUID>
+  extends SimpleJpaRepository<LocationEntity, EntityPrimaryKey>
   implements LocationJpaRepository {
 
   private static final Map<String, Field<String>> SORT_FIELDS_MAP = Map.of(

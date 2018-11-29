@@ -25,6 +25,14 @@ services:
     command: -c log_min_duration_statement=30
     ports:
       - "${DOCKER_POSTGRES_PORT:-5432:5432}"
+  system-tests:
+    image: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+    environment:
+      POSTGRES_USER: mvp
+      POSTGRES_PASSWORD: mvp
+    command: -c log_min_duration_statement=30
+    ports:
+      - "${DOCKER_POSTGRES_PORT:-5433:5432}"
   geoservice-db:
     image: postgres:latest
     environment:

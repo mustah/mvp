@@ -112,7 +112,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
 
   private PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilder() {
     return PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("address-123")
       .externalId(randomUUID().toString())
       .medium(Medium.HOT_WATER.medium)

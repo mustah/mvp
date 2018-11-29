@@ -32,7 +32,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
       case PHYSICAL_METER_ID:
         return METER_STATUS_LOG.physicalMeterId.in(toUuids(values));
       case LOGICAL_METER_ID:
-        return LOGICAL_METER.id.in(toUuids(values));
+        return LOGICAL_METER.primaryKey.id.in(toUuids(values));
       case BEFORE:
         stop = getZonedDateTimeFrom(values);
         return periodQueryFilter(start, stop);
