@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
@@ -224,7 +224,7 @@ public class LogicalMeterHelperTest {
   @Test
   public void groupByQuantity_excludesQuantitiesWithoutMeters() {
     assertThat(groupByQuantity(
-      List.of(newMeter(ROOM_TEMP_METER), newMeter(HOT_WATER_METER)),
+      List.of(newMeter(ROOM_SENSOR_METER), newMeter(HOT_WATER_METER)),
       Set.of(Quantity.ENERGY)
     )).isEmpty();
   }
@@ -234,7 +234,7 @@ public class LogicalMeterHelperTest {
     QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
 
     assertThat(groupByQuantity(
-      List.of(newMeter(ROOM_TEMP_METER)),
+      List.of(newMeter(ROOM_SENSOR_METER)),
       Set.of(new Quantity("Relative humidity"))
     )).containsKeys(Quantity.HUMIDITY);
   }

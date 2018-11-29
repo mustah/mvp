@@ -99,20 +99,6 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   }
 
   @Test
-  public void mapsMeteringMediumToEvoMedium() throws Exception {
-    MeteringReferenceInfoMessageDto message = getMeteringReferenceInfoMessageDto()
-      .withMeter(newMeterDto("EVO", "Cold water"))
-      .withFacility(new FacilityDto("test-123", "Sweden", "Kungsbacka", "Kabelgatan 2T"));
-
-    publishMessage(toJson(message).getBytes());
-
-    assertOrganisationWithSlugWasCreated("some-organisation");
-
-    UUID organisationId = organisationJpaRepository.findBySlug("some-organisation").get().id;
-    assertPhysicalMeterManufacturer(organisationId, "test-123", "1234", "EVO", "Water");
-  }
-
-  @Test
   public void responseMessagesForMeasurementMessagesArePublishedAndOrgIsCreated() throws Exception {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       new GatewayIdDto("gateway-123-456"),

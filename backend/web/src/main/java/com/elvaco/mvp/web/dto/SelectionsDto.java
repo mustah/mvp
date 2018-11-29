@@ -34,9 +34,7 @@ public class SelectionsDto {
 
   public static final List<IdNamedDto> MEDIA = unmodifiableList(
     Stream.of(Medium.values())
-      .map(medium -> medium.medium)
-      .filter(medium -> !medium.equals("Heat, Return temp"))
-      .map(IdNamedDto::new)
+      .map(medium -> new IdNamedDto(medium.medium))
       .collect(toList())
   );
 }
