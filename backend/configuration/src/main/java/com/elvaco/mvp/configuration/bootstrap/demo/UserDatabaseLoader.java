@@ -13,8 +13,8 @@ import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
@@ -29,6 +29,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
+@RequiredArgsConstructor
 @Order(2)
 @Profile("demo")
 @Component
@@ -64,23 +65,6 @@ class UserDatabaseLoader implements CommandLineRunner {
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
   private final Organisation rootOrganisation;
-
-  @Autowired
-  UserDatabaseLoader(
-    TokenService tokenService,
-    TokenFactory tokenFactory,
-    Organisations organisations,
-    UserUseCases userUseCases,
-    SettingUseCases settingUseCases,
-    Organisation rootOrganisation
-  ) {
-    this.tokenService = tokenService;
-    this.tokenFactory = tokenFactory;
-    this.organisations = organisations;
-    this.userUseCases = userUseCases;
-    this.settingUseCases = settingUseCases;
-    this.rootOrganisation = rootOrganisation;
-  }
 
   @Override
   public void run(String... args) {

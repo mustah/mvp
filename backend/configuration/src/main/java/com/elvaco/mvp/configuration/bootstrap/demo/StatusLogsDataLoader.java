@@ -47,10 +47,11 @@ class StatusLogsDataLoader {
     gateways.findAll().stream()
       .map(gateway -> StatusLogEntry.<UUID>builder()
         .entityId(gateway.id)
+        .organisationId(gateway.organisationId)
         .status(nextRandomStatusType())
         .start(subtractDays(90))
         .build())
-      .forEach(gatewayStatusLog -> gatewayStatusLogs.save(gatewayStatusLog));
+      .forEach(gatewayStatusLogs::save);
   }
 
   private void createMeterStatusLogMockData() {
@@ -75,11 +76,11 @@ class StatusLogsDataLoader {
     meterStatusLogs.save(statusLogs);
   }
 
-  private StatusType nextRandomStatusType() {
+  private static StatusType nextRandomStatusType() {
     return STATUS_TYPES[RANDOM.nextInt(STATUS_TYPES.length - 1)];
   }
 
-  private ZonedDateTime subtractDays(int daySeed) {
+  private static ZonedDateTime subtractDays(int daySeed) {
     return ZonedDateTime.now().minusDays(daySeed).plusHours(0);
   }
 }
