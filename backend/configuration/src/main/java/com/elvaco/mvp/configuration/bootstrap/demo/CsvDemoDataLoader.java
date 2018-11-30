@@ -94,6 +94,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .meterDefinition(MeterDefinition.fromMedium(Medium.from(csvData.medium)))
               .created(addDays())
               .location(locationMap.get(csvData.address.toLowerCase()))
+              .utcOffset(csvData.utcOffset)
               .build();
             PhysicalMeter physicalMeter = PhysicalMeter.builder()
               .address(csvData.meterId)
