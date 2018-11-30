@@ -184,8 +184,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusZeroPercentWhenNoMeasurements() {
-    assumeTrue(isPostgresDialect());
-
     LogicalMeter districtHeatingMeter = saveLogicalMeter(
       YESTERDAY.minusMinutes(15)
     );
@@ -947,7 +945,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_OnAnotherDay() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -983,7 +980,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatchingOneButNotAll() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1019,7 +1015,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdNotMatching() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1048,7 +1043,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_LessThan() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1077,7 +1071,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_LessThanOrEquals() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1106,7 +1099,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_GreaterThanOrEquals() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1135,7 +1127,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_GreaterThan() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1164,7 +1155,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WithMeasurementThresholdMatching_DifferentUnitSameDimension() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
@@ -1193,7 +1183,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMeters_WrongDimension() {
-    assumeTrue(isPostgresDialect());
     ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(saveLogicalMeter().id)
