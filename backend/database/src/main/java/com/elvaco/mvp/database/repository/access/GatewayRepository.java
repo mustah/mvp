@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
-import com.elvaco.mvp.core.filter.RequestParametersMapper;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -97,7 +96,7 @@ public class GatewayRepository implements Gateways {
   @Override
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
     return new PageAdapter<>(gatewayJpaRepository.findSerials(
-      RequestParametersMapper.toFilters(parameters),
+      parameters,
       PageRequest.of(
         pageable.getPageNumber(),
         pageable.getPageSize(),

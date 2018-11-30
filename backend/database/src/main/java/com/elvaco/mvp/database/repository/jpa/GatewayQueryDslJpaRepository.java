@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
@@ -13,22 +14,26 @@ import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
 import com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog;
 import com.elvaco.mvp.database.entity.jooq.tables.Location;
 import com.elvaco.mvp.database.repository.jooq.GatewayJooqConditions;
-import com.elvaco.mvp.database.repository.querydsl.GatewayFilterQueryDslJpaVisitor;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.JPQLQuery;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
 class GatewayQueryDslJpaRepository
   extends BaseQueryDslRepository<GatewayEntity, UUID>
   implements GatewayJpaRepository {
+
+  private static final Map<String, Field<String>> SORT_FIELDS_MAP = Map.of(
+    "serial", Gateway.GATEWAY.SERIAL
+  );
 
   private final DSLContext dsl;
 
@@ -85,6 +90,27 @@ class GatewayQueryDslJpaRepository
   }
 
   @Override
+  public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
+    var gateway = Gateway.GATEWAY;
+
+    var query = dsl.selectDistinct(gateway.SERIAL).from(gateway);
+
+    Filters filters = toFilters(parameters);
+    new GatewayJooqConditions(dsl).apply(filters, query);
+
+    List<String> gatewaySerials = query
+      .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP))
+      .limit(pageable.getPageSize())
+      .offset(Long.valueOf(pageable.getOffset()).intValue())
+      .fetchInto(String.class);
+
+    var countQuery = dsl.selectDistinct(gateway.SERIAL).from(gateway);
+    new GatewayJooqConditions(dsl).apply(filters, countQuery);
+
+    return getPage(gatewaySerials, pageable, () -> dsl.fetchCount(countQuery));
+  }
+
+  @Override
   public List<GatewayEntity> findAllByOrganisationId(UUID organisationId) {
     Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId);
     return createQuery(predicate).select(path).fetch();
@@ -114,15 +140,5 @@ class GatewayQueryDslJpaRepository
     Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
       .and(GATEWAY.pk.id.eq(id));
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
-  }
-
-  @Override
-  public Page<String> findSerials(Filters filters, Pageable pageable) {
-    JPQLQuery<String> query = createQuery().select(GATEWAY.serial).distinct();
-    JPQLQuery<String> countQuery = createCountQuery().select(GATEWAY.serial).distinct();
-
-    new GatewayFilterQueryDslJpaVisitor().visitAndApply(filters, query, countQuery);
-    List<String> all = querydsl.applyPagination(pageable, query).fetch();
-    return getPage(all, pageable, countQuery::fetchCount);
   }
 }
