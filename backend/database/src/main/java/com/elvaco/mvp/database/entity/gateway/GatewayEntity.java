@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.entity.gateway;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -15,7 +14,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
-import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,12 +30,12 @@ import static java.util.Collections.unmodifiableSet;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
-public class GatewayEntity extends IdentifiableType<EntityPrimaryKey> {
+public class GatewayEntity extends IdentifiableType<EntityPk> {
 
   private static final long serialVersionUID = -2132372383987246715L;
 
   @EmbeddedId
-  public EntityPrimaryKey primaryKey;
+  public EntityPk pk;
 
   @Column(nullable = false)
   public String serial;
@@ -54,13 +53,12 @@ public class GatewayEntity extends IdentifiableType<EntityPrimaryKey> {
   public Set<GatewayStatusLogEntity> statusLogs = new HashSet<>();
 
   public GatewayEntity(
-    UUID primaryKey,
-    UUID organisationId,
+    EntityPk pk,
     String serial,
     String productModel,
     Set<GatewayStatusLogEntity> statusLogs
   ) {
-    this.primaryKey = new EntityPrimaryKey(primaryKey, organisationId);
+    this.pk = pk;
     this.serial = serial;
     this.productModel = productModel;
     this.meters = emptySet();
@@ -68,7 +66,7 @@ public class GatewayEntity extends IdentifiableType<EntityPrimaryKey> {
   }
 
   @Override
-  public EntityPrimaryKey getId() {
-    return primaryKey;
+  public EntityPk getId() {
+    return pk;
   }
 }

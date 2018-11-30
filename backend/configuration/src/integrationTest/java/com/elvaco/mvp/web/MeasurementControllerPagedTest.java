@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -146,12 +147,11 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
-    var uuid = randomUUID();
+    var id = randomUUID();
     var meterDefinitionEntity = saveMeterDefinition(meterDefinition);
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      uuid,
-      uuid.toString(),
-      context().organisationEntity.id,
+      new EntityPk(id, context().organisationEntity.id),
+      id.toString(),
       ZonedDateTime.now(),
       meterDefinitionEntity,
       DEFAULT_UTC_OFFSET
@@ -164,9 +164,8 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   ) {
     var logicalMeterId = randomUUID();
     logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      logicalMeterId,
+      new EntityPk(logicalMeterId, organisationEntity.id),
       logicalMeterId.toString(),
-      organisationEntity.id,
       created,
       saveMeterDefinition(MeasurementControllerPagedTest.BUTTER_METER_DEFINITION),
       DEFAULT_UTC_OFFSET

@@ -16,8 +16,8 @@ public class GatewayWithMetersMapper {
 
   public static Gateway toDomainModel(GatewayEntity entity) {
     return Gateway.builder()
-      .id(entity.primaryKey.id)
-      .organisationId(entity.primaryKey.organisationId)
+      .id(entity.pk.id)
+      .organisationId(entity.pk.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
       .meters(toLogicalMeters(entity.meters))

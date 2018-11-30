@@ -57,12 +57,12 @@ public class LogicalMeterFilterQueryDslVisitor extends EmptyFilterQueryDslJpaVis
 
   @Override
   public void visit(OrganisationIdFilter organisationIdFilter) {
-    predicates.add(LOGICAL_METER.primaryKey.organisationId.in(organisationIdFilter.values()));
+    predicates.add(LOGICAL_METER.pk.organisationId.in(organisationIdFilter.values()));
   }
 
   @Override
   public void visit(GatewayIdFilter gatewayIdFilter) {
-    predicates.add(GATEWAY.primaryKey.id.eq(gatewayIdFilter.oneValue()));
+    predicates.add(GATEWAY.pk.id.eq(gatewayIdFilter.oneValue()));
   }
 
   @Override
@@ -125,7 +125,7 @@ public class LogicalMeterFilterQueryDslVisitor extends EmptyFilterQueryDslJpaVis
 
   @Override
   public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {
-    predicates.add(LOGICAL_METER.primaryKey.id.in(logicalMeterIdFilter.values()));
+    predicates.add(LOGICAL_METER.pk.id.in(logicalMeterIdFilter.values()));
   }
 
   @Override

@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.entity.meter;
+package com.elvaco.mvp.database.entity.gateway;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -19,19 +19,19 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Access(AccessType.FIELD)
 @Embeddable
-public class EntityPrimaryKey implements Serializable, PrimaryKey {
+public class GatewayPk implements Serializable, PrimaryKey {
 
   private static final long serialVersionUID = 7252179265239386706L;
 
   @Column(nullable = false, updatable = false)
-  public UUID id;
+  public UUID gatewayId;
 
   @Column(nullable = false, updatable = false)
   public UUID organisationId;
 
   @Override
   public UUID getId() {
-    return id;
+    return gatewayId;
   }
 
   @Override

@@ -69,7 +69,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   public Set<MeterAlarmLogEntity> alarms = new HashSet<>();
 
   @NotAudited
-  public LogicalMeterPrimaryKey logicalMeterPrimaryKey;
+  public LogicalMeterPk logicalMeterPk;
 
   public long readIntervalMinutes;
 
@@ -96,7 +96,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
     this.externalId = externalId;
     this.medium = medium;
     this.manufacturer = manufacturer;
-    this.logicalMeterPrimaryKey = new LogicalMeterPrimaryKey(logicalMeterId, organisationId);
+    this.logicalMeterPk = new LogicalMeterPk(logicalMeterId, organisationId);
     this.readIntervalMinutes = readIntervalMinutes;
     this.revision = revision;
     this.mbusDeviceType = mbusDeviceType;
@@ -110,10 +110,10 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   }
 
   public UUID getLogicalMeterId() {
-    return logicalMeterPrimaryKey.logicalMeterId;
+    return logicalMeterPk.logicalMeterId;
   }
 
   public UUID getOrganisationId() {
-    return logicalMeterPrimaryKey.organisationId;
+    return logicalMeterPk.organisationId;
   }
 }

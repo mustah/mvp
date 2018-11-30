@@ -66,19 +66,19 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public Optional<LogicalMeterEntity> findById(UUID id) {
-    return Optional.ofNullable(fetchOne(LOGICAL_METER.primaryKey.id.eq(id)));
+    return Optional.ofNullable(fetchOne(LOGICAL_METER.pk.id.eq(id)));
   }
 
   @Override
   public Optional<LogicalMeterEntity> findByPrimaryKey(UUID organisationId, UUID id) {
-    Predicate predicate = LOGICAL_METER.primaryKey.organisationId.eq(organisationId)
-      .and(LOGICAL_METER.primaryKey.id.eq(id));
+    Predicate predicate = LOGICAL_METER.pk.organisationId.eq(organisationId)
+      .and(LOGICAL_METER.pk.id.eq(id));
     return Optional.ofNullable(fetchOne(predicate));
   }
 
   @Override
   public Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId) {
-    Predicate predicate = LOGICAL_METER.primaryKey.organisationId.eq(organisationId)
+    Predicate predicate = LOGICAL_METER.pk.organisationId.eq(organisationId)
       .and(LOGICAL_METER.externalId.eq(externalId));
     return Optional.ofNullable(fetchOne(predicate));
   }
@@ -102,7 +102,7 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterEntity> findByOrganisationId(UUID organisationId) {
-    Predicate predicate = LOGICAL_METER.primaryKey.organisationId.eq(organisationId);
+    Predicate predicate = LOGICAL_METER.pk.organisationId.eq(organisationId);
     return createQuery(predicate).select(path).fetch();
   }
 
@@ -207,7 +207,7 @@ class LogicalMeterQueryDslJpaRepository
     var query = createQuery()
       .select(Projections.constructor(
         LogicalMeterCollectionStats.class,
-        LOGICAL_METER.primaryKey.id,
+        LOGICAL_METER.pk.id,
         MISSING_MEASUREMENT.id.expectedTime.countDistinct(),
         PHYSICAL_METER.readIntervalMinutes
       ));
@@ -216,7 +216,7 @@ class LogicalMeterQueryDslJpaRepository
     new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
     new MissingMeasurementFilterQueryDslVisitor().visitAndApply(filters, query);
 
-    return query.groupBy(LOGICAL_METER.primaryKey.id, PHYSICAL_METER.readIntervalMinutes)
+    return query.groupBy(LOGICAL_METER.pk.id, PHYSICAL_METER.readIntervalMinutes)
       .distinct()
       .fetch();
   }
@@ -238,8 +238,8 @@ class LogicalMeterQueryDslJpaRepository
   @Override
   public void delete(UUID id, UUID organisationId) {
     new JPADeleteClause(entityManager, LOGICAL_METER)
-      .where(LOGICAL_METER.primaryKey.id.eq(id)
-        .and(LOGICAL_METER.primaryKey.organisationId.eq(organisationId)))
+      .where(LOGICAL_METER.pk.id.eq(id)
+        .and(LOGICAL_METER.pk.organisationId.eq(organisationId)))
       .execute();
   }
 

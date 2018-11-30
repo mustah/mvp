@@ -48,7 +48,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
   private MeasurementEntityMapper measurementEntityMapper;
 
-  private MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
+  private final MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
 
   @Before
   public void setUp() {

@@ -15,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UomUnitConverterTest {
 
-  private UnitConverter converter = new UomUnitConverter();
-  private Map<String, String> meteringUnits = new TreeMap<>(Map.ofEntries(
+  private final UnitConverter converter = new UomUnitConverter();
+  private final Map<String, String> meteringUnits = new TreeMap<>(Map.ofEntries(
     entry("sec", "1 s"),
     entry("Wh", "1 Wh"),
     entry("J", "1 J"),

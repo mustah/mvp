@@ -39,7 +39,7 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Optional<GatewayEntity> findById(UUID id) {
-    var predicate = GATEWAY.primaryKey.id.eq(id);
+    var predicate = GATEWAY.pk.id.eq(id);
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
   }
 
@@ -47,8 +47,8 @@ class GatewayQueryDslJpaRepository
   public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
     ConstructorExpression<GatewaySummaryDto> constructor = Projections.constructor(
       GatewaySummaryDto.class,
-      GATEWAY.primaryKey.id,
-      GATEWAY.primaryKey.organisationId,
+      GATEWAY.pk.id,
+      GATEWAY.pk.organisationId,
       GATEWAY.serial,
       GATEWAY.productModel,
       set(Projections.constructor(
@@ -63,7 +63,7 @@ class GatewayQueryDslJpaRepository
       ),
       set(Projections.constructor(
         LogicalMeterLocation.class,
-        LOGICAL_METER.primaryKey.id,
+        LOGICAL_METER.pk.id,
         Projections.constructor(
           Location.class,
           LOCATION.latitude,
@@ -93,7 +93,7 @@ class GatewayQueryDslJpaRepository
       selectQuery
     );
 
-    var transformer = groupBy(GATEWAY.primaryKey.id).list(constructor);
+    var transformer = groupBy(GATEWAY.pk.id).list(constructor);
     List<GatewaySummaryDto> pagedGateways = selectQuery.transform(transformer);
 
     return getPage(pagedGateways, pageable, countQuery::fetchCount);
@@ -101,7 +101,7 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public List<GatewayEntity> findAllByOrganisationId(UUID organisationId) {
-    Predicate predicate = GATEWAY.primaryKey.organisationId.eq(organisationId);
+    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId);
     return createQuery(predicate).select(path).fetch();
   }
 
@@ -111,7 +111,7 @@ class GatewayQueryDslJpaRepository
     String productModel,
     String serial
   ) {
-    Predicate predicate = GATEWAY.primaryKey.organisationId.eq(organisationId)
+    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
       .and(GATEWAY.productModel.equalsIgnoreCase(productModel))
       .and(GATEWAY.serial.equalsIgnoreCase(serial));
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
@@ -119,15 +119,15 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Optional<GatewayEntity> findByOrganisationIdAndSerial(UUID organisationId, String serial) {
-    Predicate predicate = GATEWAY.primaryKey.organisationId.eq(organisationId)
+    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
       .and(GATEWAY.serial.equalsIgnoreCase(serial));
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
   }
 
   @Override
   public Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    Predicate predicate = GATEWAY.primaryKey.organisationId.eq(organisationId)
-      .and(GATEWAY.primaryKey.id.eq(id));
+    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
+      .and(GATEWAY.pk.id.eq(id));
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
   }
 

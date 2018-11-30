@@ -37,7 +37,7 @@ class PhysicalMeterQueryDslJpaRepository
     String externalId,
     String address
   ) {
-    Predicate predicate = PHYSICAL_METER.logicalMeterPrimaryKey.organisationId.eq(organisationId)
+    Predicate predicate = PHYSICAL_METER.logicalMeterPk.organisationId.eq(organisationId)
       .and(PHYSICAL_METER.externalId.eq(externalId))
       .and(PHYSICAL_METER.address.eq(address));
     return Optional.ofNullable(fetchOne(predicate));

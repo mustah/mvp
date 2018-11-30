@@ -22,7 +22,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "location")
-public class LocationEntity extends IdentifiableType<EntityPrimaryKey> {
+public class LocationEntity extends IdentifiableType<EntityPk> {
 
   private static final long serialVersionUID = -6244183552379157552L;
 
@@ -31,7 +31,7 @@ public class LocationEntity extends IdentifiableType<EntityPrimaryKey> {
     @AttributeOverride(name = "id", column = @Column(name = "logical_meter_id")),
     @AttributeOverride(name = "organisationId", column = @Column(name = "organisation_id"))
   })
-  public EntityPrimaryKey pk;
+  public EntityPk pk;
 
   public String country;
   public String city;
@@ -41,7 +41,7 @@ public class LocationEntity extends IdentifiableType<EntityPrimaryKey> {
   public Double confidence;
 
   @Override
-  public EntityPrimaryKey getId() {
+  public EntityPk getId() {
     return pk;
   }
 

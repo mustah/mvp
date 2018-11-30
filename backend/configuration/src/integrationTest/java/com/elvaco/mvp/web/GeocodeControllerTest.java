@@ -6,8 +6,7 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Pk;
-import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -57,9 +56,9 @@ public class GeocodeControllerTest extends IntegrationTest {
     var response = asSuperAdmin()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
-    var pk = new EntityPrimaryKey(logicalMeterId, context().organisationId());
+    var pk = new EntityPk(logicalMeterId, context().organisationId());
 
-    var expected = toLocationWithId(geoResponse, new Pk(pk.id, pk.organisationId));
+    var expected = toLocationWithId(geoResponse, pk);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(findLocationBy(pk)).isEqualTo(expected);
@@ -90,7 +89,7 @@ public class GeocodeControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    var pk = new EntityPrimaryKey(logicalMeterId, context().organisationId());
+    var pk = new EntityPk(logicalMeterId, context().organisationId());
 
     LocationWithId expected = new LocationBuilder()
       .id(pk.getId())
@@ -127,7 +126,7 @@ public class GeocodeControllerTest extends IntegrationTest {
     var response = asSuperAdmin()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
-    var pk = new EntityPrimaryKey(logicalMeterId, context().organisationId());
+    var pk = new EntityPk(logicalMeterId, context().organisationId());
 
     LocationWithId actual = findLocationBy(pk);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -153,7 +152,7 @@ public class GeocodeControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
-  private LocationWithId findLocationBy(EntityPrimaryKey id) {
+  private LocationWithId findLocationBy(EntityPk id) {
     return locationJpaRepository.findById(id)
       .map(LocationEntityMapper::toLocationWithId)
       .get();

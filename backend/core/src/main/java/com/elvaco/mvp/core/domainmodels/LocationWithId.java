@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -15,8 +14,7 @@ public class LocationWithId extends Location implements Identifiable<PrimaryKey>
   private final PrimaryKey pk;
 
   protected LocationWithId(
-    UUID logicalMeterId,
-    UUID organisationId,
+    PrimaryKey pk,
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,
     @Nullable String city,
@@ -24,7 +22,7 @@ public class LocationWithId extends Location implements Identifiable<PrimaryKey>
     boolean shouldForceUpdate
   ) {
     super(coordinate, country, city, address);
-    this.pk = new Pk(logicalMeterId, organisationId);
+    this.pk = pk;
     this.shouldForceUpdate = shouldForceUpdate;
   }
 

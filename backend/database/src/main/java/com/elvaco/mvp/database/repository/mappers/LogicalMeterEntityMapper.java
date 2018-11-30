@@ -12,9 +12,9 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
@@ -113,16 +113,16 @@ public class LogicalMeterEntityMapper {
   }
 
   public static LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
+    var pk = new EntityPk(logicalMeter.id, logicalMeter.organisationId);
+
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
-      logicalMeter.id,
+      pk,
       logicalMeter.externalId,
-      logicalMeter.organisationId,
       logicalMeter.created,
       MeterDefinitionEntityMapper.toEntity(logicalMeter.meterDefinition),
       logicalMeter.utcOffset
     );
 
-    var pk = new Pk(logicalMeter.id, logicalMeter.organisationId);
     logicalMeterEntity.location = LocationEntityMapper.toEntity(pk, logicalMeter.location);
 
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()

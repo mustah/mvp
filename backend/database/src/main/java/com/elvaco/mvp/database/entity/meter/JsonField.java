@@ -14,7 +14,7 @@ import static com.elvaco.mvp.core.util.Json.toJsonNode;
 public class JsonField implements Serializable {
 
   private static final long serialVersionUID = -7594482554930519496L;
-  private transient ObjectNode json;
+  private final transient ObjectNode json;
 
   public JsonField(ObjectNode json) {
     this.json = json.deepCopy();

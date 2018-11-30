@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -13,7 +12,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
-import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -68,30 +67,29 @@ public class LogicalMeterEntityMapperTest {
 
   @Test
   public void mapLogicalMeterEntityToDomainModelWithPosition() {
-    ZonedDateTime created = utcZonedDateTimeOf("2001-01-01T10:14:00.00Z");
+    var created = utcZonedDateTimeOf("2001-01-01T10:14:00.00Z");
+    var organisationId = randomUUID();
+    var meterId = randomUUID();
+    var pk = new EntityPk(meterId, organisationId);
 
-    UUID organisationId = randomUUID();
-
-    UUID meterId = randomUUID();
-    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
-      meterId,
+    var logicalMeterEntity = new LogicalMeterEntity(
+      pk,
       "an-external-id",
-      organisationId,
       created,
       newMeterDefinitionEntity("Speed", "kmh", "speed-o-meter"),
       TZ
     );
 
     logicalMeterEntity.location = LocationEntity.builder()
-      .pk(new EntityPrimaryKey(meterId, organisationId))
+      .pk(pk)
       .latitude(3.1)
       .longitude(2.1)
       .confidence(1.0)
       .build();
 
-    LogicalMeter logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
+    var logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
-    Location expectedLocation = new LocationBuilder()
+    var expectedLocation = new LocationBuilder()
       .latitude(3.1)
       .longitude(2.1)
       .confidence(1.0)
@@ -99,7 +97,7 @@ public class LogicalMeterEntityMapperTest {
 
     assertThat(expectedLocation.getCoordinate()).isEqualTo(logicalMeter.location.getCoordinate());
 
-    MeterDefinition meterDefinition = new MeterDefinition(
+    var meterDefinition = new MeterDefinition(
       MeterDefinitionType.UNKNOWN_METER_TYPE,
       "speed-o-meter",
       singleton(new Quantity(
@@ -125,16 +123,13 @@ public class LogicalMeterEntityMapperTest {
 
   @Test
   public void mapLogicalMeterEntityToDomainModelOutPosition() {
-    ZonedDateTime created = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
+    var created = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
+    var organisationId = randomUUID();
+    var meterId = randomUUID();
 
-    UUID organisationId = randomUUID();
-
-    UUID meterId = randomUUID();
-    LogicalMeterEntity logicalMeterEntity =
+    var logicalMeterEntity =
       new LogicalMeterEntity(
-        meterId,
-        "an-external-id",
-        organisationId,
+        new EntityPk(meterId, organisationId), "an-external-id",
         created,
         newMeterDefinitionEntity("Energy", "kWh", "My energy meter"),
         TZ
@@ -173,15 +168,13 @@ public class LogicalMeterEntityMapperTest {
 
     UUID meterId = randomUUID();
     LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity(
-      meterId,
-      "an-external-id",
-      ELVACO.id,
+      new EntityPk(meterId, ELVACO.id), "an-external-id",
       created,
       newMeterDefinitionEntity("Energy", "kWh", "Energy meter"),
       TZ
     );
     logicalMeterEntityExpected.location = LocationEntity.builder()
-      .pk(new EntityPrimaryKey(meterId, ELVACO.id))
+      .pk(new EntityPk(meterId, ELVACO.id))
       .latitude(3.1)
       .longitude(2.1)
       .confidence(1.0)
