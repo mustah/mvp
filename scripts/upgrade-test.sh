@@ -1,15 +1,29 @@
 #!/bin/bash
 set -e
-MVP_UPGRADE_FROM_TAG=$1
-MVP_UPGRADE_TO_TAG=$2
-TEST_HOST=localhost
+MVP_UPGRADE_FROM_TAG=
+MVP_UPGRADE_TO_TAG=
+TEST_HOST=
 
 # Values in seconds
 MAX_WAIT_FOR_MVP_APPLICATION=120
 MAX_WAIT_FOR_AMQP_MESSAGES=120
 
+if [ -z "$1" ]; then
+	MVP_UPGRADE_FROM_TAG="production"
+else
+	MVP_UPGRADE_FROM_TAG=$1
+fi
+
+if [ -z "$2" ]; then
+	MVP_UPGRADE_TO_TAG="develop"
+else
+	MVP_UPGRADE_TO_TAG=$2
+fi
+
 if [ ! -z "$3" ]; then
 	TEST_HOST=$3
+else
+	TEST_HOST="localhost"
 fi
 
 echo "Upgrade from: $MVP_UPGRADE_FROM_TAG"
@@ -20,7 +34,20 @@ echo ""
 function check_application_startup () {
 	APPLICATION=$1
 	slept=0
-	containerId=$(docker ps|grep mvp_${APPLICATION}_1| awk '{ print $1 }')
+	containerId=$(docker ps|grep "mvp_${APPLICATION}_1"| awk '{ print $1 }')
+
+	while [ -z ${containerId} ]; do
+		slept=$((slept+1))
+		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
+			docker ps -a
+			echo ":: Bailing out after $MAX_WAIT_FOR_MVP_APPLICATION seconds.."
+			exit 1
+		fi
+		echo "Try: ${slept}, No container name mvp_${APPLICATION}_1 yet, sleeping for 1 second"
+		sleep 1
+		containerId=$(docker ps|grep mvp_${APPLICATION}_1| awk '{ print $1 }')
+	done
+
 	healthStatus=$(docker inspect --format='{{.State.Health.Status}}' ${containerId})
 	status=$(docker inspect --format='{{.State.Status}}' ${containerId})
 	while [[ "$healthStatus" = 'starting' || "$healthStatus" = 'unhealthy' ]] && [[ "$status" != 'exited' ]]; do

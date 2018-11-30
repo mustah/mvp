@@ -285,6 +285,8 @@ test:upgrade:
     - name: docker:dind
       alias: docker-host
   script:
+    - docker info
+    - docker ps
     - ./scripts/upgrade-test.sh $MVP_UPGRADE_FROM_TAG $MVP_UPGRADE_TO_TAG $TEST_HOST
 
 deploy:staging:
@@ -371,7 +373,7 @@ post-prod:acceptance:
 finalize:tag-production-mvp-docker:
   <<: *no_cache
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: finalize
   dependencies: []
   tags:
