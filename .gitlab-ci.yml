@@ -371,7 +371,7 @@ post-prod:acceptance:
 finalize:tag-production-mvp-docker:
   <<: *no_cache
   variables:
-    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
   stage: finalize
   dependencies: []
   tags:
