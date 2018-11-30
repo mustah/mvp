@@ -4,10 +4,9 @@ import java.util.Collection;
 
 public class ManufacturerFilter extends Filter<String> {
   ManufacturerFilter(
-    Collection<String> values,
-    ComparisonMode comparisonMode
+    Collection<String> values
   ) {
-    super(values, comparisonMode);
+    super(values);
   }
 
   @Override

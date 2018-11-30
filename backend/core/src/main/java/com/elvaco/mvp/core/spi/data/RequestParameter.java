@@ -27,6 +27,7 @@ public enum RequestParameter {
   SERIAL("serial"),
   SORT("sort"),
   STATUS("status"),
+  THRESHOLD("threshold"),
   Q("q"),
   Q_FACILITY(),
   Q_ADDRESS(),

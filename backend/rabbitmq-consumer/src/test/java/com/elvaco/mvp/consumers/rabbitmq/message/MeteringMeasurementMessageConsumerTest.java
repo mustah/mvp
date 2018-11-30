@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -25,6 +26,7 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -44,7 +46,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-import com.elvaco.mvp.unitconverter.UomUnitConverter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -123,7 +124,19 @@ public class MeteringMeasurementMessageConsumerTest {
       ),
       new MeasurementUseCases(measurements),
       new GatewayUseCases(gateways, authenticatedUser),
-      UomUnitConverter.singleton()
+      new UnitConverter() {
+        @Override
+        public MeasurementUnit convert(
+          MeasurementUnit measurementUnit, String targetUnit
+        ) {
+          return null;
+        }
+
+        @Override
+        public boolean isSameDimension(String firstUnit, String secondUnit) {
+          return true;
+        }
+      }
     );
   }
 

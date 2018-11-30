@@ -5,10 +5,9 @@ import java.util.UUID;
 
 public class GatewayIdFilter extends IdFilter {
   protected GatewayIdFilter(
-    Collection<UUID> values,
-    ComparisonMode comparisonMode
+    Collection<UUID> values
   ) {
-    super(values, comparisonMode);
+    super(values);
   }
 
   @Override

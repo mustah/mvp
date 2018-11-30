@@ -11,13 +11,13 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
-abstract class JooqFilterVisitor implements FilterVisitor {
+public abstract class JooqFilterVisitor implements FilterVisitor {
 
   private final Collection<Condition> conditions = new ArrayList<>();
 
   protected abstract <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query);
 
-  public final <R extends Record> SelectConditionStep<R> apply(
+  public <R extends Record> SelectConditionStep<R> apply(
     Filters filters,
     SelectJoinStep<R> query
   ) {

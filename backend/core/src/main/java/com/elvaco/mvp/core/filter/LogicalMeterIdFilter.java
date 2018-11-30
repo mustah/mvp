@@ -5,8 +5,8 @@ import java.util.UUID;
 
 public class LogicalMeterIdFilter extends IdFilter {
 
-  protected LogicalMeterIdFilter(Collection<UUID> values, ComparisonMode comparisonMode) {
-    super(values, comparisonMode);
+  protected LogicalMeterIdFilter(Collection<UUID> values) {
+    super(values);
   }
 
   @Override

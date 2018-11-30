@@ -10,10 +10,9 @@ public class PeriodFilter extends Filter<SelectionPeriod> {
 
   PeriodFilter(
     Collection<SelectionPeriod> values,
-    ComparisonMode comparisonMode,
     SelectionPeriod period
   ) {
-    super(values, comparisonMode);
+    super(values);
     this.period = period;
   }
 

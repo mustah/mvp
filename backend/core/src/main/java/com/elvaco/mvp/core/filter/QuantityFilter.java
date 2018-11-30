@@ -6,10 +6,9 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 
 public class QuantityFilter extends Filter<Quantity> {
   QuantityFilter(
-    Collection<Quantity> values,
-    ComparisonMode comparisonMode
+    Collection<Quantity> values
   ) {
-    super(values, comparisonMode);
+    super(values);
   }
 
   @Override

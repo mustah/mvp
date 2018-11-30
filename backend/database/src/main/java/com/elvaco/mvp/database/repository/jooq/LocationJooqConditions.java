@@ -18,7 +18,7 @@ public class LocationJooqConditions extends EmptyJooqFilterVisitor {
 
   @Override
   public void visit(CityFilter filter) {
-    if (filter.comparisonMode().isWildcard()) {
+    if (filter.isWildcard()) {
       addCondition(LOCATION.CITY.lower().contains(filter.oneValue().toLowerCase()));
     } else {
       addCondition(knownCities(toCityParameters(filter.values())));
@@ -27,7 +27,7 @@ public class LocationJooqConditions extends EmptyJooqFilterVisitor {
 
   @Override
   public void visit(AddressFilter filter) {
-    if (filter.comparisonMode().isWildcard()) {
+    if (filter.isWildcard()) {
       addCondition(LOCATION.STREET_ADDRESS.lower().contains(filter.oneValue().toLowerCase()));
     } else {
       addCondition(knownAddresses(toAddressParameters(filter.values())));

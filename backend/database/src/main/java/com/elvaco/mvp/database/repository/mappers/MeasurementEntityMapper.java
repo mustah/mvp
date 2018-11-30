@@ -1,43 +1,49 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
-import com.elvaco.mvp.unitconverter.UomUnitConverter;
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
 
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelWithoutStatusLogs;
 
-@UtilityClass
+@RequiredArgsConstructor
 public class MeasurementEntityMapper {
 
-  public static Measurement toDomainModel(MeasurementEntity entity) {
+  private final UnitConverter unitConverter;
+  private final QuantityProvider quantityProvider;
+
+  public Measurement toDomainModel(MeasurementEntity entity) {
     return Measurement.builder()
       .created(entity.id.created)
       .quantity(entity.id.quantity.name)
-      .value(UomUnitConverter.singleton().toValue(
-        entity.value,
-        entity.id.quantity.storageUnit,
-        entity.id.quantity.displayUnit
-      ))
+      .value(
+        unitConverter.convert(
+          new MeasurementUnit(
+            entity.id.quantity.storageUnit,
+            entity.value
+          ),
+          entity.id.quantity.displayUnit
+        ).getValue())
       .unit(entity.id.quantity.displayUnit)
       .physicalMeter(toDomainModelWithoutStatusLogs(entity.id.physicalMeter))
       .build();
   }
 
-  public static MeasurementEntity toEntity(Measurement domainModel) {
+  public MeasurementEntity toEntity(Measurement domainModel) {
     return new MeasurementEntity(
       new MeasurementPk(
         domainModel.created,
-        QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(domainModel.quantity)),
+        QuantityEntityMapper.toEntity(quantityProvider.getByName(domainModel.quantity)),
         PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
       ),
-      UomUnitConverter.singleton().toValue(
-        domainModel.value,
-        domainModel.unit,
-        QuantityAccess.singleton().getByName(domainModel.quantity).storageUnit
-      )
+      unitConverter.convert(
+        new MeasurementUnit(domainModel.unit, domainModel.value),
+        quantityProvider.getByName(domainModel.quantity).storageUnit
+      ).getValue()
     );
   }
 }

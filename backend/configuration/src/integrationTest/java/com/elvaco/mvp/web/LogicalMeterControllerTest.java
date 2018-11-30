@@ -59,6 +59,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -183,8 +184,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusZeroPercentWhenNoMeasurements() {
-    assumeTrue(isPostgresDialect());
-
     LogicalMeter districtHeatingMeter = saveLogicalMeter(
       YESTERDAY.minusMinutes(15)
     );
@@ -942,6 +941,273 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage("/meters?city=unknown,unknown", PagedLogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(1);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatching_OnAnotherDay() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      -1
+    );
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now.plusDays(2),
+      1
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power >= 0 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(0);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatchingOneButNotAll() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      -1
+    );
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      1.1
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power < 0 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(0);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdNotMatching() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      1.1
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power < 0 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(0);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatching_LessThan() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      -0.1
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power < 0 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatching_LessThanOrEquals() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      0
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power <= 0 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatching_GreaterThanOrEquals() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      9
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power >= 9 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatching_GreaterThan() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      9001
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power > 9000 W")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMeters_WithMeasurementThresholdMatching_DifferentUnitSameDimension() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      8999
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power < 9 kW")
+      .build();
+
+    Page<PagedLogicalMeterDto> result = asUser()
+      .getPage(url, PagedLogicalMeterDto.class);
+
+    assertThat(result.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMeters_WrongDimension() {
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-21T03:00:00Z");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(saveLogicalMeter().id)
+      .readIntervalMinutes(60L)
+      .build());
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      singleton(Quantity.POWER),
+      now,
+      8999
+    );
+
+    Url url = Url.builder()
+      .path("/meters")
+      .parameter(AFTER, now)
+      .parameter(BEFORE, now.plusHours(1))
+      .parameter(THRESHOLD, "Power < 9 m^3")
+      .build();
+
+    ResponseEntity<ErrorMessageDto> result = asUser()
+      .get(url, ErrorMessageDto.class);
+
+    assertThat(result.getBody().message).isEqualTo(
+      "Invalid unit 'm³' for quantity 'Power' in measurement threshold");
   }
 
   @Test

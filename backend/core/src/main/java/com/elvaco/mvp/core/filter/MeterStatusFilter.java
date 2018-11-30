@@ -7,10 +7,9 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 public class MeterStatusFilter extends Filter<StatusType> {
 
   MeterStatusFilter(
-    Collection<StatusType> values,
-    ComparisonMode comparisonMode
+    Collection<StatusType> values
   ) {
-    super(values, comparisonMode);
+    super(values);
   }
 
   @Override

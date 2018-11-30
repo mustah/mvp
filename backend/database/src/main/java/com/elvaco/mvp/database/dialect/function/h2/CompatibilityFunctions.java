@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.dialect.function.h2;
 
 import java.io.IOException;
 
-import com.elvaco.mvp.unitconverter.UomUnitConverter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,11 +14,6 @@ import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 @Slf4j
 @UtilityClass
 public final class CompatibilityFunctions {
-
-  @SuppressWarnings("WeakerAccess") // It's used in h2 provisioning loader
-  public static String unitAt(String valueAndUnit, String target) {
-    return UomUnitConverter.singleton().toMeasurementUnit(valueAndUnit, target).toString();
-  }
 
   @SuppressWarnings("WeakerAccess") // It's used in h2 provisioning loader
   public static Boolean jsonbContains(String lhs, String rhs) {

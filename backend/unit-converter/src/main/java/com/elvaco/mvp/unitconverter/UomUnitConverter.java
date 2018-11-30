@@ -109,13 +109,29 @@ public class UomUnitConverter implements UnitConverter {
     REPLACEMENTS.put("*", "");
   }
 
-  private UomUnitConverter() {}
-
-  public static UomUnitConverter singleton() {
-    return SingletonHolder.INSTANCE;
+  @Override
+  public MeasurementUnit convert(
+    MeasurementUnit measurementUnit, String targetUnit
+  ) {
+    return convertString(measurementUnit.toString(), targetUnit);
   }
 
-  public MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
+  public boolean isSameDimension(String firstUnit, String secondUnit) {
+    var instance = SimpleUnitFormat.getInstance();
+    Unit<?> cleanedUnit;
+    Unit<?> cleanedSecondUnit;
+
+    try {
+      cleanedUnit = instance.parse(replace(firstUnit));
+      cleanedSecondUnit = instance.parse(replace(secondUnit));
+    } catch (ParserException ex) {
+      return false;
+    }
+
+    return cleanedUnit.isCompatible(cleanedSecondUnit);
+  }
+
+  private MeasurementUnit convertString(String valueAndUnit, String target) {
     valueAndUnit = replace(valueAndUnit);
     target = replace(target);
 
@@ -141,25 +157,6 @@ public class UomUnitConverter implements UnitConverter {
     );
   }
 
-  public boolean isSameDimension(String firstUnit, String secondUnit) {
-    var instance = SimpleUnitFormat.getInstance();
-    Unit<?> cleanedUnit;
-    Unit<?> cleanedSecondUnit;
-
-    try {
-      cleanedUnit = instance.parse(replace(firstUnit));
-      cleanedSecondUnit = instance.parse(replace(secondUnit));
-    } catch (ParserException ex) {
-      return false;
-    }
-
-    return cleanedUnit.isCompatible(cleanedSecondUnit);
-  }
-
-  public double toValue(double value, String fromUnit, String toUnit) {
-    return toMeasurementUnit(value + " " + fromUnit, toUnit).getValue();
-  }
-
   private static String replace(String valueAndUnit) {
     var replacements = REPLACEMENTS.keySet()
       .stream()
@@ -170,9 +167,5 @@ public class UomUnitConverter implements UnitConverter {
       valueAndUnit = valueAndUnit.replace(replacement, REPLACEMENTS.get(replacement));
     }
     return valueAndUnit;
-  }
-
-  private static final class SingletonHolder {
-    private static final UomUnitConverter INSTANCE = new UomUnitConverter();
   }
 }

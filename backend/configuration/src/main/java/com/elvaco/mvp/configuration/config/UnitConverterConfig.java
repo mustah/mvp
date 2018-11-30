@@ -10,6 +10,6 @@ class UnitConverterConfig {
 
   @Bean
   UnitConverter unitConverter() {
-    return UomUnitConverter.singleton();
+    return new UomUnitConverter();
   }
 }

@@ -1,7 +1,10 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
@@ -10,6 +13,7 @@ import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.ManufacturerFilter;
+import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
 import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -17,6 +21,7 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
+import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -27,6 +32,7 @@ import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
@@ -41,6 +47,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.lateral;
 import static org.jooq.impl.DSL.max;
 
 @RequiredArgsConstructor
@@ -52,10 +59,12 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   );
 
   private final DSLContext dsl;
-
+  private final MeasurementThresholdParser measurementThresholdParser;
   private Condition physicalMeterStatusLogCondition = falseCondition();
+  private Condition measurementStatsCondition = falseCondition();
   private Condition missingMeasurementCondition = falseCondition();
   private Condition meterAlarmLogCondition = falseCondition();
+  private boolean hasMeasurementStatsFilter = false;
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -97,6 +106,18 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
           .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+
+    LocalDate startDate = period.start.toLocalDate();
+    LocalDate stopDate = period.stop.toLocalDate();
+    if (stopDate.isEqual(startDate)) {
+      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.eq(Date.valueOf(startDate));
+    } else {
+      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(
+        Date.valueOf(startDate)
+      ).and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(
+        Date.valueOf(stopDate))
+      ).and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.eq(PHYSICAL_METER.ID));
+    }
 
     meterAlarmLogCondition = METER_ALARM_LOG.START.between(
       period.start.toOffsetDateTime(),
@@ -156,8 +177,40 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   }
 
   @Override
+  public void visit(MeasurementThresholdFilter thresholdFilter) {
+    String thresholdExpression = thresholdFilter.oneValue();
+    MeasurementThreshold threshold = measurementThresholdParser.parse(thresholdExpression);
+    Condition thresholdCondition = MEASUREMENT_STAT_DATA.QUANTITY.eq(threshold.quantity.getId());
+
+    Condition valueCond;
+    double convertedValue = threshold.getConvertedValue();
+    switch (threshold.operator) {
+      case LESS_THAN:
+        valueCond = MEASUREMENT_STAT_DATA.MIN.lt(convertedValue);
+        break;
+      case LESS_THAN_OR_EQUAL:
+        valueCond = MEASUREMENT_STAT_DATA.MIN.lessOrEqual(convertedValue);
+        break;
+      case GREATER_THAN:
+        valueCond = MEASUREMENT_STAT_DATA.MAX.gt(convertedValue);
+        break;
+      case GREATER_THAN_OR_EQUAL:
+        valueCond = MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(convertedValue);
+        break;
+      default:
+        throw new UnsupportedOperationException(String.format(
+          "Measurement threshold operator '%s' is not supported",
+          threshold.operator.name()
+        ));
+    }
+
+    addCondition(thresholdCondition.and(valueCond));
+    hasMeasurementStatsFilter = true;
+  }
+
+  @Override
   protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
-    return query.leftJoin(PHYSICAL_METER)
+    query = query.leftJoin(PHYSICAL_METER)
       .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
         .and(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID))
       )
@@ -190,13 +243,21 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
           .where(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
             .and(meterAlarmLogCondition)))))
 
-      .leftJoin(dsl
+      .leftJoin(lateral(dsl
         .select(
           count().as(MISSING_MEASUREMENT_COUNT),
           MISSING_MEASUREMENT.PHYSICAL_METER_ID
         ).from(MISSING_MEASUREMENT)
-        .where(missingMeasurementCondition)
-        .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID).asTable("mm"))
+        .where(missingMeasurementCondition.and(MISSING_MEASUREMENT.PHYSICAL_METER_ID.eq(
+          PHYSICAL_METER.ID)))
+        .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID)).asTable("mm"))
       .on(PHYSICAL_METER.ID.eq(field("mm.physical_meter_id", UUID.class)));
+
+    if (hasMeasurementStatsFilter && !measurementStatsCondition.equals(falseCondition())) {
+      //FIXME: this is messy, maybe put the period into the thresholdFilter instead, and
+      // ignore measurement stats when handling the periodFilter
+      query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
+    }
+    return query;
   }
 }

@@ -7,7 +7,6 @@ import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static java.util.Map.entry;
@@ -16,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UomUnitConverterTest {
 
-  private static UnitConverter converter;
+  private UnitConverter converter = new UomUnitConverter();
   private Map<String, String> meteringUnits = new TreeMap<>(Map.ofEntries(
     entry("sec", "1 s"),
     entry("Wh", "1 Wh"),
@@ -74,17 +73,12 @@ public class UomUnitConverterTest {
     entry("%", "1 %")
   ));
 
-  @BeforeClass
-  public static void setUp() {
-    converter = UomUnitConverter.singleton();
-  }
-
   @Test
   public void toMeasurementUnit_AllKnownUnits() {
     SoftAssertions.assertSoftly(softly ->
       meteringUnits.forEach((unit, expected) -> {
-        MeasurementUnit result = converter.toMeasurementUnit(
-          "1 " + unit,
+        MeasurementUnit result = converter.convert(
+          MeasurementUnit.of(unit, 1),
           unit
         );
         softly.assertThat(result.toString()).isEqualTo(expected);
@@ -94,7 +88,7 @@ public class UomUnitConverterTest {
 
   @Test
   public void toMeasurementUnit_ToWrongDimension() {
-    assertThatThrownBy(() -> converter.toMeasurementUnit("1 ㎥", "㎥/h"))
+    assertThatThrownBy(() -> converter.convert(MeasurementUnit.from("1 ㎥"), "㎥/h"))
       .isInstanceOf(UnitConversionError.class)
       .hasMessageContaining("Can not convert");
   }

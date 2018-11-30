@@ -1,0 +1,26 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Drop existing unique constraint on measurement_stat_data (postgres)" author="Anton Löfgren" dbms="postgresql">
+    <dropUniqueConstraint
+      tableName="measurement_stat_data"
+      constraintName="measurement_stat_data_quantity_stat_date_physical_meter_id_key"
+    />
+  </changeSet>
+
+  <changeSet id="Drop existing unique constraint on measurement_stat_data (h2)" author="Anton Löfgren" dbms="h2">
+    <dropUniqueConstraint
+      tableName="measurement_stat_data"
+      constraintName="CONSTRAINT_AC"
+    />
+  </changeSet>
+
+  <changeSet id="Re-add reordered unique constraint on measurement_stat_data" author="Anton Löfgren">
+    <addUniqueConstraint
+      tableName="measurement_stat_data"
+      columnNames="quantity, physical_meter_id, stat_date"
+    />
+  </changeSet>
+</databaseChangeLog>
