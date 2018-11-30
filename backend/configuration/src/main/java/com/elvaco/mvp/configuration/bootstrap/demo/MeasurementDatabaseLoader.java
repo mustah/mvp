@@ -100,7 +100,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
       ZonedDateTime created = measurementDate.plusMinutes(i * interval);
 
       List<MeasurementEntity> measurements;
-      if (meter.medium.equals(Medium.HEAT_RETURN_TEMP.medium)) {
+      if (meter.medium.equals(Medium.DISTRICT_HEATING.medium)) {
         measurements = heatMeasurement(created, meter);
       } else if (meter.medium.equals(Medium.GAS.medium)) {
         measurements = gasMeasurement(created, meter, consumingMediumMeterReading);
@@ -110,7 +110,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
         measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
       } else if (meter.medium.equals(Medium.ELECTRICITY.medium)) {
         measurements = electricityMeasurement(created, meter, consumingMediumMeterReading);
-      } else if (meter.medium.equals(Medium.ROOM_TEMP.medium)) {
+      } else if (meter.medium.equals(Medium.ROOM_SENSOR.medium)) {
         measurements = roomSensorMeasurement(created, meter);
       } else {
         throw new RuntimeException("You need to add support for mocking the medium " + meter

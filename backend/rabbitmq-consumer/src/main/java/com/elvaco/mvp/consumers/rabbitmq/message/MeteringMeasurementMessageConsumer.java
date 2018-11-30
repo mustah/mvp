@@ -9,8 +9,6 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -66,11 +64,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
       .map(existing::logicalMeter)
       .orElseGet(() -> {
-        Medium medium = Medium.from(resolveMeterDefinition(measurementMessage.values).medium);
         return LogicalMeter.builder()
           .externalId(facilityId)
           .organisationId(organisation.id)
-          .meterDefinition(MeterDefinition.fromMedium(medium))
+          .meterDefinition(resolveMeterDefinition(measurementMessage.values))
           .utcOffset("+01") //TODO: facility.utcOffset when metering supports that
           .build();
       });

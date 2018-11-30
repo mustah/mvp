@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -60,13 +62,23 @@ public class MeteringMessageMapper {
     return Optional.ofNullable(quantity);
   }
 
-  static String mapToEvoMedium(String medium) {
-    if ("Cold water".equals(medium)) {
-      return Medium.WATER.medium;
-    } else if ("Roomsensor".equals(medium)) {
-      return Medium.ROOM_TEMP.medium;
-    } else {
-      return medium;
+  static Medium mapToEvoMedium(@Nullable String medium) {
+    if (medium == null) {
+      return Medium.UNKNOWN_MEDIUM;
+    }
+    switch (medium) {
+      case "Cold water":
+        return Medium.WATER;
+      case "Roomsensor":
+        return Medium.ROOM_SENSOR;
+      case "Heat, Return temp":
+      case "Heat, Flow temp":
+      case "HeatCoolingLoadMeter":
+      case "HeatFlow Temp":
+      case "HeatReturn Temp":
+        return Medium.DISTRICT_HEATING;
+      default:
+        return Medium.from(medium);
     }
   }
 

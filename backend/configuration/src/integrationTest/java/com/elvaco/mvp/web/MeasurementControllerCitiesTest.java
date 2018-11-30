@@ -184,7 +184,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
     PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
       kiruna,
-      MeterDefinition.ROOM_TEMP_METER
+      MeterDefinition.ROOM_SENSOR_METER
     ).getLogicalMeterId());
 
     PhysicalMeterEntity gas = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(

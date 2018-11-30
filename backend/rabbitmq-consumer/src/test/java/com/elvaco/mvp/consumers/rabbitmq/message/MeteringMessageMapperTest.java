@@ -43,18 +43,28 @@ public class MeteringMessageMapperTest {
 
   @Test
   public void mapColdWaterMediumAsWater() {
-    assertThat(mapToEvoMedium("Cold water")).isEqualTo("Water");
+    assertThat(mapToEvoMedium("Cold water")).isEqualTo(Medium.WATER);
   }
 
   @Test
   public void mapMeteringMediumToInputMediumString() {
-    assertThat(mapToEvoMedium("Something")).isEqualTo("Something");
+    assertThat(mapToEvoMedium("Something")).isEqualTo(Medium.UNKNOWN_MEDIUM);
   }
 
   @Test
   public void mapKnownMediums() {
-    assertThat(mapToEvoMedium("Hot water")).isEqualTo(Medium.HOT_WATER.medium);
-    assertThat(mapToEvoMedium("District cooling")).isEqualTo(Medium.DISTRICT_COOLING.medium);
+    assertThat(mapToEvoMedium("Hot water")).isEqualTo(Medium.HOT_WATER);
+    assertThat(mapToEvoMedium("District cooling")).isEqualTo(Medium.DISTRICT_COOLING);
+  }
+
+  @Test
+  public void mapKnownDistrictHeatingMediums() {
+    assertThat(mapToEvoMedium("District heating")).isEqualTo(Medium.DISTRICT_HEATING);
+    assertThat(mapToEvoMedium("Heat, Return temp")).isEqualTo(Medium.DISTRICT_HEATING);
+    assertThat(mapToEvoMedium("Heat, Flow temp")).isEqualTo(Medium.DISTRICT_HEATING);
+    assertThat(mapToEvoMedium("HeatCoolingLoadMeter")).isEqualTo(Medium.DISTRICT_HEATING);
+    assertThat(mapToEvoMedium("HeatFlow Temp")).isEqualTo(Medium.DISTRICT_HEATING);
+    assertThat(mapToEvoMedium("HeatReturn Temp")).isEqualTo(Medium.DISTRICT_HEATING);
   }
 
   @Test

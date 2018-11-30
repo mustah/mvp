@@ -13,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -139,7 +138,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     Optional<MeterDto> meter = Optional.ofNullable(meterDto);
 
     MeterDefinition meterDefinition = meter
-      .map(dto -> MeterDefinition.fromMedium(Medium.from(mapToEvoMedium(dto.medium))))
+      .map(dto -> MeterDefinition.fromMedium(mapToEvoMedium(dto.medium)))
       .orElse(MeterDefinition.UNKNOWN_METER);
 
     return logicalMeterUseCases.findBy(organisationId, facilityId)
@@ -181,7 +180,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
     return Optional.of(
       physicalMeter.toBuilder()
-        .medium(mapToEvoMedium(meterDto.medium))
+        .medium(meterDto.medium)
         .manufacturer(meterDto.manufacturer)
         .revision(meterDto.revision)
         .mbusDeviceType(meterDto.mbusDeviceType)

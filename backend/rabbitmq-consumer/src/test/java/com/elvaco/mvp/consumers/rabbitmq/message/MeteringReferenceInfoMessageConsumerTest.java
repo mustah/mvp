@@ -306,6 +306,21 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
+  public void mapsMeterMediumToEvoDefinitionType() {
+    messageHandler.accept(messageBuilder().medium("Cold water").build());
+    var meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.WATER_METER.type);
+
+    messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
+    meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+
+    messageHandler.accept(messageBuilder().medium("Roomsensor").build());
+    meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.ROOM_SENSOR_METER.type);
+  }
+
+  @Test
   public void doesNotUpdateMeterDefinitionWithUnmappableMedium() {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 

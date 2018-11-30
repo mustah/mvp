@@ -9,7 +9,7 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.DISTRICT_HEAT
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.ELECTRICITY_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.GAS_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.HOT_WATER_METER_TYPE;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.ROOM_TEMP_METER_TYPE;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.ROOM_SENSOR_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.UNKNOWN_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.WATER_METER_TYPE;
 import static java.util.Arrays.asList;
@@ -33,13 +33,6 @@ public enum Medium {
     }
   },
 
-  HEAT_RETURN_TEMP("Heat, Return temp", DISTRICT_HEATING_METER_TYPE) {
-    @Override
-    protected Set<Quantity> quantities() {
-      return DISTRICT_QUANTITIES;
-    }
-  },
-
   HOT_WATER("Hot water", HOT_WATER_METER_TYPE) {
     @Override
     protected Set<Quantity> quantities() {
@@ -54,10 +47,10 @@ public enum Medium {
     }
   },
 
-  ROOM_TEMP("Room sensor", ROOM_TEMP_METER_TYPE) {
+  ROOM_SENSOR("Room sensor", ROOM_SENSOR_METER_TYPE) {
     @Override
     protected Set<Quantity> quantities() {
-      return ROOM_TEMP_QUANTITIES;
+      return ROOM_SENSOR_QUANTITIES;
     }
   },
 
@@ -105,7 +98,7 @@ public enum Medium {
     Quantity.POWER
   )));
 
-  private static final Set<Quantity> ROOM_TEMP_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
+  private static final Set<Quantity> ROOM_SENSOR_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
     Quantity.EXTERNAL_TEMPERATURE,
     Quantity.HUMIDITY
   )));

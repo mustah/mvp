@@ -10,7 +10,7 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_COOLING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_TEMP_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
@@ -79,7 +79,7 @@ public class LogicalMeterTest {
   @Test
   public void quantitiesRoomTempMeter() {
     LogicalMeter meter = logicalMeterBuilder()
-      .meterDefinition(ROOM_TEMP_METER)
+      .meterDefinition(ROOM_SENSOR_METER)
       .build();
 
     assertThat(meter.getQuantities()).containsOnly(

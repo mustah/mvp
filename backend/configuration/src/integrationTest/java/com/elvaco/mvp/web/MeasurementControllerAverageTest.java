@@ -782,7 +782,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(Location location) {
-    var meter = newLogicalMeterEntity(MeterDefinition.ROOM_TEMP_METER);
+    var meter = newLogicalMeterEntity(MeterDefinition.ROOM_SENSOR_METER);
     var primaryKey = new Pk(meter.getLogicalMeterId(), meter.getOrganisationId());
     meter.location = LocationEntityMapper.toEntity(primaryKey, location);
     return logicalMeterJpaRepository.save(meter);
