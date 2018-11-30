@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.ZonedDateTime;
 
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -21,6 +22,13 @@ public class MeasurementEntityMapperTest {
 
   @Before
   public void setUp() {
+    QuantityProvider quantityProvider = (name) -> new Quantity(
+      1,
+      "Volume",
+      VOLUME.getPresentationInformation(),
+      VOLUME.storageUnit
+    );
+
     entityMapper = new MeasurementEntityMapper(
       new UnitConverter() {
         @Override
@@ -35,12 +43,8 @@ public class MeasurementEntityMapperTest {
           return false;
         }
       },
-      (name) -> new Quantity(
-        1,
-        "Volume",
-        VOLUME.getPresentationInformation(),
-        VOLUME.storageUnit
-      )
+      quantityProvider,
+      new QuantityEntityMapper(quantityProvider)
     );
   }
 

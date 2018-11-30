@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Quantity;
 
+// TODO everybody should depend on QuantityProvider, not QuantityAccess
 public final class QuantityAccess implements QuantityProvider {
 
   private final ConcurrentHashMap<String, Quantity> quantityNameToQuantityMap =
@@ -14,6 +15,7 @@ public final class QuantityAccess implements QuantityProvider {
   private QuantityAccess() {}
 
   public static QuantityAccess singleton() {
+    // TODO remove this method
     return SingletonHolder.INSTANCE;
   }
 
@@ -25,30 +27,6 @@ public final class QuantityAccess implements QuantityProvider {
   @Nullable
   public Quantity getByName(String name) {
     return quantityNameToQuantityMap.get(name);
-  }
-
-  public String getStorageUnit(Quantity quantity) {
-    Quantity preloadedQty = getByName(quantity.name);
-
-    if (preloadedQty == null) {
-      return quantity.presentationUnit();
-    }
-    return preloadedQty.storageUnit;
-  }
-
-  public Integer getId(Quantity quantity) {
-    Quantity preloadedQty = getByName(quantity.name);
-    if (preloadedQty == null) {
-      return quantity.id;
-    }
-    if (quantity.id != null && !quantity.id.equals(preloadedQty.id)) {
-      throw new RuntimeException("Supplied Qunatity.Id does not match previously stored Id");
-    }
-    return preloadedQty.id;
-  }
-
-  public void clear() {
-    quantityNameToQuantityMap.clear();
   }
 
   private static final class SingletonHolder {

@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -40,6 +40,15 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     Set.of(Quantity.DIFFERENCE_TEMPERATURE, Quantity.ENERGY),
     false
   );
+
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+
+  @Autowired
+  private QuantityProvider quantityProvider;
+
+  @Autowired
+  private QuantityEntityMapper quantityEntityMapper;
 
   @Autowired
   private MeterDefinitions meterDefinitions;
@@ -128,7 +137,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
+    return meterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
   private void newMeasurement(
@@ -140,7 +149,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
-      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
+      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
       value,
       meter
     ));

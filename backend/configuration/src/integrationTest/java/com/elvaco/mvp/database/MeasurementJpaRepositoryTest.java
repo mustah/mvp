@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -36,6 +36,12 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public static final String MONTH_RESOLUTION = "1 month";
   private static final OffsetDateTime START_TIME =
     OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
+
+  @Autowired
+  private QuantityProvider quantityProvider;
+
+  @Autowired
+  private QuantityEntityMapper quantityEntityMapper;
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
 
@@ -613,7 +619,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       when.toZonedDateTime(),
-      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
+      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
       value,
       meter
     ));

@@ -20,6 +20,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -33,6 +34,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 public class MissingMeasurementControllerTest extends IntegrationTest {
+
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   private ZonedDateTime startDate;
   private ZonedDateTime endDate;
@@ -72,7 +76,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   @Test
   public void refreshAsSuperAdmin() {
     LogicalMeterEntity logicalMeter = newLogicalMeter(
-      MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
+      meterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate.minusMinutes(11)
     );
 
@@ -103,7 +107,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   @Test
   public void refreshAsUserDenied() {
     LogicalMeterEntity logicalMeter = newLogicalMeter(
-      MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
+      meterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate.minusMinutes(11)
     );
 
@@ -132,7 +136,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   @Test
   public void refreshAsAdminDenied() {
     LogicalMeterEntity logicalMeter = newLogicalMeter(
-      MeterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
+      meterDefinitionEntityMapper.toEntity(MeterDefinition.GAS_METER),
       startDate.minusMinutes(11)
     );
 

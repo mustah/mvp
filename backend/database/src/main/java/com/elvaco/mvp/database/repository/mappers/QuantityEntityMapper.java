@@ -1,15 +1,19 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
-public class QuantityEntityMapper {
+public final class QuantityEntityMapper {
 
-  public static Quantity toDomainModel(QuantityEntity quantityEntity) {
+  public QuantityEntityMapper(QuantityProvider quantityProvider) {
+    this.quantityProvider = quantityProvider;
+  }
+
+  private final QuantityProvider quantityProvider;
+
+  public Quantity toDomainModel(QuantityEntity quantityEntity) {
     return new Quantity(
       quantityEntity.id,
       quantityEntity.name,
@@ -21,13 +25,23 @@ public class QuantityEntityMapper {
     );
   }
 
-  public static QuantityEntity toEntity(Quantity quantity) {
+  public QuantityEntity toEntity(Quantity quantity) {
     return new QuantityEntity(
-      QuantityAccess.singleton().getId(quantity),
+      quantityProvider.getId(quantity),
       quantity.name,
       quantity.presentationUnit(),
-      QuantityAccess.singleton().getStorageUnit(quantity),
+      getStorageUnit(quantity),
       quantity.seriesDisplayMode()
     );
   }
+
+  private String getStorageUnit(Quantity inputQuantity) {
+    Quantity preloadedQty = quantityProvider.getByName(inputQuantity.name);
+
+    if (preloadedQty == null) {
+      return inputQuantity.presentationUnit();
+    }
+    return preloadedQty.storageUnit;
+  }
+
 }

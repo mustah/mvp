@@ -21,6 +21,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.exception.MissingParameter;
@@ -37,8 +38,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.groupByQuantity;
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
@@ -55,6 +54,7 @@ public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
+  private final LogicalMeterHelper logicalMeterHelper;
 
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(
@@ -78,7 +78,7 @@ public class MeasurementController {
     List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
 
-    groupByQuantity(logicalMeters, quantities)
+    logicalMeterHelper.groupByQuantity(logicalMeters, quantities)
       .forEach((quantity, physicalMeters) -> foundMeasurements.addAll(
         measurementUseCases.averageForPeriod(
           physicalMeters.stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
@@ -131,8 +131,8 @@ public class MeasurementController {
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(after, stop, resolution);
 
-    mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
-      .forEach((quantity, physicalMeters) -> {
+    logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
+      .forEach((quantity, physicalMeters) ->
         physicalMeters.forEach((physicalMeter) -> {
           List<MeasurementValue> series = measurementUseCases.seriesForPeriod(
             physicalMeter.id,
@@ -154,8 +154,7 @@ public class MeasurementController {
               measurementValue.value,
               quantity
             )).collect(toList()));
-        });
-      });
+        }));
 
     return toSeries(foundMeasurements);
   }

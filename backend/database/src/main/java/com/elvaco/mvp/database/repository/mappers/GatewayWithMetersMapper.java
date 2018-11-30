@@ -7,14 +7,18 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;
 
-@UtilityClass
-public class GatewayWithMetersMapper {
+public final class GatewayWithMetersMapper {
 
-  public static Gateway toDomainModel(GatewayEntity entity) {
+  private LogicalMeterEntityMapper logicalMeterEntityMapper;
+
+  public GatewayWithMetersMapper(LogicalMeterEntityMapper logicalMeterEntityMapper) {
+    this.logicalMeterEntityMapper = logicalMeterEntityMapper;
+  }
+
+  public Gateway toDomainModel(GatewayEntity entity) {
     return Gateway.builder()
       .id(entity.pk.id)
       .organisationId(entity.pk.organisationId)
@@ -27,9 +31,9 @@ public class GatewayWithMetersMapper {
       .build();
   }
 
-  private static List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {
+  private List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {
     return meters.stream()
-      .map(LogicalMeterEntityMapper::toDomainModel)
+      .map(logicalMeterEntityMapper::toDomainModel)
       .collect(toList());
   }
 }

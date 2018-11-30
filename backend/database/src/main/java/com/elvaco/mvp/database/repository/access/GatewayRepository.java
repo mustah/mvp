@@ -27,11 +27,12 @@ import static java.util.stream.Collectors.toList;
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository gatewayJpaRepository;
+  private final GatewayWithMetersMapper gatewayWithMetersMapper;
 
   @Override
   public List<Gateway> findAll() {
     return gatewayJpaRepository.findAll().stream()
-      .map(GatewayWithMetersMapper::toDomainModel)
+      .map(gatewayWithMetersMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -84,13 +85,13 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public Optional<Gateway> findById(UUID id) {
-    return gatewayJpaRepository.findById(id).map(GatewayWithMetersMapper::toDomainModel);
+    return gatewayJpaRepository.findById(id).map(gatewayWithMetersMapper::toDomainModel);
   }
 
   @Override
   public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return gatewayJpaRepository.findByOrganisationIdAndId(organisationId, id)
-      .map(GatewayWithMetersMapper::toDomainModel);
+      .map(gatewayWithMetersMapper::toDomainModel);
   }
 
   @Override

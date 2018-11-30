@@ -15,6 +15,7 @@ public class MeasurementEntityMapper {
 
   private final UnitConverter unitConverter;
   private final QuantityProvider quantityProvider;
+  private final QuantityEntityMapper quantityEntityMapper;
 
   public Measurement toDomainModel(MeasurementEntity entity) {
     return Measurement.builder()
@@ -37,7 +38,7 @@ public class MeasurementEntityMapper {
     return new MeasurementEntity(
       new MeasurementPk(
         domainModel.created,
-        QuantityEntityMapper.toEntity(quantityProvider.getByName(domainModel.quantity)),
+        quantityEntityMapper.toEntity(quantityProvider.getByName(domainModel.quantity)),
         PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
       ),
       unitConverter.convert(

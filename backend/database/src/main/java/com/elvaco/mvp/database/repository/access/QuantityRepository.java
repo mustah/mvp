@@ -16,23 +16,24 @@ import static java.util.stream.Collectors.toList;
 public class QuantityRepository implements Quantities {
 
   private final QuantityJpaRepository quantityJpaRepository;
+  private final QuantityEntityMapper quantityEntityMapper;
 
   @Override
   public List<Quantity> findAll() {
     return quantityJpaRepository.findAll().stream()
-      .map(QuantityEntityMapper::toDomainModel)
+      .map(quantityEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Optional<Quantity> findByName(String quantity) {
     return quantityJpaRepository.findByName(quantity)
-      .map(QuantityEntityMapper::toDomainModel);
+      .map(quantityEntityMapper::toDomainModel);
   }
 
   @Override
   public Quantity save(Quantity quantity) {
-    QuantityEntity saved = quantityJpaRepository.save(QuantityEntityMapper.toEntity(quantity));
-    return QuantityEntityMapper.toDomainModel(saved);
+    QuantityEntity saved = quantityJpaRepository.save(quantityEntityMapper.toEntity(quantity));
+    return quantityEntityMapper.toDomainModel(saved);
   }
 }

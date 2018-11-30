@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -45,6 +45,15 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerCitiesTest extends IntegrationTest {
+
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+
+  @Autowired
+  private QuantityEntityMapper quantityEntityMapper;
+
+  @Autowired
+  private QuantityProvider quantityProvider;
 
   @Autowired
   private LocationJpaRepository locationJpaRepository;
@@ -402,7 +411,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
+    return meterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
   private void newMeasurement(
@@ -413,7 +422,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
-      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
+      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
       value,
       meter
     ));

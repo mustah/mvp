@@ -61,7 +61,11 @@ import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
+import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -107,11 +111,12 @@ class DataProviderConfig {
   }
 
   @Bean
-  LogicalMeters logicalMeters() {
+  LogicalMeters logicalMeters(LogicalMeterEntityMapper logicalMeterEntityMapper) {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       summaryJpaRepository,
-      new LogicalMeterSortingEntityMapper()
+      new LogicalMeterSortingEntityMapper(),
+      logicalMeterEntityMapper
     );
   }
 
@@ -125,11 +130,15 @@ class DataProviderConfig {
   }
 
   @Bean
-  Measurements measurements(QuantityProvider quantityProvider) {
+  Measurements measurements(
+    QuantityProvider quantityProvider,
+    QuantityEntityMapper quantityEntityMapper
+  ) {
     return new MeasurementRepository(
       measurementJpaRepository,
       quantityProvider,
-      unitConverter
+      unitConverter,
+      quantityEntityMapper
     );
   }
 
@@ -178,13 +187,13 @@ class DataProviderConfig {
   }
 
   @Bean
-  MeterDefinitions meterDefinitions() {
-    return new MeterDefinitionRepository(meterDefinitionJpaRepository);
+  MeterDefinitions meterDefinitions(MeterDefinitionEntityMapper meterDefinitionEntityMapper) {
+    return new MeterDefinitionRepository(meterDefinitionJpaRepository, meterDefinitionEntityMapper);
   }
 
   @Bean
-  Gateways gateways() {
-    return new GatewayRepository(gatewayJpaRepository);
+  Gateways gateways(GatewayWithMetersMapper gatewayWithMetersMapper) {
+    return new GatewayRepository(gatewayJpaRepository, gatewayWithMetersMapper);
   }
 
   @Bean
@@ -213,8 +222,8 @@ class DataProviderConfig {
   }
 
   @Bean
-  Quantities quantities() {
-    return new QuantityRepository(quantityJpaRepository);
+  Quantities quantities(QuantityEntityMapper quantityEntityMapper) {
+    return new QuantityRepository(quantityJpaRepository, quantityEntityMapper);
   }
 
   @Bean

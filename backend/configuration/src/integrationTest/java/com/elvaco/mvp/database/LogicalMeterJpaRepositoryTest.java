@@ -1,9 +1,10 @@
 package com.elvaco.mvp.database;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -19,7 +20,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,18 +28,24 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
+  @Autowired
+  private QuantityProvider quantityProvider;
+
+  @Autowired
+  private QuantityEntityMapper quantityEntityMapper;
+
   private UUID logicalMeterId;
 
   @Before
   public void setUp() {
     logicalMeterId = randomUUID();
 
-    Quantity power = QuantityAccess.singleton().getByName(Quantity.POWER.name);
+    Quantity power = quantityProvider.getByName(Quantity.POWER.name);
 
     MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
       new MeterDefinitionEntity(
         MeterDefinitionType.UNKNOWN_METER_TYPE,
-        singleton(QuantityEntityMapper.toEntity(power)),
+        Set.of(quantityEntityMapper.toEntity(power)),
         "My meter definition",
         false
       ));

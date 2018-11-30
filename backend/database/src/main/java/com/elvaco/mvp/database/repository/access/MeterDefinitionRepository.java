@@ -11,15 +11,16 @@ import lombok.RequiredArgsConstructor;
 public class MeterDefinitionRepository implements MeterDefinitions {
 
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+  private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
-    MeterDefinitionEntity entity = MeterDefinitionEntityMapper.toEntity(meterDefinition);
+    MeterDefinitionEntity entity = meterDefinitionEntityMapper.toEntity(meterDefinition);
 
     if (meterDefinition.systemOwned) {
       meterDefinitionJpaRepository.findByMedium(meterDefinition.medium)
         .ifPresent(systemOwned -> entity.type = systemOwned.type);
     }
-    return MeterDefinitionEntityMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
+    return meterDefinitionEntityMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
   }
 }

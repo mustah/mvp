@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
@@ -16,6 +16,7 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -31,7 +32,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
-import static com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper.toEntity;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -50,7 +50,13 @@ public class MeasurementControllerTest extends IntegrationTest {
   private static final double DIFF_TEMP_VALUE_KELVIN = 558.74;
 
   @Autowired
+  private QuantityProvider quantityProvider;
+
+  @Autowired
   private MeterDefinitions meterDefinitions;
+
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   private OrganisationEntity otherOrganisation;
 
@@ -534,7 +540,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return toEntity(meterDefinitions.save(meterDefinition));
+    return meterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
   private void newEnergyMeasurement(
@@ -560,7 +566,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   ) {
     measurements.save(Measurement.builder()
       .created(created)
-      .quantity(QuantityAccess.singleton().getByName(quantity).name)
+      .quantity(quantityProvider.getByName(quantity).name)
       .physicalMeter(PhysicalMeterEntityMapper.toDomainModel(meter))
       .value(value)
       .unit(unit)
@@ -603,7 +609,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     logicalMeterJpaRepository.save(new LogicalMeterEntity(
       new EntityPk(logicalMeterId, organisationEntity.id), logicalMeterId.toString(),
       created,
-      toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      meterDefinitionEntityMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
       DEFAULT_UTC_OFFSET
     ));
 
