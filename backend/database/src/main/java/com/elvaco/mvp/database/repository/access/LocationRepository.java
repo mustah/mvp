@@ -24,7 +24,7 @@ import static com.elvaco.mvp.database.repository.mappers.LocationEntityMapper.to
 public class LocationRepository implements Locations {
 
   private final LocationJpaRepository locationJpaRepository;
-  private final MapMarkerJpaRepository meterMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository logicalMeterMapMarkerJooqJpaRepository;
   private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
 
   @Override
@@ -35,7 +35,7 @@ public class LocationRepository implements Locations {
 
   @Override
   public Set<MapMarker> findAllMeterMapMarkers(RequestParameters parameters) {
-    return meterMapQueryDslJpaRepository.findAllMapMarkers(parameters);
+    return logicalMeterMapMarkerJooqJpaRepository.findAllMapMarkers(parameters);
   }
 
   @Override
