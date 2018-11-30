@@ -47,6 +47,8 @@ public class LocationJooqConditions extends EmptyJooqFilterVisitor {
   @Override
   protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
     return query
-      .leftJoin(LOGICAL_METER).on(LOGICAL_METER.ID.equal(LOCATION.LOGICAL_METER_ID));
+      .leftJoin(LOGICAL_METER)
+      .on(LOGICAL_METER.ID.equal(LOCATION.LOGICAL_METER_ID)
+        .and(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)));
   }
 }
