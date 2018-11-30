@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
+import org.junit.After;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
@@ -37,6 +38,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterHelperTest {
+
+  @After
+  public void tearDown() {
+    QuantityAccess.singleton().clear();
+  }
 
   @Test
   public void calculateExpectedReadoutsHourly() {

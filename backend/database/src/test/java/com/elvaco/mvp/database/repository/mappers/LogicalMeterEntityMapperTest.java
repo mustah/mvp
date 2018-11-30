@@ -18,6 +18,7 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,6 +36,11 @@ public class LogicalMeterEntityMapperTest {
   @Before
   public void setUp() {
     QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
+  }
+
+  @After
+  public void tearDown() {
+    QuantityAccess.singleton().clear();
   }
 
   @Test

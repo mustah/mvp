@@ -46,6 +46,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -138,6 +139,11 @@ public class MeteringMeasurementMessageConsumerTest {
         }
       }
     );
+  }
+
+  @After
+  public void tearDown() {
+    QuantityAccess.singleton().clear();
   }
 
   @Test
