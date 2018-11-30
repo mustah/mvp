@@ -5,26 +5,24 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.domainmodels.Location;
-import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
-import com.elvaco.mvp.core.dto.LogicalMeterLocation;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
+import com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog;
+import com.elvaco.mvp.database.entity.jooq.tables.Location;
+import com.elvaco.mvp.database.repository.jooq.GatewayJooqConditions;
 import com.elvaco.mvp.database.repository.querydsl.GatewayFilterQueryDslJpaVisitor;
-import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.set;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -32,9 +30,12 @@ class GatewayQueryDslJpaRepository
   extends BaseQueryDslRepository<GatewayEntity, UUID>
   implements GatewayJpaRepository {
 
+  private final DSLContext dsl;
+
   @Autowired
-  GatewayQueryDslJpaRepository(EntityManager entityManager) {
+  GatewayQueryDslJpaRepository(EntityManager entityManager, DSLContext dsl) {
     super(entityManager, GatewayEntity.class);
+    this.dsl = dsl;
   }
 
   @Override
@@ -45,58 +46,42 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
-    ConstructorExpression<GatewaySummaryDto> constructor = Projections.constructor(
-      GatewaySummaryDto.class,
-      GATEWAY.pk.id,
-      GATEWAY.pk.organisationId,
-      GATEWAY.serial,
-      GATEWAY.productModel,
-      set(Projections.constructor(
-        StatusLogEntry.class,
-        GATEWAY_STATUS_LOG.id,
-        GATEWAY_STATUS_LOG.gatewayId.gatewayId,
-        GATEWAY_STATUS_LOG.gatewayId.organisationId,
-        GATEWAY_STATUS_LOG.status,
-        GATEWAY_STATUS_LOG.start,
-        GATEWAY_STATUS_LOG.stop
-        ).skipNulls()
-      ),
-      set(Projections.constructor(
-        LogicalMeterLocation.class,
-        LOGICAL_METER.pk.id,
-        Projections.constructor(
-          Location.class,
-          LOCATION.latitude,
-          LOCATION.longitude,
-          LOCATION.confidence,
-          LOCATION.country,
-          LOCATION.city,
-          LOCATION.streetAddress
-        )
-        ).skipNulls()
-      )
-    );
+    var gateway = Gateway.GATEWAY;
+    var location = Location.LOCATION;
+    var gatewayStatusLog = GatewayStatusLog.GATEWAY_STATUS_LOG;
 
-    var countQuery = createCountQuery()
-      .select(constructor)
-      .distinct();
+    var selectQuery = dsl.select(
+      gateway.ID,
+      gateway.ORGANISATION_ID,
+      gateway.SERIAL,
+      gateway.PRODUCT_MODEL,
+      gatewayStatusLog.ID,
+      gatewayStatusLog.STATUS,
+      gatewayStatusLog.START,
+      gatewayStatusLog.STOP,
+      location.LOGICAL_METER_ID,
+      location.LATITUDE,
+      location.LONGITUDE,
+      location.CONFIDENCE,
+      location.COUNTRY,
+      location.CITY,
+      location.STREET_ADDRESS
+    ).distinctOn(gateway.ID)
+      .from(gateway);
 
-    var selectQuery = createQuery()
-      .select(constructor)
-      .distinct();
+    var countQuery = dsl.select(gateway.ID).from(gateway);
 
-    querydsl.applyPagination(pageable, selectQuery);
+    var filters = toFilters(parameters);
 
-    new GatewayFilterQueryDslJpaVisitor().visitAndApply(
-      toFilters(parameters),
-      countQuery,
-      selectQuery
-    );
+    new GatewayJooqConditions(dsl).apply(filters, selectQuery);
+    new GatewayJooqConditions(dsl).apply(filters, countQuery);
 
-    var transformer = groupBy(GATEWAY.pk.id).list(constructor);
-    List<GatewaySummaryDto> pagedGateways = selectQuery.transform(transformer);
+    List<GatewaySummaryDto> pagedGateways = selectQuery
+      .limit(pageable.getPageSize())
+      .offset(Long.valueOf(pageable.getOffset()).intValue())
+      .fetchInto(GatewaySummaryDto.class);
 
-    return getPage(pagedGateways, pageable, countQuery::fetchCount);
+    return getPage(pagedGateways, pageable, () -> dsl.fetchCount(countQuery));
   }
 
   @Override

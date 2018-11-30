@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
@@ -33,11 +34,13 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("rawtypes")
 public class GatewayControllerTest extends IntegrationTest {
@@ -46,6 +49,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    assumeTrue(isPostgresDialect());
     dailyPlanet = context().organisation2();
   }
 
@@ -259,7 +263,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
     assertThat(content).hasSize(1);
     GatewayDto gatewayDto = content.getContent().get(0);
-    assertThat(gatewayDto.meterIds).hasSize(2);
+    assertThat(gatewayDto.meterIds).hasSize(1);
   }
 
   @Test
@@ -329,6 +333,76 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(content.getContent())
       .extracting("id")
       .containsExactly(gasGateway.id);
+  }
+
+  @Test
+  public void findGateways_WithMeterThreshold_Match() {
+    Gateway gateway = saveGateway(dailyPlanet.id);
+
+    LogicalMeter meter = logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
+      .build());
+
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-01T05:00:00+02");
+
+    addMeasurementsForMeterQuantities(
+      physicalMeters.save(
+        physicalMeterBuilder()
+          .logicalMeterId(meter.id)
+          .address("1234")
+          .build()),
+      singleton(Quantity.POWER),
+      now,
+      0
+    );
+
+    Url url = Url.builder().path("/gateways")
+      .period(now.minusHours(1), now.plusHours(1))
+      .parameter(RequestParameter.THRESHOLD, "Power >= 0 W")
+      .build();
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage(url, GatewayDto.class);
+
+    assertThat(content.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void findGateways_WithMeterThreshold_NoMatch() {
+    Gateway gateway = saveGateway(dailyPlanet.id);
+
+    LogicalMeter meter = logicalMeters.save(LogicalMeter.builder()
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .externalId(randomUUID().toString())
+      .organisationId(dailyPlanet.id)
+      .gateway(gateway)
+      .utcOffset(DEFAULT_UTC_OFFSET)
+      .build());
+
+    ZonedDateTime now = ZonedDateTime.parse("2018-11-01T05:00:00+02");
+
+    addMeasurementsForMeterQuantities(
+      physicalMeters.save(
+        physicalMeterBuilder()
+          .logicalMeterId(meter.id)
+          .address("1234")
+          .build()),
+      singleton(Quantity.POWER),
+      now,
+      0
+    );
+
+    Url url = Url.builder().path("/gateways")
+      .period(now.minusHours(1), now.plusHours(1))
+      .parameter(RequestParameter.THRESHOLD, "Power > 0 W")
+      .build();
+    Page<GatewayDto> content = asSuperAdmin()
+      .getPage(url, GatewayDto.class);
+
+    assertThat(content.getTotalElements()).isEqualTo(0);
   }
 
   @Test
