@@ -320,6 +320,54 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     )).isTrue();
   }
 
+  @Test
+  public void superAdmin_UsersCanSyncMetersByOrganisation() {
+    assumeTrue(isRabbitConnected());
+
+    logicalMeters.save(newLogicalMeter(context().organisationId2()));
+
+    List<UUID> meterIds = Stream.of(
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId())),
+      logicalMeters.save(newLogicalMeter(context().organisationId()))
+    ).map(logicalMeter -> logicalMeter.id)
+      .collect(toList());
+
+    ResponseEntity<Void> responseEntity = asSuperAdmin()
+      .post(
+        "/meters/sync/organisation?id=" + context().organisationId().toString(),
+        null,
+        Void.class
+      );
+
+    List<Property> properties = meterIds.stream()
+      .map(this::getUpdateGeolocationWithEntityId)
+      .collect(toList());
+
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+    assertThat(properties).hasSize(3);
+  }
+
+  @Test
+  public void usersNotAllowedToSyncByOrganisation() {
+    assumeTrue(isRabbitConnected());
+
+    logicalMeters.save(newLogicalMeter(context().organisationId()));
+    logicalMeters.save(newLogicalMeter(context().organisationId()));
+    logicalMeters.save(newLogicalMeter(context().organisationId()));
+
+    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
+      .post(
+        "/meters/sync/organisation?id=" + context().organisationId().toString(),
+        null,
+        ErrorMessageDto.class
+      );
+
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(responseEntity.getBody().message)
+      .contains("not allowed to publish synchronization requests");
+  }
+
   private MeteringReferenceInfoMessageDto newMeteringReferenceInfoMessageDto(String jobId) {
     return new MeteringReferenceInfoMessageDto(
       new MeterDto("meter-id", "some medium", "OK", "KAM", "0 * * * *", 1, 1),

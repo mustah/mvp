@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.JobService;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
@@ -54,6 +55,25 @@ public class LogicalMeterSyncController {
   ) {
     RequestParameters parameters = new RequestParametersAdapter()
       .setAllIds(LOGICAL_METER_ID, logicalMetersIds);
+
+    return logicalMeterUseCases.findAllBy(parameters).stream()
+      .map(this::sync)
+      .collect(Collectors.toList());
+  }
+
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  @PostMapping(path = "/organisation")
+  public List<SyncRequestResponseDto> synchronizeMetersOrganisationIds(
+    @RequestParam UUID id
+  ) {
+    if (!authenticatedUser.isSuperAdmin()) {
+      throw new Unauthorized(String.format(
+        "User '%s' is not allowed to publish synchronization requests",
+        authenticatedUser.getUsername()
+      ));
+    }
+    RequestParameters parameters = new RequestParametersAdapter()
+      .add(RequestParameter.ORGANISATION, id.toString());
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
       .map(this::sync)
