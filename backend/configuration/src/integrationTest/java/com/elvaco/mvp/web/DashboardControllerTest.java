@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -271,9 +272,8 @@ public class DashboardControllerTest extends IntegrationTest {
   ) {
     UUID id = randomUUID();
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      id,
+      new EntityPk(id, context().organisationEntity.id),
       id.toString(),
-      context().organisationEntity.id,
       created,
       meterDefinitionEntity,
       DEFAULT_UTC_OFFSET

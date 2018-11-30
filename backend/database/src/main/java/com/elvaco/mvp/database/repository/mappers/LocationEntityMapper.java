@@ -7,7 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
-import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import lombok.experimental.UtilityClass;
 
@@ -42,7 +42,7 @@ public class LocationEntityMapper {
   public static LocationEntity toEntity(PrimaryKey pk, @Nullable Location location) {
     if (location != null) {
       LocationEntity entity = LocationEntity.builder()
-        .pk(new EntityPrimaryKey(pk.getId(), pk.getOrganisationId()))
+        .pk(new EntityPk(pk.getId(), pk.getOrganisationId()))
         .country(location.getCountry())
         .city(location.getCity())
         .streetAddress(location.getAddress())

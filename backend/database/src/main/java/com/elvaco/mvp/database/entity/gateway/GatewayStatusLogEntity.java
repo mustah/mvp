@@ -32,7 +32,7 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  public GatewayPrimaryKey gatewayId;
+  public GatewayPk gatewayId;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -52,7 +52,7 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
     ZonedDateTime stop
   ) {
     this.id = id;
-    this.gatewayId = new GatewayPrimaryKey(gatewayId, organisationId);
+    this.gatewayId = new GatewayPk(gatewayId, organisationId);
     this.status = status;
     this.start = start;
     this.stop = stop;

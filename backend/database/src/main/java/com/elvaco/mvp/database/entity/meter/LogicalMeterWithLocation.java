@@ -26,7 +26,7 @@ public class LogicalMeterWithLocation {
     this.externalId = externalId;
     this.utcOffset = utcOffset;
     this.location = LocationEntity.builder()
-      .pk(new EntityPrimaryKey(id, organisationId))
+      .pk(new EntityPk(id, organisationId))
       .country(country)
       .city(city)
       .streetAddress(address)

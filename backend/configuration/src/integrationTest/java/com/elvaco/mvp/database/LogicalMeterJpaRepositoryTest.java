@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -44,16 +44,17 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
         false
       ));
 
+    EntityPk pk = new EntityPk(logicalMeterId, context().organisationId());
+
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
-      logicalMeterId,
+      pk,
       "Some external ID",
-      context().organisationId(),
       ZonedDateTime.now(),
       meterDefinitionEntity,
       DEFAULT_UTC_OFFSET
     );
     logicalMeterEntity.location = LocationEntity.builder()
-      .pk(new EntityPrimaryKey(logicalMeterId, context().organisationId()))
+      .pk(pk)
       .latitude(1.0)
       .longitude(2.0)
       .confidence(1.0)

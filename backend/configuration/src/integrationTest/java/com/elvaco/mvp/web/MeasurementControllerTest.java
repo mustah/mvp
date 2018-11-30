@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -568,12 +569,11 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
-    UUID uuid = randomUUID();
+    UUID id = randomUUID();
     MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      uuid,
-      uuid.toString(),
-      context().organisationEntity.id,
+      new EntityPk(id, context().organisationId()),
+      id.toString(),
       ZonedDateTime.now(),
       meterDefinitionEntity,
       DEFAULT_UTC_OFFSET
@@ -601,9 +601,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   ) {
     UUID logicalMeterId = randomUUID();
     logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      logicalMeterId,
-      logicalMeterId.toString(),
-      organisationEntity.id,
+      new EntityPk(logicalMeterId, organisationEntity.id), logicalMeterId.toString(),
       created,
       toEntity(MeterDefinition.DISTRICT_HEATING_METER),
       DEFAULT_UTC_OFFSET

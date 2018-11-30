@@ -13,7 +13,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -423,21 +423,22 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     Location location,
     MeterDefinition meterDefinition
   ) {
-    UUID uuid = randomUUID();
+    UUID id = randomUUID();
 
-    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
+    var meterDefinitionEntity = saveMeterDefinition(meterDefinition);
 
-    LogicalMeterEntity meter = logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      uuid,
-      uuid.toString(),
-      context().organisationEntity.id,
-      ZonedDateTime.now(),
-      meterDefinitionEntity,
-      DEFAULT_UTC_OFFSET
-    ));
+    var pk = new EntityPk(id, context().organisationId());
+    LogicalMeterEntity meter = logicalMeterJpaRepository.save(
+      new LogicalMeterEntity(
+        pk,
+        id.toString(),
+        ZonedDateTime.now(),
+        meterDefinitionEntity,
+        DEFAULT_UTC_OFFSET
+      ));
 
     locationJpaRepository.save(LocationEntity.builder()
-      .pk(new EntityPrimaryKey(meter.getLogicalMeterId(), context().organisationId()))
+      .pk(pk)
       .country(location.getCountry())
       .city(location.getCity())
       .streetAddress(location.getAddress())

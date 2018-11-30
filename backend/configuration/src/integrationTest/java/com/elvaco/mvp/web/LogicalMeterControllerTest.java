@@ -29,6 +29,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -2119,9 +2120,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private void createMeterWithGateway(String meterExternalId, String gatewaySerial) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
-      randomUUID(),
+      new EntityPk(randomUUID(), context().organisationId()),
       meterExternalId,
-      context().organisationId(),
       ZonedDateTime.now(),
       MeterDefinitionEntityMapper.toEntity(UNKNOWN_METER),
       DEFAULT_UTC_OFFSET
@@ -2291,8 +2291,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private static GatewayEntity newGatewayEntity(UUID organisationId, String serial) {
     return new GatewayEntity(
-      randomUUID(),
-      organisationId,
+      new EntityPk(randomUUID(), organisationId),
       serial,
       "",
       emptySet()

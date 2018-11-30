@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -184,11 +185,10 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     MeterDefinitionEntity meterDefinition,
     ZonedDateTime created
   ) {
-    UUID uuid = randomUUID();
+    UUID id = randomUUID();
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      randomUUID(),
-      uuid.toString(),
-      context().organisationId(),
+      new EntityPk(id, context().organisationId()),
+      id.toString(),
       created,
       meterDefinition,
       DEFAULT_UTC_OFFSET

@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.spi.amqp.JobService;
 
 public class MockJobService<V> implements JobService<V> {
 
-  private Map<String, V> jobs = new HashMap<>();
+  private final Map<String, V> jobs = new HashMap<>();
 
   @Override
   public void newPendingJob(String jobId) {

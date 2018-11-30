@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;
@@ -12,8 +13,8 @@ public class GatewayEntityMapper {
 
   public static Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
     return Gateway.builder()
-      .id(entity.primaryKey.id)
-      .organisationId(entity.primaryKey.organisationId)
+      .id(entity.pk.id)
+      .organisationId(entity.pk.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
       .build();
@@ -21,8 +22,8 @@ public class GatewayEntityMapper {
 
   public static Gateway toDomainModel(GatewayEntity entity) {
     return Gateway.builder()
-      .id(entity.primaryKey.id)
-      .organisationId(entity.primaryKey.organisationId)
+      .id(entity.pk.id)
+      .organisationId(entity.pk.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
       .statusLogs(entity.statusLogs.stream()
@@ -33,8 +34,7 @@ public class GatewayEntityMapper {
 
   public static GatewayEntity toEntity(Gateway domainModel) {
     return new GatewayEntity(
-      domainModel.id,
-      domainModel.organisationId,
+      new EntityPk(domainModel.id, domainModel.organisationId),
       domainModel.serial,
       domainModel.productModel,
       domainModel.statusLogs.stream().map(GatewayStatusLogEntityMapper::toEntity).collect(toSet())

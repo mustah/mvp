@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -767,12 +768,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
-    UUID uuid = randomUUID();
+    UUID id = randomUUID();
     MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
     LogicalMeterEntity meter = new LogicalMeterEntity(
-      uuid,
-      uuid.toString(),
-      context().organisationEntity.id,
+      new EntityPk(id, context().organisationEntity.id),
+      id.toString(),
       ZonedDateTime.now(),
       meterDefinitionEntity,
       DEFAULT_UTC_OFFSET

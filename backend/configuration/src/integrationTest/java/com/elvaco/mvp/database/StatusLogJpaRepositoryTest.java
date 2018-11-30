@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
+import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -60,8 +61,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
   public void duplicateGatewayLogsAreRejected() {
     UUID gatewayId = randomUUID();
     gatewayJpaRepository.save(new GatewayEntity(
-      gatewayId,
-      context().organisationId(),
+      new EntityPk(gatewayId, context().organisationId()),
       "",
       "",
       emptySet()

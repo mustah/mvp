@@ -11,5 +11,6 @@ public interface PropertiesJpaRepository extends JpaRepository<PropertyEntity, P
 
   List<PropertyEntity> findAllById_Key(String key);
 
+  @Override
   Optional<PropertyEntity> findById(PropertyPk id);
 }

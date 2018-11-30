@@ -86,8 +86,7 @@ public class LocationBuilder {
   public LocationWithId buildLocationWithId() {
     buildCoordinates();
     return new LocationWithId(
-      id,
-      organisationId,
+      new Pk(id, organisationId),
       coordinate,
       country,
       city,

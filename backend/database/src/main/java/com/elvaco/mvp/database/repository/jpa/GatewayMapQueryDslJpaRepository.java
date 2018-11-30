@@ -34,7 +34,7 @@ class GatewayMapQueryDslJpaRepository
     JPQLQuery<MapMarker> query = createQuery()
       .select(Projections.constructor(
         MapMarker.class,
-        GATEWAY.primaryKey.id,
+        GATEWAY.pk.id,
         GATEWAY_STATUS_LOG.status,
         ALARM_LOG.mask,
         LOCATION.latitude,

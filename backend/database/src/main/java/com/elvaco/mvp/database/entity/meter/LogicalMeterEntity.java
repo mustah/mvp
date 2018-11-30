@@ -41,14 +41,14 @@ import static javax.persistence.CascadeType.ALL;
   uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
 )
 @Audited
-public class LogicalMeterEntity extends IdentifiableType<EntityPrimaryKey> {
+public class LogicalMeterEntity extends IdentifiableType<EntityPk> {
 
   private static final long serialVersionUID = 5528298891965340483L;
 
   @EmbeddedId
-  public EntityPrimaryKey primaryKey;
+  public EntityPk pk;
 
-  @OneToMany(mappedBy = "logicalMeterPrimaryKey", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "logicalMeterPk", fetch = FetchType.EAGER)
   @Cascade(CascadeType.MERGE)
   public Set<PhysicalMeterEntity> physicalMeters = new HashSet<>();
 
@@ -84,15 +84,13 @@ public class LogicalMeterEntity extends IdentifiableType<EntityPrimaryKey> {
   public String utcOffset;
 
   public LogicalMeterEntity(
-    UUID primaryKey,
+    EntityPk pk,
     String externalId,
-    UUID organisationId,
     ZonedDateTime created,
     MeterDefinitionEntity meterDefinition,
     String utcOffset
   ) {
-    EntityPrimaryKey pk = new EntityPrimaryKey(primaryKey, organisationId);
-    this.primaryKey = pk;
+    this.pk = pk;
     this.externalId = externalId;
     this.created = created;
     this.meterDefinition = meterDefinition;
@@ -101,15 +99,15 @@ public class LogicalMeterEntity extends IdentifiableType<EntityPrimaryKey> {
   }
 
   @Override
-  public EntityPrimaryKey getId() {
-    return primaryKey;
+  public EntityPk getId() {
+    return pk;
   }
 
   public UUID getLogicalMeterId() {
-    return primaryKey.id;
+    return pk.id;
   }
 
   public UUID getOrganisationId() {
-    return primaryKey.organisationId;
+    return pk.organisationId;
   }
 }
