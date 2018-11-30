@@ -34,7 +34,7 @@ public class LogicalMeterDtoMapperTest {
     UUID logicalMeterId = randomUUID();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .organisation(ELVACO)
+      .organisationId(ELVACO.id)
       .status(StatusLogEntry.<UUID>builder()
         .status(StatusType.OK)
         .build())
@@ -109,7 +109,7 @@ public class LogicalMeterDtoMapperTest {
           .meterDefinition(MeterDefinition.HOT_WATER_METER)
           .created(statusChanged)
           .physicalMeter(PhysicalMeter.builder()
-            .organisation(ELVACO)
+            .organisationId(ELVACO.id)
             .address("123123")
             .externalId("an-external-id")
             .medium("Gas")
@@ -153,7 +153,7 @@ public class LogicalMeterDtoMapperTest {
   @Test
   public void meterIsNotReported() {
     LogicalMeter logicalMeter = logicalMeter()
-      .physicalMeter(PhysicalMeter.builder().organisation(ELVACO)
+      .physicalMeter(PhysicalMeter.builder().organisationId(ELVACO.id)
         .status(StatusLogEntry.<UUID>builder()
           .status(StatusType.OK)
           .build())
@@ -168,7 +168,7 @@ public class LogicalMeterDtoMapperTest {
   @Test
   public void meterIsReported() {
     LogicalMeter logicalMeter = logicalMeter()
-      .physicalMeter(PhysicalMeter.builder().organisation(ELVACO)
+      .physicalMeter(PhysicalMeter.builder().organisationId(ELVACO.id)
         .status(StatusLogEntry.<UUID>builder()
           .status(StatusType.ERROR)
           .build())

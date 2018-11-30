@@ -6,23 +6,21 @@ import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import static java.util.Collections.emptySet;
@@ -33,13 +31,12 @@ import static java.util.Collections.unmodifiableSet;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
-@Audited
-public class GatewayEntity extends IdentifiableType<UUID> {
+public class GatewayEntity extends IdentifiableType<EntityPrimaryKey> {
 
   private static final long serialVersionUID = -2132372383987246715L;
 
-  @Id
-  public UUID id;
+  @EmbeddedId
+  public EntityPrimaryKey primaryKey;
 
   @Column(nullable = false)
   public String serial;
@@ -47,11 +44,7 @@ public class GatewayEntity extends IdentifiableType<UUID> {
   @Column(nullable = false)
   public String productModel;
 
-  @Column(nullable = false)
-  public UUID organisationId;
-
   @ManyToMany(mappedBy = "gateways")
-  @Fetch(FetchMode.SUBSELECT)
   public Set<LogicalMeterEntity> meters = new HashSet<>();
 
   @OrderBy("stop desc, start desc")
@@ -61,14 +54,13 @@ public class GatewayEntity extends IdentifiableType<UUID> {
   public Set<GatewayStatusLogEntity> statusLogs = new HashSet<>();
 
   public GatewayEntity(
-    UUID id,
+    UUID primaryKey,
     UUID organisationId,
     String serial,
     String productModel,
     Set<GatewayStatusLogEntity> statusLogs
   ) {
-    this.id = id;
-    this.organisationId = organisationId;
+    this.primaryKey = new EntityPrimaryKey(primaryKey, organisationId);
     this.serial = serial;
     this.productModel = productModel;
     this.meters = emptySet();
@@ -76,7 +68,7 @@ public class GatewayEntity extends IdentifiableType<UUID> {
   }
 
   @Override
-  public UUID getId() {
-    return id;
+  public EntityPrimaryKey getId() {
+    return primaryKey;
   }
 }

@@ -81,7 +81,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       physicalMeterUseCases.findBy(organisation.id, facilityId, address)
         .map(existing::physicalMeter)
         .orElseGet(() -> PhysicalMeter.builder()
-          .organisation(organisation)
+          .organisationId(organisation.id)
           .address(address)
           .externalId(facilityId)
           .medium(UNKNOWN_MEDIUM.medium)

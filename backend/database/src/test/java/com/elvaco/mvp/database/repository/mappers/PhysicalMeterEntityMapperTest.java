@@ -37,7 +37,7 @@ public class PhysicalMeterEntityMapperTest {
       .externalId("external-id")
       .medium("My Medium")
       .manufacturer("ELV")
-      .organisation(ELVACO)
+      .organisationId(ELVACO.id)
       .readIntervalMinutes(15)
       .revision(5)
       .mbusDeviceType(9)

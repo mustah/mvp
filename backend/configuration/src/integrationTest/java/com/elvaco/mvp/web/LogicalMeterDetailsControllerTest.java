@@ -534,13 +534,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @SafeVarargs
-  private final void saveStatusLogForMeter(StatusLogEntry<UUID>... statusLogs) {
+  private void saveStatusLogForMeter(StatusLogEntry<UUID>... statusLogs) {
     asList(statusLogs).forEach(meterStatusLogs::save);
   }
 
   private PhysicalMeterBuilder physicalMeter() {
     return PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("address-123")
       .externalId(randomUUID().toString())
       .medium(Medium.HOT_WATER.medium)

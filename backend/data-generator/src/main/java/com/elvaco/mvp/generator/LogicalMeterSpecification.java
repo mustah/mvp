@@ -78,7 +78,7 @@ class LogicalMeterSpecification {
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .logicalMeterId(logicalMeterId)
-      .organisation(organisation)
+      .organisationId(organisation.id)
       .address(generateAddress())
       .externalId(externalId)
       .medium(meterDefinition.medium)

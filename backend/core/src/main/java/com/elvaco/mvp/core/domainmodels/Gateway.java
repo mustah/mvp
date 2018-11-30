@@ -46,7 +46,12 @@ public class Gateway implements Identifiable<UUID> {
   public Gateway replaceActiveStatus(StatusType status) {
     List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statusLogs,
-      StatusLogEntry.<UUID>builder().entityId(id).status(status).start(ZonedDateTime.now()).build()
+      StatusLogEntry.<UUID>builder()
+        .entityId(id)
+        .organisationId(organisationId)
+        .status(status)
+        .start(ZonedDateTime.now())
+        .build()
     );
     this.statusLogs = new ArrayList<>();
     return toBuilder().statusLogs(newStatuses).build();

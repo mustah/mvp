@@ -47,12 +47,12 @@ public class GatewayFilterQueryDslJpaVisitor extends EmptyFilterQueryDslJpaVisit
 
   @Override
   public void visit(OrganisationIdFilter organisationIdFilter) {
-    predicates.add(GATEWAY.organisationId.in(organisationIdFilter.values()));
+    predicates.add(GATEWAY.primaryKey.organisationId.in(organisationIdFilter.values()));
   }
 
   @Override
   public void visit(GatewayIdFilter gatewayIdFilter) {
-    predicates.add(GATEWAY.id.in(gatewayIdFilter.values()));
+    predicates.add(GATEWAY.primaryKey.id.in(gatewayIdFilter.values()));
   }
 
   @Override

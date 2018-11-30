@@ -9,14 +9,12 @@ import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MissingMeasurementEntity;
-import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -40,9 +38,6 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   @Id
   public UUID id;
-
-  @OneToOne
-  public OrganisationEntity organisation;
 
   public String address;
   public String externalId;
@@ -73,7 +68,8 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
   public Set<MeterAlarmLogEntity> alarms = new HashSet<>();
 
-  public UUID logicalMeterId;
+  @NotAudited
+  public LogicalMeterPrimaryKey logicalMeterPrimaryKey;
 
   public long readIntervalMinutes;
 
@@ -83,7 +79,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   public PhysicalMeterEntity(
     UUID id,
-    OrganisationEntity organisation,
+    UUID organisationId,
     String address,
     String externalId,
     String medium,
@@ -96,12 +92,11 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
     Set<MeterAlarmLogEntity> alarms
   ) {
     this.id = id;
-    this.organisation = organisation;
     this.address = address;
     this.externalId = externalId;
     this.medium = medium;
     this.manufacturer = manufacturer;
-    this.logicalMeterId = logicalMeterId;
+    this.logicalMeterPrimaryKey = new LogicalMeterPrimaryKey(logicalMeterId, organisationId);
     this.readIntervalMinutes = readIntervalMinutes;
     this.revision = revision;
     this.mbusDeviceType = mbusDeviceType;
@@ -112,5 +107,13 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
   @Override
   public UUID getId() {
     return id;
+  }
+
+  public UUID getLogicalMeterId() {
+    return logicalMeterPrimaryKey.logicalMeterId;
+  }
+
+  public UUID getOrganisationId() {
+    return logicalMeterPrimaryKey.organisationId;
   }
 }

@@ -89,7 +89,7 @@ public class MeteringAlarmMessageConsumerTest {
     physicalMeterUseCases.save(PhysicalMeter.builder()
       .address("unknown-meter-address")
       .externalId("external-123")
-      .organisation(organisation)
+      .organisationId(organisation.id)
       .build());
 
     messageConsumer.accept(newAlarmMessage(newAlarmWithLowBattery()));
@@ -111,7 +111,7 @@ public class MeteringAlarmMessageConsumerTest {
     return physicalMeterUseCases.save(PhysicalMeter.builder()
       .address("meter-123")
       .externalId("external-123")
-      .organisation(organisation)
+      .organisationId(organisation.id)
       .build());
   }
 

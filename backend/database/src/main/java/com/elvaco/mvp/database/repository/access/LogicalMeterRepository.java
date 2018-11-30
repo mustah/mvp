@@ -48,8 +48,8 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return logicalMeterJpaRepository.findByOrganisationIdAndId(organisationId, id)
+  public Optional<LogicalMeter> findByPrimaryKey(UUID organisationId, UUID id) {
+    return logicalMeterJpaRepository.findByPrimaryKey(organisationId, id)
       .map(LogicalMeterEntityMapper::toDomainModel);
   }
 
@@ -216,7 +216,7 @@ public class LogicalMeterRepository implements LogicalMeters {
         logicalMeterEntity,
         mappedStatuses,
         getReadoutCount(selectionPeriod, logicalMeterEntity),
-        missingMeasurementsCount.getOrDefault(logicalMeterEntity.id, 0L)
+        missingMeasurementsCount.getOrDefault(logicalMeterEntity.getLogicalMeterId(), 0L)
       ))
       .collect(toList());
   }

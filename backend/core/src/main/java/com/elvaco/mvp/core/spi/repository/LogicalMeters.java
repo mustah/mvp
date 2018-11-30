@@ -16,7 +16,7 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findById(UUID id);
 
-  Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id);
+  Optional<LogicalMeter> findByPrimaryKey(UUID organisationId, UUID id);
 
   Optional<LogicalMeter> findByOrganisationIdAndExternalId(UUID organisationId, String externalId);
 

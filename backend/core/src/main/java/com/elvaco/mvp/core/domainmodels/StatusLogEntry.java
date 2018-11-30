@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.Dates;
@@ -18,6 +19,7 @@ public class StatusLogEntry<T> implements Identifiable<Long> {
   @Nullable
   public final Long id;
   public final T entityId;
+  public final UUID organisationId;
   public final StatusType status;
   @Builder.Default
   public ZonedDateTime start = ZonedDateTime.now();

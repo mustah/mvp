@@ -25,7 +25,7 @@ public class SelectionQueryFilters extends QueryFilters {
   private Predicate buildNullablePredicateFor(RequestParameter parameter, List<String> values) {
     switch (parameter) {
       case ORGANISATION:
-        return LOGICAL_METER.organisationId.in(toUuids(values));
+        return LOGICAL_METER.primaryKey.organisationId.in(toUuids(values));
       case CITY:
         return LocationPredicates.whereCityOrNull(values);
       case ADDRESS:

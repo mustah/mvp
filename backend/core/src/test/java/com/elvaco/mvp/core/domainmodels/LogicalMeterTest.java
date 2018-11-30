@@ -292,7 +292,7 @@ public class LogicalMeterTest {
     UUID logicalMeterId = randomUUID();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .organisation(OTHER_ORGANISATION)
+      .organisationId(OTHER_ORGANISATION.id)
       .address("250")
       .externalId("an-external-id")
       .medium("Heat, Return temp.")
@@ -334,7 +334,7 @@ public class LogicalMeterTest {
   private static PhysicalMeter newPhysicalMeter(UUID logicalMeterId, String manufacturer) {
     return PhysicalMeter.builder()
       .logicalMeterId(logicalMeterId)
-      .organisation(SECRET_SERVICE)
+      .organisationId(SECRET_SERVICE.id)
       .address("12341234")
       .externalId("an-external-id")
       .medium("Hot water")

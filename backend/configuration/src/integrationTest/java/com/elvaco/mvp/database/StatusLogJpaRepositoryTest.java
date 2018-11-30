@@ -30,7 +30,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
     physicalMeterJpaRepository.save(
       new PhysicalMeterEntity(
         meterId,
-        context().organisationEntity,
+        context().organisationId(),
         "",
         "abc",
         "",
@@ -71,6 +71,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
     gatewayStatusLogJpaRepository.save(new GatewayStatusLogEntity(
       null,
       gatewayId,
+      context().organisationId(),
       StatusType.OK,
       start,
       null
@@ -80,6 +81,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
       gatewayStatusLogJpaRepository.save(new GatewayStatusLogEntity(
         null,
         gatewayId,
+        context().organisationId(),
         StatusType.OK,
         start,
         null

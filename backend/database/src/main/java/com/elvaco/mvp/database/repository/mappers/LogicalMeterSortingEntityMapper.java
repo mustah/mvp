@@ -19,7 +19,7 @@ public class LogicalMeterSortingEntityMapper extends SortingEntityMapper {
   private static final QPhysicalMeterEntity PHYSICAL_METER = physicalMeterEntity;
 
   static {
-    SORTABLE_PROPERTIES.put("id", LOGICAL_METER.id);
+    SORTABLE_PROPERTIES.put("id", LOGICAL_METER.primaryKey.id);
 
     SORTABLE_PROPERTIES.put("address", LOGICAL_METER.location.streetAddress);
 

@@ -60,7 +60,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     var date = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
     var logicalGasMeter = newLogicalMeterEntity(GAS_METER);
 
-    var physicalGasMeter = newPhysicalMeterEntity(logicalGasMeter.id);
+    var physicalGasMeter = newPhysicalMeterEntity(logicalGasMeter.getLogicalMeterId());
     newMeasurement(physicalGasMeter, date, "Volume", 1.0, "m^3");
     newMeasurement(physicalGasMeter, date.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(physicalGasMeter, date.plusHours(2), "Volume", 5.0, "m^3");
@@ -68,11 +68,11 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     var logicalMeter2 = newLogicalMeterEntity(GAS_METER);
 
-    var meter2 = newPhysicalMeterEntity(logicalMeter2.id);
+    var meter2 = newPhysicalMeterEntity(logicalMeter2.getLogicalMeterId());
 
     newMeasurement(meter2, date.plusHours(4), "Volume", 7.0, "m^3");
 
-    var url = urlFrom(logicalGasMeter.getId()) + "&size=2";
+    var url = urlFrom(logicalGasMeter.getId().id) + "&size=2";
 
     Page<MeasurementDto> firstPage = asUser().getPage(url, MeasurementDto.class);
 
@@ -102,7 +102,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     newMeasurement(physicalMeter, created, "Difference temperature", 285.59, "°C");
 
-    var url = urlFrom(physicalMeter.logicalMeterId);
+    var url = urlFrom(physicalMeter.getLogicalMeterId());
     Page<MeasurementDto> wrongUserResponse = asUser().getPage(url, MeasurementDto.class);
 
     assertThat(wrongUserResponse).hasSize(0);
@@ -117,10 +117,10 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     var after = ZonedDateTime.parse("2018-02-01T01:00:00Z[UTC]");
     var districtHeatingMeter = newLogicalMeterEntity(DISTRICT_HEATING_METER);
 
-    var physicalMeter = newPhysicalMeterEntity(districtHeatingMeter.id);
+    var physicalMeter = newPhysicalMeterEntity(districtHeatingMeter.getLogicalMeterId());
     newMeasurement(physicalMeter, after, "Energy", 1.0, "GJ");
 
-    var url = urlFrom(districtHeatingMeter.getId());
+    var url = urlFrom(districtHeatingMeter.getId().id);
     Page<MeasurementDto> firstPage = asUser().getPage(url, MeasurementDto.class);
 
     assertThat(firstPage.getContent()).extracting("unit").containsExactly("kWh");
@@ -175,7 +175,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     var physicalMeterId = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       physicalMeterId,
-      organisationEntity,
+      organisationEntity.id,
       "",
       physicalMeterId.toString(),
       "",
@@ -193,7 +193,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     var uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context().organisationEntity,
+      context().organisationId(),
       "",
       uuid.toString(),
       "",

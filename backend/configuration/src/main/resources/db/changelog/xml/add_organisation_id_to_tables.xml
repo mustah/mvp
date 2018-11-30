@@ -1,0 +1,116 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Insert missing organisation id to tables" author="Must Tahir">
+    <validCheckSum>7:9bfa0b503dbc072a7de4fc63e6a82ce5</validCheckSum>
+    <sqlFile
+      path="../sql/postgresql/add_organisation_id_to_tables.sql"
+      dbms="postgresql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+  </changeSet>
+
+  <changeSet id="Create composite foreign key constraint gateway_status_logs" author="Must Tahir">
+    <validCheckSum>7:eab832e4fc39c1b89a4eb0ea781e98aa</validCheckSum>
+    <sqlFile
+      path="../sql/postgresql/create_composite_foreign_key_constraint.sql"
+      dbms="postgresql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+  </changeSet>
+
+  <changeSet id="Primary key columns to gateways_meters" author="Must Tahir" dbms="postgresql">
+    <addPrimaryKey
+      columnNames="organisation_id, logical_meter_id, gateway_id"
+      constraintName="gateways_meters_pkey"
+      tableName="gateways_meters"
+    />
+  </changeSet>
+
+  <changeSet id="Add hibernate hack organisation id to association table" author="Must Tahir">
+    <validCheckSum>7:6654740625786d64481279309320fdee</validCheckSum>
+    <addColumn tableName="gateways_meters">
+      <column name="hibernate_organisation_id" valueComputed="organisation_id" type="uuid"/>
+    </addColumn>
+    <addNotNullConstraint
+      tableName="gateways_meters"
+      columnName="hibernate_organisation_id"
+      columnDataType="uuid"
+    />
+  </changeSet>
+
+  <changeSet id="Update foreign key constraint on gateways_meters" author="Must Tahir">
+    <dropForeignKeyConstraint
+      baseTableName="gateways_meters"
+      constraintName="gateways_meters_organisation_id_fkey"
+    />
+    <addForeignKeyConstraint
+      baseColumnNames="organisation_id, logical_meter_id"
+      baseTableName="gateways_meters"
+      constraintName="gateways_meters_organisation_id_fkey"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+      referencedColumnNames="organisation_id, id"
+      referencedTableName="logical_meter"
+    />
+    <dropForeignKeyConstraint
+      baseTableName="gateways_meters"
+      constraintName="gateways_meters_organisation_id_fkey1"
+    />
+    <addForeignKeyConstraint
+      baseColumnNames="organisation_id, gateway_id"
+      baseTableName="gateways_meters"
+      constraintName="gateways_meters_organisation_id_fkey1"
+      deferrable="false"
+      initiallyDeferred="false"
+      onDelete="CASCADE"
+      onUpdate="NO ACTION"
+      referencedColumnNames="organisation_id, id"
+      referencedTableName="gateway"/>
+  </changeSet>
+
+  <changeSet id="Change set fo h2" dbms="h2" author="Must tahir">
+    <addColumn tableName="location">
+      <column name="organisation_id" type="uuid"/>
+    </addColumn>
+    <addNotNullConstraint
+      columnDataType="uuid"
+      columnName="organisation_id"
+      schemaName="public"
+      tableName="location"
+    />
+
+    <dropForeignKeyConstraint baseTableName="location" constraintName="location_logical_meter_id_fkey"/>
+    <dropPrimaryKey tableName="location" constraintName="location_pkey"/>
+    <addPrimaryKey tableName="location" columnNames="logical_meter_id, organisation_id"/>
+
+    <addColumn tableName="gateway_status_log">
+      <column name="organisation_id" type="uuid"/>
+    </addColumn>
+    <addNotNullConstraint
+      columnDataType="uuid"
+      columnName="organisation_id"
+      schemaName="public"
+      tableName="gateway_status_log"
+    />
+
+    <addColumn tableName="location_aud" schemaName="evoaudit">
+      <column name="organisation_id" type="uuid"/>
+    </addColumn>
+    <addNotNullConstraint
+      columnDataType="uuid"
+      columnName="organisation_id"
+      schemaName="evoaudit"
+      tableName="location_aud"
+    />
+  </changeSet>
+
+</databaseChangeLog>

@@ -36,8 +36,8 @@ public class GeocodeSpringService implements GeocodeService {
       .cityParam(meterLocation.getCity())
       .addressParam(meterLocation.getAddress())
       .forceUpdateParam(meterLocation.shouldForceUpdate)
-      .callbackUrl(callbackUrl(meterLocation.getId(), CALLBACK_URL))
-      .errorCallbackUrl(callbackUrl(meterLocation.getId(), ERROR_CALLBACK_URL))
+      .callbackUrl(callbackUrl(meterLocation.getId().getId(), CALLBACK_URL))
+      .errorCallbackUrl(callbackUrl(meterLocation.getId().getId(), ERROR_CALLBACK_URL))
       .toUriString();
   }
 

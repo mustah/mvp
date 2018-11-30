@@ -126,7 +126,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     UUID uuid = UUID.randomUUID();
     return physicalMeters.save(PhysicalMeter.builder()
       .id(uuid)
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .externalId(uuid.toString())
       .address("")
       .medium("")

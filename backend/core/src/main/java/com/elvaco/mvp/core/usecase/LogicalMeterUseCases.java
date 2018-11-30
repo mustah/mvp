@@ -53,7 +53,7 @@ public class LogicalMeterUseCases {
     if (currentUser.isSuperAdmin()) {
       return logicalMeters.findById(id);
     } else {
-      return logicalMeters.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
+      return logicalMeters.findByPrimaryKey(currentUser.getOrganisationId(), id);
     }
   }
 

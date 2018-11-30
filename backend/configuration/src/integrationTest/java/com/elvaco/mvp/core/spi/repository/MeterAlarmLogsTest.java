@@ -136,7 +136,7 @@ public class MeterAlarmLogsTest extends IntegrationTest {
       .build();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("123123")
       .externalId(logicalMeter.externalId)
       .medium(logicalMeter.getMedium())

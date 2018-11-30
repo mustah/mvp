@@ -94,7 +94,7 @@ public class PhysicalMeterTest {
 
   private static PhysicalMeter.PhysicalMeterBuilder physicalMeter() {
     return PhysicalMeter.builder()
-      .organisation(OTHER_ORGANISATION)
+      .organisationId(OTHER_ORGANISATION.id)
       .address("12341234")
       .externalId("an-external-id")
       .medium("Hot water")

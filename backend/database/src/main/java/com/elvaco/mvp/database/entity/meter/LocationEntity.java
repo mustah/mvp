@@ -1,38 +1,37 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
+@Builder
 @NoArgsConstructor
-@Entity
-@Table(name = "location")
-@Access(AccessType.FIELD)
+@AllArgsConstructor
 @Audited
-public class LocationEntity extends IdentifiableType<UUID> {
+@Entity
+@Access(AccessType.FIELD)
+@Table(name = "location")
+public class LocationEntity extends IdentifiableType<EntityPrimaryKey> {
 
   private static final long serialVersionUID = -6244183552379157552L;
 
-  @Id
-  @Column(name = "logical_meter_id")
-  public UUID logicalMeterId;
-
-  @NotAudited
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "logical_meter_id", insertable = false, updatable = false)
-  public LogicalMeterEntity logicalMeter;
+  @EmbeddedId
+  @AttributeOverrides({
+    @AttributeOverride(name = "id", column = @Column(name = "logical_meter_id")),
+    @AttributeOverride(name = "organisationId", column = @Column(name = "organisation_id"))
+  })
+  public EntityPrimaryKey pk;
 
   public String country;
   public String city;
@@ -41,40 +40,12 @@ public class LocationEntity extends IdentifiableType<UUID> {
   public Double longitude;
   public Double confidence;
 
-  public LocationEntity(
-    UUID logicalMeterId,
-    Double latitude,
-    Double longitude,
-    Double confidence
-  ) {
-    this.logicalMeterId = logicalMeterId;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.confidence = confidence;
-  }
-
-  LocationEntity(UUID logicalMeterId) {
-    this.logicalMeterId = logicalMeterId;
-  }
-
-  public LocationEntity(
-    UUID logicalMeterId,
-    String country,
-    String city,
-    String address
-  ) {
-    this.logicalMeterId = logicalMeterId;
-    this.country = country;
-    this.city = city;
-    this.streetAddress = address;
+  @Override
+  public EntityPrimaryKey getId() {
+    return pk;
   }
 
   public boolean hasCoordinates() {
     return latitude != null && longitude != null && confidence != null;
-  }
-
-  @Override
-  public UUID getId() {
-    return logicalMeterId;
   }
 }

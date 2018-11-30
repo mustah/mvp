@@ -1,12 +1,13 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.database.entity.meter.EntityPrimaryKey;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import lombok.experimental.UtilityClass;
 
@@ -28,7 +29,8 @@ public class LocationEntityMapper {
 
   public static LocationWithId toLocationWithId(LocationEntity entity) {
     return new LocationBuilder()
-      .id(entity.logicalMeterId)
+      .id(entity.pk.id)
+      .organisationId(entity.pk.organisationId)
       .country(entity.country)
       .city(entity.city)
       .address(entity.streetAddress)
@@ -37,14 +39,14 @@ public class LocationEntityMapper {
   }
 
   @Nullable
-  public static LocationEntity toEntity(UUID logicalMeterId, @Nullable Location location) {
+  public static LocationEntity toEntity(PrimaryKey pk, @Nullable Location location) {
     if (location != null) {
-      LocationEntity entity = new LocationEntity(
-        logicalMeterId,
-        location.getCountry(),
-        location.getCity(),
-        location.getAddress()
-      );
+      LocationEntity entity = LocationEntity.builder()
+        .pk(new EntityPrimaryKey(pk.getId(), pk.getOrganisationId()))
+        .country(location.getCountry())
+        .city(location.getCity())
+        .streetAddress(location.getAddress())
+        .build();
       if (location.hasCoordinates()) {
         GeoCoordinate coordinate = location.getCoordinate();
         entity.latitude = coordinate.getLatitude();

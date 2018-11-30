@@ -76,7 +76,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeter(logicalMeter.id)
+      newPhysicalMeter(logicalMeter.getLogicalMeterId())
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
@@ -107,7 +107,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeter(logicalMeter.id)
+      newPhysicalMeter(logicalMeter.getLogicalMeterId())
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
@@ -136,7 +136,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeter(logicalMeter.id)
+      newPhysicalMeter(logicalMeter.getLogicalMeterId())
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(11));
@@ -188,7 +188,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
       randomUUID(),
       uuid.toString(),
-      context().organisationEntity.id,
+      context().organisationId(),
       created,
       meterDefinition,
       DEFAULT_UTC_OFFSET
@@ -199,7 +199,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     UUID uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context().organisationEntity,
+      context().organisationId(),
       "",
       uuid.toString(),
       MeterDefinition.GAS_METER.medium,

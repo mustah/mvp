@@ -354,7 +354,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
     physicalMeters.save(
       physicalMeterBuilder()
-        .organisation(dailyPlanet)
         .logicalMeterId(meter1234.id)
         .address("1234")
         .build()
@@ -362,7 +361,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
     physicalMeters.save(
       physicalMeterBuilder()
-        .organisation(dailyPlanet)
         .logicalMeterId(meter5678.id)
         .address("5678")
         .build()
@@ -426,7 +424,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
     physicalMeters.save(
       physicalMeterBuilder()
-        .organisation(dailyPlanet)
         .logicalMeterId(meterElv.id)
         .manufacturer("ELV")
         .build()
@@ -434,7 +431,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
     physicalMeters.save(
       physicalMeterBuilder()
-        .organisation(dailyPlanet)
         .logicalMeterId(meterKam.id)
         .manufacturer("KAM")
         .build()
@@ -507,7 +503,6 @@ public class GatewayControllerTest extends IntegrationTest {
     );
     PhysicalMeter physicalMeter = physicalMeters.save(
       physicalMeterBuilder()
-        .organisation(dailyPlanet)
         .logicalMeterId(logicalMeter.id)
         .build()
     );
@@ -543,7 +538,6 @@ public class GatewayControllerTest extends IntegrationTest {
     );
     PhysicalMeter physicalMeter = physicalMeters.save(
       physicalMeterBuilder()
-        .organisation(dailyPlanet)
         .logicalMeterId(logicalMeter.id)
         .build()
     );
@@ -620,11 +614,12 @@ public class GatewayControllerTest extends IntegrationTest {
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-id")
-      .organisationId(dailyPlanet.id)
+      .organisationId(context().organisationId())
       .gateway(gateway)
       .location(kungsbacka().build())
       .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
+
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=kungsb", GatewayDto.class);
 
@@ -641,11 +636,12 @@ public class GatewayControllerTest extends IntegrationTest {
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-id")
-      .organisationId(dailyPlanet.id)
+      .organisationId(context().organisationId())
       .gateway(gateway)
       .location(kungsbacka().build())
       .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
+
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Kungsb", GatewayDto.class);
 
@@ -664,11 +660,12 @@ public class GatewayControllerTest extends IntegrationTest {
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-id")
-      .organisationId(dailyPlanet.id)
+      .organisationId(context().organisationId())
       .gateway(gateway)
       .location(kungsbacka().address("teknikgatan 2t").build())
       .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
+
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=tekni", GatewayDto.class);
 
@@ -687,11 +684,12 @@ public class GatewayControllerTest extends IntegrationTest {
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-id")
-      .organisationId(dailyPlanet.id)
+      .organisationId(context().organisationId())
       .gateway(gateway)
       .location(kungsbacka().build())
       .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
+
     Page<GatewayDto> page = asUser()
       .getPage("/gateways?w=Kabel", GatewayDto.class);
 
@@ -738,6 +736,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   private PhysicalMeter.PhysicalMeterBuilder physicalMeterBuilder() {
     return PhysicalMeter.builder()
+      .organisationId(dailyPlanet.id)
       .address(randomUUID().toString())
       .externalId(randomUUID().toString());
   }
@@ -760,6 +759,7 @@ public class GatewayControllerTest extends IntegrationTest {
       new GatewayStatusLogEntity(
         null,
         gatewayId,
+        dailyPlanet.id,
         status,
         start,
         stop

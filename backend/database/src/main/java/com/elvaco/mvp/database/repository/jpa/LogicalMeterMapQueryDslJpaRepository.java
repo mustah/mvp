@@ -35,7 +35,7 @@ class LogicalMeterMapQueryDslJpaRepository
     JPQLQuery<MapMarker> query = createQuery()
       .select(Projections.constructor(
         MapMarker.class,
-        LOCATION.logicalMeterId,
+        LOCATION.pk.id,
         METER_STATUS_LOG.status,
         ALARM_LOG.mask,
         LOCATION.latitude,

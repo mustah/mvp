@@ -21,7 +21,7 @@ public interface LogicalMeterJpaRepository {
 
   Optional<LogicalMeterEntity> findById(UUID id);
 
-  Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
+  Optional<LogicalMeterEntity> findByPrimaryKey(UUID organisationId, UUID id);
 
   Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
 

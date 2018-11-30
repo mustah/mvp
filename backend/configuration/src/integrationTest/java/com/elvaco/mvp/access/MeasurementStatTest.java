@@ -245,7 +245,7 @@ public class MeasurementStatTest extends IntegrationTest {
       .manufacturer("ELV")
       .id(UUID.randomUUID())
       .externalId(logicalMeterId.toString())
-      .organisation(context().organisation())
+      .organisationId(context().organisationId())
       .address("1234")
       .logicalMeterId(logicalMeterId)
       .readIntervalMinutes(readIntervalMinutes)

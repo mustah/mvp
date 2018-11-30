@@ -229,7 +229,7 @@ public class MeasurementDtoMapperTest {
       .value(3.0)
       .physicalMeter(PhysicalMeter.builder()
         .id(physicalMeterId)
-        .organisation(OTHER_ORGANISATION)
+        .organisationId(OTHER_ORGANISATION.id)
         .externalId(physicalMeterId.toString())
         .address("1234")
         .medium("Heat")

@@ -86,7 +86,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementDto> measurements = asUser()
       .getList(
         "/measurements?resolution=hour"
-          + "&logicalMeterId=" + heatMeter.logicalMeterId
+          + "&logicalMeterId=" + heatMeter.getLogicalMeterId()
           + "&after=" + date
           + "&before=" + date.plusHours(1),
         MeasurementDto.class
@@ -109,7 +109,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> measurements = asUser()
       .getList(
         "/measurements?quantity=Difference+temperature:K"
-          + "&logicalMeterId=" + heatMeter.logicalMeterId
+          + "&logicalMeterId=" + heatMeter.getLogicalMeterId()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1),
@@ -134,7 +134,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     List<MeasurementDto> measurements = asUser()
       .getList(
-        "/measurements?logicalMeterId=" + otherOrganisationsMeter.logicalMeterId
+        "/measurements?logicalMeterId=" + otherOrganisationsMeter.getLogicalMeterId()
           + "&after=" + date
           + "&before=" + date,
         MeasurementDto.class
@@ -167,8 +167,8 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
 
     assertThat(getListAsSuperAdmin(
-      "/measurements?logicalMeterId=" + firstOrganisationsMeter.logicalMeterId.toString()
-        + "," + secondOrganisationsMeter.logicalMeterId.toString()
+      "/measurements?logicalMeterId=" + firstOrganisationsMeter.getLogicalMeterId().toString()
+        + "," + secondOrganisationsMeter.getLogicalMeterId().toString()
         + "&quantity=Difference+temperature"
         + "&resolution=hour"
         + "&after=" + date
@@ -188,7 +188,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
         + "quantity=Difference+temperature"
-        + "&logicalMeterId=" + heatMeter.logicalMeterId
+        + "&logicalMeterId=" + heatMeter.getLogicalMeterId()
         + "&after=" + date
         + "&before=" + date.plusHours(1)
         + "&resolution=hour");
@@ -210,7 +210,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?"
-        + "logicalMeterId=" + heatMeter.logicalMeterId
+        + "logicalMeterId=" + heatMeter.getLogicalMeterId()
         + "&after=" + date
         + "&before=" + date.plusHours(1)
         + "&resolution=hour");
@@ -219,7 +219,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       .hasSize(MeterDefinition.DISTRICT_HEATING_METER.quantities.size())
       .contains(
         new MeasurementSeriesDto(
-          heatMeter.logicalMeterId.toString(),
+          heatMeter.getLogicalMeterId().toString(),
           "Difference temperature",
           "K",
           heatMeter.externalId,
@@ -230,7 +230,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           )
         ),
         new MeasurementSeriesDto(
-          heatMeter.logicalMeterId.toString(),
+          heatMeter.getLogicalMeterId().toString(),
           "Energy",
           "kWh",
           heatMeter.externalId,
@@ -254,7 +254,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       getListAsSuperAdmin("/measurements?quantity=Difference+temperature:K"
         + "&after=" + date
         + "&before=" + date.plusHours(1)
-        + "&logicalMeterId=" + heatMeter.logicalMeterId.toString()
+        + "&logicalMeterId=" + heatMeter.getLogicalMeterId().toString()
         + "&resolution=hour");
 
     assertThat(contents).hasSize(1);
@@ -278,14 +278,14 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
         "/measurements?quantity=Difference+temperature:K,Energy:kWh"
-          + "&logicalMeterId=" + heatMeter.logicalMeterId.toString()
+          + "&logicalMeterId=" + heatMeter.getLogicalMeterId().toString()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1));
 
     assertThat(contents).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
-        heatMeter.logicalMeterId.toString(),
+        heatMeter.getLogicalMeterId().toString(),
         "Difference temperature",
         "K",
         heatMeter.externalId,
@@ -296,7 +296,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         )
       ),
       new MeasurementSeriesDto(
-        heatMeter.logicalMeterId.toString(),
+        heatMeter.getLogicalMeterId().toString(),
         "Energy",
         "kWh",
         heatMeter.externalId,
@@ -318,7 +318,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
         "/measurements?quantity=Difference+temperature"
-          + "&logicalMeterId=" + heatMeter.logicalMeterId.toString()
+          + "&logicalMeterId=" + heatMeter.getLogicalMeterId().toString()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1));
@@ -337,7 +337,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantity=Difference+temperature:unknownUnit"
-          + "&logicalMeterId=" + heatMeter.logicalMeterId.toString()
+          + "&logicalMeterId=" + heatMeter.getLogicalMeterId().toString()
           + "&resolution=hour"
           + "&after=" + date
           + "&before=" + date.plusHours(1),
@@ -358,7 +358,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = asUser()
       .get(
         "/measurements?quantity=Difference+temperature:kWh"
-          + "&logicalMeterId=" + heatMeter.logicalMeterId.toString()
+          + "&logicalMeterId=" + heatMeter.getLogicalMeterId().toString()
           + "&after=" + date
           + "&before=" + date.plusHours(1)
           + "&resolution=hour",
@@ -393,7 +393,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         false
       )
     );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.id);
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.getLogicalMeterId());
     newMeasurement(meter, when, "Volume", 25.0, "m³");
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
     newMeasurement(meter, when.plusHours(2), "Volume", 55.0, "m³");
@@ -401,7 +401,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementSeriesDto> list = asUser()
       .getList(
         "/measurements?resolution=hour&quantity=Volume"
-          + "&logicalMeterId=" + consumptionMeter.getId()
+          + "&logicalMeterId=" + consumptionMeter.getId().id
           + "&after=" + when
           + "&before=" + when.plusHours(2),
         MeasurementSeriesDto.class
@@ -409,7 +409,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(list).containsExactly(
       new MeasurementSeriesDto(
-        meter.logicalMeterId.toString(),
+        meter.getLogicalMeterId().toString(),
         "Volume",
         "m³",
         meter.externalId,
@@ -434,7 +434,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         false
       )
     );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.id);
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.getLogicalMeterId());
     newMeasurement(meter, when, "Volume", 25.0, "m³");
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
     newMeasurement(meter, when.plusHours(2), "Volume", 55.0, "m³");
@@ -443,14 +443,14 @@ public class MeasurementControllerTest extends IntegrationTest {
       .getList(String.format(
         "/measurements?resolution=hour&quantity=Volume&logicalMeterId=%s"
           + "&after=%s&before=%s",
-        consumptionMeter.getId(),
+        consumptionMeter.getId().id,
         when,
         when.plusHours(1)
       ), MeasurementSeriesDto.class).getBody();
 
     assertThat(seriesDto).containsExactly(
       new MeasurementSeriesDto(
-        meter.logicalMeterId.toString(),
+        meter.getLogicalMeterId().toString(),
         "Volume",
         "m³",
         meter.externalId,
@@ -469,7 +469,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
       GAS_METER
     );
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.getLogicalMeterId());
     newMeasurement(meter, when, "Volume", 1.0, "m^3");
     newMeasurement(meter, when.plusHours(1), "Volume", 2.0, "m^3");
     newMeasurement(meter, when.plusHours(2), "Volume", 5.0, "m^3");
@@ -481,7 +481,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "&before=" + when.plusHours(2)
           + "&quantity=" + Quantity.VOLUME.name
           + "&logicalMeterId=%s",
-        logicalMeter.getId()
+        logicalMeter.getId().id
       ), MeasurementSeriesDto.class).getBody();
 
     ZonedDateTime periodStartHour = when.truncatedTo(ChronoUnit.HOURS);
@@ -509,7 +509,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
-    newPhysicalMeterEntity(logicalMeter.id);
+    newPhysicalMeterEntity(logicalMeter.getLogicalMeterId());
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .get(
@@ -517,7 +517,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           + "?after=" + after
           + "&before=" + before
           + "&quantity=Floop"
-          + "&logicalMeterId=" + logicalMeter.getId(),
+          + "&logicalMeterId=" + logicalMeter.getId().id,
         ErrorMessageDto.class
       );
 
@@ -612,7 +612,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     UUID physicalMeterId = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       physicalMeterId,
-      organisationEntity,
+      organisationEntity.id,
       "",
       physicalMeterId.toString(),
       "",
@@ -630,7 +630,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     UUID uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context().organisationEntity,
+      context().organisationId(),
       "",
       uuid.toString(),
       "",

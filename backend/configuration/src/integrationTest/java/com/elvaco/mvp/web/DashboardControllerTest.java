@@ -124,7 +124,7 @@ public class DashboardControllerTest extends IntegrationTest {
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeterEntity(logicalMeter.id, GAS_METER)
+      newPhysicalMeterEntity(logicalMeter.getLogicalMeterId(), GAS_METER)
     );
 
     newActiveStatusLogs(physicalMeters, startDate.minusMinutes(15));
@@ -160,7 +160,7 @@ public class DashboardControllerTest extends IntegrationTest {
     );
 
     List<PhysicalMeterEntity> physicalMeters = singletonList(
-      newPhysicalMeterEntity(logicalMeter.id, DISTRICT_HEATING_METER)
+      newPhysicalMeterEntity(logicalMeter.getLogicalMeterId(), DISTRICT_HEATING_METER)
     );
 
     newActiveStatusLogs(physicalMeters, startDate);
@@ -287,7 +287,7 @@ public class DashboardControllerTest extends IntegrationTest {
     UUID id = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       id,
-      context().organisationEntity,
+      context().organisationId(),
       "",
       id.toString(),
       meterDefinition.medium,

@@ -8,14 +8,15 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class LocationWithId extends Location implements Identifiable<UUID> {
+public class LocationWithId extends Location implements Identifiable<PrimaryKey> {
 
   public final boolean shouldForceUpdate;
 
-  private final UUID logicalMeterId;
+  private final PrimaryKey pk;
 
   protected LocationWithId(
     UUID logicalMeterId,
+    UUID organisationId,
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,
     @Nullable String city,
@@ -23,12 +24,12 @@ public class LocationWithId extends Location implements Identifiable<UUID> {
     boolean shouldForceUpdate
   ) {
     super(coordinate, country, city, address);
-    this.logicalMeterId = logicalMeterId;
+    this.pk = new Pk(logicalMeterId, organisationId);
     this.shouldForceUpdate = shouldForceUpdate;
   }
 
   @Override
-  public UUID getId() {
-    return logicalMeterId;
+  public PrimaryKey getId() {
+    return pk;
   }
 }

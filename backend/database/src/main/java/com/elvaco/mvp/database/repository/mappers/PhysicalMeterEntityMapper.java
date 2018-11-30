@@ -45,7 +45,7 @@ public class PhysicalMeterEntityMapper {
   public static PhysicalMeterEntity toEntity(PhysicalMeter domainModel) {
     return new PhysicalMeterEntity(
       domainModel.id,
-      OrganisationEntityMapper.toEntity(domainModel.organisation),
+      domainModel.organisationId,
       domainModel.address,
       domainModel.externalId,
       domainModel.medium,
@@ -75,12 +75,12 @@ public class PhysicalMeterEntityMapper {
   ) {
     return PhysicalMeter.builder()
       .id(entity.id)
-      .organisation(OrganisationEntityMapper.toDomainModel(entity.organisation))
+      .organisationId(entity.getOrganisationId())
       .address(entity.address)
       .externalId(entity.externalId)
       .medium(entity.medium)
       .manufacturer(entity.manufacturer)
-      .logicalMeterId(entity.logicalMeterId)
+      .logicalMeterId(entity.getLogicalMeterId())
       .readIntervalMinutes(entity.readIntervalMinutes)
       .revision(entity.revision)
       .mbusDeviceType(entity.mbusDeviceType);

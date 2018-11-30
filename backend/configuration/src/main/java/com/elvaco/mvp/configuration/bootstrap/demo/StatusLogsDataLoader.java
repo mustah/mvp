@@ -50,7 +50,7 @@ class StatusLogsDataLoader {
         .status(nextRandomStatusType())
         .start(subtractDays(90))
         .build())
-      .forEach(gatewayStatusLogs::save);
+      .forEach(gatewayStatusLog -> gatewayStatusLogs.save(gatewayStatusLog));
   }
 
   private void createMeterStatusLogMockData() {

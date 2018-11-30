@@ -590,7 +590,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     UUID uuid = UUID.randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context().organisationEntity,
+      context().organisationId(),
       "",
       uuid.toString(),
       "",
