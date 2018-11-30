@@ -2,11 +2,19 @@ FROM openjdk:10-jre
 RUN mkdir -p /app
 RUN apt-get -y update && apt-get -y install curl
 ARG GEOSERVICE_APPVER
+ARG APM_VERSION
+ARG APM_SERVER
 RUN groupadd -g 4000 mvp && \
 	useradd -r -u 4000 -g mvp mvp
 COPY ./backend/geoservice/build/distributions/geoservice-$GEOSERVICE_APPVER.tar /app/geoservice.tar
 RUN cd /app/ && tar -m -xf geoservice.tar --strip-components=1 && rm geoservice.tar
+ADD http://artifactory2.elvaco.local/artifactory/Elvaco/elastic/apm/elastic-apm-agent-$APM_VERSION.jar /app/elastic-apm-agent.jar
 RUN chown -R mvp:mvp /app
+ENV JAVA_OPTS="$JAVA_OPTS -javaagent:/app/elastic-apm-agent.jar"
+ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.service_name=EvoGeoservice"
+ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.service_version=$MVP_APPVER"
+ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.application_packages=com.elvaco"
+ENV JAVA_OPTS="$JAVA_OPTS -Delastic.apm.server_urls=http://$APM_SERVER"
 WORKDIR /app
 HEALTHCHECK CMD curl -v --fail http://localhost:8081/actuator/health || exit 1
 CMD ["/app/bin/geoservice"]

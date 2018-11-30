@@ -187,6 +187,8 @@ pre-test:docker-mvp-app:
   <<: *no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
+    APM_VERSION: 1.1.0
+    APM_SERVER: elvsealielk01.elvaco.se:8200
   stage: pre-test
   dependencies:
     - assemble
@@ -198,7 +200,7 @@ pre-test:docker-mvp-app:
   script:
     - cat .version
     - git describe --tags --abbrev=7
-    - docker build --build-arg MVP_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile .
+    - docker build --build-arg APM_VERSION=$APM_VERSION --build-arg APM_SERVER=$APM_SERVER --build-arg MVP_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
 
@@ -206,6 +208,8 @@ pre-test:docker-geoservice-app:
   <<: *no_cache
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
+    APM_VERSION: 1.1.0
+    APM_SERVER: elvsealielk01.elvaco.se:8200
   stage: pre-test
   dependencies:
     - assemble
@@ -217,7 +221,7 @@ pre-test:docker-geoservice-app:
   script:
     - cat .version
     - git describe --tags --abbrev=7
-    - docker build --build-arg GEOSERVICE_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile-geoservice .
+    - docker build --build-arg APM_VERSION=$APM_VERSION --build-arg APM_SERVER=$APM_SERVER --build-arg GEOSERVICE_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile-geoservice .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
 
@@ -274,6 +278,7 @@ test:upgrade:
     MVP_UPGRADE_FROM_TAG: production
     MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_NAME}
     TEST_HOST: docker-host
+    APM_ENV: upgrade-test
   stage: test
   dependencies: []
   before_script:
@@ -287,7 +292,7 @@ test:upgrade:
   script:
     - docker info
     - docker ps
-    - ./scripts/upgrade-test.sh $MVP_UPGRADE_FROM_TAG $MVP_UPGRADE_TO_TAG $TEST_HOST
+    - ./scripts/upgrade-test.sh $MVP_UPGRADE_FROM_TAG $MVP_UPGRADE_TO_TAG $TEST_HOST $APM_ENV
 
 deploy:staging:
   <<: *auto_deploy

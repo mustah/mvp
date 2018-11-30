@@ -3,6 +3,7 @@ set -e
 MVP_UPGRADE_FROM_TAG=
 MVP_UPGRADE_TO_TAG=
 TEST_HOST=
+APM_ENV=
 
 # Values in seconds
 MAX_WAIT_FOR_MVP_APPLICATION=120
@@ -26,9 +27,16 @@ else
 	TEST_HOST="localhost"
 fi
 
+if [ ! -z "$4" ]; then
+	APM_ENV=$4
+else
+	APM_ENV="local-upgrade-test"
+fi
+
 echo "Upgrade from: $MVP_UPGRADE_FROM_TAG"
 echo "Upgrade to  : $MVP_UPGRADE_TO_TAG"
 echo "Test Host   : $TEST_HOST"
+echo "APM Env     : $APM_ENV"
 echo ""
 
 function check_application_startup () {
@@ -104,7 +112,7 @@ function send_amqp_message () {
 }
 
 # === Main application ===
-MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d rabbitmq application geoservice
+APM_ENV=$APM_ENV MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d rabbitmq application geoservice
 echo -n ":: Waiting for GEOSERVICE application to start up"
 check_application_startup geoservice
 
@@ -130,7 +138,7 @@ docker-compose stop application
 echo ":: Stopping old GEOSERVICE application"
 docker-compose stop geoservice
 
-MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application geoservice
+APM_ENV=$APM_ENV MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application geoservice
 echo -n ":: Waiting for new instance of MVP application to start up"
 check_application_startup application
 
