@@ -110,13 +110,12 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
     if (stopDate.isEqual(startDate)) {
-      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.eq(Date.valueOf(startDate));
+      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate));
     } else {
-      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(
-        Date.valueOf(startDate)
-      ).and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(
-        Date.valueOf(stopDate))
-      ).and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.eq(PHYSICAL_METER.ID));
+      measurementStatsCondition =
+        MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(Date.valueOf(startDate))
+          .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
+          .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     }
 
     meterAlarmLogCondition = METER_ALARM_LOG.START.between(
@@ -177,55 +176,35 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
   }
 
   @Override
-  public void visit(MeasurementThresholdFilter thresholdFilter) {
-    String thresholdExpression = thresholdFilter.oneValue();
-    MeasurementThreshold threshold = measurementThresholdParser.parse(thresholdExpression);
-    Condition thresholdCondition = MEASUREMENT_STAT_DATA.QUANTITY.eq(threshold.quantity.getId());
+  public void visit(MeasurementThresholdFilter filter) {
+    MeasurementThreshold threshold = measurementThresholdParser.parse(filter.oneValue());
 
-    Condition valueCond;
-    double convertedValue = threshold.getConvertedValue();
-    switch (threshold.operator) {
-      case LESS_THAN:
-        valueCond = MEASUREMENT_STAT_DATA.MIN.lt(convertedValue);
-        break;
-      case LESS_THAN_OR_EQUAL:
-        valueCond = MEASUREMENT_STAT_DATA.MIN.lessOrEqual(convertedValue);
-        break;
-      case GREATER_THAN:
-        valueCond = MEASUREMENT_STAT_DATA.MAX.gt(convertedValue);
-        break;
-      case GREATER_THAN_OR_EQUAL:
-        valueCond = MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(convertedValue);
-        break;
-      default:
-        throw new UnsupportedOperationException(String.format(
-          "Measurement threshold operator '%s' is not supported",
-          threshold.operator.name()
-        ));
-    }
+    addCondition(MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+      .and(valueConditionFor(threshold)));
 
-    addCondition(thresholdCondition.and(valueCond));
     hasMeasurementStatsFilter = true;
   }
 
   @Override
   protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
     query = query.leftJoin(PHYSICAL_METER)
-      .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
-        .and(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID))
+      .on(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
+        .and(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
       )
 
       .leftJoin(GATEWAYS_METERS)
-      .on(GATEWAYS_METERS.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
+      .on(GATEWAYS_METERS.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
+        .and(GATEWAYS_METERS.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
       .leftJoin(GATEWAY)
-      .on(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID)
-        .and(GATEWAY.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
+      .on(GATEWAY.ORGANISATION_ID.equal(GATEWAYS_METERS.ORGANISATION_ID)
+        .and(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID)))
 
       .leftJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
 
       .leftJoin(LOCATION)
-      .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
+      .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
+        .and(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
 
       .leftJoin(PHYSICAL_METER_STATUS_LOG)
       .on(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
@@ -244,14 +223,12 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
             .and(meterAlarmLogCondition)))))
 
       .leftJoin(lateral(dsl
-        .select(
-          count().as(MISSING_MEASUREMENT_COUNT),
-          MISSING_MEASUREMENT.PHYSICAL_METER_ID
-        ).from(MISSING_MEASUREMENT)
-        .where(missingMeasurementCondition.and(MISSING_MEASUREMENT.PHYSICAL_METER_ID.eq(
-          PHYSICAL_METER.ID)))
+        .select(count().as(MISSING_MEASUREMENT_COUNT), MISSING_MEASUREMENT.PHYSICAL_METER_ID)
+        .from(MISSING_MEASUREMENT)
+        .where(MISSING_MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+          .and(missingMeasurementCondition))
         .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID)).asTable("mm"))
-      .on(PHYSICAL_METER.ID.eq(field("mm.physical_meter_id", UUID.class)));
+      .on(PHYSICAL_METER.ID.equal(field("mm.physical_meter_id", UUID.class)));
 
     if (hasMeasurementStatsFilter && !measurementStatsCondition.equals(falseCondition())) {
       //FIXME: this is messy, maybe put the period into the thresholdFilter instead, and
@@ -259,5 +236,23 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
       query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
     }
     return query;
+  }
+
+  private Condition valueConditionFor(MeasurementThreshold threshold) {
+    switch (threshold.operator) {
+      case LESS_THAN:
+        return MEASUREMENT_STAT_DATA.MIN.lessThan(threshold.getConvertedValue());
+      case LESS_THAN_OR_EQUAL:
+        return MEASUREMENT_STAT_DATA.MIN.lessOrEqual(threshold.getConvertedValue());
+      case GREATER_THAN:
+        return MEASUREMENT_STAT_DATA.MAX.greaterThan(threshold.getConvertedValue());
+      case GREATER_THAN_OR_EQUAL:
+        return MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(threshold.getConvertedValue());
+      default:
+        throw new UnsupportedOperationException(String.format(
+          "Measurement threshold operator '%s' is not supported",
+          threshold.operator.name()
+        ));
+    }
   }
 }

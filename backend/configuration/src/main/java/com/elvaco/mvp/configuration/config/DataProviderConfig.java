@@ -87,7 +87,7 @@ class DataProviderConfig {
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
-  private final MapMarkerJpaRepository logicalMeterMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository logicalMeterMapMarkerJooqJpaRepository;
   private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
   private final SummaryJpaRepository summaryJpaRepository;
   private final PropertiesJpaRepository propertiesJpaRepository;
@@ -95,7 +95,6 @@ class DataProviderConfig {
   private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
   private final UnitConverter unitConverter;
-  private final QuantityProvider quantityProvider;
 
   @Bean
   Users users() {
@@ -120,7 +119,7 @@ class DataProviderConfig {
   Locations locations() {
     return new LocationRepository(
       locationJpaRepository,
-      logicalMeterMapQueryDslJpaRepository,
+      logicalMeterMapMarkerJooqJpaRepository,
       gatewayMapQueryDslJpaRepository
     );
   }
