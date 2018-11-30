@@ -1,9 +1,11 @@
 package com.elvaco.mvp.core.util;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
@@ -16,9 +18,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MeasurementThresholdParser {
 
-  private static final Set<String> VALID_OPERATORS = Set.of(
-    ">", ">=", "<", "<="
-  );
+  private static final Set<String> VALID_OPERATORS = Arrays.stream(Operator.values())
+    .map(Operator::getSymbol)
+    .collect(Collectors.toSet());
+
   private static final Pattern THRESHOLD_FILTER_PATTERN = Pattern.compile(
     "(?<quantity>[^<>=]+)"
       + "\\s*(?<operator>" + String.join("|", VALID_OPERATORS) + ")"
@@ -62,16 +65,14 @@ public class MeasurementThresholdParser {
   }
 
   private double parseValue(String valueString) {
-    double value;
     try {
-      value = Double.parseDouble(valueString);
+      return Double.parseDouble(valueString);
     } catch (NumberFormatException nfe) {
       throw new IllegalArgumentException(String.format(
         "Invalid value '%s' for measurement threshold",
         valueString
       ));
     }
-    return value;
   }
 
   private Operator parseOperator(String operator) {

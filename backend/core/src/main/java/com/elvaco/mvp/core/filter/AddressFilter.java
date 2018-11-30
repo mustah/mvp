@@ -6,9 +6,9 @@ public class AddressFilter extends Filter<String> {
 
   private final boolean isWildcard;
 
-  AddressFilter(Collection<String> values, boolean isWildcard) {
+  AddressFilter(Collection<String> values, MatchType matchType) {
     super(values);
-    this.isWildcard = isWildcard;
+    this.isWildcard = MatchType.WILDCARD.equals(matchType);
   }
 
   @Override

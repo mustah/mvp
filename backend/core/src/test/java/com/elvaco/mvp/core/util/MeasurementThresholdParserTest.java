@@ -35,7 +35,6 @@ public class MeasurementThresholdParserTest {
 
   @Before
   public void setUp() {
-
     UnitConverter unitConverter = new MockUnitConverter();
     parser = new MeasurementThresholdParser(provider, unitConverter);
   }
@@ -47,62 +46,48 @@ public class MeasurementThresholdParserTest {
 
   @Test
   public void parse_quantityIsCorrect() {
-    assertThat(quantityFrom("Energy > 10 kWh"))
-      .isEqualTo(Quantity.ENERGY);
+    assertThat(quantityFrom("Energy > 10 kWh")).isEqualTo(Quantity.ENERGY);
   }
 
   @Test
   public void parse_comparisonModeIsCorrect() {
-    Assertions.assertThat(operatorFrom("Energy > 10 kWh"))
-      .isEqualTo(GREATER_THAN);
-    assertThat(operatorFrom("Energy < 10 kWh"))
-      .isEqualTo(LESS_THAN);
-    assertThat(operatorFrom("Energy >= 10 kWh"))
-      .isEqualTo(GREATER_THAN_OR_EQUAL);
-    assertThat(operatorFrom("Energy <= 10 kWh"))
-      .isEqualTo(LESS_THAN_OR_EQUAL);
+    assertThat(operatorFrom("Energy > 10 kWh")).isEqualTo(GREATER_THAN);
+
+    assertThat(operatorFrom("Energy < 10 kWh")).isEqualTo(LESS_THAN);
+
+    assertThat(operatorFrom("Energy >= 10 kWh")).isEqualTo(GREATER_THAN_OR_EQUAL);
+
+    assertThat(operatorFrom("Energy <= 10 kWh")).isEqualTo(LESS_THAN_OR_EQUAL);
   }
 
   @Test
   public void parse_valueIsCorrect() {
-    assertThat(parsedValueFrom("Energy > 10 kWh"))
-      .isEqualTo(10.0);
+    assertThat(parsedValueFrom("Energy > 10 kWh")).isEqualTo(10.0);
 
-    assertThat(parsedValueFrom("Energy > 10.0 kWh"))
-      .isEqualTo(10.0);
+    assertThat(parsedValueFrom("Energy > 10.0 kWh")).isEqualTo(10.0);
 
-    assertThat(parsedValueFrom("Energy > 0 kWh"))
-      .isEqualTo(0);
+    assertThat(parsedValueFrom("Energy > 0 kWh")).isEqualTo(0);
 
-    assertThat(parsedValueFrom("Energy > 0.0 kWh"))
-      .isEqualTo(0);
+    assertThat(parsedValueFrom("Energy > 0.0 kWh")).isEqualTo(0);
 
-    assertThat(parsedValueFrom("Energy > 1.5 kWh"))
-      .isEqualTo(1.5);
+    assertThat(parsedValueFrom("Energy > 1.5 kWh")).isEqualTo(1.5);
 
-    assertThat(parsedValueFrom("Energy > 1e2 kWh"))
-      .isEqualTo(100.0);
+    assertThat(parsedValueFrom("Energy > 1e2 kWh")).isEqualTo(100.0);
 
-    assertThat(parsedValueFrom("Energy > 1E2 kWh"))
-      .isEqualTo(100.0);
+    assertThat(parsedValueFrom("Energy > 1E2 kWh")).isEqualTo(100.0);
 
-    assertThat(parsedValueFrom("Energy > 1.0e2 kWh"))
-      .isEqualTo(100.0);
+    assertThat(parsedValueFrom("Energy > 1.0e2 kWh")).isEqualTo(100.0);
 
-    assertThat(parsedValueFrom("Energy > 1000000 kWh"))
-      .isEqualTo(1000000.0);
+    assertThat(parsedValueFrom("Energy > 1000000 kWh")).isEqualTo(1000000.0);
   }
 
   @Test
   public void parse_unitIsCorrect() {
-    assertThat(parsedUnitFrom("Energy > 10 kWh"))
-      .isEqualTo("kWh");
+    assertThat(parsedUnitFrom("Energy > 10 kWh")).isEqualTo("kWh");
 
-    assertThat(parsedUnitFrom("Energy > 10 Wh"))
-      .isEqualTo("Wh");
+    assertThat(parsedUnitFrom("Energy > 10 Wh")).isEqualTo("Wh");
 
-    assertThat(parsedUnitFrom("Energy > 10 J"))
-      .isEqualTo("J");
+    assertThat(parsedUnitFrom("Energy > 10 J")).isEqualTo("J");
   }
 
   @Test

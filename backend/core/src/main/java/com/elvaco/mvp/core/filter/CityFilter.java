@@ -6,9 +6,9 @@ public class CityFilter extends Filter<String> {
 
   private final boolean isWildcard;
 
-  CityFilter(Collection<String> values, boolean isWildcard) {
+  CityFilter(Collection<String> values, MatchType matchType) {
     super(values);
-    this.isWildcard = isWildcard;
+    this.isWildcard = MatchType.WILDCARD.equals(matchType);
   }
 
   @Override

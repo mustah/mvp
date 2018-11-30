@@ -50,10 +50,10 @@ public final class RequestParametersMapper {
   private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(BEFORE, AFTER, SORT);
 
   static {
-    PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, false));
-    PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, false));
-    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, true));
-    PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, false));
+    PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(GATEWAY_SERIAL, (values) -> new SerialFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, MatchType.EXACT));
     PARAMETER_TO_FILTER.put(MEDIUM, MediumFilter::new);
     PARAMETER_TO_FILTER.put(FACILITY, FacilityFilter::new);
     PARAMETER_TO_FILTER.put(MANUFACTURER, ManufacturerFilter::new);
@@ -89,8 +89,8 @@ public final class RequestParametersMapper {
         new MeasurementThresholdFilter(values.get(0))
     );
     PARAMETER_TO_FILTER.put(ALARM, AlarmFilter::new);
-    PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, true));
-    PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, true));
+    PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, MatchType.WILDCARD));
     PARAMETER_TO_FILTER.put(
       RESOLUTION,
       (values) -> new ResolutionFilter(Set.of(

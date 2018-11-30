@@ -35,7 +35,7 @@ public class MeasurementRepository implements Measurements {
 
   private final MeasurementJpaRepository measurementJpaRepository;
   private final QuantityProvider quantityProvider;
-  private final com.elvaco.mvp.core.unitconverter.UnitConverter unitConverter;
+  private final UnitConverter unitConverter;
   private final MeasurementEntityMapper measurementEntityMapper;
 
   public MeasurementRepository(

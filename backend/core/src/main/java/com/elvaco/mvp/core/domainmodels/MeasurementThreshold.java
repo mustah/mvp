@@ -45,5 +45,9 @@ public class MeasurementThreshold {
         .filter(operator -> operator.symbol.equals(symbol))
         .findFirst();
     }
+
+    public String getSymbol() {
+      return symbol;
+    }
   }
 }

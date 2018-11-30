@@ -7,10 +7,10 @@ public class SerialFilter extends Filter<String> {
 
   SerialFilter(
     Collection<String> values,
-    boolean isWildcard
+    MatchType matchType
   ) {
     super(values);
-    this.isWildcard = isWildcard;
+    this.isWildcard = MatchType.WILDCARD.equals(matchType);
   }
 
   @Override
