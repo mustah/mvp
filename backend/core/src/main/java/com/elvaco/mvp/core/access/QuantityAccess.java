@@ -47,6 +47,10 @@ public final class QuantityAccess implements QuantityProvider {
     return preloadedQty.id;
   }
 
+  public void clear() {
+    quantityNameToQuantityMap.clear();
+  }
+
   private static final class SingletonHolder {
     private static final QuantityAccess INSTANCE = new QuantityAccess();
   }

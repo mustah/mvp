@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,6 +24,11 @@ public class QuantityEntityMapperTest {
     QuantityAccess.singleton().loadAll(List.of(
       new Quantity(1, "Volume", VOLUME.getPresentationInformation(), "m3")
     ));
+  }
+
+  @AfterClass
+  public static void tearDown() {
+    QuantityAccess.singleton().clear();
   }
 
   @Test
