@@ -24,6 +24,8 @@ public class MeterData {
   public final String gatewayProductModel;
   public final String gatewayStatus;
 
+  public final String utcOffset;
+
   public MeterData(
     String facilityId,
     String address,
@@ -37,7 +39,8 @@ public class MeterData {
     String ip,
     String port,
     String meterStatus,
-    String gatewayStatus
+    String gatewayStatus,
+    String utcOffset
   ) {
     this.facilityId = facilityId;
     this.address = address;
@@ -52,6 +55,7 @@ public class MeterData {
     this.port = toNull(port);
     this.meterStatus = meterStatus;
     this.gatewayStatus = gatewayStatus;
+    this.utcOffset = utcOffset;
   }
 
   @Nullable

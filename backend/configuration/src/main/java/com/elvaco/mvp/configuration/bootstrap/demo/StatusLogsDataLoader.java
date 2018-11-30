@@ -50,6 +50,7 @@ class StatusLogsDataLoader {
         .organisationId(gateway.organisationId)
         .status(nextRandomStatusType())
         .start(subtractDays(90))
+        .organisationId(gateway.organisationId)
         .build())
       .forEach(gatewayStatusLogs::save);
   }
