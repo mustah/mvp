@@ -1,12 +1,17 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
+import com.elvaco.mvp.core.dto.LogicalMeterLocation;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
@@ -17,6 +22,8 @@ import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
 import com.querydsl.core.types.Predicate;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record15;
+import org.jooq.RecordHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,22 +84,29 @@ class GatewayQueryDslJpaRepository
       location.COUNTRY,
       location.CITY,
       location.STREET_ADDRESS
-    ).distinctOn(gateway.ID)
+    ).distinctOn(gateway.ID, location.LOGICAL_METER_ID)
       .from(gateway);
 
-    var countQuery = dsl.select(gateway.ID).from(gateway);
+    var countQuery = dsl.selectDistinct(gateway.ID).from(gateway);
 
     var filters = toFilters(parameters);
 
     gatewayJooqConditions.apply(filters, selectQuery);
     gatewayJooqConditions.apply(filters, countQuery);
 
-    List<GatewaySummaryDto> pagedGateways = selectQuery
+    var recordHandler = new GatewaySummaryRecordHandler();
+
+    selectQuery
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
-      .fetchInto(GatewaySummaryDto.class);
+      .fetch()
+      .into(recordHandler);
 
-    return getPage(pagedGateways, pageable, () -> dsl.fetchCount(countQuery));
+    return getPage(
+      recordHandler.getDtos(),
+      pageable,
+      () -> dsl.fetchCount(countQuery)
+    );
   }
 
   @Override
@@ -146,5 +160,50 @@ class GatewayQueryDslJpaRepository
     Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
       .and(GATEWAY.pk.id.eq(id));
     return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
+  }
+
+  private static class GatewaySummaryRecordHandler
+    implements RecordHandler<Record15<UUID, UUID, String, String, Long, String,
+    OffsetDateTime, OffsetDateTime, UUID, Double, Double, Double, String, String, String>> {
+
+    private Map<UUID, GatewaySummaryDto> gatewaySummaryDtos = new HashMap<>();
+
+    @Override
+    public void next(
+      Record15<UUID, UUID, String, String, Long, String, OffsetDateTime, OffsetDateTime, UUID,
+        Double, Double, Double, String, String, String> record
+    ) {
+      GatewaySummaryDto summaryDto = gatewaySummaryDtos.getOrDefault(
+        record.value1(),
+        new GatewaySummaryDto(
+          record.value1(),
+          record.value2(),
+          record.value3(),
+          record.value4(),
+          record.value5(),
+          StatusType.from(record.value6()),
+          record.value7(),
+          record.value8()
+        )
+      );
+      summaryDto.addLocation(
+        new LogicalMeterLocation(
+          record.value9(),
+          new com.elvaco.mvp.core.domainmodels.Location(
+            record.value10(),
+            record.value11(),
+            record.value12(),
+            record.value13(),
+            record.value14(),
+            record.value15()
+          )
+        )
+      );
+      gatewaySummaryDtos.put(record.value1(), summaryDto);
+    }
+
+    List<GatewaySummaryDto> getDtos() {
+      return new ArrayList<>(gatewaySummaryDtos.values());
+    }
   }
 }

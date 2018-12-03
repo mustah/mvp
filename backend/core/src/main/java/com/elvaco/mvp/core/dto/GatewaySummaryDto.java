@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.dto;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -10,9 +11,6 @@ import com.elvaco.mvp.core.domainmodels.Identifiable;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 
 public class GatewaySummaryDto implements Identifiable<UUID> {
   public final UUID id;
@@ -31,14 +29,7 @@ public class GatewaySummaryDto implements Identifiable<UUID> {
     @Nullable Long statusLogId,
     @Nullable StatusType statusType,
     @Nullable OffsetDateTime statusStart,
-    @Nullable OffsetDateTime statusStop,
-    @Nullable UUID logicalMeterId,
-    @Nullable Double latitude,
-    @Nullable Double longitude,
-    @Nullable Double confidence,
-    @Nullable String country,
-    @Nullable String city,
-    @Nullable String streetAddress
+    @Nullable OffsetDateTime statusStop
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -53,12 +44,11 @@ public class GatewaySummaryDto implements Identifiable<UUID> {
       Optional.ofNullable(statusStop).map(OffsetDateTime::toZonedDateTime).orElse(null)
     ) : null;
 
-    this.meterLocations = logicalMeterId != null ? singleton(
-      new LogicalMeterLocation(
-        logicalMeterId,
-        new Location(latitude, longitude, confidence, country, city, streetAddress)
-      )
-    ) : emptySet();
+    this.meterLocations = new HashSet<>();
+  }
+
+  public void addLocation(LogicalMeterLocation location) {
+    this.meterLocations.add(location);
   }
 
   public Location getLocation() {

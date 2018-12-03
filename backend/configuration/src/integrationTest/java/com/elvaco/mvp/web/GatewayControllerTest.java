@@ -266,7 +266,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
     assertThat(content).hasSize(1);
     GatewayDto gatewayDto = content.getContent().get(0);
-    assertThat(gatewayDto.meterIds).hasSize(1);
+    assertThat(gatewayDto.meterIds).hasSize(2);
   }
 
   @Test
