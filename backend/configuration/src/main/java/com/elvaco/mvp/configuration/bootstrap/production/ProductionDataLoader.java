@@ -1,9 +1,5 @@
 package com.elvaco.mvp.configuration.bootstrap.production;
 
-import java.util.List;
-
-import com.elvaco.mvp.core.access.QuantityAccess;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -36,16 +32,16 @@ class ProductionDataLoader implements CommandLineRunner {
     log.info("Initial database seeding done.");
   }
 
+  public ProductionDataProvider getProductionDataProvider() {
+    return productionDataProvider;
+  }
+
   void seedDatabase() {
     createRoles();
     createOrganisations();
     createSuperAdminIfNotPresent();
-    createQuantities();
+    quantitiesArePresent();
     createMeterDefinitions();
-  }
-
-  public ProductionDataProvider getProductionDataProvider() {
-    return productionDataProvider;
   }
 
   private void createRoles() {
@@ -70,12 +66,8 @@ class ProductionDataLoader implements CommandLineRunner {
     productionDataProvider.meterDefinitions().forEach(meterDefinitions::save);
   }
 
-  private void createQuantities() {
-    Quantity.QUANTITIES.forEach(quantity ->
-      quantities.findByName(quantity.name).orElseGet(() -> quantities.save(quantity)));
-
-    List<Quantity> all = quantities.findAll();
-    QuantityAccess.singleton().loadAll(all);
-    log.info("Loaded {} quantities. {}", all.size(), all);
+  private void quantitiesArePresent() {
+    var all = quantities.findAll();
+    log.info("Loaded {} quantities: {}", all.size(), all);
   }
 }

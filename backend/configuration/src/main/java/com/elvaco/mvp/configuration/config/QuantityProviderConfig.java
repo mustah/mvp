@@ -2,6 +2,8 @@ package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.spi.repository.Quantities;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
@@ -16,9 +18,13 @@ import org.springframework.context.annotation.Configuration;
 class QuantityProviderConfig {
 
   @Bean
-  QuantityProvider quantityProvider() {
-    //FIXME: This should not be a singleton
-    return QuantityAccess.singleton();
+  QuantityProvider quantityProvider(Quantities quantities) {
+    Quantity.QUANTITIES.forEach(quantity ->
+      quantities
+        .findByName(quantity.name)
+        .orElseGet(() -> quantities.save(quantity))
+    );
+    return new QuantityAccess(quantities.findAll());
   }
 
   @Bean
@@ -40,12 +46,16 @@ class QuantityProviderConfig {
   }
 
   @Bean
-  LogicalMeterEntityMapper logicalMeterEntityMapper(MeterDefinitionEntityMapper meterDefinitionEntityMapper) {
+  LogicalMeterEntityMapper logicalMeterEntityMapper(
+    MeterDefinitionEntityMapper meterDefinitionEntityMapper
+  ) {
     return new LogicalMeterEntityMapper(meterDefinitionEntityMapper);
   }
 
   @Bean
-  GatewayWithMetersMapper gatewayWithMetersMapper(LogicalMeterEntityMapper logicalMeterEntityMapper) {
+  GatewayWithMetersMapper gatewayWithMetersMapper(
+    LogicalMeterEntityMapper logicalMeterEntityMapper
+  ) {
     return new GatewayWithMetersMapper(logicalMeterEntityMapper);
   }
 

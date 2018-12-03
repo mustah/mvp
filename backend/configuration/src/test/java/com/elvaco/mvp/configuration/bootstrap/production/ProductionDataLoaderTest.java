@@ -75,7 +75,8 @@ public class ProductionDataLoaderTest {
       organisations,
       new MockUsers(Collections.emptyList()),
       productionDataProvider,
-      new MockQuantities()
+      new MockQuantities(),
+      name -> null
     );
   }
 }
