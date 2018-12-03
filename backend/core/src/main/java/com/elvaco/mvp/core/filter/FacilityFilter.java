@@ -2,11 +2,12 @@ package com.elvaco.mvp.core.filter;
 
 import java.util.Collection;
 
-public class FacilityFilter extends Filter<String> {
+public class FacilityFilter extends StringMatchingFilter {
   FacilityFilter(
-    Collection<String> values
+    Collection<String> values,
+    MatchType matchType
   ) {
-    super(values);
+    super(values, matchType);
   }
 
   @Override

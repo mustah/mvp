@@ -32,6 +32,8 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_FACILITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
@@ -55,11 +57,16 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(SERIAL, (values) -> new SerialFilter(values, MatchType.WILDCARD));
     PARAMETER_TO_FILTER.put(ADDRESS, (values) -> new AddressFilter(values, MatchType.EXACT));
     PARAMETER_TO_FILTER.put(MEDIUM, MediumFilter::new);
-    PARAMETER_TO_FILTER.put(FACILITY, FacilityFilter::new);
+    PARAMETER_TO_FILTER.put(FACILITY, (values) -> new FacilityFilter(values, MatchType.EXACT));
+    PARAMETER_TO_FILTER.put(Q_FACILITY, (values) -> new FacilityFilter(values, MatchType.WILDCARD));
     PARAMETER_TO_FILTER.put(MANUFACTURER, ManufacturerFilter::new);
     PARAMETER_TO_FILTER.put(
       SECONDARY_ADDRESS,
-      SecondaryAddressFilter::new
+      (values) -> new SecondaryAddressFilter(values, MatchType.EXACT)
+    );
+    PARAMETER_TO_FILTER.put(
+      Q_SECONDARY_ADDRESS,
+      (values) -> new SecondaryAddressFilter(values, MatchType.WILDCARD)
     );
     PARAMETER_TO_FILTER.put(
       REPORTED,
