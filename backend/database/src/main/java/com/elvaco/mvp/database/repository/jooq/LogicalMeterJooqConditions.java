@@ -118,6 +118,7 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
           .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     }
 
+    //TODO: This doesn't look right...
     meterAlarmLogCondition = METER_ALARM_LOG.START.between(
       period.start.toOffsetDateTime(),
       period.stop.toOffsetDateTime()
@@ -236,23 +237,5 @@ public class LogicalMeterJooqConditions extends EmptyJooqFilterVisitor {
       query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
     }
     return query;
-  }
-
-  private Condition valueConditionFor(MeasurementThreshold threshold) {
-    switch (threshold.operator) {
-      case LESS_THAN:
-        return MEASUREMENT_STAT_DATA.MIN.lessThan(threshold.getConvertedValue());
-      case LESS_THAN_OR_EQUAL:
-        return MEASUREMENT_STAT_DATA.MIN.lessOrEqual(threshold.getConvertedValue());
-      case GREATER_THAN:
-        return MEASUREMENT_STAT_DATA.MAX.greaterThan(threshold.getConvertedValue());
-      case GREATER_THAN_OR_EQUAL:
-        return MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(threshold.getConvertedValue());
-      default:
-        throw new UnsupportedOperationException(String.format(
-          "Measurement threshold operator '%s' is not supported",
-          threshold.operator.name()
-        ));
-    }
   }
 }

@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
@@ -2178,41 +2177,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       minuteInterval,
       0
     );
-  }
-
-  private void addMeasurementsForMeter(
-    PhysicalMeter physicalMeter,
-    Set<Quantity> quantities,
-    ZonedDateTime start,
-    Duration periodDuration,
-    Long minuteInterval,
-    double valueIncrementation
-  ) {
-    ZonedDateTime now = start;
-    double incrementedValue = 1.0;
-    while (now.isBefore(start.plus(periodDuration))) {
-      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, incrementedValue);
-      now = now.plusMinutes(minuteInterval);
-      incrementedValue += valueIncrementation;
-    }
-  }
-
-  private void addMeasurementsForMeterQuantities(
-    PhysicalMeter physicalMeter,
-    Set<Quantity> quantities,
-    ZonedDateTime when,
-    double value
-  ) {
-    for (Quantity quantity : quantities) {
-      measurements.save(Measurement.builder()
-        .created(when)
-        .quantity(quantity.name)
-        .value(value)
-        .unit(quantity.presentationUnit())
-        .physicalMeter(physicalMeter)
-        .build()
-      );
-    }
   }
 
   private LogicalMeter saveLogicalMeter(ZonedDateTime dateTime) {

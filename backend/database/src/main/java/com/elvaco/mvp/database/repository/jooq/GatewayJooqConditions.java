@@ -1,5 +1,9 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
+import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
@@ -8,6 +12,7 @@ import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.GatewayIdFilter;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.filter.ManufacturerFilter;
+import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
 import com.elvaco.mvp.core.filter.MediumFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -15,6 +20,7 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
+import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters;
 import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +34,7 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
@@ -43,9 +50,13 @@ import static org.jooq.impl.DSL.falseCondition;
 public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
   private final DSLContext dsl;
 
+  private final MeasurementThresholdParser measurementThresholdParser;
+
   private Condition gatewayStatusLogCondition = falseCondition();
   private Condition alarmLogCondition = falseCondition();
   private Condition meterStatusLogCondition = falseCondition();
+  private Condition measurementStatsCondition = falseCondition();
+  private boolean hasMeasurementStatsFilter;
 
   @Override
   public void visit(CityFilter cityFilter) {
@@ -89,10 +100,21 @@ public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
         .and(GATEWAY_STATUS_LOG.STOP.isNull()
           .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
 
-    alarmLogCondition = METER_ALARM_LOG.START.between(
-      period.start.toOffsetDateTime(),
-      period.stop.toOffsetDateTime()
-    ).or(METER_ALARM_LOG.STOP.isNull());
+    alarmLogCondition =
+      METER_ALARM_LOG.START.lessThan(period.stop.toOffsetDateTime())
+        .and(METER_ALARM_LOG.STOP.isNull()
+          .or(METER_ALARM_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+
+    LocalDate startDate = period.start.toLocalDate();
+    LocalDate stopDate = period.stop.toLocalDate();
+    if (stopDate.isEqual(startDate)) {
+      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate));
+    } else {
+      measurementStatsCondition =
+        MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(Date.valueOf(startDate))
+          .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
+          .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
+    }
   }
 
   @Override
@@ -145,8 +167,18 @@ public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
   }
 
   @Override
+  public void visit(MeasurementThresholdFilter thresholdFilter) {
+    MeasurementThreshold threshold = measurementThresholdParser.parse(thresholdFilter.oneValue());
+
+    addCondition(MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+      .and(valueConditionFor(threshold)));
+
+    hasMeasurementStatsFilter = true;
+  }
+
+  @Override
   protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
-    return query.leftJoin(GATEWAY_STATUS_LOG)
+    query = query.leftJoin(GATEWAY_STATUS_LOG)
       .on(GATEWAY_STATUS_LOG.GATEWAY_ID.equal(GATEWAY.ID)
         .and(GATEWAY_STATUS_LOG.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID))
         .and(GATEWAY_STATUS_LOG.ID.equal(dsl
@@ -163,7 +195,8 @@ public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
       .on(LOGICAL_METER.ID.equal(GatewaysMeters.GATEWAYS_METERS.LOGICAL_METER_ID)
         .and(GATEWAY.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
 
-      .leftJoin(PHYSICAL_METER).on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
+      .leftJoin(PHYSICAL_METER)
+      .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
         .and(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
 
       .leftJoin(METER_DEFINITION)
@@ -181,6 +214,13 @@ public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
       .on(LOCATION.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
       )
-      .leftJoin(METER_ALARM_LOG).on(alarmLogCondition);
+      .leftJoin(METER_ALARM_LOG)
+      .on(alarmLogCondition.and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)));
+
+    if (hasMeasurementStatsFilter && !measurementStatsCondition.equals(falseCondition())) {
+      query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
+    }
+
+    return query;
   }
 }
