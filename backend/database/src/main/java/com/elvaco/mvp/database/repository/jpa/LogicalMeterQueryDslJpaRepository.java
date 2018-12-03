@@ -38,7 +38,6 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
@@ -133,11 +132,6 @@ class LogicalMeterQueryDslJpaRepository
     logicalMeterJooqConditions.apply(toFilters(parameters), query);
 
     return nativeQuery(query, LogicalMeterEntity.class);
-  }
-
-  @Override
-  public List<LogicalMeterEntity> findAll(RequestParameters parameters, Sort sort) {
-    return findAll(parameters);
   }
 
   @Override

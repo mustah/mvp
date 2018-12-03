@@ -13,7 +13,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 public interface LogicalMeterJpaRepository {
 
@@ -34,8 +33,6 @@ public interface LogicalMeterJpaRepository {
   List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 
   List<LogicalMeterEntity> findAll(RequestParameters parameters);
-
-  List<LogicalMeterEntity> findAll(RequestParameters parameters, Sort sort);
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
