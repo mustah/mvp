@@ -115,6 +115,13 @@ settings and the JDBC URL should be `jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1`.
 
 ## Addendum
 
+### Check for outdated gradle versions
+
+Run the gradle command `gradle dependencyUpdates` and the outdated plugins and the available 
+versions will be displayed in your terminal. 
+
+For further reading: https://github.com/ben-manes/gradle-versions-plugin
+
 ### Installing Docker
 
 You want "Docker Community Edition". See
