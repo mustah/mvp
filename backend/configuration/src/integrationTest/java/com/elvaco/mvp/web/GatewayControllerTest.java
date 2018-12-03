@@ -55,6 +55,9 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    if (!isPostgresDialect()) {
+      return;
+    }
     physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
