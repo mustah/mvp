@@ -53,7 +53,7 @@ public class GeocodeControllerTest extends IntegrationTest {
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
 
-    var response = asSuperAdmin()
+    var response = restClient()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
     var pk = new EntityPk(logicalMeterId, context().organisationId());
@@ -84,7 +84,7 @@ public class GeocodeControllerTest extends IntegrationTest {
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
 
-    var response = asSuperAdmin()
+    var response = restClient()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -123,7 +123,7 @@ public class GeocodeControllerTest extends IntegrationTest {
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
 
-    var response = asSuperAdmin()
+    var response = restClient()
       .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
 
     var pk = new EntityPk(logicalMeterId, context().organisationId());
@@ -146,7 +146,7 @@ public class GeocodeControllerTest extends IntegrationTest {
         "kabelgatan 1"
       )
     );
-    var response = asSuperAdmin()
+    var response = restClient()
       .post("/geocodes/error/" + logicalMeterId, payload, GeoResponseErrorDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
