@@ -35,6 +35,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
@@ -54,14 +55,17 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    assumeTrue(isPostgresDialect());
     start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
   }
 
   @After
   public void tearDown() {
-    measurementJpaRepository.deleteAll();
-    meterAlarmLogJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
+    if (isPostgresDialect()) {
+      measurementJpaRepository.deleteAll();
+      meterAlarmLogJpaRepository.deleteAll();
+      gatewayJpaRepository.deleteAll();
+    }
   }
 
   @Test
