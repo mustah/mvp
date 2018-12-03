@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create/update calculate_statistics procedure" author="erimel" runOnChange="true">
+    <sqlFile relativeToChangelogFile="true"
+             dbms="postgresql"
+             path="../sql/postgresql/procedures/calculate_statistics.sql"
+             splitStatements="false"
+             stripComments="false"/>
+
+  </changeSet>
+
+  <changeSet id="Create/update calculate_and_write_statistics procedure" author="erimel" runOnChange="true">
+    <sqlFile relativeToChangelogFile="true"
+             dbms="postgresql"
+             path="../sql/postgresql/procedures/calculate_and_write_statistics.sql"
+             splitStatements="false"
+             stripComments="false"/>
+
+  </changeSet>
+
+  <changeSet id="Create/update update_statistics procedure" author="erimel" runOnChange="true">
+    <sqlFile relativeToChangelogFile="true"
+             dbms="postgresql"
+             path="../sql/postgresql/procedures/update_statistics.sql"
+             splitStatements="false"
+             stripComments="false"/>
+
+  </changeSet>
+
+</databaseChangeLog>

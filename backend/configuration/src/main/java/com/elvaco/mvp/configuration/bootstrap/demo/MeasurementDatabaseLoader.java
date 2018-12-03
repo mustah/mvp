@@ -95,7 +95,8 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
       ZonedDateTime created = measurementDate.plusMinutes(i * interval);
 
       List<MeasurementEntity> measurements;
-      if (meter.medium.equals(Medium.DISTRICT_HEATING.medium)) {
+      if (meter.medium.equals("Heat, Return temp")
+        || meter.medium.equals(Medium.DISTRICT_HEATING.medium)) {
         measurements = demoDataHelper.heatMeasurement(created, meter);
       } else if (meter.medium.equals(Medium.GAS.medium)) {
         measurements = demoDataHelper.gasMeasurement(
