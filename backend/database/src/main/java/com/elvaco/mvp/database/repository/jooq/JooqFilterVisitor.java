@@ -14,7 +14,7 @@ import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
 
-public abstract class JooqFilterVisitor implements FilterVisitor {
+public abstract class JooqFilterVisitor implements FilterVisitor, ConditionAdding {
 
   private final Collection<Condition> conditions = new ArrayList<>();
 
@@ -28,7 +28,8 @@ public abstract class JooqFilterVisitor implements FilterVisitor {
     return applyJoins(query).where(conditions);
   }
 
-  void addCondition(@Nullable Condition condition) {
+  @Override
+  public void addCondition(@Nullable Condition condition) {
     if (condition != null) {
       conditions.add(condition);
     }
