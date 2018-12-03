@@ -40,8 +40,9 @@ public class MeasurementThresholdParserTest {
   }
 
   @Test
-  public void parse_emptyIsNull() {
-    Assertions.assertThat(parser.parse("")).isNull();
+  public void parse_emptyThrowsException() {
+    Assertions.assertThatThrownBy(() -> parser.parse(""))
+      .hasMessage("Malformed expression '' for measurement threshold");
   }
 
   @Test
@@ -100,10 +101,15 @@ public class MeasurementThresholdParserTest {
 
   @Test
   public void parse_invalidComparisonMode() {
-    assertThat(parser.parse("Energy >== 10 kWh")).isNull();
-    assertThat(parser.parse("Energy >< 10 kWh")).isNull();
-    assertThat(parser.parse("Energy <> 10 kWh")).isNull();
-    assertThat(parser.parse("Energy = 10 kWh")).isNull();
+
+    assertThatThrownBy(() -> parser.parse("Energy >== 10 kWh")).hasMessage(
+      "Malformed expression 'Energy >== 10 kWh' for measurement threshold");
+    assertThatThrownBy(() -> parser.parse("Energy >< 10 kWh")).hasMessage(
+      "Malformed expression 'Energy >< 10 kWh' for measurement threshold");
+    assertThatThrownBy(() -> parser.parse("Energy <> 10 kWh")).hasMessage(
+      "Malformed expression 'Energy <> 10 kWh' for measurement threshold");
+    assertThatThrownBy(() -> parser.parse("Energy = 10 kWh")).hasMessage(
+      "Malformed expression 'Energy = 10 kWh' for measurement threshold");
   }
 
   @Test
@@ -153,15 +159,22 @@ public class MeasurementThresholdParserTest {
 
   @Test
   public void parse_invalidValue() {
-    assertThat(parser.parse("Energy <= apa kW")).isNull();
-    assertThat(parser.parse("Energy >= kW")).isNull();
+    assertThatThrownBy(() -> parser.parse("Energy <= apa kW")).hasMessage(
+      "Malformed expression 'Energy <= apa kW' for measurement threshold");
+    assertThatThrownBy(() -> parser.parse("Energy <= kW")).hasMessage(
+      "Malformed expression 'Energy <= kW' for measurement threshold");
   }
 
   @Test
   public void parse_missingTerms() {
-    assertThat(parser.parse("Forward temperature 0 °C")).isNull();
-    assertThat(parser.parse("Energy = 10")).isNull();
-    assertThat(parser.parse("<= 0 °C")).isNull();
+    assertThatThrownBy(() -> parser.parse("Forward temperature 0 °C")).hasMessage(
+      "Malformed expression 'Forward temperature 0 °C' for measurement threshold");
+
+    assertThatThrownBy(() -> parser.parse("Energy = 10")).hasMessage(
+      "Malformed expression 'Energy = 10' for measurement threshold");
+
+    assertThatThrownBy(() -> parser.parse("<= 0 °C")).hasMessage(
+      "Malformed expression '<= 0 °C' for measurement threshold");
   }
 
   @Test
