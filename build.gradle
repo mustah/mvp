@@ -2,9 +2,10 @@ import com.github.spotbugs.SpotBugsTask
 
 plugins {
   id "com.github.spotbugs" version "1.6.4"
+  id "com.github.ben-manes.versions" version "0.20.0"
 }
 
-def getVersion = { ->
+def getVersion = {->
   def versionFile = new File('.version')
   try {
     def command = 'git describe --tags --abbrev=7 --dirty'
@@ -35,7 +36,7 @@ allprojects {
   }
 }
 
-subprojects { subproject ->
+subprojects {subproject ->
 
   tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
@@ -91,9 +92,9 @@ subprojects { subproject ->
 }
 
 task checkstyle {
-  dependsOn subprojects.collect { it.tasks.withType(Checkstyle) }
+  dependsOn subprojects.collect {it.tasks.withType(Checkstyle)}
 }
 
 task spotbugs {
-  dependsOn subprojects.collect { it.tasks.withType(com.github.spotbugs.SpotBugsTask) }
+  dependsOn subprojects.collect {it.tasks.withType(com.github.spotbugs.SpotBugsTask)}
 }

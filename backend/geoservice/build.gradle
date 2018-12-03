@@ -23,7 +23,7 @@ dependencies {
   compile 'org.hibernate.validator:hibernate-validator-annotation-processor:6.0.10.Final'
   compile 'javax.validation:validation-api:2.0.1.Final'
   compile 'com.h2database:h2'
-  compile 'org.postgresql:postgresql'
+  compile "org.postgresql:postgresql:${postgresqlVersion}"
   compile 'commons-io:commons-io:2.6'
   compile 'org.springframework.boot:spring-boot-starter-actuator'
   /* Deprecated & removed (http://openjdk.java.net/jeps/320) - used by hibernate */

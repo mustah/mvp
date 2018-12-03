@@ -98,7 +98,7 @@ export const quantityUnits: { [q in Quantity]: string } = {
   [Quantity.energyReturn]: 'kWh',
   [Quantity.energyReactive]: 'kWh',
   [Quantity.externalTemperature]: '°C',
-  [Quantity.volume]: 'm',
+  [Quantity.volume]: 'm³',
   [Quantity.power]: 'W',
   [Quantity.flow]: 'm³/h',
   [Quantity.forwardTemperature]: '°C',

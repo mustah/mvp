@@ -40,7 +40,7 @@ dependencies {
   compile 'org.springframework.security:spring-security-config'
   compile 'org.springframework.boot:spring-boot-starter-amqp'
   compile 'org.springframework:spring-jdbc'
-  compile 'org.simpleflatmapper:sfm-csv:6.0.3'
+  compile 'org.simpleflatmapper:sfm-csv:6.0.9'
   compile "org.ehcache:ehcache:${ehcacheVersion}"
   /* Deprecated & removed (http://openjdk.java.net/jeps/320) - used by hibernate */
   compile 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
