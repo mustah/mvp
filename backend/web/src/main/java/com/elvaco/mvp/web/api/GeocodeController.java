@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.spi.repository.Locations;
-import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.web.dto.geoservice.GeoResponseDto;
 import com.elvaco.mvp.web.dto.geoservice.GeoResponseErrorDto;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationWithId;
 public class GeocodeController {
 
   private final Locations locations;
-  private final LogicalMeterUseCases logicalMeterUseCases;
+  private final LogicalMeters logicalMeters;
 
   @PostMapping("/callback/{id}")
   public void callback(@PathVariable UUID id, @RequestBody GeoResponseDto geoResponse) {
-    logicalMeterUseCases.findById(id)
+    logicalMeters.findById(id)
       .map(logicalMeter -> toLocationWithId(geoResponse, new Pk(id, logicalMeter.organisationId)))
       .map(locations::save);
   }
