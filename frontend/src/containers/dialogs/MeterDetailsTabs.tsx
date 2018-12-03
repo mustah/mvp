@@ -9,13 +9,13 @@ import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import '../../components/table/Table.scss';
 import {TableHead} from '../../components/table/TableHead';
-import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -23,9 +23,8 @@ import {statusChangelogDataFormatter} from '../../state/domain-models-paginated/
 import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
-import {Children, Identifiable, OnClickWithId} from '../../types/Types';
+import {Children, OnClickWithId} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
@@ -52,13 +51,6 @@ interface DispatchToProps {
 }
 
 type Props = OwnProps & DispatchToProps;
-
-export interface RenderableMeasurement extends Identifiable {
-  quantity: Quantity;
-  value?: number | string;
-  unit?: string;
-  created?: number;
-}
 
 const renderStatus = ({name}: MeterStatusChangelog): Children => <Status label={name}/>;
 
