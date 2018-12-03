@@ -33,7 +33,10 @@ public class MeasurementThresholdParser {
   public MeasurementThreshold parse(String thresholdExpr) {
     Matcher m = THRESHOLD_FILTER_PATTERN.matcher(thresholdExpr.trim());
     if (!m.matches()) {
-      return null;
+      throw new IllegalArgumentException(String.format(
+        "Malformed expression '%s' for measurement threshold",
+        thresholdExpr
+      ));
     }
 
     Quantity quantity = parseQuantity(m.group("quantity"));

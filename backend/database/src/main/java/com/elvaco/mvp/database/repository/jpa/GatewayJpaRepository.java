@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
-import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.querydsl.core.types.Predicate;
@@ -24,6 +23,8 @@ public interface GatewayJpaRepository {
 
   Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
+  Page<String> findSerials(RequestParameters parameters, Pageable pageable);
+
   List<GatewayEntity> findAllByOrganisationId(UUID organisationId);
 
   Optional<GatewayEntity> findByOrganisationIdAndProductModelAndSerial(
@@ -37,6 +38,4 @@ public interface GatewayJpaRepository {
   Optional<GatewayEntity> findById(UUID id);
 
   Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
-
-  Page<String> findSerials(Filters filters, Pageable pageable);
 }

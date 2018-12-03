@@ -1,13 +1,16 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -36,6 +39,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
+import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
@@ -260,6 +264,64 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .containsExactlyInAnyOrder(new MapMarkerDto(gateway2.id, 12.345, 11.123, 55));
     assertThat(response.getBody().markers.get(StatusType.ERROR))
       .containsExactlyInAnyOrder(new MapMarkerDto(gateway3.id, 12.345, 11.123, 99));
+  }
+
+  @Test
+  public void gatewayMapMarkers_withMeterMeasurementThreshold_Match() {
+    Gateway gateway = saveGatewayWith(context().organisationId(), StatusType.OK);
+
+    Location location = kungsbacka().build();
+    LogicalMeter meter = saveLogicalMeterWith(location, gateway);
+
+    PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
+
+    ZonedDateTime now = ZonedDateTime.parse("2018-02-01T01:00:00+01");
+    addMeasurementsForMeterQuantities(physicalMeter, singleton(Quantity.POWER), now, 10.0);
+
+    Url url = Url.builder().path("/map-markers/gateways")
+      .parameter(RequestParameter.THRESHOLD, "Power >= 10.0 W")
+      .parameter(RequestParameter.AFTER, now.minusHours(1))
+      .parameter(RequestParameter.BEFORE, now.plusHours(1))
+      .build();
+
+    ResponseEntity<MapMarkersDto> response = asUser()
+      .get(url, MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers.values()).containsExactly(
+      List.of(
+        new MapMarkerDto(
+          gateway.id,
+          location.getCoordinate().getLatitude(),
+          location.getCoordinate().getLongitude()
+        )
+      )
+    );
+  }
+
+  @Test
+  public void gatewayMapMarkers_withMeterMeasurementThreshold_NoMatch() {
+    Gateway gateway = saveGatewayWith(context().organisationId(), StatusType.OK);
+
+    Location location = kungsbacka().build();
+    LogicalMeter meter = saveLogicalMeterWith(location, gateway);
+
+    PhysicalMeter physicalMeter = savePhysicalMeterWith(meter, StatusType.OK);
+
+    ZonedDateTime now = ZonedDateTime.parse("2018-02-01T01:00:00+01");
+    addMeasurementsForMeterQuantities(physicalMeter, singleton(Quantity.POWER), now, 10.0);
+
+    Url url = Url.builder().path("/map-markers/gateways")
+      .parameter(RequestParameter.THRESHOLD, "Power < 10.0 W")
+      .parameter(RequestParameter.AFTER, now.minusHours(1))
+      .parameter(RequestParameter.BEFORE, now.plusHours(1))
+      .build();
+
+    ResponseEntity<MapMarkersDto> response = asUser()
+      .get(url, MapMarkersDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().markers).isEmpty();
   }
 
   @Test
@@ -488,6 +550,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(context().organisationId())
       .created(NOW)
+      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
       .gateway(gateway)
       .location(location)
       .utcOffset(DEFAULT_UTC_OFFSET)

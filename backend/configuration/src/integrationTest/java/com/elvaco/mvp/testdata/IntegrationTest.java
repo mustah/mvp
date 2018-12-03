@@ -1,11 +1,17 @@
 package com.elvaco.mvp.testdata;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
+import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -221,6 +227,41 @@ public abstract class IntegrationTest {
       Thread.sleep(100);
     } while (System.nanoTime() < (start + MAX_WAIT_TIME));
     return false;
+  }
+
+  protected void addMeasurementsForMeter(
+    PhysicalMeter physicalMeter,
+    Set<Quantity> quantities,
+    ZonedDateTime start,
+    Duration periodDuration,
+    Long minuteInterval,
+    double valueIncrementation
+  ) {
+    ZonedDateTime now = start;
+    double incrementedValue = 1.0;
+    while (now.isBefore(start.plus(periodDuration))) {
+      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, incrementedValue);
+      now = now.plusMinutes(minuteInterval);
+      incrementedValue += valueIncrementation;
+    }
+  }
+
+  protected void addMeasurementsForMeterQuantities(
+    PhysicalMeter physicalMeter,
+    Set<Quantity> quantities,
+    ZonedDateTime when,
+    double value
+  ) {
+    for (Quantity quantity : quantities) {
+      measurements.save(Measurement.builder()
+        .created(when)
+        .quantity(quantity.name)
+        .value(value)
+        .unit(quantity.presentationUnit())
+        .physicalMeter(physicalMeter)
+        .build()
+      );
+    }
   }
 
   private void destroyContext() {

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
@@ -20,8 +21,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
-import com.elvaco.mvp.database.repository.querydsl.LogicalMeterFilterQueryDslVisitor;
-import com.elvaco.mvp.database.repository.querydsl.MissingMeasurementFilterQueryDslVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.SelectionQueryFilters;
 import com.querydsl.core.group.GroupBy;
@@ -30,11 +29,15 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPADeleteClause;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
@@ -66,28 +69,41 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public Optional<LogicalMeterEntity> findById(UUID id) {
-    return Optional.ofNullable(fetchOne(LOGICAL_METER.pk.id.eq(id)));
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    return fetchOne(logicalMeter.ID.eq(id));
   }
 
   @Override
   public Optional<LogicalMeterEntity> findByPrimaryKey(UUID organisationId, UUID id) {
-    Predicate predicate = LOGICAL_METER.pk.organisationId.eq(organisationId)
-      .and(LOGICAL_METER.pk.id.eq(id));
-    return Optional.ofNullable(fetchOne(predicate));
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    Condition condition = logicalMeter.ORGANISATION_ID.equal(organisationId)
+      .and(logicalMeter.ID.equal(id));
+    return fetchOne(condition);
   }
 
   @Override
   public Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId) {
-    Predicate predicate = LOGICAL_METER.pk.organisationId.eq(organisationId)
-      .and(LOGICAL_METER.externalId.eq(externalId));
-    return Optional.ofNullable(fetchOne(predicate));
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    Condition condition = logicalMeter.ORGANISATION_ID.equal(organisationId)
+      .and(logicalMeter.EXTERNAL_ID.equal(externalId));
+    return fetchOne(condition);
   }
 
   @Override
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
-    var query = createQuery().select(path);
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query);
-    return Optional.ofNullable(query.distinct().fetchOne());
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+
+    SelectJoinStep<Record> sqlGenerator = dsl.select()
+      .from(logicalMeter);
+
+    logicalMeterJooqConditions.apply(toFilters(parameters), sqlGenerator);
+
+    final String sql = sqlGenerator.getSQL(ParamType.NAMED);
+    Query query = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
+
+    sqlGenerator.getParams().forEach(query::setParameter);
+
+    return Optional.ofNullable((LogicalMeterEntity) query.getSingleResult());
   }
 
   @Override
@@ -108,12 +124,14 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterEntity> findAll(RequestParameters parameters) {
-    return findAllQuery(parameters).distinct().fetch();
-  }
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
 
-  @Override
-  public List<LogicalMeterEntity> findAll(RequestParameters parameters, Sort sort) {
-    return querydsl.applySorting(sort, findAllQuery(parameters)).distinct().fetch();
+    var query = dsl.select()
+      .from(logicalMeter);
+
+    logicalMeterJooqConditions.apply(toFilters(parameters), query);
+
+    return nativeQuery(query, LogicalMeterEntity.class);
   }
 
   @Override
@@ -204,21 +222,20 @@ class LogicalMeterQueryDslJpaRepository
   public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
     RequestParameters parameters
   ) {
-    var query = createQuery()
-      .select(Projections.constructor(
-        LogicalMeterCollectionStats.class,
-        LOGICAL_METER.pk.id,
-        MISSING_MEASUREMENT.id.expectedTime.countDistinct(),
-        PHYSICAL_METER.readIntervalMinutes
-      ));
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    var physicalMeter = PhysicalMeter.PHYSICAL_METER;
+    var query = dsl.select(
+      logicalMeter.ID,
+      DSL.coalesce(MISSING_MEASUREMENT_COUNT, 0L),
+      physicalMeter.READ_INTERVAL_MINUTES
+    ).distinctOn(logicalMeter.ID, physicalMeter.READ_INTERVAL_MINUTES)
+      .from(logicalMeter);
 
     Filters filters = toFilters(parameters);
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(filters, query);
-    new MissingMeasurementFilterQueryDslVisitor().visitAndApply(filters, query);
 
-    return query.groupBy(LOGICAL_METER.pk.id, PHYSICAL_METER.readIntervalMinutes)
-      .distinct()
-      .fetch();
+    logicalMeterJooqConditions.apply(filters, query);
+
+    return query.fetchInto(LogicalMeterCollectionStats.class);
   }
 
   @Override
@@ -267,14 +284,12 @@ class LogicalMeterQueryDslJpaRepository
     return getPage(all, pageable, countQuery::fetchCount);
   }
 
-  private JPQLQuery<LogicalMeterEntity> findAllQuery(RequestParameters parameters) {
-    var query = createQuery().select(path);
-    new LogicalMeterFilterQueryDslVisitor().visitAndApply(toFilters(parameters), query);
-    return query;
-  }
-
-  private LogicalMeterEntity fetchOne(Predicate... predicate) {
-    return createQuery(predicate).select(path).distinct().fetchOne();
+  private Optional<LogicalMeterEntity> fetchOne(Condition... conditions) {
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    var query = dsl.select()
+      .from(logicalMeter)
+      .where(conditions).limit(1);
+    return nativeQuery(query, LogicalMeterEntity.class).stream().findAny();
   }
 
   private static void joinLocation(JPQLQuery<String> query, RequestParameters parameters) {

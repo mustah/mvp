@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
@@ -15,6 +16,8 @@ import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.user.QOrganisationEntity;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.PathBuilder;
+import org.jooq.Param;
+import org.jooq.Query;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
@@ -62,5 +65,21 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
       entityManager,
       new PathBuilder<>(path.getType(), path.getMetadata())
     );
+  }
+
+  <E> List<E> nativeQuery(Query query, Class<E> type) {
+    var result = entityManager.createNativeQuery(query.getSQL(), type);
+
+    int i = 0;
+    for (Param<?> param : query.getParams().values()) {
+      result.setParameter(i + 1, convertToDatabaseType(param));
+      i++;
+    }
+
+    return result.getResultList();
+  }
+
+  private static <T> Object convertToDatabaseType(Param<T> param) {
+    return param.getBinding().converter().to(param.getValue());
   }
 }

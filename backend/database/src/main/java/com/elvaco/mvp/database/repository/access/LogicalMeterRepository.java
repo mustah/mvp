@@ -22,7 +22,6 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
-import com.elvaco.mvp.database.repository.queryfilters.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -114,10 +113,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
-    List<LogicalMeterEntity> meters = SortUtil.getSort(parameters)
-      .map(sort -> logicalMeterJpaRepository.findAll(parameters, sort))
-      .orElseGet(() -> logicalMeterJpaRepository.findAll(parameters));
-
+    List<LogicalMeterEntity> meters = logicalMeterJpaRepository.findAll(parameters);
     return findAllWithCollectionStatsAndStatuses(meters, parameters);
   }
 

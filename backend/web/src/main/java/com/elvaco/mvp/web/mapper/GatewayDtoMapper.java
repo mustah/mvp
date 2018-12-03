@@ -24,8 +24,8 @@ import static java.util.stream.Collectors.toList;
 public class GatewayDtoMapper {
 
   public static GatewayDto toDto(GatewaySummaryDto gateway) {
-    StatusLogEntry<UUID> gatewayStatusLog = gateway.statusLogs.stream()
-      .findFirst().orElseGet(() -> StatusLogEntry.unknownFor(gateway));
+    StatusLogEntry<UUID> gatewayStatusLog = Optional.ofNullable(gateway.statusLog)
+      .orElseGet(() -> StatusLogEntry.unknownFor(gateway));
 
     return new GatewayDto(
       gateway.id,
@@ -33,12 +33,12 @@ public class GatewayDtoMapper {
       formatProductModel(gateway.productModel),
       gatewayStatusLog.status.name,
       formatUtc(gatewayStatusLog.start),
-      LocationDtoMapper.toLocationDto(gateway.meters.stream()
+      LocationDtoMapper.toLocationDto(gateway.meterLocations.stream()
         .findFirst()
         .map(meter -> meter.location)
         .orElse(
           Location.UNKNOWN_LOCATION)),
-      gateway.meters.stream().map(meter -> meter.id).collect(toList()),
+      gateway.meterLocations.stream().map(meter -> meter.id).collect(toList()),
       gateway.organisationId
     );
   }
