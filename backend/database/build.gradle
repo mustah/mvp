@@ -32,7 +32,7 @@ dependencies {
   compile 'org.springframework:spring-jdbc'
   compile 'org.hibernate:hibernate-validator:6.0.10.Final'
   compile 'org.hibernate:hibernate-envers:5.2.16.Final'
-  compile 'org.postgresql:postgresql'
+  compile "org.postgresql:postgresql:${postgresqlVersion}"
   compile 'tec.units:unit-ri:1.0.3'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.8.9'
   compile 'com.querydsl:querydsl-root:4.2.1'
@@ -43,10 +43,10 @@ dependencies {
 
   jooqRuntime 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
   jooqRuntime 'com.sun.activation:javax.activation:1.2.0'
-  jooqRuntime 'org.postgresql:postgresql'
+  jooqRuntime "org.postgresql:postgresql:${postgresqlVersion}"
 
   liquibaseRuntime 'org.liquibase:liquibase-core:3.6.1'
-  liquibaseRuntime 'org.postgresql:postgresql'
+  liquibaseRuntime "org.postgresql:postgresql:${postgresqlVersion}"
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   testCompile "junit:junit:${junitVersion}"
