@@ -18,7 +18,7 @@ public class ProductionData implements ProductionDataProvider {
   private final Organisation rootOrganisation;
 
   @Override
-  public List<Role> users() {
+  public List<Role> roles() {
     return List.of(
       Role.USER,
       Role.ADMIN,

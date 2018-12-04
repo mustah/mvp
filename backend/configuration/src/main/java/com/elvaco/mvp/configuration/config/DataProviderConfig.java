@@ -7,6 +7,7 @@ import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -39,6 +40,7 @@ import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
 import com.elvaco.mvp.database.repository.access.QuantityRepository;
 import com.elvaco.mvp.database.repository.access.RoleRepository;
+import com.elvaco.mvp.database.repository.access.RootOrganisationRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.access.UserSelectionRepository;
@@ -101,8 +103,21 @@ class DataProviderConfig {
   private final UnitConverter unitConverter;
 
   @Bean
-  Users users() {
-    return new UserRepository(userJpaRepository, passwordEncoder::encode);
+  Users users(
+    ProductionDataProvider productionDataProvider,
+    Organisations organisations,
+    Roles roles
+  ) {
+    // the organisations & roles must be loaded, because the super admin user is associated to an
+    // already saved organisation
+    var users = new UserRepository(userJpaRepository, passwordEncoder::encode);
+
+    User user = productionDataProvider.superAdminUser();
+    if (!users.findByEmail(user.email).isPresent()) {
+      users.create(user);
+    }
+
+    return users;
   }
 
   @Bean
@@ -148,24 +163,38 @@ class DataProviderConfig {
   }
 
   @Bean
-  Organisations organisations() {
-    return new OrganisationRepository(organisationJpaRepository);
+  Organisations organisations(ProductionDataProvider productionDataProvider) {
+    var organisations = new OrganisationRepository(organisationJpaRepository);
+
+    productionDataProvider.organisations()
+      .stream()
+      .filter(organisation -> !organisations.findBySlug(organisation.slug).isPresent())
+      .forEach(organisations::save);
+
+    return organisations;
+  }
+
+  @Bean
+  RootOrganisationRepository rootOrganisationRepository(
+    OrganisationJpaRepository organisationJpaRepository
+  ) {
+    return new RootOrganisationRepository(organisationJpaRepository);
   }
 
   @Bean
   Organisation rootOrganisation(
-    Organisations organisations,
+    RootOrganisationRepository rootOrganisationRepository,
     MvpProperties mvpProperties
   ) {
     MvpProperties.RootOrganisation rootOrg = mvpProperties.getRootOrganisation();
-    return organisations
+    return rootOrganisationRepository
       .findBySlug(rootOrg.getSlug())
-      .orElse(new Organisation(
+      .orElseGet(() -> rootOrganisationRepository.save(new Organisation(
         UUID.randomUUID(),
         rootOrg.getName(),
         rootOrg.getSlug(),
         rootOrg.getName()
-      ));
+      )));
   }
 
   @Bean
@@ -184,7 +213,7 @@ class DataProviderConfig {
   @Bean
   Roles roles(ProductionDataProvider productionDataProvider) {
     var roleRepository = new RoleRepository(roleJpaRepository);
-    roleRepository.save(productionDataProvider.users());
+    roleRepository.save(productionDataProvider.roles());
     return roleRepository;
   }
 

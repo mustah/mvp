@@ -9,7 +9,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 
 public interface ProductionDataProvider {
 
-  List<Role> users();
+  List<Role> roles();
 
   List<MeterDefinition> meterDefinitions();
 
