@@ -1,13 +1,10 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -33,13 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerPagedTest extends IntegrationTest {
-
-  private static final MeterDefinition BUTTER_METER_DEFINITION = new MeterDefinition(
-    MeterDefinitionType.UNKNOWN_METER_TYPE,
-    "Butter",
-    Set.of(Quantity.DIFFERENCE_TEMPERATURE, Quantity.ENERGY),
-    false
-  );
 
   @Autowired
   private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
@@ -176,7 +166,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       new EntityPk(logicalMeterId, organisationEntity.id),
       logicalMeterId.toString(),
       created,
-      saveMeterDefinition(MeasurementControllerPagedTest.BUTTER_METER_DEFINITION),
+      saveMeterDefinition(MeterDefinition.DISTRICT_HEATING_METER),
       DEFAULT_UTC_OFFSET
     ));
 

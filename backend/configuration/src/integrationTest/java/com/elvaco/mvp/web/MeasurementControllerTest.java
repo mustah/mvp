@@ -8,7 +8,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -31,10 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -391,15 +388,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void consumptionSeriesIsDisplayedWithConsumptionValuesAtFirstTimeInInterval() {
     ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:00:00Z");
-    LogicalMeterEntity consumptionMeter = newLogicalMeterEntity(
-
-      new MeterDefinition(
-        MeterDefinitionType.UNKNOWN_METER_TYPE,
-        "Consumption of things",
-        singleton(Quantity.VOLUME),
-        false
-      )
-    );
+    LogicalMeterEntity consumptionMeter = logicalGasMeter();
     PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.getLogicalMeterId());
     newMeasurement(meter, when, "Volume", 25.0, "m³");
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
@@ -433,14 +422,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void consumptionIsIncludedForValueDirectAfterPeriod() {
     ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:00:00Z");
-    LogicalMeterEntity consumptionMeter = newLogicalMeterEntity(
-      new MeterDefinition(
-        MeterDefinitionType.UNKNOWN_METER_TYPE,
-        "Consumption of things",
-        singleton(Quantity.VOLUME),
-        false
-      )
-    );
+    LogicalMeterEntity consumptionMeter = logicalGasMeter();
     PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.getLogicalMeterId());
     newMeasurement(meter, when, "Volume", 25.0, "m³");
     newMeasurement(meter, when.plusHours(1), "Volume", 35.0, "m³");
@@ -473,9 +455,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void findsConsumptionForGasMeters() {
     ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:00:00Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      GAS_METER
-    );
+    LogicalMeterEntity logicalMeter = logicalGasMeter();
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.getLogicalMeterId());
     newMeasurement(meter, when, "Volume", 1.0, "m^3");
     newMeasurement(meter, when.plusHours(1), "Volume", 2.0, "m^3");
@@ -515,7 +495,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void measurementsForNonPresentQuantity() {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T04:59:10Z");
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(GAS_METER);
+    LogicalMeterEntity logicalMeter = logicalGasMeter();
     newPhysicalMeterEntity(logicalMeter.getLogicalMeterId());
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser()
@@ -574,9 +554,9 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
   }
 
-  private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
+  private LogicalMeterEntity logicalGasMeter() {
     UUID id = randomUUID();
-    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
+    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(MeterDefinition.GAS_METER);
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
       new EntityPk(id, context().organisationId()),
       id.toString(),
