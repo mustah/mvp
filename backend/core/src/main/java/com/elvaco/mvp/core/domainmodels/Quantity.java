@@ -6,9 +6,6 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-
 @EqualsAndHashCode
 @ToString
 public class Quantity implements Identifiable<Integer> {
@@ -49,7 +46,7 @@ public class Quantity implements Identifiable<Integer> {
   public static final Quantity REACTIVE_ENERGY = new Quantity("Reactive energy")
     .withUnits("kWh", SeriesDisplayMode.CONSUMPTION);
 
-  public static final List<Quantity> QUANTITIES = unmodifiableList(asList(
+  public static final List<Quantity> QUANTITIES = List.of(
     VOLUME,
     VOLUME_FLOW,
     TEMPERATURE,
@@ -62,7 +59,7 @@ public class Quantity implements Identifiable<Integer> {
     ENERGY_RETURN,
     REACTIVE_ENERGY,
     EXTERNAL_TEMPERATURE
-  ));
+  );
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
 
