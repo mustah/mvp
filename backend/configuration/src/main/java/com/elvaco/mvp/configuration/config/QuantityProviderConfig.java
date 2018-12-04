@@ -3,9 +3,12 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.spi.repository.Quantities;
+import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
+import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+import com.elvaco.mvp.database.repository.access.QuantityProviderRepository;
+import com.elvaco.mvp.database.repository.jpa.QuantityProviderJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
@@ -14,17 +17,50 @@ import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static java.util.stream.Collectors.toList;
+
 @Configuration
 class QuantityProviderConfig {
 
   @Bean
-  QuantityProvider quantityProvider(Quantities quantities) {
+  QuantityProviderRepository quantityProviderRepository(
+    QuantityProviderJpaRepository quantityProviderJpaRepository
+  ) {
+    // this should only be used when reading/saving the initial quantities
+    return new QuantityProviderRepository(quantityProviderJpaRepository);
+  }
+
+  @Bean
+  QuantityProvider quantityProvider(QuantityProviderRepository quantityProviderRepository) {
+    // we cannot use the domain model <-> entity mapper here, because of a circular dependency,
+    // so we must simulate it both ways here
     Quantity.QUANTITIES.forEach(quantity ->
-      quantities
+      quantityProviderRepository
         .findByName(quantity.name)
-        .orElseGet(() -> quantities.save(quantity))
+        .orElseGet(() -> quantityProviderRepository.save(
+          QuantityEntity.builder()
+            .displayUnit(quantity.presentationUnit())
+            .name(quantity.name)
+            .storageUnit(quantity.storageUnit)
+            .seriesDisplayMode(quantity.seriesDisplayMode())
+            .build()
+        ))
     );
-    return new QuantityAccess(quantities.findAll());
+
+    var savedQuantities = quantityProviderRepository.findAllEntities()
+      .stream()
+      .map(quantityEntity -> new Quantity(
+        quantityEntity.id,
+        quantityEntity.name,
+        new QuantityPresentationInformation(
+          quantityEntity.displayUnit,
+          quantityEntity.seriesDisplayMode
+        ),
+        quantityEntity.storageUnit
+      ))
+      .collect(toList());
+
+    return new QuantityAccess(savedQuantities);
   }
 
   @Bean

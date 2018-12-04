@@ -182,13 +182,23 @@ class DataProviderConfig {
   }
 
   @Bean
-  Roles roles() {
-    return new RoleRepository(roleJpaRepository);
+  Roles roles(ProductionDataProvider productionDataProvider) {
+    var roleRepository = new RoleRepository(roleJpaRepository);
+    roleRepository.save(productionDataProvider.users());
+    return roleRepository;
   }
 
   @Bean
-  MeterDefinitions meterDefinitions(MeterDefinitionEntityMapper meterDefinitionEntityMapper) {
-    return new MeterDefinitionRepository(meterDefinitionJpaRepository, meterDefinitionEntityMapper);
+  MeterDefinitions meterDefinitions(
+    ProductionDataProvider productionDataProvider,
+    MeterDefinitionEntityMapper meterDefinitionEntityMapper
+  ) {
+    var meterDefinitionRepository = new MeterDefinitionRepository(
+      meterDefinitionJpaRepository,
+      meterDefinitionEntityMapper
+    );
+    productionDataProvider.meterDefinitions().forEach(meterDefinitionRepository::save);
+    return meterDefinitionRepository;
   }
 
   @Bean

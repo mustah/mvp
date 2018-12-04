@@ -14,10 +14,12 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
 
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
