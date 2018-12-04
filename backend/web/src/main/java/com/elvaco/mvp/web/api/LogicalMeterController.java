@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
-import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -35,7 +33,7 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    Page<LogicalMeterSummaryDto> page = logicalMeterUseCases.findAll(
+    var page = logicalMeterUseCases.findAll(
       RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID),
       new PageableAdapter(pageable)
     );
@@ -48,8 +46,8 @@ public class LogicalMeterController {
   public List<LogicalMeterDto> logicalMetersWithDetails(
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return logicalMeterUseCases.findAllWithDetails(
-      RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)).stream()
+    var parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
+    return logicalMeterUseCases.findAllWithDetails(parameters).stream()
       .map(LogicalMeterDtoMapper::toDto)
       .collect(toList());
   }

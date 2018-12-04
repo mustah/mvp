@@ -13,14 +13,17 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 
 public interface LocationFilterVisitor extends ConditionAdding, FilterVisitor {
 
+  @Override
   default void visit(CityFilter cityFilter) {
     addCondition(withUnknownCities(toCityParameters(cityFilter.values())));
   }
 
+  @Override
   default void visit(AddressFilter addressFilter) {
     addCondition(withUnknownAddresses(toAddressParameters(addressFilter.values())));
   }
 
+  @Override
   default void visit(LocationConfidenceFilter locationConfidenceFilter) {
     addCondition(LOCATION.CONFIDENCE.greaterOrEqual(locationConfidenceFilter.oneValue()));
   }

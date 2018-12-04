@@ -43,6 +43,7 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
 
   private final DSLContext dsl;
   private final MeasurementThresholdParser measurementThresholdParser;
+
   private Condition physicalMeterStatusLogCondition = falseCondition();
   private Condition measurementStatsCondition = falseCondition();
   private Condition missingMeasurementCondition = falseCondition();
