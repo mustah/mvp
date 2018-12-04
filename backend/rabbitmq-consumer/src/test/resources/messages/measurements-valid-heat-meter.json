@@ -73,7 +73,7 @@
       "timestamp": "2018-03-28T00:00:00",
       "value": 16,
       "unit": "m3/h",
-      "quantity": "Volume Flow",
+      "quantity": "Volume flow",
       "status": "OK"
     }
   ]
