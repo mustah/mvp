@@ -5,14 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import lombok.experimental.UtilityClass;
@@ -42,14 +38,19 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
 public final class RequestParametersMapper {
 
   private static final Map<RequestParameter, Function<List<String>, VisitableFilter>>
     PARAMETER_TO_FILTER = new HashMap<>();
-  private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(BEFORE, AFTER, SORT);
+  private static final List<RequestParameter> IGNORED_PARAMETERS = List.of(
+    BEFORE,
+    AFTER,
+    SORT,
+    QUANTITY,
+    RESOLUTION
+  );
 
   static {
     PARAMETER_TO_FILTER.put(CITY, (values) -> new CityFilter(values, MatchType.EXACT));
@@ -98,20 +99,6 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(ALARM, AlarmFilter::new);
     PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, MatchType.WILDCARD));
     PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, MatchType.WILDCARD));
-    PARAMETER_TO_FILTER.put(
-      RESOLUTION,
-      (values) -> new ResolutionFilter(Set.of(
-        values.stream()
-          .map(TemporalResolution::fromString)
-          .flatMap(Optional::stream)
-          .findAny()
-          .orElseThrow(() -> new IllegalArgumentException("Invalid value for resolution"))
-      ))
-    );
-    PARAMETER_TO_FILTER.put(
-      QUANTITY,
-      (values) -> new QuantityFilter(values.stream().map(Quantity::of).collect(toSet()))
-    );
   }
 
   public static Filters toFilters(RequestParameters requestParameters) {

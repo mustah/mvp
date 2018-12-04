@@ -5,24 +5,12 @@ import java.time.LocalDate;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
-import com.elvaco.mvp.core.filter.AddressFilter;
-import com.elvaco.mvp.core.filter.AlarmFilter;
-import com.elvaco.mvp.core.filter.CityFilter;
-import com.elvaco.mvp.core.filter.FacilityFilter;
-import com.elvaco.mvp.core.filter.GatewayIdFilter;
-import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
-import com.elvaco.mvp.core.filter.ManufacturerFilter;
 import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
-import com.elvaco.mvp.core.filter.MediumFilter;
-import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
-import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
-import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters;
-import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -40,14 +28,10 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownAddresses;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions.withUnknownCities;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
-import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 import static org.jooq.impl.DSL.falseCondition;
 
 @RequiredArgsConstructor
-public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
+public class GatewayJooqConditions extends CommonFilterVisitor {
   private final DSLContext dsl;
 
   private final MeasurementThresholdParser measurementThresholdParser;
@@ -59,31 +43,18 @@ public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
   private boolean hasMeasurementStatsFilter;
 
   @Override
-  public void visit(CityFilter cityFilter) {
-    addCondition(withUnknownCities(toCityParameters(cityFilter.values())));
-  }
-
-  @Override
-  public void visit(AddressFilter addressFilter) {
-    addCondition(withUnknownAddresses(toAddressParameters(addressFilter.values())));
-  }
-
-  @Override
   public void visit(OrganisationIdFilter organisationIdFilter) {
     addCondition(GATEWAY.ORGANISATION_ID.in(organisationIdFilter.values()));
   }
 
   @Override
-  public void visit(GatewayIdFilter gatewayIdFilter) {
-    addCondition(GATEWAY.ID.in(gatewayIdFilter.values()));
-  }
+  public void visit(WildcardFilter wildcardFilter) {
+    var value = wildcardFilter.oneValue().toLowerCase();
 
-  @Override
-  public void visit(AlarmFilter alarmFilter) {
-    addCondition(alarmFilter.values().stream()
-      .anyMatch(FilterUtils::isYes)
-      ? METER_ALARM_LOG.MASK.isNotNull()
-      : METER_ALARM_LOG.MASK.isNull());
+    addCondition(GATEWAY.SERIAL.lower().startsWith(value)
+      .or(GATEWAY.PRODUCT_MODEL.lower().startsWith(value))
+      .or(LOCATION.CITY.lower().startsWith(value))
+      .or(LOCATION.STREET_ADDRESS.lower().startsWith(value)));
   }
 
   @Override
@@ -115,55 +86,6 @@ public class GatewayJooqConditions extends EmptyJooqFilterVisitor {
           .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
           .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     }
-  }
-
-  @Override
-  public void visit(SerialFilter serialFilter) {
-    if (serialFilter.isWildcard()) {
-      addCondition(GATEWAY.SERIAL.containsIgnoreCase(serialFilter.oneValue()));
-    } else {
-      addCondition(GATEWAY.SERIAL.in(serialFilter.values()));
-    }
-  }
-
-  @Override
-  public void visit(WildcardFilter wildcardFilter) {
-    var value = wildcardFilter.oneValue().toLowerCase();
-
-    addCondition(GATEWAY.SERIAL.lower().startsWith(value)
-      .or(GATEWAY.PRODUCT_MODEL.lower().startsWith(value))
-      .or(LOCATION.CITY.lower().startsWith(value))
-      .or(LOCATION.STREET_ADDRESS.lower().startsWith(value)));
-  }
-
-  @Override
-  public void visit(LocationConfidenceFilter locationConfidenceFilter) {
-    addCondition(LOCATION.CONFIDENCE.greaterOrEqual(locationConfidenceFilter.oneValue()));
-  }
-
-  @Override
-  public void visit(MeterStatusFilter meterStatusFilter) {
-    addCondition(PHYSICAL_METER_STATUS_LOG.STATUS.in(meterStatusFilter.values()));
-  }
-
-  @Override
-  public void visit(MediumFilter mediumFilter) {
-    addCondition(METER_DEFINITION.MEDIUM.in(mediumFilter.values()));
-  }
-
-  @Override
-  public void visit(FacilityFilter facilityFilter) {
-    addCondition(LOGICAL_METER.EXTERNAL_ID.in(facilityFilter.values()));
-  }
-
-  @Override
-  public void visit(SecondaryAddressFilter secondaryAddressFilter) {
-    addCondition(PHYSICAL_METER.ADDRESS.in(secondaryAddressFilter.values()));
-  }
-
-  @Override
-  public void visit(ManufacturerFilter manufacturerFilter) {
-    addCondition(PHYSICAL_METER.MANUFACTURER.in(manufacturerFilter.values()));
   }
 
   @Override
