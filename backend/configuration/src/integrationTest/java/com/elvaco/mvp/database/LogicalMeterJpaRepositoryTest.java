@@ -1,19 +1,14 @@
 package com.elvaco.mvp.database;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,27 +23,11 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
-  @Autowired
-  private QuantityProvider quantityProvider;
-
-  @Autowired
-  private QuantityEntityMapper quantityEntityMapper;
-
   private UUID logicalMeterId;
 
   @Before
   public void setUp() {
     logicalMeterId = randomUUID();
-
-    Quantity power = quantityProvider.getByName(Quantity.POWER.name);
-
-    MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
-      new MeterDefinitionEntity(
-        MeterDefinitionType.UNKNOWN_METER_TYPE,
-        Set.of(quantityEntityMapper.toEntity(power)),
-        "My meter definition",
-        false
-      ));
 
     EntityPk pk = new EntityPk(logicalMeterId, context().organisationId());
 
@@ -56,7 +35,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       pk,
       "Some external ID",
       ZonedDateTime.now(),
-      meterDefinitionEntity,
+      meterDefinitionJpaRepository.getOne(MeterDefinitionType.UNKNOWN_METER_TYPE),
       DEFAULT_UTC_OFFSET
     );
     logicalMeterEntity.location = LocationEntity.builder()
