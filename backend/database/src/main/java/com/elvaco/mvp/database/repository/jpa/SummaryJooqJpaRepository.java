@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
@@ -31,31 +32,34 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   }
 
   private long countMeters(Filters filters) {
-    var query = dsl.selectDistinct().from(LOGICAL_METER);
+    var query = dsl.select(DSL.countDistinct(LOGICAL_METER.ID)).from(LOGICAL_METER);
 
     logicalMeterJooqConditions.apply(filters, query);
-
-    return dsl.fetchCount(query);
+    return query.fetchOne(0, Long.class);
   }
 
-  private long countCities(Filters filters) {
-    var query = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY).from(LOGICAL_METER);
+  private Long countCities(Filters filters) {
+    var query = dsl.select(DSL.countDistinct(LOCATION.COUNTRY, LOCATION.CITY)).from(LOGICAL_METER);
 
     logicalMeterJooqConditions.apply(filters, query);
 
-    return dsl.fetchCount(query
-      .where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull())));
+    return query.where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull()))
+      .fetchOne(0, Long.class);
   }
 
-  private long countAddresses(Filters filters) {
-    var query = dsl.selectDistinct(LOCATION.COUNTRY, LOCATION.CITY, LOCATION.STREET_ADDRESS)
-      .from(LOGICAL_METER);
+  private Long countAddresses(Filters filters) {
+    var query = dsl.select(DSL.countDistinct(
+      LOCATION.COUNTRY,
+      LOCATION.CITY,
+      LOCATION.STREET_ADDRESS
+    )).from(LOGICAL_METER);
 
     logicalMeterJooqConditions.apply(filters, query);
 
-    return dsl.fetchCount(query
+    return query
       .where(LOCATION.COUNTRY.isNotNull()
         .and(LOCATION.CITY.isNotNull())
-        .and(LOCATION.STREET_ADDRESS.isNotNull())));
+        .and(LOCATION.STREET_ADDRESS.isNotNull()))
+      .fetchOne(0, Long.class);
   }
 }
