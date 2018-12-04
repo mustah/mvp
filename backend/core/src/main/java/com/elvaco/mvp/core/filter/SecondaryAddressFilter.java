@@ -2,11 +2,12 @@ package com.elvaco.mvp.core.filter;
 
 import java.util.Collection;
 
-public class SecondaryAddressFilter extends Filter<String> {
+public class SecondaryAddressFilter extends StringMatchingFilter {
   SecondaryAddressFilter(
-    Collection<String> values
+    Collection<String> values,
+    MatchType matchType
   ) {
-    super(values);
+    super(values, matchType);
   }
 
   @Override

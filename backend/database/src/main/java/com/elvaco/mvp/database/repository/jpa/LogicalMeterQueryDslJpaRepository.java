@@ -17,33 +17,33 @@ import com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog;
 import com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition;
 import com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter;
 import com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog;
+import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.SelectionJooqConditions;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.SelectionQueryFilters;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
+import org.jooq.TableField;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.withExpectedReadoutsFor;
 import static com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions.MISSING_MEASUREMENT_COUNT;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.isLocationQuery;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
@@ -70,7 +70,7 @@ class LogicalMeterQueryDslJpaRepository
   @Override
   public Optional<LogicalMeterEntity> findById(UUID id) {
     var logicalMeter = LogicalMeter.LOGICAL_METER;
-    return fetchOne(logicalMeter.ID.eq(id));
+    return fetchOne(logicalMeter.ID.equal(id));
   }
 
   @Override
@@ -108,12 +108,12 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
-    return fetchAllBy(parameters, pageable, PHYSICAL_METER.address);
+    return fetchAllBy(parameters, pageable, PhysicalMeter.PHYSICAL_METER.ADDRESS);
   }
 
   @Override
   public Page<String> findFacilities(RequestParameters parameters, Pageable pageable) {
-    return fetchAllBy(parameters, pageable, PHYSICAL_METER.externalId);
+    return fetchAllBy(parameters, pageable, PhysicalMeter.PHYSICAL_METER.EXTERNAL_ID);
   }
 
   @Override
@@ -263,25 +263,45 @@ class LogicalMeterQueryDslJpaRepository
   private Page<String> fetchAllBy(
     RequestParameters parameters,
     Pageable pageable,
-    StringPath path
+    TableField<PhysicalMeterRecord, String> field
   ) {
-    var predicate = new SelectionQueryFilters().toExpression(parameters);
 
-    var countQuery = createCountQuery(predicate)
-      .select(Projections.constructor(String.class, path))
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .distinct();
-    joinLocation(countQuery, parameters);
+    var logicalMeter = LogicalMeter.LOGICAL_METER;
 
-    var query = createQuery(predicate)
-      .select(Projections.constructor(String.class, path))
-      .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .distinct();
-    joinLocation(query, parameters);
+    var query = dsl.selectDistinct(
+      field
+    ).from(logicalMeter);
 
-    var all = querydsl.applyPagination(pageable, query).fetch();
+    var countQuery = dsl.selectDistinct(
+      field
+    ).from(logicalMeter);
 
-    return getPage(all, pageable, countQuery::fetchCount);
+    var filters = toFilters(parameters);
+    new SelectionJooqConditions().apply(filters, query);
+    new SelectionJooqConditions().apply(filters, countQuery);
+
+    var all = query
+      .orderBy(directionFor(field, pageable.getSort()))
+      .limit(pageable.getPageSize())
+      .offset(Long.valueOf(pageable.getOffset()).intValue())
+      .fetchInto(String.class);
+
+    return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
+  }
+
+  private OrderField<String> directionFor(
+    TableField<PhysicalMeterRecord, String> field,
+    Sort sort
+  ) {
+    if (sort.isUnsorted()) {
+      return field;
+    }
+
+    if (sort.iterator().next().getDirection().isAscending()) {
+      return field.asc();
+    } else {
+      return field.desc();
+    }
   }
 
   private Optional<LogicalMeterEntity> fetchOne(Condition... conditions) {
@@ -290,11 +310,5 @@ class LogicalMeterQueryDslJpaRepository
       .from(logicalMeter)
       .where(conditions).limit(1);
     return nativeQuery(query, LogicalMeterEntity.class).stream().findAny();
-  }
-
-  private static void joinLocation(JPQLQuery<String> query, RequestParameters parameters) {
-    if (isLocationQuery(parameters)) {
-      query.join(LOGICAL_METER.location, LOCATION);
-    }
   }
 }
