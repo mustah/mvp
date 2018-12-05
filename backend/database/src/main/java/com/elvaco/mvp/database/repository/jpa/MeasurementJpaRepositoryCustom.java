@@ -1,18 +1,13 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.time.ZonedDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.List;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface MeasurementJpaRepositoryCustom
   extends QuerydslPredicateExecutor<MeasurementEntity> {
 
-  Optional<MeasurementEntity> findBy(
-    UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
-  );
+  List<MeasurementEntity> findAll(RequestParameters parameters);
 }

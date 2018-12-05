@@ -11,8 +11,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
@@ -69,22 +68,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public Optional<Measurement> findBy(
-    UUID physicalMeterId,
-    ZonedDateTime created,
-    String quantity
-  ) {
-    return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
-      .filter(measurement -> measurement.quantity.equals(quantity))
-      .filter(measurement -> measurement.created.equals(created))
-      .findAny();
-  }
-
-  @Override
-  public Page<Measurement> findAllBy(
-    UUID organisationId, UUID logicalMeterId,
-    Pageable pageable
-  ) {
+  public List<Measurement> findAll(RequestParameters parameters) {
     throw new NotImplementedYet();
   }
 

@@ -8,16 +8,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -28,8 +25,8 @@ import com.elvaco.mvp.web.exception.MissingParameter;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +36,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
-import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -49,8 +45,6 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 @RequiredArgsConstructor
 @RestApi("/api/v1/measurements")
 public class MeasurementController {
-
-  private static final PageImpl<MeasurementDto> EMPTY_PAGE = new PageImpl<>(emptyList());
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
@@ -160,22 +154,14 @@ public class MeasurementController {
   }
 
   @GetMapping("/paged")
-  public org.springframework.data.domain.Page<MeasurementDto> pagedMeasurements(
-    @RequestParam UUID logicalMeterId,
-    Pageable pageable
+  public Page<MeasurementDto> latestMeasurements(
+    @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return logicalMeterUseCases.effectiveOrganisationId(logicalMeterId)
-      .map(findMeasurements(logicalMeterId, new PageableAdapter(pageable)))
-      .map(page -> new PageImpl<>(page.getContent(), pageable, page.getTotalElements()))
-      .orElse(EMPTY_PAGE);
-  }
-
-  private Function<UUID, Page<MeasurementDto>> findMeasurements(
-    UUID logicalMeterId,
-    PageableAdapter pageable
-  ) {
-    return organisationId -> measurementUseCases.findAllBy(organisationId, logicalMeterId, pageable)
-      .map(MeasurementDtoMapper::toDto);
+    var parameters = RequestParametersAdapter.of(requestParams);
+    var measurements = measurementUseCases.findAll(parameters).stream()
+      .map(MeasurementDtoMapper::toDto)
+      .collect(toList());
+    return new PageImpl<>(measurements);
   }
 
   private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
@@ -14,8 +13,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -24,8 +22,6 @@ import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
@@ -187,33 +183,10 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Optional<Measurement> findBy(
-    UUID physicalMeterId,
-    ZonedDateTime created,
-    String quantity
-  ) {
-    return measurementJpaRepository.findBy(physicalMeterId, quantity, created)
-      .map(measurementEntityMapper::toDomainModel);
-  }
-
-  @Override
-  public Page<Measurement> findAllBy(UUID organisationId, UUID logicalMeterId, Pageable pageable) {
-    List<Measurement> measurements = measurementJpaRepository.latestForMeter(
-      organisationId,
-      logicalMeterId,
-      pageable.getPageSize(),
-      pageable.getOffset()
-    ).stream()
+  public List<Measurement> findAll(RequestParameters parameters) {
+    return measurementJpaRepository.findAll(parameters).stream()
       .map(measurementEntityMapper::toDomainModel)
       .collect(toList());
-
-    return new PageAdapter<>(
-      new PageImpl<>(
-        measurements,
-        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()),
-        measurementJpaRepository.countMeasurementsForMeter(organisationId, logicalMeterId)
-      )
-    );
   }
 
   @Override

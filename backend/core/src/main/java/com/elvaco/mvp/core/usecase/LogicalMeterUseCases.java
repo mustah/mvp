@@ -74,16 +74,6 @@ public class LogicalMeterUseCases {
     return logicalMeters.findAllForSelectionTree(parameters.ensureOrganisationFilters(currentUser));
   }
 
-  public Optional<UUID> effectiveOrganisationId(UUID logicalMeterId) {
-    if (currentUser.isSuperAdmin()) {
-      return logicalMeters.findById(logicalMeterId).map(lm -> lm.organisationId);
-    } else {
-      return Optional.ofNullable(
-        currentUser.subOrganisationParameters().getEffectiveOrganisationId()
-      );
-    }
-  }
-
   public Page<String> findSecondaryAddresses(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findSecondaryAddresses(
       parameters.ensureOrganisationFilters(currentUser),

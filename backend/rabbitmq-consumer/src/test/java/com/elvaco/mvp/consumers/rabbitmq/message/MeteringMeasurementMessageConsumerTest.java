@@ -118,7 +118,7 @@ public class MeteringMeasurementMessageConsumerTest {
         organisations,
         new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
       ),
-      new MeasurementUseCases(measurements),
+      new MeasurementUseCases(authenticatedUser, measurements),
       new GatewayUseCases(gateways, authenticatedUser),
       new UnitConverter() {
         @Override

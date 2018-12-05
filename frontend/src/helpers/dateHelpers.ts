@@ -13,6 +13,7 @@ moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 export const momentFrom = (input?: moment.MomentInput): moment.Moment => moment(input).tz('UTC');
 
 const intervalMinutesToString = (minutes: number): StartOf => minutes === 60 ? 'hour' : 'day';
+
 export const startOfLatestInterval = (now: moment.MomentInput, intervalInMinutes: number): Date =>
   momentFrom(now).startOf(intervalMinutesToString(intervalInMinutes)).toDate();
 
@@ -60,10 +61,10 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
   }
 };
 
-const currentDateRange = (
-  start: Date = momentFrom().toDate(),
+export const newDateRange = (
   period: Period,
-  customDateRange: Maybe<DateRange>,
+  customDateRange: Maybe<DateRange> = Maybe.nothing(),
+  start: Date = momentFrom().toDate(),
 ): DateRange => dateRange(start, period, customDateRange);
 
 export const yyyymmdd = 'YYYY-MM-DD';
@@ -88,13 +89,13 @@ export const toPeriodApiParameters = ({
   period,
   customDateRange,
 }: CurrentPeriod): EncodedUriParameters[] =>
-  toApiParameters(currentDateRange(start, period, customDateRange));
+  toApiParameters(newDateRange(period, customDateRange, start));
 
 export const queryParametersOfDateRange = ({
   period,
   customDateRange,
 }: SelectionInterval): RequestParameters => {
-  const {start, end}: DateRange = currentDateRange(undefined, period, Maybe.maybe(customDateRange));
+  const {start, end}: DateRange = newDateRange(period, Maybe.maybe(customDateRange));
   return {
     [RequestParameter.after]: momentFrom(start).format(apiFormat),
     [RequestParameter.before]: momentFrom(end).format(apiFormat),
@@ -105,7 +106,7 @@ const toFriendlyIso8601 = ({start, end}: DateRange): string =>
   `${momentFrom(start).format(yyyymmdd)} - ${momentFrom(end).format(yyyymmdd)}`;
 
 export const prettyRange = ({start, period, customDateRange}: CurrentPeriod): string =>
-  toFriendlyIso8601(currentDateRange(start, period, customDateRange));
+  toFriendlyIso8601(newDateRange(period, customDateRange, start));
 
 export const timestamp = (input: moment.MomentInput): string =>
   displayDate(input, 'MMM D, HH:mm');

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Period} from '../../components/dates/dateModels';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import {renderCreated} from '../../components/table/cellContentHelper';
 import '../../components/table/Table.scss';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
-import {isDefined} from '../../helpers/commonUtils';
+import {newDateRange} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -42,7 +43,6 @@ const renderReadingRows =
           const row = reading.measurements
             ? quantities
               .map((quantity: Quantity) => reading.measurements![quantity])
-              .filter(isDefined)
               .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>)
             : missingMeasurements;
 
@@ -124,23 +124,20 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
     const {isFetching, measurementPages} = this.state;
     const {meter: {medium, readIntervalMinutes}} = this.props;
 
-    const {readings, quantities}: MeasurementTableData = groupMeasurementsByDate(
+    const {readings: existingReadings, quantities}: MeasurementTableData = groupMeasurementsByDate(
       measurementPages,
       getMediumType(medium),
     );
 
-    const paddedReadings: Readings = fillMissingMeasurements({
-      receivedData: readings,
+    const dateRange = newDateRange(Period.latest);
+
+    const readings: Readings = fillMissingMeasurements({
+      existingReadings,
       readIntervalMinutes,
-      lastDate: new Date(),
-      numberOfRows: 100
+      dateRange,
     });
 
-    const wrapperProps: WrapperProps = {
-      isFetching,
-      readings: paddedReadings,
-      quantities,
-    };
+    const wrapperProps: WrapperProps = {isFetching, readings, quantities};
 
     return <MeasurementsTableComponent {...wrapperProps}/>;
   }

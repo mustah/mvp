@@ -8,10 +8,12 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 
 public interface GatewayFilterVisitor extends ConditionAdding, FilterVisitor {
 
+  @Override
   default void visit(GatewayIdFilter gatewayIdFilter) {
     addCondition(GATEWAY.ID.equal(gatewayIdFilter.oneValue()));
   }
 
+  @Override
   default void visit(SerialFilter serialFilter) {
     if (serialFilter.isWildcard()) {
       addCondition(GATEWAY.SERIAL.containsIgnoreCase(serialFilter.oneValue()));

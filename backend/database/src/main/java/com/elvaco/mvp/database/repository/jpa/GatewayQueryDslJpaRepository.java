@@ -38,7 +38,7 @@ class GatewayQueryDslJpaRepository
   extends BaseQueryDslRepository<GatewayEntity, UUID>
   implements GatewayJpaRepository {
 
-  private static final Map<String, Field<String>> SORT_FIELDS_MAP = Map.of(
+  private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
     "serial", Gateway.GATEWAY.SERIAL
   );
 
@@ -166,7 +166,7 @@ class GatewayQueryDslJpaRepository
     implements RecordHandler<Record15<UUID, UUID, String, String, Long, String,
     OffsetDateTime, OffsetDateTime, UUID, Double, Double, Double, String, String, String>> {
 
-    private Map<UUID, GatewaySummaryDto> gatewaySummaryDtos = new HashMap<>();
+    private final Map<UUID, GatewaySummaryDto> gatewaySummaryDtos = new HashMap<>();
 
     @Override
     public void next(
@@ -202,7 +202,7 @@ class GatewayQueryDslJpaRepository
       gatewaySummaryDtos.put(record.value1(), summaryDto);
     }
 
-    List<GatewaySummaryDto> getDtos() {
+    private List<GatewaySummaryDto> getDtos() {
       return new ArrayList<>(gatewaySummaryDtos.values());
     }
   }

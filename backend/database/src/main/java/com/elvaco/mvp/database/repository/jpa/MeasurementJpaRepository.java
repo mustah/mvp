@@ -131,53 +131,6 @@ public interface MeasurementJpaRepository
     @Param("resolution") String resolution
   );
 
-  @Query(nativeQuery = true, value = "select"
-    + "     measurement.created,"
-    + "     measurement.value,"
-    + "     measurement.quantity,"
-    + "     physical_meter_id"
-    + " from logical_meter"
-    + " inner join physical_meter"
-    + "     on logical_meter.organisation_id = physical_meter.organisation_id and logical_meter.id"
-    + "  = physical_meter.logical_meter_id"
-    + " inner join measurement"
-    + "     on physical_meter.id = measurement.physical_meter_id"
-    + " where logical_meter.id = :logical_meter_id"
-    + " and logical_meter.organisation_id = :organisation_id"
-    + " order by created desc"
-    + " limit :limit"
-    + " offset :offset")
-  List<MeasurementEntity> latestForMeter(
-    @Param("organisation_id") UUID organisationId,
-    @Param("logical_meter_id") UUID logicalMeterId,
-    @Param("limit") int limit,
-    @Param("offset") long offset
-  );
-
-  /**
-   * The limit 100 is arbitrary, just high enough to contain a few pages, but not high enough to
-   * have to check all rows.
-   */
-  @Query(nativeQuery = true, value = "select count(1)"
-    + " from ("
-    + "   select distinct measurement.created"
-    + "   from logical_meter"
-    + "     inner join physical_meter"
-    + "       on logical_meter.organisation_id = physical_meter.organisation_id and"
-    + "          logical_meter.id = physical_meter.logical_meter_id"
-    + "     inner join measurement"
-    + "       on physical_meter.id = measurement.physical_meter_id"
-    + "     inner join quantity"
-    + "       on measurement.quantity = quantity.id"
-    + "   where logical_meter.id = :logical_meter_id"
-    + "   and logical_meter.organisation_id = :organisation_id"
-    + "   limit 100"
-    + " ) unused_alias")
-  long countMeasurementsForMeter(
-    @Param("organisation_id") UUID organisationId,
-    @Param("logical_meter_id") UUID logicalMeterId
-  );
-
   @Modifying
   @Query(nativeQuery = true, value =
     "INSERT INTO measurement (physical_meter_id, created, quantity, value)"

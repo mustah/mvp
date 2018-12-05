@@ -1,4 +1,4 @@
-import {startOfLatestInterval} from '../../helpers/dateHelpers';
+import {DateRange} from '../../components/dates/dateModels';
 import {NormalizedPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
 import {
   allQuantities,
@@ -32,12 +32,11 @@ export const groupMeasurementsByDate =
       measurementPage.result.content.forEach((id: uuid) => {
         const measurement: Measurement = measurementPage.entities.measurements[id];
 
-        const reading: Reading =
-          readings[measurement.created] || {id: measurement.created, measurements: {}};
+        const reading: Reading = readings[measurement.created] || {id: measurement.created, measurements: {}};
 
         reading.measurements[measurement.quantity] = measurement;
-        quantitiesFoundInResponse.add(measurement.quantity);
         readings[measurement.created] = reading;
+        quantitiesFoundInResponse.add(measurement.quantity);
       });
     }
 
@@ -48,39 +47,26 @@ export const groupMeasurementsByDate =
   };
 
 interface ReadingArguments {
-  numberOfRows: number;
-  receivedData: ExistingReadings;
+  existingReadings: ExistingReadings;
+  dateRange: DateRange;
   readIntervalMinutes?: number;
-  lastDate: Date;
 }
 
 export const fillMissingMeasurements =
-  ({numberOfRows, receivedData, readIntervalMinutes, lastDate}: ReadingArguments): Readings => {
+  ({existingReadings, readIntervalMinutes, dateRange: {start, end}}: ReadingArguments): Readings => {
     if (!readIntervalMinutes) {
-      return receivedData;
+      return existingReadings;
     }
 
-    const readings: Readings = {...receivedData};
+    const startInSeconds = start.valueOf() / 1000;
+    const numRows = (end.valueOf() - start.valueOf()) / (1000 * readIntervalMinutes * 60);
+    const withMissingReadings: Readings = {...existingReadings};
 
-    const end: UnixTimestamp = startOfLatestInterval(lastDate, readIntervalMinutes).valueOf() / 1000;
-
-    const timestamps = Object.keys(receivedData);
-    const firstMeasurementInData: UnixTimestamp = timestamps.reduce(
-      (first, current) => Math.min(Number(first), Number(current)),
-      Number.MAX_SAFE_INTEGER
-    );
-
-    for (let row = 0; row < numberOfRows; row++) {
-      const currentTimestamp: UnixTimestamp = end - (row * readIntervalMinutes * 60);
-
-      if (timestamps.length && currentTimestamp < firstMeasurementInData) {
-        break;
-      }
-
-      if (!readings[currentTimestamp]) {
-        readings[currentTimestamp] = {id: currentTimestamp};
+    for (let row = 0; row < numRows; row++) {
+      const timestamp: UnixTimestamp = startInSeconds + (row * readIntervalMinutes * 60);
+      if (!withMissingReadings[timestamp]) {
+        withMissingReadings[timestamp] = {id: timestamp};
       }
     }
-
-    return readings;
+    return withMissingReadings;
   };

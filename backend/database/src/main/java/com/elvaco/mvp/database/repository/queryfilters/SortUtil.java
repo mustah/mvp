@@ -18,27 +18,27 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class SortUtil {
 
-  public static Optional<Sort> getSort(RequestParameters parameters) {
-    return parameters.has(SORT)
-      .map(p -> p.getValues(SORT).stream()
-        .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
-        .collect(toList()))
-      .map(Sort::by);
-  }
-
   public static Sort getSortOrUnsorted(RequestParameters parameters) {
     return getSort(parameters).orElse(Sort.unsorted());
   }
 
   public static Collection<SortField<?>> resolveSortFields(
     RequestParameters parameters,
-    Map<String, Field<String>> sortFieldsMap
+    Map<String, Field<?>> sortFieldsMap
   ) {
     return getSort(parameters).stream()
       .flatMap(Streamable::stream)
       .map(order -> sortFieldsMap.get(order.getProperty())
         .sort(SortOrder.valueOf(order.getDirection().name())))
       .collect(toList());
+  }
+
+  private static Optional<Sort> getSort(RequestParameters parameters) {
+    return parameters.has(SORT)
+      .map(p -> p.getValues(SORT).stream()
+        .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
+        .collect(toList()))
+      .map(Sort::by);
   }
 
   private static Sort.Direction getDirection(String s) {

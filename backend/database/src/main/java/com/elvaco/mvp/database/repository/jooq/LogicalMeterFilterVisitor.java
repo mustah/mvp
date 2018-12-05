@@ -10,15 +10,18 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 
 interface LogicalMeterFilterVisitor extends FilterVisitor, ConditionAdding {
 
-  default void visit(MediumFilter mediumFilter) {
-    addCondition(METER_DEFINITION.MEDIUM.in(mediumFilter.values()));
+  @Override
+  default void visit(MediumFilter filter) {
+    addCondition(METER_DEFINITION.MEDIUM.in(filter.values()));
   }
 
-  default void visit(FacilityFilter facilityFilter) {
-    addCondition(LOGICAL_METER.EXTERNAL_ID.in(facilityFilter.values()));
+  @Override
+  default void visit(FacilityFilter filter) {
+    addCondition(LOGICAL_METER.EXTERNAL_ID.in(filter.values()));
   }
 
-  default void visit(LogicalMeterIdFilter logicalMeterIdFilter) {
-    addCondition(LOGICAL_METER.ID.in(logicalMeterIdFilter.values()));
+  @Override
+  default void visit(LogicalMeterIdFilter filter) {
+    addCondition(LOGICAL_METER.ID.in(filter.values()));
   }
 }

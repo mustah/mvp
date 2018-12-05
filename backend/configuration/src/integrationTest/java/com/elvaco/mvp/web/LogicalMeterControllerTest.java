@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -58,6 +59,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.THRESHOLD;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
@@ -1570,11 +1572,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<LogicalMeterDto> response = asSuperAdmin()
       .delete("/meters/" + districtHeatingMeter.id, LogicalMeterDto.class);
 
+    var parameters = new RequestParametersAdapter().add(
+      LOGICAL_METER_ID,
+      districtHeatingMeter.id.toString()
+    );
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
     assertThat(logicalMeters.findById(districtHeatingMeter.id)).isEmpty();
     assertThat(physicalMeterJpaRepository.findById(physicalMeter.id)).isEmpty();
-    assertThat(measurements.findBy(physicalMeter.id, date, Quantity.VOLUME.name)).isEmpty();
+    assertThat(measurementJpaRepository.findAll(parameters)).isEmpty();
   }
 
   @Test

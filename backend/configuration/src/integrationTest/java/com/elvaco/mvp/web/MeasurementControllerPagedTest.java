@@ -15,6 +15,7 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,26 +74,18 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     newMeasurement(meter2, date.plusHours(4), "Volume", 7.0, "m^3");
 
-    var url = urlFrom(logicalGasMeter.getId().id) + "&size=2";
+    var url = urlFrom(logicalGasMeter.getId().id);
 
     Page<MeasurementDto> firstPage = asUser().getPage(url, MeasurementDto.class);
 
     assertThat(firstPage.getTotalElements()).isEqualTo(4);
-    assertThat(firstPage.getTotalPages()).isEqualTo(2);
+    assertThat(firstPage.getTotalPages()).isEqualTo(1);
     assertThat(firstPage.getContent())
       .containsExactlyInAnyOrder(
-        new MeasurementDto(
-          "Volume",
-          6.0,
-          "m³",
-          date.plusHours(3)
-        ),
-        new MeasurementDto(
-          "Volume",
-          5.0,
-          "m³",
-          date.plusHours(2)
-        )
+        new MeasurementDto("Volume", 1.0, "m³", date),
+        new MeasurementDto("Volume", 2.0, "m³", date.plusHours(1)),
+        new MeasurementDto("Volume", 5.0, "m³", date.plusHours(2)),
+        new MeasurementDto("Volume", 6.0, "m³", date.plusHours(3))
       );
   }
 
@@ -205,7 +199,10 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
     ));
   }
 
-  private static String urlFrom(UUID logicalMeterId) {
-    return String.format("/measurements/paged/?logicalMeterId=%s", logicalMeterId);
+  private static Url urlFrom(UUID logicalMeterId) {
+    return Url.builder()
+      .path("/measurements/paged/")
+      .parameter(LOGICAL_METER_ID, logicalMeterId)
+      .build();
   }
 }
