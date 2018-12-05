@@ -23,21 +23,27 @@ import static java.util.stream.Collectors.toList;
 class QuantityProviderConfig {
 
   @Bean
-  QuantityProviderRepository quantityProviderRepository(
+  QuantityProviderRepository initialQuantityProviderRepository(
     QuantityProviderJpaRepository quantityProviderJpaRepository
   ) {
-    // this should only be used when reading/saving the initial quantities
     return new QuantityProviderRepository(quantityProviderJpaRepository);
   }
 
+  /**
+   * We cannot use the domain model <-> entity mapper before having a real QuantityProvider,
+   * because of a circular dependency. We avoid the circle by using a separate JPA repository and
+   * do the mapping ourselves.
+   *
+   * @param initialQuantityProviderRepository
+   *
+   * @return QuantityProvider
+   */
   @Bean
-  QuantityProvider quantityProvider(QuantityProviderRepository quantityProviderRepository) {
-    // we cannot use the domain model <-> entity mapper here, because of a circular dependency,
-    // so we must simulate it both ways here
+  QuantityProvider quantityProvider(QuantityProviderRepository initialQuantityProviderRepository) {
     Quantity.QUANTITIES.forEach(quantity ->
-      quantityProviderRepository
+      initialQuantityProviderRepository
         .findByName(quantity.name)
-        .orElseGet(() -> quantityProviderRepository.save(
+        .orElseGet(() -> initialQuantityProviderRepository.save(
           QuantityEntity.builder()
             .displayUnit(quantity.presentationUnit())
             .name(quantity.name)
@@ -47,7 +53,7 @@ class QuantityProviderConfig {
         ))
     );
 
-    var savedQuantities = quantityProviderRepository.findAllEntities()
+    var savedQuantities = initialQuantityProviderRepository.findAllEntities()
       .stream()
       .map(quantityEntity -> new Quantity(
         quantityEntity.id,
