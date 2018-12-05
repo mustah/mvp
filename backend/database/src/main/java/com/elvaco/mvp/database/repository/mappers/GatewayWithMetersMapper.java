@@ -7,16 +7,14 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public final class GatewayWithMetersMapper {
 
-  private LogicalMeterEntityMapper logicalMeterEntityMapper;
-
-  public GatewayWithMetersMapper(LogicalMeterEntityMapper logicalMeterEntityMapper) {
-    this.logicalMeterEntityMapper = logicalMeterEntityMapper;
-  }
+  private final LogicalMeterEntityMapper logicalMeterEntityMapper;
 
   public Gateway toDomainModel(GatewayEntity entity) {
     return Gateway.builder()

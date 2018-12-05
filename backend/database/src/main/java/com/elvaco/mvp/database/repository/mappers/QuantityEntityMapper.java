@@ -4,12 +4,10 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+import lombok.RequiredArgsConstructor;
 
-public final class QuantityEntityMapper {
-
-  public QuantityEntityMapper(QuantityProvider quantityProvider) {
-    this.quantityProvider = quantityProvider;
-  }
+@RequiredArgsConstructor
+public class QuantityEntityMapper {
 
   private final QuantityProvider quantityProvider;
 
@@ -43,5 +41,4 @@ public final class QuantityEntityMapper {
     }
     return preloadedQty.storageUnit;
   }
-
 }

@@ -18,21 +18,19 @@ import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+import lombok.RequiredArgsConstructor;
 
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
+import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModels;
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModelsWithoutStatusLogs;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+@RequiredArgsConstructor
 public final class LogicalMeterEntityMapper {
 
-  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
-
-  public LogicalMeterEntityMapper(MeterDefinitionEntityMapper meterDefinitionEntityMapper) {
-    this.meterDefinitionEntityMapper = meterDefinitionEntityMapper;
-  }
+  private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   public LogicalMeter toDomainModelWithLocation(LogicalMeterWithLocation logicalMeter) {
     return LogicalMeter.builder()
@@ -61,7 +59,7 @@ public final class LogicalMeterEntityMapper {
     return new LogicalMeterCollectionStats(
       logicalMeterCollectionStats.id,
       logicalMeterCollectionStats.missingReadingCount,
-      calculateExpectedReadOuts(logicalMeterCollectionStats.readInterval, selectionPeriod)
+      expectedReadouts(logicalMeterCollectionStats.readInterval, selectionPeriod)
     );
   }
 

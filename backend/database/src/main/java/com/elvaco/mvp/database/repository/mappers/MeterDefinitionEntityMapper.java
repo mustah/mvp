@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import static java.util.stream.Collectors.toSet;
 
 @RequiredArgsConstructor
-public final class MeterDefinitionEntityMapper {
+public class MeterDefinitionEntityMapper {
 
   private final QuantityEntityMapper quantityEntityMapper;
   private final QuantityProvider quantityProvider;

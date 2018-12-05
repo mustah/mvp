@@ -9,22 +9,16 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.Arrays.asList;
 
+@RequiredArgsConstructor
 public class DemoDataHelper {
 
   private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
-  private final QuantityEntityMapper quantityEntityMapper;
   private final QuantityProvider quantityProvider;
-
-  public DemoDataHelper(
-    QuantityProvider quantityProvider,
-    QuantityEntityMapper quantityEntityMapper
-  ) {
-    this.quantityProvider = quantityProvider;
-    this.quantityEntityMapper = quantityEntityMapper;
-  }
+  private final QuantityEntityMapper quantityEntityMapper;
 
   public List<MeasurementEntity> waterMeasurement(
     ZonedDateTime created,
