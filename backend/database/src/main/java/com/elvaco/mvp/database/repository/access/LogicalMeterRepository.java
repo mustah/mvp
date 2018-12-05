@@ -15,7 +15,6 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -28,6 +27,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -226,7 +226,7 @@ public class LogicalMeterRepository implements LogicalMeters {
       .findFirst()
       .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
       .orElse(0L);
-    return LogicalMeterHelper.calculateExpectedReadOuts(readIntervalMinutes, selectionPeriod);
+    return expectedReadouts(readIntervalMinutes, selectionPeriod);
   }
 
   private Map<UUID, Long> getMissingCountForMetersWithinPeriod(

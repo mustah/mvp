@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.util;
 
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import org.junit.Test;
@@ -22,7 +20,6 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
 import static com.elvaco.mvp.core.domainmodels.Quantity.QUANTITIES;
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -42,39 +39,6 @@ public class LogicalMeterHelperTest {
       .findAny()
       .orElse(null)
   );
-
-  @Test
-  public void calculateExpectedReadoutsHourly() {
-    assertThat(calculateExpectedReadOuts(
-      60,
-      new SelectionPeriod(
-        ZonedDateTime.parse("2018-01-01T00:00:00Z"),
-        ZonedDateTime.parse("2018-01-02T00:00:00Z")
-      )
-    )).isEqualTo(24);
-  }
-
-  @Test
-  public void calculateExpectedReadoutsFifteenMinutes() {
-    assertThat(calculateExpectedReadOuts(
-      15,
-      new SelectionPeriod(
-        ZonedDateTime.parse("2018-01-01T00:00:00Z"),
-        ZonedDateTime.parse("2018-01-02T00:00:00Z")
-      )
-    )).isEqualTo(96);
-  }
-
-  @Test
-  public void calculateExpectedReadoutsForZeroInterval() {
-    assertThat(calculateExpectedReadOuts(
-      0,
-      new SelectionPeriod(
-        ZonedDateTime.parse("2018-01-01T00:00:00Z"),
-        ZonedDateTime.parse("2018-01-02T00:00:00Z")
-      )
-    )).isEqualTo(0);
-  }
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_emptyParams() {
