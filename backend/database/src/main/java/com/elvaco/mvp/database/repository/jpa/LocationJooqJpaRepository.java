@@ -27,7 +27,7 @@ class LocationJooqJpaRepository
   extends SimpleJpaRepository<LocationEntity, EntityPk>
   implements LocationJpaRepository {
 
-  private static final Map<String, Field<String>> SORT_FIELDS_MAP = Map.of(
+  private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
     "city", LOCATION.CITY,
     "streetAddress", LOCATION.STREET_ADDRESS
   );

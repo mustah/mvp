@@ -1,3 +1,6 @@
+import {Period} from '../../../components/dates/dateModels';
+import {momentFrom, newDateRange} from '../../../helpers/dateHelpers';
+import {Maybe} from '../../../helpers/Maybe';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
 import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
@@ -28,27 +31,29 @@ describe('dialogHelper', () => {
       },
       productModel: 'CMi2110',
       status: {name: 'OK', id: 0},
-      statusChangelog: [{
-        date: '2017-11-22 09:34',
-        status: {id: 0, name: 'OK'},
-        id: '967af275-0026-43b9-a0ef-123dfb05612a',
-        gatewayId: '12032010',
-      }, {
-        date: '2017-11-22 10:34',
-        status: {id: 0, name: 'OK'},
-        id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
-        gatewayId: '12032010',
-      }, {
-        date: '2017-11-22 11:34',
-        status: {id: 3, name: 'Fel'},
-        id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-        gatewayId: '12032010',
-      }, {
-        date: '2017-11-22 12:34',
-        status: {id: 0, name: 'OK'},
-        id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
-        gatewayId: '12032010',
-      }],
+      statusChangelog: [
+        {
+          date: '2017-11-22 09:34',
+          status: {id: 0, name: 'OK'},
+          id: '967af275-0026-43b9-a0ef-123dfb05612a',
+          gatewayId: '12032010',
+        }, {
+          date: '2017-11-22 10:34',
+          status: {id: 0, name: 'OK'},
+          id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
+          gatewayId: '12032010',
+        }, {
+          date: '2017-11-22 11:34',
+          status: {id: 3, name: 'Fel'},
+          id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
+          gatewayId: '12032010',
+        }, {
+          date: '2017-11-22 12:34',
+          status: {id: 0, name: 'OK'},
+          id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
+          gatewayId: '12032010',
+        }
+      ],
       statusChanged: '2017-11-05 23:00',
       meterIds: ['67606228'],
       organisationId: '',
@@ -202,9 +207,39 @@ describe('dialogHelper', () => {
 
   describe('fillMissingMeasurements', () => {
 
-    const ONE_HOUR_IN_SECONDS: number = 60 * 60;
+    const readIntervalMinutes = 60;
+    const oneHourInSeconds: number = 60 * 60;
 
-    const now: Date = new Date('01 Jan 2010 00:00:00 UTC');
+    const start = momentFrom('2018-01-01T00:00:00Z').toDate();
+    const dateRange = newDateRange(Period.latest, Maybe.nothing(), start);
+    const startHour: UnixTimestamp = dateRange.start.valueOf() / 1000;
+
+    const missingReadouts24h = {
+      1514678400: {id: 1514678400},
+      1514682000: {id: 1514682000},
+      1514685600: {id: 1514685600},
+      1514689200: {id: 1514689200},
+      1514692800: {id: 1514692800},
+      1514696400: {id: 1514696400},
+      1514700000: {id: 1514700000},
+      1514703600: {id: 1514703600},
+      1514707200: {id: 1514707200},
+      1514710800: {id: 1514710800},
+      1514714400: {id: 1514714400},
+      1514718000: {id: 1514718000},
+      1514721600: {id: 1514721600},
+      1514725200: {id: 1514725200},
+      1514728800: {id: 1514728800},
+      1514732400: {id: 1514732400},
+      1514736000: {id: 1514736000},
+      1514739600: {id: 1514739600},
+      1514743200: {id: 1514743200},
+      1514746800: {id: 1514746800},
+      1514750400: {id: 1514750400},
+      1514754000: {id: 1514754000},
+      1514757600: {id: 1514757600},
+      1514761200: {id: 1514761200}
+    };
 
     const measurement = (timestampAndValue: UnixTimestamp): MeasurementsByQuantity => ({
       [Quantity.power]: {
@@ -217,128 +252,100 @@ describe('dialogHelper', () => {
     });
 
     it('fill empty readings to specified amount of lines', () => {
-      const receivedData: ExistingReadings = {};
+      const existingReadings: ExistingReadings = {};
 
-      const emptyReadings: Readings = fillMissingMeasurements({
-        numberOfRows: 100,
-        receivedData,
-        lastDate: now,
-        readIntervalMinutes: 60,
+      const actual: Readings = fillMissingMeasurements({
+        existingReadings,
+        readIntervalMinutes,
+        dateRange,
       });
 
-      const expected: Readings = {};
-      for (let i = 0; i < 100; i++) {
-        const timestamp: UnixTimestamp = (now.valueOf() / 1000) - i * ONE_HOUR_IN_SECONDS;
-        expected[timestamp] = {id: timestamp};
-      }
+      const expected: Readings = {...missingReadouts24h};
 
-      expect(emptyReadings).toEqual(expected);
+      expect(actual).toEqual(expected);
     });
 
     it('adds missing measurements between existing for an hourly meter', () => {
-      const receivedData: ExistingReadings = {};
-      receivedData[0] = {
-        id: 0,
-        measurements: measurement(0),
-      };
-      const twoHoursLater: number = 2 * ONE_HOUR_IN_SECONDS;
-      receivedData[twoHoursLater] = {
-        id: twoHoursLater,
-        measurements: measurement(twoHoursLater),
-      };
+      const existingReadings: ExistingReadings = {};
 
-      const emptyReadings: Readings = fillMissingMeasurements({
-        numberOfRows: 3,
-        lastDate: new Date(2 * ONE_HOUR_IN_SECONDS * 1000),
-        readIntervalMinutes: 60,
-        receivedData,
+      existingReadings[startHour] = {id: startHour, measurements: measurement(startHour)};
+
+      const twoHoursLater: UnixTimestamp = startHour + oneHourInSeconds;
+      existingReadings[twoHoursLater] = {id: twoHoursLater, measurements: measurement(twoHoursLater)};
+
+      const actual: Readings = fillMissingMeasurements({
+        existingReadings,
+        readIntervalMinutes,
+        dateRange,
       });
 
-      const expected: Readings = {...receivedData};
-      const oneHourLater: number = ONE_HOUR_IN_SECONDS;
-      expected[oneHourLater] = {
-        id: oneHourLater,
-      };
+      const expected: Readings = {...missingReadouts24h, ...existingReadings};
 
-      expect(emptyReadings).toEqual(expected);
+      expect(actual).toEqual(expected);
     });
 
-    it('does not add trailing missing measurements, because that data may just not have been asked for', () => {
-      const receivedData: ExistingReadings = {};
-      const twoHoursLater: number = 2 * ONE_HOUR_IN_SECONDS;
-      receivedData[twoHoursLater] = {
-        id: twoHoursLater,
-        measurements: measurement(twoHoursLater),
-      };
+    it('fills with missing readout timestamps when no measurements exists for that timestamp', () => {
+      const existingReadings: ExistingReadings = {};
+      const twoHoursLater: UnixTimestamp = 2 * oneHourInSeconds;
+      existingReadings[twoHoursLater] = {id: twoHoursLater, measurements: measurement(twoHoursLater)};
 
-      const somethingHigherThanOne = 3;
-
-      const emptyReadings: Readings = fillMissingMeasurements({
-        numberOfRows: somethingHigherThanOne,
-        lastDate: new Date(2 * ONE_HOUR_IN_SECONDS * 1000),
-        readIntervalMinutes: 60,
-        receivedData,
+      const actual: Readings = fillMissingMeasurements({
+        existingReadings,
+        readIntervalMinutes,
+        dateRange,
       });
 
-      const expected: Readings = {...receivedData};
+      const expected: Readings = {...missingReadouts24h, ...existingReadings};
 
-      expect(emptyReadings).toEqual(expected);
+      expect(actual).toEqual(expected);
     });
 
-    it('rounds the date to exact intervals', () => {
-      const receivedData: ExistingReadings = {};
-      receivedData[0] = {
-        id: 0,
-        measurements: measurement(0),
-      };
+    it('can handle 15m read intervals', () => {
+      const existingReadings: ExistingReadings = {};
 
-      const oddSeconds = 34;
-      const emptyReadings: Readings = fillMissingMeasurements({
-        numberOfRows: 2,
-        lastDate: new Date((oddSeconds + ONE_HOUR_IN_SECONDS) * 1000),
-        readIntervalMinutes: 60,
-        receivedData,
+      const actual: Readings = fillMissingMeasurements({
+        existingReadings,
+        readIntervalMinutes: 15,
+        dateRange,
       });
 
-      const expected: Readings = {...receivedData};
-      const oneHourLater: number = ONE_HOUR_IN_SECONDS;
-      expected[oneHourLater] = {
-        id: oneHourLater,
-      };
-
-      expect(emptyReadings).toEqual(expected);
+      expect(Object.keys(actual).length).toEqual(96);
     });
 
-    describe('readIntervalMinutes === undefined', () => {
+    it('can handle 60m read interval', () => {
+      const existingReadings: ExistingReadings = {};
 
-      it('does not add to empty map', () => {
-        const receivedData: ExistingReadings = {};
+      const actual: Readings = fillMissingMeasurements({
+        existingReadings,
+        readIntervalMinutes,
+        dateRange,
+      });
 
-        const emptyReadings: Readings = fillMissingMeasurements({
-          numberOfRows: 100,
-          receivedData,
-          lastDate: now,
+      expect(Object.keys(actual).length).toEqual(24);
+    });
+
+    describe('no read interval exists', () => {
+
+      it('returns the input readings', () => {
+        const existingReadings: ExistingReadings = {};
+
+        const actual: Readings = fillMissingMeasurements({
+          existingReadings,
+          dateRange,
         });
 
-        const expected: Readings = {};
-        expect(emptyReadings).toEqual(expected);
+        expect(actual).toBe(existingReadings);
       });
 
       it('keeps inserted map', () => {
-        const receivedData: ExistingReadings = {
-          0: {
-            id: 0,
-            measurements: measurement(0),
-          }
-        };
+        const existingReadings: ExistingReadings = {0: {id: 0, measurements: measurement(0)}};
 
         const emptyReadings: Readings = fillMissingMeasurements({
-          numberOfRows: 100,
-          receivedData,
-          lastDate: now,
+          existingReadings,
+          dateRange,
         });
 
-        const expected: Readings = {...receivedData};
+        const expected: Readings = {...existingReadings};
         expect(emptyReadings).toEqual(expected);
       });
 
@@ -347,13 +354,12 @@ describe('dialogHelper', () => {
     describe('readIntervalMinutes === 0', () => {
 
       it('does not add to empty map', () => {
-        const receivedData: ExistingReadings = {};
+        const existingReadings: ExistingReadings = {};
 
         const emptyReadings: Readings = fillMissingMeasurements({
-          numberOfRows: 100,
-          receivedData,
-          lastDate: now,
-          readIntervalMinutes: 0
+          existingReadings,
+          readIntervalMinutes: 0,
+          dateRange,
         });
 
         const expected: Readings = {};
@@ -361,21 +367,15 @@ describe('dialogHelper', () => {
       });
 
       it('keeps inserted map', () => {
-        const receivedData: ExistingReadings = {
-          0: {
-            id: 0,
-            measurements: measurement(0),
-          }
-        };
+        const existingReadings: ExistingReadings = {0: {id: 0, measurements: measurement(0)}};
 
         const emptyReadings: Readings = fillMissingMeasurements({
-          numberOfRows: 100,
-          receivedData,
-          lastDate: now,
-          readIntervalMinutes: 0
+          existingReadings,
+          readIntervalMinutes: 0,
+          dateRange,
         });
 
-        const expected: Readings = {...receivedData};
+        const expected: Readings = {...existingReadings};
         expect(emptyReadings).toEqual(expected);
       });
 

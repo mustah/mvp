@@ -1,9 +1,16 @@
 import {flatMap, map} from 'lodash';
+import {Period} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
+import {newDateRange} from '../../../../helpers/dateHelpers';
 import {cityWithoutCountry} from '../../../../helpers/formatters';
 import {Maybe} from '../../../../helpers/Maybe';
-import {encodeRequestParameters, makeUrl, requestParametersFrom} from '../../../../helpers/urlFactory';
+import {
+  encodeRequestParameters,
+  makeApiParametersOf,
+  makeUrl,
+  requestParametersFrom
+} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {EncodedUriParameters, uuid} from '../../../../types/Types';
@@ -235,9 +242,11 @@ interface MeasurementPagedApiResponse {
 
 export const fetchMeasurementsPaged = async (id: uuid, updateState: OnUpdate, logout: OnLogout): Promise<void> => {
   try {
+    const customDateRange = newDateRange(Period.latest);
+    const period = makeApiParametersOf({period: Period.latest, customDateRange});
     const measurementUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurementsPaged,
-      `sort=created,desc&sort=quantity,asc&logicalMeterId=${id}&size=300`,
+      `sort=created,desc&sort=quantity,asc&logicalMeterId=${id}&${period}`,
     );
     const {data}: MeasurementPagedApiResponse = await restClient.get(measurementUrl);
 
