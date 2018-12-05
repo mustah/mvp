@@ -22,12 +22,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.electricityMeasurement;
-import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.gasMeasurement;
-import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.heatMeasurement;
-import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.roomSensorMeasurement;
-import static com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper.waterMeasurement;
-
 @Slf4j
 @RequiredArgsConstructor
 @Order(5)
@@ -42,6 +36,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
   private final MeasurementJpaRepositoryImpl measurementJpaRepository;
 
   private final ThreadLocalRandom random = ThreadLocalRandom.current();
+  private final DemoDataHelper demoDataHelper;
 
   @Override
   @Transactional
@@ -101,17 +96,33 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
 
       List<MeasurementEntity> measurements;
       if (meter.medium.equals(Medium.DISTRICT_HEATING.medium)) {
-        measurements = heatMeasurement(created, meter);
+        measurements = demoDataHelper.heatMeasurement(created, meter);
       } else if (meter.medium.equals(Medium.GAS.medium)) {
-        measurements = gasMeasurement(created, meter, consumingMediumMeterReading);
+        measurements = demoDataHelper.gasMeasurement(
+          created,
+          meter,
+          consumingMediumMeterReading
+        );
       } else if (meter.medium.equals(Medium.WATER.medium)) {
-        measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
+        measurements = demoDataHelper.waterMeasurement(
+          created,
+          meter,
+          consumingMediumMeterReading
+        );
       } else if (meter.medium.equals(Medium.HOT_WATER.medium)) {
-        measurements = waterMeasurement(created, meter, consumingMediumMeterReading);
+        measurements = demoDataHelper.waterMeasurement(
+          created,
+          meter,
+          consumingMediumMeterReading
+        );
       } else if (meter.medium.equals(Medium.ELECTRICITY.medium)) {
-        measurements = electricityMeasurement(created, meter, consumingMediumMeterReading);
+        measurements = demoDataHelper.electricityMeasurement(
+          created,
+          meter,
+          consumingMediumMeterReading
+        );
       } else if (meter.medium.equals(Medium.ROOM_SENSOR.medium)) {
-        measurements = roomSensorMeasurement(created, meter);
+        measurements = demoDataHelper.roomSensorMeasurement(created, meter);
       } else {
         throw new RuntimeException("You need to add support for mocking the medium " + meter
           .medium + " in DemoDataHelper");

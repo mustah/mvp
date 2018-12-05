@@ -63,14 +63,12 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
       .map(existing::logicalMeter)
-      .orElseGet(() -> {
-        return LogicalMeter.builder()
-          .externalId(facilityId)
-          .organisationId(organisation.id)
-          .meterDefinition(resolveMeterDefinition(measurementMessage.values))
-          .utcOffset("+01") //TODO: facility.utcOffset when metering supports that
-          .build();
-      });
+      .orElseGet(() -> LogicalMeter.builder()
+        .externalId(facilityId)
+        .organisationId(organisation.id)
+        .meterDefinition(resolveMeterDefinition(measurementMessage.values))
+        .utcOffset("+01") //TODO: facility.utcOffset when metering supports that
+        .build());
 
     String address = measurementMessage.meter.id;
 

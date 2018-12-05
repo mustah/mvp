@@ -24,6 +24,13 @@ public class RoleRepository implements Roles {
       .collect(toList());
   }
 
+  @Override
+  public List<Role> findAll() {
+    return roleJpaRepository.findAll().stream()
+      .map(this::toDomainModel)
+      .collect(toList());
+  }
+
   private Role toDomainModel(RoleEntity roleEntity) {
     return new Role(roleEntity.role);
   }

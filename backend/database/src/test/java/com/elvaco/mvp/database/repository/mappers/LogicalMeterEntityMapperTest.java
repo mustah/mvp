@@ -3,7 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -17,11 +17,10 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.Quantity.QUANTITIES;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
 import static java.util.Collections.singleton;
@@ -32,15 +31,18 @@ public class LogicalMeterEntityMapperTest {
 
   private static final String TZ = "+01";
 
-  @Before
-  public void setUp() {
-    QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
-  }
+  private static final QuantityProvider QUANTITY_PROVIDER = name -> QUANTITIES.stream()
+    .filter(quantity -> quantity.name.equals(name))
+    .findAny()
+    .orElse(null);
 
-  @After
-  public void tearDown() {
-    QuantityAccess.singleton().clear();
-  }
+  private static final LogicalMeterEntityMapper logicalMeterEntityMapper =
+    new LogicalMeterEntityMapper(
+      new MeterDefinitionEntityMapper(
+        new QuantityEntityMapper(QUANTITY_PROVIDER),
+        QUANTITY_PROVIDER
+      )
+    );
 
   @Test
   public void mapsPhysicalMeters() {
@@ -59,10 +61,10 @@ public class LogicalMeterEntityMapperTest {
       .location(UNKNOWN_LOCATION)
       .build();
 
-    LogicalMeterEntity logicalMeterEntity = LogicalMeterEntityMapper.toEntity(logicalMeter);
+    LogicalMeterEntity logicalMeterEntity = logicalMeterEntityMapper.toEntity(logicalMeter);
 
     assertThat(logicalMeterEntity.physicalMeters).hasSize(1);
-    assertThat(LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
+    assertThat(logicalMeterEntityMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
   }
 
   @Test
@@ -87,7 +89,7 @@ public class LogicalMeterEntityMapperTest {
       .confidence(1.0)
       .build();
 
-    var logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
+    LogicalMeter logicalMeter = logicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
     var expectedLocation = new LocationBuilder()
       .latitude(3.1)
@@ -147,7 +149,7 @@ public class LogicalMeterEntityMapperTest {
       false
     );
 
-    LogicalMeter logicalMeter = LogicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
+    LogicalMeter logicalMeter = logicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
     assertThat(logicalMeter).isEqualTo(
       LogicalMeter.builder()
@@ -190,7 +192,7 @@ public class LogicalMeterEntityMapperTest {
       )),
       false
     );
-    LogicalMeterEntity logicalMeterEntity = LogicalMeterEntityMapper.toEntity(
+    LogicalMeterEntity logicalMeterEntity = logicalMeterEntityMapper.toEntity(
       LogicalMeter.builder()
         .id(meterId)
         .externalId("an-external-id")

@@ -1,13 +1,10 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -34,12 +31,14 @@ import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerPagedTest extends IntegrationTest {
 
-  private static final MeterDefinition BUTTER_METER_DEFINITION = new MeterDefinition(
-    MeterDefinitionType.UNKNOWN_METER_TYPE,
-    "Butter",
-    Set.of(Quantity.DIFFERENCE_TEMPERATURE, Quantity.ENERGY),
-    false
-  );
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+
+  @Autowired
+  private QuantityProvider quantityProvider;
+
+  @Autowired
+  private QuantityEntityMapper quantityEntityMapper;
 
   @Autowired
   private MeterDefinitions meterDefinitions;
@@ -128,7 +127,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
+    return meterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
   private void newMeasurement(
@@ -140,7 +139,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
-      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
+      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
       value,
       meter
     ));
@@ -167,7 +166,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       new EntityPk(logicalMeterId, organisationEntity.id),
       logicalMeterId.toString(),
       created,
-      saveMeterDefinition(MeasurementControllerPagedTest.BUTTER_METER_DEFINITION),
+      saveMeterDefinition(MeterDefinition.DISTRICT_HEATING_METER),
       DEFAULT_UTC_OFFSET
     ));
 

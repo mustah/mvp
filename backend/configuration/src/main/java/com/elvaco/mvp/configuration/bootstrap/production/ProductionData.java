@@ -9,9 +9,7 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import lombok.RequiredArgsConstructor;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 
 @RequiredArgsConstructor
 public class ProductionData implements ProductionDataProvider {
@@ -20,17 +18,17 @@ public class ProductionData implements ProductionDataProvider {
   private final Organisation rootOrganisation;
 
   @Override
-  public List<Role> users() {
-    return unmodifiableList(asList(
+  public List<Role> roles() {
+    return List.of(
       Role.USER,
       Role.ADMIN,
       Role.SUPER_ADMIN
-    ));
+    );
   }
 
   @Override
   public List<MeterDefinition> meterDefinitions() {
-    return unmodifiableList(asList(
+    return List.of(
       MeterDefinition.UNKNOWN_METER,
       MeterDefinition.HOT_WATER_METER,
       MeterDefinition.DISTRICT_HEATING_METER,
@@ -39,12 +37,12 @@ public class ProductionData implements ProductionDataProvider {
       MeterDefinition.WATER_METER,
       MeterDefinition.ROOM_SENSOR_METER,
       MeterDefinition.ELECTRICITY_METER
-    ));
+    );
   }
 
   @Override
   public List<Organisation> organisations() {
-    return singletonList(rootOrganisation);
+    return List.of(rootOrganisation);
   }
 
   @Override

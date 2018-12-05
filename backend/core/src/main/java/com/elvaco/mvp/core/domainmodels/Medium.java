@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -12,10 +11,7 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.HOT_WATER_MET
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.ROOM_SENSOR_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.UNKNOWN_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.WATER_METER_TYPE;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableSet;
 
 public enum Medium {
 
@@ -75,7 +71,7 @@ public enum Medium {
     }
   };
 
-  private static final Set<Quantity> DISTRICT_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
+  private static final Set<Quantity> DISTRICT_QUANTITIES = Set.of(
     Quantity.ENERGY,
     Quantity.VOLUME,
     Quantity.POWER,
@@ -83,25 +79,23 @@ public enum Medium {
     Quantity.FORWARD_TEMPERATURE,
     Quantity.RETURN_TEMPERATURE,
     Quantity.DIFFERENCE_TEMPERATURE
-  )));
+  );
 
-  private static final Set<Quantity> GAS_QUANTITIES = singleton(Quantity.VOLUME);
+  private static final Set<Quantity> GAS_QUANTITIES = Set.of(Quantity.VOLUME);
 
-  private static final Set<Quantity> WATER_QUANTITIES = unmodifiableSet(singleton(
-    Quantity.VOLUME
-  ));
+  private static final Set<Quantity> WATER_QUANTITIES = Set.of(Quantity.VOLUME);
 
-  private static final Set<Quantity> ELECTRICITY_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
+  private static final Set<Quantity> ELECTRICITY_QUANTITIES = Set.of(
     Quantity.ENERGY,
     Quantity.ENERGY_RETURN,
     Quantity.REACTIVE_ENERGY,
     Quantity.POWER
-  )));
+  );
 
-  private static final Set<Quantity> ROOM_SENSOR_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
+  private static final Set<Quantity> ROOM_SENSOR_QUANTITIES = Set.of(
     Quantity.EXTERNAL_TEMPERATURE,
     Quantity.HUMIDITY
-  )));
+  );
 
   public final String medium;
   public final MeterDefinitionType meterDefinitionType;

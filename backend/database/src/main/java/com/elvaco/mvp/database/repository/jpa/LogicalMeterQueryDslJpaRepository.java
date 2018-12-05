@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -42,7 +44,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.withExpectedReadoutsFor;
+import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;
 import static com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions.MISSING_MEASUREMENT_COUNT;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
@@ -310,5 +312,16 @@ class LogicalMeterQueryDslJpaRepository
       .from(logicalMeter)
       .where(conditions).limit(1);
     return nativeQuery(query, LogicalMeterEntity.class).stream().findAny();
+  }
+
+  private static Function<LogicalMeterSummaryDto, LogicalMeterSummaryDto> withExpectedReadoutsFor(
+    SelectionPeriod period
+  ) {
+    return logicalMeterSummaryDto -> logicalMeterSummaryDto.toBuilder()
+      .expectedReadingCount(
+        Optional.ofNullable(logicalMeterSummaryDto.readIntervalMinutes)
+          .map(readInterval -> expectedReadouts(readInterval, period))
+          .orElse(0L))
+      .build();
   }
 }

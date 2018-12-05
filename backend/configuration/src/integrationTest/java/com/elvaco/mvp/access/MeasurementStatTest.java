@@ -7,13 +7,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.jooq.tables.MeasurementStatData;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -38,14 +36,12 @@ public class MeasurementStatTest extends IntegrationTest {
     .truncatedTo(ChronoUnit.HOURS);
 
   @Autowired
-  private DSLContext dsl;
-
-  @Autowired
   private QuantityProvider quantityProvider;
 
   @Autowired
-  private UnitConverter unitConverter;
+  private DSLContext dsl;
 
+  @Autowired
   private MeasurementEntityMapper measurementEntityMapper;
 
   private final MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
@@ -53,7 +49,6 @@ public class MeasurementStatTest extends IntegrationTest {
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
-    measurementEntityMapper = new MeasurementEntityMapper(unitConverter, quantityProvider);
   }
 
   @Test
@@ -233,7 +228,7 @@ public class MeasurementStatTest extends IntegrationTest {
     return MeasurementStatDto.builder()
       .date(measurement.created.toLocalDate())
       .expectedCount(24)
-      .quantityId(QuantityAccess.singleton().getId(measurement.getQuantity()))
+      .quantityId(quantityProvider.getId(measurement.getQuantity()))
       .physicalMeterId(measurement.physicalMeter.id);
   }
 

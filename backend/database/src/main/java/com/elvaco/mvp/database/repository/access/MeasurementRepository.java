@@ -21,6 +21,7 @@ import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
@@ -41,12 +42,17 @@ public class MeasurementRepository implements Measurements {
   public MeasurementRepository(
     MeasurementJpaRepository measurementJpaRepository,
     QuantityProvider quantityProvider,
-    UnitConverter unitConverter
+    UnitConverter unitConverter,
+    QuantityEntityMapper quantityEntityMapper
   ) {
     this.measurementJpaRepository = measurementJpaRepository;
     this.quantityProvider = quantityProvider;
     this.unitConverter = unitConverter;
-    this.measurementEntityMapper = new MeasurementEntityMapper(unitConverter, quantityProvider);
+    this.measurementEntityMapper = new MeasurementEntityMapper(
+      unitConverter,
+      quantityProvider,
+      quantityEntityMapper
+    );
   }
 
   protected static OffsetDateTime getIntervalStart(

@@ -32,6 +32,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -60,6 +61,12 @@ public class DashboardControllerTest extends IntegrationTest {
   private final ZonedDateTime beforeDate = ZonedDateTime.now(ZoneId.of("UTC"))
     .minusDays(7)
     .truncatedTo(ChronoUnit.DAYS);
+
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+
+  @Autowired
+  private DemoDataHelper demoDataHelper;
 
   private double readingCount = 0.0;
   private double readingFailedCount = 0.0;
@@ -120,7 +127,7 @@ public class DashboardControllerTest extends IntegrationTest {
   @Test
   public void findAllWithCollectionStatusForMediumGas() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinitionEntityMapper.toEntity(GAS_METER),
+      meterDefinitionEntityMapper.toEntity(GAS_METER),
       startDate
     );
 
@@ -156,7 +163,7 @@ public class DashboardControllerTest extends IntegrationTest {
   @Test
   public void findAllWithCollectionStatusRoomSensor() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      MeterDefinitionEntityMapper.toEntity(DISTRICT_HEATING_METER),
+      meterDefinitionEntityMapper.toEntity(DISTRICT_HEATING_METER),
       startDate
     );
 
@@ -245,10 +252,13 @@ public class DashboardControllerTest extends IntegrationTest {
 
       switch (physicalMeterEntity.medium) {
         case "District heating":
-          measurementEntities.addAll(DemoDataHelper.heatMeasurement(created, physicalMeterEntity));
+          measurementEntities.addAll(demoDataHelper.heatMeasurement(
+            created,
+            physicalMeterEntity
+          ));
           break;
         case "Gas":
-          measurementEntities.addAll(DemoDataHelper.gasMeasurement(
+          measurementEntities.addAll(demoDataHelper.gasMeasurement(
             created,
             physicalMeterEntity,
             40

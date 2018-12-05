@@ -7,6 +7,7 @@ import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -39,6 +40,7 @@ import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
 import com.elvaco.mvp.database.repository.access.QuantityRepository;
 import com.elvaco.mvp.database.repository.access.RoleRepository;
+import com.elvaco.mvp.database.repository.access.RootOrganisationRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.access.UserSelectionRepository;
@@ -61,7 +63,11 @@ import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
+import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -97,8 +103,21 @@ class DataProviderConfig {
   private final UnitConverter unitConverter;
 
   @Bean
-  Users users() {
-    return new UserRepository(userJpaRepository, passwordEncoder::encode);
+  Users users(
+    ProductionDataProvider productionDataProvider,
+    Organisations organisations,
+    Roles roles
+  ) {
+    // the organisations & roles must be loaded, because the super admin user is associated to an
+    // already saved organisation
+    var users = new UserRepository(userJpaRepository, passwordEncoder::encode);
+
+    User user = productionDataProvider.superAdminUser();
+    if (!users.findByEmail(user.email).isPresent()) {
+      users.create(user);
+    }
+
+    return users;
   }
 
   @Bean
@@ -107,11 +126,12 @@ class DataProviderConfig {
   }
 
   @Bean
-  LogicalMeters logicalMeters() {
+  LogicalMeters logicalMeters(LogicalMeterEntityMapper logicalMeterEntityMapper) {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       summaryJpaRepository,
-      new LogicalMeterSortingEntityMapper()
+      new LogicalMeterSortingEntityMapper(),
+      logicalMeterEntityMapper
     );
   }
 
@@ -125,11 +145,15 @@ class DataProviderConfig {
   }
 
   @Bean
-  Measurements measurements(QuantityProvider quantityProvider) {
+  Measurements measurements(
+    QuantityProvider quantityProvider,
+    QuantityEntityMapper quantityEntityMapper
+  ) {
     return new MeasurementRepository(
       measurementJpaRepository,
       quantityProvider,
-      unitConverter
+      unitConverter,
+      quantityEntityMapper
     );
   }
 
@@ -139,24 +163,38 @@ class DataProviderConfig {
   }
 
   @Bean
-  Organisations organisations() {
-    return new OrganisationRepository(organisationJpaRepository);
+  Organisations organisations(ProductionDataProvider productionDataProvider) {
+    var organisations = new OrganisationRepository(organisationJpaRepository);
+
+    productionDataProvider.organisations()
+      .stream()
+      .filter(organisation -> !organisations.findBySlug(organisation.slug).isPresent())
+      .forEach(organisations::save);
+
+    return organisations;
+  }
+
+  @Bean
+  RootOrganisationRepository rootOrganisationRepository(
+    OrganisationJpaRepository organisationJpaRepository
+  ) {
+    return new RootOrganisationRepository(organisationJpaRepository);
   }
 
   @Bean
   Organisation rootOrganisation(
-    Organisations organisations,
+    RootOrganisationRepository rootOrganisationRepository,
     MvpProperties mvpProperties
   ) {
     MvpProperties.RootOrganisation rootOrg = mvpProperties.getRootOrganisation();
-    return organisations
+    return rootOrganisationRepository
       .findBySlug(rootOrg.getSlug())
-      .orElse(new Organisation(
+      .orElseGet(() -> rootOrganisationRepository.save(new Organisation(
         UUID.randomUUID(),
         rootOrg.getName(),
         rootOrg.getSlug(),
         rootOrg.getName()
-      ));
+      )));
   }
 
   @Bean
@@ -173,18 +211,28 @@ class DataProviderConfig {
   }
 
   @Bean
-  Roles roles() {
-    return new RoleRepository(roleJpaRepository);
+  Roles roles(ProductionDataProvider productionDataProvider) {
+    var roleRepository = new RoleRepository(roleJpaRepository);
+    roleRepository.save(productionDataProvider.roles());
+    return roleRepository;
   }
 
   @Bean
-  MeterDefinitions meterDefinitions() {
-    return new MeterDefinitionRepository(meterDefinitionJpaRepository);
+  MeterDefinitions meterDefinitions(
+    ProductionDataProvider productionDataProvider,
+    MeterDefinitionEntityMapper meterDefinitionEntityMapper
+  ) {
+    var meterDefinitionRepository = new MeterDefinitionRepository(
+      meterDefinitionJpaRepository,
+      meterDefinitionEntityMapper
+    );
+    productionDataProvider.meterDefinitions().forEach(meterDefinitionRepository::save);
+    return meterDefinitionRepository;
   }
 
   @Bean
-  Gateways gateways() {
-    return new GatewayRepository(gatewayJpaRepository);
+  Gateways gateways(GatewayWithMetersMapper gatewayWithMetersMapper) {
+    return new GatewayRepository(gatewayJpaRepository, gatewayWithMetersMapper);
   }
 
   @Bean
@@ -213,8 +261,8 @@ class DataProviderConfig {
   }
 
   @Bean
-  Quantities quantities() {
-    return new QuantityRepository(quantityJpaRepository);
+  Quantities quantities(QuantityEntityMapper quantityEntityMapper) {
+    return new QuantityRepository(quantityJpaRepository, quantityEntityMapper);
   }
 
   @Bean

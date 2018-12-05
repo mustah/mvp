@@ -210,7 +210,7 @@ public class MeteringMeasurementParserTest {
       new ValueDto(expectedTimestamp, 55, "°C", "Return temp."),
       new ValueDto(expectedTimestamp, 27.1, "K", "Difference temp."),
       new ValueDto(expectedTimestamp, 99, "m³", "Volume"),
-      new ValueDto(expectedTimestamp, 16, "m³/h", "Volume Flow")
+      new ValueDto(expectedTimestamp, 16, "m³/h", "Volume flow")
     );
   }
 }

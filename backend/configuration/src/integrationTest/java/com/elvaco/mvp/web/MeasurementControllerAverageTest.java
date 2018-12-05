@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityAccess;
+import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Pk;
@@ -46,6 +46,15 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   private static final String SERIES_ID_AVERAGE_POWER = "average-Power";
   private static final String SERIES_ID_AVERAGE_ENERGY = "average-Energy";
   private static final String AVERAGE = "average";
+
+  @Autowired
+  private QuantityEntityMapper quantityEntityMapper;
+
+  @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+
+  @Autowired
+  private QuantityProvider quantityProvider;
 
   @Autowired
   private MeterDefinitions meterDefinitions;
@@ -750,7 +759,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return MeterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
+    return meterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
   }
 
   private void newMeasurement(
@@ -761,7 +770,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       created,
-      QuantityEntityMapper.toEntity(QuantityAccess.singleton().getByName(quantity)),
+      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
       value,
       meter
     ));

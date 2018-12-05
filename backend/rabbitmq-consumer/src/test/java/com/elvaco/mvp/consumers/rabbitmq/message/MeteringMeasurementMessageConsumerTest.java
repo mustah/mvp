@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
-import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -18,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
@@ -46,7 +44,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -113,8 +110,6 @@ public class MeteringMeasurementMessageConsumerTest {
     logicalMeters = new MockLogicalMeters();
     gateways = new MockGateways();
 
-    QuantityAccess.singleton().loadAll(Quantity.QUANTITIES);
-
     messageConsumer = new MeteringMeasurementMessageConsumer(
       new LogicalMeterUseCases(authenticatedUser, logicalMeters),
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters, new MockMeterStatusLogs()),
@@ -139,11 +134,6 @@ public class MeteringMeasurementMessageConsumerTest {
         }
       }
     );
-  }
-
-  @After
-  public void tearDown() {
-    QuantityAccess.singleton().clear();
   }
 
   @Test

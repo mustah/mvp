@@ -7,4 +7,6 @@ import com.elvaco.mvp.core.domainmodels.Role;
 public interface Roles {
 
   List<Role> save(List<Role> role);
+
+  List<Role> findAll();
 }

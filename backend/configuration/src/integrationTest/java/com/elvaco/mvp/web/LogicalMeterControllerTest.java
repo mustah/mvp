@@ -82,6 +82,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private MeterDefinitions meterDefinitions;
 
   @Autowired
+  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+
+  @Autowired
   private MeterStatusLogs meterStatusLogs;
 
   @Autowired
@@ -2122,7 +2125,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new EntityPk(randomUUID(), context().organisationId()),
       meterExternalId,
       ZonedDateTime.now(),
-      MeterDefinitionEntityMapper.toEntity(UNKNOWN_METER),
+      meterDefinitionEntityMapper.toEntity(UNKNOWN_METER),
       DEFAULT_UTC_OFFSET
     );
 
