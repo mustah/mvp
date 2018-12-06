@@ -721,10 +721,10 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/lodash@^4.14.118":
-  version "4.14.118"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.118.tgz#247bab39bfcc6d910d4927c6e06cbc70ec376f27"
-  integrity sha512-iiJbKLZbhSa6FYRip/9ZDX6HXhayXLDGY2Fqws9cOkEQ6XeKfaxB0sC541mowZJueYyMnVUmmG+al5/4fCDrgw==
+"@types/lodash@^4.14.119":
+  version "4.14.119"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.119.tgz#be847e5f4bc3e35e46d041c394ead8b603ad8b39"
+  integrity sha512-Z3TNyBL8Vd/M9D9Ms2S3LmFq2sSMzahodD6rCS9V2N44HUMINb75jNkSuwAx7eo2ufqTdfOdtGQpNbieUjPQmw==
 
 "@types/material-ui@0.20.7":
   version "0.20.7"
@@ -746,10 +746,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.4.tgz#130598ee56e9a1210a53f557d64935571f05390d"
   integrity sha512-RisaZmcmCLjRipAY7nVi3fmkIk4Z0JMn8YHdGF6qYMsIDpD0dfzz+3yy2dL5Q5aHWOnqPx51IRxkA44myknJvw==
 
-"@types/node@^10.12.11":
-  version "10.12.11"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.11.tgz#715c476c99a5f6898a1ae61caf9825e43c03912e"
-  integrity sha512-3iIOhNiPGTdcUNVCv9e5G7GotfvJJe2pc9w2UgDXlUwnxSZ3RgcUocIU+xYm+rTU54jIKih998QE4dMOyMN1NQ==
+"@types/node@^10.12.12":
+  version "10.12.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.12.tgz#e15a9d034d9210f00320ef718a50c4a799417c47"
+  integrity sha512-Pr+6JRiKkfsFvmU/LK68oBRCQeEg36TyAbPhc2xpez24OOZZCuoIhWGTd39VZy6nGafSbxzGouFPTFD/rR1A0A==
 
 "@types/node@^10.12.2":
   version "10.12.6"
@@ -844,10 +844,10 @@
   resolved "https://registry.yarnpkg.com/@types/recharts-scale/-/recharts-scale-1.0.0.tgz#348c9220d6d9062c44a9d585d686644a97f7e25d"
   integrity sha512-HR/PrCcxYb2YHviTqH7CMdL1TUhUZLTUKzfrkMhxm1HTa5mg/QtP8XMiuSPz6dZ6wecazAOu8aYZ5DqkNlgHHQ==
 
-"@types/recharts@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@types/recharts/-/recharts-1.1.2.tgz#263db0caa03b20445b071d0d3000c5221765e029"
-  integrity sha512-lriVDcpbbSjRK1n1rL41ZxgNhbxJAXZkSZAQ1M91IvNwlM2uc4W9Stevk9ODK1/lzgHpJjc/WJs6aN0s707fCQ==
+"@types/recharts@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@types/recharts/-/recharts-1.1.4.tgz#eee5cb80daea270498e8570d89c2ae2782b37020"
+  integrity sha512-Zh3BcOc/S8KCDF4yW3Q6DIf60yY/h68IBNXrHyamIDTZRikSVo97OV3/lTPPpw8Jn4+x41aOZaeDbaDellGDbw==
   dependencies:
     "@types/d3-shape" "*"
     "@types/react" "*"
