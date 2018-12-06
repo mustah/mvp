@@ -2,7 +2,7 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {withEmptyContentComponent} from '../../../components/hoc/withEmptyContent';
-import {Normal} from '../../../components/texts/Texts';
+import {Bold} from '../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
@@ -35,7 +35,7 @@ const quantityMenuItem =
     );
 
 const HintText = () =>
-  <Normal className="Bold Italic">{firstUpperTranslated('select medium')}</Normal>;
+  <Bold className="Italic">{firstUpperTranslated('select medium')}</Bold>;
 
 const SelectFieldOptions = ({children, changeQuantities, selectedQuantities}: Props) => (
   <SelectField

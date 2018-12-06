@@ -187,13 +187,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   }
 
   onToggleLine = (dataKey: string) => {
-    this.setState(({hiddenKeys}) => ({
-        hiddenKeys: toggle(
-          dataKey,
-          hiddenKeys,
-        ),
-      })
-    );
+    this.setState(({hiddenKeys}) => ({hiddenKeys: toggle(dataKey, hiddenKeys)}));
   }
 
   makeRequestParameters = ({

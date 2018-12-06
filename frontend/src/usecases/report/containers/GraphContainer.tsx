@@ -184,7 +184,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       selectedIndicators,
     } = this.props;
 
-    const {hiddenKeys} = this.state;
+    const {hiddenKeys, resized} = this.state;
 
     const lines: Children[] = renderGraphContents(
       graphContents,
@@ -200,7 +200,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       data,
       legend,
       content: this.renderToolTip,
-      key: `graph-update-${isSideMenuOpen}-${this.state.resized}`,
+      key: `graph-update-${isSideMenuOpen}-${resized}`,
       legendClick: this.legendClick,
       setTooltipPayload: this.setTooltipPayload,
       hasContent: selectedListItems.length > 0,
@@ -269,13 +269,13 @@ const mapStateToProps =
     userSelection: {userSelection},
     ui,
   }: RootState): StateToProps => {
-    const {indicator: {selectedIndicators: {report}, selectedQuantities}} = ui;
+    const {indicator: {selectedIndicators: {report: selectedIndicators}, selectedQuantities}} = ui;
     return ({
       ...getSelectedPeriod(userSelection),
       isSideMenuOpen: isSideMenuOpen(ui),
       selectedListItems,
       selectedQuantities,
-      selectedIndicators: report,
+      selectedIndicators,
     });
   };
 
