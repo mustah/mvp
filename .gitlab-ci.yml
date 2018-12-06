@@ -303,6 +303,10 @@ deploy:staging:
     - schedules
     - /^release-.*$/
     - tags
+  variables:
+    API_USER: "mvpadmin@elvaco.se"
+    API_PASSWORD: "PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr"
+    API_URL: "https://evo-staging.elvaco.se"
   environment:
     name: evo-staging.elvaco.se
     url: https://evo-staging.elvaco.se
@@ -316,6 +320,7 @@ deploy:staging:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - while [ 1 ]; do curl --fail --silent --user "$API_USER:$API_PASSWORD" "$API_URL/actuator/health" >/dev/null && exit 0; echo "Waiting for application to start"; sleep 1; done
 
 post-staging:acceptance:
   <<: *acceptance_test
@@ -333,6 +338,22 @@ post-staging:acceptance:
     MVP_API_PORT: 443
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
+post-staging:performance:
+  image: frolvlad/alpine-python3
+  stage: post-staging
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  variables:
+    MVP_URL: "https://evo-staging.elvaco.se"
+    USER_EMAIL: performance@tester.se
+    USER_PASSWORD: 'Ah@4wZEzdLexuFtqO9c2J!1gD8*JMtfJ7'
+  before_script:
+    - pip install -r scripts/performance/requirements.txt
+  script:
+    - python scripts/performance/time_requests.py
+
 deploy:production:
   <<: *auto_deploy
   stage: deploy-prod
@@ -343,6 +364,10 @@ deploy:production:
     - tags
   when: manual
   allow_failure: false #block the pipeline from continuing until we've deployed to prod
+  variables:
+    API_USER: "mvpadmin@elvaco.se"
+    API_PASSWORD: "PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr"
+    API_URL: "https://evo.elvaco.se"
   environment:
     name: evo.elvaco.se
     url: https://evo.elvaco.se
@@ -356,6 +381,7 @@ deploy:production:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - while [ 1 ]; do curl --fail --silent --user "$API_USER:$API_PASSWORD" "$API_URL/actuator/health" >/dev/null && exit 0; echo "Waiting for application to start"; sleep 1; done
 
 post-prod:acceptance:
   <<: *acceptance_test
@@ -422,8 +448,8 @@ finalize:create-jira-version:
     - tags
   allow_failure: true
   variables:
-     JIRA_USER: "app.jira.evo@elvaco.se"
-     JIRA_TOKEN: "xR5ABiHwbEWrOiEY71BW9E99"
+    JIRA_USER: "app.jira.evo@elvaco.se"
+    JIRA_TOKEN: "xR5ABiHwbEWrOiEY71BW9E99"
   before_script:
     - pip install -r scripts/jira/requirements.txt
   script:
