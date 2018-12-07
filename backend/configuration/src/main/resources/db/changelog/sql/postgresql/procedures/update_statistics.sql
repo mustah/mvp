@@ -117,7 +117,12 @@ begin
   end if;
     --expand date-range for consumption and missing measurements situations
     if( consumption) then
-      select coalesce((max(created at time zone measurement_tz)::date),measurement_date_to) into measurement_date_to from measurement where physical_meter_id=rec.physical_meter_id and quantity=rec.quantity and created > rec.created;
+      select coalesce((min(created at time zone measurement_tz)::date),measurement_date_to)
+               into measurement_date_to
+         from measurement
+         where physical_meter_id=rec.physical_meter_id
+           and quantity=rec.quantity
+           and created > rec.created;
     end if;
     perform calculate_and_write_statistics(rec.quantity, rec.physical_meter_id, measurement_date, measurement_date_to, measurement_tz, read_interval,consumption);
 
