@@ -3,7 +3,7 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-  <changeSet id="drop procedure with changed signature" author="erimel">
+  <changeSet id="drop procedure with changed signature" author="erimel" dbms="postgresql">
     <sql>drop function if exists calculate_statistics(int, uuid, date,text, int);</sql>
   </changeSet>
 </databaseChangeLog>
