@@ -45,7 +45,7 @@ interface StateToProps {
 }
 
 interface OwnProps {
-  outerHiddenKeys: string[];
+  outerHiddenKeys: uuid[];
   graphContents: GraphContents;
 }
 

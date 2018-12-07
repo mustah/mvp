@@ -1,7 +1,6 @@
 import {Overwrite} from 'react-redux-typescript';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
-import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {TabName} from '../../tabs/tabsModels';
 
@@ -10,6 +9,13 @@ export interface Measurement extends Identifiable {
   value?: number;
   quantity: Quantity;
   unit: string;
+}
+
+export interface MeasurementState {
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
+  selectedTab: TabName;
+  measurementResponse: MeasurementResponses;
 }
 
 export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;
@@ -33,8 +39,7 @@ const emptyMeasurementResponse: MeasurementResponses = {
   cities: [],
 };
 
-export const initialState: ReportContainerState = {
-  hiddenKeys: [],
+export const initialState: MeasurementState = {
   isFetching: false,
   error: Maybe.nothing(),
   selectedTab: TabName.graph,

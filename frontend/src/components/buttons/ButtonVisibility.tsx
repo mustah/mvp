@@ -7,6 +7,7 @@ import {OnClickWithId, uuid} from '../../types/Types';
 
 interface VisibilityProps {
   onClick: OnClickWithId;
+  checked?: boolean;
   id: uuid;
 }
 
@@ -15,7 +16,7 @@ const iconStyle: React.CSSProperties = {fill: colors.blue};
 const HiddenIcon = <ActionVisibilityOff/>;
 const VisibleIcon = <ActionVisibility/>;
 
-export const ButtonVisibility = ({onClick, id}: VisibilityProps) => {
+export const ButtonVisibility = ({checked, id, onClick}: VisibilityProps) => {
   const toggleClick = () => onClick(id);
 
   return (
@@ -24,6 +25,7 @@ export const ButtonVisibility = ({onClick, id}: VisibilityProps) => {
       uncheckedIcon={VisibleIcon}
       onClick={toggleClick}
       iconStyle={iconStyle}
+      checked={checked}
     />
   );
 };

@@ -5,7 +5,6 @@ import {shallowEqual} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
-import {componentOrNothing} from '../../../components/hoc/hocs';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
@@ -19,41 +18,36 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
-import {toggle} from '../../../helpers/collections';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {Normalized} from '../../../state/domain-models/domainModels';
 import {SelectedTreeEntities, SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {fetchMeasurements, MeasurementOptions} from '../../../state/ui/graph/measurement/measurementActions';
 import {
   initialState,
-  MeasurementResponses,
   Measurements,
+  MeasurementState,
   Medium,
   Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps} from '../../../state/ui/tabs/tabsModels';
+import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {SelectedParameters} from '../../../state/user-selection/userSelectionModels';
-import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
+import {CallbackWith} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
+import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
 import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
-import {Legend, LegendProps} from '../components/Legend';
 import {MeasurementList} from '../components/MeasurementList';
-import {toggleSingleEntry} from '../reportActions';
-import {GraphContents, hardcodedIndicators, LegendItem} from '../reportModels';
-import {getLegendItems} from '../reportSelectors';
+import {GraphContents, hardcodedIndicators, ReportState} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
+import {LegendContainer} from './LegendContainer';
 
-interface SelectedIds {
-  selectedListItems: uuid[];
-}
+type SelectedIds = ReportState;
 
 interface StateToProps extends SelectedIds {
   enabledIndicatorTypes: Set<Medium>;
@@ -61,39 +55,29 @@ interface StateToProps extends SelectedIds {
   selectedQuantities: Quantity[];
   selectionTreeEntities: SelectionTreeEntities;
   selectedTab: TabName;
-  legendItems: Normalized<LegendItem>;
   selectionParameters: SelectedParameters;
 }
 
-export interface ReportContainerState {
-  hiddenKeys: string[];
-  isFetching: boolean;
-  error: Maybe<ErrorResponse>;
-  selectedTab: TabName;
-  measurementResponse: MeasurementResponses;
-}
-
-interface DispatchToProps extends TabsContainerDispatchToProps {
+interface DispatchToProps {
   logout: OnLogout;
+  changeTab: CallbackWith<TabName>;
   toggleReportIndicatorWidget: OnSelectIndicator;
-  toggleSingleEntry: OnClickWithId;
 }
 
 type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
-
-const hasSelectedItems = ({selectedListItems}: SelectedIds): boolean => selectedListItems.length > 0;
-
-const LegendWrapper = componentOrNothing<LegendProps & SelectedIds>(hasSelectedItems)(Legend);
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16};
 
-class ReportComponent extends React.Component<Props, ReportContainerState> {
+class ReportComponent extends React.Component<Props, MeasurementState> {
+
+  private readonly indicators: ReportIndicatorProps[];
 
   constructor(props) {
     super(props);
     this.state = {...initialState};
+    this.indicators = hardcodedIndicators();
   }
 
   async componentDidMount() {
@@ -111,19 +95,15 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
   render() {
     const {
-      legendItems,
+      enabledIndicatorTypes,
+      hiddenLines,
       selectedTab,
       selectedIndicatorTypes,
       toggleReportIndicatorWidget,
-      enabledIndicatorTypes,
-      selectedListItems,
-      toggleSingleEntry,
     } = this.props;
-    const {isFetching, error, hiddenKeys, measurementResponse} = this.state;
+    const {isFetching, error, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
-
-    const indicators = hardcodedIndicators();
 
     return (
       <MvpPageContainer>
@@ -136,7 +116,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
         </Row>
 
         <ReportIndicatorWidgets
-          indicators={indicators}
+          indicators={this.indicators}
           selectedIndicatorTypes={selectedIndicatorTypes}
           onClick={toggleReportIndicatorWidget}
           enabledIndicatorTypes={enabledIndicatorTypes}
@@ -152,7 +132,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                 </TabHeaders>
               </TabTopBar>
               <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-                <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenKeys}/>
+                <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenLines}/>
               </TabContent>
               <TabContent tab={TabName.list} selectedTab={selectedTab}>
                 <Measurements
@@ -162,19 +142,14 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
                 />
               </TabContent>
             </Tabs>
-            <LegendWrapper
-              legendItems={legendItems}
-              onToggleLine={this.onToggleLine}
-              selectedListItems={selectedListItems}
-              toggleSingleEntry={toggleSingleEntry}
-            />
+            <LegendContainer/>
           </Paper>
         </Loader>
       </MvpPageContainer>
     );
   }
 
-  updateState = (state: ReportContainerState): void => this.setState({...state});
+  updateState = (state: MeasurementState): void => this.setState({...state});
 
   onChangeTab = (selectedTab: TabName): void => {
     this.setState({selectedTab});
@@ -184,10 +159,6 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
   clearError = async () => {
     this.setState({error: Maybe.nothing(), isFetching: true});
     await fetchMeasurements(this.makeRequestParameters(this.props));
-  }
-
-  onToggleLine = (dataKey: string) => {
-    this.setState(({hiddenKeys}) => ({hiddenKeys: toggle(dataKey, hiddenKeys)}));
   }
 
   makeRequestParameters = ({
@@ -211,7 +182,7 @@ class ReportComponent extends React.Component<Props, ReportContainerState> {
 
 const mapStateToProps =
   ({
-    report: {selectedListItems},
+    report: {hiddenLines, selectedListItems},
     selectionTree: {entities},
     userSelection: {userSelection: {selectionParameters}},
     ui: {
@@ -225,7 +196,7 @@ const mapStateToProps =
     const selectedTreeState: SelectedTreeEntities = {selectedListItems, entities};
     return ({
       enabledIndicatorTypes: getMedia(selectedTreeState),
-      legendItems: getLegendItems(selectedTreeState),
+      hiddenLines,
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
@@ -240,11 +211,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabReport,
   logout,
   toggleReportIndicatorWidget,
-  toggleSingleEntry,
 }, dispatch);
 
 export const ReportContainer =
-  connect<SelectedIndicatorWidgetProps, DispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(ReportComponent);
+  connect<SelectedIndicatorWidgetProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ReportComponent);

@@ -15,9 +15,12 @@ import {Dispatcher, OnPayloadAction, payloadActionOf, uuid} from '../../types/Ty
 import {SelectedReportEntriesPayload} from './reportModels';
 
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
+export const TOGGLE_LINE = 'TOGGLE_LINE';
 
 export const setSelectedEntries: OnPayloadAction<SelectedReportEntriesPayload> =
   payloadActionOf<SelectedReportEntriesPayload>(SET_SELECTED_ENTRIES);
+
+export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
 
 const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionTreeState): Set<Medium> => {
   const cityMedia: Medium[] = ids.filter(isSelectedCity)

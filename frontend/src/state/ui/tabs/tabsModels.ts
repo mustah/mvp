@@ -28,7 +28,3 @@ export interface TabSelection {
 export interface SelectedTab {
   selectedTab: TabName;
 }
-
-export interface TabsContainerDispatchToProps {
-  changeTab: (tab: TabName) => void;
-}

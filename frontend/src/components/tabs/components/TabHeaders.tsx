@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
+import {CallbackWith} from '../../../types/Types';
 import {TabProps} from './Tab';
 import {Row} from '../../layouts/row/Row';
 
 export interface TabHeadersProps {
   children: Array<React.ReactElement<TabProps>> | React.ReactElement<TabProps>;
   selectedTab: TabName;
-  onChangeTab: (tab: string) => void;
+  onChangeTab: CallbackWith<TabName>;
 }
 
 export const TabHeaders = (props: TabHeadersProps) => {

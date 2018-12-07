@@ -15,7 +15,6 @@ import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {EncodedUriParameters, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
-import {ReportContainerState} from '../../../../usecases/report/containers/ReportContainer';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {
@@ -34,7 +33,8 @@ import {
   MeasurementResponses,
   Medium,
   MeterMeasurementsState,
-  Quantity
+  Quantity,
+  MeasurementState
 } from './measurementModels';
 import {measurementDataFormatter} from './measurementSchema';
 
@@ -72,7 +72,7 @@ export const isSelectedCity = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,]/g) || []).length === 1 &&
   (listItem.toString().match(/[:]/) || []).length === 0;
 
-type OnUpdateGraph = (state: ReportContainerState) => void;
+type OnUpdateGraph = (state: MeasurementState) => void;
 
 type GraphDataRequests = Array<Promise<GraphDataResponse>>;
 
