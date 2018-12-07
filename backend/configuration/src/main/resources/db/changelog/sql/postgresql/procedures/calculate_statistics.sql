@@ -87,7 +87,7 @@ from (select a.physical_meter_id,
                from
                  ( select generate_series( stat_date::timestamp at time zone current_tz - cast('2 day' as INTERVAL),
                                            stop_date::timestamp at time zone current_tz + cast('2 day' as INTERVAL),
-                                           cast(read_interval||' minutes' as INTERVAL)) as date) as date_serie
+                                           cast((case when read_interval=0 then 60 else read_interval end)||' minutes' as INTERVAL)) as date) as date_serie
                  left join measurement on date_serie.date = created
                                           and measurement.quantity = quantity_id
                                           and measurement.physical_meter_id = p_meter_id ) as measurement_serie

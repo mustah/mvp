@@ -40,7 +40,7 @@ begin
   end if;
 
   if(consumption) then
-    measurement_date := ((rec.created - cast(read_interval||' minutes' AS INTERVAL)) at time zone measurement_tz)::date;
+    measurement_date := ((rec.created - cast((case when read_interval=0 then 60 else read_interval end)||' minutes' AS INTERVAL)) at time zone measurement_tz)::date;
   else
     measurement_date := (rec.created at time zone measurement_tz)::date;
   end if;

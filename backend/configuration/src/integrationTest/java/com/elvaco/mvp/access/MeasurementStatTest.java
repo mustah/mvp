@@ -320,7 +320,7 @@ public class MeasurementStatTest extends IntegrationTest {
       .unit(qty.storageUnit)
       .physicalMeter(meter);
   }
-  
+
   private MeasurementStatDto fetchMeasurementStats() {
     return dsl.select()
       .from(statData)
