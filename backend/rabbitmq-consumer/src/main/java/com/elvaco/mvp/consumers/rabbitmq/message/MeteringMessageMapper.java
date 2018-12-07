@@ -1,13 +1,10 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -16,9 +13,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import lombok.experimental.UtilityClass;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Map.entry;
 import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
@@ -30,20 +25,36 @@ public class MeteringMessageMapper {
    */
   public static final ZoneId METERING_TIMEZONE = ZoneId.of("UTC+1");
 
-  static final Map<String, String> METERING_TO_MVP_UNITS = meteringUnitTranslationsMap();
+  static final Map<String, String> METERING_TO_MVP_UNITS = Map.of(
+    "Celsius", "°C",
+    "Kelvin", "K",
+    "m3", "m³",
+    "m3/h", "m³/h"
+  );
 
-  private static final Set<String> DISTRICT_HEATING_METER_QUANTITIES =
-    unmodifiableSet(new HashSet<>(asList(
-      "Return temp.",
-      "Difference temp.",
-      "Flow temp.",
-      "Volume flow",
-      "Power",
-      "Volume",
-      "Energy"
-    )));
+  private static final Set<String> DISTRICT_HEATING_METER_QUANTITIES = Set.of(
+    "Return temp.",
+    "Difference temp.",
+    "Flow temp.",
+    "Volume flow",
+    "Power",
+    "Volume",
+    "Energy"
+  );
 
-  private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = mapMeterQuantities();
+  private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = Map.ofEntries(
+    entry("Return temp.", Quantity.RETURN_TEMPERATURE),
+    entry("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE),
+    entry("Flow temp.", Quantity.FORWARD_TEMPERATURE),
+    entry("Volume flow", Quantity.VOLUME_FLOW),
+    entry("Power", Quantity.POWER),
+    entry("Volume", Quantity.VOLUME),
+    entry("Energy", Quantity.ENERGY),
+    entry("External temp", Quantity.EXTERNAL_TEMPERATURE),
+    entry("relative-humidity", Quantity.HUMIDITY),
+    entry("Energy return", Quantity.ENERGY_RETURN),
+    entry("Reactive energy", Quantity.REACTIVE_ENERGY)
+  );
 
   static MeterDefinition resolveMeterDefinition(List<ValueDto> values) {
     Set<String> quantities = values.stream()
@@ -80,30 +91,5 @@ public class MeteringMessageMapper {
       default:
         return Medium.from(medium);
     }
-  }
-
-  private static Map<String, Quantity> mapMeterQuantities() {
-    Map<String, Quantity> map = new HashMap<>();
-    map.put("Return temp.", Quantity.RETURN_TEMPERATURE);
-    map.put("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE);
-    map.put("Flow temp.", Quantity.FORWARD_TEMPERATURE);
-    map.put("Volume flow", Quantity.VOLUME_FLOW);
-    map.put("Power", Quantity.POWER);
-    map.put("Volume", Quantity.VOLUME);
-    map.put("Energy", Quantity.ENERGY);
-    map.put("External temp", Quantity.EXTERNAL_TEMPERATURE);
-    map.put("relative-humidity", Quantity.HUMIDITY);
-    map.put("Energy return", Quantity.ENERGY_RETURN);
-    map.put("Reactive energy", Quantity.REACTIVE_ENERGY);
-    return unmodifiableMap(map);
-  }
-
-  private static Map<String, String> meteringUnitTranslationsMap() {
-    Map<String, String> map = new HashMap<>();
-    map.put("Celsius", "°C");
-    map.put("Kelvin", "K");
-    map.put("m3", "m³");
-    map.put("m3/h", "m³/h");
-    return unmodifiableMap(map);
   }
 }
