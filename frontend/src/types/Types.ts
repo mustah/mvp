@@ -11,9 +11,9 @@ export type EncodedUriParameters = string;
 
 export type OnClick = (...args) => void;
 export type OnChange = OnClick;
-export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type CallbackWith<T> = (result: T) => void;
+export type OnClickWithId = CallbackWith<uuid>;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
 export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
 export type CallbackWithData = (requestData: any) => Dispatch<any>;
@@ -43,8 +43,8 @@ export type OnPayloadAction<P> = (payload: P) => Action<P>;
 export type OnEmptyAction = () => EmptyAction<string>;
 export type Dispatcher = Dispatch<any>;
 
-export const payloadActionOf = <P>(type: string): OnPayloadAction<P> => createPayloadAction(type);
-export const emptyActionOf = (type: string): OnEmptyAction => createEmptyAction(type);
+export const payloadActionOf = <P>(type: string): OnPayloadAction<P> => createPayloadAction<string, P>(type);
+export const emptyActionOf = (type: string): OnEmptyAction => createEmptyAction<string>(type);
 
 export interface Dictionary<T> {
   [key: string]: T;

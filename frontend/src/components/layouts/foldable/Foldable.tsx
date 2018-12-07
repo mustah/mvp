@@ -21,7 +21,7 @@ interface ToggleVisibilityProps extends Visible {
 }
 
 const useToggleVisibility = (initialState: boolean): ToggleVisibilityProps => {
-  const [isVisible, toggle] = React.useState(initialState);
+  const [isVisible, toggle] = React.useState<boolean>(initialState);
   const showHide = () => toggle(!isVisible);
   return {isVisible, showHide};
 };

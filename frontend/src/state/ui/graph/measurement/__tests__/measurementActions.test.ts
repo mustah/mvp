@@ -6,13 +6,12 @@ import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
 import {toIdNamed, uuid} from '../../../../../types/Types';
 import {Unauthorized} from '../../../../../usecases/auth/authModels';
-import {ReportContainerState} from '../../../../../usecases/report/containers/ReportContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {SelectionTreeCity, SelectionTreeMeter} from '../../../../selection-tree/selectionTreeModels';
 import {RelationalOperator} from '../../../../user-selection/userSelectionModels';
 import {mapApiResponseToGraphData} from '../helpers/apiResponseToGraphContents';
 import {fetchMeasurements, MeasurementOptions} from '../measurementActions';
-import {initialState, MeasurementApiResponse, Medium, Quantity} from '../measurementModels';
+import {initialState, MeasurementApiResponse, Medium, Quantity, MeasurementState} from '../measurementModels';
 
 describe('measurementActions', () => {
 
@@ -26,9 +25,9 @@ describe('measurementActions', () => {
     });
 
     const mockHost: string = 'https://blabla.com';
-    let state: ReportContainerState;
+    let state: MeasurementState;
     let defaultParameters: MeasurementOptions;
-    const updateState = (updatedState: ReportContainerState) => state = {...updatedState};
+    const updateState = (updatedState: MeasurementState) => state = {...updatedState};
     const logout = (error?: Unauthorized) => 'logged out or error';
 
     const mockMeter = (medium: Medium): SelectionTreeMeter => {
@@ -78,11 +77,11 @@ describe('measurementActions', () => {
 
       it('sets default state if no quantities are provided', async () => {
         updateState({...initialState, isFetching: true});
-        const fetching: ReportContainerState = {...initialState};
+        const fetching: MeasurementState = {...initialState};
         expect(state).not.toEqual(fetching);
 
         await fetchMeasurements(defaultParameters);
-        const expected: ReportContainerState = {...initialState};
+        const expected: MeasurementState = {...initialState};
         expect(state).toEqual(expected);
       });
 
@@ -104,7 +103,7 @@ describe('measurementActions', () => {
 
       it('returns empty data if no meter ids are provided', async () => {
         updateState({...initialState, isFetching: true});
-        const fetching: ReportContainerState = {...initialState};
+        const fetching: MeasurementState = {...initialState};
         expect(state).not.toEqual(fetching);
 
         await fetchMeasurements({
@@ -113,7 +112,7 @@ describe('measurementActions', () => {
           quantities: [Quantity.power],
           selectedListItems: [],
         });
-        const expected: ReportContainerState = {...initialState};
+        const expected: MeasurementState = {...initialState};
         expect(state).toEqual(expected);
       });
     });

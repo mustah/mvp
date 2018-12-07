@@ -1,8 +1,16 @@
 import * as React from 'react';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
-import {SelectedTab, TabName, TabsContainerDispatchToProps} from '../../../state/ui/tabs/tabsModels';
-import {Children, ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick} from '../../../types/Types';
+import {SelectedTab, TabName} from '../../../state/ui/tabs/tabsModels';
+import {
+  CallbackWith,
+  Children,
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick
+} from '../../../types/Types';
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
@@ -21,10 +29,11 @@ export interface StateToProps extends MapProps, SelectedTab, EmptyContentProps, 
   error: Maybe<ErrorResponse>;
 }
 
-export interface DispatchToProps extends TabsContainerDispatchToProps {
+export interface DispatchToProps {
   close: OnClick;
   clearError: ClearError;
   fetchMapMarkers: Fetch;
+  changeTab: CallbackWith<TabName>;
 }
 
 export interface MainContentTabsProps extends StateToProps, DispatchToProps {

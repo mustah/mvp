@@ -6,6 +6,7 @@ import {ReportIndicatorProps} from './components/indicators/ReportIndicatorWidge
 
 export interface ReportState {
   selectedListItems: uuid[];
+  hiddenLines: uuid[];
 }
 
 export interface Axes {

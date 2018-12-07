@@ -30,6 +30,7 @@ describe('reportActions', () => {
           '905a785e-f215-4eb8-b31c-0a00a365a124',
           'sweden,höganäs,hasselgatan 4',
         ],
+        hiddenLines: [],
       },
       selectionTree: {
         isFetching: false,
@@ -142,6 +143,7 @@ describe('reportActions', () => {
           ...initialState,
           report: {
             selectedListItems: ['54c58358-9631-4de3-b76c-f018fbf0fc8b'],
+            hiddenLines: [],
           },
         });
 
@@ -161,6 +163,7 @@ describe('reportActions', () => {
           ...initialState,
           report: {
             selectedListItems: [],
+            hiddenLines: [],
           },
         });
 
@@ -180,6 +183,7 @@ describe('reportActions', () => {
           ...initialState,
           report: {
             selectedListItems: ['54c58358-9631-4de3-b76c-f018fbf0fc8b'],
+            hiddenLines: [],
           },
         });
 
@@ -202,6 +206,7 @@ describe('reportActions', () => {
               '54c58358-9631-4de3-b76c-f018fbf0fc8b',
               '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
             ],
+            hiddenLines: [],
           },
         });
 
@@ -225,6 +230,7 @@ describe('reportActions', () => {
           ...initialState,
           report: {
             selectedListItems,
+            hiddenLines: [],
           },
           ui: selectedUiQuantitiesFrom([Quantity.flow])
         });
@@ -251,6 +257,7 @@ describe('reportActions', () => {
               '54c58358-9631-4de3-b76c-f018fbf0fc8b',
               '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
             ],
+            hiddenLines: [],
           },
         });
 
@@ -270,6 +277,7 @@ describe('reportActions', () => {
           ...initialState,
           report: {
             selectedListItems: [],
+            hiddenLines: [],
           },
         });
 
@@ -347,6 +355,7 @@ describe('reportActions', () => {
         ...initialState,
         report: {
           selectedListItems: [],
+          hiddenLines: [],
         },
       });
 
