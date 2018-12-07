@@ -1,6 +1,5 @@
 package com.elvaco.mvp.unitconverter;
 
-import java.util.HashMap;
 import java.util.Map;
 import javax.measure.Quantity;
 import javax.measure.UnconvertibleException;
@@ -23,13 +22,19 @@ import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.TransformedUnit;
 import tec.units.ri.unit.Units;
 
-import static java.util.Comparator.comparingInt;
 import static java.util.Map.entry;
-import static java.util.stream.Collectors.toList;
 
 public class UomUnitConverter implements UnitConverter {
 
-  private static final Map<String, String> REPLACEMENTS = new HashMap<>();
+  private static final Map<String, String> REPLACEMENTS = Map.of(
+    "m3", "m³",
+    "second(s)", "s",
+    "minute(s)", "min",
+    "hour(s)", "h",
+    "day(s)", "day",
+    "*", ""
+  );
+
   private static final Unit<Energy> WATTHOUR = new TransformedUnit<>(
     "Wh",
     Units.JOULE,
@@ -100,13 +105,6 @@ public class UomUnitConverter implements UnitConverter {
 
     aliases.forEach((input, target) -> instance.alias(target, input));
     labels.forEach((input, target) -> instance.label(target, input));
-
-    REPLACEMENTS.put("m3", "m³");
-    REPLACEMENTS.put("second(s)", "s");
-    REPLACEMENTS.put("minute(s)", "min");
-    REPLACEMENTS.put("hour(s)", "h");
-    REPLACEMENTS.put("day(s)", "day");
-    REPLACEMENTS.put("*", "");
   }
 
   @Override
@@ -158,13 +156,8 @@ public class UomUnitConverter implements UnitConverter {
   }
 
   private static String replace(String valueAndUnit) {
-    var replacements = REPLACEMENTS.keySet()
-      .stream()
-      .sorted(comparingInt(String::length))
-      .collect(toList());
-
-    for (var replacement : replacements) {
-      valueAndUnit = valueAndUnit.replace(replacement, REPLACEMENTS.get(replacement));
+    for (var replacement : REPLACEMENTS.entrySet()) {
+      valueAndUnit = valueAndUnit.replace(replacement.getKey(), replacement.getValue());
     }
     return valueAndUnit;
   }
