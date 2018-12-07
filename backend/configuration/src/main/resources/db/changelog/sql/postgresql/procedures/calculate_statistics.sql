@@ -30,8 +30,6 @@ begin
                                 '1 day'::interval) AT TIME ZONE current_tz as date) as d2 ) as gen
   left join
   (select (m.created at time zone current_tz)::date as d,
-     m.physical_meter_id,
-     m.quantity,
      min(value),
      max(value),
      coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected_count,
@@ -47,16 +45,14 @@ begin
    group by d, m.physical_meter_id, m.quantity) as mg on mg.d=gen.d2);
   else
     return query (select (m.created at time zone current_tz)::date as d,
-  m.physical_meter_id,
-  m.quantity,
+  p_meter_id as physical_meter_id,
+  quantity_id as quantity,
   min(m.consumption),
   max(m.consumption),
   coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected,
   count(m.consumption)::int,
   avg(m.consumption)
-from (select a.physical_meter_id,
-     quantity_id as quantity,
-     created,
+from (select created,
      value,
      first_value as last_known,
      lead(value) over (
@@ -68,20 +64,18 @@ from (select a.physical_meter_id,
        order by created asc)-first_value
      end as consumption
    from
-     (select q.physical_meter_id,
-        quantity_id as quantity,
-        q.created,
+     (select part.created,
         value_partition,
-        q.value,
+        part.value,
         first_value(value) over (partition by value_partition
           order by created) from
-        (select p.physical_meter_id, created, value, sum(case
-                                                       when value is null then 0
-                                                       else 1
-                                                       end) over(
+        (select created, value, sum(case
+                                      when value is null then 0
+                                      else 1
+                                    end) over(
           order by created) as value_partition
          from
-           (select p_meter_id as physical_meter_id, measurement_serie.when as created, measurement_serie.value
+           (select measurement_serie.when as created, measurement_serie.value
             from
               (select value, date_serie.date as when
                from
@@ -93,16 +87,16 @@ from (select a.physical_meter_id,
                                           and measurement.physical_meter_id = p_meter_id ) as measurement_serie
             where measurement_serie.when >= cast(stat_date as timestamp) at time zone current_tz - cast('2 day' as INTERVAL)
                   and measurement_serie.when <= cast(stop_date as timestamp) at time zone current_tz + cast('1 day' as INTERVAL)
-            order by measurement_serie.when asc) as p) as q ) as a
-   where a.created >= cast(stat_date as timestamp) at time zone current_tz
-         and a.created <= cast(stop_date as timestamp) at time zone current_tz+ cast('1 day' as INTERVAL) ) m
-where m.physical_meter_id = p_meter_id and
-      m.quantity=quantity_id and
-      m.created >= stat_date::timestamp
+            order by measurement_serie.when asc) as measurements
+        ) as part
+     ) as last_known_partition
+   where last_known_partition.created >= cast(stat_date as timestamp) at time zone current_tz
+         and last_known_partition.created <= cast(stop_date as timestamp) at time zone current_tz+ cast('1 day' as INTERVAL) ) m
+where m.created >= stat_date::timestamp
                    at time zone current_tz and
       m.created < (stop_date::timestamp + interval '1 day')
                   at time zone current_tz
-group by d, m.physical_meter_id, m.quantity);
+group by d);
   end if;
 end;
 $BODY$
