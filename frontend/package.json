@@ -87,7 +87,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",
     "mkdirp": "^0.5.1",
-    "node-sass": "4.10.0",
+    "node-sass": "^4.11.0",
     "parcel-bundler": "^1.10.3",
     "postcss": "^7.0.5",
     "redux-devtools": "^3.4.0",
