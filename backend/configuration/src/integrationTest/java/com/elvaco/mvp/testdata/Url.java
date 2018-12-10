@@ -10,6 +10,7 @@ import java.util.Map;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+
 import lombok.Builder;
 
 import static java.util.Collections.emptyMap;

@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.filter.CityFilter;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
+
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 

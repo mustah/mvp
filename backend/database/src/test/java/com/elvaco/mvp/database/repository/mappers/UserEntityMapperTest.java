@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;

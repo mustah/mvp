@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
+
 import org.junit.Before;
 import org.junit.Test;
 

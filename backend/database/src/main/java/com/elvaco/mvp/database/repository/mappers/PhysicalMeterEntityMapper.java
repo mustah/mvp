@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;

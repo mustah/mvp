@@ -5,6 +5,7 @@ import java.time.Duration;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.ResourcePoolsBuilder;

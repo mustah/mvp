@@ -2,6 +2,7 @@ package com.elvaco.mvp.testing.fixture;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
+
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;

@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jooq.MeasurementJooqConditions;
+
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;

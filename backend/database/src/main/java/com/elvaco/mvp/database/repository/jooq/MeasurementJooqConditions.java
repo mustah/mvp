@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
+
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 

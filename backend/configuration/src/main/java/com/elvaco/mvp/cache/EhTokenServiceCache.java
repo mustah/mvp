@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenService;
+
 import lombok.RequiredArgsConstructor;
 import org.ehcache.Cache;
 import org.ehcache.Cache.Entry;

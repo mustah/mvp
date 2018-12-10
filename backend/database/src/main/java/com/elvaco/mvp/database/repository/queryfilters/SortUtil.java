@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+
 import lombok.experimental.UtilityClass;
 import org.jooq.Field;
 import org.jooq.SortField;

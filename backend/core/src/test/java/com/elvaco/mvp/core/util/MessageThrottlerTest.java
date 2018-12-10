@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.util;
 
 import com.elvaco.mvp.testing.cache.MockCache;
+
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

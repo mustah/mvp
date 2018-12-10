@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.List;
 
 import com.elvaco.mvp.web.dto.UserTokenDto;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;

@@ -4,6 +4,7 @@ import com.elvaco.mvp.database.dialect.types.Types;
 import com.elvaco.mvp.database.dialect.types.h2.H2JsonFieldType;
 import com.elvaco.mvp.database.dialect.types.h2.H2MeasurementUnitType;
 import com.elvaco.mvp.database.entity.meter.JsonField;
+
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;

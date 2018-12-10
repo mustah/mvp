@@ -19,6 +19,7 @@ import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
 import com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog;
 import com.elvaco.mvp.database.entity.jooq.tables.Location;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+
 import com.querydsl.core.types.Predicate;
 import org.jooq.DSLContext;
 import org.jooq.Field;

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
+
 import lombok.experimental.UtilityClass;
 import org.jooq.Condition;
 

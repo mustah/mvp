@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
+
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;

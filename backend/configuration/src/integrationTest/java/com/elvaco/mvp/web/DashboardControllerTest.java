@@ -29,6 +29,7 @@ import com.elvaco.mvp.testing.fixture.UserTestData;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

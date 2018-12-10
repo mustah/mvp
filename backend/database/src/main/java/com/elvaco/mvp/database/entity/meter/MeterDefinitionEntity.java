@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;

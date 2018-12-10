@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.Collections.singletonList;

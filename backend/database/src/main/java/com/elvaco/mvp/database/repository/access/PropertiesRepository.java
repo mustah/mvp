@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.spi.repository.Properties;
 import com.elvaco.mvp.database.entity.property.PropertyEntity;
 import com.elvaco.mvp.database.entity.property.PropertyPk;
 import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

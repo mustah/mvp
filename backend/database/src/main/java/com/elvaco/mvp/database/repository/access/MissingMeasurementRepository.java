@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.access;
 
 import com.elvaco.mvp.core.spi.repository.MissingMeasurements;
 import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.PessimisticLockingFailureException;

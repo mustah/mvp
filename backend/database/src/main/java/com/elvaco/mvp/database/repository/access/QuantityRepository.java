@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.spi.repository.Quantities;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.repository.jpa.QuantityJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;

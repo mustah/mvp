@@ -12,6 +12,7 @@ import com.elvaco.geoservice.repository.CallbackRepository;
 import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.CallbackEntity;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

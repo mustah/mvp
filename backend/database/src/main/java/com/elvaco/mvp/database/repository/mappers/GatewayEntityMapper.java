@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;

@@ -11,6 +11,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.Map.entry;

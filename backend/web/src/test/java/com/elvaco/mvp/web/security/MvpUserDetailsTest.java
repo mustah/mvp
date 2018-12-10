@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.domainmodels.UserSelection.IdNamedDto;
 import com.elvaco.mvp.core.domainmodels.UserSelection.SelectionParametersDto;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.util.Json.toJsonNode;

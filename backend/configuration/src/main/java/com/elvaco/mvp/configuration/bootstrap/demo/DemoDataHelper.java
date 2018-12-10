@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.Arrays.asList;

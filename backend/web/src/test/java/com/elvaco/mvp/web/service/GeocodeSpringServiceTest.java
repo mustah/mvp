@@ -8,6 +8,7 @@ import java.util.function.Function;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;

@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.mapper;
 
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.web.dto.UserSelectionDto;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;

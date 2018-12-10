@@ -16,6 +16,7 @@ import com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog;
 import com.elvaco.mvp.database.entity.jooq.tables.Location;
 import com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

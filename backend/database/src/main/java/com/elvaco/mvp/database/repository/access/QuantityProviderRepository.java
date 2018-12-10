@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.repository.jpa.QuantityProviderJpaRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

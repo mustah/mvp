@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
+
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;

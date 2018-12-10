@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusLogEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

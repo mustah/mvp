@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.testing.fixture;
 
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.usecase;
 
 import com.elvaco.mvp.core.domainmodels.CollectionStats;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.usecase.DashboardUseCases.sumCollectionStats;

@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementThreshold.Operator;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;

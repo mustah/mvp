@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.exception.GatewayNotFound;
 import com.elvaco.mvp.web.mapper.GatewayDtoMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

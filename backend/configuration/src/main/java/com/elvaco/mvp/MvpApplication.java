@@ -10,6 +10,7 @@ import com.elvaco.mvp.configuration.config.ApmInterceptor;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.web.converter.CityConverter;
 import com.elvaco.mvp.web.converter.QuantityConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

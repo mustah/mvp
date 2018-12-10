@@ -28,6 +28,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

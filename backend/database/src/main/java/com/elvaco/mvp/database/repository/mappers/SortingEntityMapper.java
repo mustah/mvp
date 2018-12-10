@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.util.Map;
 
 import com.elvaco.mvp.core.spi.data.Order;
+
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import org.springframework.data.domain.Sort.Direction;

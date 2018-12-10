@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.elvaco.mvp.consumers.rabbitmq.dto.AlarmDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
+
 import org.junit.Before;
 import org.junit.Test;
 

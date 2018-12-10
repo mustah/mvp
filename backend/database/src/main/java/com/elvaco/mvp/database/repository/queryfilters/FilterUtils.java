@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QMeterAlarmLogEntity;
+
 import com.querydsl.core.types.Predicate;
 import lombok.experimental.UtilityClass;
 

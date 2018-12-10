@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.SettingEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;

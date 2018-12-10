@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

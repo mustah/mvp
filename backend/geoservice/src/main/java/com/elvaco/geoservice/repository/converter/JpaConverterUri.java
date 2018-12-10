@@ -1,7 +1,6 @@
 package com.elvaco.geoservice.repository.converter;
 
 import java.net.URI;
-
 import javax.persistence.AttributeConverter;
 
 import org.springframework.util.StringUtils;

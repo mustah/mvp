@@ -9,6 +9,7 @@ import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.exception.UserNotFound;
 import com.elvaco.mvp.web.mapper.UserDtoMapper;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

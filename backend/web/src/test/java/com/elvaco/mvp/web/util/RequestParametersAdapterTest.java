@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import com.google.common.collect.ImmutableMultimap;
 import org.junit.Test;
 import org.springframework.util.LinkedMultiValueMap;

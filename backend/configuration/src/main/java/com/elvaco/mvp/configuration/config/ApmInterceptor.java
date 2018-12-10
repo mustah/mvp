@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
 import lombok.RequiredArgsConstructor;

@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.security.AuthenticationToken;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.DAILY_PLANET;

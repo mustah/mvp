@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.repository.jooq.GatewayJooqConditions;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
 import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
+
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;

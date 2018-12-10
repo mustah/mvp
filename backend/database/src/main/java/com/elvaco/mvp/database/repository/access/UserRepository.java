@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.spi.security.PasswordEncoder;
 import com.elvaco.mvp.database.entity.user.UserEntity;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.UserEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;

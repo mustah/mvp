@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.jooq.DSLContext;
 import org.junit.Before;
 import org.junit.Test;

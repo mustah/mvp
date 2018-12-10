@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
