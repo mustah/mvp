@@ -2,7 +2,6 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.Test;
 
@@ -16,13 +15,13 @@ public class PhysicalMeterTest {
 
   @Test
   public void firstStatus() {
-    ZonedDateTime now = ZonedDateTime.now();
-    PhysicalMeter meter = physicalMeter().build();
+    var now = ZonedDateTime.now();
+    var meter = physicalMeter().build();
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
+    List<StatusLogEntry> statuses = meter.replaceActiveStatus(OK, now).statuses;
 
-    assertThat(statuses).containsExactly(StatusLogEntry.<UUID>builder()
-      .entityId(meter.id)
+    assertThat(statuses).containsExactly(StatusLogEntry.builder()
+      .primaryKey(meter.primaryKey())
       .status(OK)
       .start(now)
       .build());
@@ -30,10 +29,11 @@ public class PhysicalMeterTest {
 
   @Test
   public void replacesDifferentStatus() {
-    ZonedDateTime now = ZonedDateTime.now();
-    UUID meterId = randomUUID();
-    StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
-      .entityId(meterId)
+    var now = ZonedDateTime.now();
+    var meterId = randomUUID();
+    var primaryKey = new Pk(meterId, OTHER_ORGANISATION.id);
+    StatusLogEntry previousStatus = StatusLogEntry.builder()
+      .primaryKey(primaryKey)
       .start(now)
       .status(OK)
       .build();
@@ -42,12 +42,12 @@ public class PhysicalMeterTest {
       .status(previousStatus)
       .build();
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(ERROR, now).statuses;
+    List<StatusLogEntry> statuses = meter.replaceActiveStatus(ERROR, now).statuses;
 
     assertThat(statuses).containsExactlyInAnyOrder(
       previousStatus.toBuilder().stop(now).build(),
-      StatusLogEntry.<UUID>builder()
-        .entityId(meterId)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .start(now)
         .status(ERROR)
         .build()
@@ -56,10 +56,12 @@ public class PhysicalMeterTest {
 
   @Test
   public void doesNotReplaceSameStatus() {
-    UUID meterId = randomUUID();
-    ZonedDateTime now = ZonedDateTime.now();
-    StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
-      .entityId(meterId)
+    var meterId = randomUUID();
+    var now = ZonedDateTime.now();
+    var primaryKey = new Pk(meterId, OTHER_ORGANISATION.id);
+
+    StatusLogEntry previousStatus = StatusLogEntry.builder()
+      .primaryKey(primaryKey)
       .start(now)
       .status(OK)
       .build();
@@ -68,17 +70,19 @@ public class PhysicalMeterTest {
       .status(previousStatus)
       .build();
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
+    List<StatusLogEntry> statuses = meter.replaceActiveStatus(OK, now).statuses;
 
     assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
   }
 
   @Test
   public void doesNotReplaceSameStatusWithDifferentTimestamps() {
-    UUID meterId = randomUUID();
-    ZonedDateTime now = ZonedDateTime.now();
-    StatusLogEntry<UUID> previousStatus = StatusLogEntry.<UUID>builder()
-      .entityId(meterId)
+    var meterId = randomUUID();
+    var now = ZonedDateTime.now();
+    var primaryKey = new Pk(meterId, OTHER_ORGANISATION.id);
+
+    StatusLogEntry previousStatus = StatusLogEntry.builder()
+      .primaryKey(primaryKey)
       .status(OK)
       .start(now.minusHours(1))
       .build();
@@ -87,7 +91,7 @@ public class PhysicalMeterTest {
       .status(previousStatus)
       .build();
 
-    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(OK, now).statuses;
+    List<StatusLogEntry> statuses = meter.replaceActiveStatus(OK, now).statuses;
 
     assertThat(statuses).containsExactlyInAnyOrder(previousStatus);
   }

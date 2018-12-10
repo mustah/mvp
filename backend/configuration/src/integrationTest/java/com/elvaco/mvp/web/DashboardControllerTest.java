@@ -20,6 +20,7 @@ import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -211,7 +212,7 @@ public class DashboardControllerTest extends IntegrationTest {
     physicalMeterStatusLogJpaRepository.saveAll(physicalMeters.stream()
       .map(physicalMeterEntity -> new PhysicalMeterStatusLogEntity(
         null,
-        physicalMeterEntity.id,
+        new PhysicalMeterPk(physicalMeterEntity.getId(), physicalMeterEntity.getOrganisationId()),
         StatusType.OK,
         startDate,
         null

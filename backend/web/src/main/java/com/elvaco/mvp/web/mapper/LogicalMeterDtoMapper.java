@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.CollectionStats;
@@ -74,7 +73,7 @@ public class LogicalMeterDtoMapper {
 
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
     String created = formatUtc(logicalMeter.created);
-    Optional<StatusLogEntry<UUID>> statusLog = logicalMeter.activeStatusLog();
+    Optional<StatusLogEntry> statusLog = logicalMeter.activeStatusLog();
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.id = logicalMeter.id;
     meterDto.medium = logicalMeter.getMedium();
@@ -116,7 +115,7 @@ public class LogicalMeterDtoMapper {
     return meterDto;
   }
 
-  private static List<StatusLogEntry<UUID>> getMeterStatusLogs(LogicalMeter logicalMeter) {
+  private static List<StatusLogEntry> getMeterStatusLogs(LogicalMeter logicalMeter) {
     return logicalMeter.physicalMeters.stream()
       .flatMap(physicalMeter -> physicalMeter.statuses.stream())
       .collect(toList());

@@ -30,7 +30,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   private Predicate nullablePredicate(RequestParameter parameter, List<String> values) {
     switch (parameter) {
       case PHYSICAL_METER_ID:
-        return METER_STATUS_LOG.physicalMeterId.in(toUuids(values));
+        return METER_STATUS_LOG.pk.physicalMeterId.in(toUuids(values));
       case LOGICAL_METER_ID:
         return LOGICAL_METER.pk.id.in(toUuids(values));
       case BEFORE:

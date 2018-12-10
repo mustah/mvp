@@ -1,9 +1,9 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -29,16 +29,16 @@ public class GatewaysTest extends IntegrationTest {
 
   @Test
   public void savingGatewaySavesLogs() {
-    UUID gatewayId = randomUUID();
-    ZonedDateTime start = ZonedDateTime.now();
+    var gatewayId = randomUUID();
+    var start = ZonedDateTime.now();
+    var primaryKey = new Pk(gatewayId, context().organisationId());
     gateways.save(Gateway.builder()
       .id(gatewayId)
       .organisationId(context().organisationId())
       .serial("")
       .productModel("")
-      .statusLog(StatusLogEntry.<UUID>builder()
-        .entityId(gatewayId)
-        .organisationId(context().organisationId())
+      .statusLog(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(StatusType.ERROR)
         .start(start)
         .build())

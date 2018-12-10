@@ -20,7 +20,7 @@ import static java.util.UUID.randomUUID;
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Gateway implements Identifiable<UUID> {
+public class Gateway implements Identifiable<UUID>, PrimaryKeyed {
 
   @Default
   public UUID id = randomUUID();
@@ -30,30 +30,34 @@ public class Gateway implements Identifiable<UUID> {
   @Singular
   public List<LogicalMeter> meters;
   @Singular
-  public List<StatusLogEntry<UUID>> statusLogs;
+  public List<StatusLogEntry> statusLogs;
 
   @Override
   public UUID getId() {
     return id;
   }
 
-  public StatusLogEntry<UUID> currentStatus() {
+  public StatusLogEntry currentStatus() {
     return statusLogs.stream()
       .findFirst()
       .orElseGet(() -> StatusLogEntry.unknownFor(this));
   }
 
   public Gateway replaceActiveStatus(StatusType status) {
-    List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
+    List<StatusLogEntry> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statusLogs,
-      StatusLogEntry.<UUID>builder()
-        .entityId(id)
-        .organisationId(organisationId)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey())
         .status(status)
         .start(ZonedDateTime.now())
         .build()
     );
     this.statusLogs = new ArrayList<>();
     return toBuilder().statusLogs(newStatuses).build();
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return new Pk(id, organisationId);
   }
 }

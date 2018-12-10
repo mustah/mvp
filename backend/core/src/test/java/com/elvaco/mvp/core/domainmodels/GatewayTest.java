@@ -11,14 +11,15 @@ public class GatewayTest {
 
   @Test
   public void unknownGatewayStatusBeginsAtEpoch() {
+    var organisationId = UUID.randomUUID();
     Gateway gateway = Gateway.builder()
-      .organisationId(UUID.randomUUID())
+      .organisationId(organisationId)
       .serial("serial")
       .productModel("productModel")
       .build();
 
-    assertThat(gateway.currentStatus()).isEqualTo(StatusLogEntry.<UUID>builder()
-      .entityId(gateway.id)
+    assertThat(gateway.currentStatus()).isEqualTo(StatusLogEntry.builder()
+      .primaryKey(gateway.primaryKey())
       .status(StatusType.UNKNOWN)
       .start(ZonedDateTime.parse("1970-01-01T00:00:00Z[UTC]"))
       .build());

@@ -1,13 +1,12 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
+import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,11 +85,12 @@ public class PhysicalMetersTest extends IntegrationTest {
   @Transactional
   @Test
   public void findByOrganisationAndExternalIdAndAddress() {
-    UUID meterId = randomUUID();
+    var meterId = randomUUID();
+    var primaryKey = new Pk(meterId, context().organisationId());
 
-    StatusLogEntry<UUID> activeStatus = StatusLogEntry.<UUID>builder()
+    StatusLogEntry activeStatus = StatusLogEntry.builder()
       .id(1L)
-      .entityId(meterId)
+      .primaryKey(primaryKey)
       .status(OK)
       .build();
 
@@ -108,9 +108,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "123456789"
     ).get();
 
-    List<PhysicalMeterStatusLogEntity> all = physicalMeterStatusLogJpaRepository.findAll();
-    assertThat(all)
-      .extracting("physicalMeterId")
+    assertThat(physicalMeterStatusLogJpaRepository.findAll())
+      .extracting("pk.physicalMeterId")
       .containsExactly(meterId);
 
     assertThat(physicalMeter.id).isEqualTo(meterId);
@@ -141,14 +140,15 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void statusLogShouldBeRemovedWhenItsPhysicalMeterIsRemoved() {
-    UUID meterId = randomUUID();
-    ZonedDateTime start = ZonedDateTime.now();
+    var start = ZonedDateTime.now();
+    var meterId = randomUUID();
+    var primaryKey = new Pk(meterId, context().organisationId());
 
     physicalMeters.save(
       physicalMeter()
         .id(meterId)
-        .status(StatusLogEntry.<UUID>builder()
-          .entityId(meterId)
+        .status(StatusLogEntry.builder()
+          .primaryKey(primaryKey)
           .status(ERROR)
           .start(start)
           .build())
@@ -161,37 +161,39 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void meterShouldHaveTwoStatusLogs() {
-    UUID meterId = randomUUID();
-    ZonedDateTime start = ZonedDateTime.now();
+    var start = ZonedDateTime.now();
+    var meterId = randomUUID();
+    var primaryKey = new Pk(meterId, context().organisationId());
 
     physicalMeters.save(physicalMeter().id(meterId).build());
 
     meterStatusLogs.save(asList(
-      StatusLogEntry.<UUID>builder()
-        .entityId(meterId)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(OK)
         .start(start.minusDays(2))
         .build(),
-      StatusLogEntry.<UUID>builder()
-        .entityId(meterId)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(ERROR)
         .start(start)
         .build()
     ));
 
     assertThat(physicalMeterStatusLogJpaRepository.findAll())
-      .filteredOn("physicalMeterId", meterId)
+      .filteredOn("pk.physicalMeterId", meterId)
       .hasSize(2);
   }
 
   @Test
   public void cannotSaveMeterWithSameStatusLog() {
-    UUID meterId = randomUUID();
+    var meterId = randomUUID();
+    var primaryKey = new Pk(meterId, context().organisationId());
 
     physicalMeters.save(physicalMeter().id(meterId).build());
 
-    StatusLogEntry<UUID> status = StatusLogEntry.<UUID>builder()
-      .entityId(meterId)
+    StatusLogEntry status = StatusLogEntry.builder()
+      .primaryKey(primaryKey)
       .status(OK)
       .build();
 

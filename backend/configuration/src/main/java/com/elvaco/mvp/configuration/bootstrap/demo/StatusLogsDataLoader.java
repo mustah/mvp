@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
@@ -45,12 +44,10 @@ class StatusLogsDataLoader {
 
   private void createGatewayLogMockData() {
     gateways.findAll().stream()
-      .map(gateway -> StatusLogEntry.<UUID>builder()
-        .entityId(gateway.id)
-        .organisationId(gateway.organisationId)
+      .map(gateway -> StatusLogEntry.builder()
+        .primaryKey(gateway.primaryKey())
         .status(nextRandomStatusType())
         .start(subtractDays(90))
-        .organisationId(gateway.organisationId)
         .build())
       .forEach(gatewayStatusLogs::save);
   }
@@ -58,17 +55,17 @@ class StatusLogsDataLoader {
   private void createMeterStatusLogMockData() {
     int daySeed = 1;
 
-    List<StatusLogEntry<UUID>> statusLogs = new ArrayList<>();
+    List<StatusLogEntry> statusLogs = new ArrayList<>();
     for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
-      statusLogs.add(StatusLogEntry.<UUID>builder()
-        .entityId(meter.id)
+      statusLogs.add(StatusLogEntry.builder()
+        .primaryKey(meter.primaryKey())
         .status(OK)
         .start(subtractDays(daySeed))
         .build()
       );
-      statusLogs.add(StatusLogEntry.<UUID>builder()
-        .entityId(meter.id)
+      statusLogs.add(StatusLogEntry.builder()
+        .primaryKey(meter.primaryKey())
         .status(nextRandomStatusType())
         .start(subtractDays(daySeed).plusHours(1))
         .build()

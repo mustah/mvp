@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
+import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -123,8 +124,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter.id, context().organisationId()))
         .status(OK)
         .start(start)
         .build()
@@ -200,8 +201,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter.id, context().organisationId()))
         .status(StatusType.OK)
         .start(YESTERDAY.minusMinutes(15))
         .build()
@@ -231,8 +232,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter.id, context().organisationId()))
         .status(OK)
         .start(YESTERDAY.minusMinutes(15))
         .stop(YESTERDAY.plusHours(1))
@@ -267,9 +268,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build()
     );
 
+    var primaryKey = new Pk(physicalMeter.id, context().organisationId());
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(OK)
         .start(YESTERDAY.minusMinutes(15))
         .stop(YESTERDAY.plusHours(1))
@@ -277,8 +279,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(StatusType.WARNING)
         .start(YESTERDAY.plusHours(1))
         .build()
@@ -314,17 +316,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build()
     );
 
+    var primaryKey = new Pk(physicalMeter.id, context().organisationId());
+
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(OK)
         .start(YESTERDAY.minusMinutes(15))
         .build()
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey)
         .status(StatusType.WARNING)
         .start(YESTERDAY.plusHours(1))
         .build()
@@ -519,8 +523,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter.id, context().organisationId()))
         .status(OK)
         .start(YESTERDAY.minusMinutes(15))
         .build()
@@ -564,16 +568,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter1.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter1.id, context().organisationId()))
         .status(OK)
         .start(YESTERDAY.minusMinutes(15))
         .build()
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter2.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter2.id, context().organisationId()))
         .status(OK)
         .start(YESTERDAY.minusMinutes(15))
         .build()
@@ -618,8 +622,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeter.id, context().organisationId()))
         .status(StatusType.OK)
         .start(start)
         .build()
@@ -750,8 +754,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     // status is active within period, should be included
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(firstMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(firstMeter.id, context().organisationId()))
         .status(StatusType.ERROR)
         .start(ZonedDateTime.parse("2004-12-25T10:14:00Z"))
         .build()
@@ -759,8 +763,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     // status ended before period begun, should not be included
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(secondMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(secondMeter.id, context().organisationId()))
         .status(StatusType.ERROR)
         .start(ZonedDateTime.parse("2002-12-25T10:14:00Z"))
         .stop(ZonedDateTime.parse("2004-09-14T12:12:12Z"))
@@ -769,8 +773,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     //status started after period ended, should not be included
     saveStatusLogForMeter(
-      StatusLogEntry.<UUID>builder()
-        .entityId(thirdMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(new Pk(thirdMeter.id, context().organisationId()))
         .status(StatusType.ERROR)
         .start(ZonedDateTime.parse("2015-04-29T10:14:20Z"))
         .build()
@@ -1932,7 +1936,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void onlyMetersWithAlarms() {
     LogicalMeter logicalMeter1 = saveLogicalMeter();
     LogicalMeter logicalMeter2 = saveLogicalMeter();
-    StatusLogEntry.StatusLogEntryBuilder<UUID> statusBuilder = StatusLogEntry.<UUID>builder()
+    StatusLogEntry.StatusLogEntryBuilder statusBuilder = StatusLogEntry.builder()
       .status(StatusType.OK)
       .start(start);
 
@@ -1940,13 +1944,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter().logicalMeterId(logicalMeter1.id).build()
     );
 
-    saveStatusLogForMeter(statusBuilder.entityId(physicalMeter.id).build());
+    saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeter.primaryKey()).build());
 
     PhysicalMeter physicalMeterWithAlarm = physicalMeters.save(
       physicalMeter().logicalMeterId(logicalMeter2.id).build()
     );
 
-    saveStatusLogForMeter(statusBuilder.entityId(physicalMeterWithAlarm.id).build());
+    saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeterWithAlarm.primaryKey()).build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
       .entityId(physicalMeterWithAlarm.id)
@@ -1978,7 +1982,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void onlyMetersWithNoAlarms() {
     LogicalMeter logicalMeter1 = saveLogicalMeter();
     LogicalMeter logicalMeter2 = saveLogicalMeter();
-    StatusLogEntry.StatusLogEntryBuilder<UUID> statusBuilder = StatusLogEntry.<UUID>builder()
+    StatusLogEntry.StatusLogEntryBuilder statusBuilder = StatusLogEntry.builder()
       .status(StatusType.OK)
       .start(start);
 
@@ -1986,13 +1990,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter().logicalMeterId(logicalMeter1.id).build()
     );
 
-    saveStatusLogForMeter(statusBuilder.entityId(physicalMeter.id).build());
+    saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeter.primaryKey()).build());
 
     PhysicalMeter physicalMeterWithAlarm = physicalMeters.save(
       physicalMeter().logicalMeterId(logicalMeter2.id).build()
     );
 
-    saveStatusLogForMeter(statusBuilder.entityId(physicalMeterWithAlarm.id).build());
+    saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeterWithAlarm.primaryKey()).build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
       .entityId(physicalMeterWithAlarm.id)
@@ -2215,7 +2219,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .utcOffset(DEFAULT_UTC_OFFSET);
   }
 
-  private StatusLogEntry<UUID> saveStatusLogForMeter(StatusLogEntry<UUID> statusLog) {
+  private StatusLogEntry saveStatusLogForMeter(StatusLogEntry statusLog) {
     return meterStatusLogs.save(statusLog);
   }
 

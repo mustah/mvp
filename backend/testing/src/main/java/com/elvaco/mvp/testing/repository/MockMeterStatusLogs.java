@@ -1,30 +1,29 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 
 public class MockMeterStatusLogs
-  extends MockRepository<Long, StatusLogEntry<UUID>>
+  extends MockRepository<Long, StatusLogEntry>
   implements MeterStatusLogs {
 
   @Override
-  public StatusLogEntry<UUID> save(StatusLogEntry<UUID> meterStatusLog) {
+  public StatusLogEntry save(StatusLogEntry meterStatusLog) {
     return saveMock(meterStatusLog);
   }
 
   @Override
-  public void save(List<StatusLogEntry<UUID>> meterStatusLogs) {
+  public void save(List<StatusLogEntry> meterStatusLogs) {
     meterStatusLogs.forEach(this::saveMock);
   }
 
   @Override
-  protected StatusLogEntry<UUID> copyWithId(Long id, StatusLogEntry<UUID> entity) {
-    return StatusLogEntry.<UUID>builder()
+  protected StatusLogEntry copyWithId(Long id, StatusLogEntry entity) {
+    return StatusLogEntry.builder()
       .id(id)
-      .entityId(entity.entityId)
+      .primaryKey(entity.primaryKey)
       .status(entity.status)
       .start(entity.start)
       .stop(entity.stop)
@@ -32,7 +31,7 @@ public class MockMeterStatusLogs
   }
 
   @Override
-  protected Long generateId(StatusLogEntry<UUID> entity) {
+  protected Long generateId(StatusLogEntry entity) {
     return nextId();
   }
 }

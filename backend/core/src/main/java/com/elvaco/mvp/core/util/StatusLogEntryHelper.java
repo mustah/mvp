@@ -11,11 +11,11 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class StatusLogEntryHelper {
 
-  public static <T> List<StatusLogEntry<T>> replaceActiveStatus(
-    List<StatusLogEntry<T>> currentStatuses,
-    StatusLogEntry<T> newActiveStatus
+  public static <T> List<StatusLogEntry> replaceActiveStatus(
+    List<StatusLogEntry> currentStatuses,
+    StatusLogEntry newActiveStatus
   ) {
-    List<StatusLogEntry<T>> activeSameStatuses = currentStatuses.stream()
+    List<StatusLogEntry> activeSameStatuses = currentStatuses.stream()
       .filter(StatusLogEntry::isActive)
       .filter(logEntry -> logEntry.status == newActiveStatus.status)
       .collect(toList());
@@ -24,7 +24,7 @@ public class StatusLogEntryHelper {
       return currentStatuses;
     }
 
-    List<StatusLogEntry<T>> newStatuses = currentStatuses.stream()
+    List<StatusLogEntry> newStatuses = currentStatuses.stream()
       .map(entry -> entry.isActive()
         ? entry.toBuilder().stop(newActiveStatus.start).build()
         : entry)

@@ -21,7 +21,7 @@ import static java.util.UUID.randomUUID;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PhysicalMeter implements Identifiable<UUID> {
+public class PhysicalMeter implements Identifiable<UUID>, PrimaryKeyed {
 
   public final UUID organisationId;
   public final String address;
@@ -38,7 +38,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
   @Nullable
   public Integer mbusDeviceType;
   @Singular
-  public List<StatusLogEntry<UUID>> statuses;
+  public List<StatusLogEntry> statuses;
   @Singular
   public List<AlarmLogEntry> alarms;
 
@@ -48,15 +48,20 @@ public class PhysicalMeter implements Identifiable<UUID> {
   }
 
   public PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
-    List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
+    List<StatusLogEntry> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
       statuses,
-      StatusLogEntry.<UUID>builder()
-        .entityId(id)
+      StatusLogEntry.builder()
+        .primaryKey(primaryKey())
         .status(status)
         .start(when)
         .build()
     );
     this.statuses = new ArrayList<>();
     return toBuilder().statuses(newStatuses).build();
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return new Pk(id, organisationId);
   }
 }

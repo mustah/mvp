@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
@@ -229,15 +228,15 @@ public class SummaryControllerTest extends IntegrationTest {
     physicalMeters.save(physicalMeter);
 
     meterStatusLogs.save(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(physicalMeter.primaryKey())
         .status(StatusType.OK)
         .build()
     );
 
     meterStatusLogs.save(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(physicalMeter.primaryKey())
         .status(StatusType.WARNING)
         .start(ZonedDateTime.now().plusDays(1))
         .build()

@@ -525,7 +525,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   private PhysicalMeter savePhysicalMeterWith(LogicalMeter logicalMeter, StatusType status) {
-    PhysicalMeter physicalMeter = physicalMeters.save(
+    var physicalMeter = physicalMeters.save(
       PhysicalMeter.builder()
         .logicalMeterId(logicalMeter.id)
         .externalId(logicalMeter.externalId)
@@ -536,8 +536,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     );
 
     meterStatusLogs.save(
-      StatusLogEntry.<UUID>builder()
-        .entityId(physicalMeter.id)
+      StatusLogEntry.builder()
+        .primaryKey(physicalMeter.primaryKey())
         .status(status)
         .start(NOW)
         .build()
@@ -584,16 +584,16 @@ public class MapMarkerControllerTest extends IntegrationTest {
   }
 
   private Gateway saveGatewayWith(UUID organisationId, StatusType status) {
-    Gateway gateway = gateways.save(Gateway.builder()
+    var gateway = gateways.save(Gateway.builder()
       .organisationId(organisationId)
       .productModel(randomUUID().toString())
       .serial(randomUUID().toString())
       .build()
     );
+
     gatewayStatusLogs.save(
-      StatusLogEntry.<UUID>builder()
-        .entityId(gateway.id)
-        .organisationId(organisationId)
+      StatusLogEntry.builder()
+        .primaryKey(gateway.primaryKey())
         .status(status)
         .start(NOW)
         .build()
