@@ -7,13 +7,13 @@ buildscript {
     junitVersion = '4.13-beta-1'
     jooqVersion = '3.11.7'
     postgresqlVersion = '42.2.5'
+    elasticApmVersion = '1.1.0'
     set('hibernate.version', '5.2.16.Final')
     set('jooq.version', "${jooqVersion}")
   }
 
   dependencies {
     classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-
     classpath 'com.sun.xml.bind:jaxb-core:2.3.0.1'
     classpath 'com.sun.xml.bind:jaxb-impl:2.3.0.1'
     classpath 'javax.activation:activation:1.1.1'
