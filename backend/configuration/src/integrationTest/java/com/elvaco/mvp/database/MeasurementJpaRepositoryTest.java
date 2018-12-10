@@ -423,7 +423,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
       3.0,
-      null,
+      18.0,
       null
     );
   }
