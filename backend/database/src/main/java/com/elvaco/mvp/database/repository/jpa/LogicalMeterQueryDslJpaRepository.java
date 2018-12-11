@@ -93,19 +93,16 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
-    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    SelectJoinStep<Record> query = dsl.select().from(LogicalMeter.LOGICAL_METER);
 
-    SelectJoinStep<Record> sqlGenerator = dsl.select()
-      .from(logicalMeter);
+    logicalMeterJooqConditions.apply(toFilters(parameters), query);
 
-    logicalMeterJooqConditions.apply(toFilters(parameters), sqlGenerator);
+    String sql = query.getSQL(ParamType.NAMED);
+    Query nativeQuery = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
 
-    String sql = sqlGenerator.getSQL(ParamType.NAMED);
-    Query query = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
+    query.getParams().forEach(nativeQuery::setParameter);
 
-    sqlGenerator.getParams().forEach(query::setParameter);
-
-    return Optional.ofNullable((LogicalMeterEntity) query.getSingleResult());
+    return Optional.ofNullable((LogicalMeterEntity) nativeQuery.getSingleResult());
   }
 
   @Override
@@ -126,10 +123,7 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterEntity> findAll(RequestParameters parameters) {
-    var logicalMeter = LogicalMeter.LOGICAL_METER;
-
-    var query = dsl.select()
-      .from(logicalMeter);
+    var query = dsl.select().from(LogicalMeter.LOGICAL_METER);
 
     logicalMeterJooqConditions.apply(toFilters(parameters), query);
 
@@ -263,15 +257,9 @@ class LogicalMeterQueryDslJpaRepository
     Pageable pageable,
     TableField<PhysicalMeterRecord, String> field
   ) {
-    var logicalMeter = LogicalMeter.LOGICAL_METER;
+    var query = dsl.selectDistinct(field).from(LogicalMeter.LOGICAL_METER);
 
-    var query = dsl.selectDistinct(field).from(logicalMeter);
-
-    var countQuery = dsl.selectDistinct(field).from(logicalMeter);
-
-    var filters = toFilters(parameters);
-    new SelectionJooqConditions().apply(filters, query);
-    new SelectionJooqConditions().apply(filters, countQuery);
+    new SelectionJooqConditions().apply(toFilters(parameters), query);
 
     var all = query
       .orderBy(directionFor(field, pageable.getSort()))
@@ -279,7 +267,7 @@ class LogicalMeterQueryDslJpaRepository
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(String.class);
 
-    return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
+    return getPage(all, pageable, () -> dsl.fetchCount(query));
   }
 
   private OrderField<String> directionFor(
@@ -299,7 +287,8 @@ class LogicalMeterQueryDslJpaRepository
     var logicalMeter = LogicalMeter.LOGICAL_METER;
     var query = dsl.select()
       .from(logicalMeter)
-      .where(conditions).limit(1);
+      .where(conditions)
+      .limit(1);
     return nativeQuery(query, LogicalMeterEntity.class).stream().findAny();
   }
 
