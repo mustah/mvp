@@ -38,6 +38,9 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 
+import co.elastic.apm.api.ElasticApm;
+import co.elastic.apm.api.Scope;
+import co.elastic.apm.api.Transaction;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -260,7 +263,10 @@ class RabbitMqConfig {
     @Nullable
     @SuppressWarnings("unused")
     public String handleMessage(byte[] message) {
-      try {
+      Transaction transaction = ElasticApm.startTransaction();
+      try (Scope scope = transaction.activate()) {
+        transaction.setType("rabbitmq");
+        transaction.setName("AuthenticatedMessageListener#handleMessage");
         SecurityContextHolder.getContext().setAuthentication(
           new UsernamePasswordAuthenticationToken(new MvpUserDetails(meteringUser(), ""), null)
         );
@@ -272,8 +278,12 @@ class RabbitMqConfig {
         );
 
         return messageListener.onMessage(encodedMessage);
+      } catch (Exception ex) {
+        transaction.captureException(ex);
+        throw ex;
       } finally {
         SecurityContextHolder.clearContext();
+        transaction.end();
       }
     }
 
