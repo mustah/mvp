@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -315,7 +316,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Volume",
         START_TIME,
         START_TIME.plusHours(2),
-        HOUR_RESOLUTION
+        TemporalResolution.hour.asInterval()
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
@@ -331,8 +332,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
-    //missing measurement at START_TIME.plusHours(2)
-    //missing measurement at START_TIME.plusHours(3)
     newMeasurement(meter, START_TIME.plusHours(4), 48.0, "m³", "Volume");
     newMeasurement(meter, START_TIME.plusHours(5), 96.0, "m³", "Volume");
 
@@ -342,7 +341,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Volume",
         START_TIME,
         START_TIME.plusHours(4),
-        HOUR_RESOLUTION
+        TemporalResolution.hour.asInterval()
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
@@ -370,7 +369,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Volume",
         START_TIME,
         START_TIME.plusHours(2),
-        HOUR_RESOLUTION
+        TemporalResolution.hour.asInterval()
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
@@ -394,7 +393,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Volume",
         START_TIME,
         START_TIME.plusHours(2),
-        HOUR_RESOLUTION
+        TemporalResolution.hour.asInterval()
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
@@ -419,12 +418,12 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Volume",
         START_TIME,
         START_TIME.plusHours(2),
-        HOUR_RESOLUTION
+        TemporalResolution.hour.asInterval()
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
       3.0,
-      18.0,
+      null,
       null
     );
   }
@@ -444,7 +443,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         "Volume",
         START_TIME,
         START_TIME.plusHours(2),
-        HOUR_RESOLUTION
+        TemporalResolution.hour.asInterval()
       );
 
     assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(

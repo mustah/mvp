@@ -29,5 +29,9 @@ public enum TemporalResolution {
   public static Optional<TemporalResolution> fromString(String resolution) {
     return Optional.ofNullable(STRING_TO_ENUM.get(resolution));
   }
+
+  public String asInterval() {
+    return "1 " + this.name();
+  }
 }
 
