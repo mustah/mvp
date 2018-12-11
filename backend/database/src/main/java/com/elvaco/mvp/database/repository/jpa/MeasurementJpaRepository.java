@@ -85,7 +85,7 @@ public interface MeasurementJpaRepository
     + "         generate_series("
     + "           cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
     + "           cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC' +"
-    + "             cast('31 ' || :resolution AS INTERVAL),"
+    + "             cast(:resolution AS INTERVAL),"
     + "           cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
     + "     ) AS date_serie"
     + "     LEFT JOIN measurement"

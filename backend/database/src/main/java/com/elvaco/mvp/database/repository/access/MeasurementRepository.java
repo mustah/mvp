@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -116,30 +117,26 @@ public class MeasurementRepository implements Measurements {
     TemporalResolution resolution
   ) {
     List<MeasurementValueProjection> averageForPeriod;
-
-    switch (quantity.seriesDisplayMode()) {
-      case CONSUMPTION:
-        averageForPeriod = measurementJpaRepository.getAverageForPeriodConsumption(
-          meterIds,
-          getResolution(resolution),
-          quantity.name,
-          getIntervalStart(from, resolution),
-          getIntervalStart(to, resolution)
-        );
-        break;
-      default:
-        averageForPeriod = measurementJpaRepository.getAverageForPeriod(
-          meterIds,
-          getResolution(resolution),
-          quantity.name,
-          getIntervalStart(from, resolution),
-          getIntervalStart(to, resolution)
-        );
-        break;
+    if (quantity.seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION) {
+      averageForPeriod = measurementJpaRepository.getAverageForPeriodConsumption(
+        meterIds,
+        resolution.asInterval(),
+        quantity.name,
+        getIntervalStart(from, resolution),
+        getIntervalStart(to, resolution)
+      );
+    } else {
+      averageForPeriod = measurementJpaRepository.getAverageForPeriod(
+        meterIds,
+        resolution.asInterval(),
+        quantity.name,
+        getIntervalStart(from, resolution),
+        getIntervalStart(to, resolution)
+      );
     }
 
     return averageForPeriod.stream()
-      .map((projection) -> projectionToMeasurementValue(projection, quantity))
+      .map(projection -> projectionToMeasurementValue(projection, quantity))
       .collect(toList());
   }
 
@@ -153,27 +150,23 @@ public class MeasurementRepository implements Measurements {
   ) {
     try {
       List<MeasurementValueProjection> seriesForPeriod;
-
-      switch (quantity.seriesDisplayMode()) {
-        case CONSUMPTION:
-          seriesForPeriod = measurementJpaRepository.getSeriesForPeriodConsumption(
-            meterId,
-            quantity.name,
-            getIntervalStart(from, resolution),
-            getIntervalStart(to, resolution),
-            getResolution(resolution)
-          );
-          break;
-        default:
-          seriesForPeriod = measurementJpaRepository.getSeriesForPeriod(
-            meterId,
-            quantity.name,
-            getIntervalStart(from, resolution),
-            getIntervalStart(to, resolution),
-            getResolution(resolution)
-          );
+      if (quantity.seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION) {
+        seriesForPeriod = measurementJpaRepository.getSeriesForPeriodConsumption(
+          meterId,
+          quantity.name,
+          getIntervalStart(from, resolution),
+          getIntervalStart(to, resolution),
+          resolution.asInterval()
+        );
+      } else {
+        seriesForPeriod = measurementJpaRepository.getSeriesForPeriod(
+          meterId,
+          quantity.name,
+          getIntervalStart(from, resolution),
+          getIntervalStart(to, resolution),
+          resolution.asInterval()
+        );
       }
-
       return seriesForPeriod.stream()
         .map((projection) -> projectionToMeasurementValue(projection, quantity))
         .collect(toList());
@@ -201,17 +194,12 @@ public class MeasurementRepository implements Measurements {
     MeasurementValueProjection projection,
     Quantity quantity
   ) {
-    Quantity savedQuantity = quantityProvider.getByName(quantity.name);
-    Double value = projection.getValue() == null
-      ? null
-      : unitConverter.convert(
-        new MeasurementUnit(savedQuantity.storageUnit, projection.getValue()),
-        quantity.presentationUnit()
-      ).getValue();
+    Double value = Optional.ofNullable(projection.getValue())
+      .map(unitValue ->
+        new MeasurementUnit(quantityProvider.getByName(quantity.name).storageUnit, unitValue))
+      .map(measurementUnit -> unitConverter.convert(measurementUnit, quantity.presentationUnit()))
+      .map(MeasurementUnit::getValue)
+      .orElse(null);
     return new MeasurementValue(value, projection.getInstant());
-  }
-
-  private String getResolution(TemporalResolution resolution) {
-    return "1 ".concat(resolution.toString());
   }
 }
