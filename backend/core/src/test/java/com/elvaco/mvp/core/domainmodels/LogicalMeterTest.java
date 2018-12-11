@@ -1,8 +1,8 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import org.junit.Test;
 
@@ -12,12 +12,12 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
+import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.SECRET_SERVICE;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -168,45 +168,109 @@ public class LogicalMeterTest {
 
   @Test
   public void currentStatus_unknownIfNoStatusAvailable() {
-    LogicalMeter meter = newLogicalMeterWithStatuses(emptyList());
+    var logicalMeterId = randomUUID();
 
-    assertThat(meter.currentStatus()).isEqualTo(StatusType.UNKNOWN);
+    var physicalMeter = physicalMeter()
+      .logicalMeterId(logicalMeterId)
+      .build();
+
+    var meter = logicalMeter()
+      .id(logicalMeterId)
+      .physicalMeter(physicalMeter)
+      .build();
+
+    assertThat(meter.currentStatus()).isEqualTo(UNKNOWN);
   }
 
   @Test
   public void currentStatus_statusLogStatusIsUsedIfAvailable() {
-    LogicalMeter meter = newLogicalMeterWithStatuses(
-      singletonList(newStatusLog(StatusType.ERROR, ZonedDateTime.now()))
-    );
+    var logicalMeterId = randomUUID();
+    var physicalMeterId = randomUUID();
 
-    assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
+    var physicalMeter = physicalMeter()
+      .id(physicalMeterId)
+      .logicalMeterId(logicalMeterId)
+      .status(StatusLogEntry.builder()
+        .primaryKey(new Pk(physicalMeterId, OTHER_ORGANISATION.id))
+        .status(ERROR)
+        .build())
+      .build();
+
+    var meter = logicalMeter()
+      .id(logicalMeterId)
+      .physicalMeter(physicalMeter)
+      .build();
+
+    assertThat(meter.currentStatus()).isEqualTo(ERROR);
   }
 
   @Test
   public void currentStatus_latestStartedStatusLogUsedIfMultipleConcurrent() {
-    LogicalMeter meter = newLogicalMeterWithStatuses(
-      asList(
-        newStatusLog(StatusType.ERROR, ZonedDateTime.now()),
-        newStatusLog(OK, ZonedDateTime.now().plusHours(2)),
-        newStatusLog(StatusType.WARNING, ZonedDateTime.now().minusDays(1))
-      )
-    );
+    var logicalMeterId = randomUUID();
+    var physicalMeterId = randomUUID();
+    var primaryKey = new Pk(physicalMeterId, OTHER_ORGANISATION.id);
+
+    var physicalMeter = physicalMeter()
+      .id(physicalMeterId)
+      .logicalMeterId(logicalMeterId)
+      .status(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
+        .status(ERROR)
+        .build())
+      .status(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
+        .status(OK)
+        .start(ZonedDateTime.now().plusHours(2))
+        .build())
+      .status(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
+        .status(WARNING)
+        .start(ZonedDateTime.now().minusDays(1))
+        .build())
+      .build();
+
+    var meter = logicalMeter()
+      .id(logicalMeterId)
+      .physicalMeter(physicalMeter)
+      .build();
 
     assertThat(meter.currentStatus()).isEqualTo(OK);
   }
 
   @Test
   public void currentStatus_stoppedStatusesAreNotConsidered() {
-    ZonedDateTime now = ZonedDateTime.now();
-    LogicalMeter meter = newLogicalMeterWithStatuses(
-      asList(
-        newStatusLog(StatusType.ERROR, now),
-        newOkStatusLog(now.plusHours(2), now.plusHours(3)),
-        newStatusLog(StatusType.WARNING, now.minusDays(1))
-      )
-    );
+    var now = ZonedDateTime.now();
+    var logicalMeterId = randomUUID();
+    var physicalMeterId = randomUUID();
+    var primaryKey = new Pk(physicalMeterId, OTHER_ORGANISATION.id);
 
-    assertThat(meter.currentStatus()).isEqualTo(StatusType.ERROR);
+    var physicalMeter = physicalMeter()
+      .id(physicalMeterId)
+      .logicalMeterId(logicalMeterId)
+      .status(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
+        .start(now)
+        .status(ERROR)
+        .build())
+      .status(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
+        .status(OK)
+        .start(now.plusHours(2))
+        .stop(now.plusHours(3))
+        .build())
+      .status(StatusLogEntry.builder()
+        .primaryKey(primaryKey)
+        .status(WARNING)
+        .start(now.minusDays(1))
+        .build())
+      .build();
+
+    var meter = logicalMeter()
+      .id(logicalMeterId)
+      .physicalMeter(physicalMeter)
+      .build();
+
+    assertThat(meter.currentStatus()).isEqualTo(ERROR);
   }
 
   @Test
@@ -285,53 +349,16 @@ public class LogicalMeterTest {
       .build();
   }
 
-  private static LogicalMeter newLogicalMeterWithStatuses(
-    List<StatusLogEntry<UUID>> physicalMeterStatuses
-  ) {
-    UUID organisationId = randomUUID();
-    UUID logicalMeterId = randomUUID();
-
-    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+  private static LogicalMeter.LogicalMeterBuilder logicalMeter() {
+    return LogicalMeter.builder()
       .organisationId(OTHER_ORGANISATION.id)
-      .address("250")
-      .externalId("an-external-id")
-      .medium("Heat, Return temp.")
-      .manufacturer("ELV")
-      .logicalMeterId(logicalMeterId)
-      .readIntervalMinutes(60)
-      .statuses(physicalMeterStatuses)
-      .build();
-
-    return logicalMeterBuilder()
-      .id(logicalMeterId)
-      .organisationId(organisationId)
-      .meterDefinition(DISTRICT_HEATING_METER)
-      .physicalMeter(physicalMeter)
-      .build();
+      .meterDefinition(DISTRICT_HEATING_METER);
   }
 
-  private static StatusLogEntry<UUID> newOkStatusLog(
-    ZonedDateTime startTime,
-    ZonedDateTime stopTime
+  private static PhysicalMeter newPhysicalMeter(
+    UUID logicalMeterId,
+    @Nullable String manufacturer
   ) {
-    return StatusLogEntry.<UUID>builder()
-      .id(0L)
-      .entityId(randomUUID())
-      .status(OK)
-      .start(startTime)
-      .stop(stopTime)
-      .build();
-  }
-
-  private static StatusLogEntry<UUID> newStatusLog(StatusType statusType, ZonedDateTime startTime) {
-    return StatusLogEntry.<UUID>builder()
-      .entityId(randomUUID())
-      .status(statusType)
-      .start(startTime)
-      .build();
-  }
-
-  private static PhysicalMeter newPhysicalMeter(UUID logicalMeterId, String manufacturer) {
     return PhysicalMeter.builder()
       .logicalMeterId(logicalMeterId)
       .organisationId(SECRET_SERVICE.id)
@@ -340,5 +367,15 @@ public class LogicalMeterTest {
       .medium("Hot water")
       .manufacturer(manufacturer)
       .build();
+  }
+
+  private static PhysicalMeter.PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
+      .organisationId(OTHER_ORGANISATION.id)
+      .address("250")
+      .externalId("an-external-id")
+      .medium("Heat, Return temp.")
+      .manufacturer("ELV")
+      .readIntervalMinutes(60);
   }
 }

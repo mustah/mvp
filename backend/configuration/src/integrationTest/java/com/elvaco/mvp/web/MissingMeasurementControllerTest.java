@@ -14,6 +14,7 @@ import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -173,10 +174,10 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     ZonedDateTime startDate
   ) {
     List<PhysicalMeterStatusLogEntity> statuses = physicalMeters.stream()
-      .map(physicalMeterEntity ->
+      .map(entity ->
         new PhysicalMeterStatusLogEntity(
           null,
-          physicalMeterEntity.id,
+          new PhysicalMeterPk(entity.getId(), entity.getOrganisationId()),
           StatusType.OK,
           startDate,
           null

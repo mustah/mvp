@@ -114,6 +114,7 @@ public class UomUnitConverter implements UnitConverter {
     return convertString(measurementUnit.toString(), targetUnit);
   }
 
+  @Override
   public boolean isSameDimension(String firstUnit, String secondUnit) {
     var instance = SimpleUnitFormat.getInstance();
     Unit<?> cleanedUnit;

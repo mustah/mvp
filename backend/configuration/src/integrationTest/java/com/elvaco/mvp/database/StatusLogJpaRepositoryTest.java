@@ -5,9 +5,11 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.gateway.GatewayPk;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
@@ -47,13 +49,15 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
 
     ZonedDateTime start = ZonedDateTime.now();
 
+    var pk = new PhysicalMeterPk(meterId, context().organisationId());
+
     physicalMeterStatusLogJpaRepository.save(
-      new PhysicalMeterStatusLogEntity(null, meterId, StatusType.OK, start, null)
+      new PhysicalMeterStatusLogEntity(null, pk, StatusType.OK, start, null)
     );
 
     assertThatThrownBy(() ->
       physicalMeterStatusLogJpaRepository.save(
-        new PhysicalMeterStatusLogEntity(null, meterId, StatusType.OK, start, null)
+        new PhysicalMeterStatusLogEntity(null, pk, StatusType.OK, start, null)
       )).hasMessageContaining("constraint");
   }
 
@@ -70,9 +74,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
     ZonedDateTime start = ZonedDateTime.now();
     gatewayStatusLogJpaRepository.save(new GatewayStatusLogEntity(
       null,
-      gatewayId,
-      context().organisationId(),
-      StatusType.OK,
+      new GatewayPk(gatewayId, context().organisationId()), StatusType.OK,
       start,
       null
     ));
@@ -80,9 +82,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
     assertThatThrownBy(() ->
       gatewayStatusLogJpaRepository.save(new GatewayStatusLogEntity(
         null,
-        gatewayId,
-        context().organisationId(),
-        StatusType.OK,
+        new GatewayPk(gatewayId, context().organisationId()), StatusType.OK,
         start,
         null
       ))

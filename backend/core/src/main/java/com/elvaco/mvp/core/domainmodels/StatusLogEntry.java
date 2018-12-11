@@ -1,10 +1,10 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.Dates;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,22 +13,21 @@ import lombok.ToString;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 @ToString
-@AllArgsConstructor
-public class StatusLogEntry<T> implements Identifiable<Long> {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class StatusLogEntry implements Identifiable<Long>, PrimaryKeyed {
 
   @Nullable
   public final Long id;
-  public final T entityId;
-  public final UUID organisationId;
+  public final PrimaryKey primaryKey;
   public final StatusType status;
   @Builder.Default
   public ZonedDateTime start = ZonedDateTime.now();
   @Nullable
   public final ZonedDateTime stop;
 
-  public static <T> StatusLogEntry<T> unknownFor(Identifiable<T> entity) {
-    return StatusLogEntry.<T>builder()
-      .entityId(entity.getId())
+  public static StatusLogEntry unknownFor(PrimaryKeyed item) {
+    return StatusLogEntry.builder()
+      .primaryKey(item.primaryKey())
       .status(StatusType.UNKNOWN)
       .start(Dates.epoch())
       .build();
@@ -42,5 +41,10 @@ public class StatusLogEntry<T> implements Identifiable<Long> {
   @Override
   public Long getId() {
     return id;
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return primaryKey;
   }
 }

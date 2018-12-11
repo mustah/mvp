@@ -13,6 +13,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.core.domainmodels.Pk;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.core.domainmodels.PrimaryKeyed;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MissingMeasurementEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -32,7 +35,7 @@ import static java.util.Collections.unmodifiableSet;
 @Table(name = "physical_meter")
 @ToString(exclude = {"statusLogs", "missingMeasurements", "measurements"})
 @Audited
-public class PhysicalMeterEntity extends IdentifiableType<UUID> {
+public class PhysicalMeterEntity extends IdentifiableType<UUID> implements PrimaryKeyed {
 
   private static final long serialVersionUID = 1100904291210178685L;
 
@@ -58,7 +61,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   @NotAudited
   @OrderBy("stop desc, start desc")
-  @OneToMany(mappedBy = "physicalMeterId", orphanRemoval = true)
+  @OneToMany(mappedBy = "pk.physicalMeterId", orphanRemoval = true)
   @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
   public Set<PhysicalMeterStatusLogEntity> statusLogs = new HashSet<>();
 
@@ -115,5 +118,10 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> {
 
   public UUID getOrganisationId() {
     return logicalMeterPk.organisationId;
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return new Pk(id, getOrganisationId());
   }
 }

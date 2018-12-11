@@ -411,7 +411,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .location(UNKNOWN_LOCATION)
       .build());
 
-    messageHandler.accept(messageBuilder().medium(HOT_WATER_MEDIUM)
+    messageHandler.accept(messageBuilder()
+      .medium(HOT_WATER_MEDIUM)
       .physicalMeterId("4321")
       .build());
 
@@ -485,7 +486,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void meterStatusIsSetForNewMeter() {
     messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
 
-    List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
+    List<StatusLogEntry> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
@@ -497,7 +498,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
     messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
 
-    List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
+    List<StatusLogEntry> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
@@ -509,7 +510,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().meterStatus(StatusType.OK.name()).build());
     messageHandler.accept(messageBuilder().meterStatus(StatusType.ERROR.name()).build());
 
-    List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
+    List<StatusLogEntry> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(2);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNotNull();
@@ -522,7 +523,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void newStatusIsSetForGateway() {
     messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
 
-    List<StatusLogEntry<UUID>> statuses = gateways.findAll()
+    List<StatusLogEntry> statuses = gateways.findAll()
       .get(0).statusLogs;
 
     assertThat(statuses).hasSize(1);
@@ -578,7 +579,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
     messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
 
-    List<StatusLogEntry<UUID>> statuses = gateways.findAll()
+    List<StatusLogEntry> statuses = gateways.findAll()
       .get(0).statusLogs;
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
@@ -590,7 +591,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().gatewayStatus(StatusType.OK.name()).build());
     messageHandler.accept(messageBuilder().gatewayStatus(StatusType.ERROR.name()).build());
 
-    List<StatusLogEntry<UUID>> statuses = gateways.findAll()
+    List<StatusLogEntry> statuses = gateways.findAll()
       .get(0).statusLogs;
 
     assertThat(statuses).hasSize(2);

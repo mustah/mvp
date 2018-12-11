@@ -30,10 +30,10 @@ import static org.junit.Assume.assumeTrue;
 @Transactional
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
-  public static final String MINUTE_RESOLUTION = "1 minute";
-  public static final String HOUR_RESOLUTION = "1 hour";
-  public static final String DAY_RESOLUTION = "1 day";
-  public static final String MONTH_RESOLUTION = "1 month";
+  private static final String MINUTE_RESOLUTION = "1 minute";
+  private static final String HOUR_RESOLUTION = "1 hour";
+  private static final String DAY_RESOLUTION = "1 day";
+  private static final String MONTH_RESOLUTION = "1 month";
   private static final OffsetDateTime START_TIME =
     OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
 
@@ -42,6 +42,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   @Autowired
   private QuantityEntityMapper quantityEntityMapper;
+
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
 

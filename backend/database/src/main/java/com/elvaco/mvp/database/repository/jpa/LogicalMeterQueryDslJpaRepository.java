@@ -251,7 +251,7 @@ class LogicalMeterQueryDslJpaRepository
       .join(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
       .join(PHYSICAL_METER.statusLogs, METER_STATUS_LOG)
       .orderBy(METER_STATUS_LOG.start.desc(), METER_STATUS_LOG.stop.desc())
-      .transform(groupBy(METER_STATUS_LOG.physicalMeterId).as(GroupBy.list(METER_STATUS_LOG)));
+      .transform(groupBy(METER_STATUS_LOG.pk.physicalMeterId).as(GroupBy.list(METER_STATUS_LOG)));
   }
 
   @Override

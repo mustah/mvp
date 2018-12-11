@@ -27,10 +27,12 @@ public class MeasurementThresholdParserTest {
   private static final List<Quantity> RECOGNIZED_QUANTITIES = List.of(
     Quantity.ENERGY, Quantity.FORWARD_TEMPERATURE
   );
-  private QuantityProvider provider = name -> RECOGNIZED_QUANTITIES.stream()
+
+  private final QuantityProvider provider = name -> RECOGNIZED_QUANTITIES.stream()
     .filter(quantity -> quantity.name.equals(name))
     .findAny()
     .orElse(null);
+
   private MeasurementThresholdParser parser;
 
   @Before
@@ -206,14 +208,15 @@ public class MeasurementThresholdParserTest {
   }
 
   private static class MockUnitConverter implements UnitConverter {
-    BooleanSupplier dimensionDecisionSupplier;
-    Function<Double, Double> valueConverter;
 
-    MockUnitConverter() {
+    private final BooleanSupplier dimensionDecisionSupplier;
+    private final Function<Double, Double> valueConverter;
+
+    private MockUnitConverter() {
       this(() -> true, (v) -> v);
     }
 
-    MockUnitConverter(
+    private MockUnitConverter(
       BooleanSupplier dimensionDecisionSupplier,
       Function<Double, Double> valueConverter
     ) {

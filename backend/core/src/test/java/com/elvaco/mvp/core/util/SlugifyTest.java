@@ -41,5 +41,4 @@ public class SlugifyTest {
     assertThat(slugify("A $tring \\/\\/ith\t funny ch@racterß"))
       .isEqualTo("a-tring-ith-funny-chracter");
   }
-
 }

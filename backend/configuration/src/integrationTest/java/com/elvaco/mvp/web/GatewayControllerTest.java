@@ -15,7 +15,9 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
+import com.elvaco.mvp.database.entity.gateway.GatewayPk;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.testdata.IdStatus;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -569,8 +571,8 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void findGateways_WithErrorReportedMetersWithinPeriod() {
-    Gateway gateway1 = saveGateway(dailyPlanet.id);
-    LogicalMeter logicalMeter = logicalMeters.save(
+    var gateway1 = saveGateway(dailyPlanet.id);
+    var logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
@@ -578,14 +580,15 @@ public class GatewayControllerTest extends IntegrationTest {
         .utcOffset(DEFAULT_UTC_OFFSET)
         .build()
     );
-    PhysicalMeter physicalMeter = physicalMeters.save(
+    var physicalMeter = physicalMeters.save(
       physicalMeterBuilder()
         .logicalMeterId(logicalMeter.id)
         .build()
     );
 
-    ZonedDateTime time = ZonedDateTime.parse("2017-01-01T00:00:00Z");
-    savePhysicalMeterStatus(physicalMeter.id, ERROR, time.minusDays(1), null);
+    var time = ZonedDateTime.parse("2017-01-01T00:00:00Z");
+    var physicalMeterPk = new PhysicalMeterPk(physicalMeter.id, dailyPlanet.id);
+    savePhysicalMeterStatus(physicalMeterPk, ERROR, time.minusDays(1));
 
     Page<GatewayDto> page = asSuperAdmin()
       .getPage(
@@ -604,8 +607,8 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void findGateways_WithoutErrorReportedMetersWithinPeriod() {
-    Gateway gateway1 = saveGateway(dailyPlanet.id);
-    LogicalMeter logicalMeter = logicalMeters.save(
+    var gateway1 = saveGateway(dailyPlanet.id);
+    var logicalMeter = logicalMeters.save(
       LogicalMeter.builder()
         .externalId("external-1234")
         .organisationId(dailyPlanet.id)
@@ -619,8 +622,9 @@ public class GatewayControllerTest extends IntegrationTest {
         .build()
     );
 
-    ZonedDateTime time = ZonedDateTime.parse("2017-01-01T00:00:00Z");
-    savePhysicalMeterStatus(physicalMeter.id, OK, time.minusDays(1), null);
+    var time = ZonedDateTime.parse("2017-01-01T00:00:00Z");
+    var physicalMeterPk = new PhysicalMeterPk(physicalMeter.id, dailyPlanet.id);
+    savePhysicalMeterStatus(physicalMeterPk, OK, time.minusDays(1));
 
     Page<GatewayDto> page = asSuperAdmin()
       .getPage(
@@ -633,8 +637,7 @@ public class GatewayControllerTest extends IntegrationTest {
         GatewayDto.class
       );
 
-    List<GatewayDto> content = page.getContent();
-    assertThat(content).hasSize(0);
+    assertThat(page.getContent()).hasSize(0);
   }
 
   @Test
@@ -835,8 +838,7 @@ public class GatewayControllerTest extends IntegrationTest {
     gatewayStatusLogJpaRepository.save(
       new GatewayStatusLogEntity(
         null,
-        gatewayId,
-        dailyPlanet.id,
+        new GatewayPk(gatewayId, dailyPlanet.id),
         status,
         start,
         stop
@@ -845,18 +847,17 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   private void savePhysicalMeterStatus(
-    UUID physicalMeterId,
+    PhysicalMeterPk physicalMeterPk,
     StatusType status,
-    ZonedDateTime start,
-    @Nullable ZonedDateTime stop
+    ZonedDateTime start
   ) {
     physicalMeterStatusLogJpaRepository.save(
       new PhysicalMeterStatusLogEntity(
         null,
-        physicalMeterId,
+        physicalMeterPk,
         status,
         start,
-        stop
+        null
       )
     );
   }

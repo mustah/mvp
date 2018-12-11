@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.core.domainmodels.PrimaryKeyed;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,7 +26,7 @@ import lombok.ToString;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway_status_log")
-public class GatewayStatusLogEntity extends IdentifiableType<Long> {
+public class GatewayStatusLogEntity extends IdentifiableType<Long> implements PrimaryKeyed {
 
   private static final long serialVersionUID = -365050443321687201L;
 
@@ -45,14 +47,13 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
 
   public GatewayStatusLogEntity(
     @Nullable Long id,
-    UUID gatewayId,
-    UUID organisationId,
+    GatewayPk gatewayId,
     StatusType status,
     ZonedDateTime start,
     ZonedDateTime stop
   ) {
     this.id = id;
-    this.gatewayId = new GatewayPk(gatewayId, organisationId);
+    this.gatewayId = gatewayId;
     this.status = status;
     this.start = start;
     this.stop = stop;
@@ -69,5 +70,10 @@ public class GatewayStatusLogEntity extends IdentifiableType<Long> {
 
   public UUID getOrganisationId() {
     return gatewayId.getOrganisationId();
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return gatewayId;
   }
 }

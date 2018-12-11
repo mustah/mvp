@@ -60,7 +60,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       .orElse(StatusType.UNKNOWN);
   }
 
-  public Optional<StatusLogEntry<UUID>> activeStatusLog() {
+  public Optional<StatusLogEntry> activeStatusLog() {
     return physicalMeters.stream()
       .flatMap(physicalMeter -> physicalMeter.statuses.stream())
       .filter(StatusLogEntry::isActive)

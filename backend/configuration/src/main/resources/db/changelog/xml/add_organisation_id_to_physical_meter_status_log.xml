@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+
+  <changeSet
+    id="Add organisation_id column to physical_meter_status_log"
+    dbms="postgresql"
+    author="Must Tahir"
+  >
+    <sqlFile
+      path="../sql/postgresql/add_organisation_id_to_physical_meter_status_log.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+  </changeSet>
+
+  <changeSet
+    id="Add organisation_id column to physical_meter_status_log - h2"
+    dbms="h2"
+    author="Must Tahir"
+  >
+    <addColumn tableName="physical_meter_status_log">
+      <column name="organisation_id" type="uuid"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

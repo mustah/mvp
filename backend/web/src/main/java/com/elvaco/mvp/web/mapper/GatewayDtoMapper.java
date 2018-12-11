@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 public class GatewayDtoMapper {
 
   public static GatewayDto toDto(GatewaySummaryDto gateway) {
-    StatusLogEntry<UUID> gatewayStatusLog = Optional.ofNullable(gateway.statusLog)
+    StatusLogEntry gatewayStatusLog = Optional.ofNullable(gateway.statusLog)
       .orElseGet(() -> StatusLogEntry.unknownFor(gateway));
 
     return new GatewayDto(
@@ -46,7 +46,7 @@ public class GatewayDtoMapper {
   public static GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
 
-    StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
+    StatusLogEntry gatewayStatusLog = gateway.currentStatus();
 
     return new GatewayDto(
       gateway.id,
@@ -66,7 +66,7 @@ public class GatewayDtoMapper {
   }
 
   static GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
-    StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
+    StatusLogEntry gatewayStatusLog = gateway.currentStatus();
     return new GatewayMandatoryDto(
       gateway.id,
       formatProductModel(gateway.productModel),

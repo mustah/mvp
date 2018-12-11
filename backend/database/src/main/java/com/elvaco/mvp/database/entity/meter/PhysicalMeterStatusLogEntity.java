@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.time.ZonedDateTime;
-import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -16,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.core.domainmodels.PrimaryKeyed;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ import lombok.ToString;
 @Table(name = "physical_meter_status_log",
   uniqueConstraints = @UniqueConstraint(columnNames = {"physicalMeterId", "start", "status"})
 )
-public class PhysicalMeterStatusLogEntity extends IdentifiableType<Long> {
+public class PhysicalMeterStatusLogEntity extends IdentifiableType<Long> implements PrimaryKeyed {
 
   private static final long serialVersionUID = -365050103321687201L;
 
@@ -37,8 +38,7 @@ public class PhysicalMeterStatusLogEntity extends IdentifiableType<Long> {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  @Column(nullable = false)
-  public UUID physicalMeterId;
+  public PhysicalMeterPk pk;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -53,5 +53,10 @@ public class PhysicalMeterStatusLogEntity extends IdentifiableType<Long> {
   @Override
   public Long getId() {
     return id;
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return pk;
   }
 }
