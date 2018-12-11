@@ -40,7 +40,6 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerAverageTest extends IntegrationTest {
 
@@ -64,8 +63,6 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isPostgresDialect());
-
     otherOrganisation = organisationJpaRepository.save(
       OrganisationEntity.builder()
         .id(randomUUID())
@@ -753,10 +750,8 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Override
   protected void afterRemoveEntitiesHook() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      organisationJpaRepository.delete(otherOrganisation);
-    }
+    measurementJpaRepository.deleteAll();
+    organisationJpaRepository.delete(otherOrganisation);
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {

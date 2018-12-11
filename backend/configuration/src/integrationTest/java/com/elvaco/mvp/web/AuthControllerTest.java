@@ -19,7 +19,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class AuthControllerTest extends IntegrationTest {
 
@@ -134,8 +133,6 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void basicAuthIsSufficientForEndpointAccess() {
-    assumeTrue(isPostgresDialect());
-
     String password = "test";
     User user = createUserIfNotPresent(
       new UserBuilder()

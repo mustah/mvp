@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Collections.emptySet;
@@ -20,17 +19,11 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.offset;
-import static org.junit.Assume.assumeTrue;
 
 public class MeasurementRepositoryTest extends IntegrationTest {
 
   private static final OffsetDateTime START_TIME = OffsetDateTime.parse(
     "2018-01-01T00:00:00+00:00");
-
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
 
   @Test
   public void correctScaleIsReturned() {

@@ -71,7 +71,6 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class LogicalMeterControllerTest extends IntegrationTest {
@@ -98,16 +97,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isPostgresDialect());
     start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
     hotWaterMeterDefinition = meterDefinitions.save(HOT_WATER_METER);
   }
 
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-    }
+    measurementJpaRepository.deleteAll();
     meterAlarmLogJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();

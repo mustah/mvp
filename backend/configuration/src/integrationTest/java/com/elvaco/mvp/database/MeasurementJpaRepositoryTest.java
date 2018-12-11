@@ -18,7 +18,6 @@ import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Transactional
@@ -48,16 +46,9 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
 
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
-
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-    }
+    measurementJpaRepository.deleteAll();
   }
 
   @Test

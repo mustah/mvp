@@ -19,7 +19,6 @@ import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +29,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerPagedTest extends IntegrationTest {
 
@@ -46,16 +44,9 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   @Autowired
   private MeterDefinitions meterDefinitions;
 
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
-
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-    }
+    measurementJpaRepository.deleteAll();
   }
 
   @Test

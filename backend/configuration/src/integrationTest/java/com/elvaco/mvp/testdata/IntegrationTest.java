@@ -37,8 +37,6 @@ import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.SessionFactory;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,16 +144,6 @@ public abstract class IntegrationTest {
   }
 
   protected void afterRemoveEntitiesHook() {}
-
-  protected boolean isPostgresDialect() {
-    return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
-      .getJdbcServices()
-      .getDialect()
-      .getClass()
-      .getName()
-      .toLowerCase()
-      .contains("postgres");
-  }
 
   protected IntegrationTestFixtureContext context() {
     if (context == null) {

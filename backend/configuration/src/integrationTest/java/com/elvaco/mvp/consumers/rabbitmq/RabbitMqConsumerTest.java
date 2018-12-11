@@ -33,7 +33,6 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   @Before
   public void setUp() {
     assumeTrue(isRabbitConnected());
-    assumeTrue(isPostgresDialect());
     deleteAllTestData();
   }
 

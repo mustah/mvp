@@ -17,7 +17,6 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class SummaryControllerTest extends IntegrationTest {
 
@@ -37,11 +35,6 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
-
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
 
   @Test
   public void whenNoMetersGetEmptySummaryInfo() {

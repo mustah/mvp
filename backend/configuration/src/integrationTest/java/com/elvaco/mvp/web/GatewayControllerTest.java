@@ -43,7 +43,6 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("rawtypes")
 public class GatewayControllerTest extends IntegrationTest {
@@ -52,15 +51,11 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isPostgresDialect());
     dailyPlanet = context().organisation2();
   }
 
   @After
   public void tearDown() {
-    if (!isPostgresDialect()) {
-      return;
-    }
     physicalMeterJpaRepository.deleteAll();
     gatewayStatusLogJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();

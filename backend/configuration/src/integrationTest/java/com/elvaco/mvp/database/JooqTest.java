@@ -6,7 +6,6 @@ import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.jooq.DSLContext;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,17 +16,11 @@ import static com.elvaco.mvp.database.entity.jooq.tables.MvpUser.MVP_USER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 public class JooqTest extends IntegrationTest {
 
   @Autowired
   private DSLContext dsl;
-
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
 
   @Transactional
   @Test

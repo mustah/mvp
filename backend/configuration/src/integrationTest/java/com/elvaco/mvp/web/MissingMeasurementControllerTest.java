@@ -33,7 +33,6 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class MissingMeasurementControllerTest extends IntegrationTest {
 
@@ -45,18 +44,14 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isPostgresDialect());
-
     endDate = ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES);
     startDate = endDate.minusMinutes(10);
   }
 
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      missingMeasurementJpaRepository.refreshLocked();
-    }
+    measurementJpaRepository.deleteAll();
+    missingMeasurementJpaRepository.refreshLocked();
   }
 
   @Test

@@ -28,7 +28,6 @@ import com.elvaco.mvp.web.dto.MapMarkersDto;
 
 import com.google.common.collect.ImmutableMultimap;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,6 @@ import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class MapMarkerControllerTest extends IntegrationTest {
 
@@ -58,18 +56,11 @@ public class MapMarkerControllerTest extends IntegrationTest {
   @Autowired
   private MeterAlarmLogs meterAlarmLogs;
 
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
-
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      meterAlarmLogJpaRepository.deleteAll();
-      gatewayStatusLogJpaRepository.deleteAll();
-      gatewayJpaRepository.deleteAll();
-    }
+    meterAlarmLogJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
   }
 
   @Test
