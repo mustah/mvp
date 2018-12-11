@@ -28,4 +28,16 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="Add proper index to physical_meter_status_log" author="Must Tahir">
+    <createIndex
+      indexName="physical_meter_status_log_organisation_id_physical_meter_id_id_idx"
+      tableName="physical_meter_status_log"
+      schemaName="public"
+    >
+      <column name="organisation_id"/>
+      <column name="physical_meter_id"/>
+      <column name="id"/>
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>
