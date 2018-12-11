@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.Before;
 import org.junit.Test;
 

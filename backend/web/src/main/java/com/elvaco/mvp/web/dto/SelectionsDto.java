@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.Medium;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.Arrays.asList;

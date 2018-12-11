@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.testing.amqp.MockJobService;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Test;
 

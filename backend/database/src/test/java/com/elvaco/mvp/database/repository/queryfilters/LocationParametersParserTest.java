@@ -6,6 +6,7 @@ import java.util.List;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.AddressParam;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.CityParam;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;

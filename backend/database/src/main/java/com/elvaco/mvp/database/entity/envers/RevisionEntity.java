@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.envers.RevisionEntityListener;
+
 import com.querydsl.core.annotations.QueryExclude;
 import lombok.EqualsAndHashCode;
 import org.hibernate.envers.RevisionNumber;

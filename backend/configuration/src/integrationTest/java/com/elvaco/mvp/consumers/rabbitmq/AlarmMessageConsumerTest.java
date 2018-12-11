@@ -17,6 +17,7 @@ import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -10,6 +10,7 @@ import javax.sql.rowset.serial.SerialClob;
 
 import com.elvaco.mvp.database.dialect.types.JsonFieldType;
 import com.elvaco.mvp.database.entity.meter.JsonField;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;

@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.security.MvpUserDetails;
+
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

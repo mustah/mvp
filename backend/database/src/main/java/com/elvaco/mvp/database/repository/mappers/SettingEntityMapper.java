@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.database.entity.setting.SettingEntity;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

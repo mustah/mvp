@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.database.repository.access.MeasurementRepository.getIntervalStart;

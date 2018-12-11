@@ -2,6 +2,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+
 import org.junit.Before;
 import org.junit.Test;
 

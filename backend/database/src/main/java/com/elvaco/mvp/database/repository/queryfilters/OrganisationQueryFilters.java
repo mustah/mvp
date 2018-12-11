@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+
 import com.querydsl.core.types.Predicate;
 
 public class OrganisationQueryFilters extends QueryFilters {

@@ -18,6 +18,7 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.util;
 import java.time.Duration;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

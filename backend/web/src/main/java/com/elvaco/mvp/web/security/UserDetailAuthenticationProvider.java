@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.security;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.spi.security.TokenService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

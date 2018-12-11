@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.spi.repository.Quantities;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -7,6 +7,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 

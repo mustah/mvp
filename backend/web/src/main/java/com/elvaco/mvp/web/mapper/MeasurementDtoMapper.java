@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
 

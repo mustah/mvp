@@ -16,6 +16,7 @@ import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;

@@ -83,6 +83,7 @@
         <package name="javax" withSubpackages="true" static="false" />
         <emptyLine />
         <package name="com.elvaco" withSubpackages="true" static="false" />
+        <emptyLine />
         <package name="" withSubpackages="true" static="false" />
         <emptyLine />
         <package name="" withSubpackages="true" static="true" />

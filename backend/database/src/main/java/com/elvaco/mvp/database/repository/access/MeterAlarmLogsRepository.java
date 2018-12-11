@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterAlarmLogEntityMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

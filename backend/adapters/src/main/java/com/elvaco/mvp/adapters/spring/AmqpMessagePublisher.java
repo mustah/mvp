@@ -1,6 +1,7 @@
 package com.elvaco.mvp.adapters.spring;
 
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
+
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.MessageBuilder;
 

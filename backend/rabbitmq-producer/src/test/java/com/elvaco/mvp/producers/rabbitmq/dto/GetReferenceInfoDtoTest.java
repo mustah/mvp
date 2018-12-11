@@ -1,6 +1,7 @@
 package com.elvaco.mvp.producers.rabbitmq.dto;
 
 import com.elvaco.mvp.producers.rabbitmq.MessageSerializer;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toSet;

@@ -47,6 +47,7 @@ dependencies {
   compile 'javax.activation:javax.activation-api:1.2.0'
   compile "org.jooq:jooq:${jooqVersion}"
   compile 'org.liquibase:liquibase-core'
+  compile "co.elastic.apm:apm-agent-api:${elasticApmVersion}"
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   compileOnly "org.springframework.boot:spring-boot-configuration-processor"

@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.exception.MissingParameter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,8 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 @ControllerAdvice
 public class ApiExceptionHandler {
 
-  static final Pattern STRIP_AFTER_SEMI_COLON = Pattern.compile("([^;]+);");
   static final String INTERNAL_ERROR_MESSAGE = "Internal server error, please contact support.";
-
+  private static final Pattern STRIP_AFTER_SEMI_COLON = Pattern.compile("([^;]+);");
   private static final ApiExceptionInformation INTERNAL_SERVER_ERROR =
     new ApiExceptionInformation(
       new ErrorMessageDto(INTERNAL_ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value()),

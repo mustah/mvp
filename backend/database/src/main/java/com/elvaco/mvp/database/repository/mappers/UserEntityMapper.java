@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toList;

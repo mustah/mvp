@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+
 import lombok.Builder;
 
 @Builder

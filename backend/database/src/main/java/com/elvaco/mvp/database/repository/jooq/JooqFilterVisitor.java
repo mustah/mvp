@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.filter.FilterVisitor;
 import com.elvaco.mvp.core.filter.Filters;
+
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;

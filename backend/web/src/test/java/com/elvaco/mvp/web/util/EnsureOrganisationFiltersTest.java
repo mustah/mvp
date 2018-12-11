@@ -7,6 +7,7 @@ import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.web.security.MvpUserDetails;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;

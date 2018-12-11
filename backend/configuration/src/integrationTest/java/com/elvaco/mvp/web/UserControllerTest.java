@@ -16,6 +16,7 @@ import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import com.elvaco.mvp.web.mapper.UserDtoMapper;
+
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

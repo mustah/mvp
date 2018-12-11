@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 

@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

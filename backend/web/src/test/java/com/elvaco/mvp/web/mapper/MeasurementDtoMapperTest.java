@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;

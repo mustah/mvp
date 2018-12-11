@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.elvaco.mvp.database.entity.property.PropertyEntity;
 import com.elvaco.mvp.database.entity.property.PropertyPk;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

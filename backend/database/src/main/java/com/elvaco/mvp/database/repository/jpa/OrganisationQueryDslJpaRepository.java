@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

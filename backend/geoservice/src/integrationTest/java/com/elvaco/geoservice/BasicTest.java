@@ -13,6 +13,7 @@ import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
 import com.elvaco.geoservice.service.AddressToGeoService;
 import com.elvaco.geoservice.service.geocodefarm.GeocodeFarmService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

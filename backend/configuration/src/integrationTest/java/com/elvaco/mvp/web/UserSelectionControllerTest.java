@@ -14,6 +14,7 @@ import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UserSelectionDto;
 import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;

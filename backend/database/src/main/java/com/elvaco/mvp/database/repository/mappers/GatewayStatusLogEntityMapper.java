@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.database.entity.gateway.GatewayPk;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
+
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

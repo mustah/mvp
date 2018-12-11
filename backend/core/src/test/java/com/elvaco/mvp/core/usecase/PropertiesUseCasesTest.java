@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Properties;
 import com.elvaco.mvp.testing.repository.MockProperties;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Test;
 

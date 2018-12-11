@@ -11,6 +11,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

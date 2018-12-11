@@ -35,6 +35,7 @@ import com.elvaco.mvp.database.repository.jpa.PropertiesJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
+
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;

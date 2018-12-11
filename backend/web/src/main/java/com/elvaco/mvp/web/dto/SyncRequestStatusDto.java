@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.producers.rabbitmq.SyncRequestStatusType;
 import com.elvaco.mvp.producers.rabbitmq.dto.Constants;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

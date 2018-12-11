@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;

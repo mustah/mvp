@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.security.TokenAuthenticationFilter;
 import com.elvaco.mvp.web.security.TokenAuthenticationProvider;
 import com.elvaco.mvp.web.security.UserDetailAuthenticationProvider;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

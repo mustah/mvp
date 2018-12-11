@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
+
 import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;

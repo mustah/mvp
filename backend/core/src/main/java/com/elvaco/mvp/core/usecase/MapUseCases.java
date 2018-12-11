@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.MapMarker;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Locations;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

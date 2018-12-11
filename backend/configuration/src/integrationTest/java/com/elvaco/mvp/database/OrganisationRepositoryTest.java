@@ -6,6 +6,7 @@ import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

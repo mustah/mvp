@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;

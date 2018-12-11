@@ -22,6 +22,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;

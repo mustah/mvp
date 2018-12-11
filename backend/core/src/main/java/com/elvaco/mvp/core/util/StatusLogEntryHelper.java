@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.util;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
+
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;

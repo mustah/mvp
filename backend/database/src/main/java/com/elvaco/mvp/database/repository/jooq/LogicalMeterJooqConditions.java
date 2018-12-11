@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
+
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;

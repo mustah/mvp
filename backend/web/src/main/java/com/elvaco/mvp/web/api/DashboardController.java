@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;

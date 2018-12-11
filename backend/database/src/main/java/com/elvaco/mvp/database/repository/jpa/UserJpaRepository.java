@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.database.entity.user.UserEntity;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserJpaRepository extends JpaRepository<UserEntity, UUID> {

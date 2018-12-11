@@ -11,6 +11,7 @@ import com.elvaco.mvp.testing.cache.MockTokenService;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;

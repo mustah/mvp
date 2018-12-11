@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.util;
 import java.time.ZonedDateTime;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;

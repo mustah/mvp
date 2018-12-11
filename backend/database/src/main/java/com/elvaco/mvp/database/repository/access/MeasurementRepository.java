@@ -22,6 +22,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
+
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static java.time.temporal.ChronoUnit.DAYS;

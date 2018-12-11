@@ -26,6 +26,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.junit.After;

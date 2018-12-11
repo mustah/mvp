@@ -6,6 +6,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
+
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 

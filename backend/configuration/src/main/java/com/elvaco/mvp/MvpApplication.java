@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
+import com.elvaco.mvp.configuration.config.ApmInterceptor;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.web.converter.CityConverter;
 import com.elvaco.mvp.web.converter.QuantityConverter;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
@@ -40,6 +44,13 @@ import static java.util.Collections.singletonList;
 @EnableScheduling
 public class MvpApplication implements WebMvcConfigurer {
 
+  private final AuthenticatedUser currentUser;
+
+  @Autowired
+  public MvpApplication(AuthenticatedUser currentUser) {
+    this.currentUser = currentUser;
+  }
+
   public static void main(String[] args) {
     SpringApplication.run(MvpApplication.class, args);
   }
@@ -51,11 +62,25 @@ public class MvpApplication implements WebMvcConfigurer {
   }
 
   @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new ApmInterceptor(currentUser));
+    registry.addInterceptor(localeChangeInterceptor());
+  }
+
+  @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry.addResourceHandler("/**")
       .addResourceLocations("classpath:/static/")
       .resourceChain(false)
       .addResolver(new PushStateResourceResolver());
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry
+      .addMapping("/**")
+      .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
+      .maxAge(3600);
   }
 
   /**
@@ -94,19 +119,6 @@ public class MvpApplication implements WebMvcConfigurer {
     messageSource.setBasename("i18n/messages");
     messageSource.setDefaultEncoding("UTF-8");
     return messageSource;
-  }
-
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(localeChangeInterceptor());
-  }
-
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry
-      .addMapping("/**")
-      .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
-      .maxAge(3600);
   }
 
   private static class PushStateResourceResolver implements ResourceResolver {

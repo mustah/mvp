@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.envers;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.database.entity.envers.RevisionEntity;
+
 import org.hibernate.envers.RevisionListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

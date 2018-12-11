@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.experimental.UtilityClass;
 

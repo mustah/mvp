@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters;
+
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;

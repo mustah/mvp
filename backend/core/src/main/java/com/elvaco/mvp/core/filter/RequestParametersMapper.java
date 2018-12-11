@@ -11,6 +11,7 @@ import java.util.function.Function;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ADDRESS;

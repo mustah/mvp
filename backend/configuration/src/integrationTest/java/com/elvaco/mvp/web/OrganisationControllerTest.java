@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;

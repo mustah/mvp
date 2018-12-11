@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;

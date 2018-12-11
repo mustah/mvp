@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.testing.fixture;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+
 import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;

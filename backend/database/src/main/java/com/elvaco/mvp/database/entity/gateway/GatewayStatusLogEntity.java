@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.domainmodels.IdentifiableType;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.core.domainmodels.PrimaryKeyed;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 

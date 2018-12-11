@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.dialect.types;
 import java.io.Serializable;
 
 import com.elvaco.mvp.database.entity.meter.JsonField;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
 import org.hibernate.type.SerializationException;

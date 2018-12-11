@@ -1,7 +1,6 @@
 package com.elvaco.geoservice.repository.converter;
 
 import java.io.IOException;
-
 import javax.persistence.AttributeConverter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
