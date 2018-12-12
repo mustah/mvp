@@ -8,7 +8,9 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Transaction;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.lang.Nullable;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @RequiredArgsConstructor
@@ -27,16 +29,19 @@ public class ApmInterceptor implements HandlerInterceptor {
       currentTransaction.captureException(ex);
     }
 
-    if (currentUser == null) {
-      return;
+    try {
+      currentTransaction.setUser(
+        currentUser.getUserId().toString(), currentUser.getUsername(), currentUser.getUsername()
+      );
+
+      currentTransaction.addTag("organisation", currentUser.getOrganisationId().toString());
+      currentTransaction.addTag("super-admin", currentUser.isSuperAdmin() ? "yes" : "no");
+      currentTransaction.addTag("admin", currentUser.isAdmin() ? "yes" : "no");
+    } catch (BeanCreationException bce) {
+      if (!bce.contains(InsufficientAuthenticationException.class)) {
+        throw bce;
+      }
+      // No authenticated user in this transaction, that's fine.
     }
-
-    currentTransaction.setUser(
-      currentUser.getUserId().toString(), currentUser.getUsername(), currentUser.getUsername()
-    );
-
-    currentTransaction.addTag("organisation", currentUser.getOrganisationId().toString());
-    currentTransaction.addTag("super-admin", currentUser.isSuperAdmin() ? "yes" : "no");
-    currentTransaction.addTag("admin", currentUser.isAdmin() ? "yes" : "no");
   }
 }
