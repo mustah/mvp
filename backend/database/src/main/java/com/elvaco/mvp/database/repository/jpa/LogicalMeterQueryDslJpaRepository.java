@@ -170,7 +170,7 @@ class LogicalMeterQueryDslJpaRepository
       .distinctOn(logicalMeter.ID, physicalMeter.ID)
       .from(logicalMeter);
 
-    var countQuery = dsl.select(logicalMeter.ID).from(logicalMeter);
+    var countQuery = dsl.selectDistinct(logicalMeter.ID, physicalMeter.ID).from(logicalMeter);
 
     var filters = toFilters(parameters);
 
