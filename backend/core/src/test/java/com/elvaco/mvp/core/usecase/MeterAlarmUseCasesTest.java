@@ -2,7 +2,6 @@ package com.elvaco.mvp.core.usecase;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -15,20 +14,21 @@ import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeterAlarmUsecasesTest {
+public class MeterAlarmUseCasesTest {
 
-  Measurements measurements;
-  MeterAlarmLogs meterAlarmLogs;
-  PhysicalMeter meter;
-  MeterAlarmUseCases meterAlarmUseCases;
+  private Measurements measurements;
+  private MeterAlarmLogs meterAlarmLogs;
+  private PhysicalMeter meter;
+  private MeterAlarmUseCases meterAlarmUseCases;
 
   @Before
   public void before() {
     measurements = new MockMeasurements();
     meterAlarmLogs = new MockMeterAlarmLogs();
-    meter = PhysicalMeter.builder().id(UUID.randomUUID()).build();
+    meter = PhysicalMeter.builder().id(randomUUID()).organisationId(randomUUID()).build();
     meterAlarmUseCases = new MeterAlarmUseCases(measurements, meterAlarmLogs);
   }
 
@@ -41,7 +41,7 @@ public class MeterAlarmUsecasesTest {
       .build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(meter.id)
+      .primaryKey(meter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now()
         .minusDays(4).truncatedTo(ChronoUnit.HOURS))
@@ -61,7 +61,7 @@ public class MeterAlarmUsecasesTest {
       .build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(meter.id)
+      .primaryKey(meter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now()
         .minusDays(4).truncatedTo(ChronoUnit.HOURS))
@@ -82,7 +82,7 @@ public class MeterAlarmUsecasesTest {
       .physicalMeter(meter).build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(meter.id)
+      .primaryKey(meter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.HOURS)).build());
 
@@ -99,7 +99,7 @@ public class MeterAlarmUsecasesTest {
       .physicalMeter(meter).build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(meter.id)
+      .primaryKey(meter.primaryKey())
       .start(ZonedDateTime.now().minusDays(5).truncatedTo(ChronoUnit.HOURS))
       .lastSeen(ZonedDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS)).build());
 

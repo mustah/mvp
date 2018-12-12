@@ -21,10 +21,11 @@ public interface MeterAlarmLogJpaRepository extends JpaRepository<MeterAlarmLogE
 
   @Modifying
   @Query(nativeQuery = true, value =
-    "INSERT INTO meter_alarm_log (physical_meter_id, mask, start, last_seen, description)"
+    "INSERT INTO meter_alarm_log "
+      + " (organisation_id, physical_meter_id, mask, start, last_seen, description)"
       + " VALUES "
-      + "(:physical_meter_id, :mask, :timestamp, :timestamp, :description)"
-      + " ON CONFLICT (physical_meter_id, mask)"
+      + "(:organisation_id, :physical_meter_id, :mask, :timestamp, :timestamp, :description)"
+      + " ON CONFLICT (organisation_id, physical_meter_id, mask)"
       + "  DO UPDATE SET"
       + "    START = " + UPDATE_START + ", "
       + "    last_seen = " + UPDATE_LAST_SEEN + ", "
@@ -33,12 +34,12 @@ public interface MeterAlarmLogJpaRepository extends JpaRepository<MeterAlarmLogE
   )
   void createOrUpdate(
     @Param("physical_meter_id") UUID physicalMeterId,
+    @Param("organisation_id") UUID organisationId,
     @Param("mask") int mask,
     @Param("timestamp") ZonedDateTime timestamp,
     @Param("description") String description
   );
 
   @Query("SELECT a FROM MeterAlarmLogEntity a WHERE a.stop IS NULL AND a.start <= :timestamp ")
-  List<MeterAlarmLogEntity> findActiveAlamsOlderThan(@Param("timestamp")ZonedDateTime timestamp);
-
+  List<MeterAlarmLogEntity> findActiveAlarmsOlderThan(@Param("timestamp") ZonedDateTime timestamp);
 }

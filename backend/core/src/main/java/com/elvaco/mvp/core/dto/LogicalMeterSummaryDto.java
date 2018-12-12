@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 
 import lombok.AccessLevel;
@@ -82,7 +83,7 @@ public class LogicalMeterSummaryDto {
     this.activeAlarm = alarmId != null
       ? AlarmLogEntry.builder()
       .id(alarmId)
-      .entityId(alarmPhysicalMeterId)
+      .primaryKey(new Pk(alarmPhysicalMeterId, organisationId))
       .start(start.toZonedDateTime())
       .lastSeen(lastSeen.toZonedDateTime())
       .stop(stop != null ? stop.toZonedDateTime() : null)

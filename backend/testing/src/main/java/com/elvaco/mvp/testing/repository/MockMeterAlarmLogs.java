@@ -4,10 +4,10 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 
 public class MockMeterAlarmLogs
@@ -16,13 +16,13 @@ public class MockMeterAlarmLogs
 
   @Override
   public void createOrUpdate(
-    UUID physicalMeterId,
+    PrimaryKey primaryKey,
     int mask,
     ZonedDateTime start,
     String description
   ) {
     saveMock(AlarmLogEntry.builder()
-      .entityId(physicalMeterId)
+      .primaryKey(primaryKey)
       .mask(mask)
       .start(start)
       .lastSeen(start)
@@ -55,7 +55,7 @@ public class MockMeterAlarmLogs
   protected AlarmLogEntry copyWithId(Long id, AlarmLogEntry entity) {
     return AlarmLogEntry.builder()
       .id(id)
-      .entityId(entity.entityId)
+      .primaryKey(entity.primaryKey)
       .mask(entity.mask)
       .description(entity.description)
       .start(entity.start)

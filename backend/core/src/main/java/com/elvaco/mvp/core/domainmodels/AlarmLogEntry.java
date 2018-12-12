@@ -13,11 +13,12 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public class AlarmLogEntry implements Identifiable<Long> {
+public class AlarmLogEntry implements Identifiable<Long>, PrimaryKeyed {
 
   @Nullable
   public final Long id;
   public final UUID entityId;
+  public final PrimaryKey primaryKey;
   public final ZonedDateTime start;
   public final ZonedDateTime lastSeen;
   @Nullable
@@ -34,5 +35,10 @@ public class AlarmLogEntry implements Identifiable<Long> {
 
   public boolean isActive() {
     return stop == null;
+  }
+
+  @Override
+  public PrimaryKey primaryKey() {
+    return primaryKey;
   }
 }

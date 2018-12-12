@@ -2,10 +2,10 @@ package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 
 public interface MeterAlarmLogs {
 
@@ -14,7 +14,7 @@ public interface MeterAlarmLogs {
   void save(Collection<? extends AlarmLogEntry> alarms);
 
   void createOrUpdate(
-    UUID physicalMeterId,
+    PrimaryKey primaryKey,
     int mask,
     ZonedDateTime start,
     String description

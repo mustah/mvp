@@ -68,7 +68,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> implements Prima
 
   @NotAudited
   @OrderBy("stop desc, start desc")
-  @OneToMany(mappedBy = "physicalMeterId", orphanRemoval = true)
+  @OneToMany(mappedBy = "pk.physicalMeterId", orphanRemoval = true)
   @Cascade(value = {CascadeType.DELETE, CascadeType.REFRESH})
   public Set<MeterAlarmLogEntity> alarms = new HashSet<>();
 

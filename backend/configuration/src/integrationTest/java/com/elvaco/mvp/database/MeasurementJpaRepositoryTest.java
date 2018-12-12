@@ -54,17 +54,16 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void correctNumberOfValuesAreReturnedRelativeToStart() {
     var meter = newPhysicalMeterEntity();
+
     generateSeries(meter, Duration.ofHours(1));
-    var fiveHoursIn = START_TIME.plusHours(5);
-    var lastHourWithMeasurements = START_TIME.plusHours(9);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        singletonList(meter.id),
+        List.of(meter.id),
         HOUR_RESOLUTION,
         "Energy",
-        fiveHoursIn,
-        lastHourWithMeasurements
+        START_TIME.plusHours(5),
+        START_TIME.plusHours(9)
       );
 
     assertThat(results).hasSize(5);

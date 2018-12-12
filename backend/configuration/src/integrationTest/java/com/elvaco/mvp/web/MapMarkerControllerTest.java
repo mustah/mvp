@@ -213,8 +213,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
       .start(ZonedDateTime.now());
 
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
 
     ResponseEntity<MapMarkersDto> response = asUser()
       .get(mapMarkerAlarmUrl("yes"), MapMarkersDto.class);
@@ -244,8 +244,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
       .start(ZonedDateTime.now());
 
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
 
     ResponseEntity<MapMarkersDto> response = asUser()
       .get(gatewayMapMarkerAlarmUrl("yes"), MapMarkersDto.class);
@@ -328,7 +328,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
       .start(now.minusDays(2)).stop(now.minusDays(1)).mask(1);
 
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter.id).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter.primaryKey()).build());
     Url url = Url.builder().path("/map-markers/gateways")
       .parameter(RequestParameter.ALARM, "yes")
       .parameter(RequestParameter.AFTER, now.minusDays(1).plusHours(1))
@@ -355,8 +355,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     AlarmLogEntry.AlarmLogEntryBuilder alarmBuilder = AlarmLogEntry.builder()
       .start(ZonedDateTime.now());
 
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter2.id).mask(55).build());
-    meterAlarmLogs.save(alarmBuilder.entityId(physicalMeter3.id).mask(99).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter2.primaryKey()).mask(55).build());
+    meterAlarmLogs.save(alarmBuilder.primaryKey(physicalMeter3.primaryKey()).mask(99).build());
 
     ResponseEntity<MapMarkersDto> response = asUser()
       .get(mapMarkerAlarmUrl("no"), MapMarkersDto.class);

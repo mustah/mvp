@@ -2,10 +2,10 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
@@ -20,13 +20,14 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
 
   @Override
   public void createOrUpdate(
-    UUID physicalMeterId,
+    PrimaryKey primaryKey,
     int mask,
     ZonedDateTime timestamp,
     String description
   ) {
     meterAlarmLogJpaRepository.createOrUpdate(
-      physicalMeterId,
+      primaryKey.getId(),
+      primaryKey.getOrganisationId(),
       mask,
       timestamp,
       description
@@ -35,7 +36,7 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
 
   @Override
   public Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when) {
-    return meterAlarmLogJpaRepository.findActiveAlamsOlderThan(when).stream()
+    return meterAlarmLogJpaRepository.findActiveAlarmsOlderThan(when).stream()
       .map(MeterAlarmLogEntityMapper::toDomainModel);
   }
 

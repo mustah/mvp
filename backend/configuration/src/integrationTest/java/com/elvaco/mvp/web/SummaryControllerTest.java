@@ -88,7 +88,7 @@ public class SummaryControllerTest extends IntegrationTest {
     var start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeterWithAlarm.id)
+      .primaryKey(physicalMeterWithAlarm.primaryKey())
       .mask(12)
       .start(start)
       .build());
