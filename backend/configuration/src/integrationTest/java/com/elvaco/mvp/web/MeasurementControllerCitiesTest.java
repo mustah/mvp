@@ -43,7 +43,6 @@ import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerCitiesTest extends IntegrationTest {
 
@@ -66,8 +65,6 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isPostgresDialect());
-
     otherOrganisation = organisationJpaRepository.save(
       OrganisationEntity.builder()
         .id(randomUUID())
@@ -80,10 +77,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      organisationJpaRepository.delete(otherOrganisation);
-    }
+    measurementJpaRepository.deleteAll();
+    organisationJpaRepository.delete(otherOrganisation);
   }
 
   @Test
@@ -392,10 +387,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Override
   protected void afterRemoveEntitiesHook() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      organisationJpaRepository.delete(otherOrganisation);
-    }
+    measurementJpaRepository.deleteAll();
+    organisationJpaRepository.delete(otherOrganisation);
   }
 
   private PhysicalMeterEntity newConnectedMeterWithMeasurements(

@@ -46,7 +46,6 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
   @Before
   public void setUp() {
     assumeTrue(isRabbitConnected());
-    assumeTrue(isPostgresDialect());
 
     authenticate(context().superAdmin);
   }

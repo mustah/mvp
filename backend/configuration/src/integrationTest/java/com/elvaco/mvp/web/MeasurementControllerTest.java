@@ -37,7 +37,6 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
-import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerTest extends IntegrationTest {
 
@@ -60,8 +59,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isPostgresDialect());
-
     otherOrganisation = organisationJpaRepository.save(
       OrganisationEntity.builder()
         .id(randomUUID())
@@ -74,9 +71,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-    }
+    measurementJpaRepository.deleteAll();
   }
 
   @Test
@@ -515,9 +510,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Override
   protected void afterRemoveEntitiesHook() {
-    if (isPostgresDialect()) {
-      organisationJpaRepository.delete(otherOrganisation);
-    }
+    organisationJpaRepository.delete(otherOrganisation);
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {

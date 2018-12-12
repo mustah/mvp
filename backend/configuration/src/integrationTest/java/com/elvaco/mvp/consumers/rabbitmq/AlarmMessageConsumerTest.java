@@ -52,7 +52,6 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
   @Before
   public void setUp() {
     assumeTrue(isRabbitConnected());
-    assumeTrue(isPostgresDialect());
 
     authenticate(context().superAdmin);
 

@@ -25,7 +25,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +38,6 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
@@ -55,21 +53,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   @Autowired
   private MeterStatusLogs meterStatusLogs;
 
-  private ZonedDateTime start;
-
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-    start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-  }
+  private ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
 
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-      meterAlarmLogJpaRepository.deleteAll();
-      gatewayJpaRepository.deleteAll();
-    }
+    measurementJpaRepository.deleteAll();
+    meterAlarmLogJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
   }
 
   @Test

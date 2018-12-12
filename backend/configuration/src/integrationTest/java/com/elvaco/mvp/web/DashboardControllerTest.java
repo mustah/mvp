@@ -31,7 +31,6 @@ import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,6 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("ALL")
 public class DashboardControllerTest extends IntegrationTest {
@@ -73,16 +71,9 @@ public class DashboardControllerTest extends IntegrationTest {
   private double readingCount = 0.0;
   private double readingFailedCount = 0.0;
 
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
-
   @After
   public void tearDown() {
-    if (isPostgresDialect()) {
-      measurementJpaRepository.deleteAll();
-    }
+    measurementJpaRepository.deleteAll();
   }
 
   @Test

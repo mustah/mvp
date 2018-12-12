@@ -21,12 +21,10 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.jooq.DSLContext;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
 public class MeasurementStatTest extends IntegrationTest {
 
@@ -35,6 +33,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
   private static final ZonedDateTime UTC_TIME = ZonedDateTime.parse("2018-11-23T00:00:00+00")
     .truncatedTo(ChronoUnit.HOURS);
+  private final MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
 
   @Autowired
   private QuantityProvider quantityProvider;
@@ -44,13 +43,6 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Autowired
   private MeasurementEntityMapper measurementEntityMapper;
-
-  private final MeasurementStatData statData = MeasurementStatData.MEASUREMENT_STAT_DATA;
-
-  @Before
-  public void setUp() {
-    assumeTrue(isPostgresDialect());
-  }
 
   @Test
   public void insertUpdatesStats() {
@@ -218,7 +210,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
     IntStream.range(0, 25).forEach(i -> measurements.save(
       volumeMeasurementFor(meter)
-        .value((double)i)
+        .value((double) i)
         .created(UTC_TIME.plusHours(i - 1))
         .build())
     );
@@ -238,7 +230,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
     IntStream.range(0, 24).forEach(i -> measurements.save(
       volumeMeasurementFor(meter)
-        .value((double)i)
+        .value((double) i)
         .created(UTC_TIME.plusHours(i))
         .build())
     );
@@ -249,7 +241,6 @@ public class MeasurementStatTest extends IntegrationTest {
         .created(UTC_TIME.plusDays(2).plusHours(1 + i))
         .build())
     );
-
 
     List<MeasurementStatDto> result = dsl.select()
       .from(statData).orderBy(statData.STAT_DATE.asc())
@@ -265,7 +256,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
     measurements.save(
       volumeMeasurementFor(meter)
-        .value((double)48)
+        .value((double) 48)
         .created(UTC_TIME.plusDays(2))
         .build());
     result = dsl.select()
@@ -290,12 +281,12 @@ public class MeasurementStatTest extends IntegrationTest {
     PhysicalMeter meter = newConnectedMeter(60, "+01");
     measurements.save(
       volumeMeasurementFor(meter)
-        .value((double)1)
+        .value((double) 1)
         .created(UTC_TIME)
         .build());
     Measurement measurement = measurements.save(
       volumeMeasurementFor(meter)
-        .value((double)1)
+        .value((double) 1)
         .created(UTC_TIME.plusHours(1))
         .build());
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
@@ -308,11 +299,11 @@ public class MeasurementStatTest extends IntegrationTest {
   }
 
   private Measurement.MeasurementBuilder powerMeasurementFor(PhysicalMeter meter) {
-    return measurementFor(meter,Quantity.POWER);
+    return measurementFor(meter, Quantity.POWER);
   }
 
   private Measurement.MeasurementBuilder volumeMeasurementFor(PhysicalMeter meter) {
-    return measurementFor(meter,Quantity.VOLUME);
+    return measurementFor(meter, Quantity.VOLUME);
   }
 
   private Measurement.MeasurementBuilder measurementFor(PhysicalMeter meter, Quantity qty) {

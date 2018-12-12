@@ -256,20 +256,6 @@ test:jira_script:
     - flake8
     - nose2 --with-coverage --verbose
 
-test:integration:
-  <<: *cache_gradle_read_only
-  stage: test
-  dependencies:
-    - build:compile
-  artifacts:
-    name: "${CI_COMMIT_REF_NAME}-integration"
-    when: on_failure
-    paths:
-      - backend/configuration/build/reports/tests/integrationTest/*
-    expire_in: 2 days
-  script:
-    - gradle -PisCI -x update -x generateProdJooqSchemaSource integrationTest
-
 test:upgrade:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/test-upgrade:latest

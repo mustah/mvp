@@ -31,7 +31,6 @@ import static com.elvaco.mvp.web.util.Constants.API_V1;
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String API = API_V1 + "/**";
-  private static final String H2_CONSOLE = "/h2-console/**";
 
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
@@ -60,8 +59,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.authorizeRequests()
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
       .antMatchers(API_V1 + "/geocodes/**").permitAll()
-      .antMatchers(API_V1 + "/logout").permitAll()
-      .antMatchers(H2_CONSOLE).permitAll();
+      .antMatchers(API_V1 + "/logout").permitAll();
     http.csrf().disable();
     http.headers().frameOptions().disable();
 
