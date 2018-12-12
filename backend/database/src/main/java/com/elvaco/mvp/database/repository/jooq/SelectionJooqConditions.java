@@ -18,38 +18,37 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
 public class SelectionJooqConditions extends EmptyJooqFilterVisitor {
+
   @Override
-  public void visit(CityFilter cityFilter) {
-    addCondition(withUnknownCities(toCityParameters(cityFilter.values())));
+  public void visit(CityFilter filter) {
+    addCondition(withUnknownCities(toCityParameters(filter.values())));
   }
 
   @Override
-  public void visit(AddressFilter addressFilter) {
-    addCondition(withUnknownAddresses(toAddressParameters(addressFilter.values())));
+  public void visit(AddressFilter filter) {
+    addCondition(withUnknownAddresses(toAddressParameters(filter.values())));
   }
 
   @Override
-  public void visit(OrganisationIdFilter organisationIdFilter) {
-    addCondition(LOGICAL_METER.ORGANISATION_ID.in(organisationIdFilter.values()));
+  public void visit(OrganisationIdFilter filter) {
+    addCondition(LOGICAL_METER.ORGANISATION_ID.in(filter.values()));
   }
 
   @Override
-  public void visit(FacilityFilter facilityFilter) {
-    if (facilityFilter.isWildcard()) {
-      addCondition(LOGICAL_METER.EXTERNAL_ID.lower()
-        .contains(facilityFilter.oneValue().toLowerCase()));
+  public void visit(FacilityFilter filter) {
+    if (filter.isWildcard()) {
+      addCondition(LOGICAL_METER.EXTERNAL_ID.lower().contains(filter.oneValue().toLowerCase()));
     } else {
-      addCondition(LOGICAL_METER.EXTERNAL_ID.in(facilityFilter.values()));
+      addCondition(LOGICAL_METER.EXTERNAL_ID.in(filter.values()));
     }
   }
 
   @Override
-  public void visit(SecondaryAddressFilter secondaryAddressFilter) {
-    if (secondaryAddressFilter.isWildcard()) {
-      addCondition(PHYSICAL_METER.ADDRESS.lower()
-        .contains(secondaryAddressFilter.oneValue().toLowerCase()));
+  public void visit(SecondaryAddressFilter filter) {
+    if (filter.isWildcard()) {
+      addCondition(PHYSICAL_METER.ADDRESS.lower().contains(filter.oneValue().toLowerCase()));
     } else {
-      addCondition(PHYSICAL_METER.ADDRESS.in(secondaryAddressFilter.values()));
+      addCondition(PHYSICAL_METER.ADDRESS.in(filter.values()));
     }
   }
 

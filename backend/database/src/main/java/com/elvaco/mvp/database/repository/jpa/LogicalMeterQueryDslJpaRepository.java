@@ -284,9 +284,8 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private Optional<LogicalMeterEntity> fetchOne(Condition... conditions) {
-    var logicalMeter = LogicalMeter.LOGICAL_METER;
     var query = dsl.select()
-      .from(logicalMeter)
+      .from(LogicalMeter.LOGICAL_METER)
       .where(conditions)
       .limit(1);
     return nativeQuery(query, LogicalMeterEntity.class).stream().findAny();

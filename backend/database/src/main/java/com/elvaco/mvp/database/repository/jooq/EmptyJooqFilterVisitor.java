@@ -20,50 +20,50 @@ import com.elvaco.mvp.core.filter.WildcardFilter;
 abstract class EmptyJooqFilterVisitor extends JooqFilterVisitor {
 
   @Override
-  public void visit(CityFilter cityFilter) {}
+  public void visit(CityFilter filter) {}
 
   @Override
-  public void visit(AddressFilter addressFilter) {}
+  public void visit(AddressFilter filter) {}
 
   @Override
-  public void visit(OrganisationIdFilter organisationIdFilter) {}
+  public void visit(OrganisationIdFilter filter) {}
 
   @Override
-  public void visit(GatewayIdFilter gatewayIdFilter) {}
+  public void visit(GatewayIdFilter filter) {}
 
   @Override
-  public void visit(AlarmFilter alarmFilter) {}
+  public void visit(AlarmFilter filter) {}
 
   @Override
-  public void visit(PeriodFilter periodFilter) {}
+  public void visit(PeriodFilter filter) {}
 
   @Override
-  public void visit(SerialFilter serialFilter) {}
+  public void visit(SerialFilter filter) {}
 
   @Override
-  public void visit(WildcardFilter wildcardFilter) {}
+  public void visit(WildcardFilter filter) {}
 
   @Override
-  public void visit(LocationConfidenceFilter locationConfidenceFilter) {}
+  public void visit(LocationConfidenceFilter filter) {}
 
   @Override
-  public void visit(MeterStatusFilter meterStatusFilter) {}
+  public void visit(MeterStatusFilter filter) {}
 
   @Override
-  public void visit(MediumFilter mediumFilter) {}
+  public void visit(MediumFilter filter) {}
 
   @Override
-  public void visit(FacilityFilter facilityFilter) {}
+  public void visit(FacilityFilter filter) {}
 
   @Override
-  public void visit(SecondaryAddressFilter secondaryAddressFilter) {}
+  public void visit(SecondaryAddressFilter filter) {}
 
   @Override
-  public void visit(ManufacturerFilter manufacturerFilter) {}
+  public void visit(ManufacturerFilter filter) {}
 
   @Override
-  public void visit(LogicalMeterIdFilter logicalMeterIdFilter) {}
+  public void visit(LogicalMeterIdFilter filter) {}
 
   @Override
-  public void visit(MeasurementThresholdFilter thresholdFilter) {}
+  public void visit(MeasurementThresholdFilter filter) {}
 }

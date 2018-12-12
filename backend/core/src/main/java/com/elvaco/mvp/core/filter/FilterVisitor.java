@@ -2,35 +2,35 @@ package com.elvaco.mvp.core.filter;
 
 public interface FilterVisitor {
 
-  void visit(CityFilter cityFilter);
+  void visit(CityFilter filter);
 
-  void visit(AddressFilter addressFilter);
+  void visit(AddressFilter filter);
 
-  void visit(OrganisationIdFilter organisationIdFilter);
+  void visit(OrganisationIdFilter filter);
 
-  void visit(GatewayIdFilter gatewayIdFilter);
+  void visit(GatewayIdFilter filter);
 
-  void visit(AlarmFilter alarmFilter);
+  void visit(AlarmFilter filter);
 
-  void visit(PeriodFilter periodFilter);
+  void visit(PeriodFilter filter);
 
-  void visit(SerialFilter serialFilter);
+  void visit(SerialFilter filter);
 
-  void visit(WildcardFilter wildcardFilter);
+  void visit(WildcardFilter filter);
 
-  void visit(LocationConfidenceFilter locationConfidenceFilter);
+  void visit(LocationConfidenceFilter filter);
 
-  void visit(MeterStatusFilter meterStatusFilter);
+  void visit(MeterStatusFilter filter);
 
-  void visit(MediumFilter mediumFilter);
+  void visit(MediumFilter filter);
 
-  void visit(FacilityFilter facilityFilter);
+  void visit(FacilityFilter filter);
 
-  void visit(SecondaryAddressFilter secondaryAddressFilter);
+  void visit(SecondaryAddressFilter filter);
 
-  void visit(ManufacturerFilter manufacturerFilter);
+  void visit(ManufacturerFilter filter);
 
-  void visit(LogicalMeterIdFilter logicalMeterIdFilter);
+  void visit(LogicalMeterIdFilter filter);
 
-  void visit(MeasurementThresholdFilter measurementThresholdFilter);
+  void visit(MeasurementThresholdFilter filter);
 }

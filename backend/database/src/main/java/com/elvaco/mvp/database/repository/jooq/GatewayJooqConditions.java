@@ -44,13 +44,13 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
   private boolean hasMeasurementStatsFilter;
 
   @Override
-  public void visit(OrganisationIdFilter organisationIdFilter) {
-    addCondition(GATEWAY.ORGANISATION_ID.in(organisationIdFilter.values()));
+  public void visit(OrganisationIdFilter filter) {
+    addCondition(GATEWAY.ORGANISATION_ID.in(filter.values()));
   }
 
   @Override
-  public void visit(WildcardFilter wildcardFilter) {
-    var value = wildcardFilter.oneValue().toLowerCase();
+  public void visit(WildcardFilter filter) {
+    var value = filter.oneValue().toLowerCase();
 
     addCondition(GATEWAY.SERIAL.lower().startsWith(value)
       .or(GATEWAY.PRODUCT_MODEL.lower().startsWith(value))
@@ -59,18 +59,18 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(PeriodFilter periodFilter) {
-    SelectionPeriod period = periodFilter.getPeriod();
-
-    meterStatusLogCondition =
-      PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
-        .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
-          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+  public void visit(PeriodFilter filter) {
+    SelectionPeriod period = filter.getPeriod();
 
     gatewayStatusLogCondition =
       GATEWAY_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(GATEWAY_STATUS_LOG.STOP.isNull()
           .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+
+    meterStatusLogCondition =
+      PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
+        .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
+          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
 
     alarmLogCondition =
       METER_ALARM_LOG.START.lessThan(period.stop.toOffsetDateTime())
@@ -90,8 +90,8 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(MeasurementThresholdFilter thresholdFilter) {
-    MeasurementThreshold threshold = measurementThresholdParser.parse(thresholdFilter.oneValue());
+  public void visit(MeasurementThresholdFilter filter) {
+    MeasurementThreshold threshold = measurementThresholdParser.parse(filter.oneValue());
 
     addCondition(MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
       .and(valueConditionFor(threshold)));
