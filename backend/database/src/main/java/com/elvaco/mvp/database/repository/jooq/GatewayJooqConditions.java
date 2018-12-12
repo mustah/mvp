@@ -28,8 +28,10 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
+import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.select;
 
 @RequiredArgsConstructor
 public class GatewayJooqConditions extends CommonFilterVisitor {
@@ -41,7 +43,7 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
   private Condition alarmLogCondition = falseCondition();
   private Condition meterStatusLogCondition = falseCondition();
   private Condition measurementStatsCondition = falseCondition();
-  private boolean hasMeasurementStatsFilter;
+  private Condition measurementStatsFilter = falseCondition();
 
   @Override
   public void visit(OrganisationIdFilter filter) {
@@ -80,7 +82,8 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
     if (stopDate.isEqual(startDate)) {
-      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate));
+      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate))
+        .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     } else {
       measurementStatsCondition =
         MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(Date.valueOf(startDate))
@@ -93,10 +96,8 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
   public void visit(MeasurementThresholdFilter filter) {
     MeasurementThreshold threshold = measurementThresholdParser.parse(filter.oneValue());
 
-    addCondition(MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
-      .and(valueConditionFor(threshold)));
-
-    hasMeasurementStatsFilter = true;
+    measurementStatsFilter = MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+      .and(valueConditionFor(threshold));
   }
 
   @Override
@@ -151,10 +152,12 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
       .on(LOCATION.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));
 
-    if (hasMeasurementStatsFilter && !measurementStatsCondition.equals(falseCondition())) {
-      query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
+    if (!measurementStatsFilter.equals(falseCondition())
+      && !measurementStatsCondition.equals(falseCondition())) {
+      addCondition(exists(select()
+        .from(MEASUREMENT_STAT_DATA)
+        .where(measurementStatsFilter.and(measurementStatsCondition))));
     }
-
     return query;
   }
 }

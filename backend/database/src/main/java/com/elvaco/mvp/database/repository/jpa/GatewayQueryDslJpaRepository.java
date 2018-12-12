@@ -88,7 +88,7 @@ class GatewayQueryDslJpaRepository
     ).distinctOn(gateway.ID, location.LOGICAL_METER_ID)
       .from(gateway);
 
-    var countQuery = dsl.selectDistinct(gateway.ID).from(gateway);
+    var countQuery = dsl.selectDistinct(gateway.ID, location.LOGICAL_METER_ID).from(gateway);
 
     var filters = toFilters(parameters);
 

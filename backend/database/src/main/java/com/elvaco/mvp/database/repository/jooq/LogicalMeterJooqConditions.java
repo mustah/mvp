@@ -29,10 +29,12 @@ import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lateral;
 import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.select;
 
 @RequiredArgsConstructor
 public class LogicalMeterJooqConditions extends CommonFilterVisitor {
@@ -46,10 +48,10 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
   private final MeasurementThresholdParser measurementThresholdParser;
 
   private Condition physicalMeterStatusLogCondition = falseCondition();
-  private Condition measurementStatsCondition = falseCondition();
-  private Condition missingMeasurementCondition = falseCondition();
   private Condition meterAlarmLogCondition = falseCondition();
-  private boolean hasMeasurementStatsFilter = false;
+  private Condition missingMeasurementCondition = falseCondition();
+  private Condition measurementStatsCondition = falseCondition();
+  private Condition measurementStatsFilter = falseCondition();
 
   @Override
   public void visit(OrganisationIdFilter filter) {
@@ -80,32 +82,30 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
           .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
 
+    meterAlarmLogCondition = METER_ALARM_LOG.START.between(
+      period.start.toOffsetDateTime(),
+      period.stop.toOffsetDateTime()
+    ).or(METER_ALARM_LOG.STOP.isNull());
+
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
     if (stopDate.isEqual(startDate)) {
-      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate));
+      measurementStatsCondition = MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate))
+        .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     } else {
       measurementStatsCondition =
         MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(Date.valueOf(startDate))
           .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
           .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     }
-
-    //TODO: This doesn't look right...
-    meterAlarmLogCondition = METER_ALARM_LOG.START.between(
-      period.start.toOffsetDateTime(),
-      period.stop.toOffsetDateTime()
-    ).or(METER_ALARM_LOG.STOP.isNull());
   }
 
   @Override
   public void visit(MeasurementThresholdFilter filter) {
     MeasurementThreshold threshold = measurementThresholdParser.parse(filter.oneValue());
 
-    addCondition(MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
-      .and(valueConditionFor(threshold)));
-
-    hasMeasurementStatsFilter = true;
+    measurementStatsFilter = MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+      .and(valueConditionFor(threshold));
   }
 
   @Override
@@ -157,10 +157,11 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
         .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID)).asTable("mm"))
       .on(PHYSICAL_METER.ID.equal(field("mm.physical_meter_id", UUID.class)));
 
-    if (hasMeasurementStatsFilter && !measurementStatsCondition.equals(falseCondition())) {
-      //FIXME: this is messy, maybe put the period into the thresholdFilter instead, and
-      // ignore measurement stats when handling the periodFilter
-      query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
+    if (!measurementStatsFilter.equals(falseCondition())
+      && !measurementStatsCondition.equals(falseCondition())) {
+      addCondition(exists(select()
+        .from(MEASUREMENT_STAT_DATA)
+        .where(measurementStatsFilter.and(measurementStatsCondition))));
     }
     return query;
   }

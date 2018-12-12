@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
+import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
 import com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter;
@@ -167,10 +168,7 @@ class LogicalMeterQueryDslJpaRepository
       meterAlarmLog.STOP,
       meterAlarmLog.MASK,
       meterAlarmLog.DESCRIPTION
-    )
-      // one row for each logical/physical meter, until meter replacement is implemented
-      .distinctOn(logicalMeter.ID, physicalMeter.ID)
-      .from(logicalMeter);
+    ).from(logicalMeter);
 
     var countQuery = dsl.selectDistinct(logicalMeter.ID, physicalMeter.ID).from(logicalMeter);
 
@@ -258,17 +256,20 @@ class LogicalMeterQueryDslJpaRepository
     Pageable pageable,
     TableField<PhysicalMeterRecord, String> field
   ) {
-    var query = dsl.selectDistinct(field).from(LogicalMeter.LOGICAL_METER);
+    var selectQuery = dsl.selectDistinct(field).from(LogicalMeter.LOGICAL_METER);
+    var countQuery = dsl.selectDistinct(field).from(LogicalMeter.LOGICAL_METER);
 
-    new SelectionJooqConditions().apply(toFilters(parameters), query);
+    Filters filters = toFilters(parameters);
+    new SelectionJooqConditions().apply(filters, selectQuery);
+    new SelectionJooqConditions().apply(filters, countQuery);
 
-    var all = query
+    var all = selectQuery
       .orderBy(directionFor(field, pageable.getSort()))
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(String.class);
 
-    return getPage(all, pageable, () -> dsl.fetchCount(query));
+    return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
   }
 
   private OrderField<String> directionFor(
