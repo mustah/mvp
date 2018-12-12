@@ -60,7 +60,7 @@ public class SelectionJooqConditions extends EmptyJooqFilterVisitor {
         .and(LOGICAL_METER.ID.equal(PHYSICAL_METER.LOGICAL_METER_ID)))
 
       .leftJoin(LOCATION)
-      .on(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
-        .and(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)));
+      .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
+        .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));
   }
 }

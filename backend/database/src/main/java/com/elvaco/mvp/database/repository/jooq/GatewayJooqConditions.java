@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
-import com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
@@ -20,7 +19,6 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
-import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
@@ -29,7 +27,9 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
+import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static org.jooq.impl.DSL.falseCondition;
+import static org.jooq.impl.DSL.max;
 
 @RequiredArgsConstructor
 public class GatewayJooqConditions extends CommonFilterVisitor {
@@ -108,37 +108,48 @@ public class GatewayJooqConditions extends CommonFilterVisitor {
           .select(DSL.max(GATEWAY_STATUS_LOG.ID))
           .from(GATEWAY_STATUS_LOG)
           .where(GATEWAY_STATUS_LOG.GATEWAY_ID.equal(GATEWAY.ID)
-            .and(gatewayStatusLogCondition)))))
+            .and(GATEWAY_STATUS_LOG.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)
+              .and(gatewayStatusLogCondition))))))
 
       .leftJoin(GATEWAYS_METERS)
       .on(GATEWAYS_METERS.GATEWAY_ID.equal(GATEWAY.ID)
         .and(GATEWAYS_METERS.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)))
 
       .leftJoin(LOGICAL_METER)
-      .on(LOGICAL_METER.ID.equal(GatewaysMeters.GATEWAYS_METERS.LOGICAL_METER_ID)
+      .on(LOGICAL_METER.ID.equal(GATEWAYS_METERS.LOGICAL_METER_ID)
         .and(GATEWAY.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
 
       .leftJoin(PHYSICAL_METER)
-      .on(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)
-        .and(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)))
+      .on(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
+        .and(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
 
       .leftJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
 
       .leftJoin(PHYSICAL_METER_STATUS_LOG)
-      .on(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+      .on(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID
+        .equal(PHYSICAL_METER.ORGANISATION_ID)
+        .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
         .and(PHYSICAL_METER_STATUS_LOG.ID.equal(dsl
-          .select(DSL.max(PHYSICAL_METER_STATUS_LOG.ID))
+          .select(max(PHYSICAL_METER_STATUS_LOG.ID))
           .from(PHYSICAL_METER_STATUS_LOG)
-          .where(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(meterStatusLogCondition)))))
+          .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+            .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+              .and(meterStatusLogCondition))))))
+
+      .leftJoin(METER_ALARM_LOG)
+      .on(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+        .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+        .and(METER_ALARM_LOG.ID.equal(dsl
+          .select(max(METER_ALARM_LOG.ID))
+          .from(METER_ALARM_LOG)
+          .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+            .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+              .and(alarmLogCondition))))))
 
       .leftJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)
-        .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
-      )
-      .leftJoin(METER_ALARM_LOG)
-      .on(alarmLogCondition.and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)));
+        .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));
 
     if (hasMeasurementStatsFilter && !measurementStatsCondition.equals(falseCondition())) {
       query.leftJoin(MEASUREMENT_STAT_DATA).on(measurementStatsCondition);
