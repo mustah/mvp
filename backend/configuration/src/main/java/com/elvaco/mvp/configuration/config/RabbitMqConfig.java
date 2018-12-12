@@ -271,6 +271,7 @@ class RabbitMqConfig {
           new UsernamePasswordAuthenticationToken(new MvpUserDetails(meteringUser(), ""), null)
         );
         String encodedMessage = toEncodedMessage(message);
+        transaction.addTag("message", encodedMessage);
 
         AuthenticatedMessageListener.log.debug(
           "Received message from RabbitMQ: {}",
