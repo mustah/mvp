@@ -32,7 +32,7 @@ public class MeteringAlarmMessageConsumer implements AlarmMessageConsumer {
       message.meter.id
     ).ifPresent(physicalMeter -> message.alarm.forEach(alarmDto ->
       meterAlarmLogs.createOrUpdate(
-        physicalMeter.id,
+        physicalMeter.primaryKey(),
         alarmDto.mask,
         alarmDto.timestamp.atZone(METERING_TIMEZONE),
         alarmDto.description

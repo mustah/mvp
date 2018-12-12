@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
@@ -85,7 +86,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
     ZoneId actualZoneId = entity.start.getZone();
     assertThat(alarms).containsExactly(MeterAlarmLogEntity.builder()
       .id(entity.id)
-      .physicalMeterId(physicalMeter.id)
+      .pk(new PhysicalMeterPk(physicalMeter.id, physicalMeter.organisationId))
       .mask(1)
       .start(zonedDateTimeOf(START, actualZoneId))
       .lastSeen(zonedDateTimeOf(START, actualZoneId))
@@ -107,7 +108,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
 
     MeterAlarmLogEntity entity = alarms.get(0);
     ZoneId actualZoneId = entity.start.getZone();
-    assertThat(alarms).extracting("physicalMeterId").containsExactly(physicalMeter.id);
+    assertThat(alarms).extracting("pk.physicalMeterId").containsExactly(physicalMeter.id);
     assertThat(alarms).extracting("start").containsExactly(zonedDateTimeOf(START, actualZoneId));
   }
 
@@ -127,7 +128,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
     MeterAlarmLogEntity entity = alarms.get(0);
     ZoneId actualZoneId = entity.start.getZone();
 
-    assertThat(alarms).extracting("physicalMeterId").containsExactly(physicalMeter.id);
+    assertThat(alarms).extracting("pk.physicalMeterId").containsExactly(physicalMeter.id);
 
     assertThat(alarms).extracting("start")
       .containsExactly(zonedDateTimeOf(alarm3.timestamp, actualZoneId));
@@ -149,7 +150,7 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
     List<MeterAlarmLogEntity> alarms = meterAlarmLogJpaRepository.findAll();
     ZoneId actualZoneId = alarms.get(0).start.getZone();
 
-    assertThat(alarms).extracting("physicalMeterId")
+    assertThat(alarms).extracting("pk.physicalMeterId")
       .containsExactlyInAnyOrder(physicalMeter.id, physicalMeter.id);
 
     assertThat(alarms).extracting("description")

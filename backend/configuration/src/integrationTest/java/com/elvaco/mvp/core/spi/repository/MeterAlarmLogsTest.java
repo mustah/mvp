@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -14,7 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -30,11 +30,10 @@ public class MeterAlarmLogsTest extends IntegrationTest {
 
   @Test
   public void createNewAlarm() {
-    PhysicalMeter physicalMeter = preparePhysicalMeter();
-    ZonedDateTime start = ZonedDateTime.now();
-
-    AlarmLogEntry entity = AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+    var physicalMeter = preparePhysicalMeter();
+    var start = ZonedDateTime.now();
+    var entity = AlarmLogEntry.builder()
+      .primaryKey(physicalMeter.primaryKey())
       .mask(123)
       .start(start)
       .description("Low battery")
@@ -48,19 +47,18 @@ public class MeterAlarmLogsTest extends IntegrationTest {
 
   @Test
   public void createSameAlarmShouldThrowException() {
-    PhysicalMeter physicalMeter = preparePhysicalMeter();
-
-    ZonedDateTime now = ZonedDateTime.now();
+    var physicalMeter = preparePhysicalMeter();
+    var now = ZonedDateTime.now();
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .start(now)
       .mask(123)
       .description("Low battery")
       .build());
 
     assertThatThrownBy(() -> meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .start(now)
       .mask(123)
       .description("Low battery")
@@ -70,36 +68,36 @@ public class MeterAlarmLogsTest extends IntegrationTest {
 
   @Test
   public void saveSeveralAlarmsForTheSameMeter() {
-    PhysicalMeter physicalMeter = preparePhysicalMeter();
+    var physicalMeter = preparePhysicalMeter();
 
-    AlarmLogEntry entity1 = AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+    var entity1 = AlarmLogEntry.builder()
+      .primaryKey(physicalMeter.primaryKey())
       .mask(123)
       .start(ZonedDateTime.now())
       .description("Low battery")
       .build();
-    AlarmLogEntry entity2 = AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+    var entity2 = AlarmLogEntry.builder()
+      .primaryKey(physicalMeter.primaryKey())
       .mask(21)
       .start(ZonedDateTime.now())
       .description("Api error")
       .build();
 
-    meterAlarmLogs.save(asList(entity1, entity2));
+    meterAlarmLogs.save(List.of(entity1, entity2));
 
     assertThat(meterAlarmLogJpaRepository.findAll()).hasSize(2);
   }
 
   @Test
   public void findActiveAlarmsBeforeDate() {
-    ZonedDateTime now = ZonedDateTime.now();
-    ZonedDateTime oneWeek = now.minusWeeks(1).truncatedTo(ChronoUnit.DAYS);
-    ZonedDateTime twoDays = now.minusDays(2).truncatedTo(ChronoUnit.DAYS);
+    var now = ZonedDateTime.now();
+    var oneWeek = now.minusWeeks(1).truncatedTo(ChronoUnit.DAYS);
+    var twoDays = now.minusDays(2).truncatedTo(ChronoUnit.DAYS);
 
-    PhysicalMeter physicalMeter = preparePhysicalMeter();
+    var physicalMeter = preparePhysicalMeter();
 
     AlarmLogEntry notActive = AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(8)
       .start(oneWeek)
       .stop(oneWeek.plusHours(1))
@@ -107,24 +105,24 @@ public class MeterAlarmLogsTest extends IntegrationTest {
       .description("Low battery")
       .build();
     AlarmLogEntry activeOneWeekAgo = AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(16)
       .start(oneWeek)
       .lastSeen(oneWeek)
       .description("Low battery")
       .build();
     AlarmLogEntry activeTwoDaysAgo = AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(32)
       .start(twoDays)
       .lastSeen(twoDays)
       .description("Api error")
       .build();
 
-    meterAlarmLogs.save(asList(activeTwoDaysAgo, notActive, activeOneWeekAgo));
+    meterAlarmLogs.save(List.of(activeTwoDaysAgo, notActive, activeOneWeekAgo));
 
-    assertThat(meterAlarmLogJpaRepository.findActiveAlamsOlderThan(now)).hasSize(2);
-    assertThat(meterAlarmLogJpaRepository.findActiveAlamsOlderThan(now.minusDays(3))).hasSize(1);
+    assertThat(meterAlarmLogJpaRepository.findActiveAlarmsOlderThan(now)).hasSize(2);
+    assertThat(meterAlarmLogJpaRepository.findActiveAlarmsOlderThan(now.minusDays(3))).hasSize(1);
   }
 
   private PhysicalMeter preparePhysicalMeter() {

@@ -76,7 +76,7 @@ public class MeteringAlarmMessageConsumerTest {
 
     assertThat(meterAlarmLogs.findAll()).containsExactly(AlarmLogEntry.builder()
       .id(1L)
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(42)
       .start(toZonedDateTime())
       .lastSeen(toZonedDateTime())

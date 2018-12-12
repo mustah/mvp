@@ -1950,7 +1950,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeterWithAlarm.primaryKey()).build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeterWithAlarm.id)
+      .primaryKey(physicalMeterWithAlarm.primaryKey())
       .mask(12)
       .start(start)
       .build());
@@ -1996,7 +1996,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeterWithAlarm.primaryKey()).build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeterWithAlarm.id)
+      .primaryKey(physicalMeterWithAlarm.primaryKey())
       .mask(12)
       .start(start)
       .build());
@@ -2032,7 +2032,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     AlarmLogEntry alarm = meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(12)
       .start(start)
       .description("something is wrong")
@@ -2062,7 +2062,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(112)
       .start(start)
       .stop(start.plusHours(3))
@@ -2070,7 +2070,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(122)
       .start(start)
       .stop(start.plusHours(4))
@@ -2100,7 +2100,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(112)
       .start(start)
       .stop(start.plusHours(3))
@@ -2108,7 +2108,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .build());
 
     AlarmLogEntry activeAlarm = meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(122)
       .start(start.plusHours(2))
       .description("testing")

@@ -447,7 +447,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     );
 
     AlarmLogEntry alarm = meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(12)
       .start(start)
       .description("something is wrong")
@@ -476,14 +476,14 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     );
 
     AlarmLogEntry alarm1 = meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(12)
       .start(start.plusHours(2))
       .description("something is wrong")
       .build());
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
-      .entityId(physicalMeter.id)
+      .primaryKey(physicalMeter.primaryKey())
       .mask(33)
       .start(start)
       .description("testing")

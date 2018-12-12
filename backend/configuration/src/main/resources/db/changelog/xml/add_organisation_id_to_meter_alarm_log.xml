@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+
+  <changeSet id="Add organisation_id column to meter_alarm_log" author="Must Tahir">
+    <sqlFile
+      path="../sql/postgresql/add_organisation_id_to_meter_alarm_log.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+  </changeSet>
+
+  <changeSet id="Add index to meter_alarm_log" author="Must Tahir">
+    <createIndex
+      indexName="meter_alarm_log_organisation_id_physical_meter_id_id_idx"
+      tableName="meter_alarm_log"
+      schemaName="public"
+    >
+      <column name="organisation_id"/>
+      <column name="physical_meter_id"/>
+      <column name="id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="add new unique constraint - meter_alarm_log" author="Must Tahir">
+    <dropUniqueConstraint
+      tableName="meter_alarm_log"
+      constraintName="meter_alarm_log_physical_meter_id_mask"
+    />
+    <addUniqueConstraint
+      columnNames="organisation_id, physical_meter_id, mask"
+      constraintName="organisation_id_physical_meter_id_mask_key"
+      tableName="meter_alarm_log"
+    />
+  </changeSet>
+
+</databaseChangeLog>
