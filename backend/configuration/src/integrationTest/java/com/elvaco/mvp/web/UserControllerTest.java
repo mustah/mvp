@@ -60,14 +60,11 @@ public class UserControllerTest extends IntegrationTest {
     ResponseEntity<UnauthorizedDto> response = restClient()
       .get(path, UnauthorizedDto.class);
 
-    UnauthorizedDto expected = new UnauthorizedDto();
-    expected.message = "Full authentication is required to access this resource";
-    expected.status = HttpStatus.UNAUTHORIZED.value();
-    expected.error = "Unauthorized";
-    expected.path = apiPathOf(path);
+    UnauthorizedDto expected = UnauthorizedDto.builder()
+      .message("Full authentication is required to access this resource")
+      .path(apiPathOf(path)).build();
 
     UnauthorizedDto error = response.getBody();
-    expected.timestamp = error.timestamp;
 
     assertThat(error).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -81,14 +78,11 @@ public class UserControllerTest extends IntegrationTest {
       .loginWith("admin", "wrong-password")
       .get(path, UnauthorizedDto.class);
 
-    UnauthorizedDto expected = new UnauthorizedDto();
-    expected.message = "Bad credentials";
-    expected.status = HttpStatus.UNAUTHORIZED.value();
-    expected.error = "Unauthorized";
-    expected.path = apiPathOf(path);
+    UnauthorizedDto expected = UnauthorizedDto.builder()
+      .message("Bad credentials")
+      .path(apiPathOf(path)).build();
 
     UnauthorizedDto error = response.getBody();
-    expected.timestamp = error.timestamp;
 
     assertThat(error).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
