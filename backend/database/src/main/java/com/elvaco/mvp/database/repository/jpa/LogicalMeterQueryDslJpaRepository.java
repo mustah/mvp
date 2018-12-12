@@ -1,8 +1,10 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import javax.persistence.EntityManager;
@@ -170,7 +172,7 @@ class LogicalMeterQueryDslJpaRepository
       .distinctOn(logicalMeter.ID, physicalMeter.ID)
       .from(logicalMeter);
 
-    var countQuery = dsl.select(logicalMeter.ID).from(logicalMeter);
+    var countQuery = dsl.selectDistinct(logicalMeter.ID, physicalMeter.ID).from(logicalMeter);
 
     var filters = toFilters(parameters);
 
@@ -190,26 +192,25 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
+  public Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
     var logicalMeter = LogicalMeter.LOGICAL_METER;
     var location = com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
     var meterDefinition = MeterDefinition.METER_DEFINITION;
 
-    var query = dsl
-      .selectDistinct(
-        logicalMeter.ID,
-        logicalMeter.ORGANISATION_ID,
-        logicalMeter.EXTERNAL_ID,
-        logicalMeter.UTC_OFFSET,
-        location.COUNTRY,
-        location.CITY,
-        location.STREET_ADDRESS,
-        meterDefinition.MEDIUM
-      ).from(logicalMeter);
+    var query = dsl.select(
+      logicalMeter.ID,
+      logicalMeter.ORGANISATION_ID,
+      logicalMeter.EXTERNAL_ID,
+      logicalMeter.UTC_OFFSET,
+      location.COUNTRY,
+      location.CITY,
+      location.STREET_ADDRESS,
+      meterDefinition.MEDIUM
+    ).from(logicalMeter);
 
     logicalMeterJooqConditions.apply(toFilters(parameters), query);
 
-    return query.fetchInto(LogicalMeterWithLocation.class);
+    return new HashSet<>(query.fetchInto(LogicalMeterWithLocation.class));
   }
 
   @Override
@@ -284,9 +285,8 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   private Optional<LogicalMeterEntity> fetchOne(Condition... conditions) {
-    var logicalMeter = LogicalMeter.LOGICAL_METER;
     var query = dsl.select()
-      .from(logicalMeter)
+      .from(LogicalMeter.LOGICAL_METER)
       .where(conditions)
       .limit(1);
     return nativeQuery(query, LogicalMeterEntity.class).stream().findAny();

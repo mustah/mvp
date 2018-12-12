@@ -14,25 +14,25 @@ import static com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog.METER_ALA
 interface PhysicalMeterFilterVisitor extends FilterVisitor, ConditionAdding {
 
   @Override
-  default void visit(AlarmFilter alarmFilter) {
-    addCondition(alarmFilter.values().stream()
+  default void visit(AlarmFilter filter) {
+    addCondition(filter.values().stream()
       .anyMatch(FilterUtils::isYes)
       ? METER_ALARM_LOG.MASK.isNotNull()
       : METER_ALARM_LOG.MASK.isNull());
   }
 
   @Override
-  default void visit(MeterStatusFilter meterStatusFilter) {
-    addCondition(PHYSICAL_METER_STATUS_LOG.STATUS.in(meterStatusFilter.values()));
+  default void visit(MeterStatusFilter filter) {
+    addCondition(PHYSICAL_METER_STATUS_LOG.STATUS.in(filter.values()));
   }
 
   @Override
-  default void visit(SecondaryAddressFilter secondaryAddressFilter) {
-    addCondition(PHYSICAL_METER.ADDRESS.in(secondaryAddressFilter.values()));
+  default void visit(SecondaryAddressFilter filter) {
+    addCondition(PHYSICAL_METER.ADDRESS.in(filter.values()));
   }
 
   @Override
-  default void visit(ManufacturerFilter manufacturerFilter) {
-    addCondition(PHYSICAL_METER.MANUFACTURER.in(manufacturerFilter.values()));
+  default void visit(ManufacturerFilter filter) {
+    addCondition(PHYSICAL_METER.MANUFACTURER.in(filter.values()));
   }
 }

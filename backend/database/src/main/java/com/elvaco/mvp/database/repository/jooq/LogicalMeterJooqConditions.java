@@ -52,13 +52,13 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
   private boolean hasMeasurementStatsFilter = false;
 
   @Override
-  public void visit(OrganisationIdFilter organisationIdFilter) {
-    addCondition(LOGICAL_METER.ORGANISATION_ID.in(organisationIdFilter.values()));
+  public void visit(OrganisationIdFilter filter) {
+    addCondition(LOGICAL_METER.ORGANISATION_ID.in(filter.values()));
   }
 
   @Override
-  public void visit(WildcardFilter wildcardFilter) {
-    var value = wildcardFilter.oneValue().toLowerCase();
+  public void visit(WildcardFilter filter) {
+    var value = filter.oneValue().toLowerCase();
     addCondition(LOGICAL_METER.EXTERNAL_ID.lower().startsWith(value)
       .or(METER_DEFINITION.MEDIUM.lower().startsWith(value))
       .or(LOCATION.CITY.lower().startsWith(value))
@@ -68,8 +68,8 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(PeriodFilter periodFilter) {
-    var period = periodFilter.getPeriod();
+  public void visit(PeriodFilter filter) {
+    var period = filter.getPeriod();
 
     missingMeasurementCondition =
       MISSING_MEASUREMENT.EXPECTED_TIME.greaterOrEqual(period.start.toOffsetDateTime())
@@ -99,8 +99,8 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(MeasurementThresholdFilter thresholdFilter) {
-    MeasurementThreshold threshold = measurementThresholdParser.parse(thresholdFilter.oneValue());
+  public void visit(MeasurementThresholdFilter filter) {
+    MeasurementThreshold threshold = measurementThresholdParser.parse(filter.oneValue());
 
     addCondition(MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
       .and(valueConditionFor(threshold)));

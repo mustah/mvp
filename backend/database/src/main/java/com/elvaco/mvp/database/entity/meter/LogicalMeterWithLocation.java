@@ -2,7 +2,10 @@ package com.elvaco.mvp.database.entity.meter;
 
 import java.util.UUID;
 
-public class LogicalMeterWithLocation {
+import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+
+public class LogicalMeterWithLocation extends IdentifiableType<PrimaryKey> {
 
   public final UUID id;
   public final UUID organisationId;
@@ -10,6 +13,8 @@ public class LogicalMeterWithLocation {
   public final LocationEntity location;
   public final String medium;
   public final String utcOffset;
+
+  private final PrimaryKey primaryKey;
 
   public LogicalMeterWithLocation(
     UUID id,
@@ -32,5 +37,11 @@ public class LogicalMeterWithLocation {
       .streetAddress(address)
       .build();
     this.medium = medium;
+    this.primaryKey = new LogicalMeterPk(id, organisationId);
+  }
+
+  @Override
+  public PrimaryKey getId() {
+    return primaryKey;
   }
 }

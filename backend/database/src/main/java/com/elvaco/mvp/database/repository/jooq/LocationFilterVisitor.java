@@ -11,20 +11,20 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
-public interface LocationFilterVisitor extends ConditionAdding, FilterVisitor {
+interface LocationFilterVisitor extends ConditionAdding, FilterVisitor {
 
   @Override
-  default void visit(CityFilter cityFilter) {
-    addCondition(withUnknownCities(toCityParameters(cityFilter.values())));
+  default void visit(CityFilter filter) {
+    addCondition(withUnknownCities(toCityParameters(filter.values())));
   }
 
   @Override
-  default void visit(AddressFilter addressFilter) {
-    addCondition(withUnknownAddresses(toAddressParameters(addressFilter.values())));
+  default void visit(AddressFilter filter) {
+    addCondition(withUnknownAddresses(toAddressParameters(filter.values())));
   }
 
   @Override
-  default void visit(LocationConfidenceFilter locationConfidenceFilter) {
-    addCondition(LOCATION.CONFIDENCE.greaterOrEqual(locationConfidenceFilter.oneValue()));
+  default void visit(LocationConfidenceFilter filter) {
+    addCondition(LOCATION.CONFIDENCE.greaterOrEqual(filter.oneValue()));
   }
 }

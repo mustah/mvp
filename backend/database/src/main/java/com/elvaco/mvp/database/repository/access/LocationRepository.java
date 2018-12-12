@@ -26,7 +26,7 @@ public class LocationRepository implements Locations {
 
   private final LocationJpaRepository locationJpaRepository;
   private final MapMarkerJpaRepository logicalMeterMapMarkerJooqJpaRepository;
-  private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository gatewayMapMarkerJooqJpaRepository;
 
   @Override
   public LocationWithId save(LocationWithId location) {
@@ -41,7 +41,7 @@ public class LocationRepository implements Locations {
 
   @Override
   public Set<MapMarker> findAllGatewayMapMarkers(RequestParameters parameters) {
-    return gatewayMapQueryDslJpaRepository.findAllMapMarkers(parameters);
+    return gatewayMapMarkerJooqJpaRepository.findAllMapMarkers(parameters);
   }
 
   @Override

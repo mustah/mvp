@@ -103,11 +103,7 @@ class GatewayQueryDslJpaRepository
       .fetch()
       .into(recordHandler);
 
-    return getPage(
-      recordHandler.getDtos(),
-      pageable,
-      () -> dsl.fetchCount(countQuery)
-    );
+    return getPage(recordHandler.getDtos(), pageable, () -> dsl.fetchCount(countQuery));
   }
 
   @Override
@@ -115,18 +111,17 @@ class GatewayQueryDslJpaRepository
     var gateway = Gateway.GATEWAY;
 
     var query = dsl.selectDistinct(gateway.SERIAL).from(gateway);
+    var countQuery = dsl.selectDistinct(gateway.SERIAL).from(gateway);
 
     Filters filters = toFilters(parameters);
     gatewayJooqConditions.apply(filters, query);
+    gatewayJooqConditions.apply(filters, countQuery);
 
     List<String> gatewaySerials = query
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP))
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(String.class);
-
-    var countQuery = dsl.selectDistinct(gateway.SERIAL).from(gateway);
-    gatewayJooqConditions.apply(filters, countQuery);
 
     return getPage(gatewaySerials, pageable, () -> dsl.fetchCount(countQuery));
   }

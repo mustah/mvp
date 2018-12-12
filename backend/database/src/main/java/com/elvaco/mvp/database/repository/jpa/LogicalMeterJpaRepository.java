@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.jpa;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
@@ -37,7 +38,7 @@ public interface LogicalMeterJpaRepository {
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
-  List<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
+  Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 
   List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
 
