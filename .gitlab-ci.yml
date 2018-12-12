@@ -6,7 +6,6 @@ stages:
   - docker
   - prepare
   - build
-  - assemble
   - pre-test
   - test
   - deploy-staging
@@ -138,18 +137,7 @@ prepare:update-salt:
   script:
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
-build:frontend:
-  <<: *cache_gradle
-  stage: build
-  dependencies:
-    - prepare:version
-  script:
-    - gradle frontend:bundle
-  artifacts:
-    paths:
-      - frontend/dist
-
-build:compile:
+build:
   <<: *cache_gradle
   stage: build
   services:
@@ -158,30 +146,18 @@ build:compile:
   dependencies:
     - prepare:version
   script:
-    - gradle classes checkstyle spotbugsMain test -PisCI
-  artifacts:
-    paths:
-      - backend/*/build/libs
-      - backend/*/build/classes
-      - backend/*/build/generated
-      - acceptance_tests/build/libs/*.jar
-
-assemble:
-  <<: *cache_gradle
-  stage: assemble
-  dependencies:
-    - prepare:version
-    - build:compile
-    - build:frontend
-  script:
-    - gradle assemble -x update -x generateProdJooqSchemaSource -PisCI
+    - gradle classes checkstyle spotbugsMain test assemble -PisCI
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
       - backend/configuration/build/distributions/
       - backend/geoservice/build/distributions/
       - .version
-    expire_in: 1 hour
+      - backend/*/build/libs
+      - backend/*/build/classes
+      - backend/*/build/generated
+      - acceptance_tests/build/libs/*.jar
+
 
 pre-test:docker-mvp-app:
   <<: *no_cache
@@ -191,7 +167,7 @@ pre-test:docker-mvp-app:
     APM_SERVER: elvsealielk01.elvaco.se:8200
   stage: pre-test
   dependencies:
-    - assemble
+    - build
     - prepare:version
   tags:
     - shell
@@ -212,7 +188,7 @@ pre-test:docker-geoservice-app:
     APM_SERVER: elvsealielk01.elvaco.se:8200
   stage: pre-test
   dependencies:
-    - assemble
+    - build
     - prepare:version
   tags:
     - shell
@@ -229,7 +205,7 @@ test:system:
   <<: *cache_gradle_read_only
   stage: test
   dependencies:
-    - build:compile
+    - build
   services:
     - name: $DOCKER_REGISTRY_URL/postgresql:latest
       alias: pg_host
@@ -312,7 +288,7 @@ post-staging:acceptance:
   <<: *acceptance_test
   stage: post-staging
   dependencies:
-    - build:compile
+    - build
   only:
     - schedules
     - /^release-.*$/
@@ -373,7 +349,7 @@ post-prod:acceptance:
   <<: *acceptance_test
   stage: post-prod
   dependencies:
-    - build:compile
+    - build
   only:
     - schedules
     - /^release-.*$/
