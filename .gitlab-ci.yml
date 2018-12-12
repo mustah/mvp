@@ -153,6 +153,11 @@ build:
       - backend/configuration/build/distributions/
       - backend/geoservice/build/distributions/
       - .version
+      - backend/*/build/libs
+      - backend/*/build/classes
+      - backend/*/build/generated
+      - acceptance_tests/build/libs/*.jar
+
 
 pre-test:docker-mvp-app:
   <<: *no_cache
