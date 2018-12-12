@@ -15,31 +15,31 @@ import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.domainmodels.GeoCoordinate.CONFIDENCE_THRESHOLD;
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
+import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
+import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
-import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog.METER_ALARM_LOG;
-import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 
 @RequiredArgsConstructor
 @Repository
-class LogicalMeterMapMarkerJooqJpaRepository implements MapMarkerJpaRepository {
+class GatewayMapMarkerJooqJpaRepository implements MapMarkerJpaRepository {
 
   private final DSLContext dsl;
-  private final JooqFilterVisitor logicalMeterJooqConditions;
+  private final JooqFilterVisitor gatewayJooqConditions;
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
     var query = dsl.select(
-      LOCATION.LOGICAL_METER_ID,
-      PHYSICAL_METER_STATUS_LOG.STATUS,
+      GATEWAY.ID,
+      GATEWAY_STATUS_LOG.STATUS,
       METER_ALARM_LOG.MASK,
       LOCATION.LATITUDE,
       LOCATION.LONGITUDE
-    ).from(LOGICAL_METER);
+    ).from(GATEWAY);
 
     Filters filters = toFilters(parameters).add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD));
 
-    logicalMeterJooqConditions.apply(filters, query);
+    gatewayJooqConditions.apply(filters, query);
 
     return new HashSet<>(query.fetchInto(MapMarker.class));
   }

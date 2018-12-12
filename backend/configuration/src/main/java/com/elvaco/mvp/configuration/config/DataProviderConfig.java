@@ -95,7 +95,7 @@ class DataProviderConfig {
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
   private final MapMarkerJpaRepository logicalMeterMapMarkerJooqJpaRepository;
-  private final MapMarkerJpaRepository gatewayMapQueryDslJpaRepository;
+  private final MapMarkerJpaRepository gatewayMapMarkerJooqJpaRepository;
   private final SummaryJpaRepository summaryJpaRepository;
   private final PropertiesJpaRepository propertiesJpaRepository;
   private final QuantityJpaRepository quantityJpaRepository;
@@ -141,7 +141,7 @@ class DataProviderConfig {
     return new LocationRepository(
       locationJpaRepository,
       logicalMeterMapMarkerJooqJpaRepository,
-      gatewayMapQueryDslJpaRepository
+      gatewayMapMarkerJooqJpaRepository
     );
   }
 
