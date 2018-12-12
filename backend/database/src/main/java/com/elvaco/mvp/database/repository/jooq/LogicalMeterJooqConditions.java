@@ -140,12 +140,14 @@ public class LogicalMeterJooqConditions extends CommonFilterVisitor {
               .and(physicalMeterStatusLogCondition))))))
 
       .leftJoin(METER_ALARM_LOG)
-      .on(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+      .on(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+        .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
         .and(METER_ALARM_LOG.ID.equal(dsl
           .select(max(METER_ALARM_LOG.ID))
           .from(METER_ALARM_LOG)
-          .where(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(meterAlarmLogCondition)))))
+          .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+            .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+              .and(meterAlarmLogCondition))))))
 
       .leftJoin(lateral(dsl
         .select(count().as(MISSING_MEASUREMENT_COUNT), MISSING_MEASUREMENT.PHYSICAL_METER_ID)
