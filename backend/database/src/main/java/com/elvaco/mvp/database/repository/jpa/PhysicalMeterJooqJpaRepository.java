@@ -7,31 +7,35 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 
-import com.querydsl.core.types.Predicate;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
+import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_METER;
 
 @Repository
-class PhysicalMeterQueryDslJpaRepository
+class PhysicalMeterJooqJpaRepository
   extends BaseQueryDslRepository<PhysicalMeterEntity, UUID>
   implements PhysicalMeterJpaRepository {
 
+  private final DSLContext dsl;
+
   @Autowired
-  PhysicalMeterQueryDslJpaRepository(EntityManager entityManager) {
+  PhysicalMeterJooqJpaRepository(EntityManager entityManager, DSLContext dsl) {
     super(entityManager, PhysicalMeterEntity.class);
+    this.dsl = dsl;
   }
 
   @Override
   public Optional<PhysicalMeterEntity> findById(UUID id) {
-    return Optional.ofNullable(fetchOne(physicalMeterEntity.id.eq(id)));
+    return fetchOne(PHYSICAL_METER.ID.equal(id));
   }
 
   @Override
   public List<PhysicalMeterEntity> findByMedium(String medium) {
-    Predicate predicate = physicalMeterEntity.medium.eq(medium);
-    return createQuery(predicate).select(path).fetch();
+    return nativeQuery(dsl.select().from(PHYSICAL_METER)
+      .where(PHYSICAL_METER.MEDIUM.equal(medium)));
   }
 
   @Override
@@ -40,13 +44,13 @@ class PhysicalMeterQueryDslJpaRepository
     String externalId,
     String address
   ) {
-    Predicate predicate = physicalMeterEntity.logicalMeterPk.organisationId.eq(organisationId)
-      .and(physicalMeterEntity.externalId.eq(externalId))
-      .and(physicalMeterEntity.address.eq(address));
-    return Optional.ofNullable(fetchOne(predicate));
+    return fetchOne(PHYSICAL_METER.ORGANISATION_ID.equal(organisationId)
+      .and(PHYSICAL_METER.EXTERNAL_ID.equal(externalId)
+        .and(PHYSICAL_METER.ADDRESS.equal(address))));
   }
 
-  private PhysicalMeterEntity fetchOne(Predicate predicate) {
-    return createQuery(predicate).select(path).fetchOne();
+  private Optional<PhysicalMeterEntity> fetchOne(Condition... conditions) {
+    return nativeQuery(dsl.select().from(PHYSICAL_METER).where(conditions).limit(1)).stream()
+      .findAny();
   }
 }
