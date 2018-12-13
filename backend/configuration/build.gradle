@@ -93,7 +93,7 @@ sourceSets {
 }
 
 task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
-  testClassesDir = sourceSets.integrationTest.output.classesDir
+  testClassesDirs = sourceSets.integrationTest.output.getClassesDirs()
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
@@ -147,7 +147,7 @@ if (!project.hasProperty('isCI')) {
     systemProperty "spring.datasource.url", dbUrl
     systemProperty "spring.rabbitmq.host", "localhost"
     systemProperty "spring.rabbitmq.port", rabbitDockerPort
-    testClassesDir = sourceSets.integrationTest.output.classesDir
+    testClassesDirs = sourceSets.integrationTest.output.getClassesDirs()
     classpath = sourceSets.integrationTest.runtimeClasspath
     finalizedBy stopPostgresContainer
     finalizedBy stopRabbitContainer
@@ -162,7 +162,7 @@ if (!project.hasProperty('isCI')) {
     systemProperty "spring.rabbitmq.host", "rabbit_host"
     systemProperty "spring.rabbitmq.username", "guest"
     systemProperty "spring.rabbitmq.password", "guest"
-    testClassesDir = sourceSets.integrationTest.output.classesDir
+    testClassesDirs = sourceSets.integrationTest.output.getClassesDirs()
     classpath = sourceSets.integrationTest.runtimeClasspath
   }
 }
