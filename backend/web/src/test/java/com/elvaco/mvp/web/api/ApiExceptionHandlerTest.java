@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ApiExceptionHandlerTest {
 
@@ -24,7 +25,7 @@ public class ApiExceptionHandlerTest {
   }
 
   @Test
-  public void mappedException() {
+  public void mappedException() throws Exception {
     Exception bandwidthException = new BandwidthExceededException("Oh no");
 
     ResponseEntity<ErrorMessageDto> response =
@@ -35,12 +36,9 @@ public class ApiExceptionHandlerTest {
   }
 
   @Test
-  public void internalError() {
-    ResponseEntity<ErrorMessageDto> response =
-      apiExceptionHandler.handle(new Exception("test"));
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(response.getBody().message).isEqualTo(ApiExceptionHandler.INTERNAL_ERROR_MESSAGE);
+  public void internalErrorIsRethrown() {
+    assertThatThrownBy(() -> apiExceptionHandler.handle(new Exception("test")))
+      .isInstanceOf(Exception.class).hasMessage("test");
   }
 
   @Test
@@ -55,7 +53,7 @@ public class ApiExceptionHandlerTest {
   }
 
   @Test
-  public void clientAbortException() {
+  public void clientAbortException() throws IOException {
     ResponseEntity<ErrorMessageDto> response =
       apiExceptionHandler.handle(new ClientAbortException());
 

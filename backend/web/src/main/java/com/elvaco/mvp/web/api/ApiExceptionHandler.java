@@ -36,14 +36,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 @ControllerAdvice
 public class ApiExceptionHandler {
 
-  static final String INTERNAL_ERROR_MESSAGE = "Internal server error, please contact support.";
   private static final Pattern STRIP_AFTER_SEMI_COLON = Pattern.compile("([^;]+);");
-  private static final ApiExceptionInformation INTERNAL_SERVER_ERROR =
-    new ApiExceptionInformation(
-      new ErrorMessageDto(INTERNAL_ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value()),
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
-
   private static final Map<String, String> TYPE_TO_HUMAN_TYPE_MAP = new HashMap<>();
 
   static {
@@ -62,13 +55,13 @@ public class ApiExceptionHandler {
    */
   @ExceptionHandler
   @ResponseBody
-  public ResponseEntity<ErrorMessageDto> handle(Exception exception) {
-    return handleGeneralException(exception);
+  public ResponseEntity<ErrorMessageDto> handle(Exception exception) throws Exception {
+    return handleOrRethrowGeneralException(exception);
   }
 
   @ExceptionHandler(IOException.class)
   @ResponseBody
-  public ResponseEntity<ErrorMessageDto> handle(IOException exception) {
+  public ResponseEntity<ErrorMessageDto> handle(IOException exception) throws IOException {
     if (exception.getClass().getSimpleName().equals("ClientAbortException")) {
       log.info(
         "Ignoring '{}' caused by '{}'",
@@ -78,7 +71,7 @@ public class ApiExceptionHandler {
       log.debug("Exception occurred while processing request", exception);
       return null;
     } else {
-      return handleGeneralException(exception);
+      return handleOrRethrowGeneralException(exception);
     }
   }
 
@@ -175,20 +168,22 @@ public class ApiExceptionHandler {
     return badRequest(exception);
   }
 
-  private ResponseEntity<ErrorMessageDto> handleGeneralException(Exception exception) {
+  private <T extends Exception> ResponseEntity<ErrorMessageDto> handleOrRethrowGeneralException(
+    T exception
+  ) throws T {
     log.warn("Exception occurred while processing request", exception);
-    ApiExceptionInformation exceptionInformation = resolveHttpStatus(exception);
+    ApiExceptionInformation exceptionInformation
+      = resolveHttpStatus(exception).orElseThrow(() -> exception);
     return new ResponseEntity<>(exceptionInformation.dto, exceptionInformation.status);
   }
 
-  private static ApiExceptionInformation resolveHttpStatus(Exception exception) {
+  private static Optional<ApiExceptionInformation> resolveHttpStatus(Exception exception) {
     return Optional.ofNullable(findMergedAnnotation(exception.getClass(), ResponseStatus.class))
       .map(responseStatus ->
         new ApiExceptionInformation(
           new ErrorMessageDto(exception.getMessage(), responseStatus.value().value()),
           responseStatus.value()
-        ))
-      .orElse(INTERNAL_SERVER_ERROR);
+        ));
   }
 
   private static String humanTypeName(Class<?> javaType) {
