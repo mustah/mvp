@@ -1,10 +1,11 @@
 import {createSelector} from 'reselect';
-import {Medium} from '../ui/graph/measurement/measurementModels';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {isSelectedCity, isSelectedMeter} from '../ui/graph/measurement/measurementActions';
+import {allQuantities, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
+import {ThresholdQuery} from '../user-selection/userSelectionModels';
 import {
   CityWithClusters,
   ClusterWithAddresses,
@@ -60,7 +61,11 @@ export const getSelectionTree =
     ({result}) => result,
     ({entities}) => entities,
     ({query}) => query,
-    ({cities: cityIds}: SelectionTreeResult, {cities, addresses, meters}: SelectionTreeEntities, query) => {
+    (
+      {cities: cityIds}: SelectionTreeResult,
+      {cities, addresses, meters}: SelectionTreeEntities,
+      query
+    ) => {
 
       const shouldBeInTree = matches(query);
 
@@ -151,5 +156,19 @@ export const getMedia = createSelector<SelectedTreeEntities, uuid[], SelectionTr
       .reduce((acc: Medium[], current: Medium[]): Medium[] => acc.concat(current), []);
 
     return new Set([...meterMedia, ...cityMedia]);
+  },
+);
+
+export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Set<Medium>>(
+  (threshold: ThresholdQuery) => threshold && threshold.quantity,
+  (quantity) => {
+    if (quantity) {
+      return new Set<Medium>(Object.keys(allQuantities)
+        .map((medium) => (medium as Medium))
+        .filter((medium) => Array.from(allQuantities[medium]).includes(quantity))
+      );
+    } else {
+      return new Set<Medium>();
+    }
   },
 );
