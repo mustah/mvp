@@ -12,10 +12,9 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.dto.LogicalMeterLocation;
-import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -44,17 +43,17 @@ class GatewayJooqJpaRepository
   );
 
   private final DSLContext dsl;
-  private final JooqFilterVisitor gatewayJooqConditions;
+  private final FilterAcceptor gatewayFilters;
 
   @Autowired
   GatewayJooqJpaRepository(
     EntityManager entityManager,
     DSLContext dsl,
-    JooqFilterVisitor gatewayJooqConditions
+    FilterAcceptor gatewayFilters
   ) {
     super(entityManager, GatewayEntity.class);
     this.dsl = dsl;
-    this.gatewayJooqConditions = gatewayJooqConditions;
+    this.gatewayFilters = gatewayFilters;
   }
 
   @Override
@@ -64,7 +63,7 @@ class GatewayJooqJpaRepository
 
   @Override
   public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
-    var selectQuery = dsl.select(
+    var query = dsl.select(
       GATEWAY.ID,
       GATEWAY.ORGANISATION_ID,
       GATEWAY.SERIAL,
@@ -85,14 +84,13 @@ class GatewayJooqJpaRepository
 
     var countQuery = dsl.selectDistinct(GATEWAY.ID, LOCATION.LOGICAL_METER_ID).from(GATEWAY);
 
-    var filters = toFilters(parameters);
-
-    gatewayJooqConditions.apply(filters, selectQuery);
-    gatewayJooqConditions.apply(filters, countQuery);
+    gatewayFilters.apply(toFilters(parameters))
+      .applyJoinsOn(query)
+      .applyJoinsOn(countQuery);
 
     var recordHandler = new GatewaySummaryRecordHandler();
 
-    selectQuery.limit(pageable.getPageSize())
+    query.limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetch()
       .into(recordHandler);
@@ -105,9 +103,9 @@ class GatewayJooqJpaRepository
     var query = dsl.selectDistinct(GATEWAY.SERIAL).from(GATEWAY);
     var countQuery = dsl.selectDistinct(GATEWAY.SERIAL).from(GATEWAY);
 
-    Filters filters = toFilters(parameters);
-    gatewayJooqConditions.apply(filters, query);
-    gatewayJooqConditions.apply(filters, countQuery);
+    gatewayFilters.apply(toFilters(parameters))
+      .applyJoinsOn(query)
+      .applyJoinsOn(countQuery);
 
     List<String> gatewaySerials = query
       .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP))

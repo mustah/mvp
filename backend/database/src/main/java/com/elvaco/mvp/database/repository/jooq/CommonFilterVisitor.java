@@ -2,8 +2,8 @@ package com.elvaco.mvp.database.repository.jooq;
 
 abstract class CommonFilterVisitor
   extends JooqFilterVisitor
-  implements LocationFilterVisitor,
-             GatewayFilterVisitor,
+  implements CommonLocationFilterVisitor,
+             CommonGatewayFilterVisitor,
              PhysicalMeterFilterVisitor,
-             LogicalMeterFilterVisitor {
+             CommonLogicalMeterFilterVisitor {
 }

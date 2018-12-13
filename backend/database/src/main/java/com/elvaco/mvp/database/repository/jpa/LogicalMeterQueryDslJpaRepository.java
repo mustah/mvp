@@ -13,14 +13,13 @@ import javax.persistence.Query;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
-import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
-import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
-import com.elvaco.mvp.database.repository.jooq.SelectionJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
+import com.elvaco.mvp.database.repository.jooq.SelectionFilterVisitor;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 
 import com.querydsl.core.group.GroupBy;
@@ -51,7 +50,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-import static com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions.MISSING_MEASUREMENT_COUNT;
+import static com.elvaco.mvp.database.repository.jooq.LogicalMeterFilterVisitor.MISSING_MEASUREMENT_COUNT;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
@@ -62,17 +61,17 @@ class LogicalMeterQueryDslJpaRepository
   implements LogicalMeterJpaRepository {
 
   private final DSLContext dsl;
-  private final JooqFilterVisitor logicalMeterJooqConditions;
+  private final FilterAcceptor logicalMeterFilters;
 
   @Autowired
   LogicalMeterQueryDslJpaRepository(
     EntityManager entityManager,
     DSLContext dsl,
-    JooqFilterVisitor logicalMeterJooqConditions
+    FilterAcceptor logicalMeterFilters
   ) {
     super(entityManager, LogicalMeterEntity.class);
     this.dsl = dsl;
-    this.logicalMeterJooqConditions = logicalMeterJooqConditions;
+    this.logicalMeterFilters = logicalMeterFilters;
   }
 
   @Override
@@ -98,7 +97,7 @@ class LogicalMeterQueryDslJpaRepository
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
     SelectJoinStep<Record> query = dsl.select().from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(toFilters(parameters), query);
+    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
 
     String sql = query.getSQL(ParamType.NAMED);
     Query nativeQuery = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
@@ -128,7 +127,7 @@ class LogicalMeterQueryDslJpaRepository
   public List<LogicalMeterEntity> findAll(RequestParameters parameters) {
     var query = dsl.select().from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(toFilters(parameters), query);
+    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
 
     return nativeQuery(query);
   }
@@ -164,10 +163,9 @@ class LogicalMeterQueryDslJpaRepository
 
     var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
 
-    var filters = toFilters(parameters);
-
-    logicalMeterJooqConditions.apply(filters, selectQuery);
-    logicalMeterJooqConditions.apply(filters, countQuery);
+    logicalMeterFilters.apply(toFilters(parameters))
+      .applyJoinsOn(selectQuery)
+      .applyJoinsOn(countQuery);
 
     List<LogicalMeterSummaryDto> logicalMeters = selectQuery
       .limit(pageable.getPageSize())
@@ -194,7 +192,7 @@ class LogicalMeterQueryDslJpaRepository
       METER_DEFINITION.MEDIUM
     ).from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(toFilters(parameters), query);
+    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
 
     return new HashSet<>(query.fetchInto(LogicalMeterWithLocation.class));
   }
@@ -210,7 +208,7 @@ class LogicalMeterQueryDslJpaRepository
     ).distinctOn(LOGICAL_METER.ID, PHYSICAL_METER.READ_INTERVAL_MINUTES)
       .from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(toFilters(parameters), query);
+    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
   }
@@ -246,9 +244,9 @@ class LogicalMeterQueryDslJpaRepository
     var selectQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
     var countQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
 
-    Filters filters = toFilters(parameters);
-    new SelectionJooqConditions().apply(filters, selectQuery);
-    new SelectionJooqConditions().apply(filters, countQuery);
+    new SelectionFilterVisitor().apply(toFilters(parameters))
+      .applyJoinsOn(selectQuery)
+      .applyJoinsOn(countQuery);
 
     var all = selectQuery
       .orderBy(directionFor(field, pageable.getSort()))

@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.repository.jooq.MeasurementJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.MeasurementFilterVisitor;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -39,7 +39,7 @@ public class MeasurementJpaRepositoryImpl
   public List<MeasurementEntity> findAll(RequestParameters parameters) {
     var query = dsl.select().from(MEASUREMENT);
 
-    new MeasurementJooqConditions().apply(toFilters(parameters), query);
+    new MeasurementFilterVisitor().apply(toFilters(parameters)).applyJoinsOn(query);
 
     query.orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP));
 

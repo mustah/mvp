@@ -28,6 +28,7 @@ public class MeasurementThresholdParser {
       + "\\s*(?<operator>" + String.join("|", VALID_OPERATORS) + ")"
       + "\\s*(?<value>[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)"
       + "\\s*(?<unit>\\S+)$");
+
   private final QuantityProvider quantityProvider;
   private final UnitConverter unitConverter;
 

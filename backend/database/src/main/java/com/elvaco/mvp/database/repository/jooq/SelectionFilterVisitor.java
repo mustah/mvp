@@ -17,7 +17,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationConditions
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
-public class SelectionJooqConditions extends EmptyJooqFilterVisitor {
+public class SelectionFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(CityFilter filter) {

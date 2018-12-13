@@ -6,9 +6,9 @@ import com.elvaco.mvp.configuration.config.properties.JooqProperties;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
-import com.elvaco.mvp.database.repository.jooq.GatewayJooqConditions;
-import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
-import com.elvaco.mvp.database.repository.jooq.LogicalMeterJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
+import com.elvaco.mvp.database.repository.jooq.GatewayFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.LogicalMeterFilterVisitor;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -45,29 +45,29 @@ class JooqConfig {
   }
 
   @Bean
-  @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
-  JooqFilterVisitor logicalMeterJooqConditions(
-    DSLContext dsl,
+  MeasurementThresholdParser measurementThresholdParser(
     QuantityProvider quantityProvider,
     UnitConverter unitConverter
   ) {
-    return new LogicalMeterJooqConditions(
-      dsl,
-      new MeasurementThresholdParser(quantityProvider, unitConverter)
-    );
+    return new MeasurementThresholdParser(quantityProvider, unitConverter);
   }
 
   @Bean
   @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
-  JooqFilterVisitor gatewayJooqConditions(
+  FilterAcceptor logicalMeterFilters(
     DSLContext dsl,
-    QuantityProvider quantityProvider,
-    UnitConverter unitConverter
+    MeasurementThresholdParser measurementThresholdParser
   ) {
-    return new GatewayJooqConditions(
-      dsl,
-      new MeasurementThresholdParser(quantityProvider, unitConverter)
-    );
+    return new LogicalMeterFilterVisitor(dsl, measurementThresholdParser);
+  }
+
+  @Bean
+  @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  FilterAcceptor gatewayFilters(
+    DSLContext dsl,
+    MeasurementThresholdParser measurementThresholdParser
+  ) {
+    return new GatewayFilterVisitor(dsl, measurementThresholdParser);
   }
 
   @Bean
