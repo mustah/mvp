@@ -51,7 +51,7 @@ sourceSets {
   }
 }
 task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
-  testClassesDir = sourceSets.integrationTest.output.classesDir
+  testClassesDirs = sourceSets.integrationTest.output.getClassesDirs()
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 configurations {
