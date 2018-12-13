@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisationEntity;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -27,12 +28,12 @@ class OrganisationQueryDslJpaRepository
 
   @Override
   public Optional<OrganisationEntity> findBySlug(String slug) {
-    return Optional.ofNullable(fetchOne(ORGANISATION.slug.eq(slug)));
+    return Optional.ofNullable(fetchOne(organisationEntity.slug.eq(slug)));
   }
 
   @Override
   public Optional<OrganisationEntity> findByExternalId(String externalId) {
-    return Optional.ofNullable(fetchOne(ORGANISATION.externalId.eq(externalId)));
+    return Optional.ofNullable(fetchOne(organisationEntity.externalId.eq(externalId)));
   }
 
   @Override
@@ -42,7 +43,7 @@ class OrganisationQueryDslJpaRepository
 
   @Override
   public Page<OrganisationEntity> findAllMainOrganisations(Predicate predicate, Pageable pageable) {
-    Predicate withoutParentOrganisation = ORGANISATION.parent.isNull().and(predicate);
+    Predicate withoutParentOrganisation = organisationEntity.parent.isNull().and(predicate);
 
     var countQuery = createCountQuery(withoutParentOrganisation).select(path);
     var query = createQuery(withoutParentOrganisation).select(path);

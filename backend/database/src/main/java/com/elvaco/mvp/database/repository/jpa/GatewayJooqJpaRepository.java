@@ -15,12 +15,9 @@ import com.elvaco.mvp.core.dto.LogicalMeterLocation;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.entity.jooq.tables.Gateway;
-import com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog;
-import com.elvaco.mvp.database.entity.jooq.tables.Location;
 import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
 
-import com.querydsl.core.types.Predicate;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record15;
@@ -31,23 +28,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
+import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
+import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
+import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
-class GatewayQueryDslJpaRepository
+class GatewayJooqJpaRepository
   extends BaseQueryDslRepository<GatewayEntity, UUID>
   implements GatewayJpaRepository {
 
   private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
-    "serial", Gateway.GATEWAY.SERIAL
+    "serial", GATEWAY.SERIAL
   );
 
   private final DSLContext dsl;
   private final JooqFilterVisitor gatewayJooqConditions;
 
   @Autowired
-  GatewayQueryDslJpaRepository(
+  GatewayJooqJpaRepository(
     EntityManager entityManager,
     DSLContext dsl,
     JooqFilterVisitor gatewayJooqConditions
@@ -59,36 +59,31 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Optional<GatewayEntity> findById(UUID id) {
-    var predicate = GATEWAY.pk.id.eq(id);
-    return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
+    return fetchOne(GATEWAY.ID.equal(id));
   }
 
   @Override
   public Page<GatewaySummaryDto> findAll(RequestParameters parameters, Pageable pageable) {
-    var gateway = Gateway.GATEWAY;
-    var location = Location.LOCATION;
-    var gatewayStatusLog = GatewayStatusLog.GATEWAY_STATUS_LOG;
-
     var selectQuery = dsl.select(
-      gateway.ID,
-      gateway.ORGANISATION_ID,
-      gateway.SERIAL,
-      gateway.PRODUCT_MODEL,
-      gatewayStatusLog.ID,
-      gatewayStatusLog.STATUS,
-      gatewayStatusLog.START,
-      gatewayStatusLog.STOP,
-      location.LOGICAL_METER_ID,
-      location.LATITUDE,
-      location.LONGITUDE,
-      location.CONFIDENCE,
-      location.COUNTRY,
-      location.CITY,
-      location.STREET_ADDRESS
-    ).distinctOn(gateway.ID, location.LOGICAL_METER_ID)
-      .from(gateway);
+      GATEWAY.ID,
+      GATEWAY.ORGANISATION_ID,
+      GATEWAY.SERIAL,
+      GATEWAY.PRODUCT_MODEL,
+      GATEWAY_STATUS_LOG.ID,
+      GATEWAY_STATUS_LOG.STATUS,
+      GATEWAY_STATUS_LOG.START,
+      GATEWAY_STATUS_LOG.STOP,
+      LOCATION.LOGICAL_METER_ID,
+      LOCATION.LATITUDE,
+      LOCATION.LONGITUDE,
+      LOCATION.CONFIDENCE,
+      LOCATION.COUNTRY,
+      LOCATION.CITY,
+      LOCATION.STREET_ADDRESS
+    ).distinctOn(GATEWAY.ID, LOCATION.LOGICAL_METER_ID)
+      .from(GATEWAY);
 
-    var countQuery = dsl.selectDistinct(gateway.ID, location.LOGICAL_METER_ID).from(gateway);
+    var countQuery = dsl.selectDistinct(GATEWAY.ID, LOCATION.LOGICAL_METER_ID).from(GATEWAY);
 
     var filters = toFilters(parameters);
 
@@ -97,8 +92,7 @@ class GatewayQueryDslJpaRepository
 
     var recordHandler = new GatewaySummaryRecordHandler();
 
-    selectQuery
-      .limit(pageable.getPageSize())
+    selectQuery.limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetch()
       .into(recordHandler);
@@ -108,10 +102,8 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public Page<String> findSerials(RequestParameters parameters, Pageable pageable) {
-    var gateway = Gateway.GATEWAY;
-
-    var query = dsl.selectDistinct(gateway.SERIAL).from(gateway);
-    var countQuery = dsl.selectDistinct(gateway.SERIAL).from(gateway);
+    var query = dsl.selectDistinct(GATEWAY.SERIAL).from(GATEWAY);
+    var countQuery = dsl.selectDistinct(GATEWAY.SERIAL).from(GATEWAY);
 
     Filters filters = toFilters(parameters);
     gatewayJooqConditions.apply(filters, query);
@@ -128,8 +120,8 @@ class GatewayQueryDslJpaRepository
 
   @Override
   public List<GatewayEntity> findAllByOrganisationId(UUID organisationId) {
-    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId);
-    return createQuery(predicate).select(path).fetch();
+    return nativeQuery(dsl.select().from(GATEWAY)
+      .where(GATEWAY.ORGANISATION_ID.equal(organisationId)));
   }
 
   @Override
@@ -138,24 +130,24 @@ class GatewayQueryDslJpaRepository
     String productModel,
     String serial
   ) {
-    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
-      .and(GATEWAY.productModel.equalsIgnoreCase(productModel))
-      .and(GATEWAY.serial.equalsIgnoreCase(serial));
-    return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
+    return fetchOne(GATEWAY.ORGANISATION_ID.equal(organisationId)
+      .and(GATEWAY.PRODUCT_MODEL.equal(productModel).and(GATEWAY.SERIAL.equal(serial))));
   }
 
   @Override
   public Optional<GatewayEntity> findByOrganisationIdAndSerial(UUID organisationId, String serial) {
-    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
-      .and(GATEWAY.serial.equalsIgnoreCase(serial));
-    return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
+    return fetchOne(GATEWAY.ORGANISATION_ID.equal(organisationId)
+      .and(GATEWAY.SERIAL.equal(serial)));
   }
 
   @Override
   public Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    Predicate predicate = GATEWAY.pk.organisationId.eq(organisationId)
-      .and(GATEWAY.pk.id.eq(id));
-    return Optional.ofNullable(createQuery(predicate).select(path).fetchOne());
+    return fetchOne(GATEWAY.ORGANISATION_ID.equal(organisationId).and(GATEWAY.ID.equal(id)));
+  }
+
+  private Optional<GatewayEntity> fetchOne(Condition... conditions) {
+    return nativeQuery(dsl.select().from(GATEWAY).where(conditions).limit(1)).stream()
+      .findAny();
   }
 
   private static class GatewaySummaryRecordHandler

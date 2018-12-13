@@ -11,6 +11,8 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
+
 @Repository
 class PhysicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<PhysicalMeterEntity, UUID>
@@ -23,12 +25,12 @@ class PhysicalMeterQueryDslJpaRepository
 
   @Override
   public Optional<PhysicalMeterEntity> findById(UUID id) {
-    return Optional.ofNullable(fetchOne(PHYSICAL_METER.id.eq(id)));
+    return Optional.ofNullable(fetchOne(physicalMeterEntity.id.eq(id)));
   }
 
   @Override
   public List<PhysicalMeterEntity> findByMedium(String medium) {
-    Predicate predicate = PHYSICAL_METER.medium.eq(medium);
+    Predicate predicate = physicalMeterEntity.medium.eq(medium);
     return createQuery(predicate).select(path).fetch();
   }
 
@@ -38,9 +40,9 @@ class PhysicalMeterQueryDslJpaRepository
     String externalId,
     String address
   ) {
-    Predicate predicate = PHYSICAL_METER.logicalMeterPk.organisationId.eq(organisationId)
-      .and(PHYSICAL_METER.externalId.eq(externalId))
-      .and(PHYSICAL_METER.address.eq(address));
+    Predicate predicate = physicalMeterEntity.logicalMeterPk.organisationId.eq(organisationId)
+      .and(physicalMeterEntity.externalId.eq(externalId))
+      .and(physicalMeterEntity.address.eq(address));
     return Optional.ofNullable(fetchOne(predicate));
   }
 

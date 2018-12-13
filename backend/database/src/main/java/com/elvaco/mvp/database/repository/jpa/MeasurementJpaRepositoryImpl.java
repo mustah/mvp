@@ -43,6 +43,6 @@ public class MeasurementJpaRepositoryImpl
 
     query.orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP));
 
-    return nativeQuery(query, MeasurementEntity.class);
+    return nativeQuery(query);
   }
 }
