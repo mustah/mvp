@@ -92,11 +92,6 @@ sourceSets {
   }
 }
 
-task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
-  testClassesDirs = sourceSets.integrationTest.output.getClassesDirs()
-  classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
 if (!project.hasProperty('isCI')) {
   containers.each {final containerDef ->
     def pullTaskName = "pull${containerDef.name}Image"
@@ -136,7 +131,6 @@ if (!project.hasProperty('isCI')) {
       finalizedBy removeTaskName
     }
   }
-
 
   task systemTest(type: Test,
                   dependsOn: ['test', startAndWaitOnHealthyPostgresContainer, startAndWaitOnHealthyRabbitContainer],
@@ -191,4 +185,4 @@ jar {
   }
 }
 jar.dependsOn(':frontend:bundle')
-check.dependsOn([integrationTest, systemTest])
+check.dependsOn([systemTest])

@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    springBootVersion = '2.0.1.RELEASE'
+    springBootVersion = '2.1.0.RELEASE'
     ehcacheVersion = '3.6.2'
     lombokVersion = '1.18.4'
     assertjVersion = '3.11.1'
@@ -8,7 +8,7 @@ buildscript {
     jooqVersion = '3.11.7'
     postgresqlVersion = '42.2.5'
     elasticApmVersion = '1.1.0'
-    set('hibernate.version', '5.2.16.Final')
+    set('hibernate.version', '5.3.7.Final')
     set('jooq.version', "${jooqVersion}")
   }
 
