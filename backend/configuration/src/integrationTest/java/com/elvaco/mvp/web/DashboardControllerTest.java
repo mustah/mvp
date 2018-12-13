@@ -140,7 +140,11 @@ public class DashboardControllerTest extends IntegrationTest {
 
     ResponseEntity<DashboardDto> response = asUser()
       .get(
-        "/dashboards/current?medium=Gas&after=" + startDate + "&before=" + beforeDate,
+        Url.builder()
+          .path("/dashboards/current")
+          .period(startDate, beforeDate)
+          .parameter("medium", "Gas")
+          .build(),
         DashboardDto.class
       );
 
@@ -176,7 +180,8 @@ public class DashboardControllerTest extends IntegrationTest {
 
     ResponseEntity<DashboardDto> response = asUser()
       .get(
-        "/dashboards/current?after=" + startDate + "&before=" + beforeDate,
+        Url.builder().path("/dashboards/current")
+          .period(startDate, beforeDate).build(),
         DashboardDto.class
       );
 
