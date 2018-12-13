@@ -3,8 +3,9 @@ import {Action} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
 import {SelectedReportEntriesPayload} from '../../../usecases/report/reportModels';
+import {getThresholdMedia} from '../../selection-tree/selectionTreeSelectors';
 import {RESET_SELECTION, SELECT_SAVED_SELECTION, SET_THRESHOLD} from '../../user-selection/userSelectionActions';
-import {UserSelection} from '../../user-selection/userSelectionModels';
+import {ThresholdQuery, UserSelection} from '../../user-selection/userSelectionModels';
 import {Medium, Quantity} from '../graph/measurement/measurementModels';
 import {SET_REPORT_INDICATOR_WIDGETS, SET_SELECTED_QUANTITIES} from './indicatorActions';
 
@@ -27,6 +28,7 @@ type ActionTypes =
   | Action<Quantity[]>
   | Action<SelectedReportEntriesPayload>
   | Action<UserSelection>
+  | Action<ThresholdQuery>
   | EmptyAction<string>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
@@ -56,6 +58,13 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
         selectedQuantities: (action as Action<Quantity[]>).payload as Quantity[],
       };
     case SET_THRESHOLD:
+      return {
+        ...state,
+        selectedIndicators: {
+          report: Array.from(getThresholdMedia((action as Action<ThresholdQuery>).payload)),
+        },
+        selectedQuantities: [(action as Action<ThresholdQuery>).payload.quantity],
+      };
     case SELECT_SAVED_SELECTION:
     case RESET_SELECTION:
     case LOGOUT_USER:

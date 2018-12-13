@@ -1,10 +1,19 @@
-import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {
   SelectedTreeEntities,
   SelectionTreeCity,
   SelectionTreeMeter,
 } from '../../../state/selection-tree/selectionTreeModels';
+import {getThresholdMedia} from '../../../state/selection-tree/selectionTreeSelectors';
+import {
+  Medium,
+  Quantity,
+  quantityUnits
+} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  RelationalOperator,
+  ThresholdQuery
+} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
@@ -162,5 +171,21 @@ describe('reportSelectors', () => {
       });
     });
 
+  });
+
+  describe('getThresholdMedia', () => {
+
+    it('get media from selected threshold', () => {
+      const state: ThresholdQuery = {
+        quantity: Quantity.returnTemperature,
+        relationalOperator: RelationalOperator.lt,
+        unit: quantityUnits[Quantity.returnTemperature],
+        value: '0',
+      };
+
+      const expected: Set<Medium> = new Set<Medium>().add(Medium.districtHeating);
+
+      expect(getThresholdMedia(state)).toEqual(expected);
+    });
   });
 });

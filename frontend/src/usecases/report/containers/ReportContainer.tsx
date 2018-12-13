@@ -21,10 +21,16 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {SelectedTreeEntities, SelectionTreeEntities} from '../../../state/selection-tree/selectionTreeModels';
+import {
+  SelectedTreeEntities,
+  SelectionTreeEntities
+} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
-import {fetchMeasurements, MeasurementOptions} from '../../../state/ui/graph/measurement/measurementActions';
+import {
+  fetchMeasurements,
+  MeasurementOptions
+} from '../../../state/ui/graph/measurement/measurementActions';
 import {
   initialState,
   Measurements,
@@ -41,7 +47,10 @@ import {CallbackWith} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
 import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
-import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
+import {
+  ReportIndicatorWidgets,
+  SelectedIndicatorWidgetProps
+} from '../components/indicators/ReportIndicatorWidgets';
 import {MeasurementList} from '../components/MeasurementList';
 import {GraphContents, hardcodedIndicators, ReportState} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
@@ -104,7 +113,6 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
     const {isFetching, error, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
-
     return (
       <MvpPageContainer>
         <Row className="space-between">

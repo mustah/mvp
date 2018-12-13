@@ -1,9 +1,17 @@
 import {logoutUser} from '../../../../usecases/auth/authActions';
 import {setSelectedEntries} from '../../../../usecases/report/reportActions';
-import {RESET_SELECTION, SELECT_SAVED_SELECTION} from '../../../user-selection/userSelectionActions';
-import {UserSelection} from '../../../user-selection/userSelectionModels';
+import {
+  RESET_SELECTION,
+  SELECT_SAVED_SELECTION,
+  SET_THRESHOLD
+} from '../../../user-selection/userSelectionActions';
+import {
+  RelationalOperator,
+  ThresholdQuery,
+  UserSelection
+} from '../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../user-selection/userSelectionReducer';
-import {Medium, Quantity} from '../../graph/measurement/measurementModels';
+import {Medium, Quantity, quantityUnits} from '../../graph/measurement/measurementModels';
 import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 
 describe('indicatorReducer', () => {
@@ -70,4 +78,24 @@ describe('indicatorReducer', () => {
     });
   });
 
+  describe('setThreshold', () => {
+
+    it('Select medium and quantities from threshold', () => {
+      const payload: ThresholdQuery = {
+        quantity: Quantity.returnTemperature,
+        relationalOperator: RelationalOperator.lt,
+        unit: quantityUnits[Quantity.returnTemperature],
+        value: '0',
+      };
+      const newState: IndicatorState = indicator(state, {type: SET_THRESHOLD, payload});
+      const expected: IndicatorState = {
+        ...initialState,
+        selectedIndicators: {
+          report: [Medium.districtHeating],
+        },
+        selectedQuantities: [Quantity.returnTemperature],
+      };
+      expect(newState).toEqual(expected);
+    });
+  });
 });
