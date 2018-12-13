@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.domainmodels.City;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
-import com.elvaco.mvp.database.repository.jooq.LocationFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -50,7 +50,7 @@ class LocationJooqJpaRepository
 
     var countQuery = dsl.selectDistinct().from(LOCATION);
 
-    new LocationFilterVisitor().apply(toFilters(parameters))
+    FilterVisitors.location().apply(toFilters(parameters))
       .applyJoinsOn(query)
       .applyJoinsOn(countQuery);
 
@@ -74,7 +74,7 @@ class LocationJooqJpaRepository
 
     var countQuery = dsl.selectDistinct().from(LOCATION);
 
-    new LocationFilterVisitor().apply(toFilters(parameters))
+    FilterVisitors.location().apply(toFilters(parameters))
       .applyJoinsOn(query)
       .applyJoinsOn(countQuery);
 

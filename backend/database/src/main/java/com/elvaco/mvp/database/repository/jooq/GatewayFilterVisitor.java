@@ -34,7 +34,7 @@ import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.select;
 
 @RequiredArgsConstructor
-public class GatewayFilterVisitor extends CommonFilterVisitor {
+class GatewayFilterVisitor extends CommonFilterVisitor {
 
   private final DSLContext dsl;
   private final MeasurementThresholdParser measurementThresholdParser;

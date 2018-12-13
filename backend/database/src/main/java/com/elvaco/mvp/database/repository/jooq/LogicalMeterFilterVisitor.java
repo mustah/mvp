@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
@@ -28,6 +27,7 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.falseCondition;
@@ -37,12 +37,7 @@ import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.select;
 
 @RequiredArgsConstructor
-public class LogicalMeterFilterVisitor extends CommonFilterVisitor {
-
-  public static final Field<Long> MISSING_MEASUREMENT_COUNT = field(
-    "missing_measurement_count",
-    Long.class
-  );
+class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   private final DSLContext dsl;
   private final MeasurementThresholdParser measurementThresholdParser;

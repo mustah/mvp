@@ -19,7 +19,7 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
-import com.elvaco.mvp.database.repository.jooq.SelectionFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 
 import com.querydsl.core.group.GroupBy;
@@ -50,7 +50,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-import static com.elvaco.mvp.database.repository.jooq.LogicalMeterFilterVisitor.MISSING_MEASUREMENT_COUNT;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
@@ -244,7 +244,7 @@ class LogicalMeterQueryDslJpaRepository
     var selectQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
     var countQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
 
-    new SelectionFilterVisitor().apply(toFilters(parameters))
+    FilterVisitors.selection().apply(toFilters(parameters))
       .applyJoinsOn(selectQuery)
       .applyJoinsOn(countQuery);
 
