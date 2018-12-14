@@ -43,9 +43,9 @@ class PhysicalMeterJooqJpaRepository
     UUID organisationId,
     String externalId
   ) {
-    Predicate predicate = PHYSICAL_METER.logicalMeterPk.organisationId.eq(organisationId)
-      .and(PHYSICAL_METER.externalId.eq(externalId));
-    return createQuery(predicate).select(path).fetch();
+    return nativeQuery(dsl.select().from(PHYSICAL_METER)
+      .where(PHYSICAL_METER.ORGANISATION_ID.equal(organisationId))
+      .and(PHYSICAL_METER.EXTERNAL_ID.equal(externalId)));
   }
 
   @Override

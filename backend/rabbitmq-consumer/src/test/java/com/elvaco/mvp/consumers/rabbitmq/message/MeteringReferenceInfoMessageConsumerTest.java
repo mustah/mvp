@@ -12,6 +12,8 @@ import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Property;
@@ -50,11 +52,13 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.locationWithoutCoordinates;
+import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 @SuppressWarnings("ConstantConditions")
 public class MeteringReferenceInfoMessageConsumerTest {
@@ -174,6 +178,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .revision(REVISION_ONE)
       .mbusDeviceType(MBUS_METER_TYPE_ONE)
       .statuses(savedPhysicalMeter.statuses)
+      .activePeriod(PeriodRange.empty())
       .build());
     assertThat(gateway.meters).extracting("id").containsExactly(logicalMeter.id);
   }
@@ -304,6 +309,43 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+  }
+
+  @Test
+  public void referenceInfoDoesNotReplacePhysicalMeter() {
+    messageHandler.accept(messageBuilder().build());
+    PhysicalMeter activeMeter = physicalMeters.findBy(
+      organisations.findByExternalId(ORGANISATION_EXTERNAL_ID)
+        .map(Organisation::getId)
+        .orElse(null),
+      EXTERNAL_ID
+    ).get(0).toBuilder().activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(now()))).build();
+    physicalMeters.save(activeMeter);
+
+    LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
+
+    var newMeterAddress = "newMeterSecondaryAddress";
+    var newMeterManufacturer = "newMeterManufacturer";
+    messageHandler.accept(
+      messageBuilder()
+        .physicalMeterId(newMeterAddress)
+        .manufacturer(newMeterManufacturer)
+        .build());
+
+    assertThat(physicalMeters.findAll()).hasSize(2);
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> p.isActive(now()))
+      .hasSize(1)
+      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.manufacturer)
+      .contains(tuple(meter.id, EXTERNAL_ID, ADDRESS, MANUFACTURER));
+
+    assertThat(physicalMeters.findAll())
+      .filteredOn(p -> !p.isActive(now()))
+      .hasSize(1)
+      .extracting(p -> p.logicalMeterId, p -> p.externalId, p -> p.address, p -> p.manufacturer)
+      .contains(tuple(meter.id, EXTERNAL_ID, newMeterAddress, newMeterManufacturer));
   }
 
   @Test
@@ -858,7 +900,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .externalId(EXTERNAL_ID)
       .medium(HOT_WATER_MEDIUM)
       .manufacturer(MANUFACTURER)
-      .readIntervalMinutes(READ_INTERVAL_IN_MINUTES);
+      .readIntervalMinutes(READ_INTERVAL_IN_MINUTES)
+      .activePeriod(PeriodRange.halfOpenFrom(now().minusYears(1), null));
   }
 
   private static class MeteringReferenceInfoMessageDtoBuilder {

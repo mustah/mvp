@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -10,6 +11,8 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
@@ -30,6 +33,7 @@ import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
+import static java.util.Comparator.comparing;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -63,7 +67,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     AlreadyCreated existing = new AlreadyCreated();
 
     LogicalMeter logicalMeter = logicalMeterUseCases.findBy(organisation.id, facilityId)
-      .map(existing::logicalMeter)
+      .map(existing::setLogicalMeter)
       .orElseGet(() -> LogicalMeter.builder()
         .externalId(facilityId)
         .organisationId(organisation.id)
@@ -72,10 +76,11 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         .build());
 
     String address = measurementMessage.meter.id;
+    ZonedDateTime zonedMeasurementTimestamp = getEarliestTimestamp(measurementMessage);
 
     PhysicalMeter physicalMeter =
       physicalMeterUseCases.findBy(organisation.id, facilityId, address)
-        .map(existing::physicalMeter)
+        .map(existing::setPhysicalMeter)
         .orElseGet(() -> PhysicalMeter.builder()
           .organisationId(organisation.id)
           .address(address)
@@ -83,6 +88,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           .medium(UNKNOWN_MEDIUM.medium)
           .logicalMeterId(logicalMeter.id)
           .readIntervalMinutes(0)
+          .activePeriod(PeriodRange.halfOpenFrom(zonedMeasurementTimestamp, null))
           .build()
         );
 
@@ -108,7 +114,18 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .orElseGet(() -> logicalMeter.addPhysicalMeter(physicalMeter));
 
     existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
-    existing.shouldSavePhysicalMeter(() -> physicalMeterUseCases.save(physicalMeter));
+    existing.shouldSavePhysicalMeter(() -> {
+      if (physicalMeter.activePeriod.isEmpty()) {
+        physicalMeter.activePeriod = PeriodRange.from(PeriodBound.inclusiveOf(
+          zonedMeasurementTimestamp));
+      }
+      var m = physicalMeterUseCases.save(physicalMeter);
+      physicalMeterUseCases.deactivatePreviousPhysicalMeter(
+        physicalMeter,
+        zonedMeasurementTimestamp
+      );
+      return m;
+    });
 
     measurementMessage.values
       .forEach(value -> createMeasurement(
@@ -123,6 +140,18 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     }
 
     return responseBuilder.build();
+  }
+
+  protected ZonedDateTime getEarliestTimestamp(MeteringMeasurementMessageDto measurementMessage)
+    throws IllegalArgumentException {
+
+    return measurementMessage.values.stream()
+      .sorted(comparing((ValueDto v) -> v.timestamp))
+      .findFirst()
+      .map(dto -> dto.timestamp)
+      .orElseThrow(() -> new IllegalArgumentException(
+        "MeteringMeasurementMessage without timestamp " + measurementMessage))
+      .atZone(METERING_TIMEZONE);
   }
 
   private Optional<Measurement> createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
@@ -145,6 +174,14 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       return Optional.empty();
     }
 
+    if (!physicalMeter.activePeriod.contains(value.timestamp.atZone(METERING_TIMEZONE))) {
+      log.warn(
+        "Received mesaurement '{}' outside active period for physical meter '{}'",
+        value,
+        physicalMeter
+      );
+    }
+
     return Optional.of(Measurement.builder()
       .physicalMeter(physicalMeter)
       .created(value.timestamp.atZone(METERING_TIMEZONE))
@@ -159,12 +196,12 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     private LogicalMeter logicalMeter;
     private PhysicalMeter physicalMeter;
 
-    private LogicalMeter logicalMeter(LogicalMeter logicalMeter) {
+    private LogicalMeter setLogicalMeter(LogicalMeter logicalMeter) {
       this.logicalMeter = logicalMeter;
       return logicalMeter;
     }
 
-    private PhysicalMeter physicalMeter(PhysicalMeter physicalMeter) {
+    private PhysicalMeter setPhysicalMeter(PhysicalMeter physicalMeter) {
       this.physicalMeter = physicalMeter;
       return physicalMeter;
     }
@@ -176,7 +213,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     }
 
     private void shouldSavePhysicalMeter(Supplier<PhysicalMeter> supplier) {
-      if (physicalMeter == null) {
+      if (physicalMeter == null || physicalMeter.activePeriod.isEmpty()) {
         supplier.get();
       }
     }
