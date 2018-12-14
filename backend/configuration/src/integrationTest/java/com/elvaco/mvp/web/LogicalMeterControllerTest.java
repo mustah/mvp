@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Pk;
@@ -1479,6 +1480,56 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .hasSize(1)
       .extracting("id")
       .containsExactly(anotherOrganisationsMeter.id);
+  }
+
+  @Test
+  @Ignore
+  public void findAllMeters_FindsActivePhysicalMeter() {
+    var logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
+    var now = ZonedDateTime.now();
+
+    var meterFixture = PhysicalMeter.builder()
+      .organisationId(context().organisationId())
+      .medium("Heat")
+      .logicalMeterId(logicalMeter.id)
+      .externalId(randomUUID().toString());
+
+    var meterDuringChosenInterval = meterFixture
+      .address("1")
+      .activePeriod(PeriodRange.halfOpenFrom(now.minusDays(5), now.minusDays(1)))
+      .build();
+
+    var meterAfterChosenInterval = meterFixture
+      .address("2")
+      .activePeriod(PeriodRange.halfOpenFrom(now.minusDays(1), null))
+      .build();
+
+    physicalMeters.save(meterDuringChosenInterval);
+    physicalMeters.save(meterAfterChosenInterval);
+
+    var url = Url.builder().path("/meters");
+
+    Page<PagedLogicalMeterDto> oldPeriod = asUser()
+      .getPage(
+        url
+          .period(now.minusDays(5), now.minusDays(2))
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(oldPeriod.getContent()).hasSize(1);
+    assertThat(oldPeriod.getContent().get(0).address).isEqualTo("1");
+
+    Page<PagedLogicalMeterDto> currentPeriod = asUser()
+      .getPage(
+        url
+          .period(now.minusDays(1), now)
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(currentPeriod.getContent()).hasSize(1);
+    assertThat(currentPeriod.getContent().get(0).address).isEqualTo("2");
   }
 
   @Test

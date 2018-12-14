@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -803,6 +804,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       "",
       "",
       logicalMeterId,
+      PeriodRange.empty(),
       0,
       1,
       1,

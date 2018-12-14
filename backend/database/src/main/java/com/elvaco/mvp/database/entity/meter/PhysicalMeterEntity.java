@@ -13,6 +13,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.core.domainmodels.PrimaryKeyed;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -81,6 +83,9 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> implements Prima
 
   public Integer mbusDeviceType;
 
+  @Type(type = "tstzrange")
+  public PeriodRange activePeriod;
+
   public PhysicalMeterEntity(
     UUID id,
     UUID organisationId,
@@ -89,6 +94,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> implements Prima
     String medium,
     @Nullable String manufacturer,
     @Nullable UUID logicalMeterId,
+    @Nullable PeriodRange activePeriod,
     long readIntervalMinutes,
     @Nullable Integer revision,
     @Nullable Integer mbusDeviceType,
@@ -101,6 +107,7 @@ public class PhysicalMeterEntity extends IdentifiableType<UUID> implements Prima
     this.medium = medium;
     this.manufacturer = manufacturer;
     this.logicalMeterPk = new LogicalMeterPk(logicalMeterId, organisationId);
+    this.activePeriod = activePeriod;
     this.readIntervalMinutes = readIntervalMinutes;
     this.revision = revision;
     this.mbusDeviceType = mbusDeviceType;

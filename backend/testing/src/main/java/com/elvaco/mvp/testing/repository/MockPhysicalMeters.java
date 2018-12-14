@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 
 public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   implements PhysicalMeters {
@@ -41,6 +42,15 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
+  public List<PhysicalMeter> findBy(
+    UUID organisationId,
+    String externalId
+  ) {
+    return filter(physicalMeter -> physicalMeter.organisationId.equals(organisationId))
+      .filter(physicalMeter -> physicalMeter.externalId.equals(externalId)).collect(toList());
+  }
+
+  @Override
   public Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,
@@ -60,6 +70,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
       .manufacturer(entity.manufacturer)
       .logicalMeterId(entity.logicalMeterId)
       .readIntervalMinutes(entity.readIntervalMinutes)
+      .activePeriod(entity.activePeriod)
       .build();
   }
 

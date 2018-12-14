@@ -18,10 +18,15 @@ public interface PhysicalMeterJpaRepository {
 
   List<PhysicalMeterEntity> findByMedium(String medium);
 
+  List<PhysicalMeterEntity> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  );
+
   Optional<PhysicalMeterEntity> findByOrganisationIdAndExternalIdAndAddress(
     UUID organisationId,
     String externalId,
-    String address
+    String addressq
   );
 
   List<PhysicalMeterEntity> findAll();

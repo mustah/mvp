@@ -74,8 +74,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     var meter = newPhysicalMeterEntity();
     var dayTwo = START_TIME.plus(Period.ofDays(1));
 
-    newMeasurement(meter, START_TIME, 2.0, "W");
-    newMeasurement(meter, dayTwo, 4.0, "W");
+    newMeasurement(meter, START_TIME, 2.0);
+    newMeasurement(meter, dayTwo, 4.0);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
@@ -97,8 +97,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     var meter = newPhysicalMeterEntity();
     var nextMonth = START_TIME.plus(Period.ofMonths(1));
 
-    newMeasurement(meter, START_TIME, 2.0, "W");
-    newMeasurement(meter, nextMonth, 4.0, "W");
+    newMeasurement(meter, START_TIME, 2.0);
+    newMeasurement(meter, nextMonth, 4.0);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
@@ -120,8 +120,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     var meter = newPhysicalMeterEntity();
     var twoHoursLater = START_TIME.plusHours(2);
 
-    newMeasurement(meter, START_TIME, 2.0, "W");
-    newMeasurement(meter, twoHoursLater, 3.0, "W");
+    newMeasurement(meter, START_TIME, 2.0);
+    newMeasurement(meter, twoHoursLater, 3.0);
 
     List<MeasurementValueProjection> results = measurementJpaRepository.getAverageForPeriod(
       singletonList(meter.id),
@@ -141,12 +141,12 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void averageShouldOnlyIncludeValuesAtResolutionPoints() {
     var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0, "W");
-    newMeasurement(meter, START_TIME.plusMinutes(1), 100.0, "W");
+    newMeasurement(meter, START_TIME, 2.0);
+    newMeasurement(meter, START_TIME.plusMinutes(1), 100.0);
 
     var oneHourLater = START_TIME.plusHours(1);
-    newMeasurement(meter, oneHourLater, 1.0, "W");
-    newMeasurement(meter, oneHourLater.plusMinutes(1), 9.0, "W");
+    newMeasurement(meter, oneHourLater, 1.0);
+    newMeasurement(meter, oneHourLater.plusMinutes(1), 9.0);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
@@ -167,8 +167,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void unspecifiedMetersAreNotIncluded() {
     var firstMeter = newPhysicalMeterEntity();
     var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(firstMeter, START_TIME, 12, "W");
-    newMeasurement(secondMeter, START_TIME, 99.8, "W");
+    newMeasurement(firstMeter, START_TIME, 12);
+    newMeasurement(secondMeter, START_TIME, 99.8);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
@@ -185,8 +185,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void valuesAreFilteredByQuantity() {
     var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0, "°C", Quantity.TEMPERATURE.name);
-    newMeasurement(meter, START_TIME, 6.0, "°C", Quantity.RETURN_TEMPERATURE.name);
+    newMeasurement(meter, START_TIME, 2.0, Quantity.TEMPERATURE.name);
+    newMeasurement(meter, START_TIME, 6.0, Quantity.RETURN_TEMPERATURE.name);
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
@@ -203,7 +203,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void timesAreCorrect() {
     var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0, "W");
+    newMeasurement(meter, START_TIME, 2.0);
 
     List<MeasurementValueProjection> resultsWithHourResolution = measurementJpaRepository
       .getAverageForPeriod(
@@ -252,8 +252,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void seriesShouldIncludeEmptyResolutionPoints() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
-    newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME, 1.0, "Energy");
+    newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "Energy");
 
     List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
       meter.id,
@@ -274,9 +274,9 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void seriesShouldNotIncludeValuesInBetweenResolutionPoints() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
-    newMeasurement(meter, START_TIME.plusMinutes(30), 1.5, "kWh", "Energy");
-    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME, 1.0, "Energy");
+    newMeasurement(meter, START_TIME.plusMinutes(30), 1.5, "Energy");
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "Energy");
 
     List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
       meter.id,
@@ -296,10 +296,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_PutConsumptionOnStartOfInterval() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(3), 24.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME, 3.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(3), 24.0, "Volume");
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getSeriesForPeriodConsumption(
@@ -321,10 +321,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_PutSumOfMissingIntervalsOnStartOfInterval() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(4), 48.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(5), 96.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME, 3.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(4), 48.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(5), 96.0, "Volume");
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getSeriesForPeriodConsumption(
@@ -348,10 +348,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAtStartOfIntervalAndAfterInterval() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME.minusHours(1), 1.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.minusHours(1), 1.0, "Volume");
     // missing measurement for START_TIME
-    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "Volume");
     // missing measurement after interval
 
     List<MeasurementValueProjection> result =
@@ -374,8 +374,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAtEndOfInterval() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME, 3.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "Volume");
     // missing measurement at end of interval
 
     List<MeasurementValueProjection> result =
@@ -398,10 +398,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAtEndOfIntervalButLaterExists() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME, 3.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "Volume");
     // missing measurement at end of interval
-    newMeasurement(meter, START_TIME.plusHours(4), 24.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(4), 24.0, "Volume");
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getSeriesForPeriodConsumption(
@@ -423,9 +423,9 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void getSeriesForConsumption_MissingMeasurementAfterInterval() {
     var meter = newPhysicalMeterEntity();
 
-    newMeasurement(meter, START_TIME, 3.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "m³", "Volume");
-    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME, 3.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 6.0, "Volume");
+    newMeasurement(meter, START_TIME.plusHours(2), 12.0, "Volume");
     // missing measurement at START_TIME.plusHours(3)
 
     List<MeasurementValueProjection> result =
@@ -448,14 +448,14 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void averageForConsumptionSeries() {
     var firstMeter = newPhysicalMeterEntity();
 
-    newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
 
     var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getAverageForPeriodConsumption(
@@ -476,14 +476,14 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void averageForConsumptionSeries_lastIsNotNullWhenValueExistAfterPeriod() {
     var firstMeter = newPhysicalMeterEntity();
-    newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
 
     var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
 
     List<MeasurementValueProjection> result = measurementJpaRepository
       .getAverageForPeriodConsumption(
@@ -504,13 +504,13 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void averageForMissingMeasurements() {
     var firstMeter = newPhysicalMeterEntity();
 
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
 
     var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 7.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(1), 7.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
 
     List<MeasurementValueProjection> result = measurementJpaRepository.getAverageForPeriod(
       Arrays.asList(firstMeter.id, secondMeter.id),
@@ -532,13 +532,13 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void averageForConsumptionSeries_missingMeasurementsForOneMeter() {
     var firstMeter = newPhysicalMeterEntity();
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "kWh", "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "kWh", "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
+    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
 
     var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 0.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "kWh", "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "kWh", "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(1), 0.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
+    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
 
     List<MeasurementValueProjection> result =
       measurementJpaRepository.getAverageForPeriodConsumption(
@@ -558,9 +558,9 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void findFirstReadoutWithinRange() {
     var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME.plusHours(2), 3.0, "kWh", "Energy");
-    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
-    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusHours(2), 3.0, "Energy");
+    newMeasurement(meter, START_TIME, 1.0, "Energy");
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "Energy");
 
     var firstEnergy = measurementJpaRepository
       .firstForPhysicalMeter(
@@ -593,6 +593,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "",
       "",
       null,
+      null,
       0,
       1,
       1,
@@ -605,7 +606,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     PhysicalMeterEntity meter,
     OffsetDateTime when,
     double value,
-    String unit,
     String quantity
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
@@ -619,16 +619,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   private void newMeasurement(
     PhysicalMeterEntity meter,
     OffsetDateTime when,
-    double value,
-    String unit
+    double value
   ) {
-    newMeasurement(meter, when, value, unit, "Energy");
+    newMeasurement(meter, when, value, "Energy");
   }
 
   private void generateSeries(PhysicalMeterEntity meter, Duration interval) {
     OffsetDateTime when = START_TIME;
     for (int i = 0; i < 10; i++) {
-      newMeasurement(meter, START_TIME, 2.0, "W");
+      newMeasurement(meter, START_TIME, 2.0);
       when = when.plus(interval);
     }
   }

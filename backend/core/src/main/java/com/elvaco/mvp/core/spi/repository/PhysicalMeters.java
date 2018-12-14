@@ -20,6 +20,11 @@ public interface PhysicalMeters {
     String address
   );
 
+  List<PhysicalMeter> findBy(
+    UUID organisationId,
+    String externalId
+  );
+
   Optional<PhysicalMeter> findBy(
     UUID organisationId,
     String externalId,

@@ -90,6 +90,14 @@ jooq {
       database {
         name = 'org.jooq.meta.postgres.PostgresDatabase'
         inputSchema = 'public'
+        forcedTypes {
+          forcedType {
+            userType = 'com.elvaco.mvp.core.domainmodels.PeriodRange'
+            binding = 'com.elvaco.mvp.database.bindings.TimestampWithTimeZoneRangeBinding'
+            expression = '.*_PERIOD'
+            types = '.*'
+          }
+        }
       }
       generate {
         relations = true

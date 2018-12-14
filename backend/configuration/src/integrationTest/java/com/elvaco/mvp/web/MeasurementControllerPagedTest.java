@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -165,6 +166,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       "",
       "",
       logicalMeterId,
+      PeriodRange.empty(),
       0,
       1,
       1,
@@ -183,6 +185,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
       "",
       "",
       logicalMeterId,
+      PeriodRange.empty(),
       0,
       1,
       1,

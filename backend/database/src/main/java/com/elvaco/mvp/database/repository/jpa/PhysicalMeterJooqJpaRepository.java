@@ -39,6 +39,16 @@ class PhysicalMeterJooqJpaRepository
   }
 
   @Override
+  public List<PhysicalMeterEntity> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  ) {
+    Predicate predicate = PHYSICAL_METER.logicalMeterPk.organisationId.eq(organisationId)
+      .and(PHYSICAL_METER.externalId.eq(externalId));
+    return createQuery(predicate).select(path).fetch();
+  }
+
+  @Override
   public Optional<PhysicalMeterEntity> findByOrganisationIdAndExternalIdAndAddress(
     UUID organisationId,
     String externalId,

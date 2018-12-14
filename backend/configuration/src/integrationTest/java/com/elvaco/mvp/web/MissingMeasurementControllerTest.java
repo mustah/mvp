@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -206,7 +207,8 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       MeterDefinition.GAS_METER.medium,
       "",
       logicalMeterId,
-      (long) 1,
+      PeriodRange.empty(),
+      1,
       1,
       1,
       emptySet(),

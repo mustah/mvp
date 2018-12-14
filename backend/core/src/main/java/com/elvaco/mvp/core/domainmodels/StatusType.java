@@ -24,16 +24,16 @@ public enum StatusType {
       .orElse(UNKNOWN);
   }
 
-  private boolean hasAlias(String status) {
-    return equals(STATUS_ALIASES.get(status));
-  }
-
   public boolean isReported() {
     return this != OK;
   }
 
   public boolean isNotUnknown() {
     return this != UNKNOWN;
+  }
+
+  private boolean hasAlias(String status) {
+    return equals(STATUS_ALIASES.get(status));
   }
 
   private static Map<String, StatusType> statusTypeAliasMap() {

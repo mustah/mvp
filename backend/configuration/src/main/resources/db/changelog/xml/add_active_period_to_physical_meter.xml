@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Add active period to physical_meter" author="Anton Löfgren">
+    <addColumn tableName="physical_meter">
+      <column name="active_period" type="tstzrange" defaultValueComputed="'empty'::tstzrange"/>
+    </addColumn>
+    <addColumn tableName="physical_meter_aud" schemaName="evoaudit">
+      <column name="active_period_mod" type="boolean"/>
+      <column name="active_period" type="tstzrange"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

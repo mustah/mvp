@@ -52,6 +52,7 @@ public class PhysicalMeterEntityMapper {
       domainModel.medium,
       domainModel.manufacturer,
       domainModel.logicalMeterId,
+      domainModel.activePeriod,
       domainModel.readIntervalMinutes,
       domainModel.revision,
       domainModel.mbusDeviceType,
@@ -84,6 +85,7 @@ public class PhysicalMeterEntityMapper {
       .logicalMeterId(entity.getLogicalMeterId())
       .readIntervalMinutes(entity.readIntervalMinutes)
       .revision(entity.revision)
-      .mbusDeviceType(entity.mbusDeviceType);
+      .mbusDeviceType(entity.mbusDeviceType)
+      .activePeriod(entity.activePeriod);
   }
 }
