@@ -6,7 +6,7 @@ import {
   defaultQuantityForMedium,
   Medium,
   Quantity,
-  quantityUnits
+  quantityAttributes
 } from '../graph/measurement/measurementModels';
 import {IndicatorState} from './indicatorReducer';
 
@@ -51,9 +51,9 @@ export const canToggleMedia =
   (previouslySelected: Quantity[], addToSelection: Quantity): boolean => {
     const units = new Set(
       previouslySelected
-        .map((quantity) => quantityUnits[quantity] || null)
+        .map((quantity) => quantityAttributes[quantity].unit || null)
         .filter((unit) => unit !== null),
     );
-    units.add(quantityUnits[addToSelection]);
+    units.add(quantityAttributes[addToSelection].unit);
     return units.size <= 2;
   };

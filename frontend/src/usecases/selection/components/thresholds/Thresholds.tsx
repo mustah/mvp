@@ -6,8 +6,7 @@ import {Medium} from '../../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {
   Quantity,
-  quantityUnits,
-  quantityDisplayModes,
+  quantityAttributes,
   QunantityDisplayMode
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
@@ -90,7 +89,7 @@ export const Thresholds = (props: Props) => {
   const onChangeQuantity = (event, index, newValue: string) => setQuery({
     ...currentQuery,
     quantity: newValue as Quantity,
-    unit: quantityUnits[newValue as Quantity]
+    unit: quantityAttributes[newValue as Quantity].unit
   });
 
   const onChangeRelationalOperator = (event, index, newValue: string) => setQuery({
@@ -99,7 +98,7 @@ export const Thresholds = (props: Props) => {
   });
 
   const onChangeValue = (event, newValue: string) => setQuery({...currentQuery, value: newValue});
-  const displayModeText = quantityDisplayModes[quantity as Quantity] ===
+  const displayModeText = quantityAttributes[quantity as Quantity].displayMode ===
                      QunantityDisplayMode.consumption ? 'consumption' : 'meter value';
   return (
     <Row className={className}>
