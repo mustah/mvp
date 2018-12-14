@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -125,7 +126,7 @@ public class DashboardControllerTest extends IntegrationTest {
       startDate
     );
 
-    List<PhysicalMeterEntity> physicalMeters = singletonList(
+    List<PhysicalMeterEntity> physicalMeters = List.of(
       newPhysicalMeterEntity(logicalMeter.getLogicalMeterId(), GAS_METER)
     );
 
@@ -302,7 +303,7 @@ public class DashboardControllerTest extends IntegrationTest {
       meterDefinition.medium,
       "",
       logicalMeterId,
-      PeriodRange.empty(),
+      PeriodRange.from(PeriodBound.inclusiveOf(startDate)),
       TimeUnit.DAYS.toMinutes(1),
       1,
       1,

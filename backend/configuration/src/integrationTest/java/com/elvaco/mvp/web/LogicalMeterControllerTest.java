@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
@@ -72,6 +73,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class LogicalMeterControllerTest extends IntegrationTest {
@@ -188,9 +190,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusZeroPercentWhenNoMeasurements() {
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(
-      YESTERDAY.minusMinutes(15)
-    );
+    LogicalMeter districtHeatingMeter = saveLogicalMeterDistrictHeating();
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
@@ -218,9 +218,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusFiftyPercent() {
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(
-      YESTERDAY.minusMinutes(15)
-    );
+    ZonedDateTime created = YESTERDAY.minusMinutes(15);
+    LogicalMeter districtHeatingMeter = saveLogicalMeterDistrictHeating();
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
@@ -233,7 +232,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       StatusLogEntry.builder()
         .primaryKey(new Pk(physicalMeter.id, context().organisationId()))
         .status(OK)
-        .start(YESTERDAY.minusMinutes(15))
+        .start(created)
         .stop(YESTERDAY.plusHours(1))
         .build()
     );
@@ -257,7 +256,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusFiftyPercentWhenMeterHasStatuses() {
-    var districtHeatingMeter = saveLogicalMeter(YESTERDAY.minusMinutes(15));
+    var districtHeatingMeter = saveLogicalMeterDistrictHeating();
 
     var physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
@@ -300,12 +299,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
-    assertThat(response.getContent()).extracting("collectionPercentage").containsExactly(40.0);
+    assertThat(response.getContent()).extracting(m -> m.collectionPercentage).containsExactly(40.0);
   }
 
   @Test
   public void collectionStatusFiftyPercentWhenMeterHasMultipleActiveStatusesWithinPeriod() {
-    var districtHeatingMeter = saveLogicalMeter(YESTERDAY.minusMinutes(15));
+    var districtHeatingMeter = saveLogicalMeterDistrictHeating();
 
     var physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
@@ -347,7 +346,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage(metersUrl(YESTERDAY, YESTERDAY.plusHours(4)), PagedLogicalMeterDto.class)
       .getContent();
 
-    assertThat(content).extracting("collectionPercentage").containsExactly(50.0);
+    assertThat(content).extracting(m -> m.collectionPercentage).containsExactly(50.0);
   }
 
   @Test
@@ -509,9 +508,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusTwoOutOfThreeMissing() {
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(
-      YESTERDAY.minusMinutes(15)
-    );
+    LogicalMeter districtHeatingMeter = saveLogicalMeterDistrictHeating();
 
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
@@ -547,9 +544,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusMeterChangeWithIntervalUpdate() {
-    LogicalMeter districtHeatingMeter = saveLogicalMeter(
-      YESTERDAY.minusMinutes(15)
-    );
+    LogicalMeter districtHeatingMeter = saveLogicalMeterDistrictHeating();
 
     PhysicalMeter physicalMeter1 = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
@@ -615,6 +610,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(districtHeatingMeter.id)
       .externalId(randomUUID().toString())
+      .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
       .readIntervalMinutes(60)
       .build()
     );
@@ -643,8 +639,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
-    assertThat(paginatedLogicalMeters.getContent()).hasSize(1);
-    assertThat(paginatedLogicalMeters.getContent().get(0).collectionPercentage).isEqualTo(100.0);
+    assertThat(paginatedLogicalMeters.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .contains(100.0);
   }
 
   @Test
@@ -733,18 +730,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(firstLogicalMeter.id)
+      .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
       .externalId("meter-one")
       .readIntervalMinutes(15)
       .build()
     );
     PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(secondLogicalMeter.id)
+      .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
       .externalId("meter-two")
       .readIntervalMinutes(15)
       .build()
     );
     PhysicalMeter thirdMeter = physicalMeters.save(physicalMeter()
       .logicalMeterId(thirdLogicalMeter.id)
+      .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
       .externalId("meter-three")
       .readIntervalMinutes(15)
       .build()
@@ -792,7 +792,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getNumberOfElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    assertThat(response.getContent()).extracting("id").containsExactly(firstLogicalMeter.id);
+    assertThat(response.getContent()).extracting(m -> m.id).containsExactly(firstLogicalMeter.id);
   }
 
   @Test
@@ -1483,25 +1483,20 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  @Ignore
   public void findAllMeters_FindsActivePhysicalMeter() {
     var logicalMeter = saveLogicalMeter(DISTRICT_HEATING_METER);
-    var now = ZonedDateTime.now();
 
-    var meterFixture = PhysicalMeter.builder()
-      .organisationId(context().organisationId())
-      .medium("Heat")
-      .logicalMeterId(logicalMeter.id)
-      .externalId(randomUUID().toString());
+    var meterFixture = physicalMeter()
+      .logicalMeterId(logicalMeter.id);
 
     var meterDuringChosenInterval = meterFixture
       .address("1")
-      .activePeriod(PeriodRange.halfOpenFrom(now.minusDays(5), now.minusDays(1)))
+      .activePeriod(PeriodRange.halfOpenFrom(start.minusDays(5), start.minusDays(2)))
       .build();
 
     var meterAfterChosenInterval = meterFixture
       .address("2")
-      .activePeriod(PeriodRange.halfOpenFrom(now.minusDays(1), null))
+      .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start.minusDays(2))))
       .build();
 
     physicalMeters.save(meterDuringChosenInterval);
@@ -1511,25 +1506,24 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     Page<PagedLogicalMeterDto> oldPeriod = asUser()
       .getPage(
-        url
-          .period(now.minusDays(5), now.minusDays(2))
+        Url.builder().path("/meters")
+          .period(start.minusDays(5), start.minusDays(3))
           .build(),
         PagedLogicalMeterDto.class
       );
-
-    assertThat(oldPeriod.getContent()).hasSize(1);
-    assertThat(oldPeriod.getContent().get(0).address).isEqualTo("1");
 
     Page<PagedLogicalMeterDto> currentPeriod = asUser()
       .getPage(
-        url
-          .period(now.minusDays(1), now)
+        Url.builder().path("/meters")
+          .period(start.minusDays(1), start)
           .build(),
         PagedLogicalMeterDto.class
       );
 
-    assertThat(currentPeriod.getContent()).hasSize(1);
-    assertThat(currentPeriod.getContent().get(0).address).isEqualTo("2");
+    assertSoftly(softly -> {
+      softly.assertThat(oldPeriod.getContent()).extracting(m -> m.address).contains("1");
+      softly.assertThat(currentPeriod.getContent()).extracting(m -> m.address).contains("2");
+    });
   }
 
   @Test
@@ -1989,13 +1983,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .start(start);
 
     PhysicalMeter physicalMeter = physicalMeters.save(
-      physicalMeter().logicalMeterId(logicalMeter1.id).build()
+      physicalMeter()
+        .logicalMeterId(logicalMeter1.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
+        .build()
     );
 
     saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeter.primaryKey()).build());
 
     PhysicalMeter physicalMeterWithAlarm = physicalMeters.save(
-      physicalMeter().logicalMeterId(logicalMeter2.id).build()
+      physicalMeter()
+        .logicalMeterId(logicalMeter2.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
+        .build()
     );
 
     saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeterWithAlarm.primaryKey()).build());
@@ -2035,13 +2035,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .start(start);
 
     PhysicalMeter physicalMeter = physicalMeters.save(
-      physicalMeter().logicalMeterId(logicalMeter1.id).build()
+      physicalMeter()
+        .logicalMeterId(logicalMeter1.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
+        .build()
     );
 
     saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeter.primaryKey()).build());
 
     PhysicalMeter physicalMeterWithAlarm = physicalMeters.save(
-      physicalMeter().logicalMeterId(logicalMeter2.id).build()
+      physicalMeter()
+        .logicalMeterId(logicalMeter2.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
+        .build()
     );
 
     saveStatusLogForMeter(statusBuilder.primaryKey(physicalMeterWithAlarm.primaryKey()).build());
@@ -2078,6 +2084,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = physicalMeters.save(
       physicalMeter()
         .logicalMeterId(logicalMeter.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
         .externalId("123123")
         .build()
     );
@@ -2108,6 +2115,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = physicalMeters.save(
       physicalMeter()
         .logicalMeterId(logicalMeter.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
         .externalId("123123")
         .build()
     );
@@ -2147,6 +2155,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter()
         .logicalMeterId(logicalMeter.id)
         .externalId("123123")
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
         .build()
     );
 
@@ -2239,9 +2248,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
   }
 
-  private LogicalMeter saveLogicalMeter(ZonedDateTime dateTime) {
+  private LogicalMeter saveLogicalMeterDistrictHeating() {
     return logicalMeters.save(logicalMeterBuilder(DISTRICT_HEATING_METER)
-      .created(dateTime)
+      .created(YESTERDAY.minusMinutes(15))
       .build());
   }
 
@@ -2302,6 +2311,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .address("111-222-333-444-1")
       .externalId(randomUUID().toString())
       .medium("Heat")
+      .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(YESTERDAY.minusMinutes(15))))
       .manufacturer("ELV1");
   }
 

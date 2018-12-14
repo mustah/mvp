@@ -9,6 +9,8 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
@@ -521,6 +523,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       PhysicalMeter.builder()
         .logicalMeterId(logicalMeter.id)
         .externalId(logicalMeter.externalId)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(NOW)))
         .address("v1")
         .manufacturer("ELV")
         .organisationId(context().organisationId())

@@ -8,6 +8,8 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -74,18 +76,19 @@ public class SummaryControllerTest extends IntegrationTest {
     logicalMeters.save(logicalMeter);
     logicalMeters.save(newLogicalMeter());
 
+    var start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
+
     var physicalMeterWithAlarm = physicalMeters.save(
       PhysicalMeter.builder()
         .organisationId(context().organisationId())
         .address("111-222-333-444-1")
         .externalId(randomUUID().toString())
         .medium(Medium.GAS.medium)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(start)))
         .manufacturer("Elvaco")
         .logicalMeterId(logicalMeter.id)
         .build()
     );
-
-    var start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
 
     meterAlarmLogs.save(AlarmLogEntry.builder()
       .primaryKey(physicalMeterWithAlarm.primaryKey())
