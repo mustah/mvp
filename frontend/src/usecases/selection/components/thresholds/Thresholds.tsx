@@ -98,8 +98,10 @@ export const Thresholds = (props: Props) => {
   });
 
   const onChangeValue = (event, newValue: string) => setQuery({...currentQuery, value: newValue});
-  const displayModeText = quantityAttributes[quantity as Quantity].displayMode ===
-                     QunantityDisplayMode.consumption ? 'consumption' : 'meter value';
+  const displayModeText = quantityAttributes[quantity as Quantity] &&
+                          quantityAttributes[quantity as Quantity].displayMode === QunantityDisplayMode.consumption
+    ? 'consumption'
+    : 'meter value';
   return (
     <Row className={className}>
       <DropDownMenu
