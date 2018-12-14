@@ -11,7 +11,7 @@ import {
   UserSelection
 } from '../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../user-selection/userSelectionReducer';
-import {Medium, Quantity, quantityUnits} from '../../graph/measurement/measurementModels';
+import {Medium, Quantity, quantityAttributes} from '../../graph/measurement/measurementModels';
 import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 
 describe('indicatorReducer', () => {
@@ -84,7 +84,7 @@ describe('indicatorReducer', () => {
       const payload: ThresholdQuery = {
         quantity: Quantity.returnTemperature,
         relationalOperator: RelationalOperator.lt,
-        unit: quantityUnits[Quantity.returnTemperature],
+        unit: quantityAttributes[Quantity.returnTemperature].unit,
         value: '0',
       };
       const newState: IndicatorState = indicator(state, {type: SET_THRESHOLD, payload});

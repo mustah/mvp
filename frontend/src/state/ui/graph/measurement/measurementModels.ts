@@ -83,6 +83,11 @@ export interface MeasurementResponses extends Measurements {
   cities: AverageApiResponse;
 }
 
+export interface QuantityAttributes {
+  unit: string;
+  displayMode: QunantityDisplayMode;
+}
+
 export enum Quantity {
   volume = 'Volume',
   flow = 'Flow',
@@ -103,34 +108,19 @@ export enum QunantityDisplayMode {
   consumption
 }
 
-export const quantityUnits: { [q in Quantity]: string } = {
-  [Quantity.energy]: 'kWh',
-  [Quantity.energyReturn]: 'kWh',
-  [Quantity.energyReactive]: 'kWh',
-  [Quantity.externalTemperature]: '°C',
-  [Quantity.volume]: 'm³',
-  [Quantity.power]: 'W',
-  [Quantity.flow]: 'm³/h',
-  [Quantity.forwardTemperature]: '°C',
-  [Quantity.returnTemperature]: '°C',
-  [Quantity.temperature]: '°C',
-  [Quantity.relativeHumidity]: '%',
-  [Quantity.differenceTemperature]: 'K',
-};
-
-export const quantityDisplayModes: {[q in Quantity]: QunantityDisplayMode } = {
-  [Quantity.energy]: QunantityDisplayMode.consumption,
-  [Quantity.energyReturn]: QunantityDisplayMode.consumption,
-  [Quantity.energyReactive]: QunantityDisplayMode.consumption,
-  [Quantity.externalTemperature]: QunantityDisplayMode.meterValue,
-  [Quantity.volume]: QunantityDisplayMode.consumption,
-  [Quantity.power]: QunantityDisplayMode.meterValue,
-  [Quantity.flow]: QunantityDisplayMode.meterValue,
-  [Quantity.forwardTemperature]: QunantityDisplayMode.meterValue,
-  [Quantity.returnTemperature]: QunantityDisplayMode.meterValue,
-  [Quantity.temperature]: QunantityDisplayMode.meterValue,
-  [Quantity.relativeHumidity]: QunantityDisplayMode.meterValue,
-  [Quantity.differenceTemperature]: QunantityDisplayMode.meterValue,
+export const quantityAttributes: { [q in Quantity]: QuantityAttributes } = {
+  [Quantity.energy]: {unit: 'kWh', displayMode: QunantityDisplayMode.consumption},
+  [Quantity.energyReturn]: {unit: 'kWh', displayMode: QunantityDisplayMode.consumption},
+  [Quantity.energyReactive]: {unit: 'kWh', displayMode: QunantityDisplayMode.consumption},
+  [Quantity.externalTemperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.volume]: {unit: 'm³', displayMode: QunantityDisplayMode.consumption},
+  [Quantity.power]: {unit: 'W', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.flow]: {unit: 'm³/h', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.forwardTemperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.returnTemperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.temperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.relativeHumidity]: {unit: '%', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.differenceTemperature]: {unit: 'K', displayMode: QunantityDisplayMode.meterValue},
 };
 
 export const enum Medium {

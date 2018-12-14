@@ -8,7 +8,7 @@ import {getThresholdMedia} from '../../../state/selection-tree/selectionTreeSele
 import {
   Medium,
   Quantity,
-  quantityUnits
+  quantityAttributes
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {
   RelationalOperator,
@@ -179,7 +179,7 @@ describe('reportSelectors', () => {
       const state: ThresholdQuery = {
         quantity: Quantity.returnTemperature,
         relationalOperator: RelationalOperator.lt,
-        unit: quantityUnits[Quantity.returnTemperature],
+        unit: quantityAttributes[Quantity.returnTemperature].unit,
         value: '0',
       };
 
