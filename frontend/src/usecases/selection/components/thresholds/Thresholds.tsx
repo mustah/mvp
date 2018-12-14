@@ -4,7 +4,12 @@ import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../../services/translationService';
-import {Quantity, quantityUnits} from '../../../../state/ui/graph/measurement/measurementModels';
+import {
+  Quantity,
+  quantityUnits,
+  quantityDisplayModes,
+  QunantityDisplayMode
+} from '../../../../state/ui/graph/measurement/measurementModels';
 import {
   OnChangeThreshold,
   RelationalOperator,
@@ -94,7 +99,8 @@ export const Thresholds = (props: Props) => {
   });
 
   const onChangeValue = (event, newValue: string) => setQuery({...currentQuery, value: newValue});
-
+  const displayModeText = quantityDisplayModes[quantity as Quantity] ===
+                     QunantityDisplayMode.consumption ? 'consumption' : 'meter value';
   return (
     <Row className={className}>
       <DropDownMenu
@@ -119,7 +125,7 @@ export const Thresholds = (props: Props) => {
           value={value}
           style={textFieldStyle}
           autoComplete="off"
-          hintText={firstUpperTranslated('meter value')}
+          hintText={firstUpperTranslated(displayModeText)}
         />
         <Medium className="Unit">{unit}</Medium>
       </RowMiddle>

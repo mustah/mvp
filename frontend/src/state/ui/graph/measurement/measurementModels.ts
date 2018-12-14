@@ -98,6 +98,11 @@ export enum Quantity {
   externalTemperature = 'External temperature',
 }
 
+export enum QunantityDisplayMode {
+  meterValue = 1,
+  consumption
+}
+
 export const quantityUnits: { [q in Quantity]: string } = {
   [Quantity.energy]: 'kWh',
   [Quantity.energyReturn]: 'kWh',
@@ -111,6 +116,21 @@ export const quantityUnits: { [q in Quantity]: string } = {
   [Quantity.temperature]: '°C',
   [Quantity.relativeHumidity]: '%',
   [Quantity.differenceTemperature]: 'K',
+};
+
+export const quantityDisplayModes: {[q in Quantity]: QunantityDisplayMode } = {
+  [Quantity.energy]: QunantityDisplayMode.consumption,
+  [Quantity.energyReturn]: QunantityDisplayMode.consumption,
+  [Quantity.energyReactive]: QunantityDisplayMode.consumption,
+  [Quantity.externalTemperature]: QunantityDisplayMode.meterValue,
+  [Quantity.volume]: QunantityDisplayMode.consumption,
+  [Quantity.power]: QunantityDisplayMode.meterValue,
+  [Quantity.flow]: QunantityDisplayMode.meterValue,
+  [Quantity.forwardTemperature]: QunantityDisplayMode.meterValue,
+  [Quantity.returnTemperature]: QunantityDisplayMode.meterValue,
+  [Quantity.temperature]: QunantityDisplayMode.meterValue,
+  [Quantity.relativeHumidity]: QunantityDisplayMode.meterValue,
+  [Quantity.differenceTemperature]: QunantityDisplayMode.meterValue,
 };
 
 export const enum Medium {

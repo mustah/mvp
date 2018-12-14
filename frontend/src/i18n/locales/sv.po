@@ -197,6 +197,9 @@ msgstr "gränsvärden"
 msgid "meter value"
 msgstr "mätvärde"
 
+msgid "consumption"
+msgstr "förbrukning"
+
 msgid "collection percentage"
 msgstr "insamling %"
 
