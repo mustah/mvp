@@ -197,6 +197,9 @@ msgstr "thresholds"
 msgid "meter value"
 msgstr "meter value"
 
+msgid "consumption"
+msgstr "consumption"
+
 msgid "collection percentage"
 msgstr "collection %"
 
