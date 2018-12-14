@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.domainmodels.City;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
-import com.elvaco.mvp.database.repository.jooq.LocationJooqConditions;
+import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -43,14 +43,16 @@ class LocationJooqJpaRepository
 
   @Override
   public Page<City> findAllCities(RequestParameters parameters, Pageable pageable) {
-    var filters = toFilters(parameters);
-
     var query = dsl.selectDistinct(
       LOCATION.CITY,
       LOCATION.COUNTRY
     ).from(LOCATION);
 
-    new LocationJooqConditions().apply(filters, query);
+    var countQuery = dsl.selectDistinct().from(LOCATION);
+
+    FilterVisitors.location().apply(toFilters(parameters))
+      .applyJoinsOn(query)
+      .applyJoinsOn(countQuery);
 
     var addresses = query
       .where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull()))
@@ -59,24 +61,22 @@ class LocationJooqJpaRepository
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(City.class);
 
-    var countQuery = dsl.selectDistinct().from(LOCATION);
-
-    new LocationJooqConditions().apply(filters, countQuery);
-
     return getPage(addresses, pageable, () -> dsl.fetchCount(countQuery));
   }
 
   @Override
   public Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable) {
-    var filters = toFilters(parameters);
-
     var query = dsl.selectDistinct(
       LOCATION.STREET_ADDRESS,
       LOCATION.CITY,
       LOCATION.COUNTRY
     ).from(LOCATION);
 
-    new LocationJooqConditions().apply(filters, query);
+    var countQuery = dsl.selectDistinct().from(LOCATION);
+
+    FilterVisitors.location().apply(toFilters(parameters))
+      .applyJoinsOn(query)
+      .applyJoinsOn(countQuery);
 
     var addresses = query
       .where(LOCATION.COUNTRY.isNotNull()
@@ -86,10 +86,6 @@ class LocationJooqJpaRepository
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(Address.class);
-
-    var countQuery = dsl.selectDistinct().from(LOCATION);
-
-    new LocationJooqConditions().apply(filters, countQuery);
 
     return getPage(addresses, pageable, () -> dsl.fetchCount(countQuery));
   }

@@ -17,7 +17,7 @@ import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
 import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
-abstract class EmptyJooqFilterVisitor extends JooqFilterVisitor {
+abstract class EmptyFilterVisitor extends JooqFilterVisitor {
 
   @Override
   public void visit(CityFilter filter) {}

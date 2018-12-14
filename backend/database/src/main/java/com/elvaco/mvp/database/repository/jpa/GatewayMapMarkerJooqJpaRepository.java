@@ -7,7 +7,7 @@ import com.elvaco.mvp.core.domainmodels.MapMarker;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.filter.LocationConfidenceFilter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -25,7 +25,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog.METER_ALA
 class GatewayMapMarkerJooqJpaRepository implements MapMarkerJpaRepository {
 
   private final DSLContext dsl;
-  private final JooqFilterVisitor gatewayJooqConditions;
+  private final FilterAcceptor gatewayFilters;
 
   @Override
   public Set<MapMarker> findAllMapMarkers(RequestParameters parameters) {
@@ -39,7 +39,7 @@ class GatewayMapMarkerJooqJpaRepository implements MapMarkerJpaRepository {
 
     Filters filters = toFilters(parameters).add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD));
 
-    gatewayJooqConditions.apply(filters, query);
+    gatewayFilters.apply(filters).applyJoinsOn(query);
 
     return new HashSet<>(query.fetchInto(MapMarker.class));
   }

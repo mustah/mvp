@@ -3,7 +3,7 @@ package com.elvaco.mvp.database.repository.jpa;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.filter.Filters;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
-import com.elvaco.mvp.database.repository.jooq.JooqFilterVisitor;
+import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -19,7 +19,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_ME
 class SummaryJooqJpaRepository implements SummaryJpaRepository {
 
   private final DSLContext dsl;
-  private final JooqFilterVisitor logicalMeterJooqConditions;
+  private final FilterAcceptor logicalMeterFilters;
 
   @Override
   public MeterSummary summary(RequestParameters parameters) {
@@ -35,14 +35,15 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   private long countMeters(Filters filters) {
     var query = dsl.select(DSL.countDistinct(LOGICAL_METER.ID)).from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(filters, query);
+    logicalMeterFilters.apply(filters).applyJoinsOn(query);
+
     return query.fetchOne(0, Long.class);
   }
 
   private Long countCities(Filters filters) {
     var query = dsl.select(DSL.countDistinct(LOCATION.COUNTRY, LOCATION.CITY)).from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(filters, query);
+    logicalMeterFilters.apply(filters).applyJoinsOn(query);
 
     return query.where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull()))
       .fetchOne(0, Long.class);
@@ -55,12 +56,11 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
       LOCATION.STREET_ADDRESS
     )).from(LOGICAL_METER);
 
-    logicalMeterJooqConditions.apply(filters, query);
+    logicalMeterFilters.apply(filters).applyJoinsOn(query);
 
-    return query
-      .where(LOCATION.COUNTRY.isNotNull()
-        .and(LOCATION.CITY.isNotNull())
-        .and(LOCATION.STREET_ADDRESS.isNotNull()))
+    return query.where(LOCATION.COUNTRY.isNotNull()
+      .and(LOCATION.CITY.isNotNull())
+      .and(LOCATION.STREET_ADDRESS.isNotNull()))
       .fetchOne(0, Long.class);
   }
 }

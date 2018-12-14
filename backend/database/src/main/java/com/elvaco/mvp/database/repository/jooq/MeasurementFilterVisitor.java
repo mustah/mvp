@@ -12,8 +12,7 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_METER;
 
-public class MeasurementJooqConditions
-  extends EmptyJooqFilterVisitor {
+class MeasurementFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(OrganisationIdFilter filter) {
