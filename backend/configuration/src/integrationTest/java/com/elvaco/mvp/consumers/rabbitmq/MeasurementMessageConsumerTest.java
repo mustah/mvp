@@ -25,8 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.offset;
 import static org.junit.Assume.assumeTrue;
 
@@ -117,6 +119,14 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(0);
+  }
+
+  @Test
+  public void emptyMeasurementMessageIsDiscarded() {
+    var measurementMessage = newMeasurementMessage(emptyList());
+
+    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage))
+      .isInstanceOf(IllegalArgumentException.class);
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
