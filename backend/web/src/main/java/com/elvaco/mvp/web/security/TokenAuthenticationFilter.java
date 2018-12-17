@@ -11,7 +11,6 @@ import com.elvaco.mvp.web.exception.InvalidToken;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,8 +46,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
       setAuthentication(getAuthenticationTokenFrom(header));
       chain.doFilter(request, response);
     } catch (AuthenticationException e) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
       SecurityContextHolder.clearContext();
-      response.sendError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
     }
   }
 
