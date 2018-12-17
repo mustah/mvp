@@ -34,7 +34,7 @@ public interface LogicalMeterJpaRepository {
 
   List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 
-  List<LogicalMeterEntity> findAll(RequestParameters parameters);
+  Set<LogicalMeterEntity> findAll(RequestParameters parameters);
 
   Page<LogicalMeterSummaryDto> findAll(RequestParameters parameters, Pageable pageable);
 
