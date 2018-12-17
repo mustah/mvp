@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 public class UnauthorizedDto {
 
   @Builder.Default
+  public Long timestamp = System.currentTimeMillis();
+  @Builder.Default
   public Integer status = HttpStatus.UNAUTHORIZED.value();
   @Builder.Default
   public String error = HttpStatus.UNAUTHORIZED.getReasonPhrase();

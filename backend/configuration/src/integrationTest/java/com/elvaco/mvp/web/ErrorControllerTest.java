@@ -18,7 +18,7 @@ public class ErrorControllerTest extends IntegrationTest {
         ErrorMessageDto.class
       ).getBody()
     ).isEqualTo(new ErrorMessageDto(
-      "Internal server error, please contact support.",
+      "error",
       HttpStatus.INTERNAL_SERVER_ERROR.value()
     ));
   }

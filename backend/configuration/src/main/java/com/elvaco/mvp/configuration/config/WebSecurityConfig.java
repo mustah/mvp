@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.elvaco.mvp.core.spi.security.TokenService;
-import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.security.TokenAuthenticationFilter;
 import com.elvaco.mvp.web.security.TokenAuthenticationProvider;
 import com.elvaco.mvp.web.security.UserDetailAuthenticationProvider;
@@ -24,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 
 @RequiredArgsConstructor
@@ -91,16 +89,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       AuthenticationException authException
     ) throws IOException {
       response.setHeader(WWW_AUTHENTICATE, FORM_BASED);
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("application/json");
-      response.setCharacterEncoding("UTF-8");
-      response.getWriter()
-        .write(OBJECT_MAPPER.writeValueAsString(
-          UnauthorizedDto.builder()
-            .path(request.getServletPath())
-            .message(authException.getMessage())
-            .build()
-        ));
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
   }
 }

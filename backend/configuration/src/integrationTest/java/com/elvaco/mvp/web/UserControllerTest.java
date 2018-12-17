@@ -53,6 +53,19 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
+  /**
+   * Spring's DefaultErrorAttribute class builds this
+   * DTO as a map, but it is not used explicitly in our production code.
+   * <p/>
+   * It is important not to change the representation of this map, since that would break the
+   * frontend's expectations.
+   * <p/>
+   * Note that this DTO is a special case, compared to other "error DTO's", since it is not produced
+   * in the ApiExceptionHandler, but rather by Spring Security.
+   *
+   * @see com.elvaco.mvp.web.api.ApiExceptionHandler
+   * @see org.springframework.boot.web.servlet.error.DefaultErrorAttributes
+   **/
   @Test
   public void userIsNotAuthorized() {
     String path = "/users/2";
@@ -60,11 +73,12 @@ public class UserControllerTest extends IntegrationTest {
     ResponseEntity<UnauthorizedDto> response = restClient()
       .get(path, UnauthorizedDto.class);
 
+    UnauthorizedDto error = response.getBody();
+
     UnauthorizedDto expected = UnauthorizedDto.builder()
       .message("Full authentication is required to access this resource")
+      .timestamp(error.timestamp)
       .path(apiPathOf(path)).build();
-
-    UnauthorizedDto error = response.getBody();
 
     assertThat(error).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -78,11 +92,11 @@ public class UserControllerTest extends IntegrationTest {
       .loginWith("admin", "wrong-password")
       .get(path, UnauthorizedDto.class);
 
+    UnauthorizedDto error = response.getBody();
     UnauthorizedDto expected = UnauthorizedDto.builder()
       .message("Bad credentials")
+      .timestamp(error.timestamp)
       .path(apiPathOf(path)).build();
-
-    UnauthorizedDto error = response.getBody();
 
     assertThat(error).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
