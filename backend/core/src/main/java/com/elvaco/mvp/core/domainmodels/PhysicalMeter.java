@@ -42,6 +42,8 @@ public class PhysicalMeter implements Identifiable<UUID>, PrimaryKeyed {
   public List<StatusLogEntry> statuses;
   @Singular
   public List<AlarmLogEntry> alarms;
+  @Default
+  public PeriodRange activePeriod = PeriodRange.empty();
 
   @Override
   public UUID getId() {
@@ -64,5 +66,9 @@ public class PhysicalMeter implements Identifiable<UUID>, PrimaryKeyed {
   @Override
   public PrimaryKey primaryKey() {
     return new Pk(id, organisationId);
+  }
+
+  public boolean isActive(ZonedDateTime when) {
+    return activePeriod.contains(when);
   }
 }

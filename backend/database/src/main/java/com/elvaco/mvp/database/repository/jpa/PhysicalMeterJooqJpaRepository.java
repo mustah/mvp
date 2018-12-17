@@ -39,6 +39,16 @@ class PhysicalMeterJooqJpaRepository
   }
 
   @Override
+  public List<PhysicalMeterEntity> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  ) {
+    return nativeQuery(dsl.select().from(PHYSICAL_METER)
+      .where(PHYSICAL_METER.ORGANISATION_ID.equal(organisationId))
+      .and(PHYSICAL_METER.EXTERNAL_ID.equal(externalId)));
+  }
+
+  @Override
   public Optional<PhysicalMeterEntity> findByOrganisationIdAndExternalIdAndAddress(
     UUID organisationId,
     String externalId,

@@ -177,7 +177,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         .address(address)
         .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
         .externalId(facilityId)
-        .build());
+        .build()
+      );
 
     return Optional.of(
       physicalMeter.toBuilder()
@@ -186,6 +187,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         .revision(meterDto.revision)
         .mbusDeviceType(meterDto.mbusDeviceType)
         .readIntervalMinutes(readInterval(meterDto, physicalMeter))
+        .activePeriod(physicalMeter.activePeriod)
         .logicalMeterId(Optional.ofNullable(logicalMeter)
           .map(LogicalMeter::getId)
           .orElse(physicalMeter.logicalMeterId))

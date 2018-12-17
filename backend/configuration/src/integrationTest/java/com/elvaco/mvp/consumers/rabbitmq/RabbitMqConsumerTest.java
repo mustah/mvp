@@ -1,8 +1,11 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
@@ -20,7 +23,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import static com.elvaco.mvp.producers.rabbitmq.MessageSerializer.toJson;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
@@ -106,7 +108,7 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       new FacilityIdDto("facility-123-456"),
       "organisation-123-456",
       "test",
-      emptyList()
+      List.of(new ValueDto(LocalDateTime.now(), 0.659, "°C", "Return temp."))
     );
 
     publishMessage(toJson(message).getBytes());

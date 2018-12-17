@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -56,6 +57,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       "Some medium",
       "ELV",
       logicalMeterId,
+      PeriodRange.empty(),
       15,
       1,
       1,

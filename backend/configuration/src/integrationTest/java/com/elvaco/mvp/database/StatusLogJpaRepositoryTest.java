@@ -40,6 +40,7 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
         "",
         "",
         null,
+        null,
         0,
         1,
         1,

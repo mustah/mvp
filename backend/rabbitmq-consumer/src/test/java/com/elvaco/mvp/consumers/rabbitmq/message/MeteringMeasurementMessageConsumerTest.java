@@ -15,6 +15,8 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -49,10 +51,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +65,7 @@ public class MeteringMeasurementMessageConsumerTest {
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
   private static final String ADDRESS = "1234";
+  private static final String SECOND_METER_ADDRESS = "9876";
   private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   private static final String ORGANISATION_SLUG = "some-organisation";
 
@@ -74,10 +77,12 @@ public class MeteringMeasurementMessageConsumerTest {
   );
 
   private static final String EXTERNAL_ID = "ABC-123";
-  private static final ZonedDateTime CREATED_DATE_TIME =
-    ZonedDateTime.of(LocalDateTime.parse("2018-03-07T16:13:09"), METERING_TIMEZONE);
-  private static final LocalDateTime MEASUREMENT_TIMESTAMP =
-    LocalDateTime.parse("2018-03-07T16:13:09");
+  private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
+    "2018-03-07T16:13:09");
+  private static final ZonedDateTime ZONED_MEASUREMENT_TIMESTAMP = ZonedDateTime.of(
+    MEASUREMENT_TIMESTAMP,
+    METERING_TIMEZONE
+  );
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -145,7 +150,8 @@ public class MeteringMeasurementMessageConsumerTest {
       new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_SLUG,
       "Test source system",
-      emptyList()
+      asList(
+        new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
     );
 
     messageConsumer.accept(message);
@@ -164,7 +170,8 @@ public class MeteringMeasurementMessageConsumerTest {
       new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_SLUG,
       "Test source system",
-      emptyList()
+      asList(
+        new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
     );
 
     messageConsumer.accept(message);
@@ -360,7 +367,7 @@ public class MeteringMeasurementMessageConsumerTest {
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     Measurement expectedMeasurement = Measurement.builder()
-      .created(CREATED_DATE_TIME)
+      .created(ZONED_MEASUREMENT_TIMESTAMP)
       .quantity(QUANTITY)
       .value(1.0)
       .unit("kWh")
@@ -402,7 +409,7 @@ public class MeteringMeasurementMessageConsumerTest {
     List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(Measurement.builder()
-      .created(CREATED_DATE_TIME)
+      .created(ZONED_MEASUREMENT_TIMESTAMP)
       .quantity(QUANTITY)
       .value(1.0)
       .unit("kWh")
@@ -414,6 +421,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .medium(Medium.UNKNOWN_MEDIUM.medium)
         .logicalMeterId(logicalMeter.id)
         .readIntervalMinutes(0)
+        .activePeriod(physicalMeter.activePeriod)
         .build()
       ).build());
   }
@@ -660,6 +668,31 @@ public class MeteringMeasurementMessageConsumerTest {
     assertThat(response.isPresent()).isTrue();
     assertThat(response.get().gateway.id).isEqualTo(GATEWAY_EXTERNAL_ID);
     assertThat(response.get().facility.id).isEqualTo(EXTERNAL_ID);
+  }
+
+  private LogicalMeter givenLogicalAndPhysicalMeter(ZonedDateTime activePeriodStart) {
+    var organisation = saveDefaultOrganisation();
+    gateways.save(newGateway(organisation.id));
+    var logicalMeter = logicalMeters.save(
+      LogicalMeter.builder()
+        .externalId(EXTERNAL_ID)
+        .organisationId(organisation.id)
+        .meterDefinition(ELECTRICITY_METER)
+        .build());
+    var physicalMeter = physicalMeters.save(
+      PhysicalMeter.builder()
+        .address(ADDRESS)
+        .externalId(EXTERNAL_ID)
+        .manufacturer("ELV")
+        .medium(Medium.UNKNOWN_MEDIUM.medium)
+        .readIntervalMinutes(15)
+        .organisationId(organisation.id)
+        .medium(ELECTRICITY_METER.medium)
+        .logicalMeterId(logicalMeter.id)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
+        .build());
+    logicalMeters.save(logicalMeter.addPhysicalMeter(physicalMeter));
+    return logicalMeter;
   }
 
   private Organisation saveDefaultOrganisation() {

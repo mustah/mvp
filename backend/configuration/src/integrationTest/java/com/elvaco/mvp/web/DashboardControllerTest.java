@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
@@ -301,6 +302,7 @@ public class DashboardControllerTest extends IntegrationTest {
       meterDefinition.medium,
       "",
       logicalMeterId,
+      PeriodRange.empty(),
       TimeUnit.DAYS.toMinutes(1),
       1,
       1,
