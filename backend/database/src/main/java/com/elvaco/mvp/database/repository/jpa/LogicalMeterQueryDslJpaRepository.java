@@ -124,12 +124,12 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public List<LogicalMeterEntity> findAll(RequestParameters parameters) {
+  public Set<LogicalMeterEntity> findAll(RequestParameters parameters) {
     var query = dsl.select().from(LOGICAL_METER);
 
     logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
 
-    return nativeQuery(query);
+    return new HashSet<>(nativeQuery(query));
   }
 
   @Override

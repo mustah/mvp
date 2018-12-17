@@ -148,6 +148,43 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void shouldOnlyIncludeUnique_ById_LogicalMeters() {
+    LogicalMeter logicalMeter = saveLogicalMeter();
+
+    UUID physicalMeterId1 = randomUUID();
+    physicalMeters.save(physicalMeter()
+      .id(physicalMeterId1)
+      .logicalMeterId(logicalMeter.id)
+      .build());
+
+    UUID physicalMeterId2 = randomUUID();
+    physicalMeters.save(physicalMeter()
+      .id(physicalMeterId2)
+      .logicalMeterId(logicalMeter.id)
+      .build());
+
+    saveStatusLogForMeter(StatusLogEntry.builder()
+      .primaryKey(new Pk(physicalMeterId1, context().organisationId()))
+      .status(OK)
+      .start(YESTERDAY)
+      .build()
+    );
+
+    saveStatusLogForMeter(StatusLogEntry.builder()
+      .primaryKey(new Pk(physicalMeterId2, context().organisationId()))
+      .status(ERROR)
+      .start(YESTERDAY)
+      .build()
+    );
+
+    List<LogicalMeterDto> logicalMeters = asUser()
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(logicalMeters).hasSize(1);
+  }
+
+  @Test
   public void findById_MeterIncludesStatusChangeLog() {
     LogicalMeter logicalMeter = saveLogicalMeter();
 

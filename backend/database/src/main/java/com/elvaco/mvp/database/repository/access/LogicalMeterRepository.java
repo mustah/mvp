@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.access;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,7 +115,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
-    List<LogicalMeterEntity> meters = logicalMeterJpaRepository.findAll(parameters);
+    Collection<LogicalMeterEntity> meters = logicalMeterJpaRepository.findAll(parameters);
     return findAllWithCollectionStatsAndStatuses(meters, parameters);
   }
 
@@ -175,7 +176,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   private List<LogicalMeter> findAllWithCollectionStatsAndStatuses(
-    List<LogicalMeterEntity> meters,
+    Collection<LogicalMeterEntity> meters,
     RequestParameters parameters
   ) {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
@@ -192,7 +193,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   private List<LogicalMeter> withStatusesOnly(
-    List<LogicalMeterEntity> meters,
+    Collection<LogicalMeterEntity> meters,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
   ) {
     return meters.stream()
@@ -201,7 +202,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   private List<LogicalMeter> withStatusesAndCollectionStats(
-    List<LogicalMeterEntity> logicalMeters,
+    Collection<LogicalMeterEntity> logicalMeters,
     RequestParameters parameters,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
     SelectionPeriod selectionPeriod
