@@ -40,7 +40,7 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
 
   @Override
   public void visit(WildcardFilter filter) {
-    var value = filter.oneValue().toLowerCase();
+    String value = filter.oneValue().toLowerCase();
 
     addCondition(GATEWAY.SERIAL.lower().startsWith(value)
       .or(GATEWAY.PRODUCT_MODEL.lower().startsWith(value))

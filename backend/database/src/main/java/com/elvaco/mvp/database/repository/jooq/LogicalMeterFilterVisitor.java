@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.util.Collection;
 
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
@@ -42,7 +43,7 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   @Override
   public void visit(WildcardFilter filter) {
-    var value = filter.oneValue().toLowerCase();
+    String value = filter.oneValue().toLowerCase();
 
     addCondition(LOGICAL_METER.EXTERNAL_ID.lower().startsWith(value)
       .or(METER_DEFINITION.MEDIUM.lower().startsWith(value))
@@ -54,7 +55,7 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    var period = filter.getPeriod();
+    SelectionPeriod period = filter.getPeriod();
 
     missingMeasurementCondition =
       MISSING_MEASUREMENT.EXPECTED_TIME.greaterOrEqual(period.start.toOffsetDateTime())
