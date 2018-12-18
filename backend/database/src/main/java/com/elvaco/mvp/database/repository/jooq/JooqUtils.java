@@ -12,4 +12,5 @@ public class JooqUtils {
     "missing_measurement_count",
     Long.class
   );
+
 }
