@@ -30,7 +30,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWA
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.lateral;
 import static org.jooq.impl.DSL.select;
 
 @RequiredArgsConstructor
@@ -67,17 +67,17 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
     gatewayStatusLogCondition =
       GATEWAY_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(GATEWAY_STATUS_LOG.STOP.isNull()
-          .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+          .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
 
     meterStatusLogCondition =
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
-          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
 
     alarmLogCondition =
       METER_ALARM_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(METER_ALARM_LOG.STOP.isNull()
-          .or(METER_ALARM_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+          .or(METER_ALARM_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
 
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
@@ -134,26 +134,27 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
       .leftJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
 
-      .leftJoin(PHYSICAL_METER_STATUS_LOG)
-      .on(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID
-        .equal(PHYSICAL_METER.ORGANISATION_ID)
-        .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-        .and(PHYSICAL_METER_STATUS_LOG.ID.equal(dsl
-          .select(max(PHYSICAL_METER_STATUS_LOG.ID))
+      .leftJoin(lateral(dsl
+          .select(PHYSICAL_METER_STATUS_LOG.STATUS)
           .from(PHYSICAL_METER_STATUS_LOG)
           .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-            .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-              .and(meterStatusLogCondition))))))
+            .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+            .and(meterStatusLogCondition))
+          .orderBy(PHYSICAL_METER_STATUS_LOG.START)
+          .limit(1)
+        .asTable(PHYSICAL_METER_STATUS_LOG.getName()))
+      ).on(DSL.trueCondition())
 
-      .leftJoin(METER_ALARM_LOG)
-      .on(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-        .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-        .and(METER_ALARM_LOG.ID.equal(dsl
-          .select(max(METER_ALARM_LOG.ID))
+      .leftJoin(lateral(dsl
+          .select(METER_ALARM_LOG.MASK)
           .from(METER_ALARM_LOG)
           .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-            .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-              .and(alarmLogCondition))))))
+            .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+            .and(alarmLogCondition))
+          .orderBy(METER_ALARM_LOG.START)
+          .limit(1)
+        .asTable(METER_ALARM_LOG.getName()))
+      ).on(DSL.trueCondition())
 
       .leftJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)

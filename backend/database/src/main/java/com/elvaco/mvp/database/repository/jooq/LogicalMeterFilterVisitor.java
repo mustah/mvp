@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jooq;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
@@ -16,6 +15,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
@@ -31,9 +31,7 @@ import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREM
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lateral;
-import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.select;
 
 @RequiredArgsConstructor
@@ -75,12 +73,12 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
     physicalMeterStatusLogCondition =
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
-          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.start.toOffsetDateTime())));
+          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
 
-    meterAlarmLogCondition = METER_ALARM_LOG.START.between(
-      period.start.toOffsetDateTime(),
-      period.stop.toOffsetDateTime()
-    ).or(METER_ALARM_LOG.STOP.isNull());
+    meterAlarmLogCondition =
+      METER_ALARM_LOG.START.lessThan(period.stop.toOffsetDateTime())
+        .and(METER_ALARM_LOG.STOP.isNull()
+          .or(METER_ALARM_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
 
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
@@ -131,32 +129,42 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
 
-      .leftJoin(PHYSICAL_METER_STATUS_LOG)
-      .on(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-        .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-        .and(PHYSICAL_METER_STATUS_LOG.ID.equal(dsl
-          .select(max(PHYSICAL_METER_STATUS_LOG.ID))
-          .from(PHYSICAL_METER_STATUS_LOG)
-          .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-            .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-              .and(physicalMeterStatusLogCondition))))))
-
-      .leftJoin(METER_ALARM_LOG)
-      .on(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-        .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-        .and(METER_ALARM_LOG.ID.equal(dsl
-          .select(max(METER_ALARM_LOG.ID))
-          .from(METER_ALARM_LOG)
-          .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-            .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-              .and(meterAlarmLogCondition))))))
+      .leftJoin(lateral(dsl
+        .select(PHYSICAL_METER_STATUS_LOG.STATUS)
+        .from(PHYSICAL_METER_STATUS_LOG)
+        .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+          .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+          .and(physicalMeterStatusLogCondition))
+        .orderBy(PHYSICAL_METER_STATUS_LOG.START.desc())
+        .limit(1)
+        .asTable(PHYSICAL_METER_STATUS_LOG.getName()))
+      ).on(DSL.trueCondition())
 
       .leftJoin(lateral(dsl
-        .select(count().as(MISSING_MEASUREMENT_COUNT), MISSING_MEASUREMENT.PHYSICAL_METER_ID)
+        .select(
+          METER_ALARM_LOG.ID,
+          METER_ALARM_LOG.PHYSICAL_METER_ID,
+          METER_ALARM_LOG.START,
+          METER_ALARM_LOG.LAST_SEEN,
+          METER_ALARM_LOG.STOP,
+          METER_ALARM_LOG.MASK,
+          METER_ALARM_LOG.DESCRIPTION
+        )
+        .from(METER_ALARM_LOG)
+        .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+          .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+          .and(meterAlarmLogCondition))
+        .orderBy(METER_ALARM_LOG.START.desc())
+        .limit(1)
+        .asTable(METER_ALARM_LOG.getName()))
+      ).on(DSL.trueCondition())
+
+      .leftJoin(lateral(dsl
+        .select(count().as(MISSING_MEASUREMENT_COUNT))
         .from(MISSING_MEASUREMENT)
         .where(MISSING_MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
           .and(missingMeasurementCondition))
         .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID)).asTable("mm"))
-      .on(PHYSICAL_METER.ID.equal(field("mm.physical_meter_id", UUID.class)));
+      .on(DSL.trueCondition());
   }
 }
