@@ -91,6 +91,10 @@ export interface Identifiable {
   id: uuid;
 }
 
+export interface ComponentId {
+  componentId: string;
+}
+
 export interface ErrorResponse {
   type?: string | number;
   data?: any;
