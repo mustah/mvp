@@ -19,7 +19,14 @@ import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {ClearErrorPaginated, ErrorResponse, FetchPaginated, OnClickWithId, uuid} from '../../../types/Types';
+import {
+  ClearErrorPaginated,
+  ComponentId,
+  ErrorResponse,
+  FetchPaginated,
+  OnClickWithId,
+  uuid
+} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import {Query} from '../../search/searchModels';
 import {GatewayList} from '../components/GatewayList';
@@ -44,13 +51,9 @@ interface DispatchToProps {
   clearError: ClearErrorPaginated;
 }
 
-interface OwnProps {
-  componentId: string;
-}
+export type GatewayListProps = ListProps & DispatchToProps & ComponentId;
 
-export type GatewayListProps = ListProps & DispatchToProps & OwnProps;
-
-type Props = StateToProps & DispatchToProps & OwnProps;
+type Props = StateToProps & DispatchToProps & ComponentId;
 
 const GatewayListWrapper = withEmptyContent<GatewayListProps & WithEmptyContentProps>(GatewayList);
 
@@ -96,7 +99,7 @@ class GatewayListComponent extends React.Component<Props> {
 
 const mapStateToProps = (
   {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}, search: {collection: {query}}}: RootState,
-  {componentId}: OwnProps,
+  {componentId}: ComponentId,
 ): StateToProps => {
   const entityType: EntityTypes = 'gateways';
   const paginationData: Pagination = getPagination({componentId, entityType, pagination});
@@ -126,7 +129,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const GatewayListContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(
+  connect<StateToProps, DispatchToProps, ComponentId>(
     mapStateToProps,
     mapDispatchToProps,
   )(GatewayListComponent);

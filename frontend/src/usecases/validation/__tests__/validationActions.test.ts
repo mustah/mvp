@@ -15,7 +15,7 @@ import {Role, User} from '../../../state/domain-models/user/userModels';
 import {showFailMessage, showSuccessMessage} from '../../../state/ui/message/messageActions';
 import {Callback, ErrorResponse, uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
-import {syncAllMeters, syncWithMetering} from '../validationActions';
+import {syncMeters, syncWithMetering} from '../validationActions';
 
 describe('syncWithMetering', () => {
 
@@ -33,7 +33,7 @@ describe('syncWithMetering', () => {
   const logicalMeterId: uuid = 123;
 
   const url = `${EndPoints.syncMeters}/${logicalMeterId}`;
-  const syncAllUrl = `${EndPoints.syncMeters}`;
+  const syncMetersUrl = `${EndPoints.syncMeters}`;
 
   initTranslations({
     code: 'en',
@@ -113,7 +113,7 @@ describe('syncWithMetering', () => {
     });
 
     it('displays error message when the request times out when syncing all meters', async () => {
-      await onSyncAllMeters(() => mockRestClient.onPost(syncAllUrl).timeout(), [1]);
+      await onSyncMeters(() => mockRestClient.onPost(syncMetersUrl).timeout(), [1]);
 
       expect(store.getActions()).toEqual([showFailMessage(requestTimeout().message)]);
     });
@@ -122,13 +122,13 @@ describe('syncWithMetering', () => {
   describe('sync all meters', () => {
 
     it('does not sync when there are no meter ids', async () => {
-      await onSyncAllMeters(() => mockRestClient.onPost(syncAllUrl).reply(200, {}), []);
+      await onSyncMeters(() => mockRestClient.onPost(syncMetersUrl).reply(200, {}), []);
 
       expect(store.getActions()).toEqual([]);
     });
 
     it('syncs with all meters', async () => {
-      await onSyncAllMeters(() => mockRestClient.onPost(syncAllUrl).reply(200, {}), [1, 2, 3]);
+      await onSyncMeters(() => mockRestClient.onPost(syncMetersUrl).reply(200, {}), [1, 2, 3]);
 
       expect(store.getActions()).toEqual([
         showSuccessMessage('3 meter will soon be synchronized'),
@@ -141,9 +141,9 @@ describe('syncWithMetering', () => {
     return store.dispatch(syncWithMetering(logicalMeterId));
   };
 
-  const onSyncAllMeters = async (mockRequestCallbacks: Callback, ids: uuid[]) => {
+  const onSyncMeters = async (mockRequestCallbacks: Callback, ids: uuid[]) => {
     mockRequestCallbacks();
-    return store.dispatch(syncAllMeters(ids));
+    return store.dispatch(syncMeters(ids));
   };
 
 });

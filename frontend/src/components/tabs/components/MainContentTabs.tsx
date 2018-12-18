@@ -4,7 +4,7 @@ import {translate} from '../../../services/translationService';
 import {SelectedTab, TabName} from '../../../state/ui/tabs/tabsModels';
 import {
   CallbackWith,
-  Children,
+  Children, ClassNamed,
   ClearError,
   EncodedUriParameters,
   ErrorResponse,
@@ -36,7 +36,7 @@ export interface DispatchToProps {
   changeTab: CallbackWith<TabName>;
 }
 
-export interface MainContentTabsProps extends StateToProps, DispatchToProps {
+export interface MainContentTabsProps extends StateToProps, DispatchToProps, ClassNamed {
   children?: Children;
   DetailsDialog: React.ComponentType<DetailsDialogProps>;
 }
@@ -45,6 +45,7 @@ const MapClustersWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(Ma
 
 export const MainContentTabs = (props: MainContentTabsProps) => {
   const {
+    className,
     DetailsDialog,
     bounds,
     children,
@@ -76,7 +77,7 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
   };
 
   return (
-    <Tabs>
+    <Tabs className={className}>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
           <Tab tab={TabName.list} title={translate('list')}/>
