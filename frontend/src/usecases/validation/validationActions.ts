@@ -2,11 +2,7 @@ import {InvalidToken} from '../../exceptions/InvalidToken';
 import {EndPoints} from '../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {
-  noInternetConnection,
-  requestTimeout,
-  responseMessageOrFallback,
-} from '../../state/api/apiActions';
+import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../state/api/apiActions';
 import {showFailMessage, showSuccessMessage} from '../../state/ui/message/messageActions';
 import {Dispatcher, uuid} from '../../types/Types';
 import {logout} from '../auth/authActions';
@@ -36,7 +32,7 @@ export const syncWithMetering = (logicalMeterId: uuid) =>
     }
   };
 
-export const syncAllMeters = (ids: uuid[]) =>
+export const syncMeters = (ids: uuid[]) =>
   async (dispatch: Dispatcher) => {
     try {
       if (ids.length > 0) {

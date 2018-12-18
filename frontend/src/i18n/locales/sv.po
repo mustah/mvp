@@ -35,6 +35,9 @@ msgstr "lägg till organisation"
 msgid "sync all meters on this page"
 msgstr "synka alla mätare på denna sida"
 
+msgid "show all meters on this page on report page"
+msgstr "visa alla mätare på denna sida i grafen"
+
 msgid "edit user"
 msgstr "redigera användare"
 

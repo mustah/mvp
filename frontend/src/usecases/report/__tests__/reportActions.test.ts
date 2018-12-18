@@ -11,6 +11,7 @@ import {
   addToReport,
   selectEntryAdd,
   SET_SELECTED_ENTRIES,
+  showMetersInGraph,
   toggleIncludingChildren,
   toggleSingleEntry,
 } from '../reportActions';
@@ -116,6 +117,13 @@ describe('reportActions', () => {
               id: '9ac413ed-ba1f-48d5-9793-7e259841595f',
               name: '3003',
               medium: Medium.districtHeating,
+            },
+            '123': {
+              address: 'storgatan 12',
+              city: 'sweden,kungbacka',
+              id: 123,
+              name: '123-unknown',
+              medium: Medium.unknown,
             },
           },
         },
@@ -370,6 +378,14 @@ describe('reportActions', () => {
       expect(quantitiesToSelect).toEqual([Quantity.volume]);
     });
 
+    it('does not add unknown medium meter to graph', () => {
+      const store = configureMockStore({...initialState});
+
+      store.dispatch(addToReport(123));
+
+      expect(store.getActions()).toEqual([]);
+    });
+
   });
 
   describe('toggleIncludingChildren', () => {
@@ -534,6 +550,46 @@ describe('reportActions', () => {
       store.dispatch(selectEntryAdd('905a785e-f215-4eb8-b31c-0a00a365a124'));
 
       expect(store.getActions()).toHaveLength(0);
+    });
+
+  });
+
+  describe('showMetersInGraph', () => {
+
+    it('shows all meters in graph', () => {
+      const store = configureMockStore({...initialState});
+      const ids: uuid[] = ['22b8fd17-fd83-469e-b0ca-4ab3808beebb', '905a785e-f215-4eb8-b31c-0a00a365a124'];
+
+      store.dispatch(showMetersInGraph(ids));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: {
+            ids,
+            indicatorsToSelect: [Medium.gas],
+            quantitiesToSelect: [Quantity.volume]
+          }
+        }
+      ]);
+    });
+
+    it('excludes meters with unknown medium', () => {
+      const store = configureMockStore({...initialState});
+      const ids: uuid[] = [123, '905a785e-f215-4eb8-b31c-0a00a365a124', '22b8fd17-fd83-469e-b0ca-4ab3808beebb'];
+
+      store.dispatch(showMetersInGraph(ids));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: {
+            ids: ['905a785e-f215-4eb8-b31c-0a00a365a124', '22b8fd17-fd83-469e-b0ca-4ab3808beebb'],
+            indicatorsToSelect: [Medium.gas],
+            quantitiesToSelect: [Quantity.volume]
+          }
+        }
+      ]);
     });
 
   });

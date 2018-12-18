@@ -15,8 +15,7 @@ interface Props {
 
 const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 
-export const ListActionsDropdown = (props: Props) => {
-  const {item: {id}, selectEntryAdd, syncWithMetering} = props;
+export const ListActionsDropdown = ({item: {id}, selectEntryAdd, syncWithMetering}: Props) => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onAddToReport = () => {

@@ -1,7 +1,9 @@
 import {toggle} from '../../helpers/collections';
+import {isDefined} from '../../helpers/commonUtils';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
-import {SelectionTree, SelectionTreeState} from '../../state/selection-tree/selectionTreeModels';
+import {ObjectsById} from '../../state/domain-models/domainModels';
+import {SelectionTree, SelectionTreeMeter, SelectionTreeState} from '../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../state/selection-tree/selectionTreeSelectors';
 import {isSelectedCity, isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
 import {
@@ -30,8 +32,13 @@ const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionT
   const meterMedia: Medium[] = ids.filter(isSelectedMeter)
     .map((meterId) => meters[meterId].medium);
 
-  return new Set([...cityMedia, ...meterMedia]);
+  return new Set<Medium>([...cityMedia, ...meterMedia]);
 };
+
+const isKnownMedium = (medium: Medium): boolean => medium !== Medium.unknown;
+
+const hasKnownMedia = (id: uuid, meters: ObjectsById<SelectionTreeMeter>): boolean =>
+  isKnownMedium(meters[id].medium);
 
 interface DispatchWithinLimits {
   dispatch: Dispatcher;
@@ -98,7 +105,7 @@ export const toggleSingleEntry = (id: uuid) =>
 export const addToReport = (id: uuid) =>
   (dispatch, getState: GetState) => {
     const {selectionTree, report: {selectedListItems}, ui: {indicator: {selectedQuantities}}} = getState();
-    if (!selectedListItems.includes(id)) {
+    if (!selectedListItems.includes(id) && hasKnownMedia(id, selectionTree.entities.meters)) {
       dispatchIfWithinLimits({
         dispatch,
         ids: [...selectedListItems, id],
@@ -176,4 +183,22 @@ export const selectEntryAdd = (id: uuid) =>
         selectedQuantities
       });
     }
+  };
+
+export const showMetersInGraph = (meterIds: uuid[]) =>
+  (dispatch, getState: GetState) => {
+    const {selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
+
+    const ids = meterIds.map((id) => selectionTree.entities.meters[id])
+      .filter(isDefined)
+      .filter(({medium}) => isKnownMedium(medium))
+      .map(({id}) => id);
+
+    dispatchIfWithinLimits({
+      dispatch,
+      ids,
+      selectionTree,
+      previousIds: [],
+      selectedQuantities,
+    });
   };

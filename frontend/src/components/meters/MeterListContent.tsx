@@ -6,19 +6,23 @@ import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {
-  ClearErrorPaginated, Clickable, ComponentId,
+  CallbackWithIds,
+  ClearErrorPaginated,
+  ComponentId,
   EncodedUriParameters,
   ErrorResponse,
-  FetchPaginated, HasContent,
+  FetchPaginated,
+  HasContent,
+  OnClick,
   OnClickWithId,
-  uuid, WithChildren
+  uuid,
+  WithChildren
 } from '../../types/Types';
 import {MeterList} from '../../usecases/validation/components/MeterList';
 import {SelectionResultActionsDropdown} from '../actions-dropdown/SelectionResultActionsDropdown';
 import {componentOrNothing} from '../hoc/hocs';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
-import {connectedSuperAdminOnly} from '../hoc/withRoles';
 import {Column} from '../layouts/column/Column';
 import {Loader} from '../loading/Loader';
 
@@ -40,50 +44,64 @@ export interface MeterListStateToProps extends SelectionPage {
 export interface MeterListDispatchToProps {
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
-  syncAllMeters: (ids: uuid[]) => void;
+  syncMeters: CallbackWithIds;
+  showMetersInGraph: CallbackWithIds;
   fetchMeters: FetchPaginated;
   changePage: OnChangePage;
   clearError: ClearErrorPaginated;
 }
 
-type Props = MeterListStateToProps & MeterListDispatchToProps & ComponentId;
+export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps & ComponentId;
 
-const MeterListWrapper = withEmptyContent<Props & WithEmptyContentProps>(MeterList);
+export interface MeterListActionDropdownProps {
+  syncMeters: OnClick;
+  showMetersInGraph: OnClick;
+}
 
-const selectionPageEnhancer = componentOrNothing<SelectionPage>(({isSelectionPage}: SelectionPage) => isSelectionPage);
+const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const enhance = compose<Clickable, Clickable & HasContent & SelectionPage>(
+const selectionPageEnhancer = componentOrNothing<SelectionPage>(({isSelectionPage}) => isSelectionPage);
+
+const enhance = compose<MeterListActionDropdownProps, MeterListActionDropdownProps & HasContent & SelectionPage>(
   selectionPageEnhancer,
-  connectedSuperAdminOnly,
   withContent,
 );
 
-const SuperAdminSelectionResultActionsDropdown = enhance(SelectionResultActionsDropdown);
+const SelectionPageActionsDropdown = enhance(SelectionResultActionsDropdown);
 
-export const MeterListContent = (props: Props & WithChildren) => {
+export const MeterListContent = (props: MeterListProps & WithChildren) => {
   React.useEffect(() => {
     const {fetchMeters, parameters, pagination: {page}} = props;
     fetchMeters(page, parameters);
   });
-
-  const {clearError, syncAllMeters, pagination: {page}, result, isFetching, isSelectionPage, error} = props;
+  const {
+    clearError,
+    syncMeters,
+    showMetersInGraph,
+    pagination: {page},
+    result: meterIds,
+    isFetching,
+    isSelectionPage,
+    error
+  } = props;
   const {children, ...otherProps} = props;
-  const hasContent = result.length > 0;
-  const wrapperProps: Props & WithEmptyContentProps = {
+  const hasContent = meterIds.length > 0;
+  const wrapperProps: MeterListProps & WithEmptyContentProps = {
     ...otherProps,
     noContentText: firstUpperTranslated('no meters'),
     hasContent,
   };
 
   const onClearError = () => clearError({page});
-
-  const onSyncAllMeters = () => syncAllMeters(result);
+  const onSyncMeters = () => syncMeters(meterIds);
+  const onShowMetersInGraph = () => showMetersInGraph(meterIds);
 
   return (
     <Loader isFetching={isFetching} error={error} clearError={onClearError}>
       <Column>
-        <SuperAdminSelectionResultActionsDropdown
-          onClick={onSyncAllMeters}
+        <SelectionPageActionsDropdown
+          syncMeters={onSyncMeters}
+          showMetersInGraph={onShowMetersInGraph}
           hasContent={hasContent}
           isSelectionPage={isSelectionPage}
         />
