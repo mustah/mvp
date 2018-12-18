@@ -10,7 +10,7 @@ import {ActionsDropdown} from './ActionsDropdown';
 
 const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 
-export const SelectionResultActionsDropdown =
+export const MeterListActionsDropdown =
   ({syncMeters, showMetersInGraph}: MeterListActionDropdownProps) => {
     const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
       const syncMetersProps: ActionMenuItemProps = {

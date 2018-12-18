@@ -30,28 +30,26 @@ const mapStateToProps = (
     userSelection: {userSelection},
     paginatedDomainModels: {meters},
     routing,
-    ui: {pagination},
+    ui: {pagination: paginationModel},
     search: {validation: {query}},
   }: RootState,
   {componentId}: ComponentId,
 ): MeterListStateToProps => {
   const entityType: EntityTypes = 'meters';
-  const paginationData: Pagination = getPagination({componentId, entityType, pagination});
-  const selectionPage = isSelectionPage(routing);
-  const {page} = paginationData;
+  const pagination: Pagination = getPagination({componentId, entityType, pagination: paginationModel});
+  const {page} = pagination;
 
   return ({
     entities: getPaginatedEntities<Meter>(meters),
     result: getPageResult(meters, page),
     parameters: getPaginatedMeterParameters({
-      pagination: paginationData,
+      pagination,
       userSelection,
-      query: selectionPage ? undefined : query,
+      query: isSelectionPage(routing) ? undefined : query,
     }),
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
-    isSelectionPage: selectionPage,
-    pagination: paginationData,
+    pagination,
     error: getPageError<Meter>(meters, page),
     entityType,
   });

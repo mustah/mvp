@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {compose} from 'recompose';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
@@ -19,18 +18,13 @@ import {
   WithChildren
 } from '../../types/Types';
 import {MeterList} from '../../usecases/validation/components/MeterList';
-import {SelectionResultActionsDropdown} from '../actions-dropdown/SelectionResultActionsDropdown';
-import {componentOrNothing} from '../hoc/hocs';
+import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
 import {Column} from '../layouts/column/Column';
 import {Loader} from '../loading/Loader';
 
-interface SelectionPage {
-  isSelectionPage: boolean;
-}
-
-export interface MeterListStateToProps extends SelectionPage {
+export interface MeterListStateToProps {
   result: uuid[];
   entities: ObjectsById<Meter>;
   isFetching: boolean;
@@ -60,14 +54,8 @@ export interface MeterListActionDropdownProps {
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const selectionPageEnhancer = componentOrNothing<SelectionPage>(({isSelectionPage}) => isSelectionPage);
-
-const enhance = compose<MeterListActionDropdownProps, MeterListActionDropdownProps & HasContent & SelectionPage>(
-  selectionPageEnhancer,
-  withContent,
-);
-
-const SelectionPageActionsDropdown = enhance(SelectionResultActionsDropdown);
+const MeterListActionsDropdownEnhanced =
+  withContent<HasContent & MeterListActionDropdownProps>(MeterListActionsDropdown);
 
 export const MeterListContent = (props: MeterListProps & WithChildren) => {
   React.useEffect(() => {
@@ -81,7 +69,6 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     pagination: {page},
     result: meterIds,
     isFetching,
-    isSelectionPage,
     error
   } = props;
   const {children, ...otherProps} = props;
@@ -98,12 +85,11 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
 
   return (
     <Loader isFetching={isFetching} error={error} clearError={onClearError}>
-      <Column>
-        <SelectionPageActionsDropdown
+      <Column className="MeterListContent">
+        <MeterListActionsDropdownEnhanced
           syncMeters={onSyncMeters}
           showMetersInGraph={onShowMetersInGraph}
           hasContent={hasContent}
-          isSelectionPage={isSelectionPage}
         />
         <MeterListWrapper {...wrapperProps}/>
       </Column>
