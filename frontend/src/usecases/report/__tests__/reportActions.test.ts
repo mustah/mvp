@@ -27,10 +27,7 @@ describe('reportActions', () => {
   beforeEach(() => {
     initialState = {
       report: {
-        selectedListItems: [
-          '905a785e-f215-4eb8-b31c-0a00a365a124',
-          'sweden,höganäs,hasselgatan 4',
-        ],
+        selectedListItems: [22, 'sweden,höganäs,hasselgatan 4'],
         hiddenLines: [],
       },
       selectionTree: {
@@ -56,73 +53,65 @@ describe('reportActions', () => {
               address: 'hasselgatan 4',
               city: 'sweden,höganäs',
               name: 'hasselgatan 4',
-              meters: [
-                '905a785e-f215-4eb8-b31c-0a00a365a124',
-              ],
+              meters: [22],
               id: 'sweden,höganäs,hasselgatan 4',
             },
             'sweden,höganäs,storgatan 5': {
               address: 'storgatan 5',
               city: 'sweden,höganäs',
               name: 'storgatan 5',
-              meters: [
-                '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
-              ],
+              meters: [33],
               id: 'sweden,höganäs,storgatan 5',
             },
             'sweden,höganäs,väpnaregatan 10': {
               address: 'väpnaregatan 10',
               city: 'sweden,höganäs',
               name: 'väpnaregatan 10',
-              meters: [
-                '54c58358-9631-4de3-b76c-f018fbf0fc8b',
-              ],
+              meters: [44],
               id: 'sweden,höganäs,väpnaregatan 10',
             },
             'sweden,höganäs,lillgatan 22': {
               address: 'lillgatan 22',
               city: 'sweden,höganäs',
               name: 'lillgatan 22',
-              meters: [
-                '9ac413ed-ba1f-48d5-9793-7e259841595f',
-              ],
+              meters: [55],
               id: 'sweden,höganäs,lillgatan 22',
             },
           },
           meters: {
-            '905a785e-f215-4eb8-b31c-0a00a365a124': {
+            22: {
               address: 'hasselgatan 4',
               city: 'sweden,höganäs',
-              id: '905a785e-f215-4eb8-b31c-0a00a365a124',
+              id: 22,
               name: '3000',
               medium: Medium.gas,
             },
-            '22b8fd17-fd83-469e-b0ca-4ab3808beebb': {
+            33: {
               address: 'storgatan 5',
               city: 'sweden,höganäs',
-              id: '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
+              id: 33,
               name: '3001',
               medium: Medium.gas,
             },
-            '54c58358-9631-4de3-b76c-f018fbf0fc8b': {
+            44: {
               address: 'väpnaregatan 10',
               city: 'sweden,höganäs',
-              id: '54c58358-9631-4de3-b76c-f018fbf0fc8b',
+              id: 44,
               name: '3002',
               medium: Medium.water,
             },
-            '9ac413ed-ba1f-48d5-9793-7e259841595f': {
+            55: {
               address: 'lillgatan 22',
               city: 'sweden,höganäs',
-              id: '9ac413ed-ba1f-48d5-9793-7e259841595f',
+              id: 55,
               name: '3003',
               medium: Medium.districtHeating,
             },
-            '123': {
+            999: {
               address: 'storgatan 12',
               city: 'sweden,kungbacka',
-              id: 123,
-              name: '123-unknown',
+              id: 999,
+              name: '999-unknown',
               medium: Medium.unknown,
             },
           },
@@ -150,12 +139,12 @@ describe('reportActions', () => {
         const store = configureMockStore({
           ...initialState,
           report: {
-            selectedListItems: ['54c58358-9631-4de3-b76c-f018fbf0fc8b'],
+            selectedListItems: [44],
             hiddenLines: [],
           },
         });
 
-        store.dispatch(toggleSingleEntry('54c58358-9631-4de3-b76c-f018fbf0fc8b'));
+        store.dispatch(toggleSingleEntry(44));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);
@@ -175,7 +164,7 @@ describe('reportActions', () => {
           },
         });
 
-        store.dispatch(toggleSingleEntry('54c58358-9631-4de3-b76c-f018fbf0fc8b'));
+        store.dispatch(toggleSingleEntry(44));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);
@@ -190,12 +179,12 @@ describe('reportActions', () => {
         const store = configureMockStore({
           ...initialState,
           report: {
-            selectedListItems: ['54c58358-9631-4de3-b76c-f018fbf0fc8b'],
+            selectedListItems: [44],
             hiddenLines: [],
           },
         });
 
-        store.dispatch(toggleSingleEntry('22b8fd17-fd83-469e-b0ca-4ab3808beebb'));
+        store.dispatch(toggleSingleEntry(33));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);
@@ -210,15 +199,12 @@ describe('reportActions', () => {
         const store = configureMockStore({
           ...initialState,
           report: {
-            selectedListItems: [
-              '54c58358-9631-4de3-b76c-f018fbf0fc8b',
-              '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
-            ],
+            selectedListItems: [44, 33],
             hiddenLines: [],
           },
         });
 
-        store.dispatch(toggleSingleEntry('9ac413ed-ba1f-48d5-9793-7e259841595f'));
+        store.dispatch(toggleSingleEntry(55));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);
@@ -230,10 +216,7 @@ describe('reportActions', () => {
       });
 
       it('uses the selected quantities from previous state', () => {
-        const selectedListItems: uuid[] = [
-          '54c58358-9631-4de3-b76c-f018fbf0fc8b',
-          '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
-        ];
+        const selectedListItems: uuid[] = [44, 33];
         const store = configureMockStore({
           ...initialState,
           report: {
@@ -243,13 +226,13 @@ describe('reportActions', () => {
           ui: selectedUiQuantitiesFrom([Quantity.flow])
         });
 
-        store.dispatch(toggleSingleEntry('9ac413ed-ba1f-48d5-9793-7e259841595f'));
+        store.dispatch(toggleSingleEntry(55));
 
         expect(store.getActions()).toEqual([
           {
             type: SET_SELECTED_ENTRIES,
             payload: {
-              ids: [...selectedListItems, '9ac413ed-ba1f-48d5-9793-7e259841595f'],
+              ids: [...selectedListItems, 55],
               indicatorsToSelect: [Medium.gas, Medium.water],
               quantitiesToSelect: [Quantity.flow]
             }
@@ -261,15 +244,12 @@ describe('reportActions', () => {
         const store = configureMockStore({
           ...initialState,
           report: {
-            selectedListItems: [
-              '54c58358-9631-4de3-b76c-f018fbf0fc8b',
-              '22b8fd17-fd83-469e-b0ca-4ab3808beebb',
-            ],
+            selectedListItems: [44, 33],
             hiddenLines: [],
           },
         });
 
-        store.dispatch(toggleSingleEntry('9ac413ed-ba1f-48d5-9793-7e259841595f'));
+        store.dispatch(toggleSingleEntry(55));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);
@@ -305,24 +285,20 @@ describe('reportActions', () => {
     it('dispatches action to ADD id to selected entries if not already selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(toggleSingleEntry('54c58358-9631-4de3-b76c-f018fbf0fc8b'));
+      store.dispatch(toggleSingleEntry(44));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
 
       const {type, payload: {ids}} = actions[0];
       expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toEqual([
-        '905a785e-f215-4eb8-b31c-0a00a365a124',
-        'sweden,höganäs,hasselgatan 4',
-        '54c58358-9631-4de3-b76c-f018fbf0fc8b',
-      ]);
+      expect(ids).toEqual([22, 'sweden,höganäs,hasselgatan 4', 44]);
     });
 
     it('dispatches action to REMOVE id from selected entries if already selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(toggleSingleEntry('905a785e-f215-4eb8-b31c-0a00a365a124'));
+      store.dispatch(toggleSingleEntry(22));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
@@ -330,7 +306,7 @@ describe('reportActions', () => {
       const {type, payload: {ids}} = actions[0];
       expect(type).toEqual(SET_SELECTED_ENTRIES);
       expect(ids).toContain('sweden,höganäs,hasselgatan 4');
-      expect(ids).not.toContain('905a785e-f215-4eb8-b31c-0a00a365a124');
+      expect(ids).not.toContain(22);
     });
 
   });
@@ -340,20 +316,20 @@ describe('reportActions', () => {
     it('adds a meter that is not already selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(addToReport('22b8fd17-fd83-469e-b0ca-4ab3808beebb'));
+      store.dispatch(addToReport(33));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
 
       const {type, payload: {ids}} = actions[0];
       expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toContain('22b8fd17-fd83-469e-b0ca-4ab3808beebb');
+      expect(ids).toContain(33);
     });
 
     it('does not fire an event if meter is already selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(addToReport('905a785e-f215-4eb8-b31c-0a00a365a124'));
+      store.dispatch(addToReport(22));
 
       expect(store.getActions()).toHaveLength(0);
     });
@@ -367,7 +343,7 @@ describe('reportActions', () => {
         },
       });
 
-      store.dispatch(addToReport('54c58358-9631-4de3-b76c-f018fbf0fc8b'));
+      store.dispatch(addToReport(44));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
@@ -381,7 +357,7 @@ describe('reportActions', () => {
     it('does not add unknown medium meter to graph', () => {
       const store = configureMockStore({...initialState});
 
-      store.dispatch(addToReport(123));
+      store.dispatch(addToReport(999));
 
       expect(store.getActions()).toEqual([]);
     });
@@ -400,7 +376,7 @@ describe('reportActions', () => {
       const {type, payload: {ids}} = actions[0];
       expect(type).toEqual(SET_SELECTED_ENTRIES);
       expect(ids).toContain('sweden,höganäs,storgatan 5');
-      expect(ids).toContain('22b8fd17-fd83-469e-b0ca-4ab3808beebb');
+      expect(ids).toContain(33);
     });
 
     it('deselects given address and meters, if address already selected', () => {
@@ -426,7 +402,7 @@ describe('reportActions', () => {
       expect(type).toEqual(SET_SELECTED_ENTRIES);
       expect(ids).toContain('sweden,höganäs:s');
       expect(ids).toContain('sweden,höganäs,storgatan 5');
-      expect(ids).toContain('22b8fd17-fd83-469e-b0ca-4ab3808beebb');
+      expect(ids).toContain(33);
     });
 
     it('deselects given clusters and meters, if cluster already selected', () => {
@@ -510,13 +486,13 @@ describe('reportActions', () => {
     it('adds new id to selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(selectEntryAdd('22b8fd17-fd83-469e-b0ca-4ab3808beebb'));
+      store.dispatch(selectEntryAdd(33));
 
       expect(store.getActions()).toEqual([
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: [...initialState.report.selectedListItems, '22b8fd17-fd83-469e-b0ca-4ab3808beebb'],
+            ids: [...initialState.report.selectedListItems, 33],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }
@@ -530,13 +506,13 @@ describe('reportActions', () => {
         ui: selectedUiQuantitiesFrom([Quantity.flow]),
       });
 
-      store.dispatch(selectEntryAdd('22b8fd17-fd83-469e-b0ca-4ab3808beebb'));
+      store.dispatch(selectEntryAdd(33));
 
       expect(store.getActions()).toEqual([
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: [...initialState.report.selectedListItems, '22b8fd17-fd83-469e-b0ca-4ab3808beebb'],
+            ids: [...initialState.report.selectedListItems, 33],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.flow]
           }
@@ -547,7 +523,7 @@ describe('reportActions', () => {
     it('does not dispatch when id already exist in selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(selectEntryAdd('905a785e-f215-4eb8-b31c-0a00a365a124'));
+      store.dispatch(selectEntryAdd(22));
 
       expect(store.getActions()).toHaveLength(0);
     });
@@ -558,7 +534,7 @@ describe('reportActions', () => {
 
     it('shows all meters in graph', () => {
       const store = configureMockStore({...initialState});
-      const ids: uuid[] = ['22b8fd17-fd83-469e-b0ca-4ab3808beebb', '905a785e-f215-4eb8-b31c-0a00a365a124'];
+      const ids: uuid[] = [33, 22];
 
       store.dispatch(showMetersInGraph(ids));
 
@@ -576,7 +552,7 @@ describe('reportActions', () => {
 
     it('excludes meters with unknown medium', () => {
       const store = configureMockStore({...initialState});
-      const ids: uuid[] = [123, '905a785e-f215-4eb8-b31c-0a00a365a124', '22b8fd17-fd83-469e-b0ca-4ab3808beebb'];
+      const ids: uuid[] = [999, 22, 33];
 
       store.dispatch(showMetersInGraph(ids));
 
@@ -584,7 +560,7 @@ describe('reportActions', () => {
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: ['905a785e-f215-4eb8-b31c-0a00a365a124', '22b8fd17-fd83-469e-b0ca-4ab3808beebb'],
+            ids: [22, 33],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }
