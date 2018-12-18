@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
-import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
@@ -17,6 +16,8 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
+import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Users;
@@ -53,7 +54,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:it.properties")
-public abstract class IntegrationTest {
+public abstract class IntegrationTest implements ContextDsl {
 
   public static final String DEFAULT_UTC_OFFSET = "+01";
   private static final long MAX_WAIT_TIME = TimeUnit.SECONDS.toNanos(15);
@@ -109,10 +110,13 @@ public abstract class IntegrationTest {
   protected PhysicalMeters physicalMeters;
 
   @Autowired
-  protected Gateways gateways;
+  protected MeterStatusLogs meterStatusLogs;
 
   @Autowired
-  private EntityManagerFactory factory;
+  protected MeterAlarmLogs meterAlarmLogs;
+
+  @Autowired
+  protected Gateways gateways;
 
   @Autowired
   private TokenFactory tokenFactory;
@@ -143,14 +147,15 @@ public abstract class IntegrationTest {
     }
   }
 
-  protected void afterRemoveEntitiesHook() {}
-
-  protected IntegrationTestFixtureContext context() {
+  @Override
+  public IntegrationTestFixtureContext context() {
     if (context == null) {
       context = newContext(getCallerClassName());
     }
     return context;
   }
+
+  protected void afterRemoveEntitiesHook() {}
 
   protected void authenticate(User user) {
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
@@ -296,7 +301,13 @@ public abstract class IntegrationTest {
     if (integrationTestFixtureContextFactory == null) {
       integrationTestFixtureContextFactory = new IntegrationTestFixtureContextFactory(
         organisationJpaRepository,
-        users
+        users,
+        logicalMeters,
+        physicalMeters,
+        meterStatusLogs,
+        meterAlarmLogs,
+        measurements,
+        gateways
       );
     }
     return integrationTestFixtureContextFactory;

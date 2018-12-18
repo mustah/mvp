@@ -406,9 +406,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void doIncludeMeterMapMarkerWithLowConfidence() {
-    saveLogicalMeterWith(kungsbacka()
-      .confidence(0.5)
-      .build(), context().user);
+    given(logicalMeter().location(kungsbacka().confidence(0.5).build()));
 
     ResponseEntity<MapMarkersDto> response = asUser()
       .get("/map-markers/meters", MapMarkersDto.class);
@@ -419,9 +417,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findMeterMapMarker_HasBodyForLowConfidence() {
-    LogicalMeter logicalMeter = saveLogicalMeterWith(kungsbacka()
-      .confidence(0.0)
-      .build(), context().user);
+    var logicalMeter = given(logicalMeter().location(kungsbacka().confidence(0.0).build()));
 
     ResponseEntity<MapMarkerWithStatusDto> response = asUser()
       .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);

@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -30,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/meters/sync")
@@ -59,7 +59,7 @@ public class LogicalMeterSyncController {
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
       .map(this::sync)
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   @ResponseStatus(HttpStatus.ACCEPTED)
@@ -78,7 +78,7 @@ public class LogicalMeterSyncController {
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
       .map(this::sync)
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   @GetMapping
@@ -94,7 +94,7 @@ public class LogicalMeterSyncController {
 
     return jobIds.stream()
       .map(jobId -> SyncRequestStatusDto.from(jobId, meterSyncJobService.getJob(jobId)))
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   private SyncRequestResponseDto sync(LogicalMeter logicalMeter) {

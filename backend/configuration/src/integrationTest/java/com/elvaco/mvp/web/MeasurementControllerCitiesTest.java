@@ -1,104 +1,49 @@
 package com.elvaco.mvp.web;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
-import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
-import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.meter.EntityPk;
-import com.elvaco.mvp.database.entity.meter.LocationEntity;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
-import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
-import static com.elvaco.mvp.web.MeasurementControllerCitiesTest.MeasurementPojo.measurement;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
-import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class MeasurementControllerCitiesTest extends IntegrationTest {
 
-  @Autowired
-  private MeterDefinitionEntityMapper meterDefinitionEntityMapper;
-
-  @Autowired
-  private QuantityEntityMapper quantityEntityMapper;
-
-  @Autowired
-  private QuantityProvider quantityProvider;
-
-  @Autowired
-  private LocationJpaRepository locationJpaRepository;
-
-  @Autowired
-  private MeterDefinitions meterDefinitions;
-
-  private OrganisationEntity otherOrganisation;
-
-  @Before
-  public void setUp() {
-    otherOrganisation = organisationJpaRepository.save(
-      OrganisationEntity.builder()
-        .id(randomUUID())
-        .name("Wayne Industries")
-        .slug("wayne-industries")
-        .externalId("wayne-industries")
-        .build()
-    );
-  }
-
   @After
   public void tearDown() {
     measurementJpaRepository.deleteAll();
-    organisationJpaRepository.delete(otherOrganisation);
   }
 
   @Test
   public void oneCityAverage() {
-    LocationBuilder locationBuilder = stockholm();
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
-
-    newConnectedMeterWithMeasurements(
-      locationBuilder.address("stora gatan 1").build(),
-      measurement(start, "Power", 1.0),
-      measurement(start.plusHours(1), "Power", 2.0)
+    ZonedDateTime start = context().now();
+    LogicalMeter storaGatan1 = given(
+      logicalMeter().location(stockholm().address("stora gatan 1").build())
     );
 
-    newConnectedMeterWithMeasurements(
-      locationBuilder.address("stora gatan 2").build(),
-      measurement(start, "Power", 3.0),
-      measurement(start.plusHours(1), "Power", 4.0)
+    LogicalMeter storaGatan2 = given(
+      logicalMeter().location(stockholm().address("stora gatan 2").build())
     );
+
+    given(series(storaGatan1, Quantity.POWER, 1.0, 2.0));
+    given(series(storaGatan2, Quantity.POWER, 3.0, 4.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -124,8 +69,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         null,
         null,
         asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 2.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 3.0)
+          new MeasurementValueDto(start.toInstant(), 2.0),
+          new MeasurementValueDto(start.plusHours(1).toInstant(), 3.0)
         )
       )
     );
@@ -133,25 +78,23 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageOnlyIncludesRequestedCity() {
-    var start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+    var start = context().now();
 
-    newConnectedMeterWithMeasurements(
-      stockholm().address("stora gatan 1").build(),
-      measurement(start, "Power", 1.0),
-      measurement(start.plusHours(1), "Power", 2.0)
-    );
+    LogicalMeter stockholm1 = given(
+      logicalMeter().location(stockholm().address("stora gatan 1").build()
+      ));
 
-    newConnectedMeterWithMeasurements(
-      stockholm().address("stora gatan 2").build(),
-      measurement(start, "Power", 3.0),
-      measurement(start.plusHours(1), "Power", 4.0)
-    );
+    LogicalMeter stockholm2 = given(
+      logicalMeter().location(stockholm().address("stora gatan 2").build()
+      ));
 
-    newConnectedMeterWithMeasurements(
-      stockholm().address("stora gatan 1").city("båstad").build(),
-      measurement(start, "Power", 10.0),
-      measurement(start.plusHours(1), "Power", 10.0)
-    );
+    LogicalMeter kungsbacka = given(
+      logicalMeter().location(kungsbacka().build()
+      ));
+
+    given(series(stockholm1, Quantity.POWER, 1.0, 2.0));
+    given(series(stockholm2, Quantity.POWER, 3.0, 4.0));
+    given(series(kungsbacka, Quantity.POWER, 10.0, 10.0));
 
     var response = asUser()
       .getList(
@@ -188,24 +131,16 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .address("stora gatan 1")
       .build();
 
-    PhysicalMeterEntity roomTemperature = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      kiruna,
-      MeterDefinition.ROOM_SENSOR_METER
-    ).getLogicalMeterId());
+    LogicalMeter roomSensorMeter = given(logicalMeter().location(kiruna)
+      .meterDefinition(MeterDefinition.ROOM_SENSOR_METER));
 
-    PhysicalMeterEntity gas = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      kiruna,
-      MeterDefinition.GAS_METER
-    ).getLogicalMeterId());
+    LogicalMeter gasMeter = given(logicalMeter().location(kiruna)
+      .meterDefinition(MeterDefinition.GAS_METER));
 
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+    ZonedDateTime start = context().now();
 
-    newMeasurement(roomTemperature, start, Quantity.EXTERNAL_TEMPERATURE.name, 1.0);
-    newMeasurement(roomTemperature, start.plusHours(1), Quantity.EXTERNAL_TEMPERATURE.name, 2.0
-    );
-
-    newMeasurement(gas, start, Quantity.VOLUME.name, 10.0);
-    newMeasurement(gas, start.plusHours(1), Quantity.VOLUME.name, 11.0);
+    given(series(roomSensorMeter, Quantity.EXTERNAL_TEMPERATURE, 1.0, 2.0));
+    given(series(gasMeter, Quantity.VOLUME, 10.0, 11.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -230,8 +165,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         null,
         null,
         asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 1.0),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 2.0)
+          new MeasurementValueDto(start.toInstant(), 1.0),
+          new MeasurementValueDto(start.plusHours(1).toInstant(), 2.0)
         )
       )
     );
@@ -239,14 +174,9 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageIsEmptyWhenCityOnlyContainNonMatchingQuantities() {
-    LocationBuilder locationBuilder = stockholm().address("stora gatan 1");
-
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
-    newConnectedMeterWithMeasurements(
-      locationBuilder.build(),
-      measurement(start, "Power", 1.0)
-
-    );
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter().location(stockholm().build()));
+    given(series(meter, Quantity.POWER, 1.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -265,7 +195,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void cityAverageIsEmptyWhenNoMetersExistsInCity() {
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+    ZonedDateTime start = context().now();
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -283,21 +213,13 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void twoCitiesArePartOfSingleAverage() {
-    LocationBuilder stockholmStoraGatan1 = stockholm().address("stora gatan 1");
+    ZonedDateTime start = context().now();
 
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
+    var stockholm = given(logicalMeter().location(stockholm().build()));
+    var kungsbacka = given(logicalMeter().location(kungsbacka().build()));
 
-    newConnectedMeterWithMeasurements(
-      stockholmStoraGatan1.build(),
-      measurement(start, "Power", 1.0),
-      measurement(start.plusHours(1), "Power", 2.0)
-    );
-
-    newConnectedMeterWithMeasurements(
-      stockholmStoraGatan1.city("båstad").build(),
-      measurement(start, "Power", 10.0),
-      measurement(start.plusHours(1), "Power", 10.0)
-    );
+    given(series(stockholm, Quantity.POWER, 1.0, 2.0));
+    given(series(kungsbacka, Quantity.POWER, 10.0, 10.0));
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asUser()
       .getList(
@@ -305,7 +227,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
           .period(start, start.plusHours(1))
           .parameter("quantity", Quantity.POWER.name + ":W")
           .city("sverige,stockholm")
-          .city("sverige,båstad")
+          .city("sverige,kungsbacka")
           .resolution("hour")
           .build(),
         MeasurementSeriesDto.class
@@ -323,8 +245,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
         null,
         null,
         asList(
-          new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 5.5),
-          new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 6.0)
+          new MeasurementValueDto(start.toInstant(), 5.5),
+          new MeasurementValueDto(start.plusHours(1).toInstant(), 6.0)
         )
       )
     );
@@ -332,21 +254,12 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
 
   @Test
   public void averageForCityIsSameAsAverageForAllMetersInCity() {
-    LocationBuilder locationBuilder = stockholm();
+    ZonedDateTime start = context().now();
+    var meterOne = given(logicalMeter().location(stockholm().address("1").build()));
+    var meterTwo = given(logicalMeter().location(stockholm().address("2").build()));
 
-    ZonedDateTime start = ZonedDateTime.parse("2018-09-07T03:00:00Z");
-
-    PhysicalMeterEntity meterOne = newConnectedMeterWithMeasurements(
-      locationBuilder.address("stora gatan 1").build(),
-      measurement(start, "Power", 1.0),
-      measurement(start.plusHours(1), "Power", 2.0)
-    );
-
-    PhysicalMeterEntity meterTwo = newConnectedMeterWithMeasurements(
-      locationBuilder.address("stora gatan 2").build(),
-      measurement(start, "Power", 3.0),
-      measurement(start.plusHours(1), "Power", 4.0)
-    );
+    given(series(meterOne, Quantity.POWER, 1.0, 2.0));
+    given(series(meterTwo, Quantity.POWER, 3.0, 4.0));
 
     Url cityAverageUrl = measurementsCitiesUrl()
       .period(start, start.plusHours(1))
@@ -361,7 +274,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .period(start, start.plusHours(1))
       .resolution("hour")
       .parameter("quantity", Quantity.POWER.name + ":W")
-      .parameter("meters", List.of(meterOne.getLogicalMeterId(), meterTwo.getLogicalMeterId()))
+      .parameter("id", List.of(meterOne.id, meterTwo.id))
       .build();
 
     ResponseEntity<List<MeasurementSeriesDto>> cityAverageResponse = asUser()
@@ -378,8 +291,8 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
     assertThat(metersAverageResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     List<MeasurementValueDto> expected = List.of(
-      new MeasurementValueDto(Instant.parse("2018-09-07T03:00:00Z"), 2.0),
-      new MeasurementValueDto(Instant.parse("2018-09-07T04:00:00Z"), 3.0)
+      new MeasurementValueDto(start.toInstant(), 2.0),
+      new MeasurementValueDto(start.plusHours(1).toInstant(), 3.0)
     );
 
     assertThat(cityAverageResponse.getBody()).extracting("values").containsExactly(expected);
@@ -389,113 +302,9 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
   @Override
   protected void afterRemoveEntitiesHook() {
     measurementJpaRepository.deleteAll();
-    organisationJpaRepository.delete(otherOrganisation);
-  }
-
-  private PhysicalMeterEntity newConnectedMeterWithMeasurements(
-    Location location,
-    MeasurementPojo... measurements
-  ) {
-    PhysicalMeterEntity meter = newPhysicalMeterEntity(newLogicalMeterEntityWithLocation(
-      location
-    ).getLogicalMeterId());
-    Arrays.stream(measurements).forEach(
-      m -> newMeasurement(meter, m.created, m.quantity, m.value)
-    );
-    return meter;
-  }
-
-  private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return meterDefinitionEntityMapper.toEntity(meterDefinitions.save(meterDefinition));
-  }
-
-  private void newMeasurement(
-    PhysicalMeterEntity meter,
-    ZonedDateTime created,
-    String quantity,
-    double value
-  ) {
-    measurementJpaRepository.save(new MeasurementEntity(
-      created,
-      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
-      value,
-      meter
-    ));
-  }
-
-  private LogicalMeterEntity newLogicalMeterEntityWithLocation(
-    Location location,
-    MeterDefinition meterDefinition
-  ) {
-    UUID id = randomUUID();
-
-    var meterDefinitionEntity = saveMeterDefinition(meterDefinition);
-
-    var pk = new EntityPk(id, context().organisationId());
-    LogicalMeterEntity meter = logicalMeterJpaRepository.save(
-      new LogicalMeterEntity(
-        pk,
-        id.toString(),
-        ZonedDateTime.now(),
-        meterDefinitionEntity,
-        DEFAULT_UTC_OFFSET
-      ));
-
-    locationJpaRepository.save(LocationEntity.builder()
-      .pk(pk)
-      .country(location.getCountry())
-      .city(location.getCity())
-      .streetAddress(location.getAddress())
-      .build());
-
-    return meter;
-  }
-
-  private LogicalMeterEntity newLogicalMeterEntityWithLocation(
-    Location location
-  ) {
-    return newLogicalMeterEntityWithLocation(
-      location,
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-  }
-
-  private PhysicalMeterEntity newPhysicalMeterEntity(UUID logicalMeterId) {
-    UUID uuid = randomUUID();
-    return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
-      uuid,
-      context().organisationId(),
-      "",
-      uuid.toString(),
-      "",
-      "",
-      logicalMeterId,
-      PeriodRange.empty(),
-      0,
-      1,
-      1,
-      emptySet(),
-      emptySet()
-    ));
   }
 
   private Url.UrlBuilder measurementsCitiesUrl() {
     return Url.builder().path("/measurements/average");
-  }
-
-  @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-  static class MeasurementPojo {
-
-    public final ZonedDateTime created;
-    public final double value;
-    public final String quantity;
-
-    static MeasurementPojo measurement(
-      ZonedDateTime created,
-      String quantity,
-      double value
-    ) {
-      return new MeasurementPojo(created, value, quantity);
-    }
   }
 }
