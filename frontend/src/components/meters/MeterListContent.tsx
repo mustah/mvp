@@ -11,7 +11,7 @@ import {
   ErrorResponse,
   FetchPaginated, HasContent,
   OnClickWithId,
-  uuid
+  uuid, WithChildren
 } from '../../types/Types';
 import {MeterList} from '../../usecases/validation/components/MeterList';
 import {SelectionResultActionsDropdown} from '../actions-dropdown/SelectionResultActionsDropdown';
@@ -60,42 +60,35 @@ const enhance = compose<Clickable, Clickable & HasContent & SelectionPage>(
 
 const SuperAdminSelectionResultActionsDropdown = enhance(SelectionResultActionsDropdown);
 
-export class MeterListContent extends React.Component<Props> {
-
-  componentDidMount() {
-    const {fetchMeters, parameters, pagination: {page}} = this.props;
+export const MeterListContent = (props: Props & WithChildren) => {
+  React.useEffect(() => {
+    const {fetchMeters, parameters, pagination: {page}} = props;
     fetchMeters(page, parameters);
-  }
+  });
 
-  componentWillReceiveProps({fetchMeters, parameters, pagination: {page}}: Props) {
-    fetchMeters(page, parameters);
-  }
+  const {clearError, syncAllMeters, pagination: {page}, result, isFetching, isSelectionPage, error} = props;
+  const {children, ...otherProps} = props;
+  const hasContent = result.length > 0;
+  const wrapperProps: Props & WithEmptyContentProps = {
+    ...otherProps,
+    noContentText: firstUpperTranslated('no meters'),
+    hasContent,
+  };
 
-  render() {
-    const {result, isFetching, isSelectionPage, error} = this.props;
-    const {children, ...otherProps} = this.props;
-    const hasContent = result.length > 0;
-    const wrapperProps: Props & WithEmptyContentProps = {
-      ...otherProps,
-      noContentText: firstUpperTranslated('no meters'),
-      hasContent,
-    };
+  const onClearError = () => clearError({page});
 
-    return (
-      <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
-        <Column>
-          <SuperAdminSelectionResultActionsDropdown
-            onClick={this.syncAllMeters}
-            hasContent={hasContent}
-            isSelectionPage={isSelectionPage}
-          />
-          <MeterListWrapper {...wrapperProps}/>
-        </Column>
-      </Loader>
-    );
-  }
+  const onSyncAllMeters = () => syncAllMeters(result);
 
-  clearError = () => this.props.clearError({page: this.props.pagination.page});
-
-  syncAllMeters = () => this.props.syncAllMeters(this.props.result);
-}
+  return (
+    <Loader isFetching={isFetching} error={error} clearError={onClearError}>
+      <Column>
+        <SuperAdminSelectionResultActionsDropdown
+          onClick={onSyncAllMeters}
+          hasContent={hasContent}
+          isSelectionPage={isSelectionPage}
+        />
+        <MeterListWrapper {...wrapperProps}/>
+      </Column>
+    </Loader>
+  );
+};
