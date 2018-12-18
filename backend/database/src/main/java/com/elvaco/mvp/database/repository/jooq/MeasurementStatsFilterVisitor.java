@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.MeasurementThresholdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
@@ -33,10 +34,10 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    var period = filter.getPeriod();
-
+    SelectionPeriod period = filter.getPeriod();
     LocalDate startDate = period.start.toLocalDate();
     LocalDate stopDate = period.stop.toLocalDate();
+
     if (stopDate.isEqual(startDate)) {
       measurementStatsCondition =
         MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate))

@@ -1,8 +1,8 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
 import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
@@ -17,20 +17,16 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
-import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.lateral;
 import static org.jooq.impl.DSL.max;
-import static org.jooq.impl.DSL.trueCondition;
 
 class GatewayFilterVisitor extends CommonFilterVisitor {
 
   private final DSLContext dsl;
 
   private Condition gatewayStatusLogCondition = falseCondition();
-  private Condition meterStatusLogCondition = falseCondition();
 
   GatewayFilterVisitor(DSLContext dsl, Collection<FilterAcceptor> decorators) {
     super(decorators);
@@ -54,17 +50,12 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    SelectionPeriod period = filter.getPeriod();
+    OffsetDateTime stop = filter.getPeriod().stop.toOffsetDateTime();
 
     gatewayStatusLogCondition =
-      GATEWAY_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
+      GATEWAY_STATUS_LOG.START.lessThan(stop)
         .and(GATEWAY_STATUS_LOG.STOP.isNull()
-          .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
-
-    meterStatusLogCondition =
-      PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
-        .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
-          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
+          .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(stop)));
   }
 
   @Override
@@ -93,17 +84,6 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
 
       .leftJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
-
-      .leftJoin(lateral(dsl
-        .select(PHYSICAL_METER_STATUS_LOG.STATUS)
-        .from(PHYSICAL_METER_STATUS_LOG)
-        .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-          .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .and(meterStatusLogCondition))
-        .orderBy(PHYSICAL_METER_STATUS_LOG.START)
-        .limit(1)
-        .asTable(PHYSICAL_METER_STATUS_LOG.getName()))
-      ).on(trueCondition())
 
       .leftJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)

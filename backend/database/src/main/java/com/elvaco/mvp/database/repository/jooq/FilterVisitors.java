@@ -36,7 +36,8 @@ public class FilterVisitors {
   ) {
     return List.of(
       new MeasurementStatsFilterVisitor(parser),
-      new MeterAlarmLogFilterVisitor(dsl)
+      new MeterAlarmLogFilterVisitor(dsl),
+      new PhysicalMeterStatusLogFilterVisitor(dsl)
     );
   }
 }

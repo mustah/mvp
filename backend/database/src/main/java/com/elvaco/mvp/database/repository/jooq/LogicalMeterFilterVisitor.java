@@ -18,7 +18,6 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
-import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.falseCondition;
@@ -29,7 +28,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   private final DSLContext dsl;
 
-  private Condition physicalMeterStatusLogCondition = falseCondition();
   private Condition missingMeasurementCondition = falseCondition();
 
   public LogicalMeterFilterVisitor(DSLContext dsl, Collection<FilterAcceptor> decorators) {
@@ -61,11 +59,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
     missingMeasurementCondition =
       MISSING_MEASUREMENT.EXPECTED_TIME.greaterOrEqual(period.start.toOffsetDateTime())
         .and(MISSING_MEASUREMENT.EXPECTED_TIME.lessThan(period.stop.toOffsetDateTime()));
-
-    physicalMeterStatusLogCondition =
-      PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
-        .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
-          .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
   }
 
   @Override
@@ -89,23 +82,13 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
 
-      .leftJoin(lateral(dsl
-        .select(PHYSICAL_METER_STATUS_LOG.STATUS)
-        .from(PHYSICAL_METER_STATUS_LOG)
-        .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-          .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .and(physicalMeterStatusLogCondition))
-        .orderBy(PHYSICAL_METER_STATUS_LOG.START.desc())
-        .limit(1)
-        .asTable(PHYSICAL_METER_STATUS_LOG.getName()))
-      ).on(trueCondition())
-
-      .leftJoin(lateral(dsl
-        .select(count().as(MISSING_MEASUREMENT_COUNT))
-        .from(MISSING_MEASUREMENT)
-        .where(MISSING_MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-          .and(missingMeasurementCondition))
-        .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID)).asTable("mm"))
+      .leftJoin(lateral(
+        dsl.select(count().as(MISSING_MEASUREMENT_COUNT))
+          .from(MISSING_MEASUREMENT)
+          .where(MISSING_MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+            .and(missingMeasurementCondition))
+          .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID))
+        .asTable("mm"))
       .on(trueCondition());
   }
 }
