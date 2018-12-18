@@ -13,7 +13,6 @@ import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
-import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
@@ -31,7 +30,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   private final DSLContext dsl;
 
   private Condition physicalMeterStatusLogCondition = falseCondition();
-  private Condition meterAlarmLogCondition = falseCondition();
   private Condition missingMeasurementCondition = falseCondition();
 
   public LogicalMeterFilterVisitor(DSLContext dsl, Collection<FilterAcceptor> decorators) {
@@ -47,6 +45,7 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   @Override
   public void visit(WildcardFilter filter) {
     var value = filter.oneValue().toLowerCase();
+
     addCondition(LOGICAL_METER.EXTERNAL_ID.lower().startsWith(value)
       .or(METER_DEFINITION.MEDIUM.lower().startsWith(value))
       .or(LOCATION.CITY.lower().startsWith(value))
@@ -67,11 +66,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
       PHYSICAL_METER_STATUS_LOG.START.lessThan(period.stop.toOffsetDateTime())
         .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
           .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
-
-    meterAlarmLogCondition =
-      METER_ALARM_LOG.START.lessThan(period.stop.toOffsetDateTime())
-        .and(METER_ALARM_LOG.STOP.isNull()
-          .or(METER_ALARM_LOG.STOP.greaterOrEqual(period.stop.toOffsetDateTime())));
   }
 
   @Override
@@ -104,25 +98,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
         .orderBy(PHYSICAL_METER_STATUS_LOG.START.desc())
         .limit(1)
         .asTable(PHYSICAL_METER_STATUS_LOG.getName()))
-      ).on(trueCondition())
-
-      .leftJoin(lateral(dsl
-        .select(
-          METER_ALARM_LOG.ID,
-          METER_ALARM_LOG.PHYSICAL_METER_ID,
-          METER_ALARM_LOG.START,
-          METER_ALARM_LOG.LAST_SEEN,
-          METER_ALARM_LOG.STOP,
-          METER_ALARM_LOG.MASK,
-          METER_ALARM_LOG.DESCRIPTION
-        )
-        .from(METER_ALARM_LOG)
-        .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-          .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .and(meterAlarmLogCondition))
-        .orderBy(METER_ALARM_LOG.START.desc())
-        .limit(1)
-        .asTable(METER_ALARM_LOG.getName()))
       ).on(trueCondition())
 
       .leftJoin(lateral(dsl

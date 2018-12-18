@@ -38,8 +38,8 @@ abstract class JooqFilterVisitor implements FilterAcceptor, FilterVisitor, Condi
 
   @Override
   public <R extends Record> Joins andJoinsOn(SelectJoinStep<R> query) {
-    joiners.forEach(joiners -> joiners.apply(query));
     joinOn(query).where(conditions);
+    joiners.forEach(joiners -> joiners.apply(query));
     return this;
   }
 
