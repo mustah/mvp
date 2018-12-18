@@ -39,7 +39,7 @@ public class MeasurementJpaRepositoryImpl
   public List<MeasurementEntity> findAll(RequestParameters parameters) {
     var query = dsl.select().from(MEASUREMENT);
 
-    FilterVisitors.measurement().apply(toFilters(parameters)).applyJoinsOn(query);
+    FilterVisitors.measurement().accept(toFilters(parameters)).apply(query);
 
     query.orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP));
 

@@ -46,7 +46,7 @@ class LocationFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
+  protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
     return query
       .leftJoin(LOGICAL_METER)
       .on(LOGICAL_METER.ID.equal(LOCATION.LOGICAL_METER_ID)

@@ -53,7 +53,7 @@ class SelectionFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
+  protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
     return query.leftJoin(PHYSICAL_METER)
       .on(LOGICAL_METER.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
         .and(LOGICAL_METER.ID.equal(PHYSICAL_METER.LOGICAL_METER_ID)))

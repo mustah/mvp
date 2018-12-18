@@ -39,7 +39,7 @@ class MeasurementFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
+  protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
     return query
       .join(PHYSICAL_METER)
       .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))

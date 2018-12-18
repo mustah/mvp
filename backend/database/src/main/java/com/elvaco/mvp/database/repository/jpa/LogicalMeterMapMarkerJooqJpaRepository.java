@@ -39,7 +39,7 @@ class LogicalMeterMapMarkerJooqJpaRepository implements MapMarkerJpaRepository {
 
     Filters filters = toFilters(parameters).add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD));
 
-    logicalMeterFilters.apply(filters).applyJoinsOn(query);
+    logicalMeterFilters.accept(filters).apply(query);
 
     return new HashSet<>(query.fetchInto(MapMarker.class));
   }

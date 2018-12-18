@@ -1,5 +1,7 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.util.List;
+
 import com.elvaco.mvp.core.filter.AddressFilter;
 import com.elvaco.mvp.core.filter.AlarmFilter;
 import com.elvaco.mvp.core.filter.CityFilter;
@@ -18,6 +20,10 @@ import com.elvaco.mvp.core.filter.SerialFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
 abstract class EmptyFilterVisitor extends JooqFilterVisitor {
+
+  EmptyFilterVisitor() {
+    super(List.of());
+  }
 
   @Override
   public void visit(CityFilter filter) {}

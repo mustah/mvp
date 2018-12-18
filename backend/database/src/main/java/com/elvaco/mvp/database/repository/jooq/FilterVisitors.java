@@ -1,5 +1,7 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.util.List;
+
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 
 import lombok.experimental.UtilityClass;
@@ -24,13 +26,14 @@ public class FilterVisitors {
     DSLContext dsl,
     MeasurementThresholdParser thresholdParser
   ) {
-    return new LogicalMeterFilterVisitor(dsl, thresholdParser);
+    return new LogicalMeterFilterVisitor(dsl, filterDecorators(thresholdParser));
   }
 
-  public static FilterAcceptor gateway(
-    DSLContext dsl,
-    MeasurementThresholdParser thresholdParser
-  ) {
-    return new GatewayFilterVisitor(dsl, thresholdParser);
+  public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {
+    return new GatewayFilterVisitor(dsl, filterDecorators(parser));
+  }
+
+  private static List<FilterAcceptor> filterDecorators(MeasurementThresholdParser parser) {
+    return List.of(new MeasurementStatsFilterVisitor(parser));
   }
 }

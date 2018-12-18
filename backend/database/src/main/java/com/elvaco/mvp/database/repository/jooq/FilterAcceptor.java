@@ -4,6 +4,11 @@ import java.util.function.Function;
 
 import com.elvaco.mvp.core.filter.Filters;
 
-public interface FilterAcceptor extends Function<Filters, Joins> {
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 
+@FunctionalInterface
+public interface FilterAcceptor {
+
+  <R extends Record> Function<SelectJoinStep<? extends R>, Joins> accept(Filters filters);
 }

@@ -97,7 +97,7 @@ class LogicalMeterQueryDslJpaRepository
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
     SelectJoinStep<Record> query = dsl.select().from(LOGICAL_METER);
 
-    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
+    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
 
     String sql = query.getSQL(ParamType.NAMED);
     Query nativeQuery = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
@@ -127,7 +127,7 @@ class LogicalMeterQueryDslJpaRepository
   public Set<LogicalMeterEntity> findAll(RequestParameters parameters) {
     var query = dsl.select().from(LOGICAL_METER);
 
-    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
+    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
 
     return new HashSet<>(nativeQuery(query));
   }
@@ -163,9 +163,9 @@ class LogicalMeterQueryDslJpaRepository
 
     var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
 
-    logicalMeterFilters.apply(toFilters(parameters))
-      .applyJoinsOn(selectQuery)
-      .applyJoinsOn(countQuery);
+    logicalMeterFilters.accept(toFilters(parameters))
+      .apply(selectQuery)
+      .andJoinsOn(countQuery);
 
     List<LogicalMeterSummaryDto> logicalMeters = selectQuery
       .limit(pageable.getPageSize())
@@ -192,7 +192,7 @@ class LogicalMeterQueryDslJpaRepository
       METER_DEFINITION.MEDIUM
     ).from(LOGICAL_METER);
 
-    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
+    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
 
     return new HashSet<>(query.fetchInto(LogicalMeterWithLocation.class));
   }
@@ -208,7 +208,7 @@ class LogicalMeterQueryDslJpaRepository
     ).distinctOn(LOGICAL_METER.ID, PHYSICAL_METER.READ_INTERVAL_MINUTES)
       .from(LOGICAL_METER);
 
-    logicalMeterFilters.apply(toFilters(parameters)).applyJoinsOn(query);
+    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
   }
@@ -244,9 +244,9 @@ class LogicalMeterQueryDslJpaRepository
     var selectQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
     var countQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
 
-    FilterVisitors.selection().apply(toFilters(parameters))
-      .applyJoinsOn(selectQuery)
-      .applyJoinsOn(countQuery);
+    FilterVisitors.selection().accept(toFilters(parameters))
+      .apply(selectQuery)
+      .andJoinsOn(countQuery);
 
     var all = selectQuery
       .orderBy(directionFor(field, pageable.getSort()))
