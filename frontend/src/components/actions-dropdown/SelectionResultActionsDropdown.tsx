@@ -22,7 +22,7 @@ export const SelectionResultActionsDropdown =
       };
 
       const showMetersInGraphProps: ActionMenuItemProps = {
-        name: translate('show all meters on this page on report page'),
+        name: translate('add all on this page to report'),
         onClick: () => {
           onClick();
           history.push(`${routes.report}/`);

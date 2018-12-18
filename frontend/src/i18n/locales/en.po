@@ -35,8 +35,8 @@ msgstr "add organisation"
 msgid "sync all meters on this page"
 msgstr "sync all meters on this page"
 
-msgid "show all meters on this page on report page"
-msgstr "show all meters on this page on report page"
+msgid "add all on this page to report"
+msgstr "add all on this page to report"
 
 msgid "edit user"
 msgstr "edit user"
