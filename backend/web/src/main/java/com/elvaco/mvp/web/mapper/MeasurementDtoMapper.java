@@ -11,6 +11,8 @@ import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
 
@@ -47,51 +49,30 @@ public class MeasurementDtoMapper {
       quantityMeasurements.get(key).add(measurement);
     });
 
-    List<MeasurementSeriesDto> series = new ArrayList<>();
-    quantityMeasurements
-      .forEach((key, value) -> series.add(
-        new MeasurementSeriesDto(
-          key.id,
-          key.quantity.name,
-          key.quantity.presentationUnit(),
-          key.label,
-          key.city,
-          key.address,
-          key.medium,
-          value.stream()
-            .map(measurement -> new MeasurementValueDto(
-              measurement.when,
-              measurement.value
-            ))
-            .collect(toList())
-        )
-      ));
-    return series;
+    return quantityMeasurements.entrySet().stream()
+      .map(entry -> new MeasurementSeriesDto(
+        entry.getKey().id,
+        entry.getKey().quantity.name,
+        entry.getKey().quantity.presentationUnit(),
+        entry.getKey().label,
+        entry.getKey().city,
+        entry.getKey().address,
+        entry.getKey().medium,
+        entry.getValue().stream()
+          .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
+          .collect(toList())
+      ))
+      .collect(toList());
   }
 
   @EqualsAndHashCode
+  @AllArgsConstructor(access = AccessLevel.PRIVATE)
   private static class LabeledQuantity {
     String id;
     Quantity quantity;
     String label;
-    String city;
     String address;
+    String city;
     String medium;
-
-    private LabeledQuantity(
-      String id,
-      Quantity quantity,
-      String label,
-      String address,
-      String city,
-      String medium
-    ) {
-      this.id = id;
-      this.quantity = quantity;
-      this.label = label;
-      this.city = city;
-      this.address = address;
-      this.medium = medium;
-    }
   }
 }

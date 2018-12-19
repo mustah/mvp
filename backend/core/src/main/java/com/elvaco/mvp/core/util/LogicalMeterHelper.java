@@ -72,7 +72,7 @@ public final class LogicalMeterHelper {
     }
 
     Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
-    quantities.forEach((quantity) -> {
+    quantities.forEach(quantity -> {
       LogicalMeter firstMeter = logicalMeters.get(0);
 
       Quantity lookedUpQuantity = firstMeter.getQuantity(quantity.name)
