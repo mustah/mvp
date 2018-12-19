@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.FacilityFilter;
 import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -31,7 +32,7 @@ class MeasurementFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    var period = filter.getPeriod();
+    SelectionPeriod period = filter.getPeriod();
 
     addCondition(MEASUREMENT.CREATED
       .greaterOrEqual(period.start.toOffsetDateTime())
@@ -39,9 +40,8 @@ class MeasurementFilterVisitor extends EmptyFilterVisitor {
   }
 
   @Override
-  protected <R extends Record> SelectJoinStep<R> applyJoins(SelectJoinStep<R> query) {
-    return query
-      .join(PHYSICAL_METER)
+  protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
+    return query.join(PHYSICAL_METER)
       .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
 
       .join(LOGICAL_METER)
