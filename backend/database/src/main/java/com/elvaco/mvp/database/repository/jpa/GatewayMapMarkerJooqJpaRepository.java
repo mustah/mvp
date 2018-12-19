@@ -39,7 +39,7 @@ class GatewayMapMarkerJooqJpaRepository implements MapMarkerJpaRepository {
 
     Filters filters = toFilters(parameters).add(new LocationConfidenceFilter(CONFIDENCE_THRESHOLD));
 
-    gatewayFilters.accept(filters).apply(query);
+    gatewayFilters.accept(filters).andJoinsOn(query);
 
     return new HashSet<>(query.fetchInto(MapMarker.class));
   }

@@ -97,7 +97,7 @@ class LogicalMeterQueryDslJpaRepository
   public Optional<LogicalMeterEntity> findBy(RequestParameters parameters) {
     SelectJoinStep<Record> query = dsl.select().from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
+    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
 
     String sql = query.getSQL(ParamType.NAMED);
     Query nativeQuery = entityManager.createNativeQuery(sql, LogicalMeterEntity.class);
@@ -127,7 +127,7 @@ class LogicalMeterQueryDslJpaRepository
   public Set<LogicalMeterEntity> findAll(RequestParameters parameters) {
     var query = dsl.select().from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
+    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
 
     return new HashSet<>(nativeQuery(query));
   }
@@ -164,7 +164,7 @@ class LogicalMeterQueryDslJpaRepository
     var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
 
     logicalMeterFilters.accept(toFilters(parameters))
-      .apply(selectQuery)
+      .andJoinsOn(selectQuery)
       .andJoinsOn(countQuery);
 
     List<LogicalMeterSummaryDto> logicalMeters = selectQuery
@@ -192,7 +192,7 @@ class LogicalMeterQueryDslJpaRepository
       METER_DEFINITION.MEDIUM
     ).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
+    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
 
     return new HashSet<>(query.fetchInto(LogicalMeterWithLocation.class));
   }
@@ -208,7 +208,7 @@ class LogicalMeterQueryDslJpaRepository
     ).distinctOn(LOGICAL_METER.ID, PHYSICAL_METER.READ_INTERVAL_MINUTES)
       .from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(toFilters(parameters)).apply(query);
+    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
   }
@@ -245,7 +245,7 @@ class LogicalMeterQueryDslJpaRepository
     var countQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
 
     FilterVisitors.selection().accept(toFilters(parameters))
-      .apply(selectQuery)
+      .andJoinsOn(selectQuery)
       .andJoinsOn(countQuery);
 
     var all = selectQuery

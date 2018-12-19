@@ -51,7 +51,7 @@ class LocationJooqJpaRepository
     var countQuery = dsl.selectDistinct().from(LOCATION);
 
     FilterVisitors.location().accept(toFilters(parameters))
-      .apply(query)
+      .andJoinsOn(query)
       .andJoinsOn(countQuery);
 
     var addresses = query
@@ -75,7 +75,7 @@ class LocationJooqJpaRepository
     var countQuery = dsl.selectDistinct().from(LOCATION);
 
     FilterVisitors.location().accept(toFilters(parameters))
-      .apply(query)
+      .andJoinsOn(query)
       .andJoinsOn(countQuery);
 
     var addresses = query

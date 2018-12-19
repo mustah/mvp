@@ -85,7 +85,7 @@ class GatewayJooqJpaRepository
     var countQuery = dsl.selectDistinct(GATEWAY.ID, LOCATION.LOGICAL_METER_ID).from(GATEWAY);
 
     gatewayFilters.accept(toFilters(parameters))
-      .apply(query)
+      .andJoinsOn(query)
       .andJoinsOn(countQuery);
 
     var recordHandler = new GatewaySummaryRecordHandler();
@@ -104,7 +104,7 @@ class GatewayJooqJpaRepository
     var countQuery = dsl.selectDistinct(GATEWAY.SERIAL).from(GATEWAY);
 
     gatewayFilters.accept(toFilters(parameters))
-      .apply(query)
+      .andJoinsOn(query)
       .andJoinsOn(countQuery);
 
     List<String> gatewaySerials = query

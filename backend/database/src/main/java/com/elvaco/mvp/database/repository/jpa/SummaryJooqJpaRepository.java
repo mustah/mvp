@@ -35,7 +35,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   private long countMeters(Filters filters) {
     var query = dsl.select(DSL.countDistinct(LOGICAL_METER.ID)).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(filters).apply(query);
+    logicalMeterFilters.accept(filters).andJoinsOn(query);
 
     return query.fetchOne(0, Long.class);
   }
@@ -43,7 +43,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
   private Long countCities(Filters filters) {
     var query = dsl.select(DSL.countDistinct(LOCATION.COUNTRY, LOCATION.CITY)).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(filters).apply(query);
+    logicalMeterFilters.accept(filters).andJoinsOn(query);
 
     return query.where(LOCATION.COUNTRY.isNotNull().and(LOCATION.CITY.isNotNull()))
       .fetchOne(0, Long.class);
@@ -56,7 +56,7 @@ class SummaryJooqJpaRepository implements SummaryJpaRepository {
       LOCATION.STREET_ADDRESS
     )).from(LOGICAL_METER);
 
-    logicalMeterFilters.accept(filters).apply(query);
+    logicalMeterFilters.accept(filters).andJoinsOn(query);
 
     return query.where(LOCATION.COUNTRY.isNotNull()
       .and(LOCATION.CITY.isNotNull())
