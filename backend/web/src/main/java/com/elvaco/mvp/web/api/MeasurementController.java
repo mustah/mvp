@@ -132,16 +132,16 @@ public class MeasurementController {
         ).stream()
           .map(measurementValue -> {
             LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
-            return new LabeledMeasurementValue(
-              physicalMeter.logicalMeterId.toString(),
-              physicalMeter.externalId,
-              logicalMeter.location.getCity(),
-              logicalMeter.location.getAddress(),
-              logicalMeter.meterDefinition.medium,
-              measurementValue.when,
-              measurementValue.value,
-              entry.getKey()
-            );
+            return LabeledMeasurementValue.builder()
+              .id(physicalMeter.logicalMeterId.toString())
+              .label(physicalMeter.externalId)
+              .city(logicalMeter.location.getCity())
+              .address(logicalMeter.location.getAddress())
+              .medium(logicalMeter.meterDefinition.medium)
+              .when(measurementValue.when)
+              .value(measurementValue.value)
+              .quantity(entry.getKey())
+              .build();
           })))
       .collect(toList())
     );
