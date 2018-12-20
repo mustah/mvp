@@ -136,7 +136,7 @@ public class IntegrationTestFixtureContext {
       logicalMeter,
       quantity,
       start,
-      Duration.ofMinutes(logicalMeter.activePhysicalMeter().orElseThrow().readIntervalMinutes),
+      Duration.ofMinutes(logicalMeter.activePhysicalMeter(now()).orElseThrow().readIntervalMinutes),
       values
     );
   }
@@ -160,7 +160,7 @@ public class IntegrationTestFixtureContext {
     return series(
       logicalMeter,
       quantity,
-      Duration.ofMinutes(logicalMeter.activePhysicalMeter().orElseThrow().readIntervalMinutes),
+      Duration.ofMinutes(logicalMeter.activePhysicalMeter(now()).orElseThrow().readIntervalMinutes),
       values
     );
   }
@@ -168,7 +168,7 @@ public class IntegrationTestFixtureContext {
   MeasurementBuilder measurement(LogicalMeter logicalMeter) {
     Quantity quantity = logicalMeter.getQuantities().iterator().next();
     return Measurement.builder()
-      .physicalMeter(logicalMeter.activePhysicalMeter().orElseThrow())
+      .physicalMeter(logicalMeter.activePhysicalMeter(now()).orElseThrow())
       .unit(quantity.presentationUnit())
       .value(0.0)
       .quantity(quantity.name)
@@ -201,13 +201,13 @@ public class IntegrationTestFixtureContext {
   StatusLogEntryBuilder statusLog(LogicalMeter logicalMeter) {
     return StatusLogEntry.builder()
       .primaryKey(
-        logicalMeter.activePhysicalMeter().orElseThrow().primaryKey()
+        logicalMeter.activePhysicalMeter(now()).orElseThrow().primaryKey()
       );
   }
 
   AlarmLogEntryBuilder alarm(LogicalMeter logicalMeter) {
     return AlarmLogEntry.builder()
-      .primaryKey(logicalMeter.activePhysicalMeter().orElseThrow().primaryKey())
+      .primaryKey(logicalMeter.activePhysicalMeter(now()).orElseThrow().primaryKey())
       .start(now())
       .mask(0);
   }

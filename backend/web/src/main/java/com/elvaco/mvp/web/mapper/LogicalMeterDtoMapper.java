@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -73,6 +74,10 @@ public class LogicalMeterDtoMapper {
   }
 
   public static LogicalMeterDto toDto(LogicalMeter logicalMeter) {
+    return toDto(logicalMeter, ZonedDateTime.now());
+  }
+
+  public static LogicalMeterDto toDto(LogicalMeter logicalMeter, ZonedDateTime when) {
     String created = formatUtc(logicalMeter.created);
     Optional<StatusLogEntry> statusLog = logicalMeter.activeStatusLog();
     LogicalMeterDto meterDto = new LogicalMeterDto();
@@ -86,7 +91,7 @@ public class LogicalMeterDtoMapper {
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.facility = logicalMeter.externalId;
 
-    Optional<PhysicalMeter> physicalMeter = logicalMeter.activePhysicalMeter();
+    Optional<PhysicalMeter> physicalMeter = logicalMeter.activePhysicalMeter(when);
     meterDto.address = physicalMeter
       .map(m -> m.address)
       .orElse(null);

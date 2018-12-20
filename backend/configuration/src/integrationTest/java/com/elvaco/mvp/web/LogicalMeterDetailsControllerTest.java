@@ -344,6 +344,34 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.alarm).isNull();
   }
 
+  @Test
+  public void shouldContainInfoFromActiveMeter() {
+    var meter = given(
+      logicalMeter(),
+      physicalMeter().manufacturer("ELV")
+        .address("1234")
+        .activePeriod(PeriodRange.halfOpenFrom(context().yesterday(), context().now())),
+      physicalMeter().manufacturer("KAM")
+        .address("5678")
+        .activePeriod(PeriodRange.halfOpenFrom(context().now(), null))
+    );
+    given(gateway().meter(meter));
+
+    Url url = Url.builder().path("/meters/details")
+      .period(context().now(), context().now().plusHours(3))
+      .parameter(LOGICAL_METER_ID, meter.id)
+      .period(context().now(), context().now().plusHours(1))
+      .build();
+
+    LogicalMeterDto logicalMeterDto = asUser()
+      .getList(url, LogicalMeterDto.class)
+      .getBody()
+      .get(0);
+
+    assertThat(logicalMeterDto.manufacturer).isEqualTo("KAM");
+    assertThat(logicalMeterDto.address).isEqualTo("5678");
+  }
+
   private static void assertThatStatusIsOk(ResponseEntity<?> response) {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
