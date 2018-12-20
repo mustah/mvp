@@ -1145,6 +1145,87 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .isEqualTo(new AlarmDto(activeAlarm.id, activeAlarm.mask));
   }
 
+  @Test
+  public void findMeterByCurrentlyActivePhysicalMetersAddress_MultipleActiveInSelectionPeriod() {
+    given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(context().yesterday(), context().now()))
+        .address("aaa"),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(context().now(), null))
+        .address("bbb")
+    );
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        Url.builder()
+          .path("/meters")
+          .parameter(AFTER, context().yesterday().plusHours(1))
+          .parameter(BEFORE, context().now().plusHours(23))
+          .parameter(SECONDARY_ADDRESS, "bbb")
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getContent().get(0).address)
+      .isEqualTo("bbb");
+  }
+
+  @Test
+  public void findMeterByCurrentlyActivePhysicalMetersAddress() {
+    given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(context().yesterday(), context().now()))
+        .address("aaa"),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(context().now(), null))
+        .address("bbb")
+    );
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        Url.builder()
+          .path("/meters")
+          .parameter(AFTER, context().now().plusHours(1))
+          .parameter(BEFORE, context().now().plusHours(23))
+          .parameter(SECONDARY_ADDRESS, "bbb")
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getContent().get(0).address)
+      .isEqualTo("bbb");
+  }
+
+  @Test
+  public void findMeterByPreviouslyActivePhysicalMetersAddress() {
+    given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(context().yesterday(), context().now()))
+        .address("aaa"),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(context().now(), null))
+        .address("bbb")
+    );
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        Url.builder()
+          .path("/meters")
+          .parameter(AFTER, context().yesterday().minusHours(1))
+          .parameter(BEFORE, context().yesterday().plusHours(1))
+          .parameter(SECONDARY_ADDRESS, "aaa")
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getContent().get(0).address)
+      .isEqualTo("aaa");
+  }
+
   private void assertNothingIsRemoved(LogicalMeter meter) {
     Optional<LogicalMeterEntity> logicalMeterEntity = logicalMeterJpaRepository
       .findById(meter.id);
