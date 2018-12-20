@@ -120,7 +120,7 @@ public class MeasurementController {
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
 
-    return toSeries(logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(logicalMeters, quantities)
+    return toSeries(logicalMeterHelper.mapQuantitiesToPhysicalMeters(logicalMeters, quantities)
       .entrySet().stream()
       .flatMap(entry -> entry.getValue().stream()
         .flatMap(physicalMeter -> measurementUseCases.seriesForPeriod(

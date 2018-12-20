@@ -37,16 +37,16 @@ public class LogicalMeterHelperTest {
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_emptyParams() {
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(emptyList(), emptySet())
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(emptyList(), emptySet())
     ).isEmpty();
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
         List.of(newMeter(DISTRICT_HEATING_METER)), emptySet())
     ).isEmpty();
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(emptyList(), Set.of(Quantity.ENERGY))
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(emptyList(), Set.of(Quantity.ENERGY))
     ).isEmpty();
   }
 
@@ -54,7 +54,7 @@ public class LogicalMeterHelperTest {
   public void mapMeterQuantitiesToPhysicalMeters_oneMeterOneQuantity() {
     LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
         List.of(meter),
         Set.of(Quantity.ENERGY)
       )).isEqualTo(
@@ -67,7 +67,7 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
     LogicalMeter meterTwo = newMeter(DISTRICT_HEATING_METER);
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
         List.of(meterOne, meterTwo),
         Set.of(Quantity.ENERGY)
       )).isEqualTo(
@@ -87,7 +87,7 @@ public class LogicalMeterHelperTest {
       Quantity.VOLUME, List.of(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
     );
 
-    var actual = logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+    var actual = logicalMeterHelper.mapQuantitiesToPhysicalMeters(
       List.of(meterOne, meterTwo),
       Set.of(Quantity.ENERGY, Quantity.VOLUME)
     );
@@ -101,7 +101,7 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
 
     assertThatThrownBy(() ->
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
         List.of(meterOne, meterTwo),
         Set.of(Quantity.TEMPERATURE, Quantity.VOLUME)
       )).isInstanceOf(InvalidQuantityForMeterType.class);
@@ -122,7 +122,7 @@ public class LogicalMeterHelperTest {
     );
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
         List.of(meter),
         Set.of(volumeInSquareKilometers)
       )).isEqualTo(expected);
@@ -138,7 +138,7 @@ public class LogicalMeterHelperTest {
     );
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
         List.of(meter),
         Set.of(volumeWithNoUnit)
       )).isEqualTo(expected);
