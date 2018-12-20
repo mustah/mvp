@@ -13,10 +13,27 @@ import com.elvaco.mvp.database.repository.mappers.MeterAlarmLogEntityMapper;
 
 import lombok.RequiredArgsConstructor;
 
+import static java.util.stream.Collectors.toList;
+
 @RequiredArgsConstructor
 public class MeterAlarmLogsRepository implements MeterAlarmLogs {
 
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
+
+  @Override
+  public AlarmLogEntry save(AlarmLogEntry alarm) {
+    MeterAlarmLogEntity entity = MeterAlarmLogEntityMapper.toEntity(alarm);
+    return MeterAlarmLogEntityMapper.toDomainModel(meterAlarmLogJpaRepository.save(entity));
+  }
+
+  @Override
+  public Collection<? extends AlarmLogEntry> save(Collection<? extends AlarmLogEntry> alarms) {
+    return alarms.stream()
+      .map(MeterAlarmLogEntityMapper::toEntity)
+      .map(meterAlarmLogJpaRepository::save)
+      .map(MeterAlarmLogEntityMapper::toDomainModel)
+      .collect(toList());
+  }
 
   @Override
   public void createOrUpdate(
@@ -38,18 +55,5 @@ public class MeterAlarmLogsRepository implements MeterAlarmLogs {
   public Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when) {
     return meterAlarmLogJpaRepository.findActiveAlarmsOlderThan(when).stream()
       .map(MeterAlarmLogEntityMapper::toDomainModel);
-  }
-
-  @Override
-  public AlarmLogEntry save(AlarmLogEntry alarm) {
-    MeterAlarmLogEntity entity = MeterAlarmLogEntityMapper.toEntity(alarm);
-    return MeterAlarmLogEntityMapper.toDomainModel(meterAlarmLogJpaRepository.save(entity));
-  }
-
-  @Override
-  public void save(Collection<? extends AlarmLogEntry> alarms) {
-    alarms.stream()
-      .map(MeterAlarmLogEntityMapper::toEntity)
-      .forEach(meterAlarmLogJpaRepository::save);
   }
 }

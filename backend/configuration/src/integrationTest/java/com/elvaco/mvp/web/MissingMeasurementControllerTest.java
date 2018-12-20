@@ -78,7 +78,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       startDate.minusMinutes(11)
     );
 
-    List<PhysicalMeterEntity> physicalMeters = singletonList(
+    List<PhysicalMeterEntity> physicalMeters = List.of(
       newPhysicalMeter(logicalMeter.getLogicalMeterId())
     );
 
@@ -93,13 +93,12 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-    RequestParameters parameters = makeParametersWithDateRange();
-
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
-      logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters);
+      logicalMeterJpaRepository.findMissingMeterReadingsCounts(makeParametersWithDateRange());
 
-    assertThat(missingMeterReadingsCounts.size()).isEqualTo(1);
-    assertThat(missingMeterReadingsCounts.get(0).missingReadingCount).isEqualTo(10);
+    assertThat(missingMeterReadingsCounts)
+      .extracting(stats -> stats.missingReadingCount)
+      .containsExactly(10L);
   }
 
   @Test
@@ -138,7 +137,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       startDate.minusMinutes(11)
     );
 
-    List<PhysicalMeterEntity> physicalMeters = singletonList(
+    List<PhysicalMeterEntity> physicalMeters = List.of(
       newPhysicalMeter(logicalMeter.getLogicalMeterId())
     );
 
@@ -207,7 +206,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
       MeterDefinition.GAS_METER.medium,
       "",
       logicalMeterId,
-      PeriodRange.empty(),
+      PeriodRange.halfOpenFrom(startDate.minusMinutes(11), endDate.plusHours(1)),
       1,
       1,
       1,

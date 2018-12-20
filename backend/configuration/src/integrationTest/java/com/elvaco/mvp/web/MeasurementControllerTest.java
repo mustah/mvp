@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -312,21 +313,29 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementSeriesAreLabeledWithMeterExternalId() {
-    ZonedDateTime date = ZonedDateTime.parse("1990-01-01T08:00:00Z");
-    PhysicalMeterEntity heatMeter = newHeatMeter(date);
-    newDiffTempMeasurementCelcius(heatMeter, date);
+    ZonedDateTime date = context().now();
+    LogicalMeter logicalMeter = given(
+      logicalMeter().meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+    );
 
-    List<MeasurementSeriesDto> contents =
-      getListAsSuperAdmin(
-        "/measurements?quantity=Difference+temperature"
-          + "&logicalMeterId=" + heatMeter.getLogicalMeterId().toString()
-          + "&resolution=hour"
-          + "&after=" + date
-          + "&before=" + date.plusHours(1));
+    given(
+      measurement(logicalMeter)
+        .value(DIFF_TEMP_VALUE_CELSIUS)
+        .quantity(Quantity.DIFFERENCE_TEMPERATURE.name)
+        .created(date)
+        .unit("°C")
+    );
+
+    List<MeasurementSeriesDto> contents = getListAsSuperAdmin(
+      "/measurements?quantity=Difference+temperature"
+        + "&logicalMeterId=" + logicalMeter.id.toString()
+        + "&resolution=hour"
+        + "&after=" + date
+        + "&before=" + date.plusHours(1));
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
-    assertThat(dto.label).isEqualTo(heatMeter.externalId);
+    assertThat(dto.label).isEqualTo(logicalMeter.externalId);
   }
 
   @Test

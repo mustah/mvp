@@ -20,9 +20,11 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.lateral;
+import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.DSL.trueCondition;
 
 class LogicalMeterFilterVisitor extends CommonFilterVisitor {
@@ -30,6 +32,7 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   private final DSLContext dsl;
 
   private Condition missingMeasurementCondition = falseCondition();
+  private Condition physicalMeterCondition = noCondition();
 
   public LogicalMeterFilterVisitor(DSLContext dsl, Collection<FilterAcceptor> decorators) {
     super(decorators);
@@ -57,6 +60,9 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   public void visit(PeriodFilter filter) {
     SelectionPeriod period = filter.getPeriod();
 
+    physicalMeterCondition =
+      periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
+
     missingMeasurementCondition =
       MISSING_MEASUREMENT.EXPECTED_TIME.greaterOrEqual(period.start.toOffsetDateTime())
         .and(MISSING_MEASUREMENT.EXPECTED_TIME.lessThan(period.stop.toOffsetDateTime()));
@@ -64,9 +70,11 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
   @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
-    return query.leftJoin(PHYSICAL_METER)
-      .on(PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
-        .and(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
+    return query.join(PHYSICAL_METER)
+      .on(
+        PHYSICAL_METER.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
+          .and(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID))
+          .and(physicalMeterCondition)
       )
 
       .leftJoin(GATEWAYS_METERS)

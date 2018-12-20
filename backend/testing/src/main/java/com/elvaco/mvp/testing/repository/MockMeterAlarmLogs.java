@@ -10,9 +10,21 @@ import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.PrimaryKey;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 
+import static java.util.stream.Collectors.toList;
+
 public class MockMeterAlarmLogs
   extends MockRepository<Long, AlarmLogEntry>
   implements MeterAlarmLogs {
+
+  @Override
+  public AlarmLogEntry save(AlarmLogEntry alarm) {
+    return saveMock(alarm);
+  }
+
+  @Override
+  public Collection<? extends AlarmLogEntry> save(Collection<? extends AlarmLogEntry> alarms) {
+    return alarms.stream().map(this::saveMock).collect(toList());
+  }
 
   @Override
   public void createOrUpdate(
@@ -35,16 +47,6 @@ public class MockMeterAlarmLogs
   public Stream<AlarmLogEntry> findActiveAlarmsOlderThan(ZonedDateTime when) {
     return allMocks().stream().filter(alarm -> alarm.stop == null)
       .filter(alarm -> alarm.start.isBefore(when));
-  }
-
-  @Override
-  public AlarmLogEntry save(AlarmLogEntry alarm) {
-    return saveMock(alarm);
-  }
-
-  @Override
-  public void save(Collection<? extends AlarmLogEntry> alarms) {
-    alarms.forEach(this::saveMock);
   }
 
   public Set<AlarmLogEntry> findAll() {

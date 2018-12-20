@@ -9,6 +9,8 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
@@ -404,9 +406,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void doIncludeMeterMapMarkerWithLowConfidence() {
-    saveLogicalMeterWith(kungsbacka()
-      .confidence(0.5)
-      .build(), context().user);
+    given(logicalMeter().location(kungsbacka().confidence(0.5).build()));
 
     ResponseEntity<MapMarkersDto> response = asUser()
       .get("/map-markers/meters", MapMarkersDto.class);
@@ -417,9 +417,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void findMeterMapMarker_HasBodyForLowConfidence() {
-    LogicalMeter logicalMeter = saveLogicalMeterWith(kungsbacka()
-      .confidence(0.0)
-      .build(), context().user);
+    var logicalMeter = given(logicalMeter().location(kungsbacka().confidence(0.0).build()));
 
     ResponseEntity<MapMarkerWithStatusDto> response = asUser()
       .get("/map-markers/meters/" + logicalMeter.id, MapMarkerWithStatusDto.class);
@@ -521,6 +519,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       PhysicalMeter.builder()
         .logicalMeterId(logicalMeter.id)
         .externalId(logicalMeter.externalId)
+        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(NOW)))
         .address("v1")
         .manufacturer("ELV")
         .organisationId(context().organisationId())

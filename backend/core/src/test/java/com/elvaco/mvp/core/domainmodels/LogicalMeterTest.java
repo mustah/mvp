@@ -155,13 +155,18 @@ public class LogicalMeterTest {
   @Test
   public void getManufacturerTwoPhysicalMeters() {
     UUID organisationId = randomUUID();
+    ZonedDateTime now = ZonedDateTime.now();
     UUID logicalMeterId = randomUUID();
     LogicalMeter logicalMeter = logicalMeterBuilder()
       .id(logicalMeterId)
       .organisationId(organisationId)
       .meterDefinition(HOT_WATER_METER)
-      .physicalMeter(newPhysicalMeter(logicalMeterId, "KAM"))
-      .physicalMeter(newPhysicalMeter(logicalMeterId, "ELV"))
+      .physicalMeter(
+        newPhysicalMeter(logicalMeterId, "KAM", PeriodRange.halfOpenFrom(now.minusDays(1), now)
+        ))
+      .physicalMeter(
+        newPhysicalMeter(logicalMeterId, "ELV", PeriodRange.halfOpenFrom(now, null)
+        ))
       .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("ELV");
   }
@@ -357,6 +362,22 @@ public class LogicalMeterTest {
 
   private static PhysicalMeter newPhysicalMeter(
     UUID logicalMeterId,
+    @Nullable String manufacturer,
+    PeriodRange activePeriod
+  ) {
+    return PhysicalMeter.builder()
+      .logicalMeterId(logicalMeterId)
+      .organisationId(SECRET_SERVICE.id)
+      .address("12341234")
+      .externalId("an-external-id")
+      .medium("Hot water")
+      .manufacturer(manufacturer)
+      .activePeriod(activePeriod)
+      .build();
+  }
+
+  private static PhysicalMeter newPhysicalMeter(
+    UUID logicalMeterId,
     @Nullable String manufacturer
   ) {
     return PhysicalMeter.builder()
@@ -366,6 +387,7 @@ public class LogicalMeterTest {
       .externalId("an-external-id")
       .medium("Hot water")
       .manufacturer(manufacturer)
+      .activePeriod(PeriodRange.unbounded())
       .build();
   }
 
@@ -376,6 +398,7 @@ public class LogicalMeterTest {
       .externalId("an-external-id")
       .medium("Heat, Return temp.")
       .manufacturer("ELV")
+      .activePeriod(PeriodRange.unbounded())
       .readIntervalMinutes(60);
   }
 }

@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Language;
+import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -115,6 +116,30 @@ public class JooqTest extends IntegrationTest {
       ));
       UUID selectedId = fetchMeterField(PHYSICAL_METER.ID, meterId,
         periodContains(PHYSICAL_METER.ACTIVE_PERIOD, DATE_TIME.toOffsetDateTime())
+      );
+
+      assertThat(selectedId).isEqualTo(meterId);
+
+      selectedId = fetchMeterField(PHYSICAL_METER.ID, meterId,
+        periodContains(
+          PHYSICAL_METER.ACTIVE_PERIOD,
+          DATE_TIME.minusMinutes(1).toOffsetDateTime()
+        )
+      );
+
+      assertThat(selectedId).isNull();
+    } finally {
+      dsl.delete(PHYSICAL_METER).execute();
+    }
+  }
+
+  public void periodContains_InsideBoundedRange() {
+    try {
+      UUID meterId = insertMeterWithActivePeriod(
+        PeriodRange.from(PeriodBound.inclusiveOf(DATE_TIME))
+      );
+      UUID selectedId = fetchMeterField(PHYSICAL_METER.ID, meterId,
+        periodContains(PHYSICAL_METER.ACTIVE_PERIOD, DATE_TIME.plusDays(3).toOffsetDateTime())
       );
 
       assertThat(selectedId).isEqualTo(meterId);

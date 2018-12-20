@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web;
 
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 
@@ -17,18 +16,8 @@ public class SelectionTreeControllerTest extends IntegrationTest {
 
   @Test
   public void getResponseOk() {
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId2")
-      .organisationId(context().organisationId())
-      .location(stockholm().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(logicalMeter().location(kungsbacka().build()));
+    given(logicalMeter().location(stockholm().build()));
 
     var response = asSuperAdmin()
       .get("/selection-tree", SelectionTreeDto.class);
@@ -38,67 +27,34 @@ public class SelectionTreeControllerTest extends IntegrationTest {
 
   @Test
   public void getFilteredCity() {
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId2")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().address("kabelgatan 2").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId3")
-      .organisationId(context().organisationId())
-      .location(stockholm().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(logicalMeter().location(kungsbacka().build()));
+    given(logicalMeter().location(kungsbacka().address("kabelgatan 2").build()));
+    given(logicalMeter().location(stockholm().build()));
 
-    var cities = asSuperAdmin()
+    var response = asSuperAdmin()
       .get("/selection-tree?city=sverige,kungsbacka", SelectionTreeDto.class)
-      .getBody()
-      .cities;
+      .getBody();
 
-    assertThat(cities).hasSize(1);
-    assertThat(cities.get(0).addresses).extracting("name")
+    assertThat(response.cities)
+      .flatExtracting(c -> c.addresses)
+      .extracting(a -> a.name)
       .containsExactlyInAnyOrder("kabelgatan 1", "kabelgatan 2");
   }
 
   @Test
   public void getFilteredAddress() {
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId2")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().address("kabelgatan 2").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId3")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().address("kabelgatan 3").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("extId4")
-      .organisationId(context().organisationId())
-      .location(oslo().address("kabelgatan 2").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(logicalMeter().location(kungsbacka().build()));
+    given(logicalMeter().location(kungsbacka().address("kabelgatan 2").build()));
+    given(logicalMeter().location(kungsbacka().address("kabelgatan 3").build()));
+    given(logicalMeter().location(oslo().address("kabelgatan 3").build()));
 
     var response = asSuperAdmin()
       .get("/selection-tree?address=sverige,kungsbacka,kabelgatan+2", SelectionTreeDto.class)
       .getBody();
 
-    assertThat(response.cities).hasSize(1);
-    assertThat(response.cities.get(0).addresses).extracting("name").containsExactly("kabelgatan 2");
+    assertThat(response.cities)
+      .flatExtracting(c -> c.addresses)
+      .extracting(a -> a.name)
+      .containsExactly("kabelgatan 2");
   }
 }

@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -117,6 +118,7 @@ public class LogicalMeterDtoMapperTest {
             .manufacturer("ELV")
             .logicalMeterId(meterId)
             .readIntervalMinutes(15)
+            .activePeriod(PeriodRange.unbounded())
             .status(StatusLogEntry.builder()
               .status(StatusType.OK)
               .start(statusChanged)

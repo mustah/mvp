@@ -40,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.Assume.assumeTrue;
 
 public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
@@ -71,11 +72,6 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     propertiesJpaRepository.deleteAll();
   }
 
-  @Override
-  protected void afterRemoveEntitiesHook() {
-    organisations.deleteById(otherOrganisation.id);
-  }
-
   @Test
   public void syncMeterThatDoesNotExistReturns404() {
     ResponseEntity<ErrorMessageDto> response = asUser()
@@ -100,7 +96,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void regularUserSyncingMeterBelongingToSameOrganisationReturns403() {
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
+    LogicalMeter logicalMeter = given(logicalMeter());
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser().post(
       synchronizeUrl(logicalMeter.id),
@@ -114,7 +110,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void adminUserSyncingMeterBelongingToSameOrganisationReturns403() {
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
+    LogicalMeter logicalMeter = given(logicalMeter());
 
     ResponseEntity<ErrorMessageDto> responseEntity = asAdmin().post(
       synchronizeUrl(logicalMeter.id),
@@ -131,9 +127,9 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     List<UUID> meterIds = Stream.of(
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId()))
+      given(logicalMeter()),
+      given(logicalMeter()),
+      given(logicalMeter())
     ).map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
@@ -153,10 +149,11 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     List<UUID> meterIds = Stream.of(
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId()))
-    ).map(logicalMeter -> logicalMeter.id)
+      given(logicalMeter()),
+      given(logicalMeter()),
+      given(logicalMeter())
+    )
+      .map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
     ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asSuperAdmin()
@@ -239,9 +236,10 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     List<UUID> meterIds = Stream.of(
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId()))
-    ).map(logicalMeter -> logicalMeter.id)
+      given(logicalMeter()),
+      given(logicalMeter())
+    )
+      .map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser()
@@ -254,7 +252,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void submittingRequestWhenQueueUnavailableReturns503() {
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
+    LogicalMeter logicalMeter = given(logicalMeter());
 
     ConnectionFactory oldConnectionFactory = rabbitTemplate.getConnectionFactory();
     rabbitTemplate.setConnectionFactory(new BrokenConnectionFactory());
@@ -281,7 +279,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void successfullySubmittedRequestShouldRespondWith_AcceptedStatusCode() {
     assumeTrue(isRabbitConnected());
 
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
+    LogicalMeter logicalMeter = given(logicalMeter());
 
     ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asSuperAdmin().postList(
       synchronizeUrl(logicalMeter.id),
@@ -301,7 +299,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     assumeTrue(isRabbitConnected());
 
     TestRabbitConsumer consumer = newResponseConsumer();
-    LogicalMeter logicalMeter = logicalMeters.save(newLogicalMeter(context().organisationId()));
+    LogicalMeter logicalMeter = given(logicalMeter());
 
     ResponseEntity<List<SyncRequestResponseDto>> responseEntity = asSuperAdmin().postList(
       synchronizeUrl(logicalMeter.id),
@@ -311,14 +309,23 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     GetReferenceInfoDto enqueuedMessage = consumer.fromJson(GetReferenceInfoDto.class);
-    assertThat(enqueuedMessage.organisationId).isEqualTo(context().organisation().externalId);
-    assertThat(enqueuedMessage.gateway).isNull();
-    assertThat(enqueuedMessage.meter).isNull();
-    assertThat(enqueuedMessage.facility).isEqualTo(new FacilityIdDto(logicalMeter.externalId));
-    assertThat(propertiesUseCases.shouldUpdateGeolocation(
-      logicalMeter.id,
-      logicalMeter.organisationId
-    )).isTrue();
+
+    assertSoftly(softly -> {
+      softly.assertThat(enqueuedMessage.organisationId)
+        .isEqualTo(context().organisation().externalId);
+
+      softly.assertThat(enqueuedMessage.gateway).isNull();
+
+      softly.assertThat(enqueuedMessage.meter).isNotNull();
+
+      softly.assertThat(enqueuedMessage.facility)
+        .isEqualTo(new FacilityIdDto(logicalMeter.externalId));
+
+      softly.assertThat(propertiesUseCases.shouldUpdateGeolocation(
+        logicalMeter.id,
+        logicalMeter.organisationId
+      )).isTrue();
+    });
   }
 
   @Test
@@ -328,10 +335,11 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     logicalMeters.save(newLogicalMeter(context().organisationId2()));
 
     List<UUID> meterIds = Stream.of(
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId())),
-      logicalMeters.save(newLogicalMeter(context().organisationId()))
-    ).map(logicalMeter -> logicalMeter.id)
+      given(logicalMeter()),
+      given(logicalMeter()),
+      given(logicalMeter())
+    )
+      .map(logicalMeter -> logicalMeter.id)
       .collect(toList());
 
     ResponseEntity<Void> responseEntity = asSuperAdmin()
@@ -353,9 +361,9 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void usersNotAllowedToSyncByOrganisation() {
     assumeTrue(isRabbitConnected());
 
-    logicalMeters.save(newLogicalMeter(context().organisationId()));
-    logicalMeters.save(newLogicalMeter(context().organisationId()));
-    logicalMeters.save(newLogicalMeter(context().organisationId()));
+    given(logicalMeter());
+    given(logicalMeter());
+    given(logicalMeter());
 
     ResponseEntity<ErrorMessageDto> responseEntity = asUser()
       .post(
@@ -367,6 +375,11 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(responseEntity.getBody().message)
       .contains("not allowed to publish synchronization requests");
+  }
+
+  @Override
+  protected void afterRemoveEntitiesHook() {
+    organisations.deleteById(otherOrganisation.id);
   }
 
   private MeteringReferenceInfoMessageDto newMeteringReferenceInfoMessageDto(String jobId) {

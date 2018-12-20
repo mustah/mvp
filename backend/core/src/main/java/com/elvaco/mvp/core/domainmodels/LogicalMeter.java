@@ -25,20 +25,12 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LogicalMeter implements Identifiable<UUID> {
 
-  @Builder.Default
-  public UUID id = UUID.randomUUID();
   public final String externalId;
   public final UUID organisationId;
-  @Builder.Default
-  public MeterDefinition meterDefinition = MeterDefinition.UNKNOWN_METER;
-  @Builder.Default
-  public ZonedDateTime created = ZonedDateTime.now();
   @Singular
   public final List<PhysicalMeter> physicalMeters;
   @Singular
   public final List<Gateway> gateways;
-  @Builder.Default
-  public Location location = Location.UNKNOWN_LOCATION;
   @Nullable
   public final Long expectedMeasurementCount;
   @Nullable
@@ -48,6 +40,14 @@ public class LogicalMeter implements Identifiable<UUID> {
   @Nullable
   public final StatusType status;
   public final String utcOffset;
+  @Builder.Default
+  public UUID id = UUID.randomUUID();
+  @Builder.Default
+  public MeterDefinition meterDefinition = MeterDefinition.UNKNOWN_METER;
+  @Builder.Default
+  public ZonedDateTime created = ZonedDateTime.now();
+  @Builder.Default
+  public Location location = Location.UNKNOWN_LOCATION;
 
   @Override
   public UUID getId() {
@@ -110,12 +110,10 @@ public class LogicalMeter implements Identifiable<UUID> {
   }
 
   public Optional<PhysicalMeter> activePhysicalMeter() {
-    if (physicalMeters.size() == 1) {
-      return Optional.of(physicalMeters.get(0));
-    } else if (physicalMeters.isEmpty()) {
-      return Optional.empty();
-    }
-    //TODO: Implement actual active meter identification
-    return Optional.of(physicalMeters.get(physicalMeters.size() - 1));
+    return activePhysicalMeter(ZonedDateTime.now());
+  }
+
+  public Optional<PhysicalMeter> activePhysicalMeter(ZonedDateTime when) {
+    return physicalMeters.stream().filter(pm -> pm.activePeriod.contains(when)).findAny();
   }
 }

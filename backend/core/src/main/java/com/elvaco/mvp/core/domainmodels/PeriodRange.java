@@ -74,6 +74,10 @@ public class PeriodRange implements Serializable {
     return EMPTY;
   }
 
+  public static PeriodRange unbounded() {
+    return halfOpenFrom(null, null);
+  }
+
   public boolean isEmpty() {
     return this == EMPTY;
   }

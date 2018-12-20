@@ -60,6 +60,7 @@
   <include file="xml/change_column_order_of_location_primary_key.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_organisation_id_to_meter_alarm_log.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_active_period_to_physical_meter.xml" relativeToChangelogFile="true"/>
+  <include file="xml/set_active_period_for_existing_meters.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

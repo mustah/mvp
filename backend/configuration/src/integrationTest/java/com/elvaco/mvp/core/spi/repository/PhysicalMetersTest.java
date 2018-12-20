@@ -205,14 +205,5 @@ public class PhysicalMetersTest extends IntegrationTest {
 
     assertThat(physicalMeterStatusLogJpaRepository.findAll()).hasSize(1);
   }
-
-  private PhysicalMeterBuilder physicalMeter() {
-    return PhysicalMeter.builder()
-      .organisationId(context().organisationId())
-      .address("someId")
-      .externalId("an-external-id")
-      .medium("Heat")
-      .manufacturer("ELV")
-      .readIntervalMinutes(15);
-  }
 }
+

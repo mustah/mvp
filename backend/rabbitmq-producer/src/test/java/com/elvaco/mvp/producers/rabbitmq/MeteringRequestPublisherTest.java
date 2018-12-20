@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
@@ -131,7 +132,10 @@ public class MeteringRequestPublisherTest {
   public void physicalMeterAddressIsUsedAsMeterIdInRequest() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
-    PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .activePeriod(PeriodRange.unbounded())
+      .address("physical-meter-address")
+      .build();
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       singletonList(physicalMeter),
@@ -164,7 +168,9 @@ public class MeteringRequestPublisherTest {
   public void gatewayIdIsNotSet() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
-    PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .address("physical-meter-address")
+      .build();
 
     Gateway gateway = Gateway.builder()
       .organisationId(user.getOrganisationId())
