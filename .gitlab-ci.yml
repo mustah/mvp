@@ -164,7 +164,7 @@ pre-test:docker-mvp-app:
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_NAME}
     APM_VERSION: 1.1.0
-    APM_SERVER: elvsealielk01.elvaco.se:8200
+    APM_SERVER: swarm-worker-01.elvaco.se:8200
   stage: pre-test
   dependencies:
     - build
@@ -185,7 +185,7 @@ pre-test:docker-geoservice-app:
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_NAME}
     APM_VERSION: 1.1.0
-    APM_SERVER: elvsealielk01.elvaco.se:8200
+    APM_SERVER: swarm-worker-01.elvaco.se:8200
   stage: pre-test
   dependencies:
     - build
