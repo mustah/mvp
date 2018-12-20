@@ -14,7 +14,7 @@ public class QuantityHelper {
 
   public static Set<Quantity> complementWithUnits(Set<Quantity> quantities) {
     return quantities.stream()
-      .map((inputQuantity) -> {
+      .map(inputQuantity -> {
         if (inputQuantity.presentationUnit() != null) {
           return inputQuantity;
         }
@@ -25,5 +25,4 @@ public class QuantityHelper {
       })
       .collect(toSet());
   }
-
 }

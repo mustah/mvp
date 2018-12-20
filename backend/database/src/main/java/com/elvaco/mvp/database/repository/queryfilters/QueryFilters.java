@@ -18,7 +18,7 @@ import com.elvaco.mvp.database.entity.user.QOrganisationEntity;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
-import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
+import static com.elvaco.mvp.core.util.CollectionHelper.isNotEmpty;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
 import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;

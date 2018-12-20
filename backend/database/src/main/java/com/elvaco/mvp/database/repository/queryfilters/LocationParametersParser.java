@@ -14,7 +14,7 @@ import lombok.ToString;
 import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN;
-import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
+import static com.elvaco.mvp.core.util.CollectionHelper.isNotEmpty;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass

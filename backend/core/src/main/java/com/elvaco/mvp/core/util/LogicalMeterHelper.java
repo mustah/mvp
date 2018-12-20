@@ -89,7 +89,7 @@ public final class LogicalMeterHelper {
 
   private static List<PhysicalMeter> getNoneEmptyPhysicalMeters(LogicalMeter logicalMeter) {
     return Optional.of(logicalMeter.physicalMeters)
-      .filter(physicalMeters -> !physicalMeters.isEmpty())
+      .filter(CollectionHelper::isNotEmpty)
       .orElseThrow(() -> new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId));
   }
 
