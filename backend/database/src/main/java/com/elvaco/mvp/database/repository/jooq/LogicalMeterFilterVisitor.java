@@ -8,35 +8,24 @@ import com.elvaco.mvp.core.filter.PeriodFilter;
 import com.elvaco.mvp.core.filter.WildcardFilter;
 
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
-import static com.elvaco.mvp.database.entity.jooq.Tables.MISSING_MEASUREMENT;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
-import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
-import static org.jooq.impl.DSL.count;
-import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.lateral;
 import static org.jooq.impl.DSL.noCondition;
-import static org.jooq.impl.DSL.trueCondition;
 
 class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
-  private final DSLContext dsl;
-
-  private Condition missingMeasurementCondition = falseCondition();
   private Condition physicalMeterCondition = noCondition();
 
-  public LogicalMeterFilterVisitor(DSLContext dsl, Collection<FilterAcceptor> decorators) {
+  LogicalMeterFilterVisitor(Collection<FilterAcceptor> decorators) {
     super(decorators);
-    this.dsl = dsl;
   }
 
   @Override
@@ -62,10 +51,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
     physicalMeterCondition =
       periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
-
-    missingMeasurementCondition =
-      MISSING_MEASUREMENT.EXPECTED_TIME.greaterOrEqual(period.start.toOffsetDateTime())
-        .and(MISSING_MEASUREMENT.EXPECTED_TIME.lessThan(period.stop.toOffsetDateTime()));
   }
 
   @Override
@@ -89,15 +74,6 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
 
       .leftJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
-        .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
-
-      .leftJoin(lateral(
-        dsl.select(count().as(MISSING_MEASUREMENT_COUNT))
-          .from(MISSING_MEASUREMENT)
-          .where(MISSING_MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-            .and(missingMeasurementCondition))
-          .groupBy(MISSING_MEASUREMENT.PHYSICAL_METER_ID))
-        .asTable("mm"))
-      .on(trueCondition());
+        .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));
   }
 }
