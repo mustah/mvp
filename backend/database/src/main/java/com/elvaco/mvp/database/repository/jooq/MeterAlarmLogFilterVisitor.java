@@ -13,8 +13,7 @@ import org.jooq.SelectJoinStep;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.lateral;
-import static org.jooq.impl.DSL.trueCondition;
+import static org.jooq.impl.DSL.max;
 
 @RequiredArgsConstructor
 class MeterAlarmLogFilterVisitor extends EmptyFilterVisitor {
@@ -34,15 +33,15 @@ class MeterAlarmLogFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
-    return query.leftJoin(lateral(
-      dsl.select()
-        .from(METER_ALARM_LOG)
-        .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-          .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .and(condition))
-        .orderBy(METER_ALARM_LOG.START.desc())
-        .limit(1)
-        .asTable(METER_ALARM_LOG.getName())
-    )).on(trueCondition());
+    return query.leftJoin(METER_ALARM_LOG)
+      .on(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+        .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+        .and(METER_ALARM_LOG.ID.equal(
+          dsl.select(max(METER_ALARM_LOG.ID))
+            .from(METER_ALARM_LOG)
+            .where(METER_ALARM_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+              .and(METER_ALARM_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+                .and(condition)))
+        )));
   }
 }

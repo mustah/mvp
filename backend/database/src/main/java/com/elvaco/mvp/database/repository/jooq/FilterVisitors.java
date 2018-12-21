@@ -23,7 +23,7 @@ public class FilterVisitors {
   }
 
   public static FilterAcceptor logicalMeter(DSLContext dsl, MeasurementThresholdParser parser) {
-    return new LogicalMeterFilterVisitor(dsl, filterDecorators(dsl, parser));
+    return new LogicalMeterFilterVisitor(filterDecorators(dsl, parser));
   }
 
   public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {
@@ -37,7 +37,8 @@ public class FilterVisitors {
     return List.of(
       new MeasurementStatsFilterVisitor(parser),
       new MeterAlarmLogFilterVisitor(dsl),
-      new PhysicalMeterStatusLogFilterVisitor(dsl)
+      new PhysicalMeterStatusLogFilterVisitor(dsl),
+      new MissingMeasurementFilterVisitor(dsl)
     );
   }
 }
