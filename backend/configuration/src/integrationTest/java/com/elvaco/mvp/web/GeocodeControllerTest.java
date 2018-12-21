@@ -1,11 +1,8 @@
 package com.elvaco.mvp.web;
 
-import java.util.UUID;
-
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationEntityMapper;
@@ -36,14 +33,7 @@ public class GeocodeControllerTest extends IntegrationTest {
 
   @Test
   public void saveLocationForLogicalMeter() {
-    UUID logicalMeterId = randomUUID();
-
-    logicalMeters.save(LogicalMeter.builder()
-      .id(logicalMeterId)
-      .externalId("test-123")
-      .organisationId(context().organisationId())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    var meter = given(logicalMeter());
 
     var geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -55,9 +45,9 @@ public class GeocodeControllerTest extends IntegrationTest {
     );
 
     var response = restClient()
-      .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
+      .post("/geocodes/callback/" + meter.id, geoResponse, GeoResponseDto.class);
 
-    var pk = new EntityPk(logicalMeterId, context().organisationId());
+    var pk = new EntityPk(meter.id, meter.organisationId);
 
     var expected = toLocationWithId(geoResponse, pk);
 
@@ -67,14 +57,7 @@ public class GeocodeControllerTest extends IntegrationTest {
 
   @Test
   public void saveLocationAsLowercaseStringForLogicalMeter() {
-    UUID logicalMeterId = randomUUID();
-
-    logicalMeters.save(LogicalMeter.builder()
-      .id(logicalMeterId)
-      .externalId("test-123")
-      .organisationId(context().organisationId())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    var meter = given(logicalMeter());
 
     var geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -86,11 +69,11 @@ public class GeocodeControllerTest extends IntegrationTest {
     );
 
     var response = restClient()
-      .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
+      .post("/geocodes/callback/" + meter.id, geoResponse, GeoResponseDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    var pk = new EntityPk(logicalMeterId, context().organisationId());
+    var pk = new EntityPk(meter.id, meter.organisationId);
 
     LocationWithId expected = new LocationBuilder()
       .id(pk.getId())
@@ -106,14 +89,7 @@ public class GeocodeControllerTest extends IntegrationTest {
 
   @Test
   public void doesNotSaveLocationWithNoCountry() {
-    UUID logicalMeterId = randomUUID();
-
-    logicalMeters.save(LogicalMeter.builder()
-      .id(logicalMeterId)
-      .externalId("test-123")
-      .organisationId(context().organisationId())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    var meter = given(logicalMeter());
 
     var geoResponse = new GeoResponseDto(
       new AddressDto(
@@ -125,9 +101,9 @@ public class GeocodeControllerTest extends IntegrationTest {
     );
 
     var response = restClient()
-      .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
+      .post("/geocodes/callback/" + meter.id, geoResponse, GeoResponseDto.class);
 
-    var pk = new EntityPk(logicalMeterId, context().organisationId());
+    var pk = new EntityPk(meter.id, meter.organisationId);
 
     LocationWithId actual = findLocationBy(pk);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
