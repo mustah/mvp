@@ -19,7 +19,7 @@ import org.springframework.util.MultiValueMap;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.FACILITY;
-import static com.elvaco.mvp.core.util.CollectionUtils.isNotEmpty;
+import static com.elvaco.mvp.core.util.CollectionHelper.isNotEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;

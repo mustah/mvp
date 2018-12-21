@@ -1,7 +1,5 @@
 package com.elvaco.mvp.core.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,13 +19,8 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
 import static com.elvaco.mvp.core.domainmodels.Quantity.QUANTITIES;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,31 +37,28 @@ public class LogicalMeterHelperTest {
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_emptyParams() {
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(emptyList(), emptySet()))
-      .isEqualTo(emptyMap());
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(emptyList(), emptySet())
+    ).isEmpty();
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(singletonList(newMeter(
-        DISTRICT_HEATING_METER
-      )), emptySet()))
-      .isEqualTo(emptyMap());
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+        List.of(newMeter(DISTRICT_HEATING_METER)), emptySet())
+    ).isEmpty();
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        emptyList(),
-        singleton(Quantity.ENERGY)
-      )).isEqualTo(emptyMap());
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(emptyList(), Set.of(Quantity.ENERGY))
+    ).isEmpty();
   }
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeters_oneMeterOneQuantity() {
     LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        singletonList(meter),
-        singleton(Quantity.ENERGY)
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+        List.of(meter),
+        Set.of(Quantity.ENERGY)
       )).isEqualTo(
-      singletonMap(Quantity.ENERGY, singletonList(meter.physicalMeters.get(0)))
+      Map.of(Quantity.ENERGY, List.of(meter.physicalMeters.get(0)))
     );
   }
 
@@ -77,13 +67,12 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
     LogicalMeter meterTwo = newMeter(DISTRICT_HEATING_METER);
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        asList(meterOne, meterTwo),
-        singleton(Quantity.ENERGY)
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+        List.of(meterOne, meterTwo),
+        Set.of(Quantity.ENERGY)
       )).isEqualTo(
-      singletonMap(
-        Quantity.ENERGY,
-        asList(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
+      Map.of(
+        Quantity.ENERGY, List.of(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
       )
     );
   }
@@ -93,23 +82,17 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterOne = newMeter(DISTRICT_HEATING_METER);
     LogicalMeter meterTwo = newMeter(DISTRICT_HEATING_METER);
 
-    Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
-    expected.put(
-      Quantity.ENERGY,
-      asList(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
-    );
-    expected.put(
-      Quantity.VOLUME,
-      asList(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
+    Map<Quantity, List<PhysicalMeter>> expected = Map.of(
+      Quantity.ENERGY, List.of(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0)),
+      Quantity.VOLUME, List.of(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
     );
 
-    assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        asList(meterOne, meterTwo),
-        new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
-      )).isEqualTo(
-      expected
+    var actual = logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+      List.of(meterOne, meterTwo),
+      Set.of(Quantity.ENERGY, Quantity.VOLUME)
     );
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -118,12 +101,10 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterTwo = newMeter(HOT_WATER_METER);
 
     assertThatThrownBy(() ->
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        asList(meterOne, meterTwo),
-        new HashSet<>(asList(Quantity.TEMPERATURE, Quantity.VOLUME))
-      )).isInstanceOf(
-      InvalidQuantityForMeterType.class
-    );
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+        List.of(meterOne, meterTwo),
+        Set.of(Quantity.TEMPERATURE, Quantity.VOLUME)
+      )).isInstanceOf(InvalidQuantityForMeterType.class);
   }
 
   @Test
@@ -136,19 +117,15 @@ public class LogicalMeterHelperTest {
     );
     LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
 
-    Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
-    expected.put(
-      volumeInSquareKilometers,
-      singletonList(meter.physicalMeters.get(0))
+    Map<Quantity, List<PhysicalMeter>> expected = Map.of(
+      volumeInSquareKilometers, List.of(meter.physicalMeters.get(0))
     );
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        singletonList(meter),
-        singleton(volumeInSquareKilometers)
-      )).isEqualTo(
-      expected
-    );
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+        List.of(meter),
+        Set.of(volumeInSquareKilometers)
+      )).isEqualTo(expected);
   }
 
   @Test
@@ -156,19 +133,15 @@ public class LogicalMeterHelperTest {
     Quantity volumeWithNoUnit = new Quantity(Quantity.VOLUME.name);
     LogicalMeter meter = newMeter(DISTRICT_HEATING_METER);
 
-    Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
-    expected.put(
-      Quantity.VOLUME,
-      singletonList(meter.physicalMeters.get(0))
+    Map<Quantity, List<PhysicalMeter>> expected = Map.of(
+      Quantity.VOLUME, List.of(meter.physicalMeters.get(0))
     );
 
     assertThat(
-      logicalMeterHelper.mapMeterQuantitiesToPhysicalMeters(
-        singletonList(meter),
-        singleton(volumeWithNoUnit)
-      )).isEqualTo(
-      expected
-    );
+      logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+        List.of(meter),
+        Set.of(volumeWithNoUnit)
+      )).isEqualTo(expected);
   }
 
   @Test
@@ -203,12 +176,14 @@ public class LogicalMeterHelperTest {
 
   private LogicalMeter newMeter(MeterDefinition meterDefinition) {
     UUID meterId = randomUUID();
+    UUID organisationId = randomUUID();
     return LogicalMeter.builder()
       .id(meterId)
       .externalId("meter-" + meterId)
-      .organisationId(randomUUID())
+      .organisationId(organisationId)
       .meterDefinition(meterDefinition)
       .physicalMeter(PhysicalMeter.builder()
+        .organisationId(organisationId)
         .address("address")
         .externalId("external-id")
         .medium(meterDefinition.medium)

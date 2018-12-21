@@ -7,9 +7,12 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
 @Builder
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class LabeledMeasurementValue {
 
   public final String id;
@@ -24,26 +27,6 @@ public class LabeledMeasurementValue {
   public final Double value;
   public final Quantity quantity;
 
-  public LabeledMeasurementValue(
-    String id,
-    String label,
-    @Nullable String city,
-    @Nullable String address,
-    @Nullable String medium,
-    Instant when,
-    Double value,
-    Quantity quantity
-  ) {
-    this.id = id;
-    this.label = label;
-    this.city = city;
-    this.address = address;
-    this.medium = medium;
-    this.when = when;
-    this.value = value;
-    this.quantity = quantity;
-  }
-
   public static LabeledMeasurementValue of(
     Measurement measurement,
     UUID logicalMeterId,
@@ -51,15 +34,15 @@ public class LabeledMeasurementValue {
     @Nullable String address,
     @Nullable String medium
   ) {
-    return new LabeledMeasurementValue(
-      logicalMeterId.toString(),
-      measurement.physicalMeter.externalId,
-      city,
-      address,
-      medium,
-      measurement.created.toInstant(),
-      measurement.value,
-      measurement.getQuantity()
-    );
+    return LabeledMeasurementValue.builder()
+      .id(logicalMeterId.toString())
+      .label(measurement.physicalMeter.externalId)
+      .city(city)
+      .address(address)
+      .medium(medium)
+      .when(measurement.created.toInstant())
+      .value(measurement.value)
+      .quantity(measurement.getQuantity())
+      .build();
   }
 }

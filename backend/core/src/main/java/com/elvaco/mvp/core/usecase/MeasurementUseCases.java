@@ -35,22 +35,22 @@ public class MeasurementUseCases {
   }
 
   public List<MeasurementValue> averageForPeriod(
-    List<UUID> meterIds,
+    List<UUID> physicalMeterId,
     Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-    return measurements.findAverageForPeriod(meterIds, seriesQuantity, from, to, resolution);
+    return measurements.findAverageForPeriod(physicalMeterId, seriesQuantity, from, to, resolution);
   }
 
   public List<MeasurementValue> seriesForPeriod(
-    UUID meterId,
+    UUID physicalMeterId,
     Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-    return measurements.findSeriesForPeriod(meterId, seriesQuantity, from, to, resolution);
+    return measurements.findSeriesForPeriod(physicalMeterId, seriesQuantity, from, to, resolution);
   }
 }

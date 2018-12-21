@@ -9,6 +9,7 @@ import {UiState} from '../../../state/ui/uiReducer';
 import {uuid} from '../../../types/Types';
 import {
   addToReport,
+  limit,
   selectEntryAdd,
   SET_SELECTED_ENTRIES,
   showMetersInGraph,
@@ -439,7 +440,7 @@ describe('reportActions', () => {
       };
       initTranslations(translations);
 
-      it('shows failure message if trying to select more than 20 meters at a time', () => {
+      it('shows failure message if trying to select more than num limit of meters at a time', () => {
         const address = 'storgatan 5';
         const city = 'sweden,höganäs';
         const addressId = `${city},${address}`;
@@ -453,7 +454,7 @@ describe('reportActions', () => {
           id: addressId,
         };
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < limit + 10; i++) {
           const id = idGenerator.uuid();
           state.selectionTree.entities.meters[id] = {
             address,
@@ -474,7 +475,7 @@ describe('reportActions', () => {
 
         const {type, payload} = actions[0];
         expect(type).toEqual(SHOW_FAIL_MESSAGE);
-        expect(payload).toEqual('Only 20 meters can be selected at the same time');
+        expect(payload).toEqual(`Only ${limit} meters can be selected at the same time`);
       });
 
     });
@@ -542,7 +543,7 @@ describe('reportActions', () => {
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids,
+            ids: [22, 'sweden,höganäs,hasselgatan 4', 33],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }
@@ -560,7 +561,25 @@ describe('reportActions', () => {
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: [22, 33],
+            ids: [22, 'sweden,höganäs,hasselgatan 4', 33],
+            indicatorsToSelect: [Medium.gas],
+            quantitiesToSelect: [Quantity.volume]
+          }
+        }
+      ]);
+    });
+
+    it('duplicate meter ids are removed', () => {
+      const store = configureMockStore({...initialState});
+      const ids: uuid[] = [33, 22, 33, 'sweden,höganäs,hasselgatan 4'];
+
+      store.dispatch(showMetersInGraph(ids));
+
+      expect(store.getActions()).toEqual([
+        {
+          type: SET_SELECTED_ENTRIES,
+          payload: {
+            ids: [22, 'sweden,höganäs,hasselgatan 4', 33],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }

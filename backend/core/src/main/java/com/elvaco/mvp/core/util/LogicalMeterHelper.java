@@ -1,10 +1,11 @@
 package com.elvaco.mvp.core.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -13,10 +14,13 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.flatMapping;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public final class LogicalMeterHelper {
@@ -27,43 +31,23 @@ public final class LogicalMeterHelper {
     List<LogicalMeter> logicalMeters,
     Set<Quantity> quantities
   ) {
-    if (logicalMeters.isEmpty() || quantities.isEmpty()) {
+    if (logicalMeters.isEmpty()) {
       return emptyMap();
     }
 
-    Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
-    var lookedUpQuantities = quantities.stream()
-      .map(quantity -> {
-        var storedQuantity = quantityProvider.getByName(quantity.name);
-        if (storedQuantity == null) {
-          return quantity;
-        }
-        return quantity.complementedBy(
-          storedQuantity.getPresentationInformation(),
-          storedQuantity.storageUnit
-        );
-      })
-      .collect(toSet());
-
-    lookedUpQuantities.forEach((quantity) -> {
-      List<PhysicalMeter> physicalMeters = new ArrayList<>();
-      logicalMeters.forEach(logicalMeter -> {
-        if (logicalMeter.physicalMeters.isEmpty()) {
-          throw new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId);
-        }
-        if (logicalMeter.getQuantity(quantity.name).isPresent()) {
-          physicalMeters.addAll(logicalMeter.physicalMeters);
-        }
-      });
-
-      if (!physicalMeters.isEmpty()) {
-        physicalMeterQuantityMap.put(quantity, physicalMeters);
-      }
-    });
-    return physicalMeterQuantityMap;
+    return quantities.stream()
+      .map(this::resolveQuantity)
+      .flatMap(quantity -> logicalMeters.stream()
+        .filter(logicalMeter -> logicalMeter.getQuantity(quantity.name).isPresent())
+        .map(LogicalMeterHelper::getNoneEmptyPhysicalMeters)
+        .map(physicalMeters -> new QuantityPhysicalMeters(quantity, physicalMeters)))
+      .collect(groupingBy(
+        QuantityPhysicalMeters::getQuantity,
+        flatMapping(QuantityPhysicalMeters::getPhysicalMetersStream, toList())
+      ));
   }
 
-  public Map<Quantity, List<PhysicalMeter>> mapMeterQuantitiesToPhysicalMeters(
+  public Map<Quantity, List<PhysicalMeter>> mapQuantitiesToPhysicalMeters(
     List<LogicalMeter> logicalMeters,
     Set<Quantity> quantities
   ) {
@@ -71,31 +55,56 @@ public final class LogicalMeterHelper {
       return emptyMap();
     }
 
-    Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
-    quantities.forEach((quantity) -> {
-      LogicalMeter firstMeter = logicalMeters.get(0);
+    return quantities.stream()
+      .map(complementQuantity(logicalMeters.get(0)))
+      .flatMap(quantity -> logicalMeters.stream()
+        .map(LogicalMeterHelper::getNoneEmptyPhysicalMeters)
+        .map(physicalMeters -> new QuantityPhysicalMeters(quantity, physicalMeters)))
+      .collect(groupingBy(
+        QuantityPhysicalMeters::getQuantity,
+        flatMapping(QuantityPhysicalMeters::getPhysicalMetersStream, toList())
+      ));
+  }
 
-      Quantity lookedUpQuantity = firstMeter.getQuantity(quantity.name)
-        .orElseThrow(() -> new InvalidQuantityForMeterType(
-          quantity.name,
-          firstMeter.meterDefinition.medium
-        ));
+  private Quantity resolveQuantity(Quantity quantity) {
+    return Optional.ofNullable(quantityProvider.getByName(quantity.name))
+      .map(storedQuantity -> quantity.complementedBy(
+        storedQuantity.getPresentationInformation(),
+        storedQuantity.storageUnit
+      ))
+      .orElse(quantity);
+  }
 
-      Quantity complementedQuantity = quantity.complementedBy(
-        lookedUpQuantity.getPresentationInformation(),
-        lookedUpQuantity.storageUnit
-      );
+  private static Function<Quantity, Quantity> complementQuantity(LogicalMeter logicalMeter) {
+    return quantity -> logicalMeter.getQuantity(quantity.name)
+      .map(storedQuantity -> quantity.complementedBy(
+        storedQuantity.getPresentationInformation(),
+        storedQuantity.storageUnit
+      ))
+      .orElseThrow(() -> new InvalidQuantityForMeterType(
+        quantity.name,
+        logicalMeter.meterDefinition.medium
+      ));
+  }
 
-      List<PhysicalMeter> physicalMeters = new ArrayList<>();
-      logicalMeters.forEach(logicalMeter -> {
-          if (logicalMeter.physicalMeters.isEmpty()) {
-            throw new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId);
-          }
-          physicalMeters.addAll(logicalMeter.physicalMeters);
-        }
-      );
-      physicalMeterQuantityMap.put(complementedQuantity, physicalMeters);
-    });
-    return physicalMeterQuantityMap;
+  private static List<PhysicalMeter> getNoneEmptyPhysicalMeters(LogicalMeter logicalMeter) {
+    return Optional.of(logicalMeter.physicalMeters)
+      .filter(CollectionHelper::isNotEmpty)
+      .orElseThrow(() -> new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId));
+  }
+
+  @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+  private static class QuantityPhysicalMeters {
+
+    private final Quantity quantity;
+    private final List<PhysicalMeter> physicalMeters;
+
+    private Quantity getQuantity() {
+      return quantity;
+    }
+
+    private Stream<PhysicalMeter> getPhysicalMetersStream() {
+      return physicalMeters.stream();
+    }
   }
 }

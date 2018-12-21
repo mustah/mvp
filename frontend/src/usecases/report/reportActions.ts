@@ -48,6 +48,10 @@ interface DispatchWithinLimits {
   selectedQuantities: Quantity[];
 }
 
+export const limit: number = 160;
+
+const maxSelectedIndicators = 2;
+
 const dispatchIfWithinLimits = ({
   dispatch,
   selectionTree,
@@ -55,7 +59,6 @@ const dispatchIfWithinLimits = ({
   ids,
   selectedQuantities
 }: DispatchWithinLimits) => {
-  const limit: number = 20;
   const newAmount: number = ids.filter(isSelectedMeter).length;
 
   if (newAmount > limit) {
@@ -72,7 +75,6 @@ const dispatchIfWithinLimits = ({
   const activeMedia: Medium[] = orderedMedia
     .filter((medium) => previousMedia.has(medium) && currentlyActiveMedia.has(medium));
 
-  const maxSelectedIndicators = 2;
   orderedMedia
     .filter((medium) => currentlyActiveMedia.has(medium))
     .forEach((activeMedium) => {
@@ -187,7 +189,7 @@ export const selectEntryAdd = (id: uuid) =>
 
 export const showMetersInGraph = (meterIds: uuid[]) =>
   (dispatch, getState: GetState) => {
-    const {selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
+    const {report: {selectedListItems}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
 
     const ids = meterIds.map((id) => selectionTree.entities.meters[id])
       .filter(isDefined)
@@ -196,9 +198,9 @@ export const showMetersInGraph = (meterIds: uuid[]) =>
 
     dispatchIfWithinLimits({
       dispatch,
-      ids,
+      ids: Array.from(new Set<uuid>([...selectedListItems, ...ids])),
       selectionTree,
-      previousIds: [],
+      previousIds: selectedListItems,
       selectedQuantities,
     });
   };
