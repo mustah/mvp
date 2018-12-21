@@ -13,8 +13,7 @@ import org.jooq.SelectJoinStep;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.lateral;
-import static org.jooq.impl.DSL.trueCondition;
+import static org.jooq.impl.DSL.max;
 
 @RequiredArgsConstructor
 class PhysicalMeterStatusLogFilterVisitor extends EmptyFilterVisitor {
@@ -34,15 +33,15 @@ class PhysicalMeterStatusLogFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   protected <R extends Record> SelectJoinStep<R> joinOn(SelectJoinStep<R> query) {
-    return query.leftJoin(lateral(
-      dsl.select(PHYSICAL_METER_STATUS_LOG.STATUS)
-        .from(PHYSICAL_METER_STATUS_LOG)
-        .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
-          .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
-          .and(condition))
-        .orderBy(PHYSICAL_METER_STATUS_LOG.START.desc())
-        .limit(1)
-        .asTable(PHYSICAL_METER_STATUS_LOG.getName())
-    )).on(trueCondition());
+    return query.leftJoin(PHYSICAL_METER_STATUS_LOG)
+      .on(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+        .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
+        .and(PHYSICAL_METER_STATUS_LOG.ID.equal(
+          dsl.select(max(PHYSICAL_METER_STATUS_LOG.ID))
+            .from(PHYSICAL_METER_STATUS_LOG)
+            .where(PHYSICAL_METER_STATUS_LOG.ORGANISATION_ID.equal(PHYSICAL_METER.ORGANISATION_ID)
+              .and(PHYSICAL_METER_STATUS_LOG.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+                .and(condition)))
+        )));
   }
 }
