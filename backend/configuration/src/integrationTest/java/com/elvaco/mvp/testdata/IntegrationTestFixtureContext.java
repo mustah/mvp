@@ -280,6 +280,10 @@ public class IntegrationTestFixtureContext {
     return gateways.save(builtGateway.toBuilder().meters(savedMeters).build());
   }
 
+  Collection<Gateway> given(GatewayBuilder... gatewayBuilders) {
+    return Arrays.stream(gatewayBuilders).map(this::given).collect(toList());
+  }
+
   void given(StatusLogEntryBuilder... statusLogEntryBuilders) {
     meterStatusLogs.save(Arrays.stream(statusLogEntryBuilders)
       .map(StatusLogEntryBuilder::build)

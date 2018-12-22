@@ -45,6 +45,10 @@ public interface ContextDsl {
     return context().given(gateway);
   }
 
+  default Collection<Gateway> given(GatewayBuilder... gatewayBuilders) {
+    return context().given(gatewayBuilders);
+  }
+
   default void given(StatusLogEntryBuilder... statusLogEntryBuilder) {
     context().given(statusLogEntryBuilder);
   }
