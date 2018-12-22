@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
@@ -232,6 +233,10 @@ public class IntegrationTestFixtureContext {
     );
 
     return logicalMeter.addPhysicalMeter(physicalMeter);
+  }
+
+  Collection<LogicalMeter> given(LogicalMeterBuilder... logicalMeterBuilders) {
+    return Arrays.stream(logicalMeterBuilders).map(this::given).collect(Collectors.toList());
   }
 
   LogicalMeter given(
