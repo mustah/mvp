@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web;
 
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
@@ -35,26 +34,11 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
 
     var subOrganisation = createSubOrganisation(userSelection);
 
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("ex1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("ex2")
-      .organisationId(context().organisationId())
-      .location(stockholm().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("ex3")
-      .organisationId(context().organisationId())
-      .location(oslo().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(
+      logicalMeter().location(kungsbacka().build()),
+      logicalMeter().location(stockholm().build()),
+      logicalMeter().location(oslo().build())
+    );
 
     var user = subOrgUser().organisation(subOrganisation).build();
 
@@ -77,12 +61,7 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
 
     var subOrganisation = createSubOrganisation(userSelection);
 
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("ex1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(logicalMeter().location(kungsbacka().build()));
 
     var user = subOrgUser().organisation(subOrganisation).build();
 
@@ -105,19 +84,10 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
 
     var subOrganisation = createSubOrganisation(userSelection);
 
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("demo1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("demo2")
-      .organisationId(context().organisationId())
-      .location(stockholm().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(
+      logicalMeter().location(kungsbacka().build()),
+      logicalMeter().location(stockholm().build())
+    );
 
     var user = subOrgUser().organisation(subOrganisation).build();
 
@@ -140,26 +110,11 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
 
     var subOrganisation = createSubOrganisation(userSelection);
 
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("demo1")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("demo2")
-      .organisationId(context().organisationId())
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    logicalMeters.save(LogicalMeter.builder()
-      .externalId("demo3")
-      .organisationId(context().organisationId())
-      .location(stockholm().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
+    given(
+      logicalMeter().externalId("demo1").location(kungsbacka().build()),
+      logicalMeter().externalId("demo2").location(kungsbacka().build()),
+      logicalMeter().externalId("demo3").location(stockholm().build())
+    );
 
     var user = subOrgUser().organisation(subOrganisation).build();
 

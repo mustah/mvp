@@ -23,6 +23,10 @@ public interface ContextDsl {
     return context().given(logicalMeter);
   }
 
+  default Collection<LogicalMeter> given(LogicalMeterBuilder... logicalMeterBuilders) {
+    return context().given(logicalMeterBuilders);
+  }
+
   /**
    * Save physical meters and connect them to the given logical meter.
    */
@@ -39,6 +43,10 @@ public interface ContextDsl {
 
   default Gateway given(GatewayBuilder gateway) {
     return context().given(gateway);
+  }
+
+  default Collection<Gateway> given(GatewayBuilder... gatewayBuilders) {
+    return context().given(gatewayBuilders);
   }
 
   default void given(StatusLogEntryBuilder... statusLogEntryBuilder) {

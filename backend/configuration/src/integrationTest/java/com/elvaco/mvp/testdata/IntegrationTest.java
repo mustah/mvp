@@ -1,6 +1,5 @@
 package com.elvaco.mvp.testdata;
 
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -221,23 +220,6 @@ public abstract class IntegrationTest implements ContextDsl {
       Thread.sleep(100);
     } while (System.nanoTime() < (start + MAX_WAIT_TIME));
     return false;
-  }
-
-  protected void addMeasurementsForMeter(
-    PhysicalMeter physicalMeter,
-    Set<Quantity> quantities,
-    ZonedDateTime start,
-    Duration periodDuration,
-    Long minuteInterval,
-    double valueIncrementation
-  ) {
-    ZonedDateTime now = start;
-    double incrementedValue = 1.0;
-    while (now.isBefore(start.plus(periodDuration))) {
-      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, incrementedValue);
-      now = now.plusMinutes(minuteInterval);
-      incrementedValue += valueIncrementation;
-    }
   }
 
   protected void addMeasurementsForMeterQuantities(

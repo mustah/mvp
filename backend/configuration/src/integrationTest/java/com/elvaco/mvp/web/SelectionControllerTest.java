@@ -1,14 +1,6 @@
 package com.elvaco.mvp.web;
 
-import java.util.UUID;
-
-import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.LocationBuilder;
-import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -126,7 +118,9 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void getAddresses_IgnoresNull() {
     prepareMeters();
-    createLogicalMeter(null, "kungsbacka", "kabelgatan 17", "extId17");
+    given(logicalMeter().externalId("extId17")
+      .location(kungsbacka().country(null).address("kabelgatan 17").build())
+    );
 
     Page<AddressDto> response = asUser()
       .getPage("/selections/addresses?sort=streetAddress,asc", AddressDto.class);
@@ -143,33 +137,20 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void userCanNotAccessOtherOrganisationsCities() {
-    createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1",
-      context().organisationId()
-    );
-    createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 2",
-      "extId2",
-      context().organisationId()
-    );
-    createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 3",
-      "extId3",
-      context().organisationId()
-    );
-    createLogicalMeter(
-      "sweden",
-      "stockholm",
-      "kungsgatan 3",
-      "extId4",
-      context().organisationId2()
+    given(
+      logicalMeter()
+        .location(kungsbacka().country("sweden").address("kabelgatan 1").build())
+        .externalId("extId1"),
+      logicalMeter()
+        .location(kungsbacka().country("sweden").address("kabelgatan 2").build())
+        .externalId("extId2"),
+      logicalMeter()
+        .location(kungsbacka().country("sweden").address("kabelgatan 3").build())
+        .externalId("extId3"),
+      logicalMeter()
+        .location(stockholm().country("sweden").address("kungsgatan 3").build())
+        .organisationId(context().organisationId2())
+        .externalId("extId4")
     );
 
     Page<CityDto> response = asOtherUser().getPage("/selections/cities", CityDto.class);
@@ -238,24 +219,18 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsFacilities() {
     prepareMeters();
+    given(
+      logicalMeter().location(kungsbacka().country("sweden").address("kabelgatan 2").build())
+        .externalId("extId5"),
 
-    LogicalMeter logicalMeter = createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 2",
-      "extId5",
-      context().organisationId2()
-    );
-    createPhysicalMeter(context().organisation2(), "", logicalMeter);
+      logicalMeter().location(kungsbacka().city("gothenburg")
+        .country("sweden")
+        .address("snabelgatan 3")
+        .build())
+        .externalId("extId6")
+        .organisationId(context().organisationId2())
 
-    logicalMeter = createLogicalMeter(
-      "sweden",
-      "gothenburg",
-      "snabelgatan 3",
-      "extId6",
-      context().organisationId2()
     );
-    createPhysicalMeter(context().organisation2(), "", logicalMeter);
 
     var url = facilitiesUrl()
       .sortBy("externalId,asc")
@@ -308,14 +283,13 @@ public class SelectionControllerTest extends IntegrationTest {
   public void userCanNotAccessOtherOrganisationsSecondaryAddresses() {
     prepareMeters();
 
-    LogicalMeter logicalMeter = logicalMeters.save(createLogicalMeter(
-      "finland",
-      "helsinki",
-      "joksigatan 2",
-      "extId777",
-      context().organisationId2()
-    ));
-    physicalMeters.save(createPhysicalMeter(context().organisation2(), "777", logicalMeter));
+    given(
+      logicalMeter()
+        .organisationId(context().organisationId2())
+        .location(kungsbacka().country("finland").city("helsinki").address("joksigatan 2").build())
+        .externalId("extId777"),
+      physicalMeter().address("777").organisationId(context().organisationId2())
+    );
 
     String url = "/selections/secondary-addresses?q=777";
 
@@ -366,11 +340,9 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsGatewaySerials() {
     prepareGateways();
-    gateways.save(Gateway.builder()
-      .organisationId(context().organisationId2())
+    given(gateway().organisationId(context().organisationId2())
       .serial("6666")
-      .productModel("3100")
-      .build());
+      .productModel("3100"));
 
     var response = asOtherUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
 
@@ -381,23 +353,9 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void facilityWildcardSearch() {
-    UUID meterId = randomUUID();
-    logicalMeters.save(LogicalMeter.builder()
-      .id(meterId)
-      .externalId("abcdef")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
-      .externalId("abcdef")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
+    given(
+      logicalMeter().externalId("abcdef")
+    );
 
     var response = asUser().getPage(
       Url.builder().path("/selections/facilities").parameter(Q, "bcd").build(),
@@ -416,29 +374,13 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void secondaryAddressWildcardSearch() {
-    var logicalMeterId = randomUUID();
-    logicalMeters.save(
-      LogicalMeter.builder()
-        .id(logicalMeterId)
-        .externalId("1234")
-        .organisationId(context().organisationId())
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
-        .location(kungsbacka().address("Stora vägen 24").build())
-        .utcOffset(DEFAULT_UTC_OFFSET)
-        .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(logicalMeterId)
-      .externalId("1234")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
+    given(
+      logicalMeter().externalId("1234"), physicalMeter().address("123456")
+    );
 
     var response = asUser().getPage(Url.builder()
       .path("/selections/secondary-addresses")
-      .parameter(Q, "1234")
+      .parameter(Q, "12345")
       .build(), IdNamedDto.class);
 
     assertThat(response).hasSize(1);
@@ -454,11 +396,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void gatewaySerialWildcardSearch() {
-    gateways.save(Gateway.builder()
-      .organisationId(context().organisationId())
-      .serial("1234567")
-      .productModel("3100")
-      .build());
+    given(gateway().serial("1234567"));
 
     var response = asUser().getPage(Url.builder().path("/selections/gateway-serials")
       .parameter(Q, "3456").build(), IdNamedDto.class);
@@ -473,24 +411,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void cityWildcardSearch() {
-    UUID meterId = randomUUID();
-    logicalMeters.save(LogicalMeter.builder()
-      .id(meterId)
-      .externalId("1234")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
-      .externalId("1234")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
+    given(logicalMeter().location(kungsbacka().build()));
 
     Page<CityDto> response = asUser().getPage(
       "/selections/cities?q=ngsback",
@@ -507,24 +428,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void addressWildcardSearch() {
-    UUID meterId = randomUUID();
-    logicalMeters.save(LogicalMeter.builder()
-      .id(meterId)
-      .externalId("1234")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(kungsbacka().address("Stora vägen 24").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(meterId)
-      .externalId("1234")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
+    given(logicalMeter().location(kungsbacka().address("Stora vägen 24").build()));
 
     Page<AddressDto> response = asUser().getPage(
       "/selections/addresses?q=tora",
@@ -541,34 +445,10 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getCities_duplicatesAreNotIncluded() {
-    logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
-      .externalId("1")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
-    );
-
-    logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
-      .externalId("2")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
-    );
-
-    logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
-      .externalId("3")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(stockholm().country("norge").city("oslo").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
+    given(
+      logicalMeter().location(kungsbacka().build()),
+      logicalMeter().location(kungsbacka().build()),
+      logicalMeter().location(stockholm().country("norge").city("oslo").build())
     );
 
     Page<CityDto> response = asUser().getPage(
@@ -584,24 +464,9 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getAddresses_duplicatesAreNotIncluded() {
-    logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
-      .externalId("1")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
-    );
-
-    logicalMeters.save(LogicalMeter.builder()
-      .id(randomUUID())
-      .externalId("2")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .location(kungsbacka().build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
+    given(
+      logicalMeter().location(kungsbacka().build()),
+      logicalMeter().location(kungsbacka().build())
     );
 
     Page<AddressDto> response = asUser().getPage(
@@ -616,43 +481,8 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getSecondaryAddresses_duplicatesAreNotIncluded() {
-    var logicalMeterId1 = randomUUID();
-    logicalMeters.save(
-      LogicalMeter.builder()
-        .id(logicalMeterId1)
-        .externalId("1234")
-        .organisationId(context().organisationId())
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
-        .utcOffset(DEFAULT_UTC_OFFSET)
-        .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(logicalMeterId1)
-      .externalId("1234")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
-
-    UUID logicalMeterId2 = randomUUID();
-    logicalMeters.save(LogicalMeter.builder()
-      .id(logicalMeterId2)
-      .externalId("5678")
-      .organisationId(context().organisationId())
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
-    );
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(logicalMeterId2)
-      .externalId("5678")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
+    given(logicalMeter(), physicalMeter().address("123456"));
+    given(logicalMeter(), physicalMeter().address("123456"));
 
     Page<IdNamedDto> response = asUser().getPage(
       "/selections/secondary-addresses",
@@ -664,33 +494,11 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getFacilities_duplicatesAreNotIncluded() {
-    var logicalMeterId = randomUUID();
-    logicalMeters.save(
-      LogicalMeter.builder()
-        .id(logicalMeterId)
-        .externalId("1234")
-        .organisationId(context().organisationId())
-        .meterDefinition(MeterDefinition.HOT_WATER_METER)
-        .utcOffset(DEFAULT_UTC_OFFSET)
-        .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(logicalMeterId)
-      .externalId("1234")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("123456")
-      .build());
-
-    physicalMeters.save(PhysicalMeter.builder()
-      .logicalMeterId(logicalMeterId)
-      .externalId("1234")
-      .readIntervalMinutes(60)
-      .medium(Medium.DISTRICT_HEATING.medium)
-      .organisationId(context().organisationId())
-      .address("78910")
-      .build());
+    given(
+      logicalMeter().externalId("1234"),
+      physicalMeter().externalId("1234"),
+      physicalMeter().externalId("1234")
+    );
 
     Page<IdNamedDto> response = asUser().getPage(
       "/selections/facilities",
@@ -702,10 +510,11 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void getGatewaySerials_duplicatesAreNotIncluded() {
-    Gateway.GatewayBuilder gateway = Gateway.builder().organisationId(context().organisationId());
-    gateways.save(gateway.serial("1").productModel("3100").build());
-    gateways.save(gateway.serial("1").productModel("2100").build());
-    gateways.save(gateway.serial("2").productModel("3100").build());
+    given(
+      gateway().serial("1").productModel("3100"),
+      gateway().serial("1").productModel("2100"),
+      gateway().serial("2").productModel("3100")
+    );
 
     Page<IdNamedDto> response = asUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
 
@@ -771,75 +580,53 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   private void prepareGateways() {
-    Gateway.GatewayBuilder gatewayBuilder = Gateway.builder()
-      .organisationId(context().organisationId())
-      .productModel("3100");
-    gateways.save(gatewayBuilder.serial("1122").build());
-    gateways.save(gatewayBuilder.serial("3344").build());
-    gateways.save(gatewayBuilder.serial("5566").build());
+    given(
+      gateway().productModel("3100").serial("1122"),
+      gateway().productModel("3100").serial("3344"),
+      gateway().productModel("3100").serial("5566")
+    );
   }
 
   private void prepareMeters() {
-    var logicalMeter = createLogicalMeter(
-      "sweden",
-      "kungsbacka",
-      "kabelgatan 1",
-      "extId1"
+
+    given(
+      logicalMeter()
+        .externalId("extId1")
+        .location(kungsbacka().address("kabelgatan 1")
+          .city("kungsbacka")
+          .country("sweden")
+          .build()),
+      physicalMeter().address("111")
     );
-    createPhysicalMeter(context().organisation(), "111", logicalMeter);
 
-    logicalMeter = createLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2");
-    createPhysicalMeter(context().organisation(), "222", logicalMeter);
+    given(
+      logicalMeter()
+        .externalId("extId2")
+        .location(kungsbacka().address("kabelgatan 2")
+          .city("kungsbacka")
+          .country("sweden")
+          .build()),
+      physicalMeter().address("222")
+    );
 
-    logicalMeter = createLogicalMeter("sweden", "gothenburg", "snabelgatan 3", "extId3");
-    createPhysicalMeter(context().organisation(), "333", logicalMeter);
+    given(
+      logicalMeter()
+        .externalId("extId3")
+        .location(kungsbacka().address("snabelgatan 3")
+          .city("gothenburg")
+          .country("sweden")
+          .build()),
+      physicalMeter().address("333")
+    );
 
-    logicalMeter = createLogicalMeter("finland", "helsinki", "joksigatan 2", "extId4");
-    createPhysicalMeter(context().organisation(), "444", logicalMeter);
-  }
-
-  private PhysicalMeter createPhysicalMeter(
-    Organisation organisation,
-    String address,
-    LogicalMeter logicalMeter
-  ) {
-    return physicalMeters.save(PhysicalMeter.builder()
-      .organisationId(organisation.id)
-      .address(address)
-      .externalId(logicalMeter.externalId)
-      .medium("Gas")
-      .manufacturer("elv")
-      .logicalMeterId(logicalMeter.id)
-      .readIntervalMinutes(60)
-      .build());
-  }
-
-  private LogicalMeter createLogicalMeter(
-    String country,
-    String city,
-    String address,
-    String externalId
-  ) {
-    return createLogicalMeter(country, city, address, externalId, context().organisationId());
-  }
-
-  private LogicalMeter createLogicalMeter(
-    String country,
-    String city,
-    String address,
-    String externalId,
-    UUID organisationId
-  ) {
-    return logicalMeters.save(LogicalMeter.builder()
-      .externalId(externalId)
-      .organisationId(organisationId)
-      .location(new LocationBuilder()
-        .country(country)
-        .city(city)
-        .address(address)
-        .build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
-      .build()
+    given(
+      logicalMeter()
+        .externalId("extId4")
+        .location(kungsbacka().address("joksigatan 2")
+          .city("helsinki")
+          .country("finland")
+          .build()),
+      physicalMeter().address("444")
     );
   }
 
