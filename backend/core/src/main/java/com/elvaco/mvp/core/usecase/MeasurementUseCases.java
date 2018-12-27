@@ -1,13 +1,10 @@
 package com.elvaco.mvp.core.usecase;
 
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -34,23 +31,11 @@ public class MeasurementUseCases {
     return measurements.findAll(parameters.ensureOrganisationFilters(currentUser));
   }
 
-  public List<MeasurementValue> averageForPeriod(
-    List<UUID> physicalMeterId,
-    Quantity seriesQuantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
-    return measurements.findAverageForPeriod(physicalMeterId, seriesQuantity, from, to, resolution);
+  public List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter) {
+    return measurements.findAverageForPeriod(parameter);
   }
 
-  public List<MeasurementValue> seriesForPeriod(
-    UUID physicalMeterId,
-    Quantity seriesQuantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
-    return measurements.findSeriesForPeriod(physicalMeterId, seriesQuantity, from, to, resolution);
+  public List<MeasurementValue> findSeriesForPeriod(MeasurementParameter parameter) {
+    return measurements.findSeriesForPeriod(parameter);
   }
 }

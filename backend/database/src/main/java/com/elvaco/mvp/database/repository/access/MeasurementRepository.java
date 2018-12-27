@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.repository.access;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -8,12 +7,12 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
-import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
@@ -25,9 +24,6 @@ import com.elvaco.mvp.database.util.SqlErrorMapper;
 
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.HOURS;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.stream.Collectors.toList;
 
 public class MeasurementRepository implements Measurements {
@@ -51,30 +47,6 @@ public class MeasurementRepository implements Measurements {
       quantityProvider,
       quantityEntityMapper
     );
-  }
-
-  protected static OffsetDateTime getIntervalStart(
-    ZonedDateTime zonedDateTime,
-    TemporalResolution resolution
-  ) {
-    switch (resolution) {
-      case day:
-        return OffsetDateTime.ofInstant(
-          zonedDateTime.truncatedTo(DAYS).toInstant(),
-          zonedDateTime.getZone()
-        );
-      case month:
-        return OffsetDateTime.ofInstant(
-          zonedDateTime.truncatedTo(DAYS).with(firstDayOfMonth()).toInstant(),
-          zonedDateTime.getZone()
-        );
-      case hour:
-      default:
-        return OffsetDateTime.ofInstant(
-          zonedDateTime.truncatedTo(HOURS).toInstant(),
-          zonedDateTime.getZone()
-        );
-    }
   }
 
   @Override
@@ -110,69 +82,60 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public List<MeasurementValue> findAverageForPeriod(
-    List<UUID> meterIds,
-    Quantity quantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
+  public List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter) {
     List<MeasurementValueProjection> averageForPeriod;
-    if (quantity.seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION) {
+    if (parameter.getQuantity().seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION) {
       averageForPeriod = measurementJpaRepository.getAverageForPeriodConsumption(
-        meterIds,
-        resolution.asInterval(),
-        quantity.name,
-        getIntervalStart(from, resolution),
-        getIntervalStart(to, resolution)
+        parameter.getPhysicalMeterIds(),
+        parameter.getResolution().asInterval(),
+        parameter.getQuantity().name,
+        parameter.getResolution().getStart(parameter.getFrom()),
+        parameter.getResolution().getStart(parameter.getTo())
       );
     } else {
       averageForPeriod = measurementJpaRepository.getAverageForPeriod(
-        meterIds,
-        resolution.asInterval(),
-        quantity.name,
-        getIntervalStart(from, resolution),
-        getIntervalStart(to, resolution)
+        parameter.getPhysicalMeterIds(),
+        parameter.getResolution().asInterval(),
+        parameter.getQuantity().name,
+        parameter.getResolution().getStart(parameter.getFrom()),
+        parameter.getResolution().getStart(parameter.getTo())
       );
     }
 
     return averageForPeriod.stream()
-      .map(projection -> projectionToMeasurementValue(projection, quantity))
+      .map(projection -> toMeasurementValue(projection, parameter.getQuantity()))
       .collect(toList());
   }
 
   @Override
-  public List<MeasurementValue> findSeriesForPeriod(
-    UUID meterId,
-    Quantity quantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
+  public List<MeasurementValue> findSeriesForPeriod(MeasurementParameter parameter) {
     try {
       List<MeasurementValueProjection> seriesForPeriod;
-      if (quantity.seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION) {
+      if (parameter.getQuantity().seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION) {
         seriesForPeriod = measurementJpaRepository.getSeriesForPeriodConsumption(
-          meterId,
-          quantity.name,
-          getIntervalStart(from, resolution),
-          getIntervalStart(to, resolution),
-          resolution.asInterval()
+          parameter.getPhysicalMeterIds().get(0),
+          parameter.getQuantity().name,
+          parameter.getResolution().getStart(parameter.getFrom()),
+          parameter.getResolution().getStart(parameter.getTo()),
+          parameter.getResolution().asInterval()
         );
       } else {
         seriesForPeriod = measurementJpaRepository.getSeriesForPeriod(
-          meterId,
-          quantity.name,
-          getIntervalStart(from, resolution),
-          getIntervalStart(to, resolution),
-          resolution.asInterval()
+          parameter.getPhysicalMeterIds().get(0),
+          parameter.getQuantity().name,
+          parameter.getResolution().getStart(parameter.getFrom()),
+          parameter.getResolution().getStart(parameter.getTo()),
+          parameter.getResolution().asInterval()
         );
       }
       return seriesForPeriod.stream()
-        .map((projection) -> projectionToMeasurementValue(projection, quantity))
+        .map((projection) -> toMeasurementValue(projection, parameter.getQuantity()))
         .collect(toList());
     } catch (DataIntegrityViolationException ex) {
-      throw SqlErrorMapper.mapDataIntegrityViolation(ex, quantity.presentationUnit());
+      throw SqlErrorMapper.mapDataIntegrityViolation(
+        ex,
+        parameter.getQuantity().presentationUnit()
+      );
     }
   }
 
@@ -191,7 +154,7 @@ public class MeasurementRepository implements Measurements {
       .map(measurementEntityMapper::toDomainModel);
   }
 
-  private MeasurementValue projectionToMeasurementValue(
+  private MeasurementValue toMeasurementValue(
     MeasurementValueProjection projection,
     Quantity quantity
   ) {

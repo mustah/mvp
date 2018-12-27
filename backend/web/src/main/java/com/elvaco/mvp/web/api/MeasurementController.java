@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -52,7 +53,7 @@ public class MeasurementController {
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(
     @RequestParam MultiValueMap<String, String> requestParams,
-    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
@@ -73,23 +74,24 @@ public class MeasurementController {
 
     return toSeries(logicalMeterHelper.groupByQuantity(logicalMeters, quantities)
       .entrySet().stream()
-      .flatMap(entry ->
-        measurementUseCases.averageForPeriod(
+      .flatMap(entry -> measurementUseCases.findAverageForPeriod(
+        new MeasurementParameter(
           entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
           entry.getKey(),
-          after,
+          start,
           stop,
-          resolutionOrDefault(after, stop, resolution)
-        ).stream()
-          .map(measurementValue -> LabeledMeasurementValue.builder()
-            .id(String.format("average-%s", entry.getKey().name))
-            .label(label)
-            .when(measurementValue.when)
-            .value(measurementValue.value)
-            .quantity(entry.getKey())
-            .city(singleCityOrNull(parameters))
-            .build()
-          ))
+          resolutionOrDefault(start, stop, resolution)
+        ))
+        .stream()
+        .map(measurementValue -> LabeledMeasurementValue.builder()
+          .id(String.format("average-%s", entry.getKey().name))
+          .label(label)
+          .when(measurementValue.when)
+          .value(measurementValue.value)
+          .quantity(entry.getKey())
+          .city(singleCityOrNull(parameters))
+          .build()
+        ))
       .collect(toList())
     );
   }
@@ -97,7 +99,7 @@ public class MeasurementController {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
-    @RequestParam List<UUID> logicalMeterId,
+    @RequestParam(name = "logicalMeterId") List<UUID> logicalMeterIds,
     @RequestParam(name = "quantity") Optional<Set<Quantity>> optionalQuantities,
     @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
@@ -107,7 +109,7 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterId);
+    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterIds);
 
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, identity()));
@@ -123,13 +125,15 @@ public class MeasurementController {
     return toSeries(logicalMeterHelper.mapQuantitiesToPhysicalMeters(logicalMeters, quantities)
       .entrySet().stream()
       .flatMap(entry -> entry.getValue().stream()
-        .flatMap(physicalMeter -> measurementUseCases.seriesForPeriod(
-          physicalMeter.id,
-          entry.getKey(),
-          start,
-          stop,
-          temporalResolution
-        ).stream()
+        .flatMap(physicalMeter -> measurementUseCases.findSeriesForPeriod(
+          new MeasurementParameter(
+            List.of(physicalMeter.id),
+            entry.getKey(),
+            start,
+            stop,
+            temporalResolution
+          ))
+          .stream()
           .map(measurementValue -> {
             LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
             return LabeledMeasurementValue.builder()

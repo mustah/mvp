@@ -7,10 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
@@ -46,24 +45,12 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public List<MeasurementValue> findAverageForPeriod(
-    List<UUID> meterIds,
-    Quantity quantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
+  public List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter) {
     return emptyList();
   }
 
   @Override
-  public List<MeasurementValue> findSeriesForPeriod(
-    UUID meterId,
-    Quantity quantity,
-    ZonedDateTime from,
-    ZonedDateTime to,
-    TemporalResolution resolution
-  ) {
+  public List<MeasurementValue> findSeriesForPeriod(MeasurementParameter parameter) {
     return emptyList();
   }
 
