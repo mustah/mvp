@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.repository.access;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
-import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
@@ -26,9 +24,6 @@ import com.elvaco.mvp.database.util.SqlErrorMapper;
 
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.HOURS;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.stream.Collectors.toList;
 
 public class MeasurementRepository implements Measurements {
@@ -52,30 +47,6 @@ public class MeasurementRepository implements Measurements {
       quantityProvider,
       quantityEntityMapper
     );
-  }
-
-  protected static OffsetDateTime getIntervalStart(
-    ZonedDateTime zonedDateTime,
-    TemporalResolution resolution
-  ) {
-    switch (resolution) {
-      case day:
-        return OffsetDateTime.ofInstant(
-          zonedDateTime.truncatedTo(DAYS).toInstant(),
-          zonedDateTime.getZone()
-        );
-      case month:
-        return OffsetDateTime.ofInstant(
-          zonedDateTime.truncatedTo(DAYS).with(firstDayOfMonth()).toInstant(),
-          zonedDateTime.getZone()
-        );
-      case hour:
-      default:
-        return OffsetDateTime.ofInstant(
-          zonedDateTime.truncatedTo(HOURS).toInstant(),
-          zonedDateTime.getZone()
-        );
-    }
   }
 
   @Override
@@ -118,16 +89,16 @@ public class MeasurementRepository implements Measurements {
         parameter.getPhysicalMeterIds(),
         parameter.getResolution().asInterval(),
         parameter.getQuantity().name,
-        getIntervalStart(parameter.getFrom(), parameter.getResolution()),
-        getIntervalStart(parameter.getTo(), parameter.getResolution())
+        parameter.getResolution().getStart(parameter.getFrom()),
+        parameter.getResolution().getStart(parameter.getTo())
       );
     } else {
       averageForPeriod = measurementJpaRepository.getAverageForPeriod(
         parameter.getPhysicalMeterIds(),
         parameter.getResolution().asInterval(),
         parameter.getQuantity().name,
-        getIntervalStart(parameter.getFrom(), parameter.getResolution()),
-        getIntervalStart(parameter.getTo(), parameter.getResolution())
+        parameter.getResolution().getStart(parameter.getFrom()),
+        parameter.getResolution().getStart(parameter.getTo())
       );
     }
 
@@ -144,16 +115,16 @@ public class MeasurementRepository implements Measurements {
         seriesForPeriod = measurementJpaRepository.getSeriesForPeriodConsumption(
           parameter.getPhysicalMeterIds().get(0),
           parameter.getQuantity().name,
-          getIntervalStart(parameter.getFrom(), parameter.getResolution()),
-          getIntervalStart(parameter.getTo(), parameter.getResolution()),
+          parameter.getResolution().getStart(parameter.getFrom()),
+          parameter.getResolution().getStart(parameter.getTo()),
           parameter.getResolution().asInterval()
         );
       } else {
         seriesForPeriod = measurementJpaRepository.getSeriesForPeriod(
           parameter.getPhysicalMeterIds().get(0),
           parameter.getQuantity().name,
-          getIntervalStart(parameter.getFrom(), parameter.getResolution()),
-          getIntervalStart(parameter.getTo(), parameter.getResolution()),
+          parameter.getResolution().getStart(parameter.getFrom()),
+          parameter.getResolution().getStart(parameter.getTo()),
           parameter.getResolution().asInterval()
         );
       }
