@@ -82,13 +82,12 @@ export interface Clickable {
   onClick: OnClick;
 }
 
-export interface IdNamed {
+export interface Identifiable {
   readonly id: uuid;
-  readonly name: string;
 }
 
-export interface Identifiable {
-  id: uuid;
+export interface IdNamed extends Identifiable {
+  readonly name: string;
 }
 
 export interface ComponentId {

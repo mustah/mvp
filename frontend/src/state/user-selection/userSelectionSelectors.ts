@@ -14,7 +14,7 @@ import {
   toThresholdParameter,
 } from '../../helpers/urlFactory';
 
-import {EncodedUriParameters} from '../../types/Types';
+import {EncodedUriParameters, uuid} from '../../types/Types';
 import {Pagination} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
@@ -22,6 +22,7 @@ import {
   SelectionInterval,
   SelectionItem,
   SelectionListItem,
+  ThresholdQuery,
   UriLookupState,
   UriLookupStatePaginated,
   UserSelection,
@@ -64,6 +65,11 @@ export const getSelectedAddresses = getSelectedItems(ParameterName.addresses);
 export const getSelectedFacilities = getSelectedItems(ParameterName.facilities);
 export const getSelectedSecondaryAddresses = getSelectedItems(ParameterName.secondaryAddresses);
 export const getSelectedGatewaySerials = getSelectedItems(ParameterName.gatewaySerials);
+
+export const getThreshold = (state: UserSelectionState): ThresholdQuery | undefined =>
+  getSelectionParameters(state).threshold;
+
+export const getUserSelectionId = (state: UserSelectionState): uuid => state.userSelection.id;
 
 const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
   const {start} = state;

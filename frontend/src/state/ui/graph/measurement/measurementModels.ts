@@ -123,6 +123,13 @@ export const quantityAttributes: { [q in Quantity]: QuantityAttributes } = {
   [Quantity.differenceTemperature]: {unit: 'K', displayMode: QunantityDisplayMode.meterValue},
 };
 
+export const getDisplayModeText = (quantity: Quantity | string | undefined): string => {
+  const quantityAttribute = quantityAttributes[quantity as Quantity];
+  return quantityAttribute && quantityAttribute.displayMode === QunantityDisplayMode.consumption
+    ? 'consumption'
+    : 'meter value';
+};
+
 export const enum Medium {
   electricity = 'current',
   districtHeating = 'districtHeating',

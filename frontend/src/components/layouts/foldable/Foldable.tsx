@@ -4,7 +4,7 @@ import {Callback, ClassNamed, WithChildren} from '../../../types/Types';
 import {IconRightArrow} from '../../icons/IconRightArrow';
 import {BoldFirstUpper} from '../../texts/Texts';
 import {Column} from '../column/Column';
-import {RowMiddle} from '../row/Row';
+import {Row, RowMiddle} from '../row/Row';
 import './Foldable.scss';
 
 interface Visible {
@@ -41,9 +41,9 @@ export const Foldable = ({
         <IconRightArrow className={classNames('Foldable-arrow', {isVisible})}/>
         <BoldFirstUpper className="Medium">{title}</BoldFirstUpper>
       </RowMiddle>
-      <div className={classNames('Foldable-content', className, {isVisible})}>
+      <Row className={classNames('Foldable-content', className, {isVisible})}>
         {children}
-      </div>
+      </Row>
     </Column>
   );
 };
