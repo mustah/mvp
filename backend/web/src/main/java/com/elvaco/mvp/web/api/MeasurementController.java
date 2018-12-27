@@ -53,7 +53,7 @@ public class MeasurementController {
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(
     @RequestParam MultiValueMap<String, String> requestParams,
-    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution,
     @RequestParam(required = false, defaultValue = "average") String label
@@ -78,9 +78,9 @@ public class MeasurementController {
         new MeasurementParameter(
           entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
           entry.getKey(),
-          after,
+          start,
           stop,
-          resolutionOrDefault(after, stop, resolution)
+          resolutionOrDefault(start, stop, resolution)
         ))
         .stream()
         .map(measurementValue -> LabeledMeasurementValue.builder()
@@ -99,7 +99,7 @@ public class MeasurementController {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
-    @RequestParam List<UUID> logicalMeterId,
+    @RequestParam(name = "logicalMeterId") List<UUID> logicalMeterIds,
     @RequestParam(name = "quantity") Optional<Set<Quantity>> optionalQuantities,
     @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
@@ -109,7 +109,7 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterId);
+    List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterIds);
 
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, identity()));
