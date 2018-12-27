@@ -943,7 +943,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId("street facility")
       .organisationId(context().organisationId())
       .location(new LocationBuilder().city("city town").address("street road 1").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -970,7 +969,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .externalId(meterIdOne.toString())
       .organisationId(context().organisationId())
       .location(new LocationBuilder().address("street 1").build())
-      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()
@@ -985,7 +983,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .id(meterIdTwo)
       .externalId("street facility")
       .organisationId(context().organisationId())
-      .utcOffset(DEFAULT_UTC_OFFSET)
       .build());
 
     physicalMeters.save(PhysicalMeter.builder()

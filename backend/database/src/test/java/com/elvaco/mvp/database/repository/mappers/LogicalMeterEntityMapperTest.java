@@ -30,8 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterEntityMapperTest {
 
-  private static final String TZ = "+01";
-
   private static final QuantityProvider QUANTITY_PROVIDER = name -> QUANTITIES.stream()
     .filter(quantity -> quantity.name.equals(name))
     .findAny()
@@ -80,7 +78,7 @@ public class LogicalMeterEntityMapperTest {
       "an-external-id",
       created,
       newMeterDefinitionEntity("Speed", "kmh", "speed-o-meter"),
-      TZ
+      LogicalMeter.UTC_OFFSET
     );
 
     logicalMeterEntity.location = LocationEntity.builder()
@@ -119,7 +117,6 @@ public class LogicalMeterEntityMapperTest {
         .created(created)
         .meterDefinition(meterDefinition)
         .location(expectedLocation)
-        .utcOffset(TZ)
         .build()
     );
   }
@@ -135,7 +132,7 @@ public class LogicalMeterEntityMapperTest {
         new EntityPk(meterId, organisationId), "an-external-id",
         created,
         newMeterDefinitionEntity("Energy", "kWh", "My energy meter"),
-        TZ
+        LogicalMeter.UTC_OFFSET
       );
 
     MeterDefinition meterDefinition = new MeterDefinition(
@@ -159,8 +156,6 @@ public class LogicalMeterEntityMapperTest {
         .organisationId(organisationId)
         .created(created)
         .meterDefinition(meterDefinition)
-        .location(UNKNOWN_LOCATION)
-        .utcOffset(TZ)
         .build()
     );
   }
@@ -174,7 +169,7 @@ public class LogicalMeterEntityMapperTest {
       new EntityPk(meterId, ELVACO.id), "an-external-id",
       created,
       newMeterDefinitionEntity("Energy", "kWh", "Energy meter"),
-      TZ
+      LogicalMeter.UTC_OFFSET
     );
     logicalMeterEntityExpected.location = LocationEntity.builder()
       .pk(new EntityPk(meterId, ELVACO.id))

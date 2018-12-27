@@ -206,7 +206,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void consumptionFor24h() {
-    PhysicalMeter meter = newConnectedMeter(60, "+01");
+    PhysicalMeter meter = newConnectedMeter();
 
     IntStream.range(0, 25).forEach(i -> measurements.save(
       volumeMeasurementFor(meter)
@@ -278,7 +278,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
   @Test
   public void consumptionDeleteOne() {
-    PhysicalMeter meter = newConnectedMeter(60, "+01");
+    PhysicalMeter meter = newConnectedMeter();
     measurements.save(
       volumeMeasurementFor(meter)
         .value((double) 1)
@@ -354,7 +354,7 @@ public class MeasurementStatTest extends IntegrationTest {
   }
 
   private PhysicalMeter newConnectedMeter(int readIntervalMinutes) {
-    return newConnectedMeter(readIntervalMinutes, "+01");
+    return newConnectedMeter(readIntervalMinutes, LogicalMeter.UTC_OFFSET);
   }
 
   @RequiredArgsConstructor

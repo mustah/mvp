@@ -3,6 +3,7 @@ package com.elvaco.mvp.database;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -38,7 +39,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       "Some external ID",
       ZonedDateTime.now(),
       meterDefinitionJpaRepository.getOne(MeterDefinitionType.UNKNOWN_METER_TYPE),
-      DEFAULT_UTC_OFFSET
+      LogicalMeter.UTC_OFFSET
     );
     logicalMeterEntity.location = LocationEntity.builder()
       .pk(pk)

@@ -25,6 +25,8 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LogicalMeter implements Identifiable<UUID> {
 
+  public static final String UTC_OFFSET = "+01";
+
   public final String externalId;
   public final UUID organisationId;
   @Singular
@@ -39,7 +41,8 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final AlarmLogEntry alarm;
   @Nullable
   public final StatusType status;
-  public final String utcOffset;
+  @Builder.Default
+  public String utcOffset = UTC_OFFSET;
   @Builder.Default
   public UUID id = UUID.randomUUID();
   @Builder.Default

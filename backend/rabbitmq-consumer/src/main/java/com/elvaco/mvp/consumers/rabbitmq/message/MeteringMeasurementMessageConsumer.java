@@ -72,7 +72,6 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         .externalId(facilityId)
         .organisationId(organisation.id)
         .meterDefinition(resolveMeterDefinition(measurementMessage.values))
-        .utcOffset("+01") //TODO: facility.utcOffset when metering supports that
         .build());
 
     String address = measurementMessage.meter.id;
@@ -146,8 +145,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     throws IllegalArgumentException {
 
     return measurementMessage.values.stream()
-      .sorted(comparing((ValueDto v) -> v.timestamp))
-      .findFirst()
+      .min(comparing((ValueDto v) -> v.timestamp))
       .map(dto -> dto.timestamp)
       .orElseThrow(() -> new IllegalArgumentException(
         "MeteringMeasurementMessage without timestamp " + measurementMessage))
