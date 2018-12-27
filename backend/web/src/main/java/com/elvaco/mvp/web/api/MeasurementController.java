@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -73,23 +74,24 @@ public class MeasurementController {
 
     return toSeries(logicalMeterHelper.groupByQuantity(logicalMeters, quantities)
       .entrySet().stream()
-      .flatMap(entry ->
-        measurementUseCases.averageForPeriod(
+      .flatMap(entry -> measurementUseCases.findAverageForPeriod(
+        new MeasurementParameter(
           entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
           entry.getKey(),
           after,
           stop,
           resolutionOrDefault(after, stop, resolution)
-        ).stream()
-          .map(measurementValue -> LabeledMeasurementValue.builder()
-            .id(String.format("average-%s", entry.getKey().name))
-            .label(label)
-            .when(measurementValue.when)
-            .value(measurementValue.value)
-            .quantity(entry.getKey())
-            .city(singleCityOrNull(parameters))
-            .build()
-          ))
+        ))
+        .stream()
+        .map(measurementValue -> LabeledMeasurementValue.builder()
+          .id(String.format("average-%s", entry.getKey().name))
+          .label(label)
+          .when(measurementValue.when)
+          .value(measurementValue.value)
+          .quantity(entry.getKey())
+          .city(singleCityOrNull(parameters))
+          .build()
+        ))
       .collect(toList())
     );
   }
@@ -123,13 +125,15 @@ public class MeasurementController {
     return toSeries(logicalMeterHelper.mapQuantitiesToPhysicalMeters(logicalMeters, quantities)
       .entrySet().stream()
       .flatMap(entry -> entry.getValue().stream()
-        .flatMap(physicalMeter -> measurementUseCases.seriesForPeriod(
-          physicalMeter.id,
-          entry.getKey(),
-          start,
-          stop,
-          temporalResolution
-        ).stream()
+        .flatMap(physicalMeter -> measurementUseCases.findSeriesForPeriod(
+          new MeasurementParameter(
+            List.of(physicalMeter.id),
+            entry.getKey(),
+            start,
+            stop,
+            temporalResolution
+          ))
+          .stream()
           .map(measurementValue -> {
             LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
             return LabeledMeasurementValue.builder()

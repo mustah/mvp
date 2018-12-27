@@ -32,9 +32,10 @@ public interface MeasurementJpaRepository
     + "                cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC' + cast(:resolution AS INTERVAL),"
     + "                cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS date) as date_serie"
     + "       LEFT JOIN measurement"
-    + "         on date_serie.date = created"
+    + "          ON physical_meter_id IN :physical_meter_ids"
+    + "         AND date_serie.date = created"
     + "         AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
-    + "         AND physical_meter_id IN :meter_ids"
+
     + "   ) as consumption_values"
     + " WHERE"
     + "   interval_start <= cast(:to AS TIMESTAMPTZ)"
@@ -42,7 +43,7 @@ public interface MeasurementJpaRepository
     + " ORDER BY interval_start"
   )
   List<MeasurementValueProjection> getAverageForPeriodConsumption(
-    @Param("meter_ids") List<UUID> meterIds,
+    @Param("physical_meter_ids") List<UUID> physicalMeterIds,
     @Param("resolution") String resolution,
     @Param("quantity") String quantity,
     @Param("from") OffsetDateTime from,
@@ -60,13 +61,13 @@ public interface MeasurementJpaRepository
     + "                  cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
     + "     ) AS date_serie"
     + "     LEFT JOIN measurement"
-    + "            ON date_serie.date = created"
-    + "           AND physical_meter_id IN :meter_ids"
+    + "            ON physical_meter_id IN :physical_meter_ids"
+    + "           AND date_serie.date = created"
     + "           AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
     + " GROUP BY date_serie.date"
     + " ORDER BY date_serie.date")
   List<MeasurementValueProjection> getAverageForPeriod(
-    @Param("meter_ids") List<UUID> meterIds,
+    @Param("physical_meter_ids") List<UUID> meterIds,
     @Param("resolution") String resolution,
     @Param("quantity") String quantity,
     @Param("from") OffsetDateTime from,
@@ -90,10 +91,10 @@ public interface MeasurementJpaRepository
     + "           cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
     + "     ) AS date_serie"
     + "     LEFT JOIN measurement"
-    + "     ON"
-    + "       date_serie.date = created"
+    + "        ON physical_meter_id = :physical_meter_id"
+    + "       AND date_serie.date = created"
     + "       AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
-    + "       AND physical_meter_id = :meter_id"
+
     + "   ) as measurement_serie"
     + " WHERE"
     + "   measurement_serie.when >= CAST(:from AS TIMESTAMPTZ)"
@@ -102,7 +103,7 @@ public interface MeasurementJpaRepository
     + "   measurement_serie.when ASC;"
   )
   List<MeasurementValueProjection> getSeriesForPeriodConsumption(
-    @Param("meter_id") UUID physicalMeterId,
+    @Param("physical_meter_id") UUID physicalMeterId,
     @Param("quantity") String quantity,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to,
@@ -120,13 +121,13 @@ public interface MeasurementJpaRepository
     + "                  cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
     + "   ) AS date_serie"
     + "   LEFT JOIN measurement"
-    + "          ON date_serie.date = created"
-    + "         AND physical_meter_id = :meter_id"
+    + "          ON physical_meter_id = :physical_meter_id"
+    + "         AND date_serie.date = created"
     + "         AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
     + " ORDER BY date_serie.date ASC"
   )
   List<MeasurementValueProjection> getSeriesForPeriod(
-    @Param("meter_id") UUID physicalMeterId,
+    @Param("physical_meter_id") UUID physicalMeterId,
     @Param("quantity") String quantity,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to,
@@ -152,17 +153,17 @@ public interface MeasurementJpaRepository
     @Param("value") double value
   );
 
-  @Query(nativeQuery = true, value = "select"
+  @Query(nativeQuery = true, value = "SELECT"
     + "     measurement.created,"
     + "     measurement.value,"
     + "     measurement.quantity,"
     + "     physical_meter_id"
-    + " from measurement"
-    + " where physical_meter_id = :physical_meter_id"
-    + " and created > :from"
-    + " and created <= :to"
-    + " order by created asc"
-    + " limit 1"
+    + " FROM measurement"
+    + " WHERE physical_meter_id = :physical_meter_id"
+    + " AND created > :from"
+    + " AND created <= :to"
+    + " ORDER BY created ASC"
+    + " LIMIT 1"
   )
   Optional<MeasurementEntity> firstForPhysicalMeter(
     @Param("physical_meter_id") UUID logicalMeterId,
