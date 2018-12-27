@@ -10,6 +10,7 @@ import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
+import {isDefined} from '../../../helpers/commonUtils';
 import {translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
 import {
@@ -44,11 +45,12 @@ export const SelectionContent = ({
   gatewaySerials,
   media,
   organisations,
+  onChangeThreshold,
   reported,
   secondaryAddresses,
   threshold,
   toggleParameter,
-  onChangeThreshold,
+  userSelectionId,
 }: SelectionContentProps) => {
 
   const selectCity = (item: SelectionListItem) =>
@@ -144,9 +146,14 @@ export const SelectionContent = ({
       <Foldable
         title={translate('thresholds')}
         containerClassName="Thresholds"
-        isVisible={threshold !== undefined}
+        isVisible={isDefined(threshold)}
       >
-        <Thresholds onChange={onChangeThreshold} query={threshold} className="Thresholds-container"/>
+        <Thresholds
+          key={`thresholds-${userSelectionId}`}
+          onChange={onChangeThreshold}
+          query={threshold}
+          className="Thresholds-container"
+        />
       </Foldable>
 
       <SearchResultList/>

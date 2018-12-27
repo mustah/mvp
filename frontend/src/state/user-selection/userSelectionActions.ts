@@ -22,7 +22,7 @@ import {
   UserSelection
 } from './userSelectionModels';
 import {userSelectionsDataFormatter} from './userSelectionSchema';
-import {getUserSelection} from './userSelectionSelectors';
+import {getThreshold, getUserSelection} from './userSelectionSelectors';
 
 export const SELECT_PERIOD = 'SELECT_PERIOD';
 export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
@@ -40,19 +40,20 @@ export const resetSelection = emptyActionOf(RESET_SELECTION);
 const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
 
 export const SET_THRESHOLD = 'SET_THRESHOLD';
-const actuallySetThreshold = payloadActionOf<ThresholdQuery>(SET_THRESHOLD);
+const setThresholdAction = payloadActionOf<ThresholdQuery>(SET_THRESHOLD);
+
 export const setThreshold =
   (threshold: ThresholdQuery | undefined) =>
     (dispatch, getState: GetState) => {
-      const oldThreshold: ThresholdQuery | undefined =
-        getState().userSelection.userSelection.selectionParameters.threshold;
+      const oldThreshold = getThreshold(getState().userSelection);
+      const isOldThresholdValid = isValidThreshold(oldThreshold);
 
       if (
-        (!isValidThreshold(oldThreshold) && isValidThreshold(threshold)) ||
-        (isValidThreshold(oldThreshold) && threshold === undefined) ||
-        (isValidThreshold(oldThreshold) && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
+        (!isOldThresholdValid && isValidThreshold(threshold)) ||
+        (isOldThresholdValid && threshold === undefined) ||
+        (isOldThresholdValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
       ) {
-        dispatch(actuallySetThreshold(threshold as ThresholdQuery));
+        dispatch(setThresholdAction(threshold as ThresholdQuery));
       }
     };
 

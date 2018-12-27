@@ -5,9 +5,9 @@ import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {
+  getDisplayModeText,
   Quantity,
-  quantityAttributes,
-  QunantityDisplayMode
+  quantityAttributes
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
   OnChangeThreshold,
@@ -62,28 +62,24 @@ type RenderableThresholdQuery = Partial<{
 
 type Props = ThresholdProps & ClassNamed & Styled;
 
-const propertyState = (
+const useChangeQuery = (
   initialQuery: RenderableThresholdQuery,
   onChange: OnChangeThreshold
 ): [RenderableThresholdQuery, CallbackWith<RenderableThresholdQuery>] => {
   const [value, updateProperty] = React.useState<RenderableThresholdQuery>(initialQuery);
-  const fireActionAndUpdateState = (query: RenderableThresholdQuery) => {
+  const onChangeThresholdQuery = (query: RenderableThresholdQuery) => {
     onChange(query as ThresholdQuery);
     updateProperty(query);
   };
-  return [value, fireActionAndUpdateState];
+  return [value, onChangeThresholdQuery];
 };
 
 const emptyQuery: RenderableThresholdQuery = {
   value: '',
-  quantity: undefined,
-  relationalOperator: undefined,
-  unit: undefined,
 };
 
-export const Thresholds = (props: Props) => {
-  const {query = emptyQuery, onChange, className} = props;
-  const [currentQuery, setQuery] = propertyState(query, onChange);
+export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => {
+  const [currentQuery, setQuery] = useChangeQuery(query, onChange);
   const {quantity, relationalOperator, value, unit} = currentQuery;
 
   const onChangeQuantity = (event, index, newValue: string) => setQuery({
@@ -97,11 +93,8 @@ export const Thresholds = (props: Props) => {
     relationalOperator: newValue as RelationalOperator,
   });
 
-  const onChangeValue = (event, newValue: string) => setQuery({...currentQuery, value: newValue});
-  const displayModeText = quantityAttributes[quantity as Quantity] &&
-                          quantityAttributes[quantity as Quantity].displayMode === QunantityDisplayMode.consumption
-    ? 'consumption'
-    : 'meter value';
+  const onChangeValue = (event, value: string) => setQuery({...currentQuery, value});
+
   return (
     <Row className={className}>
       <DropDownMenu
@@ -126,7 +119,7 @@ export const Thresholds = (props: Props) => {
           value={value}
           style={textFieldStyle}
           autoComplete="off"
-          hintText={firstUpperTranslated(displayModeText)}
+          hintText={firstUpperTranslated(getDisplayModeText(quantity))}
         />
         <Medium className="Unit">{unit}</Medium>
       </RowMiddle>

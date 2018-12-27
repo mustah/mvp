@@ -18,7 +18,10 @@ import {
   getSelectedOrganisations,
   getSelectedReported,
   getSelectedSecondaryAddresses,
+  getThreshold,
+  getUserSelectionId,
 } from '../../../state/user-selection/userSelectionSelectors';
+import {uuid} from '../../../types/Types';
 import {SelectionContent} from '../components/SelectionContent';
 
 interface StateToProps {
@@ -32,6 +35,7 @@ interface StateToProps {
   reported: SelectionListItem[];
   secondaryAddresses: SelectionListItem[];
   threshold: ThresholdQuery | undefined;
+  userSelectionId: uuid;
 }
 
 interface DispatchToProps {
@@ -51,7 +55,8 @@ const mapStateToProps = ({userSelection}: RootState): StateToProps => ({
   organisations: getSelectedOrganisations(userSelection),
   reported: getSelectedReported(userSelection),
   secondaryAddresses: getSelectedSecondaryAddresses(userSelection),
-  threshold: userSelection.userSelection.selectionParameters.threshold,
+  threshold: getThreshold(userSelection),
+  userSelectionId: getUserSelectionId(userSelection),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
