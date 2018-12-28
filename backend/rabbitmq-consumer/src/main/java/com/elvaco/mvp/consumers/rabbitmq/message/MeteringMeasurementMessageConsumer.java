@@ -127,10 +127,8 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
     });
 
     measurementMessage.values
-      .forEach(value -> createMeasurement(
-        value,
-        physicalMeter
-      ).ifPresent(measurementUseCases::createOrUpdate));
+      .forEach(value -> createMeasurement(value, physicalMeter)
+        .ifPresent(measurementUseCases::createOrUpdate));
 
     if (physicalMeterValidator().isIncomplete(physicalMeter)
       || logicalMeterValidator().isIncomplete(connectedLogicalMeter)) {
@@ -146,10 +144,9 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     return measurementMessage.values.stream()
       .min(comparing((ValueDto v) -> v.timestamp))
-      .map(dto -> dto.timestamp)
+      .map(dto -> dto.timestamp.atZone(METERING_TIMEZONE))
       .orElseThrow(() -> new IllegalArgumentException(
-        "MeteringMeasurementMessage without timestamp " + measurementMessage))
-      .atZone(METERING_TIMEZONE);
+        "MeteringMeasurementMessage without timestamp " + measurementMessage));
   }
 
   private Optional<Measurement> createMeasurement(ValueDto value, PhysicalMeter physicalMeter) {
@@ -174,7 +171,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
 
     if (!physicalMeter.activePeriod.contains(value.timestamp.atZone(METERING_TIMEZONE))) {
       log.warn(
-        "Received mesaurement '{}' outside active period for physical meter '{}'",
+        "Received measurement '{}' outside active period for physical meter '{}'",
         value,
         physicalMeter
       );

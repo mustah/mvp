@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -43,10 +42,9 @@ public class PhysicalMeterUseCases {
     String externalId,
     String address
   ) {
-    if (hasTenantAccess(organisationId)) {
-      return physicalMeters.findByWithStatuses(organisationId, externalId, address);
-    }
-    return Optional.empty();
+    return Optional.of(organisationId)
+      .filter(this::hasTenantAccess)
+      .flatMap(orgId -> physicalMeters.findByWithStatuses(orgId, externalId, address));
   }
 
   public Optional<PhysicalMeter> findBy(
@@ -54,31 +52,22 @@ public class PhysicalMeterUseCases {
     String externalId,
     String address
   ) {
-    if (hasTenantAccess(organisationId)) {
-      return physicalMeters.findBy(organisationId, externalId, address);
-    }
-    return Optional.empty();
+    return Optional.of(organisationId)
+      .filter(this::hasTenantAccess)
+      .flatMap(orgId -> physicalMeters.findBy(orgId, externalId, address));
   }
 
   public void deactivatePreviousPhysicalMeter(
     PhysicalMeter physicalMeter,
     ZonedDateTime measurementTimestamp
   ) {
-    if (!hasTenantAccess(physicalMeter.organisationId)) {
-      return;
-    }
-
-    physicalMeters.findBy(physicalMeter.organisationId, physicalMeter.externalId)
-      .stream()
-      .filter(p -> !p.id.equals(physicalMeter.id))
-      .filter(p -> p.activePeriod.isRightOpen())
-      .forEach(p -> {
-        p.activePeriod = p.activePeriod
-          .toBuilder()
-          .stop(PeriodBound.exclusiveOf(measurementTimestamp))
-          .build();
-        save(p);
-      });
+    Optional.of(physicalMeter.organisationId)
+      .filter(this::hasTenantAccess)
+      .ifPresent(orgId -> physicalMeters.findBy(orgId, physicalMeter.externalId).stream()
+        .filter(p -> !p.id.equals(physicalMeter.id))
+        .filter(p -> p.activePeriod.isRightOpen())
+        .map(p -> p.deactivate(measurementTimestamp))
+        .forEach(this::save));
   }
 
   private Unauthorized userIsUnauthorized(UUID id) {

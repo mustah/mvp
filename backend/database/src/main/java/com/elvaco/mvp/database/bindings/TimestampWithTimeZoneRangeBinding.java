@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.database.util.PeriodRangeParser;
@@ -26,22 +27,19 @@ public class TimestampWithTimeZoneRangeBinding implements Binding<Object, Period
   @Override
   public Converter<Object, PeriodRange> converter() {
     return new Converter<>() {
+
       private static final long serialVersionUID = 692440657729988729L;
 
+      @Nullable
       @Override
-      public PeriodRange from(Object t) {
-        if (t == null) {
-          return null;
-        }
-        return PeriodRangeParser.parse((String) t);
+      public PeriodRange from(Object o) {
+        return o == null ? null : PeriodRangeParser.parse((String) o);
       }
 
+      @Nullable
       @Override
-      public Object to(PeriodRange u) {
-        if (u == null) {
-          return null;
-        }
-        return PeriodRangeParser.format(u);
+      public Object to(PeriodRange pr) {
+        return pr == null ? null : PeriodRangeParser.format(pr);
       }
 
       @Override
