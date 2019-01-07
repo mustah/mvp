@@ -58,6 +58,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 @SuppressWarnings("ConstantConditions")
@@ -487,9 +488,28 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .externalId("")
       .build();
 
-    messageHandler.accept(message);
+    assertThatThrownBy(() -> messageHandler.accept(message))
+      .hasMessage("Invalid facility id");
+  }
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+  @Test
+  public void unknownStatusType_ShouldThrowException() {
+    MeteringReferenceInfoMessageDto message = messageBuilder()
+      .meterStatus("unknown")
+      .build();
+
+    assertThatThrownBy(() -> messageHandler.accept(message))
+      .hasMessage("Invalid status type 'unknown'.");
+  }
+
+  @Test
+  public void notMappedStatusType_ShouldThrowException() {
+    MeteringReferenceInfoMessageDto message = messageBuilder()
+      .meterStatus("tryBye")
+      .build();
+
+    assertThatThrownBy(() -> messageHandler.accept(message))
+      .hasMessage("Invalid status type 'tryBye'.");
   }
 
   @Test
@@ -503,15 +523,14 @@ public class MeteringReferenceInfoMessageConsumerTest {
       ""
     );
 
-    messageHandler.accept(message);
-
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+    assertThatThrownBy(() -> messageHandler.accept(message))
+      .hasMessage("Invalid facility id");
   }
 
   @Test
   public void physicalMeterRequiresMeterId() {
     MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
-      new MeterDto(null, null, null, null, null, null, null),
+      new MeterDto(null, null, "ok", null, null, null, null),
       new FacilityDto("valid facility id", null, null, null),
       "Test source system",
       "organisation id",
@@ -800,7 +819,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(
       messageBuilder().gatewayStatus(StatusType.OK.name()).build()
-        .withMeter(new MeterDto(null, null, null, null, null, null, null))
+        .withMeter(new MeterDto(null, null, "ErrorReported", null, null, null, null))
     );
 
     assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
@@ -817,7 +836,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(
       messageBuilder().gatewayStatus(StatusType.ERROR.name()).build()
-        .withMeter(new MeterDto(null, null, null, null, null, null, null))
+        .withMeter(new MeterDto(null, null, "ErrorReported", null, null, null, null))
     );
 
     assertThat(gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get()
