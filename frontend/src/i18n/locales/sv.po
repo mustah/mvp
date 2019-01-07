@@ -227,8 +227,11 @@ msgstr "mätar-id"
 msgid "latest value"
 msgstr "senaste"
 
-msgid "status log"
-msgstr "statuslogg"
+msgid "event"
+msgstr "händelse"
+
+msgid "events"
+msgstr "händelser"
 
 msgid "gateways"
 msgstr "gateways"

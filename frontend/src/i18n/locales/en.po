@@ -227,8 +227,11 @@ msgstr "meter-id"
 msgid "latest value"
 msgstr "latest"
 
-msgid "status log"
-msgstr "status log"
+msgid "event"
+msgstr "event"
+
+msgid "events"
+msgstr "events"
 
 msgid "gateways"
 msgstr "gateways"
