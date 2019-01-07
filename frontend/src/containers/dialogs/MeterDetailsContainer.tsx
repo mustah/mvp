@@ -15,7 +15,7 @@ import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 import {syncWithMetering} from '../../usecases/validation/validationActions';
 import './MeterDetailsContainer.scss';
-import {MeterDetailsInfoContainer} from './MeterDetailsInfo';
+import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';
 import {MeterDetailsTabsContainer} from './MeterDetailsTabs';
 
 interface StateToProps {
