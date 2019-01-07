@@ -1,27 +1,27 @@
 package com.elvaco.mvp.core.util;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 
 import lombok.experimental.UtilityClass;
 
-import static com.elvaco.mvp.core.util.CollectionHelper.isNotEmpty;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class StatusLogEntryHelper {
 
-  public static <T> List<StatusLogEntry> replaceActiveStatus(
+  public static List<StatusLogEntry> replaceActiveStatus(
     List<StatusLogEntry> currentStatuses,
     StatusLogEntry newActiveStatus
   ) {
-    List<StatusLogEntry> activeSameStatuses = currentStatuses.stream()
+    Optional<StatusLogEntry> sameActiveStatus = currentStatuses.stream()
       .filter(StatusLogEntry::isActive)
       .filter(logEntry -> logEntry.status == newActiveStatus.status)
-      .collect(toList());
+      .findAny();
 
-    if (isNotEmpty(activeSameStatuses)) {
+    if (sameActiveStatus.isPresent()) {
       return currentStatuses;
     }
 

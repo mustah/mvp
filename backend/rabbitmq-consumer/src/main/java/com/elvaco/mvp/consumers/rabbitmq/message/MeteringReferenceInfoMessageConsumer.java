@@ -1,7 +1,8 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
@@ -24,6 +26,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
+import com.elvaco.mvp.core.util.StatusLogEntryHelper;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
@@ -81,13 +84,13 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     );
 
     Optional<PhysicalMeter> physicalMeter = Optional.ofNullable(meterDto)
-      .flatMap(meter ->
-        findOrCreatePhysicalMeter(
-          meter,
-          facility.id,
-          logicalMeter,
-          organisation.id
-        ));
+      .filter(meter -> Objects.nonNull(meter.id))
+      .map(meter -> findOrCreatePhysicalMeter(
+        meter,
+        facility.id,
+        organisation.id,
+        logicalMeter != null ? logicalMeter.id : null
+      ));
 
     Optional<Gateway> gateway = Optional.ofNullable(findOrCreateGateway(
       referenceInfoMessage.gateway,
@@ -155,45 +158,44 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         .orElse(null));
   }
 
-  private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
+  private PhysicalMeter findOrCreatePhysicalMeter(
     MeterDto meterDto,
     String facilityId,
-    @Nullable LogicalMeter logicalMeter,
-    UUID organisationId
+    UUID organisationId,
+    @Nullable UUID logicalMeterId
   ) {
-    String address = meterDto.id;
-    if (address == null) {
-      return Optional.empty();
-    }
-
     PhysicalMeter physicalMeter = physicalMeterUseCases
-      .findByWithStatuses(organisationId, facilityId, address)
+      .findByWithStatuses(organisationId, facilityId, meterDto.id)
       .orElseGet(() -> PhysicalMeter.builder()
         .organisationId(organisationId)
-        .address(address)
+        .address(meterDto.id)
         .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
         .externalId(facilityId)
         .build()
       );
 
-    return Optional.of(
-      physicalMeter.toBuilder()
-        .medium(meterDto.medium)
-        .manufacturer(meterDto.manufacturer)
-        .revision(meterDto.revision)
-        .mbusDeviceType(meterDto.mbusDeviceType)
-        .readIntervalMinutes(readInterval(meterDto, physicalMeter))
-        .activePeriod(physicalMeter.activePeriod)
-        .logicalMeterId(Optional.ofNullable(logicalMeter)
-          .map(LogicalMeter::getId)
-          .orElse(physicalMeter.logicalMeterId))
+    List<StatusLogEntry> statuses = StatusLogEntryHelper.replaceActiveStatus(
+      List.copyOf(physicalMeter.statuses),
+      StatusLogEntry.builder()
+        .primaryKey(physicalMeter.primaryKey())
+        .status(StatusType.from(meterDto.status))
         .build()
-        .replaceActiveStatus(StatusType.from(meterDto.status), ZonedDateTime.now())
     );
+
+    return physicalMeter.toBuilder()
+      .medium(meterDto.medium)
+      .manufacturer(meterDto.manufacturer)
+      .revision(meterDto.revision)
+      .mbusDeviceType(meterDto.mbusDeviceType)
+      .readIntervalMinutes(readInterval(meterDto.cron, physicalMeter))
+      .activePeriod(physicalMeter.activePeriod)
+      .logicalMeterId(logicalMeterId != null ? logicalMeterId : physicalMeter.logicalMeterId)
+      .build()
+      .setStatuses(statuses);
   }
 
-  private Long readInterval(MeterDto meterDto, PhysicalMeter physicalMeter) {
-    return CronHelper.toReportInterval(meterDto.cron)
+  private Long readInterval(String cron, PhysicalMeter physicalMeter) {
+    return CronHelper.toReportInterval(cron)
       .map(Duration::toMinutes)
       .map(d -> d == 0 ? DEFAULT_READ_INTERVAL_MINUTES : d)
       .orElse(physicalMeter.readIntervalMinutes);
@@ -210,17 +212,14 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         organisationId,
         gatewayStatusDto.productModel,
         gatewayStatusDto.id
-      ).orElseGet(() ->
-        gatewayUseCases.findBy(organisationId, gatewayStatusDto.id)
-          .orElseGet(() ->
-            Gateway.builder()
-              .organisationId(organisationId)
-              .serial(gatewayStatusDto.id)
-              .productModel(gatewayStatusDto.productModel)
-              .meter(logicalMeter)
-              .build()
-          )
-      )
+      ).orElseGet(() -> gatewayUseCases.findBy(organisationId, gatewayStatusDto.id)
+        .orElseGet(() -> Gateway.builder()
+          .organisationId(organisationId)
+          .serial(gatewayStatusDto.id)
+          .productModel(gatewayStatusDto.productModel)
+          .meter(logicalMeter)
+          .build()
+        ))
         .toBuilder()
         .productModel(gatewayStatusDto.productModel)
         .build()

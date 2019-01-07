@@ -74,10 +74,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
-  public List<PhysicalMeter> findBy(
-    UUID organisationId,
-    String externalId
-  ) {
+  public List<PhysicalMeter> findBy(UUID organisationId, String externalId) {
     return physicalMeterJpaRepository.findByOrganisationIdAndExternalId(
       organisationId,
       externalId
@@ -89,11 +86,7 @@ public class PhysicalMetersRepository implements PhysicalMeters {
     cacheNames = "physicalMeter.organisationIdExternalIdAddress",
     key = "#organisationId + #externalId + #address"
   )
-  public Optional<PhysicalMeter> findBy(
-    UUID organisationId,
-    String externalId,
-    String address
-  ) {
+  public Optional<PhysicalMeter> findBy(UUID organisationId, String externalId, String address) {
     return physicalMeterJpaRepository.findByOrganisationIdAndExternalIdAndAddress(
       organisationId,
       externalId,

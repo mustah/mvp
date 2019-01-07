@@ -11,6 +11,7 @@ public enum StatusType {
   UNKNOWN("unknown");
 
   private static final Map<String, StatusType> STATUS_ALIASES = statusTypeAliasMap();
+
   public final String name;
 
   StatusType(String name) {

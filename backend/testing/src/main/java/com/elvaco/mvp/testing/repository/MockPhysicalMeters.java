@@ -42,20 +42,13 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
-  public List<PhysicalMeter> findBy(
-    UUID organisationId,
-    String externalId
-  ) {
+  public List<PhysicalMeter> findBy(UUID organisationId, String externalId) {
     return filter(physicalMeter -> physicalMeter.organisationId.equals(organisationId))
       .filter(physicalMeter -> physicalMeter.externalId.equals(externalId)).collect(toList());
   }
 
   @Override
-  public Optional<PhysicalMeter> findBy(
-    UUID organisationId,
-    String externalId,
-    String address
-  ) {
+  public Optional<PhysicalMeter> findBy(UUID organisationId, String externalId, String address) {
     return findByWithStatuses(organisationId, externalId, address);
   }
 

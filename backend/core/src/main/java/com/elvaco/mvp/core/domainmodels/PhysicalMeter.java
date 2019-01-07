@@ -1,12 +1,9 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
-
-import com.elvaco.mvp.core.util.StatusLogEntryHelper;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -50,19 +47,6 @@ public class PhysicalMeter implements Identifiable<UUID>, PrimaryKeyed {
     return id;
   }
 
-  public PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
-    List<StatusLogEntry> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
-      statuses,
-      StatusLogEntry.builder()
-        .primaryKey(primaryKey())
-        .status(status)
-        .start(when)
-        .build()
-    );
-    this.statuses = new ArrayList<>();
-    return toBuilder().statuses(newStatuses).build();
-  }
-
   @Override
   public PrimaryKey primaryKey() {
     return new Pk(id, organisationId);
@@ -70,6 +54,11 @@ public class PhysicalMeter implements Identifiable<UUID>, PrimaryKeyed {
 
   public boolean isActive(ZonedDateTime when) {
     return activePeriod.contains(when);
+  }
+
+  public PhysicalMeter setStatuses(List<StatusLogEntry> statuses) {
+    this.statuses = statuses;
+    return this;
   }
 
   public PhysicalMeter deactivate(ZonedDateTime dateTime) {
