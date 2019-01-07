@@ -21,7 +21,7 @@ import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId, EncodedUriParameters, uuid} from '../../types/Types';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import './GatewayDetailsContainer.scss';
-import {GatewayDetailsInfoContainer} from './GatewayDetailsInfo';
+import {GatewayDetailsInfoContainer} from './GatewayDetailsInfoContainer';
 import {GatewayDetailsTabs} from './GatewayDetailsTabs';
 
 interface StateToProps {
