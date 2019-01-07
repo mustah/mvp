@@ -16,8 +16,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class CronHelper {
 
-  private static final CronParser CRON_PARSER =
-    new CronParser(cronDefinition());
+  private static final CronParser CRON_PARSER = new CronParser(cronDefinition());
   private static final ZonedDateTime PREDICTABLE_TIME = ZonedDateTime.parse("1970-02-02T00:00:00Z")
     .truncatedTo(ChronoUnit.SECONDS);
 
@@ -44,10 +43,6 @@ public class CronHelper {
       )));
 
     return Duration.between(lastExecution, nextExecution);
-  }
-
-  private static RuntimeException invalidExecutionTime() {
-    throw new RuntimeException("No execution time found!");
   }
 
   private static CronDefinition cronDefinition() {

@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 
 import org.junit.Test;
 
+import static com.elvaco.mvp.database.util.PeriodRangeParser.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,17 +14,11 @@ public class PeriodRangeParserTest {
 
   @Test
   public void parseUnboundedRange() {
-    assertThat(PeriodRangeParser.parse("[]")).isEqualTo(
-      PeriodRange.closedFrom(null, null)
-    );
+    assertThat(PeriodRangeParser.parse("[]")).isEqualTo(PeriodRange.closedFrom(null, null));
 
-    assertThat(PeriodRangeParser.parse("()")).isEqualTo(
-      PeriodRange.openFrom(null, null)
-    );
+    assertThat(PeriodRangeParser.parse("()")).isEqualTo(PeriodRange.openFrom(null, null));
 
-    assertThat(PeriodRangeParser.parse("[)")).isEqualTo(
-      PeriodRange.halfOpenFrom(null, null)
-    );
+    assertThat(PeriodRangeParser.parse("[)")).isEqualTo(PeriodRange.halfOpenFrom(null, null));
   }
 
   @Test
@@ -45,7 +40,7 @@ public class PeriodRangeParserTest {
 
   @Test
   public void parseEmptyRange() {
-    assertThat(PeriodRangeParser.parse(PeriodRangeParser.EMPTY)).isEqualTo(PeriodRange.empty());
+    assertThat(PeriodRangeParser.parse(EMPTY)).isEqualTo(PeriodRange.empty());
   }
 
   @Test
@@ -62,7 +57,6 @@ public class PeriodRangeParserTest {
 
   @Test
   public void parseHalfBoundedRanges() {
-
     assertThat(PeriodRangeParser.parse("[\"2018-01-01 08:00:00+01\",)"))
       .isEqualTo(PeriodRange.halfOpenFrom(
         ZonedDateTime.parse("2018-01-01T08:00:00+01"),
@@ -79,17 +73,15 @@ public class PeriodRangeParserTest {
   @Test
   public void formatHalfBoundedRanges() {
     ZonedDateTime dateTime = ZonedDateTime.parse("2018-01-01T08:00:00+01");
-    assertThat(
-      PeriodRangeParser.format(PeriodRange.openFrom(dateTime, null))
-    ).isEqualTo("(2018-01-01 08:00:00.000+01:00,)");
 
-    assertThat(
-      PeriodRangeParser.format(PeriodRange.halfOpenFrom(null, dateTime))
-    ).isEqualTo("[,2018-01-01 08:00:00.000+01:00)");
+    assertThat(PeriodRangeParser.format(PeriodRange.openFrom(dateTime, null)))
+      .isEqualTo("(2018-01-01 08:00:00.000+01:00,)");
 
-    assertThat(
-      PeriodRangeParser.format(PeriodRange.closedFrom(null, dateTime))
-    ).isEqualTo("[,2018-01-01 08:00:00.000+01:00]");
+    assertThat(PeriodRangeParser.format(PeriodRange.halfOpenFrom(null, dateTime)))
+      .isEqualTo("[,2018-01-01 08:00:00.000+01:00)");
+
+    assertThat(PeriodRangeParser.format(PeriodRange.closedFrom(null, dateTime)))
+      .isEqualTo("[,2018-01-01 08:00:00.000+01:00]");
   }
 
   @Test
@@ -110,22 +102,20 @@ public class PeriodRangeParserTest {
   public void formatBoundedRanges() {
     ZonedDateTime start = ZonedDateTime.parse("2018-01-01T08:00:00+01");
     ZonedDateTime stop = ZonedDateTime.parse("2018-01-01T09:00:00+01");
-    assertThat(
-      PeriodRangeParser.format(PeriodRange.openFrom(start, stop))
-    ).isEqualTo("(2018-01-01 08:00:00.000+01:00,2018-01-01 09:00:00.000+01:00)");
 
-    assertThat(
-      PeriodRangeParser.format(PeriodRange.halfOpenFrom(start, stop))
-    ).isEqualTo("[2018-01-01 08:00:00.000+01:00,2018-01-01 09:00:00.000+01:00)");
+    assertThat(PeriodRangeParser.format(PeriodRange.openFrom(start, stop)))
+      .isEqualTo("(2018-01-01 08:00:00.000+01:00,2018-01-01 09:00:00.000+01:00)");
 
-    assertThat(
-      PeriodRangeParser.format(PeriodRange.closedFrom(start, stop))
-    ).isEqualTo("[2018-01-01 08:00:00.000+01:00,2018-01-01 09:00:00.000+01:00]");
+    assertThat(PeriodRangeParser.format(PeriodRange.halfOpenFrom(start, stop)))
+      .isEqualTo("[2018-01-01 08:00:00.000+01:00,2018-01-01 09:00:00.000+01:00)");
+
+    assertThat(PeriodRangeParser.format(PeriodRange.closedFrom(start, stop)))
+      .isEqualTo("[2018-01-01 08:00:00.000+01:00,2018-01-01 09:00:00.000+01:00]");
   }
 
   @Test
   public void formatEmptyRange() {
-    assertThat(PeriodRangeParser.format(PeriodRange.empty())).isEqualTo(PeriodRangeParser.EMPTY);
+    assertThat(PeriodRangeParser.format(PeriodRange.empty())).isEqualTo(EMPTY);
   }
 
   private void assertMalformed(String rangeString) {

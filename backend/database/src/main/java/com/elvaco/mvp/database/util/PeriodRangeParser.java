@@ -28,11 +28,8 @@ public class PeriodRangeParser {
       return PeriodRange.empty();
     }
 
-    ZonedDateTime start = null;
-    ZonedDateTime stop = null;
-
-    BoundType leftMarker = parseBoundMarker(rangeString.charAt(0)).orElseThrow(() ->
-      new MalformedPeriodRange(String.format(
+    BoundType leftMarker = parseBoundMarker(rangeString.charAt(0))
+      .orElseThrow(() -> new MalformedPeriodRange(String.format(
         "Missing left bound marker in period range '%s'",
         rangeString
       )));
@@ -44,9 +41,12 @@ public class PeriodRangeParser {
     }
 
     String[] bounds = rangeString.substring(1, rangeString.length() - 1).split(",", -1);
+    ZonedDateTime start = null;
     if (bounds[0] != null) {
       start = parseTimestamp(bounds[0]);
     }
+
+    ZonedDateTime stop = null;
     if (bounds.length == 2) {
       stop = parseTimestamp(bounds[1]);
     } else if (bounds.length > 2) {
@@ -78,25 +78,22 @@ public class PeriodRangeParser {
     return new PeriodRange(leftBound, rightBound);
   }
 
-  public static String format(PeriodRange u) {
-    if (u.isEmpty()) {
-      return EMPTY;
-    }
+  public static String format(PeriodRange pr) {
+    return pr.isEmpty()
+      ? EMPTY
+      : formatStart(pr) + formatDateRange(pr) + formatStop(pr);
+  }
 
-    StringBuilder sb = new StringBuilder();
-    sb.append(u.start.isInclusive ? '[' : '(');
+  private static String formatDateRange(PeriodRange u) {
+    return formatDateTime(u.getStartDateTime()) + ',' + formatDateTime(u.getStopDateTime());
+  }
 
-    sb.append(u.getStartDateTime()
-      .map(ZonedDateTime::toOffsetDateTime)
-      .map(PostgresTimestampParser::format)
-      .orElse(""));
-    sb.append(',');
-    sb.append(u.getStopDateTime()
-      .map(ZonedDateTime::toOffsetDateTime)
-      .map(PostgresTimestampParser::format)
-      .orElse(""));
-    sb.append(u.stop.isInclusive ? ']' : ')');
-    return sb.toString();
+  private static char formatStart(PeriodRange u) {
+    return u.start.isInclusive ? '[' : '(';
+  }
+
+  private static char formatStop(PeriodRange u) {
+    return u.stop.isInclusive ? ']' : ')';
   }
 
   @Nullable
@@ -110,6 +107,13 @@ public class PeriodRangeParser {
     } catch (DateTimeParseException exc) {
       throw new MalformedPeriodRange("Failed to parse timestamp", exc);
     }
+  }
+
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  private static String formatDateTime(Optional<ZonedDateTime> zonedDateTime) {
+    return zonedDateTime.map(ZonedDateTime::toOffsetDateTime)
+      .map(PostgresTimestampParser::format)
+      .orElse("");
   }
 
   private static String stripQuotes(String str) {
@@ -137,7 +141,8 @@ public class PeriodRangeParser {
 
   }
 
-  static class PostgresTimestampParser {
+  @UtilityClass
+  static final class PostgresTimestampParser {
 
     private static final DateTimeFormatter POSTGRES_DATE_TIME_PARSE_FORMATTER =
       DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss[.SSS][xxx][xx][X]");
@@ -145,15 +150,12 @@ public class PeriodRangeParser {
     private static final DateTimeFormatter POSTGRES_DATE_TIME_FMT_FORMATTER =
       DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSSxxx");
 
-    static String format(OffsetDateTime dateTime) {
-      return dateTime.format(POSTGRES_DATE_TIME_FMT_FORMATTER);
+    static OffsetDateTime parse(String string) {
+      return OffsetDateTime.parse(string, POSTGRES_DATE_TIME_PARSE_FORMATTER);
     }
 
-    static OffsetDateTime parse(String string) {
-      return OffsetDateTime.parse(
-        string,
-        POSTGRES_DATE_TIME_PARSE_FORMATTER
-      );
+    private static String format(OffsetDateTime dateTime) {
+      return dateTime.format(POSTGRES_DATE_TIME_FMT_FORMATTER);
     }
   }
 }

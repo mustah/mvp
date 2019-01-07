@@ -18,7 +18,9 @@ import lombok.ToString;
 public class PeriodRange implements Serializable {
 
   private static final long serialVersionUID = -5369174948443667940L;
+
   private static final PeriodRange EMPTY = new PeriodRange();
+
   public final PeriodBound start;
   public final PeriodBound stop;
 
@@ -64,10 +66,7 @@ public class PeriodRange implements Serializable {
   }
 
   public static PeriodRange from(PeriodBound start) {
-    return new PeriodRange(
-      start,
-      PeriodBound.unboundedExclusive()
-    );
+    return new PeriodRange(start, PeriodBound.unboundedExclusive());
   }
 
   public static PeriodRange empty() {
@@ -94,32 +93,34 @@ public class PeriodRange implements Serializable {
     if (isEmpty()) {
       return false;
     }
-    Function<ZonedDateTime, Boolean> startIncludedFunc;
-    if (start.isInclusive) {
-      startIncludedFunc = startTime -> startTime.isEqual(when) || startTime.isBefore(when);
-    } else {
-      startIncludedFunc = startTime -> startTime.isBefore(when);
-    }
-
-    Function<ZonedDateTime, Boolean> stopIncludedFunc;
-    if (stop.isInclusive) {
-      stopIncludedFunc = stopTime -> stopTime.isEqual(when) || stopTime.isAfter(when);
-    } else {
-      stopIncludedFunc = stopTime -> stopTime.isAfter(when);
-    }
-    return getStartDateTime().map(startIncludedFunc).orElse(true)
-      && getStopDateTime().map(stopIncludedFunc).orElse(true);
+    return getStartDateTime().map(startIncludedFunction(when)).orElse(true)
+      && getStopDateTime().map(stopIncludedFunction(when)).orElse(true);
   }
 
   public boolean isRightOpen() {
     return this == EMPTY || !this.getStopDateTime().isPresent();
   }
 
-  private void validateBounds(PeriodBound start, PeriodBound stop) {
+  private Function<ZonedDateTime, Boolean> startIncludedFunction(ZonedDateTime when) {
+    if (start.isInclusive) {
+      return startTime -> startTime.isEqual(when) || startTime.isBefore(when);
+    } else {
+      return startTime -> startTime.isBefore(when);
+    }
+  }
+
+  private Function<ZonedDateTime, Boolean> stopIncludedFunction(ZonedDateTime when) {
+    if (stop.isInclusive) {
+      return stopTime -> stopTime.isEqual(when) || stopTime.isAfter(when);
+    } else {
+      return stopTime -> stopTime.isAfter(when);
+    }
+  }
+
+  private static void validateBounds(PeriodBound start, PeriodBound stop) {
     if (start.dateTime == null || stop.dateTime == null) {
       return;
     }
-
     if (start.dateTime.isAfter(stop.dateTime)) {
       throw new IllegalArgumentException(String.format(
         "Stop time can not be before start time (start = '%s', stop = '%s')",

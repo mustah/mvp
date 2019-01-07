@@ -22,6 +22,7 @@ public class StatusTypeTest {
   @Test
   public void ignoresCase() {
     assertThat(StatusType.from("Ok")).isEqualTo(StatusType.OK);
+    assertThat(StatusType.from("OK")).isEqualTo(StatusType.OK);
     assertThat(StatusType.from("warniNG")).isEqualTo(StatusType.WARNING);
   }
 

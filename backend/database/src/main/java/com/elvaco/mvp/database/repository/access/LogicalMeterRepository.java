@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
@@ -31,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.flatMapping;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -179,8 +182,12 @@ public class LogicalMeterRepository implements LogicalMeters {
     Collection<LogicalMeterEntity> meters,
     RequestParameters parameters
   ) {
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
-      logicalMeterJpaRepository.findStatusesGroupedByPhysicalMeterId(parameters);
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses = meters.stream()
+      .flatMap(lm -> lm.physicalMeters.stream())
+      .collect(groupingBy(
+        PhysicalMeterEntity::getId,
+        flatMapping(pm -> pm.statusLogs.stream(), toList())
+      ));
 
     return parameters.getPeriod()
       .map(selectionPeriod -> withStatusesAndCollectionStats(

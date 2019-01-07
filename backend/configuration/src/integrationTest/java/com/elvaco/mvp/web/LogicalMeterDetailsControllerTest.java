@@ -139,6 +139,61 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findById_MeterIncludes_AllStatusChangeLogs() {
+    var logicalMeter = given(logicalMeter());
+    var start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+    var stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
+
+    given(
+      statusLog(logicalMeter)
+        .status(OK)
+        .start(start)
+        .stop(stop),
+      statusLog(logicalMeter)
+        .status(ERROR)
+        .start(stop)
+    );
+
+    var url = Url.builder()
+      .path("/meters/details")
+      .parameter(LOGICAL_METER_ID, logicalMeter.id)
+      .period(start, stop)
+      .build();
+
+    LogicalMeterDto logicalMeterDto = asUser()
+      .getList(url, LogicalMeterDto.class)
+      .getBody()
+      .get(0);
+
+    assertThat(logicalMeterDto.statusChangelog)
+      .extracting(m -> m.name)
+      .containsExactlyInAnyOrder(OK.name, ERROR.name);
+  }
+
+  @Test
+  public void findById_MeterIncludesStatusChangeLogs_OutsideOfTimePeriod() {
+    var logicalMeter = given(logicalMeter());
+    var start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+
+    given(statusLog(logicalMeter).status(OK).start(start));
+
+    Url url = Url.builder()
+      .path("/meters/details")
+      .parameter(LOGICAL_METER_ID, logicalMeter.id)
+      .period(start.minusYears(2), start.minusYears(1))
+      .build();
+
+    LogicalMeterDto logicalMeterDto = asUser()
+      .getList(url, LogicalMeterDto.class)
+      .getBody()
+      .get(0);
+
+    assertThat(logicalMeterDto.statusChangelog)
+      .extracting(m -> m.name)
+      .containsExactlyInAnyOrder(OK.name);
+  }
+
+  @Test
   public void pagedMeterDetailsIsNotReported() {
     ZonedDateTime start = context().now();
     LogicalMeter logicalMeter = given(logicalMeter());
@@ -357,7 +412,8 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     );
     given(gateway().meter(meter));
 
-    Url url = Url.builder().path("/meters/details")
+    Url url = Url.builder()
+      .path("/meters/details")
       .period(context().now(), context().now().plusHours(3))
       .parameter(LOGICAL_METER_ID, meter.id)
       .period(context().now(), context().now().plusHours(1))

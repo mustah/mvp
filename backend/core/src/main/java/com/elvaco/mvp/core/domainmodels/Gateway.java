@@ -46,7 +46,7 @@ public class Gateway implements Identifiable<UUID>, PrimaryKeyed {
 
   public Gateway replaceActiveStatus(StatusType status) {
     List<StatusLogEntry> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
-      statusLogs,
+      List.copyOf(statusLogs),
       StatusLogEntry.builder()
         .primaryKey(primaryKey())
         .status(status)

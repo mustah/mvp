@@ -184,7 +184,6 @@ public class IntegrationTestFixtureContext {
       .created(now().minusYears(1))
       .externalId(logicalMeterId.toString())
       .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
-      .utcOffset(IntegrationTest.DEFAULT_UTC_OFFSET)
       .location(Location.UNKNOWN_LOCATION);
   }
 

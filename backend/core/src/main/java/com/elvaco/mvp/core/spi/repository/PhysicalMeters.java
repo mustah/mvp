@@ -20,14 +20,7 @@ public interface PhysicalMeters {
     String address
   );
 
-  List<PhysicalMeter> findBy(
-    UUID organisationId,
-    String externalId
-  );
+  List<PhysicalMeter> findBy(UUID organisationId, String externalId);
 
-  Optional<PhysicalMeter> findBy(
-    UUID organisationId,
-    String externalId,
-    String address
-  );
+  Optional<PhysicalMeter> findBy(UUID organisationId, String externalId, String address);
 }
