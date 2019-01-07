@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -17,12 +16,9 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
-import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 
-import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPADeleteClause;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -48,10 +44,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition.METER_D
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity.physicalMeterEntity;
-import static com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
-import static com.querydsl.core.group.GroupBy.groupBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -211,21 +204,6 @@ class LogicalMeterQueryDslJpaRepository
     logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
-  }
-
-  @Override
-  @SuppressWarnings(
-    {"SpringDataRepositoryMethodReturnTypeInspection", "SpringDataMethodInconsistencyInspection"}
-  )
-  public Map<UUID, List<PhysicalMeterStatusLogEntity>> findStatusesGroupedByPhysicalMeterId(
-    RequestParameters parameters
-  ) {
-    return createQuery(new PhysicalMeterStatusLogQueryFilters().toExpression(parameters))
-      .join(logicalMeterEntity.physicalMeters, physicalMeterEntity)
-      .join(physicalMeterEntity.statusLogs, physicalMeterStatusLogEntity)
-      .orderBy(physicalMeterStatusLogEntity.start.desc(), physicalMeterStatusLogEntity.stop.desc())
-      .transform(groupBy(physicalMeterStatusLogEntity.pk.physicalMeterId).as(GroupBy.list(
-        physicalMeterStatusLogEntity)));
   }
 
   @Override
