@@ -155,6 +155,10 @@ public class Quantity implements Identifiable<Integer> {
     return id;
   }
 
+  public boolean isConsumption() {
+    return seriesDisplayMode() == SeriesDisplayMode.CONSUMPTION;
+  }
+
   private Quantity withUnits(String unit, SeriesDisplayMode displayMode) {
     return new Quantity(
       id,

@@ -70,6 +70,7 @@ import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -147,10 +148,12 @@ class DataProviderConfig {
 
   @Bean
   Measurements measurements(
+    DSLContext dsl,
     QuantityProvider quantityProvider,
     QuantityEntityMapper quantityEntityMapper
   ) {
     return new MeasurementRepository(
+      dsl,
       measurementJpaRepository,
       quantityProvider,
       unitConverter,

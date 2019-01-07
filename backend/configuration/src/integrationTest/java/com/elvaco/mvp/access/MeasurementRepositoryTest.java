@@ -1,6 +1,8 @@
 package com.elvaco.mvp.access;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +26,225 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
   private static final OffsetDateTime START_TIME = OffsetDateTime.parse(
     "2018-01-01T00:00:00+00:00");
+
+  @Test
+  public void getSeriesForConsumption_PutConsumptionOnStartOfInterval() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.VOLUME, start, 3.0, 6.0, 12.0, 24.0)
+    );
+
+    List<MeasurementValue> result =
+      measurements.findSeriesForPeriod(
+        new MeasurementParameter(
+          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          Quantity.VOLUME,
+          start,
+          start.plusHours(2),
+          TemporalResolution.hour
+        )
+      );
+
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      3.0,
+      6.0,
+      12.0
+    );
+  }
+
+  @Test
+  public void getSeriesForConsumption_PutSumOfMissingIntervalsOnStartOfInterval() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.VOLUME, start, 3.0, 6.0)
+    );
+
+    given(
+      series(meter, Quantity.VOLUME, start.plusHours(4), 48.0, 96.0)
+    );
+
+    List<MeasurementValue> result =
+      measurements.findSeriesForPeriod(
+        new MeasurementParameter(
+          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          Quantity.VOLUME,
+          start,
+          start.plusHours(4),
+          TemporalResolution.hour
+        )
+      );
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      3.0,
+      42.0,
+      null,
+      null,
+      48.0
+    );
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAtStartOfIntervalAndAfterInterval() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.VOLUME, start.minusHours(1), 1.0)
+    );
+    // missing measurement for 'start'
+    given(
+      series(meter, Quantity.VOLUME, start.plusHours(1), 6.0, 12.0)
+    );
+    // missing measurement after interval
+
+    List<MeasurementValue> result =
+      measurements.findSeriesForPeriod(
+        new MeasurementParameter(
+          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          Quantity.VOLUME,
+          start,
+          start.plusHours(2),
+          TemporalResolution.hour
+        )
+      );
+
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      null,
+      6.0,
+      null
+    );
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAtEndOfInterval() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.VOLUME, start, 3.0, 6.0)
+    );
+    // missing measurement at end of interval
+
+    List<MeasurementValue> result =
+      measurements.findSeriesForPeriod(
+        new MeasurementParameter(
+          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          Quantity.VOLUME,
+          start,
+          start.plusHours(2),
+          TemporalResolution.hour
+        )
+      );
+
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      3.0,
+      null,
+      null
+    );
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAtEndOfIntervalButLaterExists() {
+
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.VOLUME, start, 3.0, 6.0)
+    );
+    // missing measurement at end of interval
+    given(
+      series(meter, Quantity.VOLUME, start.plusHours(4), 24.0)
+    );
+
+    List<MeasurementValue> result =
+      measurements.findSeriesForPeriod(
+        new MeasurementParameter(
+          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          Quantity.VOLUME,
+          start,
+          start.plusHours(2),
+          TemporalResolution.hour
+        )
+      );
+
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      3.0,
+      null,
+      null
+    );
+  }
+
+  @Test
+  public void getSeriesForConsumption_MissingMeasurementAfterInterval() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.VOLUME, start, 3.0, 6.0, 12.0)
+    );
+    // missing measurement at START_TIME.plusHours(3)
+
+    List<MeasurementValue> result =
+      measurements.findSeriesForPeriod(
+        new MeasurementParameter(
+          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          Quantity.VOLUME,
+          start,
+          start.plusHours(2),
+          TemporalResolution.hour
+        ));
+
+    assertThat(result).extracting(value -> value.value)
+      .containsExactly(3.0, 6.0, null);
+  }
+
+  @Test
+  public void seriesShouldIncludeEmptyResolutionPoints() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    given(
+      series(meter, Quantity.POWER, start, 1.0, 2.0)
+    );
+
+    List<MeasurementValue> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        List.of(meter.activePhysicalMeter().orElseThrow().id),
+        Quantity.POWER,
+        start,
+        start.plusHours(2),
+        TemporalResolution.hour
+      )
+    );
+
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      1.0,
+      2.0,
+      null
+    );
+  }
+
+  @Test
+  public void seriesShouldNotIncludeValuesInBetweenResolutionPoints() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+
+    given(
+      series(meter, Quantity.POWER, start, Duration.ofMinutes(30), 1.0, 1.5, 2.0)
+    );
+
+    List<MeasurementValue> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        List.of(meter.activePhysicalMeter().orElseThrow().id),
+        Quantity.POWER,
+        start,
+        start.plusHours(1),
+        TemporalResolution.hour
+      )
+    );
+
+    assertThat(result).extracting(value -> value.value).containsExactly(
+      1.0,
+      2.0
+    );
+  }
 
   @Test
   public void correctScaleIsReturned() {
