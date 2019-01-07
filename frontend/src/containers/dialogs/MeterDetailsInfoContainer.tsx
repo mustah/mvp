@@ -22,6 +22,7 @@ import {User} from '../../state/domain-models/user/userModels';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
+import {useFetchOrganisation} from './fetchOrganisationHook';
 import {Info, SuperAdminInfo} from './Info';
 
 const renderReadInterval = (minutes: number | undefined): string => {
@@ -49,118 +50,105 @@ interface StateToProps {
 
 type Props = OwnProps & StateToProps & DispatchToProps;
 
-class MeterDetailsInfo extends React.Component<Props> {
+const MeterDetailsInfo = ({
+  meter: {
+    address,
+    readIntervalMinutes,
+    collectionPercentage,
+    location,
+    id,
+    manufacturer,
+    medium,
+    organisationId,
+    alarm,
+    statusChanged,
+    facility,
+    isReported,
+  },
+  fetchOrganisation,
+  organisation,
+  user
+}: Props) => {
+  useFetchOrganisation({fetchOrganisation, user, organisationId});
 
-  componentDidMount() {
-    const {fetchOrganisation, meter: {organisationId}, user} = this.props;
-    if (isSuperAdmin(user)) {
-      fetchOrganisation(organisationId);
-    }
-  }
+  const organisationName = organisation.map(({name}) => name).orElse(translate('unknown'));
 
-  componentWillReceiveProps({fetchOrganisation, meter, user}: Props) {
-    if (isSuperAdmin(user)) {
-      fetchOrganisation(meter.organisationId);
-    }
-  }
+  const formattedCollectionPercentage = formatCollectionPercentage(
+    collectionPercentage,
+    readIntervalMinutes,
+    isSuperAdmin(user),
+  );
 
-  render() {
-    const {
-      meter: {
-        address,
-        readIntervalMinutes,
-        collectionPercentage,
-        location,
-        id,
-        manufacturer,
-        medium,
-        alarm,
-        statusChanged,
-        facility,
-        isReported,
-      },
-      organisation,
-      user
-    } = this.props;
-    const organisationName = organisation.map(({name}) => name).orElse(translate('unknown'));
-
-    const formattedCollectionPercentage = formatCollectionPercentage(
-      collectionPercentage,
-      readIntervalMinutes,
-      isSuperAdmin(user),
-    );
-
-    return (
-      <Row>
-        <Column className="Overview">
-          <Row>
-            <Column>
-              <Row>
-                <div className="display-none">{id}</div>
-                <MainTitle>{translate('meter')}</MainTitle>
-              </Row>
-            </Column>
-            <Info label={translate('product model')}>
-              <BoldFirstUpper>{orUnknown(manufacturer)}</BoldFirstUpper>
-            </Info>
-            <Info label={translate('medium')}>
-              <BoldFirstUpper>{medium}</BoldFirstUpper>
-            </Info>
-            <Info label={translate('city')}>
-              <CityInfo name={orUnknown(location.city)} subTitle={orUnknown(location.country)}/>
-            </Info>
-            <Info label={translate('address')}>
-              <BoldFirstUpper>{orUnknown(location.address)}</BoldFirstUpper>
-            </Info>
-            <SuperAdminInfo label={translate('organisation')}>
-              <BoldFirstUpper>{organisationName}</BoldFirstUpper>
-            </SuperAdminInfo>
-          </Row>
-          <Row>
-            <Column>
-              <Row>
-                <Subtitle>{translate('collection')}</Subtitle>
-              </Row>
-            </Column>
-            <Info className="First-column" label={translate('resolution')}>
-              <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
-            </Info>
-            <Info label={translate('collection percentage')}>
-              <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
-            </Info>
-          </Row>
-          <Row>
-            <Column>
-              <Row>
-                <Subtitle>{translate('validation')}</Subtitle>
-              </Row>
-            </Column>
-            <Info className="First-column" label={translate('alarm')}>
-              <MeterAlarm alarm={alarm}/>
-            </Info>
-            <Info label={translate('status change')}>
-              <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
-            </Info>
-          </Row>
-          <RowMiddle>
-            <Column>
-              <Row>
-                <Subtitle>{translate('labels')}</Subtitle>
-              </Row>
-            </Column>
-            <Info label={translate('facility id')}>
-              <BoldFirstUpper>{facility}</BoldFirstUpper>
-            </Info>
-            <Info label={translate('meter id')}>
-              <BoldFirstUpper>{address}</BoldFirstUpper>
-            </Info>
-            <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
-          </RowMiddle>
-        </Column>
-      </Row>
-    );
-  }
-}
+  return (
+    <Row>
+      <Column className="Overview">
+        <Row>
+          <Column>
+            <Row>
+              <div className="display-none">{id}</div>
+              <MainTitle>{translate('meter')}</MainTitle>
+            </Row>
+          </Column>
+          <Info label={translate('product model')}>
+            <BoldFirstUpper>{orUnknown(manufacturer)}</BoldFirstUpper>
+          </Info>
+          <Info label={translate('medium')}>
+            <BoldFirstUpper>{medium}</BoldFirstUpper>
+          </Info>
+          <Info label={translate('city')}>
+            <CityInfo name={orUnknown(location.city)} subTitle={orUnknown(location.country)}/>
+          </Info>
+          <Info label={translate('address')}>
+            <BoldFirstUpper>{orUnknown(location.address)}</BoldFirstUpper>
+          </Info>
+          <SuperAdminInfo label={translate('organisation')}>
+            <BoldFirstUpper>{organisationName}</BoldFirstUpper>
+          </SuperAdminInfo>
+        </Row>
+        <Row>
+          <Column>
+            <Row>
+              <Subtitle>{translate('collection')}</Subtitle>
+            </Row>
+          </Column>
+          <Info className="First-column" label={translate('resolution')}>
+            <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
+          </Info>
+          <Info label={translate('collection percentage')}>
+            <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
+          </Info>
+        </Row>
+        <Row>
+          <Column>
+            <Row>
+              <Subtitle>{translate('validation')}</Subtitle>
+            </Row>
+          </Column>
+          <Info className="First-column" label={translate('alarm')}>
+            <MeterAlarm alarm={alarm}/>
+          </Info>
+          <Info label={translate('status change')}>
+            <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+          </Info>
+        </Row>
+        <RowMiddle>
+          <Column>
+            <Row>
+              <Subtitle>{translate('labels')}</Subtitle>
+            </Row>
+          </Column>
+          <Info label={translate('facility id')}>
+            <BoldFirstUpper>{facility}</BoldFirstUpper>
+          </Info>
+          <Info label={translate('meter id')}>
+            <BoldFirstUpper>{address}</BoldFirstUpper>
+          </Info>
+          <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+        </RowMiddle>
+      </Column>
+    </Row>
+  );
+};
 
 const mapStateToProps = (
   {domainModels: {organisations}, auth, paginatedDomainModels: {meters}}: RootState,
