@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.spi.repository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public interface Measurements {
 
   List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter);
 
-  List<MeasurementValue> findSeriesForPeriod(MeasurementParameter parameter);
+  Map<UUID, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter);
 
   List<Measurement> findAll(RequestParameters parameters);
 

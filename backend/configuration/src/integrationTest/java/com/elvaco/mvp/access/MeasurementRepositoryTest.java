@@ -4,8 +4,10 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
@@ -35,10 +37,10 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       series(meter, Quantity.VOLUME, start, 3.0, 6.0, 12.0, 24.0)
     );
 
-    List<MeasurementValue> result =
+    Map<UUID, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          List.of(physicalMeterId(meter)),
           Quantity.VOLUME,
           start,
           start.plusHours(2),
@@ -46,11 +48,9 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         )
       );
 
-    assertThat(result).extracting(value -> value.value).containsExactly(
-      3.0,
-      6.0,
-      12.0
-    );
+    assertThat(result.get(physicalMeterId(meter)))
+      .extracting(value -> value.value)
+      .containsExactly(3.0, 6.0, 12.0);
   }
 
   @Test
@@ -65,23 +65,25 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       series(meter, Quantity.VOLUME, start.plusHours(4), 48.0, 96.0)
     );
 
-    List<MeasurementValue> result =
+    Map<UUID, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          List.of(physicalMeterId(meter)),
           Quantity.VOLUME,
           start,
           start.plusHours(4),
           TemporalResolution.hour
         )
       );
-    assertThat(result).extracting(value -> value.value).containsExactly(
-      3.0,
-      42.0,
-      null,
-      null,
-      48.0
-    );
+    assertThat(result.get(physicalMeterId(meter)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        3.0,
+        42.0,
+        null,
+        null,
+        48.0
+      );
   }
 
   @Test
@@ -97,10 +99,10 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     );
     // missing measurement after interval
 
-    List<MeasurementValue> result =
+    Map<UUID, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          List.of(physicalMeterId(meter)),
           Quantity.VOLUME,
           start,
           start.plusHours(2),
@@ -108,11 +110,13 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         )
       );
 
-    assertThat(result).extracting(value -> value.value).containsExactly(
-      null,
-      6.0,
-      null
-    );
+    assertThat(result.get(physicalMeterId(meter)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        null,
+        6.0,
+        null
+      );
   }
 
   @Test
@@ -124,10 +128,10 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     );
     // missing measurement at end of interval
 
-    List<MeasurementValue> result =
+    Map<UUID, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          List.of(physicalMeterId(meter)),
           Quantity.VOLUME,
           start,
           start.plusHours(2),
@@ -135,7 +139,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         )
       );
 
-    assertThat(result).extracting(value -> value.value).containsExactly(
+    assertThat(result.get(physicalMeterId(meter))).extracting(value -> value.value).containsExactly(
       3.0,
       null,
       null
@@ -155,10 +159,10 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       series(meter, Quantity.VOLUME, start.plusHours(4), 24.0)
     );
 
-    List<MeasurementValue> result =
+    Map<UUID, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          List.of(physicalMeterId(meter)),
           Quantity.VOLUME,
           start,
           start.plusHours(2),
@@ -166,11 +170,13 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         )
       );
 
-    assertThat(result).extracting(value -> value.value).containsExactly(
-      3.0,
-      null,
-      null
-    );
+    assertThat(result.get(physicalMeterId(meter)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        3.0,
+        null,
+        null
+      );
   }
 
   @Test
@@ -182,17 +188,17 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     );
     // missing measurement at START_TIME.plusHours(3)
 
-    List<MeasurementValue> result =
+    Map<UUID, List<MeasurementValue>> result =
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
-          List.of(meter.activePhysicalMeter().orElseThrow().id),
+          List.of(physicalMeterId(meter)),
           Quantity.VOLUME,
           start,
           start.plusHours(2),
           TemporalResolution.hour
         ));
 
-    assertThat(result).extracting(value -> value.value)
+    assertThat(result.get(physicalMeterId(meter))).extracting(value -> value.value)
       .containsExactly(3.0, 6.0, null);
   }
 
@@ -204,9 +210,9 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       series(meter, Quantity.POWER, start, 1.0, 2.0)
     );
 
-    List<MeasurementValue> result = measurements.findSeriesForPeriod(
+    Map<UUID, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(meter.activePhysicalMeter().orElseThrow().id),
+        List.of(physicalMeterId(meter)),
         Quantity.POWER,
         start,
         start.plusHours(2),
@@ -214,11 +220,13 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       )
     );
 
-    assertThat(result).extracting(value -> value.value).containsExactly(
-      1.0,
-      2.0,
-      null
-    );
+    assertThat(result.get(physicalMeterId(meter)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        1.0,
+        2.0,
+        null
+      );
   }
 
   @Test
@@ -230,9 +238,9 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       series(meter, Quantity.POWER, start, Duration.ofMinutes(30), 1.0, 1.5, 2.0)
     );
 
-    List<MeasurementValue> result = measurements.findSeriesForPeriod(
+    Map<UUID, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
-        List.of(meter.activePhysicalMeter().orElseThrow().id),
+        List.of(physicalMeterId(meter)),
         Quantity.POWER,
         start,
         start.plusHours(1),
@@ -240,10 +248,92 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       )
     );
 
-    assertThat(result).extracting(value -> value.value).containsExactly(
-      1.0,
-      2.0
+    assertThat(result.get(physicalMeterId(meter)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        1.0,
+        2.0
+      );
+  }
+
+  @Test
+  public void readoutSeriesForMultipleMeters() {
+    ZonedDateTime start = context().now();
+    var meterOne = given(logicalMeter());
+    var meterTwo = given(logicalMeter());
+
+    given(
+      series(meterOne, Quantity.POWER, start, 1.0, 2.0, 3.0)
     );
+
+    given(
+      series(meterTwo, Quantity.POWER, start, 10.0, 20.0, 30.0)
+    );
+
+    Map<UUID, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        List.of(physicalMeterId(meterOne), physicalMeterId(meterTwo)),
+        Quantity.POWER,
+        start,
+        start.plusHours(2),
+        TemporalResolution.hour
+      )
+    );
+
+    assertThat(result.get(physicalMeterId(meterOne)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        1.0,
+        2.0,
+        3.0
+      );
+
+    assertThat(result.get(physicalMeterId(meterTwo)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        10.0,
+        20.0,
+        30.0
+      );
+  }
+
+  @Test
+  public void consumptionSeriesForMultipleMeters() {
+    ZonedDateTime start = context().now();
+    var meterOne = given(logicalMeter());
+    var meterTwo = given(logicalMeter());
+
+    given(
+      series(meterOne, Quantity.VOLUME, start, 1.0, 2.0, 3.0)
+    );
+
+    given(
+      series(meterTwo, Quantity.VOLUME, start, 10.0, 20.0, 30.0)
+    );
+
+    Map<UUID, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        List.of(physicalMeterId(meterOne), physicalMeterId(meterTwo)),
+        Quantity.VOLUME,
+        start,
+        start.plusHours(1),
+        TemporalResolution.hour
+      )
+    );
+
+    assertThat(result.get(physicalMeterId(meterOne)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        1.0,
+        1.0
+      );
+
+    assertThat(result.get(physicalMeterId(meterTwo)))
+      .extracting(value -> value.value)
+      .containsExactly(
+        10.0,
+        10.0
+      );
   }
 
   @Test
@@ -308,6 +398,10 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     assertThatThrownBy(() ->
       newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "m³/s", "Volume")
     ).isInstanceOf(UnitConversionError.class);
+  }
+
+  private UUID physicalMeterId(LogicalMeter meterOne) {
+    return meterOne.activePhysicalMeter().orElseThrow().id;
   }
 
   private void newMeasurement(

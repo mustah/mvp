@@ -133,6 +133,7 @@ public class MeasurementController {
             stop,
             temporalResolution
           ))
+          .get(physicalMeter.id)
           .stream()
           .map(measurementValue -> {
             LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);

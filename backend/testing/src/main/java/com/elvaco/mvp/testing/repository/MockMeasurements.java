@@ -3,6 +3,7 @@ package com.elvaco.mvp.testing.repository;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 public class MockMeasurements extends MockRepository<Measurement.Id, Measurement>
   implements Measurements {
@@ -50,8 +52,8 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public List<MeasurementValue> findSeriesForPeriod(MeasurementParameter parameter) {
-    return emptyList();
+  public Map<UUID, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter) {
+    return emptyMap();
   }
 
   @Override
