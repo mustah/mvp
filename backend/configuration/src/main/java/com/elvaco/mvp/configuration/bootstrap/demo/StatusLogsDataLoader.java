@@ -17,9 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
-import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
-import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 
 @Profile("demo")
 @Component
@@ -27,11 +26,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 class StatusLogsDataLoader {
 
   private static final Random RANDOM = new Random();
-  private static final StatusType[] STATUS_TYPES = {
-    OK,
-    WARNING,
-    UNKNOWN,
-    };
+  private static final StatusType[] STATUS_TYPES = {OK, ERROR};
 
   private final PhysicalMeters physicalMeters;
   private final MeterStatusLogs meterStatusLogs;

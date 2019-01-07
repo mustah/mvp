@@ -13,7 +13,7 @@ public class MeteringReferenceInfoMessageDto extends MeteringMessageDto {
   @Nullable
   public final MeterDto meter;
 
-  //Metering currently sends this in camel-case form, for some reason
+  // Metering currently sends this in camel-case form, for some reason
   @SerializedName(value = "jobId", alternate = "job_id")
   @Nullable
   public final String jobId;

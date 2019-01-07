@@ -52,29 +52,24 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private final JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
 
   @Override
-  public void accept(MeteringReferenceInfoMessageDto referenceInfoMessage) {
-    FacilityDto facility = referenceInfoMessage.facility;
-
-    String jobId = referenceInfoMessage.jobId;
-    if (meterSyncJobService.isActive(jobId)) {
-      meterSyncJobService.update(jobId, referenceInfoMessage);
+  public void accept(MeteringReferenceInfoMessageDto message) {
+    if (meterSyncJobService.isActive(message.jobId)) {
+      meterSyncJobService.update(message.jobId, message);
     }
 
-    if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
-      log.warn("Discarding message with invalid facility id: '{}'", referenceInfoMessage);
-      return;
-    }
+    validateMessageValues(message);
 
-    Organisation organisation =
-      organisationUseCases.findOrCreate(referenceInfoMessage.organisationId);
+    Organisation organisation = organisationUseCases.findOrCreate(message.organisationId);
 
-    MeterDto meterDto = referenceInfoMessage.meter;
+    FacilityDto facility = message.facility;
 
     Location location = new LocationBuilder()
       .country(facility.country)
       .city(facility.city)
       .address(facility.address)
       .build();
+
+    MeterDto meterDto = message.meter;
 
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
       meterDto,
@@ -93,7 +88,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       ));
 
     Optional<Gateway> gateway = Optional.ofNullable(findOrCreateGateway(
-      referenceInfoMessage.gateway,
+      message.gateway,
       logicalMeter,
       organisation.id
     ));
@@ -226,6 +221,21 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
         .replaceActiveStatus(StatusType.from(gatewayStatusDto.status));
     } else {
       return null;
+    }
+  }
+
+  private static void validateMessageValues(MeteringReferenceInfoMessageDto message) {
+    FacilityDto facility = message.facility;
+    if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
+      throw new RuntimeException("Invalid facility id");
+    }
+
+    MeterDto meterDto = message.meter;
+    if (meterDto != null) {
+      Optional.of(meterDto.status)
+        .map(StatusType::from)
+        .filter(StatusType::isNotUnknown)
+        .orElseThrow(() -> new RuntimeException("Invalid status type '" + meterDto.status + "'."));
     }
   }
 }

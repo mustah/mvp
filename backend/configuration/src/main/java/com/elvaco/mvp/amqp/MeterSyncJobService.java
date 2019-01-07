@@ -33,9 +33,7 @@ public class MeterSyncJobService implements JobService<MeteringReferenceInfoMess
   }
 
   @Override
-  public void update(
-    String jobId, MeteringReferenceInfoMessageDto jobInformation
-  ) {
+  public void update(String jobId, MeteringReferenceInfoMessageDto jobInformation) {
     jobIdCache.put(jobId, jobInformation);
   }
 
