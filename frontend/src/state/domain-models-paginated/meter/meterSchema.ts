@@ -29,8 +29,8 @@ type Changelogs = GatewayStatusChangelog | MeterStatusChangelog;
 export const meterDataFormatter: DataFormatter<NormalizedPaginated<Meter>> =
   (response) => normalize(response, meterSchema) as NormalizedPaginated<Meter>;
 
-export const statusChangelogDataFormatter: DataFormatter<Normalized<Changelogs>> =
-  (domainModel: Gateway | MeterDetails): Normalized<Changelogs> => {
+export const eventsDataFormatter: DataFormatter<Normalized<Changelogs>> =
+  (domainModel: MeterDetails): Normalized<Changelogs> => {
     const {entities, result} = normalize(domainModel, statusChangelogSchema);
     return {
       entities: entities.statusChangelog,

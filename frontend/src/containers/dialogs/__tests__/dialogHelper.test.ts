@@ -1,9 +1,9 @@
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom, newDateRange} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/meter/meterSchema';
+import {eventsDataFormatter} from '../../../state/domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
+import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
 import {
   ExistingReadings,
   Measurement,
@@ -18,86 +18,79 @@ import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} 
 
 describe('dialogHelper', () => {
 
-  describe('statusChangelogDataFormatter', () => {
+  describe('eventsDataFormatter', () => {
 
-    const gateway: Gateway = {
+    const meter: MeterDetails = {
+      facility: '1234',
+      medium: '',
+      manufacturer: '',
+      gatewaySerial: '',
       id: '12032010',
-      serial: '005',
       location: {
         address: 'Stockholmsv 33',
         city: 'Perstorp',
         country: 'sverige',
         position: {longitude: 14.205929, latitude: 59.666749},
       },
-      productModel: 'CMi2110',
-      status: {name: 'OK', id: 0},
       statusChangelog: [
         {
-          date: '2017-11-22 09:34',
-          status: {id: 0, name: 'OK'},
+          start: '2017-11-22 09:34',
+          name: 'OK',
           id: '967af275-0026-43b9-a0ef-123dfb05612a',
-          gatewayId: '12032010',
         }, {
-          date: '2017-11-22 10:34',
-          status: {id: 0, name: 'OK'},
+          start: '2017-11-22 10:34',
+          name: 'OK',
           id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
-          gatewayId: '12032010',
         }, {
-          date: '2017-11-22 11:34',
-          status: {id: 3, name: 'Fel'},
+          start: '2017-11-22 11:34',
+          name: 'Fel',
           id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-          gatewayId: '12032010',
         }, {
-          date: '2017-11-22 12:34',
-          status: {id: 0, name: 'OK'},
+          start: '2017-11-22 12:34',
+          name: 'OK',
           id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
-          gatewayId: '12032010',
         }
       ],
       statusChanged: '2017-11-05 23:00',
-      meterIds: ['67606228'],
+      gateway: {
+        serial: '',
+        productModel: '',
+        id: '',
+        status: {id: 'OK', name: 'OK'},
+      },
       organisationId: '',
     };
 
     it('normalizes and uses only statusChangelog property', () => {
-      expect(statusChangelogDataFormatter(gateway)).toEqual({
-        entities:
-          {
-            '967af275-0026-43b9-a0ef-123dfb05612a':
-              {
-                date: '2017-11-22 09:34',
-                status: {id: 0, name: 'OK'},
-                id: '967af275-0026-43b9-a0ef-123dfb05612a',
-                gatewayId: '12032010',
-              },
-            '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb':
-              {
-                date: '2017-11-22 10:34',
-                status: {id: 0, name: 'OK'},
-                id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
-                gatewayId: '12032010',
-              },
-            'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27':
-              {
-                date: '2017-11-22 11:34',
-                status: {id: 3, name: 'Fel'},
-                id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-                gatewayId: '12032010',
-              },
-            '3e4a4295-2d1a-4118-b303-16fbb3ddfa49':
-              {
-                date: '2017-11-22 12:34',
-                status: {id: 0, name: 'OK'},
-                id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
-                gatewayId: '12032010',
-              },
+      expect(eventsDataFormatter(meter)).toEqual({
+        'entities': {
+          '3e4a4295-2d1a-4118-b303-16fbb3ddfa49': {
+            'id': '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
+            'name': 'OK',
+            'start': '2017-11-22 12:34'
           },
-        result: [
+          '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb': {
+            'id': '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
+            'name': 'OK',
+            'start': '2017-11-22 10:34'
+          },
+          '967af275-0026-43b9-a0ef-123dfb05612a': {
+            'id': '967af275-0026-43b9-a0ef-123dfb05612a',
+            'name': 'OK',
+            'start': '2017-11-22 09:34'
+          },
+          'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27': {
+            'id': 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
+            'name': 'Fel',
+            'start': '2017-11-22 11:34'
+          }
+        },
+        'result': [
           '967af275-0026-43b9-a0ef-123dfb05612a',
           '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
           'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-          '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
-        ],
+          '3e4a4295-2d1a-4118-b303-16fbb3ddfa49'
+        ]
       });
     });
   });

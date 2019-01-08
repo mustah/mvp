@@ -19,7 +19,7 @@ import {TimestampInfoMessage} from '../../components/timestamp-info-message/Time
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {statusChangelogDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
+import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
 import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
@@ -89,7 +89,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
       result: [gateway.id],
     };
 
-    const statusChangelog = statusChangelogDataFormatter(meter);
+    const eventLog = eventsDataFormatter(meter);
 
     const hasContent: boolean = meterMapMarker
       .filter(({status}: MapMarker) => status !== undefined)
@@ -124,7 +124,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <MeterMeasurementsContainer meter={meter}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Table {...statusChangelog}>
+            <Table {...eventLog}>
               <TableColumn
                 header={<TableHead>{translate('date')}</TableHead>}
                 renderCell={renderDate}
