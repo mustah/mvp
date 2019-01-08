@@ -22,7 +22,7 @@ import {User} from '../../state/domain-models/user/userModels';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
-import {useFetchOrganisation} from './fetchOrganisationHook';
+import {useFetchOrganisation} from './fetchDialogDataHook';
 import {Info, SuperAdminInfo} from './Info';
 
 const renderReadInterval = (minutes: number | undefined): string => {

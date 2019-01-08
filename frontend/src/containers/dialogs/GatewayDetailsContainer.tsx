@@ -1,12 +1,10 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Period} from '../../components/dates/dateModels';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../helpers/Maybe';
-import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
 import {fetchGateway} from '../../state/domain-models-paginated/gateway/gatewayApiActions';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -18,8 +16,9 @@ import {ObjectsById} from '../../state/domain-models/domainModels';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {fetchGatewayMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
-import {CallbackWithId, EncodedUriParameters, uuid} from '../../types/Types';
+import {CallbackWithId, uuid} from '../../types/Types';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
+import {OnFetchGatewayMeterDetails, useFetchGatewayAndItsMeters} from './fetchDialogDataHook';
 import './GatewayDetailsContainer.scss';
 import {GatewayDetailsInfoContainer} from './GatewayDetailsInfoContainer';
 import {GatewayDetailsTabs} from './GatewayDetailsTabs';
@@ -34,7 +33,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchGateway: CallbackWithId;
-  fetchGatewayMeterDetails: (meterIds: uuid[], parameters: EncodedUriParameters, gatewayId?: uuid) => void;
+  fetchGatewayMeterDetails: OnFetchGatewayMeterDetails;
 }
 
 type Props = StateToProps & DispatchToProps & SelectedId;
@@ -55,28 +54,12 @@ const GatewayDetailsContent = (props: Props) => {
 
 const GatewayDetailsContentLoader = withLargeLoader<Props>(GatewayDetailsContent);
 
-const fetchGatewayAndItsMeters =
-  ({fetchGateway, gateway, fetchGatewayMeterDetails, selectedId}: Props) => {
-    selectedId.do((id: uuid) => fetchGateway(id));
-    gateway.filter(({meterIds}: Gateway) => meterIds.length > 0)
-      .map(({id, meterIds}: Gateway) =>
-        fetchGatewayMeterDetails(meterIds, makeApiParametersOf({period: Period.latest}), id));
-  };
+const GatewayDetails = (props: Props) => {
+  const {fetchGateway, fetchGatewayMeterDetails, gateway, selectedId} = props;
+  useFetchGatewayAndItsMeters({fetchGateway, fetchGatewayMeterDetails, gateway, selectedId});
 
-class GatewayDetails extends React.Component<Props> {
-
-  componentDidMount() {
-    fetchGatewayAndItsMeters(this.props);
-  }
-
-  componentWillReceiveProps(props: Props) {
-    fetchGatewayAndItsMeters(props);
-  }
-
-  render() {
-    return <GatewayDetailsContentLoader {...this.props}/>;
-  }
-}
+  return <GatewayDetailsContentLoader {...props}/>;
+};
 
 const mapStateToProps = (
   {

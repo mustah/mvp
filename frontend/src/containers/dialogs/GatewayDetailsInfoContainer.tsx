@@ -20,7 +20,7 @@ import {fetchOrganisation} from '../../state/domain-models/organisation/organisa
 import {User} from '../../state/domain-models/user/userModels';
 import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
-import {useFetchOrganisation} from './fetchOrganisationHook';
+import {useFetchOrganisation} from './fetchDialogDataHook';
 import {Info, SuperAdminInfo} from './Info';
 
 interface OwnProps {
