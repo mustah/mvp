@@ -19,7 +19,7 @@ import {TimestampInfoMessage} from '../../components/timestamp-info-message/Time
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {statusChangelogDataFormatter} from '../../state/domain-models-paginated/gateway/gatewaySchema';
+import {statusChangelogDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
 import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';

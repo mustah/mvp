@@ -2,7 +2,7 @@ import {Period} from '../../../components/dates/dateModels';
 import {momentFrom, newDateRange} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/gateway/gatewaySchema';
+import {statusChangelogDataFormatter} from '../../../state/domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
 import {
   ExistingReadings,
