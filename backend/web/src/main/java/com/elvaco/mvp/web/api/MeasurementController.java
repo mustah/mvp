@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -122,33 +124,52 @@ public class MeasurementController {
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
 
-    return toSeries(logicalMeterHelper.mapQuantitiesToPhysicalMeters(logicalMeters, quantities)
-      .entrySet().stream()
-      .flatMap(entry -> entry.getValue().stream()
-        .flatMap(physicalMeter -> measurementUseCases.findSeriesForPeriod(
-          new MeasurementParameter(
-            List.of(physicalMeter.id),
-            entry.getKey(),
-            start,
-            stop,
-            temporalResolution
-          ))
-          .stream()
-          .map(measurementValue -> {
-            LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
-            return LabeledMeasurementValue.builder()
-              .id(physicalMeter.logicalMeterId.toString())
-              .label(physicalMeter.externalId)
-              .city(logicalMeter.location.getCity())
-              .address(logicalMeter.location.getAddress())
-              .medium(logicalMeter.meterDefinition.medium)
-              .when(measurementValue.when)
-              .value(measurementValue.value)
-              .quantity(entry.getKey())
-              .build();
-          })))
-      .collect(toList())
+    Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeter
+      = logicalMeterHelper.mapQuantitiesToPhysicalMeters(
+      logicalMeters,
+      quantities
     );
+
+    Map<UUID, PhysicalMeter> physicalMeters = quantityToPhysicalMeter
+      .values().stream().flatMap(Collection::stream)
+      .collect(toMap(PhysicalMeter::getId, identity(), (o, n) -> n));
+
+    List<LabeledMeasurementValue> labeledMeasurementValues =
+      quantityToPhysicalMeter.entrySet()
+        .stream()
+        .map(entry -> new MeasurementParameter(
+          entry.getValue().stream().map(PhysicalMeter::getId).collect(toList()),
+          entry.getKey(),
+          start,
+          stop,
+          temporalResolution
+        ))
+        .collect(toMap(MeasurementParameter::getQuantity, measurementUseCases::findSeriesForPeriod))
+        .entrySet().stream()
+        .flatMap(quantityMapEntry ->
+          quantityMapEntry.getValue()
+            .entrySet()
+            .stream()
+            .flatMap(uuidListEntry -> {
+              PhysicalMeter physicalMeter = physicalMeters.get(uuidListEntry.getKey());
+              LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
+              return uuidListEntry.getValue()
+                .stream().map(measurementValue ->
+                  LabeledMeasurementValue.builder()
+                    .id(logicalMeter.id.toString())
+                    .label(logicalMeter.externalId)
+                    .city(logicalMeter.location.getCity())
+                    .address(logicalMeter.location.getAddress())
+                    .medium(logicalMeter.meterDefinition.medium)
+                    .when(measurementValue.when)
+                    .value(measurementValue.value)
+                    .quantity(quantityMapEntry.getKey())
+                    .build()
+                );
+            })
+        ).collect(toList());
+
+    return toSeries(labeledMeasurementValues);
   }
 
   @GetMapping("/paged")

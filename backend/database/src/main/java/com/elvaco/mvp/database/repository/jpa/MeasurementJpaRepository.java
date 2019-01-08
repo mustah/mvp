@@ -74,66 +74,6 @@ public interface MeasurementJpaRepository
     @Param("to") OffsetDateTime to
   );
 
-  @Query(nativeQuery = true, value = ""
-    + "   SELECT measurement_serie.value, measurement_serie.when from "
-    + "   (SELECT"
-    + "     lead(value) over (ORDER BY created ASC) - value AS value,"
-    + "     date_serie.date AS when"
-    + "   FROM"
-    + "     ("
-    + "       SELECT"
-    //          Series of all expected measurements from startTime up to (stopTime + 1) intervals.
-    //          Consider stopTime as inclusive, hence +1 to the stopTime
-    + "         generate_series("
-    + "           cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
-    + "           cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC' +"
-    + "             cast(:resolution AS INTERVAL),"
-    + "           cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
-    + "     ) AS date_serie"
-    + "     LEFT JOIN measurement"
-    + "        ON physical_meter_id = :physical_meter_id"
-    + "       AND date_serie.date = created"
-    + "       AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
-
-    + "   ) as measurement_serie"
-    + " WHERE"
-    + "   measurement_serie.when >= CAST(:from AS TIMESTAMPTZ)"
-    + "   AND measurement_serie.when <= CAST(:to AS TIMESTAMPTZ)"
-    + " ORDER BY"
-    + "   measurement_serie.when ASC;"
-  )
-  List<MeasurementValueProjection> getSeriesForPeriodConsumption(
-    @Param("physical_meter_id") UUID physicalMeterId,
-    @Param("quantity") String quantity,
-    @Param("from") OffsetDateTime from,
-    @Param("to") OffsetDateTime to,
-    @Param("resolution") String resolution
-  );
-
-  @Query(nativeQuery = true, value = ""
-    + " SELECT"
-    + "   value,"
-    + "   date_serie.date as when"
-    + " FROM"
-    + "   (SELECT generate_series("
-    + "                  cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
-    + "                  cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
-    + "                  cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
-    + "   ) AS date_serie"
-    + "   LEFT JOIN measurement"
-    + "          ON physical_meter_id = :physical_meter_id"
-    + "         AND date_serie.date = created"
-    + "         AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
-    + " ORDER BY date_serie.date ASC"
-  )
-  List<MeasurementValueProjection> getSeriesForPeriod(
-    @Param("physical_meter_id") UUID physicalMeterId,
-    @Param("quantity") String quantity,
-    @Param("from") OffsetDateTime from,
-    @Param("to") OffsetDateTime to,
-    @Param("resolution") String resolution
-  );
-
   @Modifying
   @Query(nativeQuery = true, value =
     "INSERT INTO measurement (physical_meter_id, created, quantity, value)"
