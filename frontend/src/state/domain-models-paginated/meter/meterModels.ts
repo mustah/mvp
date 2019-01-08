@@ -2,7 +2,7 @@ import {Identifiable, uuid} from '../../../types/Types';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
-export interface MeterStatusChangelog extends Identifiable {
+export interface EventLog extends Identifiable {
   name: string;
   start: string;
 }

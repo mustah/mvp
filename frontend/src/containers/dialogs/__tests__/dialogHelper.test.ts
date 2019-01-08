@@ -32,24 +32,27 @@ describe('dialogHelper', () => {
         country: 'sverige',
         position: {longitude: 14.205929, latitude: 59.666749},
       },
-      statusChangelog: [
+      eventLog: [
         {
           start: '2017-11-22 09:34',
           name: 'OK',
           id: '967af275-0026-43b9-a0ef-123dfb05612a',
-        }, {
+        },
+        {
           start: '2017-11-22 10:34',
           name: 'OK',
           id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
-        }, {
+        },
+        {
           start: '2017-11-22 11:34',
           name: 'Fel',
           id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-        }, {
+        },
+        {
           start: '2017-11-22 12:34',
-          name: 'OK',
+          name: '234523',
           id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
-        }
+        },
       ],
       statusChanged: '2017-11-05 23:00',
       gateway: {
@@ -63,29 +66,29 @@ describe('dialogHelper', () => {
 
     it('normalizes and uses only statusChangelog property', () => {
       expect(eventsDataFormatter(meter)).toEqual({
-        'entities': {
+        entities: {
           '3e4a4295-2d1a-4118-b303-16fbb3ddfa49': {
-            'id': '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
-            'name': 'OK',
-            'start': '2017-11-22 12:34'
+            id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
+            name: '234523',
+            start: '2017-11-22 12:34'
           },
           '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb': {
-            'id': '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
-            'name': 'OK',
-            'start': '2017-11-22 10:34'
+            id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
+            name: 'OK',
+            start: '2017-11-22 10:34'
           },
           '967af275-0026-43b9-a0ef-123dfb05612a': {
-            'id': '967af275-0026-43b9-a0ef-123dfb05612a',
-            'name': 'OK',
-            'start': '2017-11-22 09:34'
+            id: '967af275-0026-43b9-a0ef-123dfb05612a',
+            name: 'OK',
+            start: '2017-11-22 09:34'
           },
           'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27': {
-            'id': 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-            'name': 'Fel',
-            'start': '2017-11-22 11:34'
+            id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
+            name: 'Fel',
+            start: '2017-11-22 11:34'
           }
         },
-        'result': [
+        result: [
           '967af275-0026-43b9-a0ef-123dfb05612a',
           '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
           'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',

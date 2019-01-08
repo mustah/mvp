@@ -68,7 +68,7 @@ describe('meterDetailsApiActions', () => {
       facility: 'fac123',
       medium: Medium.districtHeating,
       manufacturer: 'man123',
-      statusChangelog: [],
+      eventLog: [],
       gatewaySerial: 'gatser123',
       gateway: {
         serial: 'ser123',

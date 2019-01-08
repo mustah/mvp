@@ -13,7 +13,7 @@ import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.AlarmDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-import com.elvaco.mvp.web.dto.MeterStatusLogDto;
+import com.elvaco.mvp.web.dto.EventLogDto;
 
 import org.junit.After;
 import org.junit.Test;
@@ -131,11 +131,10 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
-    assertThat(meterStatusLogDto.id).isNotNull();
-    assertThat(meterStatusLogDto.name).isEqualTo("ok");
-    assertThat(meterStatusLogDto.start).isEqualTo("2001-01-01T10:14:00Z");
-    assertThat(meterStatusLogDto.stop).isEqualTo("2001-01-06T10:14:00Z");
+    EventLogDto eventLogDto = logicalMeterDto.eventLog.get(0);
+    assertThat(eventLogDto.id).isNotNull();
+    assertThat(eventLogDto.name).isEqualTo("ok");
+    assertThat(eventLogDto.start).isEqualTo("2001-01-01T10:14:00Z");
   }
 
   @Test
@@ -165,7 +164,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.statusChangelog)
+    assertThat(logicalMeterDto.eventLog)
       .extracting(m -> m.name)
       .containsExactlyInAnyOrder(OK.name, ERROR.name);
   }
@@ -188,7 +187,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.statusChangelog)
+    assertThat(logicalMeterDto.eventLog)
       .extracting(m -> m.name)
       .containsExactlyInAnyOrder(OK.name);
   }

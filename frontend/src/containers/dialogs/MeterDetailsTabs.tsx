@@ -20,7 +20,7 @@ import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
-import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
+import {EventLog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
@@ -52,9 +52,9 @@ interface DispatchToProps {
 
 type Props = OwnProps & DispatchToProps;
 
-const renderStatus = ({name}: MeterStatusChangelog): Children => <Status label={name}/>;
+const renderStatus = ({name}: EventLog): Children => <Status label={name}/>;
 
-const renderDate = ({start}: MeterStatusChangelog): Children =>
+const renderDate = ({start}: EventLog): Children =>
   <WrappedDateTime date={start} hasContent={!!start}/>;
 
 const renderSerial = ({serial}: Gateway): string => serial;

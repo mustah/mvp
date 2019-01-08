@@ -20,7 +20,7 @@ public class LogicalMeterDto {
   public String medium;
   public String manufacturer;
   public String statusChanged;
-  public List<MeterStatusLogDto> statusChangelog;
+  public List<EventLogDto> eventLog;
   public String created;
   public boolean isReported;
   @Nullable

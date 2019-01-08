@@ -9,10 +9,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class MeterStatusLogDto {
+public class EventLogDto {
 
   public Long id;
   public String name;
   public String start;
-  public String stop;
 }

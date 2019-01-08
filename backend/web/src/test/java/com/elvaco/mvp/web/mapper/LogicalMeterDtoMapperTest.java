@@ -16,7 +16,7 @@ import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
-import com.elvaco.mvp.web.dto.MeterStatusLogDto;
+import com.elvaco.mvp.web.dto.EventLogDto;
 
 import org.junit.Test;
 
@@ -79,8 +79,8 @@ public class LogicalMeterDtoMapperTest {
     expected.manufacturer = "ELV";
     expected.facility = "an-external-id";
     expected.address = "123123";
-    expected.statusChangelog = singletonList(
-      new MeterStatusLogDto(
+    expected.eventLog = singletonList(
+      new EventLogDto(
         null,
         StatusType.OK.name,
         CREATED_DATE_STRING,
