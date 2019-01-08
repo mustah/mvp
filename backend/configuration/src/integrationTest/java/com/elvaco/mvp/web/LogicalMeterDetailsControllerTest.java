@@ -12,8 +12,8 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.AlarmDto;
-import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.EventLogDto;
+import com.elvaco.mvp.web.dto.LogicalMeterDto;
 
 import org.junit.After;
 import org.junit.Test;
@@ -116,7 +116,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findById_MeterIncludesStatusChangeLog() {
+  public void findById_Meter_IncludesStatusChanges() {
     LogicalMeter logicalMeter = given(logicalMeter());
 
     given(
@@ -138,7 +138,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findById_MeterIncludes_AllStatusChangeLogs() {
+  public void findById_Meter_Includes_AllStatusChanges() {
     var logicalMeter = given(logicalMeter());
     var start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
     var stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
@@ -190,6 +190,30 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(logicalMeterDto.eventLog)
       .extracting(m -> m.name)
       .containsExactlyInAnyOrder(OK.name);
+  }
+
+  @Test
+  public void findById_Meter_IncludesEventLog_MeterReplacements() {
+    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+    ZonedDateTime stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
+
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start, stop)),
+      physicalMeter().activePeriod(PeriodRange.from(stop))
+    );
+
+    LogicalMeterDto logicalMeterDto = asUser()
+      .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
+      .getBody()
+      .get(0);
+
+    assertThat(logicalMeterDto.eventLog).hasSize(2);
+
+    EventLogDto eventLogDto = logicalMeterDto.eventLog.get(0);
+    assertThat(eventLogDto.id).isNotNull();
+    assertThat(eventLogDto.name).isEqualTo("ok");
+    assertThat(eventLogDto.start).isEqualTo("2001-01-01T10:14:00Z");
   }
 
   @Test
