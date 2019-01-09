@@ -119,7 +119,22 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public List<LogicalMeter> findAllWithDetails(RequestParameters parameters) {
     Collection<LogicalMeterEntity> meters = logicalMeterJpaRepository.findAll(parameters);
-    return findAllWithCollectionStatsAndStatuses(meters, parameters);
+
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses = meters.stream()
+      .flatMap(lm -> lm.physicalMeters.stream())
+      .collect(groupingBy(
+        PhysicalMeterEntity::getId,
+        flatMapping(pm -> pm.statusLogs.stream(), toList())
+      ));
+
+    return parameters.getPeriod()
+      .map(selectionPeriod -> withStatusesAndCollectionStats(
+        meters,
+        parameters,
+        mappedStatuses,
+        selectionPeriod
+      ))
+      .orElse(withStatusesOnly(meters, mappedStatuses));
   }
 
   @Override
@@ -176,27 +191,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   public LogicalMeter delete(LogicalMeter logicalMeter) {
     logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
     return logicalMeter;
-  }
-
-  private List<LogicalMeter> findAllWithCollectionStatsAndStatuses(
-    Collection<LogicalMeterEntity> meters,
-    RequestParameters parameters
-  ) {
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses = meters.stream()
-      .flatMap(lm -> lm.physicalMeters.stream())
-      .collect(groupingBy(
-        PhysicalMeterEntity::getId,
-        flatMapping(pm -> pm.statusLogs.stream(), toList())
-      ));
-
-    return parameters.getPeriod()
-      .map(selectionPeriod -> withStatusesAndCollectionStats(
-        meters,
-        parameters,
-        mappedStatuses,
-        selectionPeriod
-      ))
-      .orElse(withStatusesOnly(meters, mappedStatuses));
   }
 
   private List<LogicalMeter> withStatusesOnly(

@@ -7,7 +7,6 @@ import {RootState} from '../../reducers/rootReducer';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {CallbackWithId, CallbackWithIds, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
@@ -22,7 +21,6 @@ interface StateToProps {
   isFetching: boolean;
   meter: Maybe<MeterDetails>;
   meterMapMarker: Maybe<MapMarker>;
-  dateRange: SelectionInterval;
 }
 
 interface DispatchToProps {
@@ -50,8 +48,8 @@ const MeterDetailsContent = (props: Props) => {
 const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 
 const MeterDetailsComponent = (props: Props) => {
-  const {dateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId} = props;
-  useFetchMeterAndMapMarker({dateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId});
+  const {fetchMeterDetails, fetchMeterMapMarker, selectedId} = props;
+  useFetchMeterAndMapMarker({fetchMeterDetails, fetchMeterMapMarker, selectedId});
 
   return <LoadingMeterDetails {...props}/>;
 };
@@ -59,11 +57,9 @@ const MeterDetailsComponent = (props: Props) => {
 const mapStateToProps = (
   {
     domainModels: {meterMapMarkers, meters},
-    userSelection: {userSelection: {selectionParameters: {dateRange}}},
   }: RootState,
   {selectedId}: SelectedId,
 ): StateToProps => ({
-  dateRange,
   isFetching: [meterMapMarkers, meters].some((models) => models.isFetching),
   meter: selectedId
     .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),

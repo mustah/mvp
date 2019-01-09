@@ -1,9 +1,9 @@
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom, newDateRange} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
+import {EventLogType} from '../../../state/domain-models-paginated/meter/meterModels';
 import {eventsDataFormatter} from '../../../state/domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginated} from '../../../state/domain-models-paginated/paginatedDomainModels';
-import {MeterDetails} from '../../../state/domain-models/meter-details/meterDetailsModels';
 import {
   ExistingReadings,
   Measurement,
@@ -20,7 +20,7 @@ describe('dialogHelper', () => {
 
   describe('eventsDataFormatter', () => {
 
-    const meter: MeterDetails = {
+    const meterResponse = {
       facility: '1234',
       medium: '',
       manufacturer: '',
@@ -34,24 +34,24 @@ describe('dialogHelper', () => {
       },
       eventLog: [
         {
-          start: '2017-11-22 09:34',
-          name: 'OK',
-          id: '967af275-0026-43b9-a0ef-123dfb05612a',
-        },
-        {
-          start: '2017-11-22 10:34',
-          name: 'OK',
-          id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
+          start: '2017-11-22 12:34',
+          name: '234523',
+          type: EventLogType.newMeter,
         },
         {
           start: '2017-11-22 11:34',
           name: 'Fel',
-          id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
+          type: EventLogType.statusChange,
         },
         {
-          start: '2017-11-22 12:34',
-          name: '234523',
-          id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
+          start: '2017-11-22 10:34',
+          name: 'OK',
+          type: EventLogType.statusChange,
+        },
+        {
+          start: '2017-11-22 09:34',
+          name: 'OK',
+          type: EventLogType.statusChange,
         },
       ],
       statusChanged: '2017-11-05 23:00',
@@ -65,34 +65,34 @@ describe('dialogHelper', () => {
     };
 
     it('normalizes and uses only statusChangelog property', () => {
-      expect(eventsDataFormatter(meter)).toEqual({
+      expect(eventsDataFormatter(meterResponse)).toEqual({
         entities: {
-          '3e4a4295-2d1a-4118-b303-16fbb3ddfa49': {
-            id: '3e4a4295-2d1a-4118-b303-16fbb3ddfa49',
+          '2017-11-22 12:34_newMeter': {
             name: '234523',
-            start: '2017-11-22 12:34'
+            start: '2017-11-22 12:34',
+            type: EventLogType.newMeter,
           },
-          '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb': {
-            id: '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
+          '2017-11-22 10:34_statusChange': {
             name: 'OK',
-            start: '2017-11-22 10:34'
+            start: '2017-11-22 10:34',
+            type: EventLogType.statusChange,
           },
-          '967af275-0026-43b9-a0ef-123dfb05612a': {
-            id: '967af275-0026-43b9-a0ef-123dfb05612a',
+          '2017-11-22 09:34_statusChange': {
             name: 'OK',
-            start: '2017-11-22 09:34'
+            start: '2017-11-22 09:34',
+            type: EventLogType.statusChange,
           },
-          'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27': {
-            id: 'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
+          '2017-11-22 11:34_statusChange': {
             name: 'Fel',
-            start: '2017-11-22 11:34'
+            start: '2017-11-22 11:34',
+            type: EventLogType.statusChange,
           }
         },
         result: [
-          '967af275-0026-43b9-a0ef-123dfb05612a',
-          '6e4daf1f-a611-42e4-8ebf-ed9e10a7b4fb',
-          'ac359487-0e7b-4ed2-85bb-d0f75e9d7a27',
-          '3e4a4295-2d1a-4118-b303-16fbb3ddfa49'
+          '2017-11-22 12:34_newMeter',
+          '2017-11-22 11:34_statusChange',
+          '2017-11-22 10:34_statusChange',
+          '2017-11-22 09:34_statusChange',
         ]
       });
     });

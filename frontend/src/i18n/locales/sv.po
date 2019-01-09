@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-10-19 09:35+0200\n"
+"POT-Creation-Date: 2019-01-08T15:20:15.363Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.6\n"
 
 msgid "admin"
 msgstr "admin"
@@ -23,6 +23,12 @@ msgstr "synka"
 msgid "add to report"
 msgstr "lägg till i rapport"
 
+msgid "sync all meters on this page"
+msgstr "synka alla mätare på denna sida"
+
+msgid "add all on this page to report"
+msgstr "lägg till alla på sidan i rapport"
+
 msgid "edit organisation"
 msgstr "redigera organisation"
 
@@ -31,12 +37,6 @@ msgstr "ta bort organisation"
 
 msgid "add organisation"
 msgstr "lägg till organisation"
-
-msgid "sync all meters on this page"
-msgstr "synka alla mätare på denna sida"
-
-msgid "add all on this page to report"
-msgstr "lägg till alla på sidan i rapport"
 
 msgid "edit user"
 msgstr "redigera användare"
@@ -104,6 +104,9 @@ msgstr "organisationskod"
 msgid "parent organisation"
 msgstr "huvudorganisation"
 
+msgid "selection"
+msgstr "urval"
+
 msgid "name"
 msgstr "namn"
 
@@ -134,20 +137,20 @@ msgstr "{{pending}} av {{count}}"
 msgid "measurement"
 msgstr "mätvärde saknas"
 
-msgid "other"
-msgstr "övriga"
+msgid "no meters"
+msgstr "inga mätare"
 
 msgid "yes"
 msgstr "ja"
-
-msgid "all timestamps are displayed in UTC+1"
-msgstr "alla tider visas i UTC+1"
 
 msgid "list"
 msgstr "lista"
 
 msgid "map"
 msgstr "karta"
+
+msgid "all timestamps are displayed in UTC+1"
+msgstr "alla tider visas i UTC+1"
 
 msgid "unknown"
 msgstr "okänd"
@@ -194,15 +197,6 @@ msgstr "medium"
 msgid "alarm"
 msgstr "larm"
 
-msgid "thresholds"
-msgstr "gränsvärden"
-
-msgid "meter value"
-msgstr "mätvärde"
-
-msgid "consumption"
-msgstr "förbrukning"
-
 msgid "collection percentage"
 msgstr "insamling %"
 
@@ -224,11 +218,11 @@ msgstr "etiketter"
 msgid "meter id"
 msgstr "mätar-id"
 
+msgid "new meter: {{name}}"
+msgstr "ny mätare: {{name}}"
+
 msgid "latest value"
 msgstr "senaste"
-
-msgid "event"
-msgstr "händelse"
 
 msgid "events"
 msgstr "händelser"
@@ -239,17 +233,11 @@ msgstr "gateways"
 msgid "date"
 msgstr "datum"
 
-msgid "status"
-msgstr "status"
-
-msgid "never collected"
-msgstr "ej insamlad"
+msgid "event"
+msgstr "händelse"
 
 msgid "readout"
 msgstr "avläsning"
-
-msgid "no meters"
-msgstr "inga mätare"
 
 msgid "Volume short"
 msgstr "Volume"
@@ -480,14 +468,14 @@ msgstr "ångra ändringar"
 msgid "give the selection a name"
 msgstr "namnge ditt urval"
 
-msgid "selection"
-msgstr "urval"
+msgid "filter"
+msgstr "filtrera"
 
 msgid "secondary address"
 msgstr "sekundäradress"
 
-msgid "filter"
-msgstr "filtrera"
+msgid "thresholds"
+msgstr "gränsvärden"
 
 msgid "delete user selection"
 msgstr "ta bort urval"
@@ -558,6 +546,21 @@ msgstr ""
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} mätare kommer snart att uppdateras"
+
+#~ msgid "other"
+#~ msgstr "övriga"
+
+#~ msgid "meter value"
+#~ msgstr "mätvärde"
+
+#~ msgid "consumption"
+#~ msgstr "förbrukning"
+
+#~ msgid "status"
+#~ msgstr "status"
+
+#~ msgid "never collected"
+#~ msgstr "ej insamlad"
 
 #~ msgid "none"
 #~ msgstr "ingen"

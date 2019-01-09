@@ -2,7 +2,13 @@ import {Identifiable, uuid} from '../../../types/Types';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
+export const enum EventLogType {
+  newMeter = 'newMeter',
+  statusChange = 'statusChange',
+}
+
 export interface EventLog extends Identifiable {
+  type: EventLogType;
   name: string;
   start: string;
 }

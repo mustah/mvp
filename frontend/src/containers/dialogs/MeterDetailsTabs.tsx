@@ -5,7 +5,7 @@ import {ListActionsDropdown} from '../../components/actions-dropdown/ListActions
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
-import {Status} from '../../components/status/Status';
+import {ColoredEvent, Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import '../../components/table/Table.scss';
 import {TableHead} from '../../components/table/TableHead';
@@ -19,8 +19,8 @@ import {TimestampInfoMessage} from '../../components/timestamp-info-message/Time
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
+import {EventLog, EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
 import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
-import {EventLog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
@@ -52,7 +52,10 @@ interface DispatchToProps {
 
 type Props = OwnProps & DispatchToProps;
 
-const renderStatus = ({name}: EventLog): Children => <Status label={name}/>;
+const renderEvent = ({name, type}: EventLog): Children =>
+  type === EventLogType.newMeter
+    ? <ColoredEvent label={translate('new meter: {{name}}', {name})} type={type}/>
+    : <Status label={name}/>;
 
 const renderDate = ({start}: EventLog): Children =>
   <WrappedDateTime date={start} hasContent={!!start}/>;
@@ -131,7 +134,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
               />
               <TableColumn
                 header={<TableHead>{translate('event')}</TableHead>}
-                renderCell={renderStatus}
+                renderCell={renderEvent}
               />
             </Table>
             <TimestampInfoMessage/>

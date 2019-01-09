@@ -19,7 +19,9 @@ export const meterProcessStrategy = (entity: any): schema.StrategyFunction => ({
 const meter: Schema = new schema.Entity('meters', {}, {processStrategy: meterProcessStrategy});
 const meterSchema: Schema = {content: [meter]};
 
-const eventLog = new schema.Entity('eventLog');
+const eventLog = new schema.Entity('eventLog', {}, {
+  idAttribute: (value, parent, key) => `${value.start}_${value.type}`
+});
 const eventLogSchema: Schema = {eventLog: [eventLog]};
 
 export const measurement = [new schema.Entity('measurements', {}, {idAttribute: 'quantity'})];
