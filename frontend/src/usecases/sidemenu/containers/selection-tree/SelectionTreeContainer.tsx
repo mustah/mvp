@@ -29,6 +29,7 @@ interface StateToProps extends Query {
   openListItems: Set<uuid>;
   parameters: EncodedUriParameters;
   itemOptions: ItemOptions;
+  primaryText: string;
 }
 
 interface DispatchToProps {
@@ -68,6 +69,7 @@ class SelectionTreeComponent extends React.Component<Props> {
       itemOptions,
       centerMapOnMeter,
       selectionTreeSearch,
+      primaryText,
       query,
     } = this.props;
 
@@ -108,7 +110,7 @@ class SelectionTreeComponent extends React.Component<Props> {
         <List style={listStyle}>
           <ListItem
             className="ListItem"
-            primaryText={translate('selection overview')}
+            primaryText={primaryText}
             initiallyOpen={true}
             style={sideBarHeaderStyle}
             hoverColor={sideBarStyle.color}
@@ -140,6 +142,7 @@ const mapStateToProps =
         report: isReportPage(routing),
       },
       query,
+      primaryText: userSelection.name,
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
