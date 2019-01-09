@@ -57,19 +57,25 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       meterSyncJobService.update(message.jobId, message);
     }
 
-    validateMessageValues(message);
+    FacilityDto facility = message.facility;
+    if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
+      log.warn("Discarding message with invalid facility id: '{}'", message);
+      return;
+    }
+
+    MeterDto meterDto = message.meter;
+    if (meterDto != null && !StatusType.from(meterDto.status).isNotUnknown()) {
+      log.warn("Discarding message with invalid status type: '{}'", message);
+      return;
+    }
 
     Organisation organisation = organisationUseCases.findOrCreate(message.organisationId);
-
-    FacilityDto facility = message.facility;
 
     Location location = new LocationBuilder()
       .country(facility.country)
       .city(facility.city)
       .address(facility.address)
       .build();
-
-    MeterDto meterDto = message.meter;
 
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
       meterDto,
@@ -224,18 +230,4 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     }
   }
 
-  private static void validateMessageValues(MeteringReferenceInfoMessageDto message) {
-    FacilityDto facility = message.facility;
-    if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
-      throw new RuntimeException("Invalid facility id");
-    }
-
-    MeterDto meterDto = message.meter;
-    if (meterDto != null) {
-      Optional.of(meterDto.status)
-        .map(StatusType::from)
-        .filter(StatusType::isNotUnknown)
-        .orElseThrow(() -> new RuntimeException("Invalid status type '" + meterDto.status + "'."));
-    }
-  }
 }

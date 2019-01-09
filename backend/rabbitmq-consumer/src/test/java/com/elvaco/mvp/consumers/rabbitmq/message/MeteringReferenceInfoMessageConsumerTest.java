@@ -58,7 +58,6 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 @SuppressWarnings("ConstantConditions")
@@ -488,8 +487,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .externalId("")
       .build();
 
-    assertThatThrownBy(() -> messageHandler.accept(message))
-      .hasMessage("Invalid facility id");
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -498,8 +498,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .meterStatus("unknown")
       .build();
 
-    assertThatThrownBy(() -> messageHandler.accept(message))
-      .hasMessage("Invalid status type 'unknown'.");
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -508,8 +509,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .meterStatus("tryBye")
       .build();
 
-    assertThatThrownBy(() -> messageHandler.accept(message))
-      .hasMessage("Invalid status type 'tryBye'.");
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
   }
 
   @Test
@@ -523,8 +525,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       ""
     );
 
-    assertThatThrownBy(() -> messageHandler.accept(message))
-      .hasMessage("Invalid facility id");
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
   }
 
   @Test
