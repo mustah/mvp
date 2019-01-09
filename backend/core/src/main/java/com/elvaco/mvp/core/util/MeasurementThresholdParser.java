@@ -1,11 +1,13 @@
 package com.elvaco.mvp.core.util;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
@@ -27,7 +29,8 @@ public class MeasurementThresholdParser {
     "(?<quantity>[^<>=]+)"
       + "\\s*(?<operator>" + String.join("|", VALID_OPERATORS) + ")"
       + "\\s*(?<value>[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)"
-      + "\\s*(?<unit>\\S+)$");
+      + "\\s*(?<unit>\\S+)"
+      + "\\s*(for (?<duration>\\d+) days)?$");
 
   private final QuantityProvider quantityProvider;
   private final UnitConverter unitConverter;
@@ -43,6 +46,7 @@ public class MeasurementThresholdParser {
 
     Quantity quantity = parseQuantity(m.group("quantity"));
     Operator operator = parseOperator(m.group("operator"));
+    Duration duration = parseDuration(m.group("duration"));
     MeasurementUnit parsedUnitValue = new MeasurementUnit(
       parseUnit(m.group("unit")),
       parseValue(m.group("value"))
@@ -61,8 +65,28 @@ public class MeasurementThresholdParser {
     );
 
     return new MeasurementThreshold(
-      quantity, parsedUnitValue, convertedUnitValue, operator
+      quantity, parsedUnitValue, convertedUnitValue, operator, duration
     );
+  }
+
+  @Nullable
+  private Duration parseDuration(@Nullable String dayCountStr) {
+    if (dayCountStr == null) {
+      return null;
+    }
+    long dayCount = 0;
+    try {
+      dayCount = Long.parseLong(dayCountStr);
+    } catch (NumberFormatException ignore) {
+    }
+
+    if (dayCount <= 0) {
+      throw new IllegalArgumentException(String.format(
+        "Invalid duration '%s'",
+        dayCountStr
+      ));
+    }
+    return Duration.ofDays(Long.parseLong(dayCountStr));
   }
 
   private String parseUnit(String unit) {
