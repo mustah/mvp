@@ -543,7 +543,7 @@ describe('reportActions', () => {
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: [22, 'sweden,höganäs,hasselgatan 4', 33],
+            ids: [33, 22],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }
@@ -561,7 +561,7 @@ describe('reportActions', () => {
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: [22, 'sweden,höganäs,hasselgatan 4', 33],
+            ids: [22, 33],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }
@@ -579,7 +579,7 @@ describe('reportActions', () => {
         {
           type: SET_SELECTED_ENTRIES,
           payload: {
-            ids: [22, 'sweden,höganäs,hasselgatan 4', 33],
+            ids: [33, 22],
             indicatorsToSelect: [Medium.gas],
             quantitiesToSelect: [Quantity.volume]
           }

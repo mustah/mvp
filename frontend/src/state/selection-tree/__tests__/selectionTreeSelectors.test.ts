@@ -1,7 +1,7 @@
-import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {uuid} from '../../../types/Types';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {SelectedTreeEntities, SelectionTree, SelectionTreeState} from '../selectionTreeModels';
-import {getMedia, getSelectionTree} from '../selectionTreeSelectors';
+import {getMedia, getMeterIds, getSelectionTree} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -180,6 +180,7 @@ describe('selectionTreeSelectors', () => {
         },
         result: {cities: []},
       };
+
       expect(getSelectionTree(selectionTreeState)).toEqual({
         entities: {
           cities: {},
@@ -215,9 +216,7 @@ describe('selectionTreeSelectors', () => {
 
         expect(withoutQuery.entities.clusters['sweden,kungsbacka:k'].name).toEqual('K...(2)');
         expect(withQuery.entities.clusters['sweden,kungsbacka:k'].name).toEqual('K...(1)');
-
       });
-
     });
 
   });
@@ -246,6 +245,17 @@ describe('selectionTreeSelectors', () => {
       };
 
       expect(getMedia(state)).toEqual(expected);
+    });
+
+  });
+
+  describe('getMeterIds', () => {
+
+    it('gets all the meters', () => {
+      const expected: uuid[] = ['1', '2', '3', '4', '5', '6'];
+      const actual: uuid[] = getMeterIds(selectionTreeState);
+
+      expect(actual).toEqual(expected);
     });
 
   });

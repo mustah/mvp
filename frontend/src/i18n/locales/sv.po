@@ -38,6 +38,15 @@ msgstr "ta bort organisation"
 msgid "add organisation"
 msgstr "lägg till organisation"
 
+<<<<<<< HEAD
+=======
+msgid "sync all meters on this page"
+msgstr "synka alla mätare på denna sida"
+
+msgid "add all meters in selection to report"
+msgstr "lägg till alla mätare i urvalet i rapport"
+
+>>>>>>> Add first 130 meters from selection tree to graph when entering report
 msgid "edit user"
 msgstr "redigera användare"
 

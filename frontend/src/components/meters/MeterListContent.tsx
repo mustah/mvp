@@ -39,7 +39,6 @@ export interface MeterListDispatchToProps {
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
   syncMeters: CallbackWithIds;
-  showMetersInGraph: CallbackWithIds;
   fetchMeters: FetchPaginated;
   changePage: OnChangePage;
   clearError: ClearErrorPaginated;
@@ -49,7 +48,6 @@ export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps & 
 
 export interface MeterListActionDropdownProps {
   syncMeters: OnClick;
-  showMetersInGraph: OnClick;
 }
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
@@ -65,14 +63,13 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
   const {
     clearError,
     syncMeters,
-    showMetersInGraph,
     pagination: {page},
-    result: meterIds,
+    result,
     isFetching,
     error
   } = props;
   const {children, ...otherProps} = props;
-  const hasContent = meterIds.length > 0;
+  const hasContent = result.length > 0;
   const wrapperProps: MeterListProps & WithEmptyContentProps = {
     ...otherProps,
     noContentText: firstUpperTranslated('no meters'),
@@ -80,15 +77,13 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
   };
 
   const onClearError = () => clearError({page});
-  const onSyncMeters = () => syncMeters(meterIds);
-  const onShowMetersInGraph = () => showMetersInGraph(meterIds);
+  const onSyncMeters = () => syncMeters(result);
 
   return (
     <Loader isFetching={isFetching} error={error} clearError={onClearError}>
       <Column className="MeterListContent">
         <MeterListActionsDropdownEnhanced
           syncMeters={onSyncMeters}
-          showMetersInGraph={onShowMetersInGraph}
           hasContent={hasContent}
         />
         <MeterListWrapper {...wrapperProps}/>

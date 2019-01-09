@@ -48,7 +48,7 @@ interface DispatchWithinLimits {
   selectedQuantities: Quantity[];
 }
 
-export const limit: number = 160;
+export const limit: number = 130;
 
 const maxSelectedIndicators = 2;
 
@@ -198,7 +198,7 @@ export const showMetersInGraph = (meterIds: uuid[]) =>
 
     dispatchIfWithinLimits({
       dispatch,
-      ids: Array.from(new Set<uuid>([...selectedListItems, ...ids])),
+      ids: Array.from(new Set<uuid>([...ids])),
       selectionTree,
       previousIds: selectedListItems,
       selectedQuantities,
