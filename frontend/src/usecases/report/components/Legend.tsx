@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
+import {ButtonLink} from '../../../components/buttons/ButtonLink';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconIndicator} from '../../../components/icons/IconIndicator';
 import {Row} from '../../../components/layouts/row/Row';
@@ -82,7 +83,7 @@ export const Legend = ({hiddenLines, legendItems, toggleLine, deleteItem}: Legen
           renderCell={renderVisibilityButton}
         />
         <TableColumn
-          header={<TableHead className="icon"/>}
+          header={<TableHead className="Link"><ButtonLink colorClassName="Blue" onClick={() => console.log('clear')}>{translate('remove all')}</ButtonLink></TableHead>}
           cellClassName="icon"
           renderCell={renderDeleteButton}
         />

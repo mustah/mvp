@@ -15,6 +15,11 @@
       text-align: right;
       width: 36px;
     }
+
+    &.Link {
+      width: 86px;
+      text-transform: capitalize;
+    }
   }
 
   thead {
@@ -42,7 +47,8 @@
     }
 
     &.icon {
-      padding: 0 2px;
+      padding: 0 24px;
+      text-align: center;
     }
 
     &.actionDropdown {

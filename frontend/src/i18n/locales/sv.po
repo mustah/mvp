@@ -504,6 +504,9 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "remove all"
+msgstr "Ta bort alla"
+
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
