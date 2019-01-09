@@ -12,8 +12,8 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
 import com.elvaco.mvp.web.dto.AlarmDto;
+import com.elvaco.mvp.web.dto.EventLogDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 
 import org.junit.After;
 import org.junit.Test;
@@ -25,7 +25,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,8 +39,11 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findById_WithinDefaultPeriod_WithUnknownStatus() {
-    ZonedDateTime start = context().now();
-    LogicalMeter logicalMeter = given(logicalMeter());
+    var start = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start, start.plusHours(5)))
+    );
     given(statusLog(logicalMeter).start(start).status(UNKNOWN));
 
     LogicalMeterDto logicalMeterDto = asUser()
@@ -54,13 +56,19 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findById_WithinExplicitPeriod_WithUnknownStatus() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
 
     given(statusLog(logicalMeter).start(context().yesterday()).status(UNKNOWN));
 
     UrlTemplate urlTemplate = Url.builder()
       .path("/meters/details")
-      .parameter(LOGICAL_METER_ID, logicalMeter.id)
+      .logicalMeterId(logicalMeter.id)
       .parameter(BEFORE, context().now())
       .parameter(AFTER, context().yesterday())
       .build();
@@ -76,7 +84,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findById_WithinPeriod_ShouldBeNotReportedWhenOkStatus() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
 
     given(statusLog(logicalMeter).status(OK).start(context().yesterday()));
 
@@ -116,14 +130,23 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findById_MeterIncludesStatusChangeLog() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+  public void findById_Meter_IncludesStatusChanges() {
+    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+    ZonedDateTime stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
+
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(10)
+      ))
+    );
 
     given(
       statusLog(logicalMeter)
         .status(OK)
-        .start(ZonedDateTime.parse("2001-01-01T10:14:00Z"))
-        .stop(ZonedDateTime.parse("2001-01-06T10:14:00Z"))
+        .start(start)
+        .stop(stop)
     );
 
     LogicalMeterDto logicalMeterDto = asUser()
@@ -131,18 +154,21 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
-    assertThat(meterStatusLogDto.id).isNotNull();
-    assertThat(meterStatusLogDto.name).isEqualTo("ok");
-    assertThat(meterStatusLogDto.start).isEqualTo("2001-01-01T10:14:00Z");
-    assertThat(meterStatusLogDto.stop).isEqualTo("2001-01-06T10:14:00Z");
+    assertThat(logicalMeterDto.eventLog).hasSize(2);
+    EventLogDto eventLogDto = logicalMeterDto.eventLog.get(1);
+    assertThat(eventLogDto.name).isEqualTo("ok");
+    assertThat(eventLogDto.start).isEqualTo("2001-01-01T10:14:00Z");
   }
 
   @Test
-  public void findById_MeterIncludes_AllStatusChangeLogs() {
-    var logicalMeter = given(logicalMeter());
-    var start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
-    var stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
+  public void findById_Meter_Includes_AllStatusChanges() {
+    var start = context().now();
+    var stop = start.plusDays(6);
+
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.from(start))
+    );
 
     given(
       statusLog(logicalMeter)
@@ -156,7 +182,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     var url = Url.builder()
       .path("/meters/details")
-      .parameter(LOGICAL_METER_ID, logicalMeter.id)
+      .logicalMeterId(logicalMeter.id)
       .period(start, stop)
       .build();
 
@@ -165,22 +191,28 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.statusChangelog)
+    assertThat(logicalMeterDto.eventLog)
       .extracting(m -> m.name)
-      .containsExactlyInAnyOrder(OK.name, ERROR.name);
+      .containsExactlyInAnyOrder(
+        logicalMeter.activePhysicalMeter().get().address,
+        OK.name,
+        ERROR.name
+      );
   }
 
   @Test
-  public void findById_MeterIncludesStatusChangeLogs_OutsideOfTimePeriod() {
-    var logicalMeter = given(logicalMeter());
+  public void findById_Meter_IncludesStatusChangeLogs_OutsideOfTimePeriod() {
     var start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.from(start))
+    );
 
     given(statusLog(logicalMeter).status(OK).start(start));
 
     Url url = Url.builder()
       .path("/meters/details")
-      .parameter(LOGICAL_METER_ID, logicalMeter.id)
-      .period(start.minusYears(2), start.minusYears(1))
+      .logicalMeterId(logicalMeter.id)
       .build();
 
     LogicalMeterDto logicalMeterDto = asUser()
@@ -188,19 +220,72 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.statusChangelog)
+    assertThat(logicalMeterDto.eventLog)
       .extracting(m -> m.name)
-      .containsExactlyInAnyOrder(OK.name);
+      .containsExactlyInAnyOrder(logicalMeter.activePhysicalMeter().get().address, OK.name);
+  }
+
+  @Test
+  public void findById_Meter_IncludesEventLog_MeterReplacements_WithoutPeriod_Desc() {
+    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+    ZonedDateTime stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
+
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start, stop)),
+      physicalMeter().activePeriod(PeriodRange.from(stop))
+    );
+
+    LogicalMeterDto logicalMeterDto = asUser()
+      .getList(
+        Url.builder()
+          .path("/meters/details")
+          .parameter("id", logicalMeter.id)
+          .build(),
+        LogicalMeterDto.class
+      )
+      .getBody()
+      .get(0);
+
+    assertThat(logicalMeterDto.eventLog)
+      .hasSize(2)
+      .extracting(e -> e.start)
+      .containsExactly("2001-01-06T10:14:00Z", "2001-01-01T10:14:00Z");
+  }
+
+  @Test
+  public void findById_Meter_ExcludesEventLog_MeterReplacements_WithPeriod_Desc() {
+    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T10:14:00Z");
+    ZonedDateTime stop = ZonedDateTime.parse("2001-01-06T10:14:00Z");
+
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start, stop)),
+      physicalMeter().activePeriod(PeriodRange.from(stop))
+    );
+
+    Url url = Url.builder()
+      .path("/meters/details")
+      .logicalMeterId(logicalMeter.id)
+      .period(start.minusYears(2), stop.minusYears(1))
+      .build();
+
+    List<LogicalMeterDto> response = asUser()
+      .getList(url, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(response).isEmpty();
   }
 
   @Test
   public void pagedMeterDetailsIsNotReported() {
     ZonedDateTime start = context().now();
-    LogicalMeter logicalMeter = given(logicalMeter());
-
-    given(
-      statusLog(logicalMeter).status(OK).start(start)
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start, start.plusHours(5)))
     );
+
+    given(statusLog(logicalMeter).status(OK).start(start));
 
     List<LogicalMeterDto> response = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
@@ -214,8 +299,20 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   @Test
   public void twoPagedMeterDetailsHaveStatuses() {
     ZonedDateTime start = context().now();
-    LogicalMeter logicalMeter1 = given(logicalMeter());
-    LogicalMeter logicalMeter2 = given(logicalMeter());
+    var logicalMeter1 = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        start,
+        start.plusHours(5)
+      ))
+    );
+    var logicalMeter2 = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        start,
+        start.plusHours(5)
+      ))
+    );
 
     given(
       statusLog(logicalMeter1).status(OK).start(start),
@@ -239,8 +336,20 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findOnlyMetersConnectedToGateway() {
-    LogicalMeter logicalMeter1 = given(logicalMeter());
-    LogicalMeter logicalMeter2 = given(logicalMeter());
+    LogicalMeter logicalMeter1 = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
+    LogicalMeter logicalMeter2 = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
     given(logicalMeter());
 
     var gateway = given(gateway().meters(List.of(logicalMeter1, logicalMeter2)));
@@ -256,7 +365,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void meterIsNotReported_WhenNoReportedStatusExists() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
 
     physicalMeters.save(physicalMeter()
       .logicalMeterId(logicalMeter.id)
@@ -276,7 +391,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   public void metersIsNotReportedWhenStatusOk() {
     ZonedDateTime start = context().now();
 
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        start,
+        start.plusHours(5)
+      ))
+    );
     given(statusLog(logicalMeter).status(OK).start(start));
 
     LogicalMeterDto logicalMeterDto = asUser()
@@ -290,7 +411,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void latestStartedStatusIsSetWhenMeterHasMultipleActiveStatuses() {
-    var logicalMeter = given(logicalMeter());
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
 
     given(
       statusLog(logicalMeter).start(context().now()).status(OK),
@@ -346,7 +473,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findById_ShouldHaveMeterWithAlarm() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(1)
+      ))
+    );
 
     var alarm = given(alarm(logicalMeter).mask(12)
       .start(context().now())
@@ -366,7 +499,11 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findById_ShouldHaveMeterWithLatestActiveAlarm() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(), physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      )));
 
     AlarmLogEntry alarm1 = given(
       alarm(logicalMeter).mask(12)
@@ -389,7 +526,13 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
   @Test
   public void findById_ShouldNotHaveMeterWithAlarm() {
-    LogicalMeter logicalMeter = given(logicalMeter());
+    LogicalMeter logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
+        context().now(),
+        context().now().plusHours(5)
+      ))
+    );
 
     LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
@@ -415,7 +558,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     Url url = Url.builder()
       .path("/meters/details")
       .period(context().now(), context().now().plusHours(3))
-      .parameter(LOGICAL_METER_ID, meter.id)
+      .logicalMeterId(meter.id)
       .period(context().now(), context().now().plusHours(1))
       .build();
 

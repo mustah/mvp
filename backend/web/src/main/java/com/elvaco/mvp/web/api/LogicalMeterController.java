@@ -50,9 +50,11 @@ public class LogicalMeterController {
     var parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
     return logicalMeterUseCases.findAllWithDetails(parameters).stream()
       .map(logicalMeter ->
-        parameters.getPeriod().map(p -> LogicalMeterDtoMapper.toDto(logicalMeter, p.stop))
-        .orElse(LogicalMeterDtoMapper.toDto(logicalMeter))
-      ).collect(toList());
+        parameters.getPeriod()
+          .map(p -> LogicalMeterDtoMapper.toDto(logicalMeter, p.stop))
+          .orElse(LogicalMeterDtoMapper.toDto(logicalMeter))
+      )
+      .collect(toList());
   }
 
   @DeleteMapping("{id}")

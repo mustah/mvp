@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -15,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.AlarmDto;
+import com.elvaco.mvp.web.dto.EventLogDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -23,7 +25,7 @@ import lombok.experimental.UtilityClass;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
-import static java.util.stream.Collectors.toList;
+import static java.util.Comparator.comparing;
 
 @UtilityClass
 public class LogicalMeterDtoMapper {
@@ -108,9 +110,7 @@ public class LogicalMeterDtoMapper {
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
-    meterDto.statusChangelog = getMeterStatusLogs(logicalMeter).stream()
-      .map(MeterStatusLogDtoMapper::toDto)
-      .collect(toList());
+    meterDto.eventLog = getEventLog(logicalMeter);
 
     meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask, alarm.description))
@@ -121,9 +121,16 @@ public class LogicalMeterDtoMapper {
     return meterDto;
   }
 
-  private static List<StatusLogEntry> getMeterStatusLogs(LogicalMeter logicalMeter) {
-    return logicalMeter.physicalMeters.stream()
+  private static List<EventLogDto> getEventLog(LogicalMeter logicalMeter) {
+    List<EventLogDto> events = new ArrayList<>();
+
+    logicalMeter.physicalMeters.stream()
+      .peek(physicalMeter -> events.add(EventLogDtoMapper.toMeterReplacementDto(physicalMeter)))
       .flatMap(physicalMeter -> physicalMeter.statuses.stream())
-      .collect(toList());
+      .map(EventLogDtoMapper::toStatusChangeDto)
+      .forEach(events::add);
+
+    events.sort(comparing((EventLogDto eventLogDto) -> eventLogDto.start).reversed());
+    return events;
   }
 }

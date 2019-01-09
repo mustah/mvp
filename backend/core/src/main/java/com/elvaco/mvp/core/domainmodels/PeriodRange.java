@@ -65,6 +65,13 @@ public class PeriodRange implements Serializable {
     );
   }
 
+  public static PeriodRange from(@Nullable ZonedDateTime start) {
+    return new PeriodRange(
+      PeriodBound.inclusiveOf(start),
+      PeriodBound.unboundedExclusive()
+    );
+  }
+
   public static PeriodRange from(PeriodBound start) {
     return new PeriodRange(start, PeriodBound.unboundedExclusive());
   }

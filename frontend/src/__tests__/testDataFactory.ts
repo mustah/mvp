@@ -1,4 +1,4 @@
-import {Meter, MeterStatusChangelog} from '../state/domain-models-paginated/meter/meterModels';
+import {Meter, EventLog} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Identifiable, uuid} from '../types/Types';
 
@@ -57,7 +57,7 @@ export const makeMeter = (id: number, city: string, address: string): Meter => (
 export interface MeterDto extends Identifiable, LocationHolder {
   facility: uuid;
   isReported?: boolean;
-  statusChangelog: MeterStatusChangelog[];
+  statusChangelog: EventLog[];
 }
 
 export const makeMeterDto = (id: number, city: string, address: string): MeterDto => {

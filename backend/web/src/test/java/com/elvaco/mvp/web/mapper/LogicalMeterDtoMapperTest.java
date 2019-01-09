@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -11,19 +12,19 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.web.dto.EventLogDto;
+import com.elvaco.mvp.web.dto.EventType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerWithStatusDto;
-import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.web.mapper.LogicalMeterDtoMapper.toDto;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,14 +80,20 @@ public class LogicalMeterDtoMapperTest {
     expected.manufacturer = "ELV";
     expected.facility = "an-external-id";
     expected.address = "123123";
-    expected.statusChangelog = singletonList(
-      new MeterStatusLogDto(
-        null,
-        StatusType.OK.name,
-        CREATED_DATE_STRING,
-        ""
-      )
+
+    expected.eventLog = List.of(
+      EventLogDto.builder()
+        .type(EventType.newMeter)
+        .name("123123")
+        .start(CREATED_DATE_STRING)
+        .build(),
+      EventLogDto.builder()
+        .type(EventType.statusChange)
+        .name(StatusType.OK.name)
+        .start(CREATED_DATE_STRING)
+        .build()
     );
+
     ZonedDateTime statusChanged = ZonedDateTime.parse(CREATED_DATE_STRING);
     expected.gateway = new GatewayMandatoryDto(
       randomUUID(),
@@ -118,7 +125,7 @@ public class LogicalMeterDtoMapperTest {
             .manufacturer("ELV")
             .logicalMeterId(meterId)
             .readIntervalMinutes(15)
-            .activePeriod(PeriodRange.unbounded())
+            .activePeriod(PeriodRange.from(statusChanged))
             .status(StatusLogEntry.builder()
               .status(StatusType.OK)
               .start(statusChanged)

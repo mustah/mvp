@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -13,6 +14,13 @@ import com.elvaco.mvp.core.spi.data.RequestParameter;
 
 import lombok.Builder;
 
+import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
 import static java.util.Collections.emptyMap;
 
 @Builder
@@ -87,36 +95,31 @@ public class Url implements UrlTemplate {
     }
 
     public UrlBuilder period(ZonedDateTime start, ZonedDateTime stop) {
-      return parameter(RequestParameter.BEFORE, stop).parameter(RequestParameter.AFTER, start);
+      return parameter(BEFORE, stop).parameter(AFTER, start);
     }
 
     public UrlBuilder city(String city) {
-      return parameter(RequestParameter.CITY, city);
+      return parameter(CITY, city);
     }
 
     public UrlBuilder city(Location location) {
-      return parameter(
-        RequestParameter.CITY,
-        location.getCountryOrUnknown() + ", " + location.getCityOrUnknown()
-      );
+      return parameter(CITY, location.getCountryOrUnknown() + ", " + location.getCityOrUnknown());
     }
 
     public UrlBuilder quantity(Quantity quantity) {
-      return parameter(
-        RequestParameter.QUANTITY,
-        quantity.name
-      );
+      return parameter(QUANTITY, quantity.name);
     }
 
     public UrlBuilder resolution(String resolution) {
-      return parameter(
-        RequestParameter.RESOLUTION,
-        resolution
-      );
+      return parameter(RESOLUTION, resolution);
     }
 
     public UrlBuilder sortBy(Object value) {
-      return parameter(RequestParameter.SORT, value);
+      return parameter(SORT, value);
+    }
+
+    public UrlBuilder logicalMeterId(UUID id) {
+      return parameter(LOGICAL_METER_ID, id);
     }
   }
 }

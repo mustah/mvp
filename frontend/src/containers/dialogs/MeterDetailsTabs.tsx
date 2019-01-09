@@ -5,7 +5,7 @@ import {ListActionsDropdown} from '../../components/actions-dropdown/ListActions
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
-import {Status} from '../../components/status/Status';
+import {ColoredEvent, Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import '../../components/table/Table.scss';
 import {TableHead} from '../../components/table/TableHead';
@@ -19,8 +19,8 @@ import {TimestampInfoMessage} from '../../components/timestamp-info-message/Time
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {statusChangelogDataFormatter} from '../../state/domain-models-paginated/gateway/gatewaySchema';
-import {MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
+import {EventLog, EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
+import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
@@ -52,9 +52,12 @@ interface DispatchToProps {
 
 type Props = OwnProps & DispatchToProps;
 
-const renderStatus = ({name}: MeterStatusChangelog): Children => <Status label={name}/>;
+const renderEvent = ({name, type}: EventLog): Children =>
+  type === EventLogType.newMeter
+    ? <ColoredEvent label={translate('new meter: {{name}}', {name})} type={type}/>
+    : <Status label={name}/>;
 
-const renderDate = ({start}: MeterStatusChangelog): Children =>
+const renderDate = ({start}: EventLog): Children =>
   <WrappedDateTime date={start} hasContent={!!start}/>;
 
 const renderSerial = ({serial}: Gateway): string => serial;
@@ -89,7 +92,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
       result: [gateway.id],
     };
 
-    const statusChangelog = statusChangelogDataFormatter(meter);
+    const eventLog = eventsDataFormatter(meter);
 
     const hasContent: boolean = meterMapMarker
       .filter(({status}: MapMarker) => status !== undefined)
@@ -108,7 +111,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
               <Tab tab={TabName.values} title={translate('latest value')}/>
-              <Tab tab={TabName.log} title={translate('status log')}/>
+              <Tab tab={TabName.log} title={translate('events')}/>
               <Tab tab={TabName.map} title={translate('map')}/>
               <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
             </TabHeaders>
@@ -124,14 +127,14 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <MeterMeasurementsContainer meter={meter}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Table {...statusChangelog}>
+            <Table {...eventLog}>
               <TableColumn
                 header={<TableHead>{translate('date')}</TableHead>}
                 renderCell={renderDate}
               />
               <TableColumn
-                header={<TableHead>{translate('status')}</TableHead>}
-                renderCell={renderStatus}
+                header={<TableHead>{translate('event')}</TableHead>}
+                renderCell={renderEvent}
               />
             </Table>
             <TimestampInfoMessage/>

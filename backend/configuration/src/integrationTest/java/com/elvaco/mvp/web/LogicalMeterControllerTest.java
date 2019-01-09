@@ -752,26 +752,32 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanRemoveLogicalMeter() {
-    var meter = given(logicalMeter());
-    given(series(meter, Quantity.POWER, 1));
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.from(context().now()))
+    );
+
+    given(series(logicalMeter, Quantity.POWER, 1));
 
     ResponseEntity<LogicalMeterDto> response = asSuperAdmin()
-      .delete("/meters/" + meter.id, LogicalMeterDto.class);
+      .delete("/meters/" + logicalMeter.id, LogicalMeterDto.class);
 
     assertSoftly(softly -> {
       softly.assertThat(response.getStatusCode())
         .isEqualTo(HttpStatus.OK);
 
-      softly.assertThat(logicalMeters.findById(meter.id))
+      softly.assertThat(logicalMeters.findById(logicalMeter.id))
         .isEmpty();
 
-      softly.assertThat(physicalMeterJpaRepository.findById(meter.activePhysicalMeter().get().id))
+      softly.assertThat(physicalMeterJpaRepository.findById(logicalMeter
+        .activePhysicalMeter()
+        .get().id))
         .isEmpty();
 
       softly.assertThat(measurementJpaRepository.findAll(
         new RequestParametersAdapter().add(
           LOGICAL_METER_ID,
-          meter.id.toString()
+          logicalMeter.id.toString()
         ))
       )
         .isEmpty();
