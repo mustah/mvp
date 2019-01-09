@@ -73,7 +73,7 @@ class SelectionTreeComponent extends React.Component<Props> {
       query,
     } = this.props;
 
-    const renderSelectionOverview = (id: uuid) =>
+    const renderSelectionTree = (id: uuid) =>
       renderSelectionTreeCities({
         addToReport,
         id,
@@ -88,7 +88,7 @@ class SelectionTreeComponent extends React.Component<Props> {
 
     const cityIds: uuid[] = selectionTree.result.cities;
     const nestedItems = cityIds.length
-      ? [...cityIds].sort().map(renderSelectionOverview)
+      ? [...cityIds].sort().map(renderSelectionTree)
       : [
         (
           <LoadingListItem
@@ -99,26 +99,29 @@ class SelectionTreeComponent extends React.Component<Props> {
         )
       ];
 
+    const searchBox = (
+      <SearchBox
+        onChange={selectionTreeSearch}
+        onClear={clearSearch}
+        value={query}
+        className="SearchBox-list SearchBox-tree"
+        key={`search-box-${primaryText}`}
+      />);
+
+    const selectionTreeItems = [searchBox, ...nestedItems];
+
     return (
-      <>
-        <SearchBox
-          onChange={selectionTreeSearch}
-          onClear={clearSearch}
-          value={query}
-          className="SearchBox-list SearchBox-tree"
+      <List style={listStyle}>
+        <ListItem
+          className="ListItem"
+          primaryText={primaryText}
+          initiallyOpen={true}
+          style={sideBarHeaderStyle}
+          hoverColor={sideBarStyle.color}
+          nestedItems={selectionTreeItems}
+          nestedListStyle={nestedListItemStyle}
         />
-        <List style={listStyle}>
-          <ListItem
-            className="ListItem"
-            primaryText={primaryText}
-            initiallyOpen={true}
-            style={sideBarHeaderStyle}
-            hoverColor={sideBarStyle.color}
-            nestedItems={nestedItems}
-            nestedListStyle={nestedListItemStyle}
-          />
-        </List>
-      </>
+      </List>
     );
   }
 }
