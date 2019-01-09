@@ -26,9 +26,6 @@ msgstr "add to report"
 msgid "sync all meters on this page"
 msgstr "sync all meters on this page"
 
-msgid "add all on this page to report"
-msgstr "add all on this page to report"
-
 msgid "edit organisation"
 msgstr "edit organisation"
 
@@ -38,15 +35,9 @@ msgstr "delete organisation"
 msgid "add organisation"
 msgstr "add organisation"
 
-<<<<<<< HEAD
-=======
-msgid "sync all meters on this page"
-msgstr "sync all meters on this page"
-
 msgid "add all to report"
 msgstr "add all to report"
 
->>>>>>> Add first 130 meters from selection tree to graph when entering report
 msgid "edit user"
 msgstr "edit user"
 

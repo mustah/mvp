@@ -26,9 +26,6 @@ msgstr "lägg till i rapport"
 msgid "sync all meters on this page"
 msgstr "synka alla mätare på denna sida"
 
-msgid "add all on this page to report"
-msgstr "lägg till alla på sidan i rapport"
-
 msgid "edit organisation"
 msgstr "redigera organisation"
 
@@ -38,15 +35,9 @@ msgstr "ta bort organisation"
 msgid "add organisation"
 msgstr "lägg till organisation"
 
-<<<<<<< HEAD
-=======
-msgid "sync all meters on this page"
-msgstr "synka alla mätare på denna sida"
-
 msgid "add all to report"
 msgstr "lägg till alla i rapport"
 
->>>>>>> Add first 130 meters from selection tree to graph when entering report
 msgid "edit user"
 msgstr "redigera användare"
 

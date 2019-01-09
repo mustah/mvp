@@ -204,3 +204,8 @@ export const showMetersInGraph = (meterIds: uuid[]) =>
       selectedQuantities,
     });
   };
+
+const emptyReportState = {ids: [], indicatorsToSelect: [], quantitiesToSelect: []};
+
+export const clearSelectedListItems = () =>
+  (dispatch) => dispatch(setSelectedEntries(emptyReportState));

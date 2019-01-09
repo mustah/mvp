@@ -18,6 +18,7 @@ import './Legend.scss';
 export interface LegendProps {
   hiddenLines: uuid[];
   toggleLine: OnClick;
+  clearSelectedListItems: OnClick;
   deleteItem: OnClickWithId;
   legendItems: Normalized<LegendItem>;
 }
@@ -45,7 +46,7 @@ const renderMedium = ({medium}: LegendItem) =>
     ))
     : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
 
-export const Legend = ({hiddenLines, legendItems, toggleLine, deleteItem}: LegendProps) => {
+export const Legend = ({clearSelectedListItems, hiddenLines, legendItems, toggleLine, deleteItem}: LegendProps) => {
 
   const renderVisibilityButton = ({id}: LegendItem) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
@@ -83,7 +84,9 @@ export const Legend = ({hiddenLines, legendItems, toggleLine, deleteItem}: Legen
           renderCell={renderVisibilityButton}
         />
         <TableColumn
-          header={<TableHead className="Link"><ButtonLink colorClassName="Blue" onClick={() => console.log('clear')}>{translate('remove all')}</ButtonLink></TableHead>}
+          header={
+            <TableHead className="Link"><ButtonLink colorClassName="Blue" onClick={clearSelectedListItems}>
+              {translate('remove all')}</ButtonLink></TableHead>}
           cellClassName="icon"
           renderCell={renderDeleteButton}
         />

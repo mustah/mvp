@@ -3,9 +3,9 @@ import {bindActionCreators} from 'redux';
 import {componentOrNothing} from '../../../components/hoc/hocs';
 import {RootState} from '../../../reducers/rootReducer';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {OnClickWithId} from '../../../types/Types';
+import {OnClick, OnClickWithId} from '../../../types/Types';
 import {Legend, LegendProps} from '../components/Legend';
-import {toggleLine, toggleSingleEntry} from '../reportActions';
+import {clearSelectedListItems, toggleLine, toggleSingleEntry} from '../reportActions';
 import {LegendItem, ReportState} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
@@ -16,6 +16,7 @@ interface StateToProps extends ReportState {
 interface DispatchToProps {
   deleteItem: OnClickWithId;
   toggleLine: OnClickWithId;
+  clearSelectedListItems: OnClick;
 }
 
 const hasSelectedItems = ({selectedListItems}: ReportState): boolean => selectedListItems.length > 0;
@@ -34,6 +35,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem: toggleSingleEntry,
+  clearSelectedListItems,
   toggleLine,
 }, dispatch);
 
