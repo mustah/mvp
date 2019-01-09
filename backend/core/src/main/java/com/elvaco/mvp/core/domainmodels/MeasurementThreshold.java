@@ -3,7 +3,6 @@ package com.elvaco.mvp.core.domainmodels;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
-
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;

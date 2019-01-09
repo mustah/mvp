@@ -12,6 +12,8 @@ import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 
 import org.junit.Test;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
@@ -205,7 +207,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       leakingMeter,
       Quantity.VOLUME,
       now,
-      DoubleStream.generate(() -> 0.1).limit(24).toArray()
+      DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()
     ));
 
     //then, someone fixes it
@@ -213,7 +215,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
       leakingMeter,
       Quantity.VOLUME,
       now.plusDays(1),
-      DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()
+      DoubleStream.generate(() -> 24).limit(24).toArray()
     ));
 
     Page<PagedLogicalMeterDto> result = asUser()
@@ -317,6 +319,17 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void forDuration_DurationLongerThanSelectionPeriod() {
-    assertThat(true).isFalse();
+    ZonedDateTime now = context().now();
+    ResponseEntity<ErrorMessageDto> response = asUser()
+      .get(Url.builder()
+        .path("/meters")
+        .period(now, now.plusDays(1))
+        .parameter(THRESHOLD, "External temperature <= 20°C for 3 days")
+        .build(), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).contains(
+      "Threshold duration too long to fit in selection period"
+    );
   }
 }
