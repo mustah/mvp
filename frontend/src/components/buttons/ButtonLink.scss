@@ -9,8 +9,10 @@
     &:hover {
       text-decoration: underline;
     }
+  }
 
-    &.Blue {
+  &.blue {
+    .Normal {
       color: $blue;
     }
   }

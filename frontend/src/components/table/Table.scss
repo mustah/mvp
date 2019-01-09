@@ -18,7 +18,12 @@
 
     &.Link {
       width: 86px;
-      text-transform: capitalize;
+      font-weight: normal;
+      text-transform: lowercase;
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
     }
   }
 

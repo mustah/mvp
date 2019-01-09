@@ -4,9 +4,8 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyle} from '../../../../app/themes';
-import {ButtonLink} from '../../../../components/buttons/ButtonLink';
+import {withContent} from '../../../../components/hoc/withContent';
 import {Column} from '../../../../components/layouts/column/Column';
-import {Row} from '../../../../components/layouts/row/Row';
 import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
@@ -19,8 +18,10 @@ import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTre
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {
   CallbackWithIds,
+  Clickable,
   EncodedUriParameters,
   Fetch,
+  HasContent,
   OnChange,
   OnClick,
   OnClickWithId,
@@ -35,6 +36,7 @@ import {
 } from '../../../report/reportActions';
 import {clearSelectionTreeSearch, selectionTreeSearch} from '../../../search/searchActions';
 import {OnSearch, Query} from '../../../search/searchModels';
+import {AddAllToReportButton} from '../../components/AddAllToReportButton';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {ItemOptions, renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
@@ -61,6 +63,8 @@ interface DispatchToProps {
 }
 
 type Props = StateToProps & DispatchToProps;
+
+const AddAllToReportButtonWrapper = withContent<Clickable & HasContent>(AddAllToReportButton);
 
 class SelectionTreeComponent extends React.Component<Props> {
 
@@ -118,22 +122,17 @@ class SelectionTreeComponent extends React.Component<Props> {
       ];
 
     const addAllToReport = () => showMetersInGraph(getMeterIdsWithLimit(selectionTree.entities.meters));
+    const shouldShowAddAllButton: boolean = !!itemOptions.report && !isFetching && cityIds.length > 0;
 
-    const shouldShowAddAllButton = itemOptions.report && !isFetching && cityIds.length > 0;
     const searchBox = (
-      <Column>
+      <Column key={`search-box-${primaryText}`} className="SearchBox-Container">
         <SearchBox
           onChange={selectionTreeSearch}
           onClear={clearSearch}
           value={query}
           className="SearchBox-list SearchBox-tree"
-          key={`search-box-${primaryText}`}
         />
-        {shouldShowAddAllButton &&
-         <Row className="ActionRow">
-           <ButtonLink colorClassName="Blue" onClick={addAllToReport}>{translate('add all to report')}</ButtonLink>
-         </Row>
-        }
+        <AddAllToReportButtonWrapper hasContent={shouldShowAddAllButton} onClick={addAllToReport}/>
       </Column>);
 
     const selectionTreeItems = [searchBox, ...nestedItems];
