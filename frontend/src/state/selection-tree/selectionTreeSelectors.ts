@@ -175,7 +175,10 @@ export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quan
   },
 );
 
+export const getMeterIdsWithLimit = (meters) =>
+  meters ? Object.keys(meters).splice(0, limit) : [];
+
 export const getMeterIds = createSelector<SelectionTreeState, ObjectsById<SelectionTreeMeter>, uuid[]>(
   (state) => state.entities.meters,
-  (meters) => meters ? Object.keys(meters).splice(0, limit) : []
+  (meters) => getMeterIdsWithLimit(meters)
 );

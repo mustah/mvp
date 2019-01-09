@@ -43,8 +43,8 @@ msgstr "add organisation"
 msgid "sync all meters on this page"
 msgstr "sync all meters on this page"
 
-msgid "add all meters in selection to report"
-msgstr "add all meters in selection to report"
+msgid "add all to report"
+msgstr "add all to report"
 
 >>>>>>> Add first 130 meters from selection tree to graph when entering report
 msgid "edit user"

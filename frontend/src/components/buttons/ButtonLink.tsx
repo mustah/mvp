@@ -8,10 +8,11 @@ import './ButtonLink.scss';
 interface Props extends Clickable {
   className?: string;
   children?: React.ReactNode | React.ReactNode[];
+  colorClassName?: string;
 }
 
-export const ButtonLink = ({className, children, onClick}: Props) => (
+export const ButtonLink = ({className, children, onClick, colorClassName}: Props) => (
   <Row className={classNames('ButtonLink', className)} onClick={onClick}>
-    <BoldFirstUpper>{children}</BoldFirstUpper>
+    <BoldFirstUpper className={colorClassName}>{children}</BoldFirstUpper>
   </Row>
 );
