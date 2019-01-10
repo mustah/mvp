@@ -1,8 +1,7 @@
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
-import {withEmptyContentComponent} from '../../../components/hoc/withEmptyContent';
-import {Bold} from '../../../components/texts/Texts';
+import {withContent} from '../../../components/hoc/withContent';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
@@ -34,9 +33,6 @@ const quantityMenuItem =
       />
     );
 
-const HintText = () =>
-  <Bold className="Italic">{firstUpperTranslated('select medium')}</Bold>;
-
 const SelectFieldOptions = ({children, changeQuantities, selectedQuantities}: Props) => (
   <SelectField
     multiple={true}
@@ -48,10 +44,7 @@ const SelectFieldOptions = ({children, changeQuantities, selectedQuantities}: Pr
   </SelectField>
 );
 
-const WrappedSelectFieldOptions = withEmptyContentComponent<Props & HasContent>(
-  SelectFieldOptions,
-  HintText,
-);
+const SelectFieldOptionsWrapper = withContent<Props & HasContent>(SelectFieldOptions);
 
 export const QuantityDropdown =
   ({selectedIndicators, selectedQuantities, onSelectQuantities}: QuantitySelectorProps) => {
@@ -76,9 +69,9 @@ export const QuantityDropdown =
 
     return (
       <div style={style}>
-        <WrappedSelectFieldOptions {...wrappedProps}>
+        <SelectFieldOptionsWrapper {...wrappedProps}>
           {options}
-        </WrappedSelectFieldOptions>
+        </SelectFieldOptionsWrapper>
       </div>
     );
   };

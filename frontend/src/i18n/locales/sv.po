@@ -420,9 +420,6 @@ msgstr "anläggning"
 msgid "value"
 msgstr "värde"
 
-msgid "select medium"
-msgstr "välj medium ovan"
-
 msgid "select quantities"
 msgstr "välj storheter"
 

@@ -420,9 +420,6 @@ msgstr "facility"
 msgid "value"
 msgstr "value"
 
-msgid "select medium"
-msgstr "select medium"
-
 msgid "select quantities"
 msgstr "select quantities"
 

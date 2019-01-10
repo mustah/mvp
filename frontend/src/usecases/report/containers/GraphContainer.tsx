@@ -13,25 +13,22 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import {bindActionCreators} from 'redux';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Column} from '../../../components/layouts/column/Column';
+import {DispatchToProps} from '../../../components/tabs/components/MainContentTabs';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {toggle} from '../../../helpers/collections';
 import {shortTimestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {selectQuantities} from '../../../state/ui/indicator/indicatorActions';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
 import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/graph/Dot';
-import {QuantityDropdown} from '../components/QuantityDropdown';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
 import './GraphContainer.scss';
 
@@ -39,9 +36,7 @@ interface StateToProps {
   customDateRange: Maybe<DateRange>;
   isSideMenuOpen: boolean;
   period: Period;
-  selectedIndicators: Medium[];
   selectedListItems: uuid[];
-  selectedQuantities: Quantity[];
 }
 
 interface OwnProps {
@@ -52,10 +47,6 @@ interface OwnProps {
 interface GraphComponentState {
   hiddenKeys: string[];
   resized: boolean;
-}
-
-interface DispatchToProps {
-  selectQuantities: (quantities: Quantity[]) => void;
 }
 
 interface MouseOverProps {
@@ -146,7 +137,7 @@ const GraphContent =
     </Column>
   );
 
-type Props = OwnProps & StateToProps & DispatchToProps;
+type Props = OwnProps & StateToProps;
 
 type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
@@ -179,9 +170,6 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       isSideMenuOpen,
       outerHiddenKeys,
       selectedListItems,
-      selectedQuantities,
-      selectQuantities,
-      selectedIndicators,
     } = this.props;
 
     const {hiddenKeys, resized} = this.state;
@@ -207,16 +195,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       noContentText: firstUpperTranslated('select meters to include in graph'),
     };
 
-    return (
-      <>
-        <QuantityDropdown
-          selectedIndicators={selectedIndicators}
-          selectedQuantities={selectedQuantities}
-          onSelectQuantities={selectQuantities}
-        />
-        <GraphContentWrapper {...wrapperProps}/>
-      </>
-    );
+    return <GraphContentWrapper {...wrapperProps}/>;
   }
 
   updateDimensions = () => this.setState(({resized}) => ({resized: !resized}));
@@ -268,20 +247,12 @@ const mapStateToProps =
     report: {selectedListItems},
     userSelection: {userSelection},
     ui,
-  }: RootState): StateToProps => {
-    const {indicator: {selectedIndicators: {report: selectedIndicators}, selectedQuantities}} = ui;
-    return ({
+  }: RootState): StateToProps =>
+    ({
       ...getSelectedPeriod(userSelection),
       isSideMenuOpen: isSideMenuOpen(ui),
       selectedListItems,
-      selectedQuantities,
-      selectedIndicators,
     });
-  };
-
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  selectQuantities,
-}, dispatch);
 
 export const GraphContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps)(GraphComponent);

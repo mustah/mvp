@@ -37,7 +37,7 @@ import {
   Medium,
   Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
-import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
+import {selectQuantities, toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
@@ -48,10 +48,12 @@ import {OnLogout} from '../../auth/authModels';
 import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
 import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
 import {MeasurementList} from '../components/MeasurementList';
+import {QuantityDropdown} from '../components/QuantityDropdown';
 import {showMetersInGraph} from '../reportActions';
 import {GraphContents, hardcodedIndicators, ReportState} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 import {LegendContainer} from './LegendContainer';
+import './ReportContainer.scss';
 
 type SelectedIds = ReportState;
 
@@ -67,6 +69,7 @@ interface StateToProps extends SelectedIds {
 interface DispatchToProps {
   logout: OnLogout;
   changeTab: CallbackWith<TabName>;
+  selectQuantities: (quantities: Quantity[]) => void;
   showMetersInGraph: CallbackWithIds;
   toggleReportIndicatorWidget: OnSelectIndicator;
 }
@@ -110,6 +113,9 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
       hiddenLines,
       selectedTab,
       selectedIndicatorTypes,
+      selectedIndicators,
+      selectedQuantities,
+      selectQuantities,
       toggleReportIndicatorWidget,
     } = this.props;
     const {isFetching, error, measurementResponse} = this.state;
@@ -125,12 +131,19 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
           </Row>
         </Row>
 
-        <ReportIndicatorWidgets
-          indicators={this.indicators}
-          selectedIndicatorTypes={selectedIndicatorTypes}
-          onClick={toggleReportIndicatorWidget}
-          enabledIndicatorTypes={enabledIndicatorTypes}
-        />
+        <Row className="ReportContent-Container">
+          <ReportIndicatorWidgets
+            indicators={this.indicators}
+            selectedIndicatorTypes={selectedIndicatorTypes}
+            onClick={toggleReportIndicatorWidget}
+            enabledIndicatorTypes={enabledIndicatorTypes}
+          />
+          <QuantityDropdown
+            selectedIndicators={selectedIndicators}
+            selectedQuantities={selectedQuantities}
+            onSelectQuantities={selectQuantities}
+          />
+        </Row>
 
         <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
           <Paper style={contentStyle}>
@@ -225,8 +238,9 @@ const mapStateToProps =
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabReport,
-  showMetersInGraph,
   logout,
+  selectQuantities,
+  showMetersInGraph,
   toggleReportIndicatorWidget,
 }, dispatch);
 
