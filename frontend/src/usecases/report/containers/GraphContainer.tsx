@@ -19,7 +19,7 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/w
 import {Column} from '../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {toggle} from '../../../helpers/collections';
-import {timestamp} from '../../../helpers/dateHelpers';
+import {shortTimestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -133,7 +133,7 @@ const GraphContent =
             dataKey="name"
             domain={['dataMin', 'dataMax']}
             scale="time"
-            tickFormatter={timestamp}
+            tickFormatter={shortTimestamp}
             type="number"
           />
           <CartesianGrid strokeDasharray="3 3"/>

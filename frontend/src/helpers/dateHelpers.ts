@@ -108,8 +108,10 @@ const toFriendlyIso8601 = ({start, end}: DateRange): string =>
 export const prettyRange = ({start, period, customDateRange}: CurrentPeriod): string =>
   toFriendlyIso8601(newDateRange(period, customDateRange, start));
 
-export const timestamp = (input: moment.MomentInput): string =>
+export const shortTimestamp = (input: moment.MomentInput): string =>
   displayDate(input, 'MMM D, HH:mm');
+
+export const timestamp = (input: moment.MomentInput): string => displayDate(input);
 
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
   momentFrom(input).add(1, 'hours').format(format);
