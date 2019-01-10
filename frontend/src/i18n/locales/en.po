@@ -137,6 +137,9 @@ msgstr "{{pending}} of {{count}}"
 msgid "measurement missing"
 msgstr "measurement missing"
 
+msgid "measurements"
+msgstr "measurements"
+
 msgid "no meters"
 msgstr "no meters"
 
@@ -220,9 +223,6 @@ msgstr "meter-id"
 
 msgid "new meter: {{name}}"
 msgstr "new meter: {{name}}"
-
-msgid "latest value"
-msgstr "latest"
 
 msgid "events"
 msgstr "events"
