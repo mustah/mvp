@@ -1,6 +1,6 @@
 @import "../../app/variables";
 
-.PeriodSelection {
+.DropdownMenu {
   align-items: flex-start;
 
   &:hover {
@@ -9,13 +9,13 @@
     }
   }
 
-  .PeriodSelection-dropdown {
+  .DropdownMenu-dropdown {
     &:hover {
       border: 1px solid $blue !important;
     }
   }
 }
 
-.TimePeriod:first-letter {
+.DropdownMenu-MenuItem:first-letter {
   text-transform: uppercase;
 }
