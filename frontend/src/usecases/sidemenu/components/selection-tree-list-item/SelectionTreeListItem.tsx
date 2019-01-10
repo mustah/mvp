@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  listItemStyle,
-  listItemStyleWithActions,
-  nestedListItemStyle,
-  sideBarInnerDivStyle,
-} from '../../../../app/themes';
+import {listItemStyle, nestedListItemStyle, sideBarInnerDivStyle,} from '../../../../app/themes';
 import {MediumButton} from '../../../../components/buttons/MediumButton';
 import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
@@ -201,7 +196,7 @@ const renderSelectableListItem = ({
   const content = !nestedItems
     ? (
       <RowCenter className="space-between">
-        <RowCenter className="first-uppercase" style={listItemStyleWithActions.textStyle}>
+        <RowCenter className="first-uppercase" style={listItemStyle.textStyle}>
           <OpenDialogInfoButton
             label={primaryText}
             title={primaryText}

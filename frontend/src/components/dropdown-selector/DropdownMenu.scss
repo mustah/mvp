@@ -1,7 +1,7 @@
 @import "../../app/variables";
 
 .DropdownMenu {
-  align-items: flex-start;
+  align-items: flex-end;
 
   &:hover {
     .IconCalendar {
@@ -16,6 +16,12 @@
   }
 }
 
-.DropdownMenu-MenuItem:first-letter {
-  text-transform: uppercase;
+.DropdownMenu-MenuItem {
+  &:first-letter {
+    text-transform: uppercase;
+  }
+
+  &:hover {
+    color: $black !important;
+  }
 }

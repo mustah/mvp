@@ -47,6 +47,9 @@ export const mvpTheme = getMuiTheme({
   },
   listItem: {
     nestedLevelDepth: 14,
+  },
+  menuItem: {
+    hoverColor: colors.blue,
   }
 });
 
@@ -105,10 +108,6 @@ export const listItemStyle: React.CSSProperties = {
   },
 };
 
-export const listItemStyleWithActions: React.CSSProperties = {
-  ...listItemStyle,
-};
-
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
   ...selectedSideBarStyle,
@@ -158,4 +157,8 @@ export const cardStyle: React.CSSProperties = {
 export const buttonStyle: React.CSSProperties = {
   backgroundColor: colors.blue,
   color: colors.white,
+};
+
+export const dropdownListStyle: React.CSSProperties = {
+  width: 200,
 };

@@ -1,7 +1,10 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
+import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
-import {colors, fontSize, listItemStyle} from '../../app/themes';
-import {OnClick, WithChildren} from '../../types/Types';
+import {colors, dropdownListStyle, fontSize, listItemStyle} from '../../app/themes';
+import {firstUpperTranslated} from '../../services/translationService';
+import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
+import {Children, OnClick, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
@@ -18,10 +21,6 @@ const style: React.CSSProperties = {
   marginLeft: 24,
   marginBottom: 16,
   borderWidth: 1,
-};
-
-const listStyle: React.CSSProperties = {
-  width: 200,
 };
 
 const underlineStyle: React.CSSProperties = {
@@ -50,19 +49,21 @@ const iconStyle: React.CSSProperties = {
 
 const selectedMenuItemStyle: React.CSSProperties = {color: colors.blue};
 
-interface Props extends WithChildren {
-  value: Period | string;
+export interface DropdownMenuProps extends WithChildren {
+  disabled?: boolean;
   menuItems: MenuItemProps[];
+  value?: Period | string;
 }
 
 export interface MenuItemProps {
-  value: Period | string;
+  checked?: boolean;
   label: string;
-  primaryText: string;
   onClick: OnClick;
+  primaryText: string;
+  value: Period | string;
 }
 
-export const DropdownMenu = ({children, menuItems, value}: Props) => {
+export const DropdownMenu = ({children, menuItems, value}: DropdownMenuProps) => {
 
   const renderedMenuItems = menuItems.map(({primaryText, label, value, onClick}: MenuItemProps) => (
     <MenuItem
@@ -80,15 +81,15 @@ export const DropdownMenu = ({children, menuItems, value}: Props) => {
     <Row className="DropdownMenu">
       <DropDownMenu
         className="DropdownMenu-dropdown"
-        maxHeight={300}
-        underlineStyle={underlineStyle}
-        labelStyle={labelStyle}
-        listStyle={listStyle}
-        iconStyle={iconStyle}
-        style={style}
-        value={value}
         iconButton={<IconCalendar className="IconCalendar"/>}
+        iconStyle={iconStyle}
+        maxHeight={300}
+        labelStyle={labelStyle}
+        listStyle={dropdownListStyle}
         selectedMenuItemStyle={selectedMenuItemStyle}
+        style={style}
+        underlineStyle={underlineStyle}
+        value={value}
       >
         {renderedMenuItems}
       </DropDownMenu>
@@ -96,3 +97,46 @@ export const DropdownMenu = ({children, menuItems, value}: Props) => {
     </Row>
   );
 };
+
+const multiSelectLabelStyle: React.CSSProperties = {
+  ...labelStyle,
+  height: 38,
+  width: 168,
+};
+
+const multiSelectStyle: React.CSSProperties = {
+  ...style,
+  marginLeft: 0,
+  marginBottom: 0,
+  borderColor: colors.borderColor,
+};
+
+const hintStyle: React.CSSProperties = {bottom: 5, left: 8, color: colors.lightBlack};
+
+export interface MultiSelectDropdownMenuProps {
+  selectedQuantities: Quantity[];
+  changeQuantities: (event, index, values) => void;
+  children?: Children;
+}
+
+export const MultiSelectDropdownMenu =
+  ({children, changeQuantities, selectedQuantities}: MultiSelectDropdownMenuProps) => (
+    <Row className="DropdownMenu">
+      <SelectField
+        autoWidth={true}
+        className="DropdownMenu-dropdown"
+        hintStyle={hintStyle}
+        hintText={firstUpperTranslated('select quantities')}
+        iconStyle={iconStyle}
+        labelStyle={multiSelectLabelStyle}
+        multiple={true}
+        onChange={changeQuantities}
+        selectedMenuItemStyle={selectedMenuItemStyle}
+        style={multiSelectStyle}
+        value={selectedQuantities}
+        underlineStyle={underlineStyle}
+      >
+        {children}
+      </SelectField>
+    </Row>
+  );
