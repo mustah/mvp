@@ -134,8 +134,11 @@ msgstr "no measurements expected for the selected period"
 msgid "{{pending}} of {{count}}"
 msgstr "{{pending}} of {{count}}"
 
-msgid "measurement"
+msgid "measurement missing"
 msgstr "measurement missing"
+
+msgid "measurements"
+msgstr "measurements"
 
 msgid "no meters"
 msgstr "no meters"
@@ -220,9 +223,6 @@ msgstr "meter-id"
 
 msgid "new meter: {{name}}"
 msgstr "new meter: {{name}}"
-
-msgid "latest value"
-msgstr "latest"
 
 msgid "events"
 msgstr "events"
@@ -432,6 +432,9 @@ msgstr "select meters to include in graph"
 msgid "graph"
 msgstr "graph"
 
+msgid "table"
+msgstr "table"
+
 msgid "select meters"
 msgstr "select meters"
 
@@ -509,7 +512,7 @@ msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} of {{count}}"
 
 msgctxt "°plural"
-msgid "measurement°"
+msgid "measurement missing°"
 msgstr "measurements missing"
 
 msgctxt "°plural"

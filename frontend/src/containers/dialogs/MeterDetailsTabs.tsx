@@ -110,7 +110,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
         <Tabs className="full-width first-letter">
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
-              <Tab tab={TabName.values} title={translate('latest value')}/>
+              <Tab tab={TabName.values} title={translate('measurements')}/>
               <Tab tab={TabName.log} title={translate('events')}/>
               <Tab tab={TabName.map} title={translate('map')}/>
               <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>

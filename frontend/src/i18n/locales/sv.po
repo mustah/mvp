@@ -134,8 +134,11 @@ msgstr "inga mätvärden förväntades under den valda perioden"
 msgid "{{pending}} of {{count}}"
 msgstr "{{pending}} av {{count}}"
 
-msgid "measurement"
+msgid "measurement missing"
 msgstr "mätvärde saknas"
+
+msgid "measurements"
+msgstr "mätvärden"
 
 msgid "no meters"
 msgstr "inga mätare"
@@ -220,9 +223,6 @@ msgstr "mätar-id"
 
 msgid "new meter: {{name}}"
 msgstr "ny mätare: {{name}}"
-
-msgid "latest value"
-msgstr "senaste"
 
 msgid "events"
 msgstr "händelser"
@@ -432,6 +432,9 @@ msgstr "välj mätare för att inkludera dem i grafen"
 msgid "graph"
 msgstr "graf"
 
+msgid "table"
+msgstr "tabell"
+
 msgid "select meters"
 msgstr "välj mätare"
 
@@ -509,7 +512,7 @@ msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} av {{count}}"
 
 msgctxt "°plural"
-msgid "measurement°"
+msgid "measurement missing°"
 msgstr "mätvärden saknas"
 
 msgctxt "°plural"

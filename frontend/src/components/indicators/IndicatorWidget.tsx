@@ -64,7 +64,7 @@ export const IndicatorWidget =
             <IconCollection className="Indicator-icon" color={colors.white}/>
             <Column className="Indicator-details">
               <Normal>{translate('{{pending}} of {{count}}', {pending, count: total})}</Normal>
-              <Normal>{translate('measurement', {count: total})}</Normal>
+              <Normal>{translate('measurement missing', {count: total})}</Normal>
             </Column>
           </Row>
         </ColumnCenter>

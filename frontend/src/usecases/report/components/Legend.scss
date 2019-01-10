@@ -5,10 +5,18 @@
 
   .icon {
     width: 24px;
+
   }
 
-  td.icon button {
-    min-width: 24px !important;
-    line-height: inherit !important;
+  td {
+    &.icon {
+      padding: 0 24px;
+      text-align: center;
+
+      button {
+        min-width: 24px !important;
+        line-height: inherit !important;
+      }
+    }
   }
 }
