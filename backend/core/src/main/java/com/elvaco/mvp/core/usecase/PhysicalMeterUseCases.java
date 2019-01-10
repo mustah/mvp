@@ -28,6 +28,13 @@ public class PhysicalMeterUseCases {
     throw userIsUnauthorized(physicalMeter.id);
   }
 
+  public PhysicalMeter saveAndFlush(PhysicalMeter physicalMeter) {
+    if (hasTenantAccess(physicalMeter.organisationId)) {
+      return physicalMeters.saveAndFlush(physicalMeter);
+    }
+    throw userIsUnauthorized(physicalMeter.id);
+  }
+
   public PhysicalMeter saveWithStatuses(PhysicalMeter physicalMeter) {
     if (hasTenantAccess(physicalMeter.organisationId)) {
       physicalMeters.save(physicalMeter);
@@ -67,7 +74,7 @@ public class PhysicalMeterUseCases {
         .filter(p -> !p.id.equals(physicalMeter.id))
         .filter(p -> p.activePeriod.isRightOpen())
         .map(p -> p.deactivate(measurementTimestamp))
-        .forEach(this::save));
+        .forEach(this::saveAndFlush));
   }
 
   private Unauthorized userIsUnauthorized(UUID id) {

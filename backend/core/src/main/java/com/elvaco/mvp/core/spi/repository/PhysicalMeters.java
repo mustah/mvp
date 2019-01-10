@@ -14,6 +14,8 @@ public interface PhysicalMeters {
 
   PhysicalMeter save(PhysicalMeter physicalMeter);
 
+  PhysicalMeter saveAndFlush(PhysicalMeter physicalMeter);
+
   Optional<PhysicalMeter> findByWithStatuses(
     UUID organisationId,
     String externalId,

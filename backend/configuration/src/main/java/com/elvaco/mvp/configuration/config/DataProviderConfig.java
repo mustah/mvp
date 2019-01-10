@@ -2,6 +2,8 @@ package com.elvaco.mvp.configuration.config;
 
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
@@ -103,6 +105,7 @@ class DataProviderConfig {
   private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
   private final UnitConverter unitConverter;
+  private final EntityManager entityManager;
 
   @Bean
   Users users(
@@ -163,7 +166,7 @@ class DataProviderConfig {
 
   @Bean
   PhysicalMeters physicalMeters() {
-    return new PhysicalMetersRepository(physicalMeterJpaRepository);
+    return new PhysicalMetersRepository(physicalMeterJpaRepository, entityManager);
   }
 
   @Bean

@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper;
 
@@ -24,6 +27,7 @@ import static java.util.stream.Collectors.toList;
 public class PhysicalMetersRepository implements PhysicalMeters {
 
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
+  private final EntityManager entityManager;
 
   @Override
   public List<PhysicalMeter> findByMedium(String medium) {
@@ -50,6 +54,18 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     try {
       return toDomainModel(physicalMeterJpaRepository.save(toEntity(physicalMeter)));
+    } catch (DataIntegrityViolationException ex) {
+      log.warn("Constraint violation: ", ex);
+      return physicalMeter;
+    }
+  }
+
+  @Override
+  public PhysicalMeter saveAndFlush(PhysicalMeter physicalMeter) {
+    try {
+      PhysicalMeterEntity entity = physicalMeterJpaRepository.save(toEntity(physicalMeter));
+      entityManager.flush();
+      return toDomainModel(entity);
     } catch (DataIntegrityViolationException ex) {
       log.warn("Constraint violation: ", ex);
       return physicalMeter;
