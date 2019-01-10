@@ -30,6 +30,11 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   }
 
   @Override
+  public PhysicalMeter saveAndFlush(PhysicalMeter physicalMeter) {
+    return save(physicalMeter);
+  }
+
+  @Override
   public Optional<PhysicalMeter> findByWithStatuses(
     UUID organisationId,
     String externalId,

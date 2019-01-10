@@ -118,12 +118,11 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
         physicalMeter.activePeriod = PeriodRange.from(PeriodBound.inclusiveOf(
           zonedMeasurementTimestamp));
       }
-      var m = physicalMeterUseCases.save(physicalMeter);
       physicalMeterUseCases.deactivatePreviousPhysicalMeter(
         physicalMeter,
         zonedMeasurementTimestamp
       );
-      return m;
+      return physicalMeterUseCases.save(physicalMeter);
     });
 
     measurementMessage.values
