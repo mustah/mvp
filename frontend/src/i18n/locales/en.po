@@ -432,6 +432,9 @@ msgstr "select meters to include in graph"
 msgid "graph"
 msgstr "graph"
 
+msgid "table"
+msgstr "table"
+
 msgid "select meters"
 msgstr "select meters"
 

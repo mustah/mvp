@@ -138,7 +138,7 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
               <TabTopBar>
                 <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
                   <Tab tab={TabName.graph} title={translate('graph')}/>
-                  <Tab tab={TabName.list} title={translate('list')}/>
+                  <Tab tab={TabName.list} title={translate('table')}/>
                 </TabHeaders>
               </TabTopBar>
               <TabContent tab={TabName.graph} selectedTab={selectedTab}>

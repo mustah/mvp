@@ -432,6 +432,9 @@ msgstr "välj mätare för att inkludera dem i grafen"
 msgid "graph"
 msgstr "graf"
 
+msgid "table"
+msgstr "tabell"
+
 msgid "select meters"
 msgstr "välj mätare"
 
