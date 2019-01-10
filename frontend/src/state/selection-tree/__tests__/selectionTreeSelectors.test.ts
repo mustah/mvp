@@ -1,7 +1,8 @@
-import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {uuid} from '../../../types/Types';
-import {SelectedTreeEntities, SelectionTree, SelectionTreeState} from '../selectionTreeModels';
-import {getMedia, getSelectionTree} from '../selectionTreeSelectors';
+import {ObjectsById} from '../../domain-models/domainModels';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
+import {SelectedTreeEntities, SelectionTree, SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
+import {getMedia, getMeterIds, getMeterIdsWithLimit, getSelectionTree} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -180,6 +181,7 @@ describe('selectionTreeSelectors', () => {
         },
         result: {cities: []},
       };
+
       expect(getSelectionTree(selectionTreeState)).toEqual({
         entities: {
           cities: {},
@@ -215,9 +217,7 @@ describe('selectionTreeSelectors', () => {
 
         expect(withoutQuery.entities.clusters['sweden,kungsbacka:k'].name).toEqual('K...(2)');
         expect(withQuery.entities.clusters['sweden,kungsbacka:k'].name).toEqual('K...(1)');
-
       });
-
     });
 
   });
@@ -246,6 +246,46 @@ describe('selectionTreeSelectors', () => {
       };
 
       expect(getMedia(state)).toEqual(expected);
+    });
+
+  });
+
+  describe('getMeterIds', () => {
+
+    it('gets all the meters', () => {
+      const expected: uuid[] = ['1', '2', '3', '4', '5', '6'];
+      const actual: uuid[] = getMeterIds(selectionTreeState);
+
+      expect(actual).toEqual(expected);
+    });
+
+  });
+
+  describe('getMeterIdsWithLimit', () => {
+
+    it('handles no selection tree meters', () => {
+      expect(getMeterIdsWithLimit()).toEqual([]);
+    });
+
+    it('handles empty selection tree meters', () => {
+      const meters: ObjectsById<SelectionTreeMeter> = {};
+
+      expect(getMeterIdsWithLimit(meters)).toEqual([]);
+    });
+
+    it('should only have one meter id', () => {
+      const meters: ObjectsById<SelectionTreeMeter> = {
+        1: {id: 1, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
+      };
+      expect(getMeterIdsWithLimit(meters)).toEqual(['1']);
+    });
+
+    it('should only have more than one meter id', () => {
+      const meters: ObjectsById<SelectionTreeMeter> = {
+        1: {id: 1, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
+        2: {id: 2, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
+      };
+      expect(getMeterIdsWithLimit(meters)).toEqual(['1', '2']);
     });
 
   });

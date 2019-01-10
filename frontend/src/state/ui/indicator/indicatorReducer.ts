@@ -17,9 +17,7 @@ export interface IndicatorState {
 }
 
 export const initialState: IndicatorState = {
-  selectedIndicators: {
-    report: [],
-  },
+  selectedIndicators: {report: []},
   selectedQuantities: [],
 };
 

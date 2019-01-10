@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
+import {limit} from '../../usecases/report/reportActions';
 import {Query} from '../../usecases/search/searchModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {isSelectedCity, isSelectedMeter} from '../ui/graph/measurement/measurementActions';
@@ -13,6 +14,7 @@ import {
   SelectionTree,
   SelectionTreeAddress,
   SelectionTreeEntities,
+  SelectionTreeMeter,
   SelectionTreeResult,
   SelectionTreeState,
 } from './selectionTreeModels';
@@ -171,4 +173,12 @@ export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quan
       return new Set<Medium>();
     }
   },
+);
+
+export const getMeterIdsWithLimit = (meters?: ObjectsById<SelectionTreeMeter>): uuid[] =>
+  meters ? Object.keys(meters).splice(0, limit) : [];
+
+export const getMeterIds = createSelector<SelectionTreeState, ObjectsById<SelectionTreeMeter>, uuid[]>(
+  (state) => state.entities.meters,
+  (meters) => getMeterIdsWithLimit(meters)
 );

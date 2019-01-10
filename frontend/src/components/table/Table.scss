@@ -15,6 +15,16 @@
       text-align: right;
       width: 36px;
     }
+
+    &.Link {
+      width: 86px;
+      font-weight: normal;
+      text-transform: lowercase;
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
+    }
   }
 
   thead {
@@ -42,7 +52,8 @@
     }
 
     &.icon {
-      padding: 0 2px;
+      padding: 0 24px;
+      text-align: center;
     }
 
     &.actionDropdown {

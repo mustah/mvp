@@ -4,21 +4,39 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyle} from '../../../../app/themes';
+import {withContent} from '../../../../components/hoc/withContent';
+import {Column} from '../../../../components/layouts/column/Column';
 import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
 import {translate} from '../../../../services/translationService';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
-import {getSelectionTree} from '../../../../state/selection-tree/selectionTreeSelectors';
+import {getMeterIdsWithLimit, getSelectionTree} from '../../../../state/selection-tree/selectionTreeSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
-import {EncodedUriParameters, Fetch, OnChange, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {
+  CallbackWithIds,
+  Clickable,
+  EncodedUriParameters,
+  Fetch,
+  HasContent,
+  OnChange,
+  OnClick,
+  OnClickWithId,
+  uuid
+} from '../../../../types/Types';
 import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
-import {addToReport, toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
+import {
+  addToReport,
+  showMetersInGraph,
+  toggleIncludingChildren,
+  toggleSingleEntry
+} from '../../../report/reportActions';
 import {clearSelectionTreeSearch, selectionTreeSearch} from '../../../search/searchActions';
 import {OnSearch, Query} from '../../../search/searchModels';
+import {AddAllToReportButton} from '../../components/AddAllToReportButton';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {ItemOptions, renderSelectionTreeCities} from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
@@ -29,11 +47,13 @@ interface StateToProps extends Query {
   openListItems: Set<uuid>;
   parameters: EncodedUriParameters;
   itemOptions: ItemOptions;
+  primaryText: string;
 }
 
 interface DispatchToProps {
   addToReport: OnClickWithId;
   fetchSelectionTree: Fetch;
+  showMetersInGraph: CallbackWithIds;
   toggleExpand: OnClickWithId;
   toggleSingleEntry: OnClickWithId;
   toggleIncludingChildren: OnClick;
@@ -43,6 +63,8 @@ interface DispatchToProps {
 }
 
 type Props = StateToProps & DispatchToProps;
+
+const AddAllToReportButtonWrapper = withContent<Clickable & HasContent>(AddAllToReportButton);
 
 class SelectionTreeComponent extends React.Component<Props> {
 
@@ -60,6 +82,7 @@ class SelectionTreeComponent extends React.Component<Props> {
       addToReport,
       clearSearch,
       isFetching,
+      showMetersInGraph,
       selectionTree,
       toggleExpand,
       openListItems,
@@ -68,10 +91,11 @@ class SelectionTreeComponent extends React.Component<Props> {
       itemOptions,
       centerMapOnMeter,
       selectionTreeSearch,
+      primaryText,
       query,
     } = this.props;
 
-    const renderSelectionOverview = (id: uuid) =>
+    const renderSelectionTree = (id: uuid) =>
       renderSelectionTreeCities({
         addToReport,
         id,
@@ -86,7 +110,7 @@ class SelectionTreeComponent extends React.Component<Props> {
 
     const cityIds: uuid[] = selectionTree.result.cities;
     const nestedItems = cityIds.length
-      ? [...cityIds].sort().map(renderSelectionOverview)
+      ? [...cityIds].sort().map(renderSelectionTree)
       : [
         (
           <LoadingListItem
@@ -97,26 +121,34 @@ class SelectionTreeComponent extends React.Component<Props> {
         )
       ];
 
-    return (
-      <>
+    const addAllToReport = () => showMetersInGraph(getMeterIdsWithLimit(selectionTree.entities.meters));
+    const shouldShowAddAllButton: boolean = !!itemOptions.report && !isFetching && cityIds.length > 0;
+
+    const searchBox = (
+      <Column key={`search-box-${primaryText}`} className="SearchBox-Container">
         <SearchBox
           onChange={selectionTreeSearch}
           onClear={clearSearch}
           value={query}
           className="SearchBox-list SearchBox-tree"
         />
-        <List style={listStyle}>
-          <ListItem
-            className="ListItem"
-            primaryText={translate('selection overview')}
-            initiallyOpen={true}
-            style={sideBarHeaderStyle}
-            hoverColor={sideBarStyle.color}
-            nestedItems={nestedItems}
-            nestedListStyle={nestedListItemStyle}
-          />
-        </List>
-      </>
+        <AddAllToReportButtonWrapper hasContent={shouldShowAddAllButton} onClick={addAllToReport}/>
+      </Column>);
+
+    const selectionTreeItems = [searchBox, ...nestedItems];
+
+    return (
+      <List style={listStyle}>
+        <ListItem
+          className="ListItem"
+          primaryText={primaryText}
+          initiallyOpen={true}
+          style={sideBarHeaderStyle}
+          hoverColor={sideBarStyle.color}
+          nestedItems={selectionTreeItems}
+          nestedListStyle={nestedListItemStyle}
+        />
+      </List>
     );
   }
 }
@@ -140,12 +172,14 @@ const mapStateToProps =
         report: isReportPage(routing),
       },
       query,
+      primaryText: userSelection.name,
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   centerMapOnMeter,
   clearSearch: clearSelectionTreeSearch,
   addToReport,
+  showMetersInGraph,
   fetchSelectionTree,
   selectionTreeSearch,
   toggleExpand: selectionTreeToggleId,

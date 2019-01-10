@@ -10,4 +10,10 @@
       text-decoration: underline;
     }
   }
+
+  &.blue {
+    .Normal {
+      color: $blue;
+    }
+  }
 }

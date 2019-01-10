@@ -21,16 +21,15 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {
   SelectedTreeEntities,
-  SelectionTreeEntities
+  SelectionTreeEntities,
+  SelectionTreeMeter
 } from '../../../state/selection-tree/selectionTreeModels';
-import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
+import {getMedia, getMeterIdsWithLimit} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
-import {
-  fetchMeasurements,
-  MeasurementOptions
-} from '../../../state/ui/graph/measurement/measurementActions';
+import {fetchMeasurements, MeasurementOptions} from '../../../state/ui/graph/measurement/measurementActions';
 import {
   initialState,
   Measurements,
@@ -43,15 +42,13 @@ import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {SelectedParameters} from '../../../state/user-selection/userSelectionModels';
-import {CallbackWith} from '../../../types/Types';
+import {CallbackWith, CallbackWithIds} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
 import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
-import {
-  ReportIndicatorWidgets,
-  SelectedIndicatorWidgetProps
-} from '../components/indicators/ReportIndicatorWidgets';
+import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
 import {MeasurementList} from '../components/MeasurementList';
+import {showMetersInGraph} from '../reportActions';
 import {GraphContents, hardcodedIndicators, ReportState} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 import {LegendContainer} from './LegendContainer';
@@ -70,6 +67,7 @@ interface StateToProps extends SelectedIds {
 interface DispatchToProps {
   logout: OnLogout;
   changeTab: CallbackWith<TabName>;
+  showMetersInGraph: CallbackWithIds;
   toggleReportIndicatorWidget: OnSelectIndicator;
 }
 
@@ -96,7 +94,11 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
 
   async componentWillReceiveProps(nextProps: Props) {
     const requestParameters = this.makeRequestParameters(nextProps);
+    const {showMetersInGraph, selectionTreeEntities: {meters}} = nextProps;
     if (!shallowEqual(requestParameters, this.makeRequestParameters(this.props))) {
+      if (this.canShowMetersInGraph(nextProps, meters)) {
+        showMetersInGraph(getMeterIdsWithLimit(meters));
+      }
       this.setState({isFetching: true});
       await fetchMeasurements(requestParameters);
     }
@@ -186,6 +188,12 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
       updateState: this.updateState,
       selectionParameters,
     })
+
+  private canShowMetersInGraph({selectionTreeEntities}: Props, meters: ObjectsById<SelectionTreeMeter>): boolean {
+    return selectionTreeEntities !== this.props.selectionTreeEntities
+           && meters
+           && Object.keys(meters).length > 0;
+  }
 }
 
 const mapStateToProps =
@@ -217,6 +225,7 @@ const mapStateToProps =
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabReport,
+  showMetersInGraph,
   logout,
   toggleReportIndicatorWidget,
 }, dispatch);
