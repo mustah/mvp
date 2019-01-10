@@ -134,7 +134,7 @@ msgstr "inga mätvärden förväntades under den valda perioden"
 msgid "{{pending}} of {{count}}"
 msgstr "{{pending}} av {{count}}"
 
-msgid "measurement"
+msgid "measurement missing"
 msgstr "mätvärde saknas"
 
 msgid "no meters"
@@ -509,7 +509,7 @@ msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} av {{count}}"
 
 msgctxt "°plural"
-msgid "measurement°"
+msgid "measurement missing°"
 msgstr "mätvärden saknas"
 
 msgctxt "°plural"

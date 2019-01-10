@@ -134,7 +134,7 @@ msgstr "no measurements expected for the selected period"
 msgid "{{pending}} of {{count}}"
 msgstr "{{pending}} of {{count}}"
 
-msgid "measurement"
+msgid "measurement missing"
 msgstr "measurement missing"
 
 msgid "no meters"
@@ -509,7 +509,7 @@ msgid "{{pending}} of {{count}}°"
 msgstr "{{pending}} of {{count}}"
 
 msgctxt "°plural"
-msgid "measurement°"
+msgid "measurement missing°"
 msgstr "measurements missing"
 
 msgctxt "°plural"
