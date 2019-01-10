@@ -493,25 +493,52 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
-  public void unknownStatusType_ShouldThrowException() {
+  public void unknownStatusType_ShouldBeLoggedAndProcessed() {
     MeteringReferenceInfoMessageDto message = messageBuilder()
       .meterStatus("unknown")
       .build();
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(physicalMeters.findAll()).hasSize(1);
   }
 
   @Test
-  public void notMappedStatusType_ShouldThrowException() {
+  public void notMappedStatusType_ShouldBeLoggedAndProcessed() {
     MeteringReferenceInfoMessageDto message = messageBuilder()
       .meterStatus("tryBye")
       .build();
 
     messageHandler.accept(message);
 
-    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).isEmpty();
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters())).hasSize(1);
+    assertThat(physicalMeters.findAll()).hasSize(1);
+  }
+
+  @Test
+  public void messageWithoutFacilityOnly() {
+    String externalId = "externalId";
+    MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
+      new MeterDto(null, null, null, null, null, 0, 0),
+      new FacilityDto(
+        externalId,
+        "locationCountry",
+        "locationCity",
+        "locationAddress"
+      ),
+      "Test source system",
+      "organisationExternalId",
+      new GatewayStatusDto(null, null, null),
+      "jobId"
+    );
+
+    messageHandler.accept(message);
+
+    assertThat(logicalMeters.findAllWithDetails(new MockRequestParameters()))
+      .hasSize(1)
+      .extracting(l -> l.externalId).containsExactly(externalId);
+    assertThat(physicalMeters.findAll()).hasSize(0);
   }
 
   @Test

@@ -65,8 +65,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
     MeterDto meterDto = message.meter;
     if (meterDto != null && !StatusType.from(meterDto.status).isNotUnknown()) {
-      log.warn("Discarding message with invalid status type: '{}'", message);
-      return;
+      log.warn("Received message with invalid status type: '{}'", message);
     }
 
     Organisation organisation = organisationUseCases.findOrCreate(message.organisationId);
