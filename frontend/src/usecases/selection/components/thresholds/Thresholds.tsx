@@ -3,13 +3,14 @@ import * as React from 'react';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
-import {firstUpperTranslated} from '../../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {
   getDisplayModeText,
   Quantity,
   quantityAttributes
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
+  duringDays,
   OnChangeThreshold,
   RelationalOperator,
   ThresholdQuery
@@ -42,6 +43,10 @@ const makeMenuItem = (text) => (
   <MenuItem key={text} primaryText={text} value={text}/>
 );
 
+const makeMenuItemWithValue = (text, value) => (
+  <MenuItem key={text} primaryText={text} value={value}/>
+);
+
 const operatorMenuItems = Object.keys(RelationalOperator)
   .map((key) => RelationalOperator[key])
   .map(makeMenuItem);
@@ -50,6 +55,8 @@ const quantityMenuItems = Object.keys(Quantity)
   .sort((a, b) => a.localeCompare(b))
   .map((key) => Quantity[key])
   .map(makeMenuItem);
+
+const duringDaysMenuItems = [makeMenuItemWithValue('N/A', null)].concat(duringDays.map(makeMenuItem));
 
 interface ThresholdProps {
   query?: ThresholdQuery;
@@ -80,8 +87,8 @@ const emptyQuery: RenderableThresholdQuery = {
 
 export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => {
   const [currentQuery, setQuery] = useChangeQuery(query, onChange);
-  const {quantity, relationalOperator, value, unit} = currentQuery;
-
+  const {quantity, relationalOperator, value, unit, duration} = currentQuery;
+  const durationOrNull = !duration ? null : duration;
   const onChangeQuantity = (event, index, newValue: string) => setQuery({
     ...currentQuery,
     quantity: newValue as Quantity,
@@ -94,6 +101,7 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
   });
 
   const onChangeValue = (event, value: string) => setQuery({...currentQuery, value});
+  const onChangeDuration = (event, index, duration: string) => setQuery({...currentQuery, duration});
 
   return (
     <Row className={className}>
@@ -122,6 +130,17 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
           hintText={firstUpperTranslated(getDisplayModeText(quantity))}
         />
         <Medium className="Unit">{unit}</Medium>
+      </RowMiddle>
+      <RowMiddle>
+        <Medium className="During">{translate('during')}</Medium>
+        <DropDownMenu
+          onChange={onChangeDuration}
+          value={durationOrNull}
+          style={dropDownStyle}
+        >
+          {duringDaysMenuItems}
+        </DropDownMenu>
+        <Medium className="Days">{translate('days')}</Medium>
       </RowMiddle>
     </Row>
   );

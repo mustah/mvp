@@ -486,6 +486,12 @@ msgstr "secondary address"
 msgid "thresholds"
 msgstr "thresholds"
 
+msgid "during"
+msgstr "during"
+
+msgid "days"
+msgstr "days"
+
 msgid "delete user selection"
 msgstr "delete selection"
 

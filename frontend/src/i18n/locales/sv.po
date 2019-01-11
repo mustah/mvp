@@ -486,6 +486,12 @@ msgstr "sekundäradress"
 msgid "thresholds"
 msgstr "gränsvärden"
 
+msgid "during"
+msgstr "under"
+
+msgid "days"
+msgstr "dagar"
+
 msgid "delete user selection"
 msgstr "ta bort urval"
 

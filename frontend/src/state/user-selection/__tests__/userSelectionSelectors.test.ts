@@ -196,6 +196,67 @@ describe('userSelectionSelectors', () => {
 
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
+
+    it('includes a threshold for duration query', () => {
+      const threshold: ThresholdQuery = {
+        relationalOperator: '>=' as RelationalOperator,
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: '3',
+        duration: '3'
+      };
+
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
+
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters({
+        ...initialUriLookupState,
+        userSelection: state.userSelection,
+        start,
+      });
+
+      const url: URL = urlFromParameters(parameters);
+
+      expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW for 3 days');
+    });
+    it('does not include a duration in threshold query', () => {
+      const threshold: ThresholdQuery = {
+        relationalOperator: '>=' as RelationalOperator,
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: '3',
+        duration: null
+      };
+
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
+
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters({
+        ...initialUriLookupState,
+        userSelection: state.userSelection,
+        start,
+      });
+
+      const url: URL = urlFromParameters(parameters);
+
+      expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
+    });
   });
 
   describe('getPaginatedGatewayParameters', () => {

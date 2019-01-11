@@ -133,8 +133,11 @@ type SelectedParametersById = Omit<SelectedParameters, 'dateRange' | 'threshold'
 export type EntityApiParametersFactory =
   (selectionParameters: SelectedParametersById) => EncodedUriParameters[];
 
-const thresholdAsString = (threshold: ThresholdQuery): string =>
-  `${threshold.quantity} ${threshold.relationalOperator} ${threshold.value} ${threshold.unit}`;
+const thresholdAsString = (threshold: ThresholdQuery): string => {
+  return `${threshold.quantity} ${threshold.relationalOperator} ${threshold.value} ${threshold.unit}${
+    threshold.duration ? ' for ' + threshold.duration + ' days' : ''
+    }`;
+};
 
 export const toThresholdParameter = (threshold: ThresholdQuery | undefined): EncodedUriParameters[] =>
   isValidThreshold(threshold)
