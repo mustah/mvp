@@ -47,8 +47,10 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
 
     int i = 0;
     for (Param<?> param : query.getParams().values()) {
-      result.setParameter(i + 1, convertToDatabaseType(param));
-      i++;
+      if (!param.isInline()) {
+        result.setParameter(i + 1, convertToDatabaseType(param));
+        i++;
+      }
     }
 
     return result.getResultList();
