@@ -67,6 +67,13 @@ public class UserRepository implements Users {
   }
 
   @Override
+  public User updateWithNewPassword(User user) {
+    return toDomainModel(
+      userJpaRepository.save(toEntity(user.withPassword(passwordEncoder.encode(user.password))))
+    );
+  }
+
+  @Override
   public User update(User user) {
     return toDomainModel(userJpaRepository.save(toEntity(user)));
   }

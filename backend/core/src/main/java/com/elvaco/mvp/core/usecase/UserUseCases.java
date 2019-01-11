@@ -71,6 +71,13 @@ public class UserUseCases {
     }
   }
 
+  public Optional<User> changePassword(User user) {
+    if (organisationPermissions.isAllowed(currentUser, user, UPDATE)) {
+      return Optional.of(removeTokenForUser(users.updateWithNewPassword(user)));
+    }
+    return Optional.empty();
+  }
+
   private User removeTokenForUser(User user) {
     if (!currentUser.hasSameUsernameAs(user)) {
       tokenService.removeTokenByUsername(user.getUsername());

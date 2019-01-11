@@ -53,10 +53,16 @@ public class UserController {
   }
 
   @PutMapping
-  public UserDto updateUser(@RequestBody UserDto user) {
-    return userUseCases.update(toDomainModel(user))
-      .map(UserDtoMapper::toDto)
-      .orElseThrow(() -> UserNotFound.withId(user.id));
+  public UserDto updateUser(@RequestBody UserWithPasswordDto user) {
+    if (user.password == null || user.password.trim().isEmpty()) {
+      return userUseCases.update(toDomainModel(user))
+        .map(UserDtoMapper::toDto)
+        .orElseThrow(() -> UserNotFound.withId(user.id));
+    } else {
+      return userUseCases.changePassword(toDomainModel(user))
+        .map(UserDtoMapper::toDto)
+        .orElseThrow(() -> UserNotFound.withId(user.id));
+    }
   }
 
   @DeleteMapping("{id}")

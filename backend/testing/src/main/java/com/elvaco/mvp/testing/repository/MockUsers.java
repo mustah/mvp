@@ -72,6 +72,11 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   }
 
   @Override
+  public User updateWithNewPassword(User user) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public void deleteById(UUID id) {
     deleteMockById(id);
   }

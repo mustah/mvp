@@ -21,6 +21,8 @@ public interface Users {
 
   User update(User user);
 
+  User updateWithNewPassword(User user);
+
   void deleteById(UUID id);
 
   List<User> findByRole(Role role);
