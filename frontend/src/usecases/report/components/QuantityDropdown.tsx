@@ -1,6 +1,6 @@
 import {MenuItem} from 'material-ui';
 import * as React from 'react';
-import {listItemStyle} from '../../../app/themes';
+import {menuItemStyle} from '../../../app/themes';
 import {
   MultiSelectDropdownMenu,
   MultiSelectDropdownMenuProps
@@ -16,7 +16,7 @@ interface QuantitySelectorProps {
   onSelectQuantities: (quantities: Quantity[]) => void;
 }
 
-const quantityMenuItemStyle: React.CSSProperties = {...listItemStyle, overflow: 'hidden'};
+const quantityMenuItemStyle: React.CSSProperties = {...menuItemStyle, overflow: 'hidden'};
 
 const MultiSelectDropdownMenuWrapper =
   withContent<MultiSelectDropdownMenuProps & HasContent>(MultiSelectDropdownMenu);

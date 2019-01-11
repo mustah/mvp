@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
-import {Period} from '../../../../../components/dates/dateModels';
+import {Period, TemporalResolution} from '../../../../../components/dates/dateModels';
 import {idGenerator} from '../../../../../helpers/idGenerator';
+import {RequestParameter} from '../../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
 import {toIdNamed, uuid} from '../../../../../types/Types';
@@ -10,8 +11,8 @@ import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {SelectionTreeCity, SelectionTreeMeter} from '../../../../selection-tree/selectionTreeModels';
 import {RelationalOperator} from '../../../../user-selection/userSelectionModels';
 import {mapApiResponseToGraphData} from '../helpers/apiResponseToGraphContents';
-import {fetchMeasurements, MeasurementOptions} from '../measurementActions';
-import {initialState, MeasurementApiResponse, Medium, Quantity, MeasurementState} from '../measurementModels';
+import {fetchMeasurements, MeasurementParameters} from '../measurementActions';
+import {initialState, MeasurementApiResponse, MeasurementState, Medium, Quantity} from '../measurementModels';
 
 describe('measurementActions', () => {
 
@@ -26,7 +27,7 @@ describe('measurementActions', () => {
 
     const mockHost: string = 'https://blabla.com';
     let state: MeasurementState;
-    let defaultParameters: MeasurementOptions;
+    let defaultParameters: MeasurementParameters;
     const updateState = (updatedState: MeasurementState) => state = {...updatedState};
     const logout = (error?: Unauthorized) => 'logged out or error';
 
@@ -63,6 +64,7 @@ describe('measurementActions', () => {
         selectedIndicators: [],
         quantities: [],
         selectedListItems: [],
+        resolution: TemporalResolution.day,
         updateState,
         logout,
         selectionParameters: {
@@ -312,12 +314,14 @@ describe('measurementActions', () => {
         expect(meter.searchParams.get('logicalMeterId')).toEqual(mockedMeter.id);
         expect(meter.searchParams.get('before')).toBeTruthy();
         expect(meter.searchParams.get('after')).toBeTruthy();
+        expect(meter.searchParams.get(RequestParameter.resolution)).toEqual(TemporalResolution.day);
 
         expect(city.pathname).toEqual('/measurements/average');
         expect(city.searchParams.get('quantity')).toEqual(Quantity.power);
         expect(city.searchParams.get('city')).toEqual(mockedCity.id);
         expect(city.searchParams.get('before')).toBeTruthy();
         expect(city.searchParams.get('after')).toBeTruthy();
+        expect(city.searchParams.get(RequestParameter.resolution)).toEqual(TemporalResolution.day);
       });
 
       it('current selection affects the *average* request URL', async () => {
@@ -367,6 +371,7 @@ describe('measurementActions', () => {
         expect(city.searchParams.get('after')).toBeTruthy();
         expect(city.searchParams.get('medium')).toEqual('Gas');
         expect(city.searchParams.get('threshold')).toEqual('Power >= 7 W');
+        expect(city.searchParams.get(RequestParameter.resolution)).toEqual(TemporalResolution.day);
       });
 
     });

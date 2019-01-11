@@ -1,58 +1,58 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
-import {colors, dropdownListStyle, fontSize, listItemStyle} from '../../app/themes';
+import {colors, fontSize, menuItemStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
-import {Children, OnClick, WithChildren} from '../../types/Types';
+import {Children, OnClick, Styled, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
 import './DropdownMenu.scss';
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
 const height = 32;
 
-const style: React.CSSProperties = {
-  height,
-  width: 210,
-  fontSize: fontSize.normal,
-  border: `2px solid ${colors.borderColor}`,
-  borderRadius: 4,
-  marginLeft: 24,
-  marginBottom: 16,
-  borderWidth: 1,
+const menu: {[name: string]: React.CSSProperties} = {
+  iconStyle: {
+    fill: colors.lightBlack,
+    height,
+    width: 36,
+    right: 0,
+    top: 0,
+    padding: 0,
+  },
+  labelStyle: {
+    height,
+    lineHeight: 1,
+    paddingRight: 0,
+    paddingLeft: 8,
+    fontSize: 14,
+    display: 'flex',
+    alignItems: 'center',
+    width: 210,
+  },
+  style: {
+    height,
+    width: 210,
+    fontSize: fontSize.normal,
+    border: `2px solid ${colors.borderColor}`,
+    borderRadius: 4,
+    marginLeft: 24,
+    marginBottom: 16,
+    borderWidth: 1,
+  },
+  selectedMenuItemStyle: {color: colors.blue},
+  underlineStyle: {border: 'none'},
 };
 
-const underlineStyle: React.CSSProperties = {
-  border: 'none',
-};
-
-const labelStyle: React.CSSProperties = {
-  height,
-  lineHeight: 1,
-  paddingRight: 0,
-  paddingLeft: 8,
-  fontSize: 14,
-  display: 'flex',
-  alignItems: 'center',
-  width: 210,
-};
-
-const iconStyle: React.CSSProperties = {
-  fill: colors.lightBlack,
-  height,
-  width: 36,
-  right: 0,
-  top: 0,
-  padding: 0,
-};
-
-const selectedMenuItemStyle: React.CSSProperties = {color: colors.blue};
-
-export interface DropdownMenuProps extends WithChildren {
+export interface DropdownMenuProps extends WithChildren, Styled {
   disabled?: boolean;
+  labelStyle?: React.CSSProperties;
+  listStyle?: React.CSSProperties;
   menuItems: MenuItemProps[];
   value?: Period | string;
+  IconButton?: React.ComponentType<SvgIconProps>;
 }
 
 export interface MenuItemProps {
@@ -63,7 +63,15 @@ export interface MenuItemProps {
   value: Period | string;
 }
 
-export const DropdownMenu = ({children, menuItems, value}: DropdownMenuProps) => {
+export const DropdownMenu = ({
+  children,
+  IconButton = IconCalendar,
+  labelStyle,
+  listStyle,
+  menuItems,
+  value,
+  style
+}: DropdownMenuProps) => {
 
   const renderedMenuItems = menuItems.map(({primaryText, label, value, onClick}: MenuItemProps) => (
     <MenuItem
@@ -71,24 +79,27 @@ export const DropdownMenu = ({children, menuItems, value}: DropdownMenuProps) =>
       key={primaryText}
       label={label}
       primaryText={primaryText}
-      style={listItemStyle}
+      style={menuItemStyle}
       value={value}
       onClick={onClick}
     />
   ));
 
+  const menuStyle = {...menu.style, ...style};
+  const menuLabelStyle = {...menu.labelStyle, ...labelStyle};
+
   return (
     <Row className="DropdownMenu">
       <DropDownMenu
         className="DropdownMenu-dropdown"
-        iconButton={<IconCalendar className="IconCalendar"/>}
-        iconStyle={iconStyle}
+        iconButton={<IconButton className="IconButton"/>}
+        iconStyle={menu.iconStyle}
         maxHeight={300}
-        labelStyle={labelStyle}
-        listStyle={dropdownListStyle}
-        selectedMenuItemStyle={selectedMenuItemStyle}
-        style={style}
-        underlineStyle={underlineStyle}
+        labelStyle={menuLabelStyle}
+        listStyle={listStyle}
+        selectedMenuItemStyle={menu.selectedMenuItemStyle}
+        style={menuStyle}
+        underlineStyle={menu.underlineStyle}
         value={value}
       >
         {renderedMenuItems}
@@ -99,13 +110,13 @@ export const DropdownMenu = ({children, menuItems, value}: DropdownMenuProps) =>
 };
 
 const multiSelectLabelStyle: React.CSSProperties = {
-  ...labelStyle,
+  ...menu.labelStyle,
   height: 38,
   width: 168,
 };
 
 const multiSelectStyle: React.CSSProperties = {
-  ...style,
+  ...menu.style,
   marginLeft: 0,
   marginBottom: 0,
   borderColor: colors.borderColor,
@@ -127,14 +138,14 @@ export const MultiSelectDropdownMenu =
         className="DropdownMenu-dropdown"
         hintStyle={hintStyle}
         hintText={firstUpperTranslated('select quantities')}
-        iconStyle={iconStyle}
+        iconStyle={menu.iconStyle}
         labelStyle={multiSelectLabelStyle}
         multiple={true}
         onChange={changeQuantities}
-        selectedMenuItemStyle={selectedMenuItemStyle}
+        selectedMenuItemStyle={menu.selectedMenuItemStyle}
         style={multiSelectStyle}
         value={selectedQuantities}
-        underlineStyle={underlineStyle}
+        underlineStyle={menu.underlineStyle}
       >
         {children}
       </SelectField>

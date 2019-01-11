@@ -1,5 +1,6 @@
 import {Moment} from 'moment-timezone';
 import * as React from 'react';
+import {dropdownListStyle} from '../../app/themes';
 import {momentFrom, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
@@ -76,7 +77,7 @@ export class PeriodSelection extends React.Component<Props, State> {
     })).orElse({start: null, end: null});
 
     return (
-      <DropdownMenu menuItems={timePeriods} value={period}>
+      <DropdownMenu listStyle={dropdownListStyle} menuItems={timePeriods} value={period}>
         <PeriodConfirmDialog
           isOpen={this.state.periodSelectorOpen}
           confirm={this.confirmCustomPeriod}

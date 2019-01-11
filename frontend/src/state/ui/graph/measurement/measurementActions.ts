@@ -1,5 +1,5 @@
 import {flatMap, map} from 'lodash';
-import {Period} from '../../../../components/dates/dateModels';
+import {Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
 import {newDateRange} from '../../../../helpers/dateHelpers';
@@ -31,32 +31,36 @@ import {
   MeasurementApiResponse,
   MeasurementResponsePart,
   MeasurementResponses,
+  MeasurementState,
   Medium,
   MeterMeasurementsState,
-  Quantity,
-  MeasurementState
+  Quantity
 } from './measurementModels';
 import {measurementDataFormatter} from './measurementSchema';
 
 const measurementMeterUri = (
   quantity: Quantity,
+  resolution: TemporalResolution,
   meters: uuid[],
   {dateRange}: SelectedParameters,
 ): EncodedUriParameters =>
   encodeRequestParameters({
     ...requestParametersFrom({dateRange}),
     quantity,
+    resolution,
     logicalMeterId: meters.map((id: uuid): string => id.toString()),
   });
 
 const measurementCityUri = (
   quantity: Quantity,
+  resolution: TemporalResolution,
   city: uuid,
   selectedParameters: SelectedParameters,
 ): EncodedUriParameters =>
   encodeRequestParameters({
     ...requestParametersFrom(selectedParameters),
     quantity,
+    resolution,
     city: city.toString(),
     label: cityWithoutCountry(city.toString()),
   });
@@ -84,9 +88,10 @@ interface GroupedRequests {
 
 const requestsPerQuantity = (
   quantities: Quantity[],
+  resolution: TemporalResolution,
   selectionTreeEntities: SelectionTreeEntities,
   selectedListItems: uuid[],
-  selectionParameters: SelectedParameters,
+  selectionParameters: SelectedParameters
 ): GroupedRequests => {
   const meterByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
   quantities.forEach((quantity: Quantity) => {
@@ -133,7 +138,7 @@ const requestsPerQuantity = (
         ...Array.from(quantitiesByCity[city]).map((quantity: Quantity) =>
           restClient.getParallel(makeUrl(
             EndPoints.measurements.concat('/average'),
-            measurementCityUri(quantity, city, selectionParameters),
+            measurementCityUri(quantity, resolution, city, selectionParameters),
           ))
         )
       ],
@@ -145,7 +150,7 @@ const requestsPerQuantity = (
     .map((quantity: Quantity) =>
       restClient.getParallel(makeUrl(
         EndPoints.measurements,
-        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), selectionParameters),
+        measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
       )));
 
   requests.average = Object.keys(meterByQuantity)
@@ -153,7 +158,7 @@ const requestsPerQuantity = (
     .map((quantity: Quantity) =>
       restClient.getParallel(makeUrl(
         EndPoints.measurements.concat('/average'),
-        measurementMeterUri(quantity, Array.from(meterByQuantity[quantity]!), selectionParameters),
+        measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
       )));
 
   return requests;
@@ -164,18 +169,20 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
   values: averageEntity.values.filter(({value}) => value !== undefined),
 });
 
-export interface MeasurementOptions {
+export interface MeasurementParameters {
+  logout: OnLogout;
+  quantities: Quantity[];
+  resolution: TemporalResolution;
   selectionTreeEntities: SelectionTreeEntities;
   selectedIndicators: Medium[];
-  quantities: Quantity[];
   selectedListItems: uuid[];
-  updateState: OnUpdateGraph;
-  logout: OnLogout;
   selectionParameters: SelectedParameters;
+  updateState: OnUpdateGraph;
 }
 
 export const fetchMeasurements =
   async ({
+    resolution,
     selectionTreeEntities,
     selectedIndicators,
     quantities,
@@ -183,12 +190,13 @@ export const fetchMeasurements =
     updateState,
     logout,
     selectionParameters,
-  }: MeasurementOptions): Promise<void> => {
+  }: MeasurementParameters): Promise<void> => {
     const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
       quantities,
+      resolution,
       selectionTreeEntities,
       selectedListItems,
-      selectionParameters,
+      selectionParameters
     );
 
     if (

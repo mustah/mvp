@@ -5,9 +5,12 @@ import {shallowEqual} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
+import {TemporalResolution} from '../../../components/dates/dateModels';
+import {ResolutionProps, ResolutionSelection} from '../../../components/dates/ResolutionSelection';
+import {withContent} from '../../../components/hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
-import {Row} from '../../../components/layouts/row/Row';
+import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
@@ -29,7 +32,7 @@ import {
 } from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia, getMeterIdsWithLimit} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
-import {fetchMeasurements, MeasurementOptions} from '../../../state/ui/graph/measurement/measurementActions';
+import {fetchMeasurements, MeasurementParameters} from '../../../state/ui/graph/measurement/measurementActions';
 import {
   initialState,
   Measurements,
@@ -41,15 +44,15 @@ import {selectQuantities, toggleReportIndicatorWidget} from '../../../state/ui/i
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {SelectedParameters} from '../../../state/user-selection/userSelectionModels';
-import {CallbackWith, CallbackWithIds} from '../../../types/Types';
+import {OnSelectResolution, SelectedParameters} from '../../../state/user-selection/userSelectionModels';
+import {CallbackWith, CallbackWithIds, HasContent} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
 import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
 import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
 import {MeasurementList} from '../components/MeasurementList';
 import {QuantityDropdown} from '../components/QuantityDropdown';
-import {showMetersInGraph} from '../reportActions';
+import {selectResolution, showMetersInGraph} from '../reportActions';
 import {GraphContents, hardcodedIndicators, ReportState} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 import {LegendContainer} from './LegendContainer';
@@ -59,6 +62,7 @@ type SelectedIds = ReportState;
 
 interface StateToProps extends SelectedIds {
   enabledIndicatorTypes: Set<Medium>;
+  resolution: TemporalResolution;
   selectedIndicators: Medium[];
   selectedQuantities: Quantity[];
   selectionTreeEntities: SelectionTreeEntities;
@@ -72,13 +76,16 @@ interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
   showMetersInGraph: CallbackWithIds;
   toggleReportIndicatorWidget: OnSelectIndicator;
+  selectResolution: OnSelectResolution;
 }
 
 type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
-const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16};
+const ResolutionDropdown = withContent<ResolutionProps & HasContent>(ResolutionSelection);
+
+const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16, paddingTop: 0};
 
 class ReportComponent extends React.Component<Props, MeasurementState> {
 
@@ -111,16 +118,21 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
     const {
       enabledIndicatorTypes,
       hiddenLines,
+      resolution,
       selectedTab,
       selectedIndicatorTypes,
       selectedIndicators,
       selectedQuantities,
       selectQuantities,
+      selectResolution,
       toggleReportIndicatorWidget,
     } = this.props;
     const {isFetching, error, measurementResponse} = this.state;
 
     const graphContents: GraphContents = mapApiResponseToGraphData(measurementResponse);
+
+    const canShowResolutionDropdown = selectedIndicators.length > 0;
+
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -138,21 +150,28 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
             onClick={toggleReportIndicatorWidget}
             enabledIndicatorTypes={enabledIndicatorTypes}
           />
-          <QuantityDropdown
-            selectedIndicators={selectedIndicators}
-            selectedQuantities={selectedQuantities}
-            onSelectQuantities={selectQuantities}
-          />
         </Row>
 
         <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
           <Paper style={contentStyle}>
-            <Tabs>
+            <Tabs className="ReportTabs">
               <TabTopBar>
                 <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
                   <Tab tab={TabName.graph} title={translate('graph')}/>
                   <Tab tab={TabName.list} title={translate('table')}/>
                 </TabHeaders>
+                <RowRight className="ReportTabs-DropdownMenus">
+                  <ResolutionDropdown
+                    resolution={resolution}
+                    selectResolution={selectResolution}
+                    hasContent={canShowResolutionDropdown}
+                  />
+                  <QuantityDropdown
+                    selectedIndicators={selectedIndicators}
+                    selectedQuantities={selectedQuantities}
+                    onSelectQuantities={selectQuantities}
+                  />
+                </RowRight>
               </TabTopBar>
               <TabContent tab={TabName.graph} selectedTab={selectedTab}>
                 <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenLines}/>
@@ -185,16 +204,18 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
   }
 
   makeRequestParameters = ({
+    resolution,
     selectionTreeEntities,
     selectedIndicators,
     selectedListItems,
     selectedQuantities,
     logout,
     selectionParameters,
-  }: Props): MeasurementOptions =>
+  }: Props): MeasurementParameters =>
     ({
       quantities: selectedQuantities,
       logout,
+      resolution,
       selectedListItems,
       selectedIndicators,
       selectionTreeEntities,
@@ -211,7 +232,7 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
 
 const mapStateToProps =
   ({
-    report: {hiddenLines, selectedListItems},
+    report: {hiddenLines, resolution, selectedListItems},
     selectionTree: {entities},
     userSelection: {userSelection: {selectionParameters}},
     ui: {
@@ -226,6 +247,7 @@ const mapStateToProps =
     return ({
       enabledIndicatorTypes: getMedia(selectedTreeState),
       hiddenLines,
+      resolution,
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
@@ -240,6 +262,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabReport,
   logout,
   selectQuantities,
+  selectResolution,
   showMetersInGraph,
   toggleReportIndicatorWidget,
 }, dispatch);

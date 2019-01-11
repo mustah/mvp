@@ -1,10 +1,8 @@
 @import "../../app/variables";
 
 .DropdownMenu {
-  align-items: flex-end;
-
   &:hover {
-    .IconCalendar {
+    .IconButton {
       fill: $blue !important;
     }
   }

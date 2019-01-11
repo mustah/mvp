@@ -14,6 +14,15 @@ msgstr ""
 msgid "admin"
 msgstr "admin"
 
+msgid "day"
+msgstr "day"
+
+msgid "hour"
+msgstr "hour"
+
+msgid "month"
+msgstr "month"
+
 msgid "metering"
 msgstr "metering"
 

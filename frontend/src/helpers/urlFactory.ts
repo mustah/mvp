@@ -43,6 +43,7 @@ export enum RequestParameter {
   quantity = 'quantity',
   secondaryAddress = 'secondaryAddress',
   threshold = 'threshold',
+  resolution = 'resolution',
 }
 
 const requestParametersBySelectionParameters: ParameterNames = {

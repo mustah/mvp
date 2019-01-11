@@ -1,5 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {TemporalResolution} from '../../../components/dates/dateModels';
 import {idGenerator} from '../../../helpers/idGenerator';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
@@ -30,6 +31,7 @@ describe('reportActions', () => {
       report: {
         selectedListItems: [22, 'sweden,höganäs,hasselgatan 4'],
         hiddenLines: [],
+        resolution: TemporalResolution.day,
       },
       selectionTree: {
         isFetching: false,
@@ -142,6 +144,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems: [44],
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
         });
 
@@ -162,6 +165,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems: [],
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
         });
 
@@ -182,6 +186,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems: [44],
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
         });
 
@@ -202,6 +207,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems: [44, 33],
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
         });
 
@@ -223,6 +229,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems,
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
           ui: selectedUiQuantitiesFrom([Quantity.flow])
         });
@@ -247,6 +254,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems: [44, 33],
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
         });
 
@@ -267,6 +275,7 @@ describe('reportActions', () => {
           report: {
             selectedListItems: [],
             hiddenLines: [],
+            resolution: TemporalResolution.day,
           },
         });
 
@@ -341,6 +350,7 @@ describe('reportActions', () => {
         report: {
           selectedListItems: [],
           hiddenLines: [],
+          resolution: TemporalResolution.day,
         },
       });
 

@@ -1,3 +1,4 @@
+import {TemporalResolution} from '../../components/dates/dateModels';
 import {toggle} from '../../helpers/collections';
 import {isDefined} from '../../helpers/commonUtils';
 import {GetState} from '../../reducers/rootReducer';
@@ -16,11 +17,15 @@ import {showFailMessage} from '../../state/ui/message/messageActions';
 import {Dispatcher, OnPayloadAction, payloadActionOf, uuid} from '../../types/Types';
 import {SelectedReportEntriesPayload} from './reportModels';
 
+export const SELECT_RESOLUTION = 'SELECT_RESOLUTION';
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 export const TOGGLE_LINE = 'TOGGLE_LINE';
 
 export const setSelectedEntries: OnPayloadAction<SelectedReportEntriesPayload> =
   payloadActionOf<SelectedReportEntriesPayload>(SET_SELECTED_ENTRIES);
+
+export const selectResolution: OnPayloadAction<TemporalResolution> =
+  payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
 
 export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
 

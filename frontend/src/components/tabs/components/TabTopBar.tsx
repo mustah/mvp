@@ -7,8 +7,8 @@ export interface TabTopBarProps {
   children: ItemOrArray<React.ReactElement<TabHeadersProps>>;
 }
 
-export const TabTopBar = (props: TabTopBarProps) => (
+export const TabTopBar = ({children}: TabTopBarProps) => (
   <Row className="TabList">
-    {props.children}
+    {children}
   </Row>
 );

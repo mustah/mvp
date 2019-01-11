@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
   dividerStyle,
-  listItemStyle,
+  menuItemStyle,
   listItemStyleSelected,
   listStyle,
   nestedListItemStyle,
@@ -65,7 +65,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
       const style: React.CSSProperties = item.id === selection.id
         ? listItemStyleSelected
-        : listItemStyle;
+        : menuItemStyle;
 
       return (
         <ListItem
