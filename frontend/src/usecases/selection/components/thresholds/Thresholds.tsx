@@ -1,5 +1,6 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
+import {selectedStyle} from '../../../../app/themes';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
@@ -10,7 +11,6 @@ import {
   quantityAttributes
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
-  duringDays,
   OnChangeThreshold,
   RelationalOperator,
   ThresholdQuery
@@ -30,22 +30,18 @@ const quantityDropDownStyle: React.CSSProperties = {
 
 const operatorDropDownStyle: React.CSSProperties = {
   ...dropDownStyle,
-  width: 124
+  width: 100,
 };
 
-const textFieldStyle: React.CSSProperties = {
+const valueFieldStyle: React.CSSProperties = {
   width: 114,
   marginBottom: 0,
   marginTop: 8,
 };
 
-const makeMenuItem = (text) => (
-  <MenuItem key={text} primaryText={text} value={text}/>
-);
+const makeMenuItem = (text) => makeMenuItemWithValue(text, text);
 
-const makeMenuItemWithValue = (text, value) => (
-  <MenuItem key={text} primaryText={text} value={value}/>
-);
+const makeMenuItemWithValue = (text, value) => <MenuItem key={text} primaryText={text} value={value}/>;
 
 const operatorMenuItems = Object.keys(RelationalOperator)
   .map((key) => RelationalOperator[key])
@@ -55,8 +51,6 @@ const quantityMenuItems = Object.keys(Quantity)
   .sort((a, b) => a.localeCompare(b))
   .map((key) => Quantity[key])
   .map(makeMenuItem);
-
-const duringDaysMenuItems = [makeMenuItemWithValue('N/A', null)].concat(duringDays.map(makeMenuItem));
 
 interface ThresholdProps {
   query?: ThresholdQuery;
@@ -103,12 +97,21 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
   const onChangeValue = (event, value: string) => setQuery({...currentQuery, value});
   const onChangeDuration = (event, index, duration: string) => setQuery({...currentQuery, duration});
 
+  const duringDaysMenuItems = [
+    makeMenuItemWithValue(translate('at least once'), null),
+    ...[1, 2, 3, 4, 5, 6, 7]
+      .map((days: number) =>
+        makeMenuItemWithValue(translate('during {{count}} days (or more)', {count: days}), days)
+      )
+  ];
+
   return (
     <Row className={className}>
       <DropDownMenu
         onChange={onChangeQuantity}
         value={quantity}
         style={quantityDropDownStyle}
+        selectedMenuItemStyle={selectedStyle}
       >
         {quantityMenuItems}
       </DropDownMenu>
@@ -117,30 +120,32 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
         onChange={onChangeRelationalOperator}
         value={relationalOperator}
         style={operatorDropDownStyle}
+        selectedMenuItemStyle={selectedStyle}
       >
         {operatorMenuItems}
       </DropDownMenu>
 
       <RowMiddle>
         <TextFieldInput
+          className="align-right"
           onChange={onChangeValue}
           value={value}
-          style={textFieldStyle}
+          style={valueFieldStyle}
           autoComplete="off"
           hintText={firstUpperTranslated(getDisplayModeText(quantity))}
         />
         <Medium className="Unit">{unit}</Medium>
       </RowMiddle>
+
       <RowMiddle>
-        <Medium className="During">{translate('during')}</Medium>
         <DropDownMenu
           onChange={onChangeDuration}
           value={durationOrNull}
           style={dropDownStyle}
+          selectedMenuItemStyle={selectedStyle}
         >
           {duringDaysMenuItems}
         </DropDownMenu>
-        <Medium className="Days">{translate('days')}</Medium>
       </RowMiddle>
     </Row>
   );

@@ -513,11 +513,24 @@ msgstr "logout"
 msgid "remove all"
 msgstr "remove all"
 
+msgid "at least once"
+msgstr "at least once"
+
+msgid "clear threshold"
+msgstr "clear threshold"
+
 msgid "meter will soon be synchronized"
 msgstr "meter will soon be synchronized"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} meter will soon be synchronized"
+
+msgid "during {{count}} days (or more)"
+msgstr "during one day (or more)"
+
+msgctxt "°plural"
+msgid "during {{count}} days (or more)°"
+msgstr "during {{count}} days (or more)"
 
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"

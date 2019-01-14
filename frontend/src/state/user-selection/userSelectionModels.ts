@@ -30,8 +30,6 @@ export enum RelationalOperator {
   gte = '>=',
 }
 
-export const duringDays = ['1', '2', '3', '4', '5', '6', '7'];
-
 export interface ThresholdQuery {
   value: string;
   relationalOperator: RelationalOperator;
@@ -42,8 +40,7 @@ export interface ThresholdQuery {
 
 export const isValidThreshold = (threshold: undefined | ThresholdQuery) =>
   threshold !== undefined &&
-  [4, 5].includes(Object.keys(threshold).length) &&
-  Object.keys(threshold)
+  ['value', 'relationalOperator', 'quantity', 'unit']
     .every((key) => threshold[key] && (threshold[key] as string).length > 0);
 
 export interface SelectionParameter {

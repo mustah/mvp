@@ -70,7 +70,7 @@ export const sideBarStyle: React.CSSProperties = {
   color: colors.lightGrey,
 };
 
-export const selectedSideBarStyle: React.CSSProperties = {
+export const selectedStyle: React.CSSProperties = {
   color: colors.blue,
   fontWeight: 'bold',
 };
@@ -110,7 +110,7 @@ export const menuItemStyle: React.CSSProperties = {
 
 export const listItemStyleSelected: React.CSSProperties = {
   ...menuItemStyle,
-  ...selectedSideBarStyle,
+  ...selectedStyle,
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {
