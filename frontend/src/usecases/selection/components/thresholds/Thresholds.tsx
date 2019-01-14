@@ -1,6 +1,7 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
 import {selectedStyle} from '../../../../app/themes';
+import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
@@ -63,6 +64,9 @@ type RenderableThresholdQuery = Partial<{
 
 type Props = ThresholdProps & ClassNamed & Styled;
 
+const thresholdQueryIsModified = (query: RenderableThresholdQuery) =>
+  query.duration || query.quantity || query.relationalOperator || query.unit || query.value !== '';
+
 const useChangeQuery = (
   initialQuery: RenderableThresholdQuery,
   onChange: OnChangeThreshold
@@ -104,6 +108,16 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
         makeMenuItemWithValue(translate('during {{count}} days (or more)', {count: days}), days)
       )
   ];
+
+  const clearThreshold = () => setQuery({...emptyQuery});
+
+  const clearThresholdButton = thresholdQueryIsModified(currentQuery)
+    ? (
+      <RowMiddle>
+        <ButtonLinkBlue onClick={clearThreshold}>{translate('clear threshold')}</ButtonLinkBlue>
+      </RowMiddle>
+    )
+    : null;
 
   return (
     <Row className={className}>
@@ -147,6 +161,8 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
           {duringDaysMenuItems}
         </DropDownMenu>
       </RowMiddle>
+
+      {clearThresholdButton}
     </Row>
   );
 };
