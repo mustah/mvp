@@ -69,7 +69,7 @@ export interface SelectedReportEntriesPayload {
   quantitiesToSelect: Quantity[];
 }
 
-export const hardcodedIndicators = (): ReportIndicatorProps[] => ([
+export const reportIndicators = (): ReportIndicatorProps[] => ([
   {
     type: Medium.electricity,
     title: firstUpperTranslated('electricity'),

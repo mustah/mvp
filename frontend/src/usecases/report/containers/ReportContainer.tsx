@@ -45,7 +45,7 @@ import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {OnSelectResolution, SelectedParameters} from '../../../state/user-selection/userSelectionModels';
-import {CallbackWith, CallbackWithIds, HasContent} from '../../../types/Types';
+import {CallbackWith, CallbackWithIds, HasContent, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {OnLogout} from '../../auth/authModels';
 import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
@@ -53,7 +53,7 @@ import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../component
 import {MeasurementList} from '../components/MeasurementList';
 import {QuantityDropdown} from '../components/QuantityDropdown';
 import {selectResolution, showMetersInGraph} from '../reportActions';
-import {GraphContents, hardcodedIndicators, ReportState} from '../reportModels';
+import {GraphContents, reportIndicators, ReportState} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 import {LegendContainer} from './LegendContainer';
 import './ReportContainer.scss';
@@ -62,12 +62,14 @@ type SelectedIds = ReportState;
 
 interface StateToProps extends SelectedIds {
   enabledIndicatorTypes: Set<Medium>;
+  isFetchingSelectionTree: boolean;
   resolution: TemporalResolution;
   selectedIndicators: Medium[];
   selectedQuantities: Quantity[];
   selectionTreeEntities: SelectionTreeEntities;
   selectedTab: TabName;
   selectionParameters: SelectedParameters;
+  userSelectionId: uuid;
 }
 
 interface DispatchToProps {
@@ -87,6 +89,9 @@ const ResolutionDropdown = withContent<ResolutionProps & HasContent>(ResolutionS
 
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16, paddingTop: 0};
 
+const hasMeters = (meters: ObjectsById<SelectionTreeMeter>): boolean =>
+  meters && Object.keys(meters).length > 0;
+
 class ReportComponent extends React.Component<Props, MeasurementState> {
 
   private readonly indicators: ReportIndicatorProps[];
@@ -94,7 +99,7 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
   constructor(props) {
     super(props);
     this.state = {...initialState};
-    this.indicators = hardcodedIndicators();
+    this.indicators = reportIndicators();
   }
 
   async componentDidMount() {
@@ -104,11 +109,8 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
 
   async componentWillReceiveProps(nextProps: Props) {
     const requestParameters = this.makeRequestParameters(nextProps);
-    const {showMetersInGraph, selectionTreeEntities: {meters}} = nextProps;
     if (!shallowEqual(requestParameters, this.makeRequestParameters(this.props))) {
-      if (this.canShowMetersInGraph(nextProps, meters)) {
-        showMetersInGraph(getMeterIdsWithLimit(meters));
-      }
+      this.showMetersInGraph(nextProps);
       this.setState({isFetching: true});
       await fetchMeasurements(requestParameters);
     }
@@ -223,18 +225,27 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
       selectionParameters,
     })
 
-  private canShowMetersInGraph({selectionTreeEntities}: Props, meters: ObjectsById<SelectionTreeMeter>): boolean {
-    return selectionTreeEntities !== this.props.selectionTreeEntities
-           && meters
-           && Object.keys(meters).length > 0;
+  private showMetersInGraph(nextProps: Props) {
+    const {isFetchingSelectionTree, showMetersInGraph, selectionTreeEntities, userSelectionId} = this.props;
+    if (userSelectionId !== nextProps.userSelectionId) {
+      showMetersInGraph([]);
+    } else if (nextProps.isFetchingSelectionTree !== isFetchingSelectionTree
+               && !shallowEqual(nextProps.selectionTreeEntities.meters, selectionTreeEntities.meters)
+               && hasMeters(nextProps.selectionTreeEntities.meters)) {
+      if (nextProps.selectedListItems.length > 0) {
+        showMetersInGraph(nextProps.selectedListItems);
+      } else {
+        showMetersInGraph(getMeterIdsWithLimit(nextProps.selectionTreeEntities.meters));
+      }
+    }
   }
 }
 
 const mapStateToProps =
   ({
     report: {hiddenLines, resolution, selectedListItems},
-    selectionTree: {entities},
-    userSelection: {userSelection: {selectionParameters}},
+    selectionTree: {entities, isFetching},
+    userSelection: {userSelection: {selectionParameters, id: userSelectionId}},
     ui: {
       indicator: {
         selectedIndicators: {report},
@@ -246,6 +257,7 @@ const mapStateToProps =
     const selectedTreeState: SelectedTreeEntities = {selectedListItems, entities};
     return ({
       enabledIndicatorTypes: getMedia(selectedTreeState),
+      isFetchingSelectionTree: isFetching,
       hiddenLines,
       resolution,
       selectedListItems,
@@ -255,6 +267,7 @@ const mapStateToProps =
       selectionTreeEntities: entities,
       selectedTab: getSelectedTab(tabs.report),
       selectionParameters,
+      userSelectionId,
     });
   };
 
