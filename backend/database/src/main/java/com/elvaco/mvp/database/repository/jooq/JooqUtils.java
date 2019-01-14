@@ -31,20 +31,41 @@ public class JooqUtils {
   }
 
   static Condition valueConditionFor(MeasurementThreshold threshold) {
-    switch (threshold.operator) {
-      case LESS_THAN:
-        return MEASUREMENT_STAT_DATA.MIN.lessThan(threshold.getConvertedValue());
-      case LESS_THAN_OR_EQUAL:
-        return MEASUREMENT_STAT_DATA.MIN.lessOrEqual(threshold.getConvertedValue());
-      case GREATER_THAN:
-        return MEASUREMENT_STAT_DATA.MAX.greaterThan(threshold.getConvertedValue());
-      case GREATER_THAN_OR_EQUAL:
-        return MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(threshold.getConvertedValue());
-      default:
-        throw new UnsupportedOperationException(String.format(
-          "Measurement threshold operator '%s' is not supported",
-          threshold.operator.name()
-        ));
+    // TODO: Implement for "duration thresholds"
+    if (threshold.duration == null) {
+      switch (threshold.operator) {
+        case LESS_THAN:
+          return MEASUREMENT_STAT_DATA.MIN.lessThan(threshold.getConvertedValue());
+        case LESS_THAN_OR_EQUAL:
+          return MEASUREMENT_STAT_DATA.MIN.lessOrEqual(threshold.getConvertedValue());
+        case GREATER_THAN:
+          return MEASUREMENT_STAT_DATA.MAX.greaterThan(threshold.getConvertedValue());
+        case GREATER_THAN_OR_EQUAL:
+          return MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(threshold.getConvertedValue());
+        default:
+          throw new UnsupportedOperationException(String.format(
+            "Measurement threshold operator '%s' is not supported",
+            threshold.operator.name()
+          ));
+      }
+    } else {
+      switch (threshold.operator) {
+        case LESS_THAN:
+          return MEASUREMENT_STAT_DATA.MAX.lessThan(threshold.getConvertedValue());
+        case LESS_THAN_OR_EQUAL:
+          return MEASUREMENT_STAT_DATA.MAX.lessOrEqual(threshold.getConvertedValue());
+        case GREATER_THAN:
+          return MEASUREMENT_STAT_DATA.MIN.greaterThan(threshold.getConvertedValue());
+        case GREATER_THAN_OR_EQUAL:
+          return MEASUREMENT_STAT_DATA.MIN.greaterOrEqual(threshold.getConvertedValue());
+        default:
+          throw new UnsupportedOperationException(String.format(
+            "Measurement threshold operator '%s' is not supported",
+            threshold.operator.name()
+          ));
+      }
+
     }
   }
 }
+

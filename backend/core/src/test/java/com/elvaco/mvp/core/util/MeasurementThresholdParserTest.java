@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.util;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
@@ -92,6 +93,29 @@ public class MeasurementThresholdParserTest {
     assertThat(parsedUnitFrom("Energy > 10 Wh")).isEqualTo("Wh");
 
     assertThat(parsedUnitFrom("Energy > 10 J")).isEqualTo("J");
+  }
+
+  @Test
+  public void parse_withDurationExpression() {
+    assertThat(parsedDurationFrom("Energy > 10 kWh for 2 days")).isEqualTo(Duration.ofDays(2));
+    assertThat(parsedDurationFrom("Energy > 10 kWh for 7 days")).isEqualTo(Duration.ofDays(7));
+  }
+
+  @Test
+  public void parse_noDuration() {
+    assertThat(parsedDurationFrom("Energy > 10 kWh")).isNull();
+  }
+
+  @Test
+  public void parse_invalidDuration() {
+    assertThatThrownBy(() -> parser.parse("Energy > 10 kWh for 0 days"))
+      .hasMessageContaining("Invalid duration '0'");
+
+    assertThatThrownBy(() -> parser.parse("Energy > 10 kWh for -99 days"))
+      .hasMessageContaining("Malformed expression");
+
+    assertThatThrownBy(() -> parser.parse("Energy > 10 kWh for xyzzy days"))
+      .hasMessageContaining("Malformed expression");
   }
 
   @Test
@@ -190,6 +214,10 @@ public class MeasurementThresholdParserTest {
     parser = new MeasurementThresholdParser(provider, unitConverter);
     assertThat(parser.parse("Energy > 1000 Wh").convertedValueUnit)
       .isEqualTo(new MeasurementUnit("kWh", 1.0));
+  }
+
+  private Duration parsedDurationFrom(String expr) {
+    return parser.parse(expr).duration;
   }
 
   private String parsedUnitFrom(String expr) {

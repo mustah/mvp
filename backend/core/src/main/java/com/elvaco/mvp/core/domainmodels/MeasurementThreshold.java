@@ -1,7 +1,9 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,17 @@ public class MeasurementThreshold {
   public final MeasurementUnit parsedValueUnit;
   public final MeasurementUnit convertedValueUnit;
   public final Operator operator;
+  @Nullable
+  public final Duration duration;
+
+  public MeasurementThreshold(
+    Quantity quantity,
+    MeasurementUnit parsedValueUnit,
+    MeasurementUnit convertedValueUnit,
+    Operator operator
+  ) {
+    this(quantity, parsedValueUnit, convertedValueUnit, operator, null);
+  }
 
   public double getConvertedValue() {
     return convertedValueUnit.getValue();
