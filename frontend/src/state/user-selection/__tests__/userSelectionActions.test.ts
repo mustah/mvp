@@ -361,14 +361,14 @@ describe('userSelectionActions', () => {
       quantity: Quantity.power,
       relationalOperator: '>=' as RelationalOperator,
     };
-    const anotherOk: ThresholdQuery = {...ok, value: '3'};
+    const anotherOk: ThresholdQuery = {...ok, value: '3', duration: '2'};
     const incomplete: IncompleteThresholdQuery = {
       value: '',
       unit: undefined,
       quantity: undefined,
       relationalOperator: '>=' as RelationalOperator,
     };
-    const anotherIncomplete: IncompleteThresholdQuery = {...incomplete, value: '3'};
+    const anotherIncomplete: IncompleteThresholdQuery = {...incomplete, value: '3', duration: '2'};
 
     const triggersChange: boolean = true;
     const skipsAction: boolean = false;

@@ -23,3 +23,7 @@
 .TextField, .SelectField {
   margin-bottom: 20px;
 }
+
+.TextField.align-right input {
+  text-align: right;
+}

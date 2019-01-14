@@ -35,12 +35,13 @@ export interface ThresholdQuery {
   relationalOperator: RelationalOperator;
   quantity: Quantity;
   unit: string;
+  duration?: string | null;
 }
 
 export const isValidThreshold = (threshold: undefined | ThresholdQuery) =>
   threshold !== undefined &&
-  Object.keys(threshold).length === 4 &&
-  Object.keys(threshold).every((key) => threshold[key] && (threshold[key] as string).length > 0);
+  ['value', 'relationalOperator', 'quantity', 'unit']
+    .every((key) => threshold[key] && (threshold[key] as string).length > 0);
 
 export interface SelectionParameter {
   item: SelectionItem;

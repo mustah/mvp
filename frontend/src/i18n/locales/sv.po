@@ -486,6 +486,12 @@ msgstr "sekundäradress"
 msgid "thresholds"
 msgstr "gränsvärden"
 
+msgid "during"
+msgstr "under"
+
+msgid "days"
+msgstr "dagar"
+
 msgid "delete user selection"
 msgstr "ta bort urval"
 
@@ -507,11 +513,24 @@ msgstr "logga ut"
 msgid "remove all"
 msgstr "Ta bort alla"
 
+msgid "at least once"
+msgstr "ett värde (eller fler)"
+
+msgid "clear threshold"
+msgstr "rensa gränsvärde"
+
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
+
+msgid "during {{count}} days (or more)"
+msgstr "under en dag (eller mer)"
+
+msgctxt "°plural"
+msgid "during {{count}} days (or more)°"
+msgstr "under {{count}} dagar (eller mer)"
 
 msgctxt "°plural"
 msgid "{{pending}} of {{count}}°"

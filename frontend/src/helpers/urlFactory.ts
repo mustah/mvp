@@ -134,7 +134,9 @@ export type EntityApiParametersFactory =
   (selectionParameters: SelectedParametersById) => EncodedUriParameters[];
 
 const thresholdAsString = (threshold: ThresholdQuery): string =>
-  `${threshold.quantity} ${threshold.relationalOperator} ${threshold.value} ${threshold.unit}`;
+  `${threshold.quantity} ${threshold.relationalOperator} ${threshold.value} ${threshold.unit}${
+    threshold.duration ? ' for ' + threshold.duration + ' days' : ''
+    }`;
 
 export const toThresholdParameter = (threshold: ThresholdQuery | undefined): EncodedUriParameters[] =>
   isValidThreshold(threshold)

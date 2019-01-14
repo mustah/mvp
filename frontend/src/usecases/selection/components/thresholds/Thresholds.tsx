@@ -1,9 +1,11 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
+import {selectedStyle} from '../../../../app/themes';
+import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
-import {firstUpperTranslated} from '../../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {
   getDisplayModeText,
   Quantity,
@@ -29,18 +31,18 @@ const quantityDropDownStyle: React.CSSProperties = {
 
 const operatorDropDownStyle: React.CSSProperties = {
   ...dropDownStyle,
-  width: 124
+  width: 100,
 };
 
-const textFieldStyle: React.CSSProperties = {
+const valueFieldStyle: React.CSSProperties = {
   width: 114,
   marginBottom: 0,
   marginTop: 8,
 };
 
-const makeMenuItem = (text) => (
-  <MenuItem key={text} primaryText={text} value={text}/>
-);
+const makeMenuItem = (text) => makeMenuItemWithValue(text, text);
+
+const makeMenuItemWithValue = (text, value) => <MenuItem key={text} primaryText={text} value={value}/>;
 
 const operatorMenuItems = Object.keys(RelationalOperator)
   .map((key) => RelationalOperator[key])
@@ -62,6 +64,9 @@ type RenderableThresholdQuery = Partial<{
 
 type Props = ThresholdProps & ClassNamed & Styled;
 
+const thresholdQueryIsModified = (query: RenderableThresholdQuery) =>
+  query.duration || query.quantity || query.relationalOperator || query.unit || query.value !== '';
+
 const useChangeQuery = (
   initialQuery: RenderableThresholdQuery,
   onChange: OnChangeThreshold
@@ -80,8 +85,8 @@ const emptyQuery: RenderableThresholdQuery = {
 
 export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => {
   const [currentQuery, setQuery] = useChangeQuery(query, onChange);
-  const {quantity, relationalOperator, value, unit} = currentQuery;
-
+  const {quantity, relationalOperator, value, unit, duration} = currentQuery;
+  const durationOrNull = !duration ? null : duration;
   const onChangeQuantity = (event, index, newValue: string) => setQuery({
     ...currentQuery,
     quantity: newValue as Quantity,
@@ -94,6 +99,25 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
   });
 
   const onChangeValue = (event, value: string) => setQuery({...currentQuery, value});
+  const onChangeDuration = (event, index, duration: string) => setQuery({...currentQuery, duration});
+
+  const duringDaysMenuItems = [
+    makeMenuItemWithValue(translate('at least once'), null),
+    ...[1, 2, 3, 4, 5, 6, 7]
+      .map((days: number) =>
+        makeMenuItemWithValue(translate('during {{count}} days (or more)', {count: days}), days)
+      )
+  ];
+
+  const clearThreshold = () => setQuery({...emptyQuery});
+
+  const clearThresholdButton = thresholdQueryIsModified(currentQuery)
+    ? (
+      <RowMiddle>
+        <ButtonLinkBlue onClick={clearThreshold}>{translate('clear threshold')}</ButtonLinkBlue>
+      </RowMiddle>
+    )
+    : null;
 
   return (
     <Row className={className}>
@@ -101,6 +125,7 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
         onChange={onChangeQuantity}
         value={quantity}
         style={quantityDropDownStyle}
+        selectedMenuItemStyle={selectedStyle}
       >
         {quantityMenuItems}
       </DropDownMenu>
@@ -109,20 +134,35 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
         onChange={onChangeRelationalOperator}
         value={relationalOperator}
         style={operatorDropDownStyle}
+        selectedMenuItemStyle={selectedStyle}
       >
         {operatorMenuItems}
       </DropDownMenu>
 
       <RowMiddle>
         <TextFieldInput
+          className="align-right"
           onChange={onChangeValue}
           value={value}
-          style={textFieldStyle}
+          style={valueFieldStyle}
           autoComplete="off"
           hintText={firstUpperTranslated(getDisplayModeText(quantity))}
         />
         <Medium className="Unit">{unit}</Medium>
       </RowMiddle>
+
+      <RowMiddle>
+        <DropDownMenu
+          onChange={onChangeDuration}
+          value={durationOrNull}
+          style={dropDownStyle}
+          selectedMenuItemStyle={selectedStyle}
+        >
+          {duringDaysMenuItems}
+        </DropDownMenu>
+      </RowMiddle>
+
+      {clearThresholdButton}
     </Row>
   );
 };

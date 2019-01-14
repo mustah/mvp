@@ -31,7 +31,6 @@ public class JooqUtils {
   }
 
   static Condition valueConditionFor(MeasurementThreshold threshold) {
-    // TODO: Implement for "duration thresholds"
     if (threshold.duration == null) {
       switch (threshold.operator) {
         case LESS_THAN:
