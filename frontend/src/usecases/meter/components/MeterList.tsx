@@ -57,7 +57,7 @@ export const MeterList = (
   const onChangePage = (page: number) => changePage({entityType, componentId, page});
 
   return (
-    <div className="MeterList">
+    <>
       <Table result={result} entities={entities}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
@@ -105,6 +105,6 @@ export const MeterList = (
         />
       </Table>
       <PaginationControl pagination={pagination} changePage={onChangePage}/>
-    </div>
+    </>
   );
 };
