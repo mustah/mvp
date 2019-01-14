@@ -119,7 +119,7 @@ class DataProviderConfig {
 
     User user = productionDataProvider.superAdminUser();
     if (!users.findByEmail(user.email).isPresent()) {
-      users.create(user);
+      users.save(user);
     }
 
     return users;

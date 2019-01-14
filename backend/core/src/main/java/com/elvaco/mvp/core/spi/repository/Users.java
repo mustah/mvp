@@ -17,11 +17,9 @@ public interface Users {
 
   Optional<String> findPasswordByUserId(UUID userId);
 
-  User create(User user);
+  User save(User user);
 
   User update(User user);
-
-  User updateWithNewPassword(User user);
 
   void deleteById(UUID id);
 

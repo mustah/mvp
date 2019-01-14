@@ -132,7 +132,7 @@ public class UserControllerTest extends IntegrationTest {
   public void updateSavedUserName() {
     String newName = "New name";
 
-    User user = users.create(
+    User user = users.save(
       new UserBuilder()
         .name("First Name")
         .email("t@b.com")
@@ -155,7 +155,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void deleteUserWithId() {
-    User user = users.create(
+    User user = users.save(
       userBuilder()
         .email("noo@b.com")
         .password("test123")
@@ -184,7 +184,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotDeleteUser() {
-    User user = users.create(
+    User user = users.save(
       userBuilder()
         .name("Someu Ser")
         .email("thisguy@users.net")
@@ -359,7 +359,7 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void superAdminCanChangeAnyUsersPassword() {
     UserWithPasswordDto userDto = createUserDto("First-Name@company.se", "ttt123");
-    userDto.id = users.create(UserDtoMapper.toDomainModel(userDto)).id;
+    userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
 
     String newPassword = "asdf";
     userDto.password = newPassword;
@@ -375,7 +375,7 @@ public class UserControllerTest extends IntegrationTest {
   public void passwordCantBeUpdatedToBlankOrWhiteSpace() {
     String oldPassword = "ttt123";
     UserWithPasswordDto userDto = createUserDto("First-Name@company.se", oldPassword);
-    userDto.id = users.create(UserDtoMapper.toDomainModel(userDto)).id;
+    userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
 
     userDto.password = "";
     asSuperAdmin().put("/users", userDto);
@@ -396,7 +396,7 @@ public class UserControllerTest extends IntegrationTest {
   public void userCantChangeOtherUsersPassword() {
     String oldPassword = "ttt123";
     UserWithPasswordDto userDto = createUserDto("First-Name@company.se", oldPassword);
-    userDto.id = users.create(UserDtoMapper.toDomainModel(userDto)).id;
+    userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
 
     userDto.password = "test";
     asUser().put("/users", userDto);

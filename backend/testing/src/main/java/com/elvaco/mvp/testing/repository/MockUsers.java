@@ -62,18 +62,13 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   }
 
   @Override
-  public User create(User user) {
+  public User save(User user) {
     return saveMock(user);
   }
 
   @Override
   public User update(User user) {
     return saveMock(user);
-  }
-
-  @Override
-  public User updateWithNewPassword(User user) {
-    throw new UnsupportedOperationException();
   }
 
   @Override

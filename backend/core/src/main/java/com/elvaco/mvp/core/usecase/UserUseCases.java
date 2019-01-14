@@ -49,7 +49,7 @@ public class UserUseCases {
 
   public Optional<User> create(User user) {
     if (organisationPermissions.isAllowed(currentUser, user, CREATE)) {
-      return Optional.of(users.create(user));
+      return Optional.of(users.save(user));
     }
     return Optional.empty();
   }
@@ -73,7 +73,9 @@ public class UserUseCases {
 
   public Optional<User> changePassword(User user) {
     if (organisationPermissions.isAllowed(currentUser, user, UPDATE)) {
-      return Optional.of(removeTokenForUser(users.updateWithNewPassword(user)));
+      if (users.findPasswordByUserId(user.id).isPresent()) {
+        return Optional.of(removeTokenForUser(users.save(user)));
+      }
     }
     return Optional.empty();
   }
