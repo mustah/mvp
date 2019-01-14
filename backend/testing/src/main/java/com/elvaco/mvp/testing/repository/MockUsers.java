@@ -62,7 +62,7 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   }
 
   @Override
-  public User create(User user) {
+  public User save(User user) {
     return saveMock(user);
   }
 

@@ -18,6 +18,7 @@ import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 import com.elvaco.mvp.web.mapper.UserDtoMapper;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -33,6 +34,9 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
+
+  @Autowired
+  private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   @Test
   public void findUserById() {
@@ -128,7 +132,7 @@ public class UserControllerTest extends IntegrationTest {
   public void updateSavedUserName() {
     String newName = "New name";
 
-    User user = users.create(
+    User user = users.save(
       new UserBuilder()
         .name("First Name")
         .email("t@b.com")
@@ -151,7 +155,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void deleteUserWithId() {
-    User user = users.create(
+    User user = users.save(
       userBuilder()
         .email("noo@b.com")
         .password("test123")
@@ -180,7 +184,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotDeleteUser() {
-    User user = users.create(
+    User user = users.save(
       userBuilder()
         .name("Someu Ser")
         .email("thisguy@users.net")
@@ -350,6 +354,56 @@ public class UserControllerTest extends IntegrationTest {
       .get("/users/" + created.id, Unauthorized.class);
 
     assertThat(logoutResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  public void superAdminCanChangeAnyUsersPassword() {
+    UserWithPasswordDto userDto = createUserDto("First-Name@company.se", "ttt123");
+    userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
+
+    String newPassword = "asdf";
+    userDto.password = newPassword;
+
+    asSuperAdmin().put("/users", userDto);
+
+    User updatedUser = users.findById(userDto.id).get();
+
+    assertThat(passwordEncoder.matches(newPassword, updatedUser.password)).isTrue();
+  }
+
+  @Test
+  public void passwordCantBeUpdatedToBlankOrWhiteSpace() {
+    String oldPassword = "ttt123";
+    UserWithPasswordDto userDto = createUserDto("First-Name@company.se", oldPassword);
+    userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
+
+    userDto.password = "";
+    asSuperAdmin().put("/users", userDto);
+
+    User updatedUser = users.findById(userDto.id).get();
+
+    assertThat(passwordEncoder.matches(oldPassword, updatedUser.password)).isTrue();
+
+    userDto.password = "   ";
+    asSuperAdmin().put("/users", userDto);
+
+    updatedUser = users.findById(userDto.id).get();
+
+    assertThat(passwordEncoder.matches(oldPassword, updatedUser.password)).isTrue();
+  }
+
+  @Test
+  public void userCantChangeOtherUsersPassword() {
+    String oldPassword = "ttt123";
+    UserWithPasswordDto userDto = createUserDto("First-Name@company.se", oldPassword);
+    userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
+
+    userDto.password = "test";
+    asUser().put("/users", userDto);
+
+    User updatedUser = users.findById(userDto.id).get();
+
+    assertThat(passwordEncoder.matches(oldPassword, updatedUser.password)).isTrue();
   }
 
   private UserWithPasswordDto createUserDto(String email) {

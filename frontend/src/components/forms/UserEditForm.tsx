@@ -55,7 +55,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   }
 
   render() {
-    const {organisations, possibleRoles, languages, isEditSelf, user} = this.props;
+    const {organisations, possibleRoles, languages, isEditSelf} = this.props;
     const {name, email, organisation, roles, password, language} = this.state;
 
     const nameLabel = firstUpperTranslated('name');
@@ -69,7 +69,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
     const languageOptions: IdNamed[] = languages.map(({code, name}) => ({id: code, name}));
 
-    const passwordElement = user ? null : (
+    const passwordElement = isEditSelf ? null : (
       <TextFieldInput
         id="password"
         floatingLabelText={newPasswordLabel}

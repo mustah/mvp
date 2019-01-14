@@ -53,7 +53,7 @@ class IntegrationTestFixtureContextFactory {
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
       .asUser()
       .build();
-    users.create(user);
+    users.save(user);
 
     User admin = new UserBuilder()
       .name("integration-test-admin")
@@ -62,7 +62,7 @@ class IntegrationTestFixtureContextFactory {
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
       .asAdmin()
       .build();
-    users.create(admin);
+    users.save(admin);
 
     User superAdmin = new UserBuilder()
       .name("integration-test-super-admin")
@@ -71,7 +71,7 @@ class IntegrationTestFixtureContextFactory {
       .organisation(OrganisationEntityMapper.toDomainModel(organisation))
       .asSuperAdmin()
       .build();
-    users.create(superAdmin);
+    users.save(superAdmin);
 
     UUID contextId2 = randomUUID();
     OrganisationEntity organisation2 = organisationJpaRepository.save(
@@ -90,7 +90,7 @@ class IntegrationTestFixtureContextFactory {
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
       .asUser()
       .build();
-    users.create(user2);
+    users.save(user2);
 
     User admin2 = new UserBuilder()
       .name("integration-test-admin2")
@@ -99,7 +99,7 @@ class IntegrationTestFixtureContextFactory {
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
       .asAdmin()
       .build();
-    users.create(admin2);
+    users.save(admin2);
 
     User superAdmin2 = new UserBuilder()
       .name("integration-test-super-admin2")
@@ -108,7 +108,7 @@ class IntegrationTestFixtureContextFactory {
       .organisation(OrganisationEntityMapper.toDomainModel(organisation2))
       .asSuperAdmin()
       .build();
-    users.create(superAdmin2);
+    users.save(superAdmin2);
 
     return new IntegrationTestFixtureContext(
       organisation,

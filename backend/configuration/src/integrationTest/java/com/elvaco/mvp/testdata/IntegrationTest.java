@@ -199,7 +199,7 @@ public abstract class IntegrationTest implements ContextDsl {
   protected User createUserIfNotPresent(User user) {
     return users
       .findByEmail(user.email)
-      .orElseGet(() -> users.create(user));
+      .orElseGet(() -> users.save(user));
   }
 
   protected RestClient restAsUser(User user) {
