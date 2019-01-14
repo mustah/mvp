@@ -298,6 +298,20 @@ public class MeasurementStatTest extends IntegrationTest {
     assertThat(result).hasSize(0);
   }
 
+  @Test
+  public void consumptionFor24hReadInterval() {
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(24 * 60));
+    given(series(meter, Quantity.VOLUME, 1, 2, 3));
+    var result = dsl.select()
+      .from(statData).orderBy(statData.STAT_DATE.asc())
+      .fetchInto(MeasurementStatDto.class);
+
+    //This documents the current behaviour. I'm not sure it's correct, however, since we've received
+    // measurements for 3 days, shouldn't we have three entries even though one of them won't be
+    // applicable as a "consumption" entry?
+    assertThat(result).hasSize(2);
+  }
+
   private Measurement.MeasurementBuilder powerMeasurementFor(PhysicalMeter meter) {
     return measurementFor(meter, Quantity.POWER);
   }
