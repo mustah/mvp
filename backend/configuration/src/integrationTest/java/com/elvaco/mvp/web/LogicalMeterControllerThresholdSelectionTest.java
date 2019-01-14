@@ -46,8 +46,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   public void findAllMeters_WithMeasurementThresholdMatchingOneButNotAll() {
     ZonedDateTime now = context().now();
     var meter = given(physicalMeter());
-    given(series(meter, Quantity.POWER, -1));
-    given(series(meter, Quantity.POWER, 1.1));
+    given(series(meter, Quantity.POWER, -1, 1.1));
 
     Url url = Url.builder()
       .path("/meters")
@@ -59,7 +58,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     Page<PagedLogicalMeterDto> result = asUser()
       .getPage(url, PagedLogicalMeterDto.class);
 
-    assertThat(result.getTotalElements()).isEqualTo(0);
+    assertThat(result.getTotalElements()).isEqualTo(1);
   }
 
   @Test
@@ -331,5 +330,110 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
     assertThat(response.getBody().message).contains(
       "Threshold duration too long to fit in selection period"
     );
+  }
+
+  @Test
+  public void forDuration_0mIntervalDoesNotCrashEverything() {
+    ZonedDateTime now = context().now();
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(0));
+    given(series(
+      meter,
+      Quantity.VOLUME,
+      now,
+      DoubleStream.iterate(0, (m) -> m + 1).limit(24).toArray()
+    ));
+
+    ResponseEntity<PagedLogicalMeterDto> response = asUser()
+      .get(Url.builder()
+        .path("/meters")
+        .period(now.plusDays(1), now.plusDays(2))
+        .parameter(THRESHOLD, "Volume < 0 m^3 for 1 days")
+        .build(), PagedLogicalMeterDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  public void forDuration_15mIntervalAsHourConsumption() {
+    ZonedDateTime now = context().now();
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
+    given(series(
+      meter,
+      Quantity.VOLUME,
+      now,
+      DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume < 4 m^3 for 1 days")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(0);
+
+    page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume <= 4 m^3 for 1 days")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void forDuration_24hIntervalAsHourConsumption() {
+    ZonedDateTime now = context().now();
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
+    given(series(
+      meter,
+      Quantity.VOLUME,
+      now,
+      DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume < 1 m^3 for 1 days")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(0);
+
+    page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume <= 1 m^3 for 1 days")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void forDuration_NonConsumptionQuantityIsNotConvertedToHourly() {
+    ZonedDateTime now = context().now();
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
+    given(series(
+      meter,
+      Quantity.RETURN_TEMPERATURE,
+      now,
+      DoubleStream.iterate(0, (m) -> m + 24).limit(2).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Return temperature < 24 °C for 1 days")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(0);
+
+    page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Return temperature <= 24 °C for 1 days")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
   }
 }

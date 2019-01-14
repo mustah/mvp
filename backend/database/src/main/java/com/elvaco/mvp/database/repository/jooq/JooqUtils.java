@@ -4,14 +4,18 @@ import java.time.OffsetDateTime;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
+import com.elvaco.mvp.database.entity.jooq.tables.records.MeasurementStatDataRecord;
 
 import lombok.experimental.UtilityClass;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.TableField;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
+import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.inline;
 import static org.jooq.impl.DSL.val;
 
 @UtilityClass
@@ -48,23 +52,35 @@ public class JooqUtils {
           ));
       }
     } else {
+
+      Field<Double> max = threshold.quantity.isConsumption()
+        ? asHourly(MEASUREMENT_STAT_DATA.MAX)
+        : MEASUREMENT_STAT_DATA.MAX;
+
+      Field<Double> min = threshold.quantity.isConsumption()
+        ? asHourly(MEASUREMENT_STAT_DATA.MIN)
+        : MEASUREMENT_STAT_DATA.MIN;
+
       switch (threshold.operator) {
         case LESS_THAN:
-          return MEASUREMENT_STAT_DATA.MAX.lessThan(threshold.getConvertedValue());
+          return max.lessThan(threshold.getConvertedValue());
         case LESS_THAN_OR_EQUAL:
-          return MEASUREMENT_STAT_DATA.MAX.lessOrEqual(threshold.getConvertedValue());
+          return max.lessOrEqual(threshold.getConvertedValue());
         case GREATER_THAN:
-          return MEASUREMENT_STAT_DATA.MIN.greaterThan(threshold.getConvertedValue());
+          return min.greaterThan(threshold.getConvertedValue());
         case GREATER_THAN_OR_EQUAL:
-          return MEASUREMENT_STAT_DATA.MIN.greaterOrEqual(threshold.getConvertedValue());
+          return min.greaterOrEqual(threshold.getConvertedValue());
         default:
           throw new UnsupportedOperationException(String.format(
             "Measurement threshold operator '%s' is not supported",
             threshold.operator.name()
           ));
       }
-
     }
+  }
+
+  private static Field<Double> asHourly(TableField<MeasurementStatDataRecord, Double> field) {
+    return field.divide(PHYSICAL_METER.READ_INTERVAL_MINUTES.divide(inline(60.0)));
   }
 }
 
