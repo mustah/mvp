@@ -2,6 +2,7 @@ import {EmptyAction} from 'react-redux-typescript';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {toggle} from '../../helpers/collections';
 import {resetReducer} from '../../state/domain-models/domainModelsReducer';
+import {NormalizedSelectionTree} from '../../state/selection-tree/selectionTreeModels';
 import {SELECT_PERIOD, SET_CUSTOM_DATE_RANGE} from '../../state/user-selection/userSelectionActions';
 import {Action, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
@@ -14,11 +15,13 @@ export const initialState: ReportState = {
   resolution: TemporalResolution.hour,
 };
 
-const toggleLine = (state: ReportState, {payload}: Action<uuid>) =>
-  ({...state, hiddenLines: toggle(payload, state.hiddenLines)});
+const toggleLine = (state: ReportState, {payload}: Action<uuid>): ReportState => ({
+  ...state,
+  hiddenLines: toggle(payload, state.hiddenLines)
+});
 
 type ActionTypes =
-  | Action<SelectedReportEntriesPayload | string[] | uuid | TemporalResolution>
+  | Action<SelectedReportEntriesPayload | string[] | uuid | TemporalResolution | NormalizedSelectionTree>
   | EmptyAction<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
@@ -36,11 +39,12 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
     case TOGGLE_LINE:
       return toggleLine(state, (action as Action<uuid>));
     case LOGOUT_USER:
-      return {...initialState};
+      return initialState;
     case SELECT_PERIOD:
+      return state;
     case SET_CUSTOM_DATE_RANGE:
       return state;
     default:
-      return resetReducer<ReportState>(state, action, {...initialState});
+      return resetReducer<ReportState>(state, action, initialState);
   }
 };

@@ -203,7 +203,7 @@ export const showMetersInGraph = (meterIds: uuid[]) =>
 
     dispatchIfWithinLimits({
       dispatch,
-      ids: Array.from(new Set<uuid>([...ids])),
+      ids: Array.from(new Set<uuid>(ids)),
       selectionTree,
       previousIds: selectedListItems,
       selectedQuantities,
