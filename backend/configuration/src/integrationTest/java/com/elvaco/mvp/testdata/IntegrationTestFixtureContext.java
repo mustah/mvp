@@ -183,6 +183,9 @@ public class IntegrationTestFixtureContext {
       .id(logicalMeterId)
       .created(now().minusYears(1))
       .externalId(logicalMeterId.toString())
+      .utcOffset(
+        String.format("%+03d", Duration.ofSeconds(now().getOffset().getTotalSeconds()).toHours())
+      )
       .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
       .location(Location.UNKNOWN_LOCATION);
   }
