@@ -24,12 +24,13 @@ const hasSelectedItems = ({selectedListItems}: ReportState): boolean => selected
 const LegendComponent = componentOrNothing<LegendProps & ReportState>(hasSelectedItems)(Legend);
 
 const mapStateToProps = ({
-  report: {hiddenLines, selectedListItems},
+  report: {hiddenLines, resolution, selectedListItems},
   selectionTree: {entities},
 }: RootState): StateToProps =>
   ({
     legendItems: getLegendItems({selectedListItems, entities}),
     hiddenLines,
+    resolution,
     selectedListItems,
   });
 

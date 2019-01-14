@@ -3,7 +3,7 @@ import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
 import {Index, InfiniteLoader, List, ListRowProps} from 'react-virtualized';
-import {dropDownStyle} from '../../app/themes';
+import {dropdownStyle} from '../../app/themes';
 import {getId} from '../../helpers/collections';
 import {selectedFirstThenUnknownByNameAsc} from '../../helpers/comparators';
 import {orUnknown} from '../../helpers/translations';
@@ -128,7 +128,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
         </div>
 
         <Popover
-          style={dropDownStyle.popoverStyle}
+          style={dropdownStyle.popoverStyle}
           open={isOpen}
           anchorEl={anchorElement}
           anchorOrigin={anchorOrigin}
@@ -247,7 +247,7 @@ class DropdownComponent extends React.Component<DropdownComponentProps, State> {
         ref={registerChild}
         rowCount={numItems}
         rowRenderer={this.rowRenderer}
-        style={dropDownStyle.listStyle}
+        style={dropdownStyle.listStyle}
         width={240}
       />
     );

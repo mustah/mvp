@@ -1,0 +1,25 @@
+@import "../../app/variables";
+
+.DropdownMenu {
+  &:hover {
+    .IconButton {
+      fill: $blue !important;
+    }
+  }
+
+  .DropdownMenu-dropdown {
+    &:hover {
+      border: 1px solid $blue !important;
+    }
+  }
+}
+
+.DropdownMenu-MenuItem {
+  &:first-letter {
+    text-transform: uppercase;
+  }
+
+  &:hover {
+    color: $black !important;
+  }
+}

@@ -14,6 +14,15 @@ msgstr ""
 msgid "admin"
 msgstr "admin"
 
+msgid "day"
+msgstr "day"
+
+msgid "hour"
+msgstr "hour"
+
+msgid "month"
+msgstr "month"
+
 msgid "metering"
 msgstr "metering"
 
@@ -419,9 +428,6 @@ msgstr "facility"
 
 msgid "value"
 msgstr "value"
-
-msgid "select medium"
-msgstr "select medium"
 
 msgid "select quantities"
 msgstr "select quantities"

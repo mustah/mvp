@@ -1,4 +1,5 @@
 import {LegendPayload} from 'recharts';
+import {TemporalResolution} from '../../components/dates/dateModels';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
@@ -7,6 +8,7 @@ import {ReportIndicatorProps} from './components/indicators/ReportIndicatorWidge
 export interface ReportState {
   selectedListItems: uuid[];
   hiddenLines: uuid[];
+  resolution: TemporalResolution;
 }
 
 export interface Axes {

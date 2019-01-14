@@ -7,6 +7,12 @@ export const enum Period {
   custom = 'custom',
 }
 
+export const enum TemporalResolution {
+  hour = 'hour',
+  day = 'day',
+  month = 'month',
+}
+
 export interface DateRange {
   start: Date;
   end: Date;

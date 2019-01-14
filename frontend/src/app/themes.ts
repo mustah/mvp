@@ -47,6 +47,9 @@ export const mvpTheme = getMuiTheme({
   },
   listItem: {
     nestedLevelDepth: 14,
+  },
+  menuItem: {
+    hoverColor: colors.blue,
   }
 });
 
@@ -92,7 +95,7 @@ export const dividerStyle: React.CSSProperties = {
   marginBottom: 10,
 };
 
-export const listItemStyle: React.CSSProperties = {
+export const menuItemStyle: React.CSSProperties = {
   fontSize: fontSize.normal,
   textStyle: {
     textOverflow: 'ellipsis',
@@ -105,17 +108,13 @@ export const listItemStyle: React.CSSProperties = {
   },
 };
 
-export const listItemStyleWithActions: React.CSSProperties = {
-  ...listItemStyle,
-};
-
 export const listItemStyleSelected: React.CSSProperties = {
-  ...listItemStyle,
+  ...menuItemStyle,
   ...selectedSideBarStyle,
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {
-  ...listItemStyle,
+  ...menuItemStyle,
   lineHeight: '32px',
   minHeight: 32,
 };
@@ -125,7 +124,7 @@ export const nestedListItemStyle: React.CSSProperties = {
   paddingBottom: 0,
 };
 
-export const dropDownStyle: Styles = {
+export const dropdownStyle: Styles = {
   popoverStyle: {marginTop: 6, marginLeft: 2},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
   parentStyle: {fontSize: 11, fontWeight: 'normal', color: colors.lightBlack},
@@ -158,4 +157,8 @@ export const cardStyle: React.CSSProperties = {
 export const buttonStyle: React.CSSProperties = {
   backgroundColor: colors.blue,
   color: colors.white,
+};
+
+export const dropdownListStyle: React.CSSProperties = {
+  width: 200,
 };

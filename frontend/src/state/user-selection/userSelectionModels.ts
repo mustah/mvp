@@ -1,4 +1,4 @@
-import {DateRange, Period} from '../../components/dates/dateModels';
+import {DateRange, Period, TemporalResolution} from '../../components/dates/dateModels';
 import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
 import {Address, City} from '../domain-models/location/locationModels';
@@ -101,6 +101,7 @@ export interface UriLookupStatePaginated extends UriLookupState {
 }
 
 export type OnSelectPeriod = (period: Period) => void;
+export type OnSelectResolution = (resolution: TemporalResolution) => void;
 export type OnSelectCustomDateRange = (dateRange: DateRange) => void;
 
 export type OnSelectSelection = (selection: UserSelection) => void;

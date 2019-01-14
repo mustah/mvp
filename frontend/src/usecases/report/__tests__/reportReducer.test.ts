@@ -1,11 +1,11 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
-import {DateRange, Period} from '../../../components/dates/dateModels';
+import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
-import {setSelectedEntries, toggleLine} from '../reportActions';
+import {selectResolution, setSelectedEntries, toggleLine} from '../reportActions';
 import {ReportState, SelectedReportEntriesPayload} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 
@@ -76,7 +76,11 @@ describe('reportReducer', () => {
       };
       const state: ReportState = report(initialState, setSelectedEntries(payload));
 
-      const expected: ReportState = {selectedListItems: payload.ids, hiddenLines: []};
+      const expected: ReportState = {
+        selectedListItems: payload.ids,
+        hiddenLines: [],
+        resolution: TemporalResolution.hour
+      };
       expect(state).toEqual(expected);
 
       const newState: ReportState = report(state, setCustomDateRange(dateRange));
@@ -105,6 +109,32 @@ describe('reportReducer', () => {
       const state: ReportState = report({...initialState, hiddenLines: [2]}, toggleLine(3));
 
       const expected: ReportState = {...initialState, hiddenLines: [2, 3]};
+      expect(state).toEqual(expected);
+    });
+  });
+
+  describe('selectResolution', () => {
+
+    it('can select hourly resolution', () => {
+      const payload = TemporalResolution.hour;
+
+      const state: ReportState = report(initialState, selectResolution(payload));
+
+      const expected: ReportState = {...initialState, resolution: payload};
+      expect(state).toEqual(expected);
+    });
+
+    it('changes resolution', () => {
+      const payload = TemporalResolution.hour;
+
+      let state: ReportState = report(initialState, selectResolution(payload));
+
+      let expected: ReportState = {...initialState, resolution: payload};
+      expect(state).toEqual(expected);
+
+      state = report(initialState, selectResolution(TemporalResolution.month));
+
+      expected = {...initialState, resolution: TemporalResolution.month};
       expect(state).toEqual(expected);
     });
   });

@@ -1,18 +1,14 @@
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
+import {MenuItem} from 'material-ui';
 import * as React from 'react';
-import {withEmptyContentComponent} from '../../../components/hoc/withEmptyContent';
-import {Bold} from '../../../components/texts/Texts';
-import {firstUpperTranslated} from '../../../services/translationService';
+import {menuItemStyle} from '../../../app/themes';
+import {
+  MultiSelectDropdownMenu,
+  MultiSelectDropdownMenuProps
+} from '../../../components/dropdown-selector/DropdownMenu';
+import {withContent} from '../../../components/hoc/withContent';
 import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {canToggleMedia} from '../../../state/ui/indicator/indicatorActions';
-import {Children, HasContent} from '../../../types/Types';
-
-interface Props {
-  selectedQuantities: Quantity[];
-  changeQuantities: (event, index, values) => void;
-  children?: Children;
-}
+import {HasContent} from '../../../types/Types';
 
 interface QuantitySelectorProps {
   selectedQuantities: Quantity[];
@@ -20,38 +16,23 @@ interface QuantitySelectorProps {
   onSelectQuantities: (quantities: Quantity[]) => void;
 }
 
-const style: React.CSSProperties = {padding: '20px 20px 0px'};
+const quantityMenuItemStyle: React.CSSProperties = {...menuItemStyle, overflow: 'hidden'};
 
-const quantityMenuItem =
-  (selectedQuantities: Quantity[]) =>
-    (quantity: Quantity) => (
-      <MenuItem
-        checked={selectedQuantities.includes(quantity)}
-        disabled={!selectedQuantities.includes(quantity) && !canToggleMedia(selectedQuantities, quantity)}
-        key={quantity}
-        primaryText={quantity}
-        value={quantity}
-      />
-    );
+const MultiSelectDropdownMenuWrapper =
+  withContent<MultiSelectDropdownMenuProps & HasContent>(MultiSelectDropdownMenu);
 
-const HintText = () =>
-  <Bold className="Italic">{firstUpperTranslated('select medium')}</Bold>;
-
-const SelectFieldOptions = ({children, changeQuantities, selectedQuantities}: Props) => (
-  <SelectField
-    multiple={true}
-    hintText={firstUpperTranslated('select quantities')}
-    value={selectedQuantities}
-    onChange={changeQuantities}
-  >
-    {children}
-  </SelectField>
-);
-
-const WrappedSelectFieldOptions = withEmptyContentComponent<Props & HasContent>(
-  SelectFieldOptions,
-  HintText,
-);
+const renderQuantityMenuItem = (selectedQuantities: Quantity[]) =>
+  (quantity: Quantity) => (
+    <MenuItem
+      className="DropdownMenu-MenuItem QuantityMenuItem"
+      checked={selectedQuantities.includes(quantity)}
+      disabled={!selectedQuantities.includes(quantity) && !canToggleMedia(selectedQuantities, quantity)}
+      key={quantity}
+      primaryText={quantity}
+      style={quantityMenuItemStyle}
+      value={quantity}
+    />
+  );
 
 export const QuantityDropdown =
   ({selectedIndicators, selectedQuantities, onSelectQuantities}: QuantitySelectorProps) => {
@@ -61,24 +42,21 @@ export const QuantityDropdown =
     );
 
     const changeQuantities = (event, index, values) => onSelectQuantities(values);
-    const renderMenuItem = quantityMenuItem(selectedQuantities);
-    const options = Array.from(quantities.values()).map(renderMenuItem);
+    const options = Array.from(quantities.values()).map(renderQuantityMenuItem(selectedQuantities));
 
     if (!options.length && selectedQuantities.length) {
       onSelectQuantities([]);
     }
 
-    const wrappedProps: HasContent & Props = {
+    const wrappedProps: HasContent & MultiSelectDropdownMenuProps = {
       changeQuantities,
       selectedQuantities,
       hasContent: options.length > 0,
     };
 
     return (
-      <div style={style}>
-        <WrappedSelectFieldOptions {...wrappedProps}>
-          {options}
-        </WrappedSelectFieldOptions>
-      </div>
+      <MultiSelectDropdownMenuWrapper {...wrappedProps}>
+        {options}
+      </MultiSelectDropdownMenuWrapper>
     );
   };
