@@ -63,10 +63,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       return;
     }
 
-    MeterDto meterDto = message.meter;
-    if (meterDto != null && !StatusType.from(meterDto.status).isNotUnknown()) {
-      log.warn("Received message with invalid status type: '{}'", message);
-    }
+    logInvalidStatus(message);
 
     Organisation organisation = organisationUseCases.findOrCreate(message.organisationId);
 
@@ -76,6 +73,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .address(facility.address)
       .build();
 
+    MeterDto meterDto = message.meter;
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
       meterDto,
       location,
@@ -104,6 +102,14 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
     physicalMeter.ifPresent(physicalMeterUseCases::saveWithStatuses);
     gateway.ifPresent(gatewayUseCases::save);
+  }
+
+  private void logInvalidStatus(MeteringReferenceInfoMessageDto message) {
+    MeterDto meterDto = message.meter;
+    if (meterDto != null && meterDto.id != null
+      && !StatusType.from(meterDto.status).isNotUnknown()) {
+      log.warn("Received message with invalid status type: '{}'", message);
+    }
   }
 
   private void onFetchCoordinates(LogicalMeter meter) {
@@ -228,5 +234,4 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       return null;
     }
   }
-
 }
