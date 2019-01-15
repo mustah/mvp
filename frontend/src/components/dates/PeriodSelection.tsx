@@ -5,14 +5,20 @@ import {momentFrom, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
+import {Styled} from '../../types/Types';
 import {PeriodConfirmDialog} from '../dialog/PeriodConfirmDialog';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
 import {DateRange, Period} from './dateModels';
 
-interface Props {
+interface NullableDateRange {
+  start: Moment | null;
+  end: Moment | null;
+}
+
+interface Props extends Styled {
+  customDateRange: Maybe<DateRange>;
   period: Period;
   selectPeriod: OnSelectPeriod;
-  customDateRange: Maybe<DateRange>;
   setCustomDateRange: OnSelectCustomDateRange;
 }
 
@@ -20,17 +26,12 @@ interface State {
   periodSelectorOpen: boolean;
 }
 
-interface NullableDateRange {
-  start: Moment | null;
-  end: Moment | null;
-}
-
 export class PeriodSelection extends React.Component<Props, State> {
 
   state: State = {periodSelectorOpen: false};
 
   render() {
-    const {period, customDateRange} = this.props;
+    const {period, customDateRange, style} = this.props;
 
     const timePeriods: MenuItemProps[] = [
       {
@@ -77,7 +78,12 @@ export class PeriodSelection extends React.Component<Props, State> {
     })).orElse({start: null, end: null});
 
     return (
-      <DropdownMenu listStyle={dropdownListStyle} menuItems={timePeriods} value={period}>
+      <DropdownMenu
+        listStyle={dropdownListStyle}
+        menuItems={timePeriods}
+        value={period}
+        style={style}
+      >
         <PeriodConfirmDialog
           isOpen={this.state.periodSelectorOpen}
           confirm={this.confirmCustomPeriod}

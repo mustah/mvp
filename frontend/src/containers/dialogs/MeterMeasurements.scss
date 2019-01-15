@@ -1,0 +1,20 @@
+@import '../../app/variables';
+
+.MeterMeasurements {
+  .DropdownMenu {
+    align-self: flex-end;
+  }
+}
+
+
+.MeterDetailsTabs {
+  .TabSettings {
+    padding-bottom: 10px;
+    padding-right: 0;
+  }
+
+  .TabList {
+    justify-content: space-between;
+    height: 64px;
+  }
+}

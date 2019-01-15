@@ -107,7 +107,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
 
     return (
       <Row>
-        <Tabs className="full-width first-letter">
+        <Tabs className="MeterDetailsTabs full-width first-letter">
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
               <Tab tab={TabName.values} title={translate('measurements')}/>

@@ -1,8 +1,7 @@
 import {flatMap, map} from 'lodash';
-import {Period, TemporalResolution} from '../../../../components/dates/dateModels';
+import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonUtils';
-import {newDateRange} from '../../../../helpers/dateHelpers';
 import {cityWithoutCountry} from '../../../../helpers/formatters';
 import {Maybe} from '../../../../helpers/Maybe';
 import {
@@ -22,7 +21,7 @@ import {
   SelectionTreeEntities,
   SelectionTreeMeter,
 } from '../../../selection-tree/selectionTreeModels';
-import {SelectedParameters} from '../../../user-selection/userSelectionModels';
+import {SelectedParameters, SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {
   allQuantities,
   initialMeterMeasurementsState,
@@ -248,10 +247,14 @@ interface MeasurementPagedApiResponse {
   data: NormalizedPaginated<Measurement>;
 }
 
-export const fetchMeasurementsPaged = async (id: uuid, updateState: OnUpdate, logout: OnLogout): Promise<void> => {
+export const fetchMeasurementsPaged = async (
+  id: uuid,
+  selectionInterval: SelectionInterval,
+  updateState: OnUpdate,
+  logout: OnLogout
+): Promise<void> => {
   try {
-    const customDateRange = newDateRange(Period.latest);
-    const period = makeApiParametersOf({period: Period.latest, customDateRange});
+    const period = makeApiParametersOf(selectionInterval);
     const measurementUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurementsPaged,
       `sort=created,desc&sort=quantity,asc&logicalMeterId=${id}&${period}`,

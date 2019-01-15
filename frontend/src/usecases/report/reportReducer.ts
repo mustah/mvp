@@ -41,7 +41,6 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
     case LOGOUT_USER:
       return initialState;
     case SELECT_PERIOD:
-      return state;
     case SET_CUSTOM_DATE_RANGE:
       return state;
     default:
