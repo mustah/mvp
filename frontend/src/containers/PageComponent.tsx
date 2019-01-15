@@ -2,10 +2,9 @@ import * as React from 'react';
 import {Footer} from '../components/footer/Footer';
 import {Column} from '../components/layouts/column/Column';
 import {Layout} from '../components/layouts/layout/Layout';
-import {AppTitle} from '../components/texts/Titles';
-import {translate} from '../services/translationService';
 import {WithChildren} from '../types/Types';
-import {TopMenuContainer} from '../usecases/topmenu/containers/TopMenuContainer';
+import {TopMenu} from '../usecases/topmenu/component/TopMenu';
+import {LogoContainer} from '../usecases/topmenu/containers/LogoContainer';
 
 interface Props extends WithChildren {
   topMenuSearch: JSX.Element;
@@ -20,21 +19,19 @@ const Content = ({children}: WithChildren) => (
 
 export const PageComponent = ({topMenuSearch, ...props}: Props) => (
   <Layout className="flex-1">
-    <TopMenuContainer>
-      <AppTitle>{translate('metering')}</AppTitle>
+    <TopMenu>
+      <LogoContainer/>
       {topMenuSearch}
-    </TopMenuContainer>
-
+    </TopMenu>
     <Content {...props}/>
   </Layout>
 );
 
 export const AdminPageComponent = (props: WithChildren) => (
   <Layout className="flex-1">
-    <TopMenuContainer>
-      <AppTitle>{translate('admin')}</AppTitle>
-    </TopMenuContainer>
-
+    <TopMenu>
+      <LogoContainer/>
+    </TopMenu>
     <Content {...props}/>
   </Layout>
 );

@@ -20,8 +20,8 @@ interface State {
   anchorElement?: React.ReactInstance;
 }
 
-export const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
-export const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
+export const anchorOrigin: origin = {horizontal: 'left', vertical: 'center'};
+export const targetOrigin: origin = {horizontal: 'middle', vertical: 'top'};
 
 export class PopoverMenu extends React.Component<Props, State> {
 

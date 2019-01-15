@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 import {routes} from '../../app/routes';
 import {colors, menuItemInnerDivStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
-import {OnClick, RenderFunction} from '../../types/Types';
+import {Clickable, OnClick, RenderFunction} from '../../types/Types';
 import {ColumnCenter} from '../layouts/column/Column';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../popover/PopoverMenu';
 import {Xsmall} from '../texts/Texts';
@@ -17,7 +17,7 @@ const renderAdmin = () => translate('admin');
 
 const renderMetering = () => translate('metering');
 
-const MenuIcon = ({onClick}) => (
+const MenuIcon = ({onClick}: Clickable) => (
   <ColumnCenter onClick={onClick} className="MenuItem clickable" style={appSwitchIconStyle}>
     <NavigationMenu color={colors.white}/>
     <Xsmall className="uppercase">
@@ -49,6 +49,7 @@ export const AppSwitchDropdown = () => {
 
   return (
     <PopoverMenu
+      className="AppSwitchDropdown"
       IconComponent={MenuIcon}
       anchorOrigin={anchorOrigin}
       targetOrigin={targetOrigin}

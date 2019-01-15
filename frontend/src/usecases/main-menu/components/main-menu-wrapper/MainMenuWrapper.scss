@@ -10,7 +10,7 @@
   background-color: $main-menu-color;
   z-index: $main-menu-z-index;
 
-  .MenuItems {
+  &.MenuItems {
     flex: 1;
   }
 }

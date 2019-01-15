@@ -12,7 +12,7 @@ export const SelectionMenu = ({
   resetSelection,
   selectSavedSelection,
 }: SelectionMenuProps) => (
-  <RowCenter>
+  <RowCenter className="SelectionSearch">
     <IconNavigationBack onClick={closeSelectionPage}/>
     <RowMiddle>
       <InlineEditInput

@@ -43,7 +43,7 @@ const Profile = ({user: {name}, logout}: Props) => {
   const wrappedLogout = () => logout();
 
   const renderPopoverContent: RenderFunction<OnClick> = () => (
-    <React.Fragment>
+    <>
       <Link to={routes.userProfile} className="link" key="goToProfile">
         <MenuItem
           style={menuItemInnerDivStyle}
@@ -55,7 +55,7 @@ const Profile = ({user: {name}, logout}: Props) => {
       <MenuItem style={menuItemInnerDivStyle} className="first-uppercase" onClick={wrappedLogout} key="logout">
         {translate('logout')}
       </MenuItem>
-    </React.Fragment>
+    </>
   );
 
   return (

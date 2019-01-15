@@ -24,7 +24,7 @@ export const SelectionMenuSummary = (props: SelectionMenuProps) => {
   const resetToSelection = () => selectSavedSelection(id);
 
   return (
-    <RowCenter className="SelectionMenuSummary">
+    <RowCenter className="SelectionSearch SelectionMenuSummary">
       <Link to={routes.selection} className="link SelectionIcon-margin">
         <IconSelection/>
       </Link>
