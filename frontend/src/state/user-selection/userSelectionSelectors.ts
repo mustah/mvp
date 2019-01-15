@@ -15,7 +15,7 @@ import {
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters, uuid} from '../../types/Types';
-import {Pagination} from '../ui/pagination/paginationModels';
+import {ApiRequestSortingOptions, Pagination} from '../ui/pagination/paginationModels';
 import {
   ParameterName,
   SelectedParameters,
@@ -77,14 +77,30 @@ const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
   return ({start, period, customDateRange: Maybe.maybe(customDateRange)});
 };
 
+const toSortParameters = (sort: ApiRequestSortingOptions[] | undefined): EncodedUriParameters[] =>
+  sort
+    ? sort.map(
+    ({field, dir}: ApiRequestSortingOptions) =>
+      `sort=${encodeURIComponent(field)}${dir ? ',' + dir : ''}`
+    )
+    : [];
+
 const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) =>
-  createSelector<UriLookupStatePaginated, string, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+  createSelector<UriLookupStatePaginated,
+    string,
+    Pagination,
+    ApiRequestSortingOptions[] | undefined,
+    SelectedParameters,
+    CurrentPeriod,
+    EncodedUriParameters>(
     ({query}) => query!,
     ({pagination}) => pagination,
+    ({sort}) => sort,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, pagination, {dateRange, threshold, ...rest}, currentPeriod) =>
+    (query, pagination, sort, {dateRange, threshold, ...rest}, currentPeriod) =>
       encodedUriParametersFrom([
+        ...toSortParameters(sort),
         ...toThresholdParameter(threshold),
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),

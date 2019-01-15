@@ -1,4 +1,10 @@
-import {Grid, GridColumn, GridPageChangeEvent, GridSortChangeEvent} from '@progress/kendo-react-grid';
+import {
+  Grid,
+  GridColumn,
+  GridPageChangeEvent,
+  GridPagerSettings,
+  GridSortChangeEvent
+} from '@progress/kendo-react-grid';
 import * as React from 'react';
 import '../../../app/kendo.scss';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
@@ -13,6 +19,7 @@ import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
 
 const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
@@ -35,6 +42,8 @@ export const MeterList = (
     isFetching,
     isSuperAdmin,
     pagination,
+    sort,
+    sortTable,
   }: MeterListProps) => {
 
   const renderMeterId = ({address, isReported}: Meter) => (
@@ -67,28 +76,30 @@ export const MeterList = (
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
-  const handleKendoPageChange = (event: GridPageChangeEvent) => {
-    changePage({entityType, componentId, page: event.page.skip / paginationPageSize});
+  const handleKendoPageChange = ({page: {skip}}: GridPageChangeEvent) => {
+    changePage({entityType, componentId, page: skip / paginationPageSize});
   };
 
-  const handleKendoSortChange = (event: GridSortChangeEvent) => {
-    console.log('sorting..', event);
+  const handleKendoSortChange = ({sort}: GridSortChangeEvent) => {
+    sortTable(sort as ApiRequestSortingOptions[]);
   };
 
-  const data = result.map(key => entities[key]);
+  const data = result.map((key) => entities[key]);
+
+  const pageable: GridPagerSettings = {
+    buttonCount: 5,
+    info: true,
+    type: 'numeric',
+    pageSizes: true,
+    previousNext: true,
+  };
 
   return (
     <>
       <Grid
-        data={{data: data, total: pagination.totalElements}}
+        data={{data, total: pagination.totalElements}}
 
-        pageable={{
-          buttonCount: 5,
-          info: true,
-          type: 'numeric',
-          pageSizes: true,
-          previousNext: true,
-        }}
+        pageable={pageable}
         pageSize={pagination.size}
         take={pagination.size}
         skip={pagination.page * pagination.size}
@@ -96,7 +107,7 @@ export const MeterList = (
 
         sortable={true}
         onSortChange={handleKendoSortChange}
-
+        sort={sort}
       >
         <GridColumn
           field="facility"

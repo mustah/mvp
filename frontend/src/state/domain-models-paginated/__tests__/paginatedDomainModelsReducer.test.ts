@@ -1,8 +1,10 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
+import {RequestParameter} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {ApiRequestSortingOptions} from '../../ui/pagination/paginationModels';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
@@ -12,7 +14,7 @@ import {
   PageNumbered,
   PaginatedDomainModelsState,
 } from '../paginatedDomainModels';
-import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
+import {makeRequestActionsOf, sortTable} from '../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../paginatedDomainModelsEntityActions';
 import {makeInitialState, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
@@ -234,6 +236,88 @@ describe('paginatedDomainModelsReducer', () => {
         mockSelectionAction,
       )).toEqual({meters: makeInitialState<Meter>(), gateways: makeInitialState<Gateway>()});
     });
+  });
+
+  describe('sortTable', () => {
+
+    it('can start sorting', () => {
+      const state: MetersState = makeInitialState();
+
+      const payload: ApiRequestSortingOptions[]  = [{field: RequestParameter.city}];
+      const newState: MetersState = meters(state, sortTable(payload));
+
+      expect(newState).toHaveProperty('sort', payload);
+    });
+
+    it('can remove sorting', () => {
+      const state: MetersState = meters(makeInitialState(), sortTable([{field: RequestParameter.city}]));
+
+      const newState: MetersState = meters(state, sortTable(undefined));
+
+      expect(newState).not.toHaveProperty('sort');
+    });
+
+    it('keeps the result when the sorting is unchanged', () => {
+      const payload: ApiRequestSortingOptions[] = [{field: RequestParameter.city}];
+      const state: MetersState = meters(
+        {
+          ...makeInitialState(),
+          result: {
+            1: {
+              isFetching: false,
+              isSuccessfullyFetched: true,
+              result: [123, 456],
+            },
+          },
+          sort: [...payload],
+        },
+        sortTable(payload)
+      );
+
+      expect(state).toHaveProperty('result');
+      expect(state.result).toHaveProperty('1');
+      expect(state.result[1]).toHaveProperty('result', [123, 456]);
+    });
+
+    it('throws out the result when the sorting changes', () => {
+      const payload: ApiRequestSortingOptions[] = [{field: RequestParameter.city}];
+      const differentPayload: ApiRequestSortingOptions[] = [{field: RequestParameter.city, dir: 'desc'}];
+      const state: MetersState = meters(
+        {
+          ...makeInitialState(),
+          result: {
+            1: {
+              isFetching: false,
+              isSuccessfullyFetched: true,
+              result: [123, 456],
+            },
+          },
+          sort: [...payload],
+        },
+        sortTable(differentPayload)
+      );
+
+      expect(state).toHaveProperty('result');
+      expect(state.result).not.toHaveProperty('1');
+    });
+
+    it('can replace sorting', () => {
+      const state: MetersState = meters(makeInitialState(), sortTable([{field: RequestParameter.city}]));
+
+      const newState: MetersState = meters(
+        state,
+        sortTable([{field: RequestParameter.city}, {field: RequestParameter.address}])
+      );
+
+      expect(newState).toHaveProperty(
+        'sort',
+        [
+          {field: RequestParameter.city},
+          {field: RequestParameter.address}
+        ]
+      );
+    });
+
   });
 
   describe('logout user', () => {

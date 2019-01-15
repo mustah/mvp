@@ -2,7 +2,7 @@ import {urlFromParameters} from '../../../__tests__/urlFromParameters';
 import {Period} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {meterParameters} from '../../../helpers/urlFactory';
+import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {Quantity} from '../../ui/graph/measurement/measurementModels';
 import {initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
@@ -227,6 +227,7 @@ describe('userSelectionSelectors', () => {
 
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW for 3 days');
     });
+
     it('does not include a duration in threshold query', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
@@ -257,6 +258,22 @@ describe('userSelectionSelectors', () => {
 
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
+
+    it('can sort by field', () => {
+      const state: UriLookupStatePaginated = {
+        ...initialUriLookupState,
+        sort: [
+          {dir: 'asc', field: RequestParameter.city},
+        ],
+      };
+
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters(state);
+
+      const url: URL = urlFromParameters(parameters);
+
+      expect(url.searchParams.get(RequestParameter.sort)).toEqual('city,asc');
+    });
+
   });
 
   describe('getPaginatedGatewayParameters', () => {

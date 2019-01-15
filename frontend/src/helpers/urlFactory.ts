@@ -42,6 +42,7 @@ export enum RequestParameter {
   reported = 'reported',
   quantity = 'quantity',
   secondaryAddress = 'secondaryAddress',
+  sort = 'sort',
   threshold = 'threshold',
   resolution = 'resolution',
 }
@@ -59,6 +60,7 @@ const requestParametersBySelectionParameters: ParameterNames = {
   productModels: RequestParameter.productModel,
   reported: RequestParameter.reported,
   secondaryAddresses: RequestParameter.secondaryAddress,
+  sort: RequestParameter.sort,
   threshold: RequestParameter.threshold,
 };
 

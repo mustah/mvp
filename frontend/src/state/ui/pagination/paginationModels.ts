@@ -1,3 +1,4 @@
+import {RequestParameter} from '../../../helpers/urlFactory';
 import {uuid} from '../../../types/Types';
 import {
   NormalizedPaginatedResult,
@@ -42,7 +43,13 @@ type Pageable = {
   [entityType in keyof DomainModelsState]?: PaginationModel;
 };
 
-export interface SortingOptions {
+// This interface must match Kendo's SortDescriptor (which wants the field as 'string', we add a validating layer)
+export interface ApiRequestSortingOptions {
+  field: RequestParameter;
+  dir?: 'asc' | 'desc';
+}
+
+export interface ApiResultSortingOptions {
   direction: 'ASC' | 'DESC';
   property: string;
   ignoreCase: boolean;
