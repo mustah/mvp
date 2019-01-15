@@ -85,7 +85,7 @@ export interface MeasurementResponses extends Measurements {
 
 export interface QuantityAttributes {
   unit: string;
-  displayMode: QunantityDisplayMode;
+  displayMode: QuantityDisplayMode;
 }
 
 export enum Quantity {
@@ -103,29 +103,38 @@ export enum Quantity {
   externalTemperature = 'External temperature',
 }
 
-export enum QunantityDisplayMode {
+enum QuantityDisplayMode {
   meterValue = 1,
   consumption
 }
 
+export const unitPerHour = (quantity: string | undefined, unit: string | undefined): string | undefined => {
+  if (!quantity || !unit) {
+    return unit;
+  }
+  return quantityAttributes[quantity as Quantity].displayMode === QuantityDisplayMode.consumption
+    ? `${unit}/h`
+    : unit;
+};
+
 export const quantityAttributes: { [q in Quantity]: QuantityAttributes } = {
-  [Quantity.energy]: {unit: 'kWh', displayMode: QunantityDisplayMode.consumption},
-  [Quantity.energyReturn]: {unit: 'kWh', displayMode: QunantityDisplayMode.consumption},
-  [Quantity.energyReactive]: {unit: 'kWh', displayMode: QunantityDisplayMode.consumption},
-  [Quantity.externalTemperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.volume]: {unit: 'm³', displayMode: QunantityDisplayMode.consumption},
-  [Quantity.power]: {unit: 'W', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.flow]: {unit: 'm³/h', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.forwardTemperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.returnTemperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.temperature]: {unit: '°C', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.relativeHumidity]: {unit: '%', displayMode: QunantityDisplayMode.meterValue},
-  [Quantity.differenceTemperature]: {unit: 'K', displayMode: QunantityDisplayMode.meterValue},
+  [Quantity.energy]: {unit: 'kWh', displayMode: QuantityDisplayMode.consumption},
+  [Quantity.energyReturn]: {unit: 'kWh', displayMode: QuantityDisplayMode.consumption},
+  [Quantity.energyReactive]: {unit: 'kWh', displayMode: QuantityDisplayMode.consumption},
+  [Quantity.externalTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.volume]: {unit: 'm³', displayMode: QuantityDisplayMode.consumption},
+  [Quantity.power]: {unit: 'W', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.flow]: {unit: 'm³/h', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.forwardTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.returnTemperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.temperature]: {unit: '°C', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.relativeHumidity]: {unit: '%', displayMode: QuantityDisplayMode.meterValue},
+  [Quantity.differenceTemperature]: {unit: 'K', displayMode: QuantityDisplayMode.meterValue},
 };
 
 export const getDisplayModeText = (quantity: Quantity | string | undefined): string => {
   const quantityAttribute = quantityAttributes[quantity as Quantity];
-  return quantityAttribute && quantityAttribute.displayMode === QunantityDisplayMode.consumption
+  return quantityAttribute && quantityAttribute.displayMode === QuantityDisplayMode.consumption
     ? 'consumption'
     : 'meter value';
 };
