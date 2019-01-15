@@ -110,7 +110,12 @@ export const MeterList = (
         />
         <GridColumn field="address" cell={renderInKendo(renderMeterId)} title={translate('meter id')}/>
         <GridColumn field="location" cell={renderInKendo(renderCityName)} title={translate('city')}/>
-        <GridColumn field="location" cell={renderInKendo(renderAddressName)} title={translate('address')}/>
+        <GridColumn
+          field="location"
+          cell={renderInKendo(renderAddressName)}
+          title={translate('address')}
+          width={180}
+        />
         <GridColumn field="manufacturer" cell={renderInKendo(renderManufacturer)} title={translate('manufacturer')}/>
         <GridColumn field="medium" cell={renderInKendo(renderMedium)} title={translate('medium')}/>
         <GridColumn field="alarm" cell={renderInKendo(renderAlarm)} title={translate('alarm')}/>
