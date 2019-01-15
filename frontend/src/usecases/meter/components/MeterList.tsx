@@ -13,6 +13,7 @@ import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import '../../../app/kendo.scss';
 
 const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
 
@@ -74,18 +75,13 @@ export const MeterList = (
   const handleKendoSortChange = (event: GridSortChangeEvent) =>
     console.log('sorting..', event);
 
-  // TODO style table to match the previous looks
-  // TODO move pagination to kendo, make sure prev/next/"jumping to number" works
-  // TODO add types where needed
-  // TODO remove previous <Table> usage
-  // TODO add "sort by header"
-
   console.log('pagination', pagination)
   const data = result
-    .map(key => entities[key]).slice(
+    .slice(
       pagination.page * pagination.size,
       pagination.page * pagination.size + pagination.size
-    );
+    )
+    .map(key => entities[key]);
 
   return (
     <>
