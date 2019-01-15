@@ -102,7 +102,12 @@ export const MeterList = (
         onSortChange={handleKendoSortChange}
 
       >
-        <GridColumn field="facility" cell={renderInKendo(renderMeterListItem)} title={translate('facility')}/>
+        <GridColumn
+          field="facility"
+          cell={renderInKendo(renderMeterListItem)}
+          title={translate('facility')}
+          width={180}
+        />
         <GridColumn field="address" cell={renderInKendo(renderMeterId)} title={translate('meter id')}/>
         <GridColumn field="location" cell={renderInKendo(renderCityName)} title={translate('city')}/>
         <GridColumn field="location" cell={renderInKendo(renderAddressName)} title={translate('address')}/>
