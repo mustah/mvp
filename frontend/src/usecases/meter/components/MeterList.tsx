@@ -1,11 +1,11 @@
 import {Grid, GridColumn, GridPageChangeEvent, GridSortChangeEvent} from '@progress/kendo-react-grid';
 import * as React from 'react';
+import '../../../app/kendo.scss';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListProps} from '../../../components/meters/MeterListContent';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
-import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {MeterAlarm} from '../../../components/status/MeterAlarm';
 import {ErrorLabel} from '../../../components/texts/ErrorLabel';
 import {Normal} from '../../../components/texts/Texts';
@@ -13,7 +13,7 @@ import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import '../../../app/kendo.scss';
+import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
 
 const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
 
@@ -67,10 +67,8 @@ export const MeterList = (
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
-  const onChangePage = (page: number) => changePage({entityType, componentId, page});
-
   const handleKendoPageChange = (event: GridPageChangeEvent) =>
-    changePage({entityType, componentId, page: event.page.skip / 20});
+    changePage({entityType, componentId, page: event.page.skip / paginationPageSize});
 
   const handleKendoSortChange = (event: GridSortChangeEvent) =>
     console.log('sorting..', event);
@@ -112,11 +110,13 @@ export const MeterList = (
         <GridColumn field="medium" cell={renderInKendo(renderMedium)} title={translate('medium')}/>
         <GridColumn field="alarm" cell={renderInKendo(renderAlarm)} title={translate('alarm')}/>
         <GridColumn field="gateway" cell={renderInKendo(renderGatewaySerial)} title={translate('gateway')}/>
-        <GridColumn cell={renderInKendo(renderCollectionStatus)} title={translate('collection percentage')}/>
-        <GridColumn cell={renderInKendo(renderActions)}/>
+        <GridColumn
+          sortable={false}
+          cell={renderInKendo(renderCollectionStatus)}
+          title={translate('collection percentage')}
+        />
+        <GridColumn sortable={false} cell={renderInKendo(renderActions)}/>
       </Grid>
-
-      <PaginationControl pagination={pagination} changePage={onChangePage}/>
     </>
   );
 };

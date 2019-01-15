@@ -5,7 +5,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
 import {Quantity} from '../../ui/graph/measurement/measurementModels';
-import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
+import {initialPaginationState, paginationPageSize} from '../../ui/pagination/paginationReducer';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {addParameterToSelection, selectPeriod} from '../userSelectionActions';
 import {
@@ -55,7 +55,7 @@ describe('userSelectionSelectors', () => {
   });
 
   it('encode the initial, empty, selection', () => {
-    expect(initialEncodedParameters).toEqual(`${latestUrlParameters}&size=${limit}&page=0`);
+    expect(initialEncodedParameters).toEqual(`${latestUrlParameters}&size=${paginationPageSize}&page=0`);
   });
 
   describe('getPaginatedMeterParameters', () => {
@@ -77,7 +77,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=${limit}&page=0`);
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=${paginationPageSize}&page=0`);
     });
 
     it('has two selected cities', () => {
@@ -110,7 +110,7 @@ describe('userSelectionSelectors', () => {
 
       expect(uriParameters).toEqual(
         `city=sweden%2Cg%C3%B6teborg&city=sweden%2Cstockholm` +
-        `&${latestUrlParameters}&size=${limit}&page=0`,
+        `&${latestUrlParameters}&size=${paginationPageSize}&page=0`,
       );
     });
 

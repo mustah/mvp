@@ -1,6 +1,6 @@
 import {DomainModelsState} from '../../../domain-models/domainModels';
 import {Pagination, PaginationLookupState, PaginationState} from '../paginationModels';
-import {limit} from '../paginationReducer';
+import {paginationPageSize} from '../paginationReducer';
 import {getPagination, getPaginationList, PaginatedDomainModel} from '../paginationSelectors';
 
 describe('paginationSelectors', () => {
@@ -82,7 +82,7 @@ describe('paginationSelectors', () => {
 
       const expected: Pagination = {
         page: 0,
-        size: limit,
+        size: paginationPageSize,
         totalElements: -1,
         totalPages: -1,
       };
