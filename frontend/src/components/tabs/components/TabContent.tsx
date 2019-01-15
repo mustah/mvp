@@ -1,7 +1,9 @@
+import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {ClassNamed} from '../../../types/Types';
 import {Column} from '../../layouts/column/Column';
+import './Tabs.scss';
 
 export interface TabContentProps extends ClassNamed {
   tab: TabName;
@@ -9,5 +11,8 @@ export interface TabContentProps extends ClassNamed {
   children: any;
 }
 
-export const TabContent = ({tab, selectedTab, children, className}: TabContentProps) =>
-  selectedTab === tab ? <Column className={className}>{children}</Column> : null;
+export const TabContent = ({tab, selectedTab, children, className}: TabContentProps) => (
+  <Column className={classNames('TabContent', {selected: selectedTab === tab}, className)}>
+    {children}
+  </Column>
+);

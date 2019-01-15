@@ -47,6 +47,14 @@
       }
     }
   }
+
+  .TabContent {
+    display: none;
+
+    &.selected {
+      display: flex;
+    }
+  }
 }
 
 .TabSettings {

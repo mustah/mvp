@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Period} from '../../components/dates/dateModels';
+import {DateRange, Period} from '../../components/dates/dateModels';
+import {PeriodSelection} from '../../components/dates/PeriodSelection';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import {renderCreated} from '../../components/table/cellContentHelper';
@@ -9,6 +10,7 @@ import '../../components/table/Table.scss';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {newDateRange} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
+import {Maybe} from '../../helpers/Maybe';
 import {translate} from '../../services/translationService';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {fetchMeasurementsPaged} from '../../state/ui/graph/measurement/measurementActions';
@@ -20,10 +22,13 @@ import {
   Quantity,
   Readings
 } from '../../state/ui/graph/measurement/measurementModels';
+import {groupMeasurementsByDate, MeasurementTableData} from '../../state/ui/graph/measurement/measurementSelectors';
+import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Fetching, UnixTimestamp} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
-import {fillMissingMeasurements, groupMeasurementsByDate, MeasurementTableData} from './dialogHelper';
+import {fillMissingMeasurements} from './dialogHelper';
+import './MeterMeasurements.scss';
 
 const renderValue = ({value, unit}: Measurement): string =>
   value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
@@ -57,6 +62,13 @@ const renderReadingRows =
 
 const readoutColumnStyle: React.CSSProperties = {
   width: 80,
+};
+
+const style: React.CSSProperties = {
+  marginTop: -46,
+  marginRight: 40,
+  marginBottom: 0,
+  marginLeft: 0,
 };
 
 interface ReadingsProps {
@@ -93,17 +105,29 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
   </Column>
 );
 
+const makeSelectionInterval = ({customDateRange, period}: State): SelectionInterval =>
+  ({period, customDateRange: customDateRange.getOrElseUndefined()});
+
 type WrapperProps = Fetching & ReadingsProps;
 
 const MeasurementsTableComponent = withLargeLoader<ReadingsProps>(MeasurementsTable);
 
 type Props = OwnProps & DispatchToProps;
 
-class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
+interface State extends MeterMeasurementsState {
+  period: Period;
+  customDateRange: Maybe<DateRange>;
+}
+
+class MeterMeasurements extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.state = {...initialMeterMeasurementsState};
+    this.state = {
+      ...initialMeterMeasurementsState,
+      customDateRange: Maybe.nothing(),
+      period: Period.latest,
+    };
   }
 
   async componentDidMount() {
@@ -111,17 +135,17 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
 
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(id, this.updateState, logout);
+    await fetchMeasurementsPaged(id, makeSelectionInterval(this.state), this.onUpdateState, logout);
   }
 
   async componentWillReceiveProps({meter: {id}, logout}: Props) {
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(id, this.updateState, logout);
+    await fetchMeasurementsPaged(id, makeSelectionInterval(this.state), this.onUpdateState, logout);
   }
 
   render() {
-    const {isFetching, measurementPages} = this.state;
+    const {customDateRange, isFetching, measurementPages, period} = this.state;
     const {meter: {medium, readIntervalMinutes}} = this.props;
 
     const {readings: existingReadings, quantities}: MeasurementTableData = groupMeasurementsByDate(
@@ -129,20 +153,43 @@ class MeterMeasurements extends React.Component<Props, MeterMeasurementsState> {
       getMediumType(medium),
     );
 
-    const dateRange = newDateRange(Period.latest);
-
     const readings: Readings = fillMissingMeasurements({
       existingReadings,
       readIntervalMinutes,
-      dateRange,
+      dateRange: newDateRange(period),
     });
 
     const wrapperProps: WrapperProps = {isFetching, readings, quantities};
 
-    return <MeasurementsTableComponent {...wrapperProps}/>;
+    return (
+      <Column className="MeterMeasurements">
+        <PeriodSelection
+          customDateRange={customDateRange}
+          period={period}
+          selectPeriod={this.selectPeriod}
+          setCustomDateRange={this.setCustomDateRange}
+          style={style}
+        />
+        <MeasurementsTableComponent {...wrapperProps}/>
+      </Column>);
   }
 
-  updateState = (state: MeterMeasurementsState) => this.setState({...state});
+  selectPeriod = async (period: Period) => {
+    this.setState({period, isFetching: true});
+    await this.doFetch();
+  }
+
+  setCustomDateRange = async (dateRange: DateRange) => {
+    this.setState({customDateRange: Maybe.maybe(dateRange), isFetching: true});
+    await this.doFetch();
+  }
+
+  onUpdateState = (state: MeterMeasurementsState) => this.setState({...state});
+
+  doFetch = async () => {
+    const {meter: {id}} = this.props;
+    await fetchMeasurementsPaged(id, makeSelectionInterval(this.state), this.onUpdateState, logout);
+  }
 }
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
