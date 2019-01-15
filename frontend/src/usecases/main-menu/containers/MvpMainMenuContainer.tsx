@@ -2,10 +2,9 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {IconCollection} from '../../../components/icons/IconCollection';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
+import {IconMeter} from '../../../components/icons/IconMeter';
 import {IconReport} from '../../../components/icons/IconReport';
-import {IconValidation} from '../../../components/icons/IconValidation';
 import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
@@ -27,18 +26,11 @@ const MvpMainMenu = ({pathname}: StateToProps) => (
           icon={<IconDashboard className="MenuItem-icon"/>}
         />
       </Link>
-      <Link to={routes.collection} className="link">
+      <Link to={routes.meter} className="link">
         <MenuItem
-          name={translate('collection')}
-          isSelected={routes.collection === pathname}
-          icon={<IconCollection className="MenuItem-icon"/>}
-        />
-      </Link>
-      <Link to={routes.validation} className="link">
-        <MenuItem
-          name={translate('validation')}
-          isSelected={routes.validation === pathname}
-          icon={<IconValidation className="MenuItem-icon"/>}
+          name={translate('meter')}
+          isSelected={routes.meter === pathname}
+          icon={<IconMeter className="MenuItem-icon"/>}
         />
       </Link>
       <Link to={routes.report} className="link">

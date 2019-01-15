@@ -6,12 +6,12 @@ export const CHANGE_TAB = 'CHANGE_TAB';
 
 const changeTab = createPayloadAction<string, TabSelection>(CHANGE_TAB);
 
-export const changeTabCollection = (tab: TabName) => changeTab({
+export const changeTabGateway = (tab: TabName) => changeTab({
   useCase: UseCases.collection,
   tab,
 });
 
-export const changeTabValidation = (tab: TabName) => changeTab({
+export const changeTabMeter = (tab: TabName) => changeTab({
   useCase: UseCases.validation,
   tab,
 });

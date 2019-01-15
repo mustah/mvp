@@ -22,7 +22,7 @@ import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {ComponentId} from '../../types/Types';
 import {selectEntryAdd, showMetersInGraph} from '../../usecases/report/reportActions';
-import {syncMeters, syncWithMetering} from '../../usecases/validation/validationActions';
+import {syncMeters, syncWithMetering} from '../../usecases/meter/meterActions';
 
 const mapStateToProps = (
   {

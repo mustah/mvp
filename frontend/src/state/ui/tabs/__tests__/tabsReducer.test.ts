@@ -1,4 +1,4 @@
-import {changeTabCollection, changeTabReport, changeTabValidation} from '../tabsActions';
+import {changeTabGateway, changeTabReport, changeTabMeter} from '../tabsActions';
 import {TabName, TabsState} from '../tabsModels';
 import {initialState, tabs} from '../tabsReducer';
 
@@ -7,7 +7,7 @@ describe('tabsReducer', () => {
   describe('changeTab', () => {
 
     it('changes tab to map in validation use case', () => {
-      const state: TabsState = tabs(initialState, changeTabValidation(TabName.map));
+      const state: TabsState = tabs(initialState, changeTabMeter(TabName.map));
 
       const expected: TabsState = {
         ...initialState,
@@ -17,7 +17,7 @@ describe('tabsReducer', () => {
     });
 
     it('changes tabs in validation use case', () => {
-      let state: TabsState = tabs(initialState, changeTabValidation(TabName.map));
+      let state: TabsState = tabs(initialState, changeTabMeter(TabName.map));
 
       const expected: TabsState = {
         ...initialState,
@@ -25,7 +25,7 @@ describe('tabsReducer', () => {
       };
       expect(state).toEqual(expected);
 
-      state = tabs(state, changeTabValidation(TabName.list));
+      state = tabs(state, changeTabMeter(TabName.list));
 
       const expected2: TabsState = {
         ...initialState,
@@ -35,7 +35,7 @@ describe('tabsReducer', () => {
     });
 
     it('changes tab to list in collection use case', () => {
-      const state = tabs(initialState, changeTabCollection(TabName.list));
+      const state = tabs(initialState, changeTabGateway(TabName.list));
 
       expect(state).toEqual({
         ...initialState,
@@ -44,7 +44,7 @@ describe('tabsReducer', () => {
     });
 
     it('changes tabs in collection use case', () => {
-      let state: TabsState = tabs(initialState, changeTabCollection(TabName.graph));
+      let state: TabsState = tabs(initialState, changeTabGateway(TabName.graph));
 
       const expected: TabsState = {
         ...initialState,
@@ -52,7 +52,7 @@ describe('tabsReducer', () => {
       };
       expect(state).toEqual(expected);
 
-      state = tabs(state, changeTabCollection(TabName.list));
+      state = tabs(state, changeTabGateway(TabName.list));
 
       const expected2: TabsState = {
         ...initialState,

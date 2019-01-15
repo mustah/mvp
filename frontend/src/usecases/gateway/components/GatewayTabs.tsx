@@ -6,7 +6,7 @@ import {
 } from '../../../components/tabs/components/MainContentTabs';
 import {GatewayListContainer} from '../containers/GatewayListContainer';
 
-export const CollectionTabs = (props: MainContentTabsProps) =>
+export const GatewayTabs = (props: MainContentTabsProps) =>
   (
     <MainContentTabs {...props} DetailsDialog={GatewayDetailsDialog}>
       <GatewayListContainer componentId="collectionGatewayList"/>

@@ -15,7 +15,7 @@ import {Role, User} from '../../../state/domain-models/user/userModels';
 import {showFailMessage, showSuccessMessage} from '../../../state/ui/message/messageActions';
 import {Callback, ErrorResponse, uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
-import {syncMeters, syncWithMetering} from '../validationActions';
+import {syncMeters, syncWithMetering} from '../meterActions';
 
 describe('syncWithMetering', () => {
 

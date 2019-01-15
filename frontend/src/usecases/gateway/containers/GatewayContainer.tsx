@@ -14,7 +14,7 @@ import {translate} from '../../../services/translationService';
 import {OnClick} from '../../../types/Types';
 import {clearCollectionSearch, collectionSearch} from '../../search/searchActions';
 import {OnSearch, Query} from '../../search/searchModels';
-import {CollectionTabsContainer} from '../containers/CollectionTabsContainer';
+import {GatewayTabsContainer} from './GatewayTabsContainer';
 
 interface DispatchToProps {
   search: OnSearch;
@@ -23,7 +23,7 @@ interface DispatchToProps {
 
 type Props = Query & DispatchToProps;
 
-const Collection = ({clearSearch, search, query}: Props) => (
+const GatewayPage = ({clearSearch, search, query}: Props) => (
   <MvpPageContainer>
     <Row className="space-between">
       <RowCenter>
@@ -44,7 +44,7 @@ const Collection = ({clearSearch, search, query}: Props) => (
     </Row>
 
     <Paper style={mainContentPaperStyle}>
-      <CollectionTabsContainer/>
+      <GatewayTabsContainer/>
     </Paper>
   </MvpPageContainer>
 );
@@ -56,5 +56,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   search: collectionSearch,
 }, dispatch);
 
-export const CollectionContainer =
-  connect<Query, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Collection);
+export const GatewayContainer =
+  connect<Query, DispatchToProps>(mapStateToProps, mapDispatchToProps)(GatewayPage);

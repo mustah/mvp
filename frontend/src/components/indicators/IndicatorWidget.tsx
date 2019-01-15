@@ -8,7 +8,7 @@ import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {WidgetModel} from './indicatorWidgetModels';
-import {IconCollection} from '../icons/IconCollection';
+import {IconGateway} from '../icons/IconGateway';
 import classNames = require('classnames');
 
 interface Props {
@@ -34,7 +34,7 @@ const NoExpectedMeasurementsWidget =
           {firstUpperTranslated('no measurements expected for the selected period')}
         </Row>
         <Row className="Indicator-subtitle Row-center">
-          <IconCollection className="Indicator-icon" color={colors.blue}/>
+          <IconGateway className="Indicator-icon" color={colors.blue}/>
         </Row>
       </ColumnCenter>
     </Column>
@@ -61,7 +61,7 @@ export const IndicatorWidget =
             <Normal className="Indicator-unit">%</Normal>
           </Row>
           <Row className="Indicator-subtitle Row-center">
-            <IconCollection className="Indicator-icon" color={colors.white}/>
+            <IconGateway className="Indicator-icon" color={colors.white}/>
             <Column className="Indicator-details">
               <Normal>{translate('{{pending}} of {{count}}', {pending, count: total})}</Normal>
               <Normal>{translate('measurement missing', {count: total})}</Normal>

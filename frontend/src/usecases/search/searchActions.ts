@@ -2,7 +2,7 @@ import {throttle} from 'lodash';
 import {Dispatch} from 'react-redux';
 import {RootState} from '../../reducers/rootReducer';
 import {OnPayloadAction, payloadActionOf} from '../../types/Types';
-import {collectionQuery, OnSearch, QueryParameter, selectionTreeQuery, validationQuery} from './searchModels';
+import {gatewayQuery, OnSearch, QueryParameter, selectionTreeQuery, meterQuery} from './searchModels';
 
 export const SEARCH = 'SEARCH';
 export const SEARCH_SELECTION_TREE = 'SEARCH_SELECTION_TREE';
@@ -21,10 +21,10 @@ const onSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<Que
 const clearSearch = (parameter: QueryParameter, searchFunction: OnPayloadAction<QueryParameter>) =>
   (dispatch: Dispatch<RootState>) => dispatch(searchFunction(parameter));
 
-export const collectionSearch = (query?: string) => onSearch(collectionQuery(query), search);
-export const validationSearch = (query?: string) => onSearch(validationQuery(query), search);
+export const collectionSearch = (query?: string) => onSearch(gatewayQuery(query), search);
+export const validationSearch = (query?: string) => onSearch(meterQuery(query), search);
 export const selectionTreeSearch = (query?: string) => onSearch(selectionTreeQuery(query), searchSelectionTree);
 
-export const clearCollectionSearch = () => clearSearch(collectionQuery(), search);
-export const clearValidationSearch = () => clearSearch(validationQuery(), search);
+export const clearCollectionSearch = () => clearSearch(gatewayQuery(), search);
+export const clearValidationSearch = () => clearSearch(meterQuery(), search);
 export const clearSelectionTreeSearch = () => clearSearch(selectionTreeQuery(), searchSelectionTree);
