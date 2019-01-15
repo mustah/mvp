@@ -6,7 +6,7 @@ import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {search} from '../../../usecases/search/searchActions';
-import {collectionQuery, meterQuery} from '../../../usecases/search/searchModels';
+import {gatewayQuery, meterQuery} from '../../../usecases/search/searchModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
@@ -265,7 +265,7 @@ describe('domainModelsReducer', () => {
 
       expect(nextState).toEqual(expected);
 
-      const state = gatewayMapMarkers(nextState, search(collectionQuery('test')));
+      const state = gatewayMapMarkers(nextState, search(gatewayQuery('test')));
 
       expect(state).toEqual(initialDomain<MapMarker>());
     });

@@ -2,7 +2,7 @@ import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../../app/routes';
 import {LOGOUT_USER} from '../../auth/authActions';
 import {search as searchAction} from '../searchActions';
-import {collectionQuery, QueryParameter, selectionTreeQuery, meterQuery} from '../searchModels';
+import {gatewayQuery, QueryParameter, selectionTreeQuery, meterQuery} from '../searchModels';
 import {initialState, search, SearchState} from '../searchReducer';
 
 describe('searchReducer', () => {
@@ -39,7 +39,7 @@ describe('searchReducer', () => {
   describe('gateway search query', () => {
 
     it('has no gateway search query', () => {
-      const payload: QueryParameter = collectionQuery();
+      const payload: QueryParameter = gatewayQuery();
       const state: SearchState = search(
         initialState,
         searchAction(payload),
@@ -49,18 +49,18 @@ describe('searchReducer', () => {
     });
 
     it('has gateway search query', () => {
-      const payload: QueryParameter = collectionQuery('bro');
+      const payload: QueryParameter = gatewayQuery('bro');
       const state: SearchState = search(initialState, searchAction(payload));
 
       expect(state).toEqual({...initialState, collection: {query: 'bro'}});
     });
 
     it('replaces previous gateway search query', () => {
-      let state: SearchState = search(initialState, searchAction(collectionQuery('bro')));
+      let state: SearchState = search(initialState, searchAction(gatewayQuery('bro')));
 
       expect(state).toEqual({...initialState, collection: {query: 'bro'}});
 
-      state = search(initialState, searchAction(collectionQuery('hop')));
+      state = search(initialState, searchAction(gatewayQuery('hop')));
       expect(state).toEqual({...initialState, collection: {query: 'hop'}});
     });
   });
@@ -120,7 +120,7 @@ describe('searchReducer', () => {
     it('replaces only gateway query', () => {
       let state: SearchState = search(initialState, searchAction(meterQuery('bro')));
 
-      state = search(state, searchAction(collectionQuery('stop')));
+      state = search(state, searchAction(gatewayQuery('stop')));
 
       expect(state).toEqual({
         ...initialState,
@@ -167,7 +167,7 @@ describe('searchReducer', () => {
       let state: SearchState = {
         ...initialState,
         ...meterQuery('kungsbacka'),
-        ...collectionQuery('CMi'),
+        ...gatewayQuery('CMi'),
       };
 
       state = search(state, {type: LOGOUT_USER});

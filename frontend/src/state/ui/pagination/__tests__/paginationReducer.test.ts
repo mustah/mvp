@@ -1,6 +1,6 @@
 import {mockSelectionAction} from '../../../../__tests__/testActions';
 import {search} from '../../../../usecases/search/searchActions';
-import {collectionQuery, meterQuery} from '../../../../usecases/search/searchModels';
+import {gatewayQuery, meterQuery} from '../../../../usecases/search/searchModels';
 import {changePage, updatePageMetaData} from '../paginationActions';
 import {
   PaginationChangePayload,
@@ -135,7 +135,7 @@ describe('paginationReducer', () => {
           },
         },
       };
-      expect(pagination(paginatedState, search(collectionQuery('error')))).toEqual(expectedState);
+      expect(pagination(paginatedState, search(gatewayQuery('error')))).toEqual(expectedState);
     });
 
   });

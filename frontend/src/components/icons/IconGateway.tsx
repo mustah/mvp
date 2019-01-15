@@ -3,7 +3,7 @@ import SvgIcon from 'material-ui/SvgIcon';
 import * as React from 'react';
 
 /* tslint:disable */
-export const IconCollection: React.SFC<SvgIconProps> = (props) => (
+export const IconGateway: React.SFC<SvgIconProps> = (props) => (
   <SvgIcon viewBox="210 238 111 143" {...props} color={props.color || 'white'}>
     <path d="M264.6,367 L210.9,367 L210.9,258.2 L254.7,258.2 L254.7,243.2 C254.7,240.6 256.8,238.5 259.4,238.5 L259.4,238.5 C262,238.5 264.1,240.6 264.1,243.2 L264.1,267.7 L220.3,267.7 L220.3,357.6 L264.5,357.6 L264.5,367 L264.6,367 Z" id="Shape" stroke="none" fillRule="evenodd"/>
     <path d="M277.5,381.5 L277.5,381.5 C274.9,381.5 272.8,379.382829 272.8,376.76157 L272.8,358.412756 L311.3,358.412756 L311.3,267.777678 L272.8,267.777678 L272.8,258.2 L320.8,258.2 L320.8,367.889616 L282.3,367.889616 L282.3,376.660752 C282.3,379.382829 280.1,381.5 277.5,381.5 Z" id="Shape" stroke="none" fillRule="evenodd"/>

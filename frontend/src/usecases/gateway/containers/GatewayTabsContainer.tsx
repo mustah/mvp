@@ -4,14 +4,14 @@ import {DispatchToProps, StateToProps} from '../../../components/tabs/components
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
+import {changeTabGateway} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {getGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
-import {CollectionTabs} from '../components/CollectionTabs';
+import {GatewayTabs} from '../components/GatewayTabs';
 
 const mapStateToProps =
   (rootState: RootState): StateToProps => {
@@ -36,14 +36,14 @@ const mapStateToProps =
   };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  changeTab: changeTabCollection,
+  changeTab: changeTabGateway,
   clearError: clearErrorGatewayMapMarkers,
   close: closeClusterDialog,
   fetchMapMarkers: fetchGatewayMapMarkers,
 }, dispatch);
 
-export const CollectionTabsContainer =
+export const GatewayTabsContainer =
   connect<StateToProps, DispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
-  )(withMapMarkersFetcher(CollectionTabs));
+  )(withMapMarkersFetcher(GatewayTabs));

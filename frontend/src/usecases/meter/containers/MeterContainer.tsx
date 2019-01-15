@@ -27,7 +27,7 @@ const MeterPage = ({clearSearch, search, query}: Props) => (
   <MvpPageContainer>
     <Row className="space-between">
       <RowCenter>
-        <MainTitle subtitle={translate('validation')}>
+        <MainTitle>
           {translate('meter', {count: 2})}
         </MainTitle>
         <SearchBox

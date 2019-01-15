@@ -1,6 +1,4 @@
 import * as React from 'react';
-import {Link} from 'react-router-dom';
-import {routes} from '../../../../app/routes';
 import {withSmallLoader} from '../../../../components/hoc/withLoaders';
 import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget';
 import {WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
@@ -27,9 +25,7 @@ const containerStyle: React.CSSProperties = {height: 144, display: 'flex'};
 
 const IndicatorContent = ({widget}: WidgetProps) => (
   <Column>
-    <Link to={routes.collection}>
-      <IndicatorWidget widget={widget} title={translate('collection')}/>
-    </Link>
+    <IndicatorWidget widget={widget} title={translate('collection')}/>
   </Column>
 );
 

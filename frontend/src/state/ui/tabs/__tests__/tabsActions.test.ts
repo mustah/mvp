@@ -1,6 +1,6 @@
 import configureStore, {MockStore} from 'redux-mock-store';
 import {UseCases} from '../../../../types/Types';
-import {CHANGE_TAB, changeTabCollection, changeTabValidation} from '../tabsActions';
+import {CHANGE_TAB, changeTabGateway, changeTabMeter} from '../tabsActions';
 import {TabName} from '../tabsModels';
 
 describe('tabsActions', () => {
@@ -13,7 +13,7 @@ describe('tabsActions', () => {
   describe('changeTab', () => {
 
     it('changes tab in collection use case', () => {
-      const action = changeTabCollection(TabName.graph);
+      const action = changeTabGateway(TabName.graph);
 
       store.dispatch(action);
 
@@ -27,7 +27,7 @@ describe('tabsActions', () => {
     });
 
     it('changes tab in validation use case', () => {
-      const action = changeTabValidation(TabName.list);
+      const action = changeTabMeter(TabName.list);
 
       store.dispatch(action);
 
