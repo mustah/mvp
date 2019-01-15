@@ -35,16 +35,25 @@ public class JooqUtils {
   }
 
   static Condition valueConditionFor(MeasurementThreshold threshold) {
+
+    Field<Double> max = threshold.quantity.isConsumption()
+      ? asHourly(MEASUREMENT_STAT_DATA.MAX)
+      : MEASUREMENT_STAT_DATA.MAX;
+
+    Field<Double> min = threshold.quantity.isConsumption()
+      ? asHourly(MEASUREMENT_STAT_DATA.MIN)
+      : MEASUREMENT_STAT_DATA.MIN;
+
     if (threshold.duration == null) {
       switch (threshold.operator) {
         case LESS_THAN:
-          return MEASUREMENT_STAT_DATA.MIN.lessThan(threshold.getConvertedValue());
+          return min.lessThan(threshold.getConvertedValue());
         case LESS_THAN_OR_EQUAL:
-          return MEASUREMENT_STAT_DATA.MIN.lessOrEqual(threshold.getConvertedValue());
+          return min.lessOrEqual(threshold.getConvertedValue());
         case GREATER_THAN:
-          return MEASUREMENT_STAT_DATA.MAX.greaterThan(threshold.getConvertedValue());
+          return max.greaterThan(threshold.getConvertedValue());
         case GREATER_THAN_OR_EQUAL:
-          return MEASUREMENT_STAT_DATA.MAX.greaterOrEqual(threshold.getConvertedValue());
+          return max.greaterOrEqual(threshold.getConvertedValue());
         default:
           throw new UnsupportedOperationException(String.format(
             "Measurement threshold operator '%s' is not supported",
@@ -52,15 +61,6 @@ public class JooqUtils {
           ));
       }
     } else {
-
-      Field<Double> max = threshold.quantity.isConsumption()
-        ? asHourly(MEASUREMENT_STAT_DATA.MAX)
-        : MEASUREMENT_STAT_DATA.MAX;
-
-      Field<Double> min = threshold.quantity.isConsumption()
-        ? asHourly(MEASUREMENT_STAT_DATA.MIN)
-        : MEASUREMENT_STAT_DATA.MIN;
-
       switch (threshold.operator) {
         case LESS_THAN:
           return max.lessThan(threshold.getConvertedValue());

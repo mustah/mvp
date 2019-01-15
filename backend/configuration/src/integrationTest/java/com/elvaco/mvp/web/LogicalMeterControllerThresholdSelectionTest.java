@@ -197,6 +197,63 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   }
 
   @Test
+  public void atAnyTime_24hIntervalAsHourConsumption() {
+    ZonedDateTime now = context().now();
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(60 * 24));
+    given(series(
+      meter,
+      Quantity.VOLUME,
+      now,
+      DoubleStream.iterate(0, (m) -> m + 24).limit(4).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume < 1 m^3")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(0);
+
+    page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume <= 1 m^3")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
+  public void atAnyTime_15mIntervalAsHourConsumption() {
+
+    ZonedDateTime now = context().now();
+    var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
+    given(series(
+      meter,
+      Quantity.VOLUME,
+      now,
+      DoubleStream.iterate(0, (m) -> m + 1).limit(24 * 8).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume < 4 m^3")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(0);
+
+    page = asUser().getPage(Url.builder()
+      .path("/meters")
+      .period(now.plusDays(1), now.plusDays(2))
+      .parameter(THRESHOLD, "Volume <= 4 m^3")
+      .build(), PagedLogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
+  }
+
+  @Test
   public void forDuration_FindLeakingMeters() {
     ZonedDateTime now = context().now();
     var leakingMeter = given(logicalMeter().meterDefinition(MeterDefinition.HOT_WATER_METER));
