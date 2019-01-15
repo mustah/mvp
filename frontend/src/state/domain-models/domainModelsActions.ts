@@ -205,12 +205,30 @@ export const postRequestToUrl = <T, P>(
         dispatch,
       });
 
-export const putRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) =>
-  (requestData: T) =>
+export const putRequestToUrl = <T, D, P>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>,
+  url: (parameters: P) => string
+) =>
+  (requestData: D, urlParameters: P) =>
     (dispatch) =>
-      asyncRequest<T, T>({
+      asyncRequest<D, T>({
         ...putRequestOf<T>(endPoint),
-        requestFunc: (requestData: T) => restClient.put(endPoint, requestData),
+        requestFunc: (requestData: D) => restClient.put(url(urlParameters), requestData),
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
+
+export const putRequest = <T, D>(
+  endPoint: EndPoints,
+  requestCallbacks: RequestCallbacks<T>
+) =>
+  (requestData: D) =>
+    (dispatch) =>
+      asyncRequest<D, T>({
+        ...putRequestOf<T>(endPoint),
+        requestFunc: (requestData: D) => restClient.put(endPoint, requestData),
         requestData,
         ...requestCallbacks,
         dispatch,

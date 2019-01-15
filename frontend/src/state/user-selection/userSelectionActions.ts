@@ -128,7 +128,7 @@ export const saveSelection = postRequest<UserSelection>(EndPoints.userSelections
   },
 });
 
-export const updateSelection = putRequest<UserSelection>(EndPoints.userSelections, {
+export const updateSelection = putRequest<UserSelection, UserSelection>(EndPoints.userSelections, {
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to update selection: {{error}}',

@@ -71,12 +71,14 @@ public class UserUseCases {
     }
   }
 
-  public Optional<User> changePassword(User user) {
-    if (organisationPermissions.isAllowed(currentUser, user, UPDATE)) {
-      if (users.findPasswordByUserId(user.id).isPresent()) {
-        return Optional.of(removeTokenForUser(users.save(user)));
-      }
+  public Optional<User> changePassword(UUID userId, String password) {
+    Optional<User> user = this.findById(userId)
+      .map(u -> u.withPassword(password));
+
+    if (user.isPresent() && organisationPermissions.isAllowed(currentUser, user.get(), UPDATE)) {
+      return Optional.of(removeTokenForUser(users.save(user.get())));
     }
+
     return Optional.empty();
   }
 

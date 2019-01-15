@@ -7,11 +7,13 @@ import static java.util.Objects.requireNonNull;
 public class AuthenticationToken extends AbstractAuthenticationToken {
 
   private final String token;
+  private final Object principal;
 
   public AuthenticationToken(String token, Object details) {
     super(null);
     this.token = requireNonNull(token, "Token cannot be null");
     this.setDetails(details);
+    this.principal = details;
   }
 
   public String getToken() {
@@ -30,7 +32,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
   @Override
   public Object getPrincipal() {
-    return null;
+    return principal;
   }
 
   @Override

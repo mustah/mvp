@@ -23,4 +23,5 @@ export const enum EndPoints {
   dashboard = '/dashboards/current',
   userSelections = '/user/selections',
   users = '/users',
+  changePassword = '/users/change-password',
 }

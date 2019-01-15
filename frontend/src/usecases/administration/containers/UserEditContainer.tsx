@@ -4,7 +4,9 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
+import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
+import {Column} from '../../../components/layouts/column/Column';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {PageTitle} from '../../../components/texts/Titles';
@@ -17,7 +19,7 @@ import {getEntitiesDomainModels, getError} from '../../../state/domain-models/do
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {clearUserError, fetchUser, modifyUser} from '../../../state/domain-models/user/userApiActions';
+import {changePassword, clearUserError, fetchUser, modifyUser} from '../../../state/domain-models/user/userApiActions';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
@@ -38,12 +40,21 @@ interface DispatchToProps {
   fetchUser: CallbackWithId;
   fetchOrganisations: Fetch;
   modifyUser: OnClick;
+  changePassword: OnClick;
   clearError: ClearError;
 }
 
 type OwnProps = RouteComponentProps<{userId: uuid}>;
 
 type Props = StateToProps & DispatchToProps & OwnProps;
+
+const userEditStyle: React.CSSProperties = {
+  marginRight: 24,
+};
+
+const passwordChangeStyle: React.CSSProperties = {
+  marginLeft: 24,
+};
 
 class UserEdit extends React.Component<Props, {}> {
 
@@ -61,6 +72,7 @@ class UserEdit extends React.Component<Props, {}> {
   render() {
     const {
       modifyUser,
+      changePassword,
       organisations,
       roles,
       users,
@@ -80,6 +92,7 @@ class UserEdit extends React.Component<Props, {}> {
         <Paper style={paperStyle}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <RowIndented>
+              <Column style={userEditStyle}>
               <UserEditForm
                 organisations={organisations}
                 onSubmit={modifyUser}
@@ -88,6 +101,14 @@ class UserEdit extends React.Component<Props, {}> {
                 user={users[userId]}
                 languages={languages}
               />
+              </Column>
+
+              <Column style={passwordChangeStyle}>
+                <PasswordEditForm
+                  onSubmit={changePassword}
+                  user={users[userId]}
+                />
+              </Column>
             </RowIndented>
           </Loader>
         </Paper>
@@ -109,6 +130,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchUser,
   fetchOrganisations,
   modifyUser,
+  changePassword,
   clearError: clearUserError,
 }, dispatch);
 
