@@ -43,17 +43,17 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
   }
 
   private <E> List<E> nativeQuery(Query query, Class<E> type) {
-    var result = entityManager.createNativeQuery(query.getSQL(), type);
+    var nativeQuery = entityManager.createNativeQuery(query.getSQL(), type);
 
     int i = 0;
     for (Param<?> param : query.getParams().values()) {
       if (!param.isInline()) {
-        result.setParameter(i + 1, convertToDatabaseType(param));
+        nativeQuery.setParameter(i + 1, convertToDatabaseType(param));
         i++;
       }
     }
 
-    return result.getResultList();
+    return nativeQuery.getResultList();
   }
 
   private static <T> Object convertToDatabaseType(Param<T> param) {

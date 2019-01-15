@@ -38,7 +38,7 @@ public class FilterVisitors {
       new MeasurementStatsFilterVisitor(parser),
       new MeterAlarmLogFilterVisitor(dsl),
       new PhysicalMeterStatusLogFilterVisitor(dsl),
-      new MissingMeasurementFilterVisitor(dsl)
+      new CollectionPercentageFilterVisitor(dsl)
     );
   }
 }

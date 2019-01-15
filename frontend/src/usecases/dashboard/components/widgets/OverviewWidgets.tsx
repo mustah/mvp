@@ -17,11 +17,10 @@ interface WidgetProps {
 }
 
 const emptyWidget: WidgetModel = {
-  total: 0,
-  pending: 0,
+  collectionPercentage: NaN,
 };
 
-const containerStyle: React.CSSProperties = {height: 144, display: 'flex'};
+const containerStyle: React.CSSProperties = {height: 108, display: 'flex'};
 
 const IndicatorContent = ({widget}: WidgetProps) => (
   <Column>

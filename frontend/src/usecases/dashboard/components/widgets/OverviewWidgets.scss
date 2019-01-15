@@ -2,15 +2,8 @@
 
 .OverviewWidgets {
   .Widget {
-    min-width: 172px;
-    height: 144px;
+    min-width: $status-box-width;
+    height: $status-box-height;
     padding-top: 0;
-
-    .Indicator-wrapper {
-      .Indicator {
-        padding: $sm-space;
-        cursor: default;
-      }
-    }
   }
 }

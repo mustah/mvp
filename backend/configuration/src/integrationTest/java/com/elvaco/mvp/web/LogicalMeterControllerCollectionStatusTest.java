@@ -70,7 +70,27 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   }
 
   @Test
-  public void fiftyPercent() {
+  public void fiftyPercent_readout() {
+    LogicalMeter districtHeatingMeter = given(logicalMeter());
+
+    given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, 1.0));
+    missingMeasurementJpaRepository.refreshLocked();
+
+    Page<PagedLogicalMeterDto> response = asUser()
+      .getPage(
+        metersUrl(context().now(), context().now().plusHours(2)),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .containsExactly(50.0);
+  }
+
+  @Test
+  public void fiftyPercent_consumption() {
     LogicalMeter districtHeatingMeter = given(logicalMeter());
 
     given(series(districtHeatingMeter, Quantity.ENERGY, 1.0));
@@ -230,6 +250,30 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
       .getPage(
         metersUrl(context().now(), context().now().plusDays(1)),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .contains(100.0);
+  }
+
+  @Test
+  public void oneHundredPercentForTwoDays() {
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+
+    given(series(
+      districtHeatingMeter,
+      Quantity.RETURN_TEMPERATURE,
+      context().now(),
+      DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        metersUrl(context().now(), context().now().plusDays(2)),
         PagedLogicalMeterDto.class
       );
 

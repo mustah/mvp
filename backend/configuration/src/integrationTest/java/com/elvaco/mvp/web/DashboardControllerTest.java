@@ -45,9 +45,33 @@ public class DashboardControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     WidgetDto widget = response.getBody().widgets.get(0);
-    assertThat(widget.total).isEqualTo(0);
-    assertThat(widget.pending).isEqualTo(0);
-    assertThat(widget.type).isEqualTo(WidgetType.COLLECTION.name);
+    assertThat(widget).isEqualTo(
+      new WidgetDto(
+        WidgetType.COLLECTION.name,
+        Double.NaN
+      )
+    );
+  }
+
+  @Test
+  public void collectionStatusNoMeters_ReturnsEmptyCollectionStatus() {
+
+    ZonedDateTime start = context().now();
+    ZonedDateTime end = start.plusHours(2);
+    ResponseEntity<DashboardDto> response = asUser()
+      .get(Url.builder()
+        .path("/dashboards/current")
+        .period(start, end)
+        .build(), DashboardDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    WidgetDto widget = response.getBody().widgets.get(0);
+    assertThat(widget).isEqualTo(
+      new WidgetDto(
+        WidgetType.COLLECTION.name,
+        Double.NaN
+      )
+    );
   }
 
   @Ignore
@@ -105,8 +129,7 @@ public class DashboardControllerTest extends IntegrationTest {
     assertThat(response.getBody().widgets.get(0))
       .isEqualTo(new WidgetDto(
         WidgetType.COLLECTION.name,
-        2,
-        1
+        50
       ));
   }
 
@@ -117,7 +140,7 @@ public class DashboardControllerTest extends IntegrationTest {
     var meter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
     given(series(
       meter,
-      Quantity.ENERGY,
+      Quantity.POWER,
       start,
       1
     ));
@@ -135,16 +158,10 @@ public class DashboardControllerTest extends IntegrationTest {
 
     DashboardDto dashboardDtos = response.getBody();
 
-    assertThat(dashboardDtos.widgets.get(0).type)
-      .as("Unexpected widget type")
-      .isEqualTo(WidgetType.COLLECTION.name);
-
-    assertThat(dashboardDtos.widgets.get(0).total)
-      .as("Expected number of measurements diverged")
-      .isEqualTo(2);
-
-    assertThat(dashboardDtos.widgets.get(0).pending)
-      .as("Unexpected number of missing measurements")
-      .isEqualTo(1);
+    assertThat(dashboardDtos.widgets.get(0))
+      .isEqualTo(new WidgetDto(
+        WidgetType.COLLECTION.name,
+        50
+      ));
   }
 }

@@ -48,19 +48,7 @@ public final class LogicalMeterEntityMapper {
     return newLogicalMeter(
       entity,
       toDomainModelsWithoutStatusLogs(entity.physicalMeters),
-      null,
       null
-    );
-  }
-
-  public LogicalMeterCollectionStats toDomainModel(
-    LogicalMeterCollectionStats logicalMeterCollectionStats,
-    SelectionPeriod selectionPeriod
-  ) {
-    return new LogicalMeterCollectionStats(
-      logicalMeterCollectionStats.id,
-      logicalMeterCollectionStats.missingReadingCount,
-      expectedReadouts(logicalMeterCollectionStats.readInterval, selectionPeriod)
     );
   }
 
@@ -68,7 +56,6 @@ public final class LogicalMeterEntityMapper {
     return newLogicalMeter(
       entity,
       toDomainModels(entity.physicalMeters),
-      null,
       null
     );
   }
@@ -80,7 +67,6 @@ public final class LogicalMeterEntityMapper {
     return toDomainModel(
       logicalMeterEntity,
       mappedStatuses,
-      null,
       null
     );
   }
@@ -88,8 +74,7 @@ public final class LogicalMeterEntityMapper {
   public LogicalMeter toDomainModel(
     LogicalMeterEntity logicalMeterEntity,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap,
-    @Nullable Long expectedMeasurementCount,
-    @Nullable Long missingMeasurementCount
+    @Nullable Double collectionPercentage
   ) {
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
       .map(physicalMeterEntity ->
@@ -102,8 +87,7 @@ public final class LogicalMeterEntityMapper {
     return newLogicalMeter(
       logicalMeterEntity,
       physicalMeters,
-      expectedMeasurementCount,
-      missingMeasurementCount
+      collectionPercentage
     );
   }
 
@@ -147,8 +131,7 @@ public final class LogicalMeterEntityMapper {
   private LogicalMeter newLogicalMeter(
     LogicalMeterEntity entity,
     List<PhysicalMeter> physicalMeters,
-    @Nullable Long expectedMeasurementCount,
-    @Nullable Long missingMeasurementCount
+    @Nullable Double collectionPercentage
   ) {
     return LogicalMeter.builder()
       .id(entity.getLogicalMeterId())
@@ -159,8 +142,7 @@ public final class LogicalMeterEntityMapper {
       .physicalMeters(physicalMeters)
       .gateways(toGatewaysWithoutStatusLogs(entity.gateways))
       .location(LocationEntityMapper.toDomainModel(entity.location))
-      .expectedMeasurementCount(expectedMeasurementCount)
-      .missingMeasurementCount(missingMeasurementCount)
+      .collectionPercentage(collectionPercentage)
       .alarm(MeterAlarmLogEntityMapper.toLatestActiveAlarm(physicalMeters))
       .utcOffset(entity.utcOffset)
       .build();

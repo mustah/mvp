@@ -12,6 +12,5 @@ import lombok.ToString;
 public class WidgetDto {
 
   public String type;
-  public double total;
-  public double pending;
+  public double collectionPercentage;
 }

@@ -8,4 +8,8 @@ import lombok.RequiredArgsConstructor;
 public class SelectionPeriod {
   public final ZonedDateTime start;
   public final ZonedDateTime stop;
+
+  public PeriodRange toPeriodRange() {
+    return PeriodRange.halfOpenFrom(start, stop);
+  }
 }

@@ -28,7 +28,7 @@ public class LogicalMeterSummaryDto {
   public final String medium;
   public final String gatewaySerial;
   @Nullable
-  public final Long missingReadingCount;
+  public final Double collectionPercentage;
   @Nullable
   public final AlarmLogEntry activeAlarm;
   @Nullable
@@ -49,7 +49,7 @@ public class LogicalMeterSummaryDto {
     OffsetDateTime created,
     String medium,
     String gatewaySerial,
-    @Nullable Long missingReadingCount,
+    Double collectionPercentage,
     @Nullable String activeStatus,
     @Nullable String manufacturer,
     @Nullable String address,
@@ -75,7 +75,7 @@ public class LogicalMeterSummaryDto {
     this.medium = medium;
     this.gatewaySerial = gatewaySerial;
     this.activeStatus = StatusType.from(activeStatus);
-    this.missingReadingCount = missingReadingCount;
+    this.collectionPercentage = collectionPercentage;
     this.manufacturer = manufacturer;
     this.address = address;
     this.readIntervalMinutes = readIntervalMinutes;

@@ -10,7 +10,6 @@ import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -30,7 +29,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.flatMapping;
 import static java.util.stream.Collectors.groupingBy;
@@ -128,11 +126,10 @@ public class LogicalMeterRepository implements LogicalMeters {
       ));
 
     return parameters.getPeriod()
-      .map(selectionPeriod -> withStatusesAndCollectionStats(
+      .map(ignore -> withStatusesAndCollectionStats(
         meters,
         parameters,
-        mappedStatuses,
-        selectionPeriod
+        mappedStatuses
       ))
       .orElse(withStatusesOnly(meters, mappedStatuses));
   }
@@ -175,14 +172,11 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
+  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
     RequestParameters parameters
   ) {
     return parameters.getPeriod()
-      .map(selectionPeriod ->
-        logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
-          .map(entry -> logicalMeterEntityMapper.toDomainModel(entry, selectionPeriod))
-          .collect(toList()))
+      .map(ignore -> logicalMeterJpaRepository.findMeterCollectionStats(parameters))
       .orElse(emptyList());
   }
 
@@ -205,41 +199,28 @@ public class LogicalMeterRepository implements LogicalMeters {
   private List<LogicalMeter> withStatusesAndCollectionStats(
     Collection<LogicalMeterEntity> logicalMeters,
     RequestParameters parameters,
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses,
-    SelectionPeriod selectionPeriod
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
   ) {
-    Map<UUID, Long> missingMeasurementsCount =
-      getMissingCountForMetersWithinPeriod(parameters);
+    Map<UUID, Double> collectionPercentages =
+      getCollectionPercentagesForMeters(parameters);
 
     return logicalMeters.stream()
       .map(logicalMeterEntity -> logicalMeterEntityMapper.toDomainModel(
         logicalMeterEntity,
         mappedStatuses,
-        getReadoutCount(selectionPeriod, logicalMeterEntity),
-        missingMeasurementsCount.getOrDefault(logicalMeterEntity.getLogicalMeterId(), 0L)
+        collectionPercentages.getOrDefault(logicalMeterEntity.getLogicalMeterId(), 0.0)
       ))
       .collect(toList());
   }
 
-  private long getReadoutCount(
-    SelectionPeriod selectionPeriod,
-    LogicalMeterEntity logicalMeterEntity
-  ) {
-    Long readIntervalMinutes = logicalMeterEntity.physicalMeters.stream()
-      .findFirst()
-      .map(physicalMeterEntity -> physicalMeterEntity.readIntervalMinutes)
-      .orElse(0L);
-    return expectedReadouts(readIntervalMinutes, selectionPeriod);
-  }
-
-  private Map<UUID, Long> getMissingCountForMetersWithinPeriod(
+  private Map<UUID, Double> getCollectionPercentagesForMeters(
     RequestParameters parameters
   ) {
-    return logicalMeterJpaRepository.findMissingMeterReadingsCounts(parameters).stream()
+    return logicalMeterJpaRepository.findMeterCollectionStats(parameters).stream()
       .collect(toMap(
         entry -> entry.id,
-        entry -> entry.missingReadingCount,
-        (oldCount, newCount) -> oldCount + newCount
+        entry -> entry.collectionPercentage,
+        (oldPct, newPct) -> oldPct + newPct
       ));
   }
 }

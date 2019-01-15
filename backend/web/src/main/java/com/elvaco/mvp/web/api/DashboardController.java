@@ -38,10 +38,9 @@ public class DashboardController {
       dashboardUseCases.findCollectionStats(parameters)
         .map(collectionStats -> new WidgetDto(
           WidgetType.COLLECTION.name,
-          collectionStats.expected,
-          collectionStats.missing
+          collectionStats.collectionPercentage
         ))
-        .orElse(new WidgetDto(WidgetType.COLLECTION.name, 0, 0))
+        .orElse(new WidgetDto(WidgetType.COLLECTION.name, Double.NaN))
     );
   }
 }

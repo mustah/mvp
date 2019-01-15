@@ -1,14 +1,18 @@
 package com.elvaco.mvp.database.repository.jooq;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
+import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.database.entity.jooq.tables.records.MeasurementStatDataRecord;
 
 import lombok.experimental.UtilityClass;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Table;
 import org.jooq.TableField;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
@@ -16,14 +20,16 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.inline;
+import static org.jooq.impl.DSL.table;
 import static org.jooq.impl.DSL.val;
 
 @UtilityClass
 public class JooqUtils {
 
-  public static final Field<Long> MISSING_MEASUREMENT_COUNT = field(
-    "missing_measurement_count",
-    Long.class
+  public static final Table<?> METER_STATS = table("meter_stats");
+  public static final Field<Double> COLLECTION_PERCENTAGE = field(
+    "collection_percentage",
+    Double.class
   );
 
   public static Condition periodContains(Field<PeriodRange> field, OffsetDateTime time) {
@@ -39,7 +45,6 @@ public class JooqUtils {
   }
 
   static Condition valueConditionFor(MeasurementThreshold threshold) {
-
     Field<Double> max = threshold.quantity.isConsumption()
       ? asHourly(MEASUREMENT_STAT_DATA.MAX)
       : MEASUREMENT_STAT_DATA.MAX;
@@ -49,37 +54,45 @@ public class JooqUtils {
       : MEASUREMENT_STAT_DATA.MIN;
 
     if (threshold.duration == null) {
-      switch (threshold.operator) {
-        case LESS_THAN:
-          return min.lessThan(threshold.getConvertedValue());
-        case LESS_THAN_OR_EQUAL:
-          return min.lessOrEqual(threshold.getConvertedValue());
-        case GREATER_THAN:
-          return max.greaterThan(threshold.getConvertedValue());
-        case GREATER_THAN_OR_EQUAL:
-          return max.greaterOrEqual(threshold.getConvertedValue());
-        default:
-          throw new UnsupportedOperationException(String.format(
-            "Measurement threshold operator '%s' is not supported",
-            threshold.operator.name()
-          ));
-      }
+      return getCondition(threshold, max, min);
     } else {
-      switch (threshold.operator) {
-        case LESS_THAN:
-          return max.lessThan(threshold.getConvertedValue());
-        case LESS_THAN_OR_EQUAL:
-          return max.lessOrEqual(threshold.getConvertedValue());
-        case GREATER_THAN:
-          return min.greaterThan(threshold.getConvertedValue());
-        case GREATER_THAN_OR_EQUAL:
-          return min.greaterOrEqual(threshold.getConvertedValue());
-        default:
-          throw new UnsupportedOperationException(String.format(
-            "Measurement threshold operator '%s' is not supported",
-            threshold.operator.name()
-          ));
-      }
+      return getCondition(threshold, min, max);
+    }
+  }
+
+  static Condition measurementStatsConditionFor(SelectionPeriod period) {
+    LocalDate startDate = period.start.toLocalDate();
+    LocalDate stopDate = period.stop.toLocalDate();
+
+    if (stopDate.isEqual(startDate)) {
+      return MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate))
+        .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
+    } else {
+      return MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(Date.valueOf(startDate))
+        .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
+        .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
+    }
+  }
+
+  private static Condition getCondition(
+    MeasurementThreshold threshold,
+    Field<Double> max,
+    Field<Double> min
+  ) {
+    switch (threshold.operator) {
+      case LESS_THAN:
+        return min.lessThan(threshold.getConvertedValue());
+      case LESS_THAN_OR_EQUAL:
+        return min.lessOrEqual(threshold.getConvertedValue());
+      case GREATER_THAN:
+        return max.greaterThan(threshold.getConvertedValue());
+      case GREATER_THAN_OR_EQUAL:
+        return max.greaterOrEqual(threshold.getConvertedValue());
+      default:
+        throw new UnsupportedOperationException(String.format(
+          "Measurement threshold operator '%s' is not supported",
+          threshold.operator.name()
+        ));
     }
   }
 

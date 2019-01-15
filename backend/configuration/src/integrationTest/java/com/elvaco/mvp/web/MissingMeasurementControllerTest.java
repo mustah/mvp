@@ -27,7 +27,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   @Test
   public void findMissingMeterReadings_WithoutPeriod() {
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
-      logicalMeterJpaRepository.findMissingMeterReadingsCounts(new RequestParametersAdapter());
+      logicalMeterJpaRepository.findMeterCollectionStats(new RequestParametersAdapter());
 
     assertThat(missingMeterReadingsCounts).isEmpty();
   }
@@ -35,7 +35,7 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
   @Test
   public void findMissingMeterReadings_WhenNoneExists() {
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
-      logicalMeterJpaRepository.findMissingMeterReadingsCounts(makeParametersWithDateRange());
+      logicalMeterJpaRepository.findMeterCollectionStats(makeParametersWithDateRange());
 
     assertThat(missingMeterReadingsCounts).isEmpty();
   }
@@ -54,11 +54,11 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts =
-      logicalMeterJpaRepository.findMissingMeterReadingsCounts(makeParametersWithDateRange());
+      logicalMeterJpaRepository.findMeterCollectionStats(makeParametersWithDateRange());
 
     assertThat(missingMeterReadingsCounts)
-      .extracting(stats -> stats.missingReadingCount)
-      .containsExactly(24L);
+      .extracting(stats -> stats.collectionPercentage)
+      .containsExactly(0.0);
   }
 
   @Test
@@ -75,10 +75,10 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts = logicalMeterJpaRepository
-      .findMissingMeterReadingsCounts(makeParametersWithDateRange());
+      .findMeterCollectionStats(makeParametersWithDateRange());
 
     assertThat(missingMeterReadingsCounts.size()).isEqualTo(1);
-    assertThat(missingMeterReadingsCounts.get(0).missingReadingCount).isEqualTo(0);
+    assertThat(missingMeterReadingsCounts.get(0).collectionPercentage).isEqualTo(0);
   }
 
   @Test
@@ -95,10 +95,10 @@ public class MissingMeasurementControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
     List<LogicalMeterCollectionStats> missingMeterReadingsCounts = logicalMeterJpaRepository
-      .findMissingMeterReadingsCounts(makeParametersWithDateRange());
+      .findMeterCollectionStats(makeParametersWithDateRange());
 
     assertThat(missingMeterReadingsCounts.size()).isEqualTo(1);
-    assertThat(missingMeterReadingsCounts.get(0).missingReadingCount).isEqualTo(0);
+    assertThat(missingMeterReadingsCounts.get(0).collectionPercentage).isEqualTo(0);
   }
 
   private RequestParameters makeParametersWithDateRange() {

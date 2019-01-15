@@ -152,8 +152,7 @@ public class LogicalMeterDtoMapperTest {
             .longitude(56.123)
             .confidence(1.0)
             .build())
-          .expectedMeasurementCount(100L)
-          .missingMeasurementCount(25L)
+          .collectionPercentage(75.0)
           .build()
       ))
       .isEqualTo(expected);
