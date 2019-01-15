@@ -67,19 +67,15 @@ export const MeterList = (
   const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
     formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
 
-  const handleKendoPageChange = (event: GridPageChangeEvent) =>
+  const handleKendoPageChange = (event: GridPageChangeEvent) => {
     changePage({entityType, componentId, page: event.page.skip / paginationPageSize});
+  };
 
-  const handleKendoSortChange = (event: GridSortChangeEvent) =>
+  const handleKendoSortChange = (event: GridSortChangeEvent) => {
     console.log('sorting..', event);
+  };
 
-  console.log('pagination', pagination)
-  const data = result
-    .slice(
-      pagination.page * pagination.size,
-      pagination.page * pagination.size + pagination.size
-    )
-    .map(key => entities[key]);
+  const data = result.map(key => entities[key]);
 
   return (
     <>
@@ -108,23 +104,32 @@ export const MeterList = (
           title={translate('facility')}
           width={180}
         />
+
         <GridColumn field="address" cell={renderInKendo(renderMeterId)} title={translate('meter id')}/>
+
         <GridColumn field="location" cell={renderInKendo(renderCityName)} title={translate('city')}/>
+
         <GridColumn
           field="location"
           cell={renderInKendo(renderAddressName)}
           title={translate('address')}
           width={180}
         />
+
         <GridColumn field="manufacturer" cell={renderInKendo(renderManufacturer)} title={translate('manufacturer')}/>
+
         <GridColumn field="medium" cell={renderInKendo(renderMedium)} title={translate('medium')}/>
+
         <GridColumn field="alarm" cell={renderInKendo(renderAlarm)} title={translate('alarm')}/>
+
         <GridColumn field="gateway" cell={renderInKendo(renderGatewaySerial)} title={translate('gateway')}/>
+
         <GridColumn
           sortable={false}
           cell={renderInKendo(renderCollectionStatus)}
           title={translate('collection percentage')}
         />
+
         <GridColumn sortable={false} cell={renderInKendo(renderActions)}/>
       </Grid>
     </>
