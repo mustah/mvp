@@ -14,7 +14,7 @@ import {translate} from '../../../services/translationService';
 import {OnClick} from '../../../types/Types';
 import {clearValidationSearch, validationSearch} from '../../search/searchActions';
 import {OnSearch, Query} from '../../search/searchModels';
-import {ValidationTabsContainer} from '../containers/ValidationTabsContainer';
+import {MeterTabsContainer} from './MeterTabsContainer';
 
 interface DispatchToProps {
   search: OnSearch;
@@ -23,12 +23,12 @@ interface DispatchToProps {
 
 type Props = Query & DispatchToProps;
 
-const Validation = ({clearSearch, search, query}: Props) => (
+const MeterPage = ({clearSearch, search, query}: Props) => (
   <MvpPageContainer>
     <Row className="space-between">
       <RowCenter>
-        <MainTitle subtitle={translate('meter', {count: 2})}>
-          {translate('validation')}
+        <MainTitle subtitle={translate('validation')}>
+          {translate('meter', {count: 2})}
         </MainTitle>
         <SearchBox
           onChange={search}
@@ -44,7 +44,7 @@ const Validation = ({clearSearch, search, query}: Props) => (
     </Row>
 
     <Paper style={mainContentPaperStyle}>
-      <ValidationTabsContainer/>
+      <MeterTabsContainer/>
     </Paper>
   </MvpPageContainer>
 );
@@ -57,5 +57,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   search: validationSearch,
 }, dispatch);
 
-export const ValidationContainer =
-  connect<Query, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Validation);
+export const MeterContainer =
+  connect<Query, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeterPage);

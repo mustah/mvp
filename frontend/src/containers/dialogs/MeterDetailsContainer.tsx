@@ -11,7 +11,7 @@ import {CallbackWithId, CallbackWithIds, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
-import {syncWithMetering} from '../../usecases/validation/validationActions';
+import {syncWithMetering} from '../../usecases/meter/meterActions';
 import {useFetchMeterAndMapMarker} from './fetchDialogDataHook';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';

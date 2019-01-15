@@ -1,6 +1,6 @@
 import {mockSelectionAction} from '../../../../__tests__/testActions';
 import {search} from '../../../../usecases/search/searchActions';
-import {collectionQuery, validationQuery} from '../../../../usecases/search/searchModels';
+import {collectionQuery, meterQuery} from '../../../../usecases/search/searchModels';
 import {changePage, updatePageMetaData} from '../paginationActions';
 import {
   PaginationChangePayload,
@@ -121,7 +121,7 @@ describe('paginationReducer', () => {
           },
         },
       };
-      expect(pagination(paginatedState, search(validationQuery('ok')))).toEqual(expectedState);
+      expect(pagination(paginatedState, search(meterQuery('ok')))).toEqual(expectedState);
     });
 
     it('changes page when gateway wildcard search is performed', () => {

@@ -5,7 +5,7 @@ import {routes} from '../../../app/routes';
 import {IconCollection} from '../../../components/icons/IconCollection';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconReport} from '../../../components/icons/IconReport';
-import {IconValidation} from '../../../components/icons/IconValidation';
+import {IconMeter} from '../../../components/icons/IconMeter';
 import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
@@ -34,11 +34,11 @@ const MvpMainMenu = ({pathname}: StateToProps) => (
           icon={<IconCollection className="MenuItem-icon"/>}
         />
       </Link>
-      <Link to={routes.validation} className="link">
+      <Link to={routes.meter} className="link">
         <MenuItem
-          name={translate('validation')}
-          isSelected={routes.validation === pathname}
-          icon={<IconValidation className="MenuItem-icon"/>}
+          name={translate('meter')}
+          isSelected={routes.meter === pathname}
+          icon={<IconMeter className="MenuItem-icon"/>}
         />
       </Link>
       <Link to={routes.report} className="link">

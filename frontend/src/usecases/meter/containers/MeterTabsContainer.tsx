@@ -11,7 +11,7 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
-import {ValidationTabs} from '../components/ValidationTabs';
+import {MeterTabs} from '../components/MeterTabs';
 
 const mapStateToProps =
   (rootState: RootState): StateToProps => {
@@ -42,8 +42,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMapMarkers: fetchMeterMapMarkers,
 }, dispatch);
 
-export const ValidationTabsContainer =
+export const MeterTabsContainer =
   connect<StateToProps, DispatchToProps>(
     mapStateToProps,
     mapDispatchToProps,
-  )(withMapMarkersFetcher(ValidationTabs));
+  )(withMapMarkersFetcher(MeterTabs));

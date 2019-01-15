@@ -11,5 +11,5 @@ export type QueryParameter = Partial<{
 }>;
 
 export const collectionQuery = (query?: string): QueryParameter => ({collection: {query}});
-export const validationQuery = (query?: string): QueryParameter => ({validation: {query}});
+export const meterQuery = (query?: string): QueryParameter => ({validation: {query}});
 export const selectionTreeQuery = (query?: string): QueryParameter => ({selectionTree: {query}});

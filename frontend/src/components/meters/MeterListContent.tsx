@@ -17,7 +17,7 @@ import {
   uuid,
   WithChildren
 } from '../../types/Types';
-import {MeterList} from '../../usecases/validation/components/MeterList';
+import {MeterList} from '../../usecases/meter/components/MeterList';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
