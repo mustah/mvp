@@ -1,7 +1,10 @@
 import Divider from 'material-ui/Divider';
+import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
+import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
 import {branch, renderNothing} from 'recompose';
 import {routes} from '../../app/routes';
+import {actionMenuItemIconStyle} from '../../app/themes';
 import {isDefined} from '../../helpers/commonUtils';
 import {history} from '../../index';
 import {translate} from '../../services/translationService';
@@ -55,9 +58,23 @@ export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, sy
         deleteMeter!(id);
       },
     };
+
     return ([
-      <SyncWithMeteringMenuItem {...syncMenuItemProps} key={`sync-${id}`}/>,
-      <ActionMenuItem name={translate('add to report')} onClick={onAddToReport} key={`add-to-report-${id}`}/>,
+      (
+        <SyncWithMeteringMenuItem
+          {...syncMenuItemProps}
+          key={`sync-${id}`}
+          leftIcon={<NotificationSync style={actionMenuItemIconStyle}/>}
+        />
+      ),
+      (
+        <ActionMenuItem
+          leftIcon={<EditorInsertChart style={actionMenuItemIconStyle}/>}
+          name={translate('add to report')}
+          onClick={onAddToReport}
+          key={`add-to-report-${id}`}
+        />
+      ),
       <Divider key={`list-divider-${id}`}/>,
       <DeleteMeterActionMenuItem {...deleteMenuItemProps} key={`delete-meter-${id}`}/>
     ]);

@@ -74,6 +74,13 @@ export const iconSizeLarge: React.CSSProperties = {
   height: 28,
 };
 
+export const actionMenuItemIconStyle: React.CSSProperties = {
+  height: 18,
+  width: 17,
+  padding: 0,
+  margin: '7px 0 0 4px',
+};
+
 export const sideBarStyle: React.CSSProperties = {
   color: colors.lightGrey,
 };
