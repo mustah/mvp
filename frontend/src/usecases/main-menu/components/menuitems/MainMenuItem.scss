@@ -1,0 +1,22 @@
+@import "../../../../app/variables";
+
+.MainMenuItem {
+  cursor: pointer;
+  padding: $sm-space $space;
+
+  &:hover {
+    background-color: $primary-bg-hover;
+    border-radius: $menu-item-border-radius;
+  }
+
+  &.isSelected {
+    background-color: $primary-bg-selected;
+    border-radius: $menu-item-border-radius;
+    color: $blackest;
+    font-weight: bold;
+  }
+
+  .MainMenuItem-icon {
+    margin-right: $sm-space;
+  }
+}

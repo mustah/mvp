@@ -12,8 +12,7 @@ import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
 import {getUser} from '../../auth/authSelectors';
-import {MainMenu} from '../components/main-menu/MainMenu';
-import {MenuItem} from '../components/menuitems/MenuItem';
+import {MainMenuItem} from '../components/menuitems/MainMenuItem';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface StateToProps {
@@ -22,14 +21,14 @@ interface StateToProps {
 }
 
 const iconProps: SvgIconProps = {
-  style: iconStyle,
-  color: colors.white,
-  className: 'MenuItem-icon',
+  style: {...iconStyle, width: 26, height: 26},
+  color: colors.black,
+  className: 'MainMenuItem-icon',
 };
 
 const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
   <Link to={routes.adminOrganisations} className="link">
-    <MenuItem
+    <MainMenuItem
       name={translate('organisations')}
       isSelected={routes.adminOrganisations === pathname}
       icon={<SocialDomain {...iconProps}/>}
@@ -39,19 +38,17 @@ const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
 
 const OrganisationMenuItem = superAdminOnly(AdminOrganisationLinkMenuItem);
 
-const AdminMainMenu = (props: StateToProps) => (
-  <MainMenu>
-    <Column>
-      <Link to={routes.admin} className="link">
-        <MenuItem
-          name={translate('users')}
-          isSelected={routes.admin === props.pathname || routes.adminUsers === props.pathname}
-          icon={<ActionSupervisorAccount {...iconProps}/>}
-        />
-      </Link>
-      <OrganisationMenuItem {...props}/>
-    </Column>
-  </MainMenu>
+const AdminMainMenuItems = (props: StateToProps) => (
+  <Column>
+    <Link to={routes.admin} className="link">
+      <MainMenuItem
+        name={translate('users')}
+        isSelected={routes.admin === props.pathname || routes.adminUsers === props.pathname}
+        icon={<ActionSupervisorAccount {...iconProps}/>}
+      />
+    </Link>
+    <OrganisationMenuItem {...props}/>
+  </Column>
 );
 
 const mapStateToProps = ({routing, auth}: RootState): StateToProps => ({
@@ -59,5 +56,5 @@ const mapStateToProps = ({routing, auth}: RootState): StateToProps => ({
   user: getUser(auth),
 });
 
-export const AdminMainMenuContainer =
-  connect<StateToProps>(mapStateToProps)(AdminMainMenu);
+export const AdminMainMenuItemsContainer =
+  connect<StateToProps>(mapStateToProps)(AdminMainMenuItems);

@@ -7,7 +7,7 @@
 
       &:hover {
         background-color: $primary-bg-hover;
-        border-radius: 0 50px 50px 0;
+        border-radius: $menu-item-border-radius;
       }
     }
 

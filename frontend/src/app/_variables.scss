@@ -27,6 +27,7 @@ $box-shadow-hover: rgba(0, 0, 0, 0.16) 0 1px 8px, rgba(0, 0, 0, 0.16) 0 1px 6px;
 $primary-bg: $dark-blue;
 $primary-bg-active: $blue;
 $primary-bg-hover: #00b6f721;
+$primary-bg-selected: #00b6f74d;
 
 $primary-fg: $white;
 $primary-fg-active: $white;
@@ -52,6 +53,7 @@ $xl: 24px;
 $xxl: 56px;
 
 $border-radius: 4px;
+$menu-item-border-radius: 0 50px 50px 0;
 
 // padding and margin
 $xs-space: 4px;

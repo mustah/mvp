@@ -13,26 +13,30 @@ interface StateToProps {
 
 interface OwnProps {
   children?: Children;
+  containerStyle?: React.CSSProperties;
 }
 
 const appBarHeight: number = mvpTheme.appBar!.height!;
 
-const containerStyle: React.CSSProperties = {
+const style: React.CSSProperties = {
   left: drawerWidth,
   top: appBarHeight,
   paddingBottom: appBarHeight + 24,
 };
 
-const SideMenu = ({isSideMenuOpen, children}: StateToProps & OwnProps) => (
-  <Drawer
-    containerClassName="DrawerContainer"
-    open={isSideMenuOpen}
-    docked={true}
-    containerStyle={containerStyle}
-  >
-    {children}
-  </Drawer>
-);
+const SideMenu = ({isSideMenuOpen, children, containerStyle}: StateToProps & OwnProps) => {
+  const menuStyle: React.CSSProperties = {...style, ...containerStyle};
+  return (
+    <Drawer
+      containerClassName="DrawerContainer"
+      open={isSideMenuOpen}
+      docked={true}
+      containerStyle={menuStyle}
+    >
+      {children}
+    </Drawer>
+  );
+};
 
 const mapStateToProps = ({ui}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
