@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
-import {routes} from '../../app/routes';
-import {translate} from '../../services/translationService';
-import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../types/Types';
-import {ActionMenuItem} from './ActionMenuItem';
-import {ActionsDropdown} from './ActionsDropdown';
+import {routes} from '../../../app/routes';
+import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
+import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
+import {translate} from '../../../services/translationService';
+import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
 
 interface Props {
   id: uuid;
@@ -12,14 +12,12 @@ interface Props {
 }
 
 export const OrganisationActions = ({id, confirmDelete}: Props) => {
-  const openAlert = () => confirmDelete(id);
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onClickDelete = () => {
       onClick();
-      openAlert();
+      confirmDelete(id);
     };
-
     return [
       (
         <Link to={`${routes.adminOrganisationsModify}/${id}`} className="link" key={`edit-${id}`}>
