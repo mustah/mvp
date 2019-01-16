@@ -29,6 +29,7 @@ export const ButtonClose = ({onClick}: DialogButtonProps) => (
 export const ButtonConfirm = ({onClick, disabled}: DialogButtonProps) => (
   <FlatButton
     label={translate('confirm')}
+    primary={true}
     onClick={onClick}
     disabled={disabled}
     className={classNames('FlatButton', {disabled})}

@@ -46,6 +46,9 @@ export const mvpTheme = getMuiTheme({
     bodyFontSize: fontSize.normal,
     bodyColor: darkBlack,
   },
+  flatButton: {
+    primaryTextColor: colors.blue,
+  },
   listItem: {
     nestedLevelDepth: 14,
   },
