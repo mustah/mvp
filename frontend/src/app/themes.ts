@@ -79,7 +79,7 @@ export const sideBarStyle: React.CSSProperties = {
 };
 
 export const selectedStyle: React.CSSProperties = {
-  color: colors.blue,
+  color: colors.black,
   fontWeight: 'bold',
   backgroundColor: colors.selectedListItem
 };
