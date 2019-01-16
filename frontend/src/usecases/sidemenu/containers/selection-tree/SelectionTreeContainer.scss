@@ -14,7 +14,7 @@
     width: 2 * $iconPadding + $iconSize !important;
     margin-right: 8px !important;
 
-    &.ZoomButton, &.AddToListButton, &.InfoButton, &.MediumButton {
+    &.ZoomButton, &.InfoButton, &.MediumButton {
       margin-right: 0 !important;
       height: $iconSize !important;
       width: $iconSize !important;

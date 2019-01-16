@@ -52,6 +52,9 @@ export const mvpTheme = getMuiTheme({
   menuItem: {
     hoverColor: colors.listItemHover,
     selectedTextColor: colors.blue,
+  },
+  raisedButton: {
+    primaryColor: colors.blue,
   }
 });
 

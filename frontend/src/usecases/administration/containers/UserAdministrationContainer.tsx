@@ -2,10 +2,9 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {UserActions} from '../../../components/actions-dropdown/UserActions';
-import {UserBatchActions} from '../../../components/actions-dropdown/UserBatchActions';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
-import {RowRight} from '../../../components/layouts/row/Row';
+import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
@@ -13,12 +12,11 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {
-  clearUserError, deleteUser, fetchUsers,
-} from '../../../state/domain-models/user/userApiActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {clearUserError, deleteUser, fetchUsers} from '../../../state/domain-models/user/userApiActions';
 import {User} from '../../../state/domain-models/user/userModels';
-import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, Fetch, OnClickWithId, uuid} from '../../../types/Types';
+import {AddUserButton} from '../components/AddUserButton';
 
 interface StateToProps {
   users: DomainModel<User>;
@@ -69,9 +67,9 @@ class UserAdministration extends React.Component<Props, State> {
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
-          <RowRight>
-            <UserBatchActions/>
-          </RowRight>
+          <Row>
+            <AddUserButton/>
+          </Row>
           <Table result={users.result} entities={users.entities}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}

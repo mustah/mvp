@@ -2,10 +2,9 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {OrganisationActions} from '../../../components/actions-dropdown/OrganisationActions';
-import {OrganisationBatchActions} from '../../../components/actions-dropdown/OrganisationBatchActions';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
-import {RowRight} from '../../../components/layouts/row/Row';
+import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
@@ -22,6 +21,7 @@ import {
   fetchOrganisations,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {ClearError, ErrorResponse, Fetch, OnClickWithId, uuid} from '../../../types/Types';
+import {AddOrganisationButton} from '../components/AddOrganisationButton';
 
 const renderParentOrganisation = ({parent}: Organisation) => parent ? parent.name : '';
 const renderName = ({name}: Organisation) => name;
@@ -72,9 +72,9 @@ class OrganisationsComponent extends React.Component<Props, State> {
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
-          <RowRight>
-            <OrganisationBatchActions/>
-          </RowRight>
+          <Row>
+            <AddOrganisationButton/>
+          </Row>
           <Table {...organisations}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
