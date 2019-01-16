@@ -9,7 +9,8 @@ import {firstUpperTranslated, translate} from '../../../../services/translationS
 import {
   getDisplayModeText,
   Quantity,
-  quantityAttributes
+  quantityAttributes,
+  unitPerHour
 } from '../../../../state/ui/graph/measurement/measurementModels';
 import {
   OnChangeThreshold,
@@ -86,6 +87,7 @@ const emptyQuery: RenderableThresholdQuery = {
 export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => {
   const [currentQuery, setQuery] = useChangeQuery(query, onChange);
   const {quantity, relationalOperator, value, unit, duration} = currentQuery;
+  const decoratedUnit = unitPerHour(quantity, unit);
   const durationOrNull = !duration ? null : duration;
   const onChangeQuantity = (event, index, newValue: string) => setQuery({
     ...currentQuery,
@@ -148,7 +150,7 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
           autoComplete="off"
           hintText={firstUpperTranslated(getDisplayModeText(quantity))}
         />
-        <Medium className="Unit">{unit}</Medium>
+        <Medium className="Unit">{decoratedUnit}</Medium>
       </RowMiddle>
 
       <RowMiddle>
