@@ -1,22 +1,14 @@
 import Divider from 'material-ui/Divider';
-import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {
-  dividerStyle,
-  menuItemStyle,
-  listItemStyleSelected,
-  listStyle,
-  nestedListItemStyle,
-  sideBarHeaderStyle,
-  sideBarStyle,
-} from '../../../../app/themes';
+import {colors, dividerStyle, listItemStyle, listItemStyleSelected} from '../../../../app/themes';
 import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
+import {FoldableMenuItem} from '../../../../components/layouts/foldable/FoldableMenuItem';
 import {Row} from '../../../../components/layouts/row/Row';
 import {RootState} from '../../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../../services/translationService';
+import {translate} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
 import {
   deleteUserSelection,
@@ -47,7 +39,9 @@ interface State {
   selectionToDelete?: uuid;
 }
 
-const innerDivStyle: React.CSSProperties = {padding: 0};
+const innerDivStyle: React.CSSProperties = {
+  padding: '0 0 0 32px',
+};
 
 class SavedSelections extends React.Component<StateToProps & DispatchToProps, State> {
 
@@ -63,15 +57,12 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
     const renderListItem = (id: uuid) => {
       const item: UserSelection = entities[id];
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
-      const style: React.CSSProperties = item.id === selection.id
-        ? listItemStyleSelected
-        : menuItemStyle;
 
       return (
         <ListItem
-          style={style}
+          style={item.id === selection.id ? listItemStyleSelected : listItemStyle}
           innerDivStyle={innerDivStyle}
-          hoverColor={sideBarStyle.color}
+          hoverColor={colors.listItemHover}
           value={item}
           key={item.id}
         >
@@ -89,32 +80,30 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
 
     const listItems = result.length
       ? result.map(renderListItem)
-      : [(
-           <LoadingListItem
-             isFetching={isFetching}
-             text={translate('no saved selections')}
-             key="loading-list-item"
-           />
-         )];
+      : [
+        (
+          <LoadingListItem
+            isFetching={isFetching}
+            text={translate('no saved selections')}
+            key="loading-list-item"
+          />
+        )
+      ];
 
     return (
-      <List style={listStyle}>
-        <ListItem
-          className="ListItem"
-          primaryText={firstUpperTranslated('saved selections')}
-          initiallyOpen={true}
-          style={sideBarHeaderStyle}
-          hoverColor={sideBarStyle.color}
-          nestedItems={listItems}
-          nestedListStyle={nestedListItemStyle}
-        />
+      <>
+        <FoldableMenuItem title={translate('saved selections')}>
+          {listItems}
+        </FoldableMenuItem>
+
         <Divider style={dividerStyle}/>
+
         <ConfirmDialog
           isOpen={this.state.isDeleteDialogOpen}
           close={this.closeDialog}
           confirm={this.deleteSelectedUser}
         />
-      </List>
+      </>
     );
   }
 

@@ -9,7 +9,7 @@ import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
-import {MainMenuWrapper} from '../components/main-menu-wrapper/MainMenuWrapper';
+import {MainMenu} from '../components/main-menu/MainMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
 
 interface StateToProps {
@@ -17,7 +17,7 @@ interface StateToProps {
 }
 
 const MvpMainMenu = ({pathname}: StateToProps) => (
-  <MainMenuWrapper>
+  <MainMenu>
     <Column>
       <Link to={routes.dashboard} className="link">
         <MenuItem
@@ -41,7 +41,7 @@ const MvpMainMenu = ({pathname}: StateToProps) => (
         />
       </Link>
     </Column>
-  </MainMenuWrapper>
+  </MainMenu>
 );
 
 const mapStateToProps = ({routing}: RootState): StateToProps => ({

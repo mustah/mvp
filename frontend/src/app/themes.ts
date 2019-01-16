@@ -9,8 +9,7 @@ interface Styles {
 export const fontSize = {
   small: 12,
   normal: 14,
-  big: 16,
-  bigger: 20,
+  large: 16,
 };
 
 const evoBorderRadius: React.CSSProperties = {borderRadius: 4};
@@ -28,6 +27,8 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
+  listItemHover: '#00b6f721',
+  selectedListItem: '#00b6f74d',
 };
 
 export const mvpTheme = getMuiTheme({
@@ -49,7 +50,8 @@ export const mvpTheme = getMuiTheme({
     nestedLevelDepth: 14,
   },
   menuItem: {
-    hoverColor: colors.blue,
+    hoverColor: colors.listItemHover,
+    selectedTextColor: colors.blue,
   }
 });
 
@@ -73,20 +75,11 @@ export const sideBarStyle: React.CSSProperties = {
 export const selectedStyle: React.CSSProperties = {
   color: colors.blue,
   fontWeight: 'bold',
+  backgroundColor: colors.selectedListItem
 };
 
 export const sideBarInnerDivStyle: React.CSSProperties = {
-  padding: '4px 0',
-};
-
-export const sideBarHeaderStyle: React.CSSProperties = {
-  fontWeight: 'bold',
-  fontSize: fontSize.big,
-  paddingTop: 0,
-};
-
-export const listStyle: React.CSSProperties = {
-  padding: 0,
+  padding: '5px 0 5px 11px',
 };
 
 export const dividerStyle: React.CSSProperties = {
@@ -108,8 +101,13 @@ export const menuItemStyle: React.CSSProperties = {
   },
 };
 
-export const listItemStyleSelected: React.CSSProperties = {
+export const listItemStyle: React.CSSProperties = {
+  borderRadius: '0 50px 50px 0',
   ...menuItemStyle,
+};
+
+export const listItemStyleSelected: React.CSSProperties = {
+  ...listItemStyle,
   ...selectedStyle,
 };
 

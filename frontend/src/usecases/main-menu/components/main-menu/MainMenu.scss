@@ -1,8 +1,8 @@
 @import "../../../../app/variables";
 @import "../../../../app/flex";
 
-.MainMenuWrapper {
-  top: 0;
+.MainMenu {
+  top: $main-menu-height;
   left: 0;
   position: fixed;
   height: 100%;

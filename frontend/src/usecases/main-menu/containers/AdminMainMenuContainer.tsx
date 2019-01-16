@@ -12,7 +12,7 @@ import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
 import {getUser} from '../../auth/authSelectors';
-import {MainMenuWrapper} from '../components/main-menu-wrapper/MainMenuWrapper';
+import {MainMenu} from '../components/main-menu/MainMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
@@ -40,7 +40,7 @@ const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
 const OrganisationMenuItem = superAdminOnly(AdminOrganisationLinkMenuItem);
 
 const AdminMainMenu = (props: StateToProps) => (
-  <MainMenuWrapper>
+  <MainMenu>
     <Column>
       <Link to={routes.admin} className="link">
         <MenuItem
@@ -51,7 +51,7 @@ const AdminMainMenu = (props: StateToProps) => (
       </Link>
       <OrganisationMenuItem {...props}/>
     </Column>
-  </MainMenuWrapper>
+  </MainMenu>
 );
 
 const mapStateToProps = ({routing, auth}: RootState): StateToProps => ({

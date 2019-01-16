@@ -1,11 +1,9 @@
-import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyle} from '../../../../app/themes';
 import {withContent} from '../../../../components/hoc/withContent';
 import {Column} from '../../../../components/layouts/column/Column';
+import {FoldableMenuItem} from '../../../../components/layouts/foldable/FoldableMenuItem';
 import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
@@ -138,17 +136,9 @@ class SelectionTreeComponent extends React.Component<Props> {
     const selectionTreeItems = [searchBox, ...nestedItems];
 
     return (
-      <List style={listStyle}>
-        <ListItem
-          className="ListItem"
-          primaryText={primaryText}
-          initiallyOpen={true}
-          style={sideBarHeaderStyle}
-          hoverColor={sideBarStyle.color}
-          nestedItems={selectionTreeItems}
-          nestedListStyle={nestedListItemStyle}
-        />
-      </List>
+      <FoldableMenuItem title={primaryText}>
+        {selectionTreeItems}
+      </FoldableMenuItem>
     );
   }
 }
