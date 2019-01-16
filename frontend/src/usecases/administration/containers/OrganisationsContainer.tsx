@@ -1,14 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {OrganisationActions} from '../components/OrganisationActions';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
-import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -22,8 +20,9 @@ import {
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {ClearError, ErrorResponse, Fetch, OnClickWithId, uuid} from '../../../types/Types';
 import {AddOrganisationButton} from '../components/AddOrganisationButton';
+import {OrganisationActions} from '../components/OrganisationActions';
 
-const renderParentOrganisation = ({parent}: Organisation) => parent ? parent.name : '';
+const renderParentOrganisation = ({parent}: Organisation) => parent ? parent.name : '-';
 const renderName = ({name}: Organisation) => name;
 const renderSlug = ({slug}: Organisation) => slug;
 
@@ -93,7 +92,6 @@ class OrganisationsComponent extends React.Component<Props, State> {
               renderCell={renderActionDropdown}
             />
           </Table>
-          <TimestampInfoMessage/>
           <ConfirmDialog
             isOpen={this.state.isDeleteDialogOpen}
             close={this.closeDialog}
