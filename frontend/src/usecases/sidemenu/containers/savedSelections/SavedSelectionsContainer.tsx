@@ -3,10 +3,13 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {routes} from '../../../../app/routes';
 import {colors, dividerStyle, listItemStyle, listItemStyleSelected} from '../../../../app/themes';
 import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
 import {FoldableMenuItem} from '../../../../components/layouts/foldable/FoldableMenuItem';
 import {Row} from '../../../../components/layouts/row/Row';
+import {Normal} from '../../../../components/texts/Texts';
+import {history} from '../../../../index';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
@@ -40,7 +43,7 @@ interface State {
 }
 
 const innerDivStyle: React.CSSProperties = {
-  padding: '0 0 0 32px',
+  padding: 0,
 };
 
 class SavedSelections extends React.Component<StateToProps & DispatchToProps, State> {
@@ -57,9 +60,14 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
     const renderListItem = (id: uuid) => {
       const item: UserSelection = entities[id];
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
+      const navigateToMeters: Callback = () => {
+        history.push(routes.meter);
+        selectSavedSelection(item.id);
+      };
 
       return (
         <ListItem
+          className="UserSelection-ListItem"
           style={item.id === selection.id ? listItemStyleSelected : listItemStyle}
           innerDivStyle={innerDivStyle}
           hoverColor={colors.listItemHover}
@@ -67,11 +75,15 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
           key={item.id}
         >
           <Row className="space-between">
-            <Row className="UserSelectionName flex-1" onClick={onSelectSelection}>
-              {item.name}
+            <Row className="UserSelectionName flex-1" onClick={navigateToMeters}>
+              <Normal>{item.name}</Normal>
             </Row>
             <Row className="UserSelectionAction">
-              <SavedSelectionActionsDropdown id={item.id} openConfirmDialog={this.openDialog}/>
+              <SavedSelectionActionsDropdown
+                id={item.id}
+                confirmDelete={this.openDialog}
+                onSelectSelection={onSelectSelection}
+              />
             </Row>
           </Row>
         </ListItem>

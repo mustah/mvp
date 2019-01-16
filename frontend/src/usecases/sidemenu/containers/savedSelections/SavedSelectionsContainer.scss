@@ -1,5 +1,11 @@
-.UserSelectionName {
-  padding-top: 7px;
+.UserSelection-ListItem {
+  .UserSelectionName {
+    padding-top: 7px;
+
+    .Normal {
+      padding-left: 32px;
+    }
+  }
 }
 
 .UserSelectionAction {

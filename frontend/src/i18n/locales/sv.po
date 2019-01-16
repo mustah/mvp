@@ -56,6 +56,9 @@ msgstr "lägg till organisation"
 msgid "edit user"
 msgstr "redigera användare"
 
+msgid "edit user selection"
+msgstr "redigera urval"
+
 msgid "delete user"
 msgstr "ta bort användare"
 
