@@ -1,5 +1,4 @@
 import Divider from 'material-ui/Divider';
-import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
 import {branch, renderNothing} from 'recompose';
@@ -10,6 +9,7 @@ import {history} from '../../index';
 import {translate} from '../../services/translationService';
 import {IdNamed, OnClick, OnClickWithId, RenderFunction} from '../../types/Types';
 import {connectedSuperAdminOnly} from '../hoc/withRoles';
+import {IconReport} from '../icons/IconReport';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
@@ -69,7 +69,7 @@ export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, sy
       ),
       (
         <ActionMenuItem
-          leftIcon={<EditorInsertChart style={actionMenuItemIconStyle}/>}
+          leftIcon={<IconReport style={actionMenuItemIconStyle}/>}
           name={translate('add to report')}
           onClick={onAddToReport}
           key={`add-to-report-${id}`}
