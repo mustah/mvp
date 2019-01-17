@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconMeter} from '../../../components/icons/IconMeter';
@@ -10,7 +11,8 @@ import {FoldableMainMenuItem} from '../../../components/layouts/foldable/Foldabl
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname, isReportPage} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
-import {PathNamed} from '../../../types/Types';
+import {resetSelection} from '../../../state/user-selection/userSelectionActions';
+import {OnClick, PathNamed} from '../../../types/Types';
 import {SavedSelectionsContainer} from '../../sidemenu/containers/savedSelections/SavedSelectionsContainer';
 import {SelectionTreeContainer} from '../../sidemenu/containers/selection-tree/SelectionTreeContainer';
 import {mainMenuIconProps, MainMenuItem} from '../components/menu-items/MainMenuItem';
@@ -19,7 +21,13 @@ interface StateToProps extends PathNamed {
   isReportPage: boolean;
 }
 
-const MvpMainMenuItems = ({isReportPage, pathName}: StateToProps) => (
+interface DispatchToProps {
+  resetSelection: OnClick;
+}
+
+type Props = StateToProps & DispatchToProps;
+
+const MvpMainMenuItems = ({isReportPage, pathName, resetSelection}: Props) => (
   <Column>
     <Link to={routes.dashboard} className="link">
       <MainMenuItem
@@ -35,6 +43,7 @@ const MvpMainMenuItems = ({isReportPage, pathName}: StateToProps) => (
       isVisible={pathName === routes.meter}
       linkTo={routes.meter}
       pathName={pathName}
+      onClick={resetSelection}
       title={translate('meter')}
     >
       <SavedSelectionsContainer/>
@@ -58,4 +67,9 @@ const mapStateToProps = ({routing}: RootState): StateToProps => ({
   isReportPage: isReportPage(routing),
 });
 
-export const MvpMainMenuItemsContainer = connect<StateToProps>(mapStateToProps)(MvpMainMenuItems);
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  resetSelection,
+}, dispatch);
+
+export const MvpMainMenuItemsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MvpMainMenuItems);

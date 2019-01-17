@@ -1,7 +1,7 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
-import {Callback, ClassNamed, PathNamed, WithChildren} from '../../../types/Types';
+import {Callback, ClassNamed, Clickable, PathNamed, WithChildren} from '../../../types/Types';
 import {MainMenuItem} from '../../../usecases/main-menu/components/menu-items/MainMenuItem';
 import {IconRightArrow} from '../../icons/IconRightArrow';
 import {BoldFirstUpper} from '../../texts/Texts';
@@ -55,7 +55,7 @@ export const Foldable = ({
 export const FoldableMenuItem = (props: FoldableProps) =>
   <Foldable containerClassName="FoldableMenuItem" fontClassName="Normal" {...props}/>;
 
-interface FoldableMainMenuItemProps extends FoldableProps, PathNamed {
+interface FoldableMainMenuItemProps extends FoldableProps, PathNamed, Partial<Clickable> {
   icon: React.ReactElement<any>;
   isSelected: boolean;
   linkTo: string;
@@ -69,6 +69,7 @@ export const FoldableMainMenuItem = ({
   fontClassName,
   isSelected,
   linkTo,
+  onClick,
   pathName,
   title,
   isVisible: initialVisibility = true
@@ -81,7 +82,7 @@ export const FoldableMainMenuItem = ({
     <Column className={classNames('Foldable', containerClassName)}>
       <RowMiddle className={classNames('Foldable-title', 'clickable', selected)}>
         <IconRightArrow onClick={showHide} className={classNames('Foldable-arrow', visible)}/>
-        <Link to={linkTo} className="link">
+        <Link to={linkTo} className="link" onClick={onClick}>
           <MainMenuItem
             name={title}
             fontClassName={fontClassName}
