@@ -4,6 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
+import {borderRadius} from '../../../app/themes';
 import {Column} from '../../../components/layouts/column/Column';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
 import {Children} from '../../../types/Types';
@@ -42,7 +43,13 @@ export const Map = ({
   bounds,
 }: Props) => {
   const {tilesUrl, updateTilesUrl} = useFallbackTilesUrl();
-  const style = {height, width};
+  const style: React.CSSProperties = {
+    height,
+    width,
+    borderRadius,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0
+  };
   const centerProps: MapProps = {zoom: 7};
 
   if (viewCenter) {

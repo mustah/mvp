@@ -12,7 +12,13 @@ export const fontSize = {
   large: 16,
 };
 
-const evoBorderRadius: React.CSSProperties = {borderRadius: 4};
+export const borderRadius = 4;
+
+export const boxShadow =
+  '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)';
+
+export const popoverBoxShadow =
+  '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)';
 
 export const colors = {
   darkBlue: '#006da3',
@@ -137,8 +143,13 @@ export const nestedListItemStyle: React.CSSProperties = {
   paddingBottom: 0,
 };
 
+export const popoverStyle: React.CSSProperties = {
+  borderRadius,
+  boxShadow: popoverBoxShadow,
+};
+
 export const dropdownStyle: Styles = {
-  popoverStyle: {marginTop: 6, marginLeft: 2},
+  popoverStyle: {marginTop: 6, marginLeft: 2, ...popoverStyle},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
   parentStyle: {fontSize: 11, fontWeight: 'normal', color: colors.lightBlack},
 };
@@ -154,8 +165,8 @@ export const floatingLabelFocusStyle = {
 export const paperStyle: React.CSSProperties = {
   paddingTop: 16,
   paddingBottom: 16,
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.16)',
-  ...evoBorderRadius,
+  boxShadow,
+  borderRadius,
 };
 
 export const mainContentPaperStyle: React.CSSProperties = {
@@ -164,7 +175,8 @@ export const mainContentPaperStyle: React.CSSProperties = {
 };
 
 export const cardStyle: React.CSSProperties = {
-  ...evoBorderRadius,
+  borderRadius,
+  boxShadow,
 };
 
 export const buttonStyle: React.CSSProperties = {
@@ -174,4 +186,5 @@ export const buttonStyle: React.CSSProperties = {
 
 export const dropdownListStyle: React.CSSProperties = {
   width: 200,
+  ...popoverStyle
 };
