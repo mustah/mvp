@@ -19,7 +19,7 @@
 
   .SelectionSearch {
     position: fixed;
-    left: $opened-side-menu-width + $lg-space;
+    left: $side-menu-width + $lg-space;
 
     &.SelectionMenuSummary {
       color: $white;
@@ -36,5 +36,9 @@
 
   .TopMenu-RightContent {
     margin-right: $space;
+
+    .TopMenu-Item {
+      cursor: pointer;
+    }
   }
 }

@@ -1,0 +1,18 @@
+@import "../../../app/variables";
+
+.MenuUnderline {
+  position: fixed;
+  top: 56px;
+  visibility: hidden;
+  height: 4px;
+  background-color: $blue;
+  width: 86px;
+}
+
+.TopMenu-Item {
+  &:hover {
+    .MenuUnderline {
+      visibility: visible;
+    }
+  }
+}

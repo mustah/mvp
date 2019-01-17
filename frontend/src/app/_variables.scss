@@ -24,22 +24,21 @@ $box-shadow: rgba(0, 0, 0, 0.12) 0 1px 6px, rgba(0, 0, 0, 0.12) 0 1px 4px;
 $box-shadow-hover: rgba(0, 0, 0, 0.16) 0 1px 8px, rgba(0, 0, 0, 0.16) 0 1px 6px;
 
 // interaction
-$primary-bg: $dark-blue;
-$primary-bg-active: $blue;
-$primary-bg-hover: #00b6f721;
-$primary-bg-selected: #00b6f74d;
+$primary-bg: #ffffff;
+$primary-bg-active: #81d4fa;
+$primary-bg-hover: #e6f8ff;
 
-$primary-fg: $white;
-$primary-fg-active: $white;
-$primary-fg-hover: $white;
+$primary-fg: #3c3c3c;
+$primary-fg-active: #044462;
+$primary-fg-hover: #0f2228;
 
-$secondary-bg: $light-grey;
-$secondary-bg-active: $grey;
-$secondary-bg-hover: $grey;
+$secondary-bg: #f9f9f9;
+$secondary-bg-active: #b6e2cc;
+$secondary-bg-hover: #edf8f2;
 
-$secondary-fg: $light-black;
-$secondary-fg-active: $black;
-$secondary-fg-hover: $black;
+$secondary-fg: #3c3c3c;
+$secondary-fg-active: #245c40;
+$secondary-fg-hover: #0f2228;
 
 $error: $red;
 
@@ -72,13 +71,13 @@ $map-height: 300px;
 $map-width: 800px;
 
 $main-menu-height: 60px;
-$main-menu-width: 84px; // need to change drawerWidth in themes.ts when changing this value
+$main-menu-width: 0; // need to change drawerWidth in themes.ts when changing this value
 $main-menu-z-index: 1400; // slightly larger than material design's app bar
+$main-menu-item-height: 56px;
+$list-item-height: 28px;
 $selection-header-z-index: $main-menu-z-index + 100;
 
-$side-menu-container-width: 256px;
-$side-menu-tab: 5px;
-$opened-side-menu-width: $side-menu-container-width + $main-menu-width;
+$side-menu-width: 256px;
 
 $overview-widget-width: 172px;
 

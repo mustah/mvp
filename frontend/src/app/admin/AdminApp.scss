@@ -7,7 +7,7 @@
     width: $lg-space;
 
     &.isSideMenuOpen {
-      width: $side-menu-container-width + $lg-space;
+      width: $side-menu-width + $lg-space;
     }
   }
 
@@ -15,7 +15,7 @@
     left: $sm-space;
 
     &.isSideMenuOpen {
-      left: $side-menu-container-width;
+      left: $side-menu-width;
     }
   }
 }

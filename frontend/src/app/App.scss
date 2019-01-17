@@ -32,9 +32,9 @@ body {
 }
 
 .SideMenuContainer {
-  width: $main-menu-width;
+  width: 0;
 
   &.isSideMenuOpen {
-    width: $opened-side-menu-width;
+    width: $side-menu-width;
   }
 }

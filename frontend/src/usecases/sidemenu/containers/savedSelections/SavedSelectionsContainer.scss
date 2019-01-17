@@ -1,9 +1,11 @@
+@import '../../../../app/variables';
+
 .UserSelection-ListItem {
   .UserSelectionName {
-    padding-top: 7px;
+    height: $list-item-height;
 
     .Normal {
-      padding-left: 32px;
+      padding-left: 40px;
     }
   }
 }

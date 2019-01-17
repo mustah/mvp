@@ -27,9 +27,17 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
-  listItemHover: '#00b6f721',
-  selectedListItem: '#00b6f74d',
+  listItemHover: '#e6f8ff',
+  selectedListItem: '#b3ebff',
 };
+
+export const secondaryBg = '#f9f9f9';
+export const secondaryBgActive = '#b6e2cc';
+export const secondaryBgHover = '#edf8f2';
+
+export const secondaryFg = '#3c3c3c';
+export const secondaryFgActive = '#245c40';
+export const secondaryFgHover = '#0f2228';
 
 export const mvpTheme = getMuiTheme({
   appBar: {
@@ -60,8 +68,6 @@ export const mvpTheme = getMuiTheme({
     primaryColor: colors.blue,
   }
 });
-
-export const drawerWidth = 84; // Should be the same as $main-menu-width in _variables.scss
 
 export const iconStyle: React.CSSProperties = {
   padding: 0,
@@ -95,12 +101,6 @@ export const sideBarInnerDivStyle: React.CSSProperties = {
   padding: '5px 0 5px 11px',
 };
 
-export const dividerStyle: React.CSSProperties = {
-  backgroundColor: colors.dividerColor,
-  marginTop: 10,
-  marginBottom: 10,
-};
-
 export const menuItemStyle: React.CSSProperties = {
   fontSize: fontSize.normal,
   textStyle: {
@@ -122,6 +122,8 @@ export const listItemStyle: React.CSSProperties = {
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
   ...selectedStyle,
+  backgroundColor: secondaryBgActive,
+  color: secondaryFgActive
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {

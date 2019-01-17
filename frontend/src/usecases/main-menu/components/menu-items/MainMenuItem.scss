@@ -2,7 +2,8 @@
 
 .MainMenuItem {
   cursor: pointer;
-  padding: $sm-space $space;
+  padding: 0;
+  height: $main-menu-item-height;
 
   &:hover {
     background-color: $primary-bg-hover;
@@ -10,13 +11,17 @@
   }
 
   &.isSelected {
-    background-color: $primary-bg-selected;
+    background-color: $primary-bg-active;
     border-radius: $menu-item-border-radius;
-    color: $blackest;
+    color: $primary-fg-active;
     font-weight: bold;
+
+    .MainMenuItem-icon {
+      fill: $primary-fg-active !important;
+    }
   }
 
   .MainMenuItem-icon {
-    margin-right: $space;
+    margin-right: $sm-space;
   }
 }

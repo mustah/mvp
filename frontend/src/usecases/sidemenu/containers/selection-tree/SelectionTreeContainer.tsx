@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withContent} from '../../../../components/hoc/withContent';
 import {Column} from '../../../../components/layouts/column/Column';
-import {FoldableMenuItem} from '../../../../components/layouts/foldable/FoldableMenuItem';
+import {FoldableMenuItem} from '../../../../components/layouts/foldable/Foldable';
 import {SearchBox} from '../../../../components/search-box/SearchBox';
 import {RootState} from '../../../../reducers/rootReducer';
 import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';

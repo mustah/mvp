@@ -100,6 +100,10 @@ export interface ComponentId {
   componentId: string;
 }
 
+export interface PathNamed {
+  pathName: string;
+}
+
 export interface ErrorResponse {
   type?: string | number;
   data?: any;

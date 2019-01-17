@@ -1,18 +1,27 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
+import {colors, iconStyle} from '../../../../app/themes';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {Selectable} from '../../../../types/Types';
 import './MainMenuItem.scss';
+import SvgIconProps = __MaterialUI.SvgIconProps;
+
+export const mainMenuIconProps: SvgIconProps = {
+  style: {...iconStyle, width: 26, height: 26},
+  color: colors.black,
+  className: 'MainMenuItem-icon',
+};
 
 export interface MenuItemProps extends Selectable {
   name: string;
   icon: React.ReactElement<any>;
+  fontClassName?: string;
 }
 
-export const MainMenuItem = ({name, icon, isSelected}: MenuItemProps) => (
+export const MainMenuItem = ({name, fontClassName = 'Medium', icon, isSelected}: MenuItemProps) => (
   <RowMiddle className={classNames('MainMenuItem', {isSelected})}>
     {icon}
-    <Normal className="first-uppercase">{name}</Normal>
+    <Normal className={classNames('first-uppercase', fontClassName)}>{name}</Normal>
   </RowMiddle>
 );

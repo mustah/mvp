@@ -1,7 +1,7 @@
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {drawerWidth, mvpTheme} from '../../../app/themes';
+import {mvpTheme} from '../../../app/themes';
 import {RootState} from '../../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {Children} from '../../../types/Types';
@@ -19,7 +19,6 @@ interface OwnProps {
 const appBarHeight: number = mvpTheme.appBar!.height!;
 
 const style: React.CSSProperties = {
-  left: drawerWidth,
   top: appBarHeight,
   paddingBottom: appBarHeight + 24,
 };

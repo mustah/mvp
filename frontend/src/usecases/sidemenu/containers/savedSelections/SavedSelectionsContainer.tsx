@@ -1,13 +1,12 @@
-import Divider from 'material-ui/Divider';
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../../app/routes';
-import {colors, dividerStyle, listItemStyle, listItemStyleSelected} from '../../../../app/themes';
+import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../../app/themes';
 import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
-import {FoldableMenuItem} from '../../../../components/layouts/foldable/FoldableMenuItem';
-import {Row} from '../../../../components/layouts/row/Row';
+import {FoldableMenuItem} from '../../../../components/layouts/foldable/Foldable';
+import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
 import {history} from '../../../../index';
 import {RootState} from '../../../../reducers/rootReducer';
@@ -70,14 +69,14 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
           className="UserSelection-ListItem"
           style={item.id === selection.id ? listItemStyleSelected : listItemStyle}
           innerDivStyle={innerDivStyle}
-          hoverColor={colors.listItemHover}
+          hoverColor={secondaryBgHover}
           value={item}
           key={item.id}
         >
           <Row className="space-between">
-            <Row className="UserSelectionName flex-1" onClick={navigateToMeters}>
+            <RowMiddle className="UserSelectionName flex-1" onClick={navigateToMeters}>
               <Normal>{item.name}</Normal>
-            </Row>
+            </RowMiddle>
             <Row className="UserSelectionAction">
               <SavedSelectionActionsDropdown
                 id={item.id}
@@ -104,11 +103,9 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
 
     return (
       <>
-        <FoldableMenuItem title={translate('saved selections')}>
+        <FoldableMenuItem title={translate('saved selections')} containerClassName="SavedSelectionsContainer">
           {listItems}
         </FoldableMenuItem>
-
-        <Divider style={dividerStyle}/>
 
         <ConfirmDialog
           isOpen={this.state.isDeleteDialogOpen}
