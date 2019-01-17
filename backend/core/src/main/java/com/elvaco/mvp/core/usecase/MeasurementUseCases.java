@@ -2,9 +2,9 @@ package com.elvaco.mvp.core.usecase;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -37,7 +37,9 @@ public class MeasurementUseCases {
     return measurements.findAverageForPeriod(parameter);
   }
 
-  public Map<UUID, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter) {
+  public Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(
+    MeasurementParameter parameter
+  ) {
     return measurements.findSeriesForPeriod(parameter);
   }
 }

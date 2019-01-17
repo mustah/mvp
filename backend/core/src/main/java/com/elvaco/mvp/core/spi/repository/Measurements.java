@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -26,7 +27,7 @@ public interface Measurements {
 
   List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter);
 
-  Map<UUID, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter);
+  Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter);
 
   List<Measurement> findAll(RequestParameters parameters);
 

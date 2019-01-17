@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.access;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
@@ -28,18 +30,24 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.ResultQuery;
 import org.jooq.Row1;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT;
+import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION_QUANTITIES;
+import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.QUANTITY;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.jooq.impl.DSL.trueCondition;
 
 public class MeasurementRepository implements Measurements {
 
@@ -102,60 +110,62 @@ public class MeasurementRepository implements Measurements {
   @Override
   public List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter) {
     List<MeasurementValueProjection> averageForPeriod;
-    if (parameter.getQuantity().isConsumption()) {
+    if (parameter.getQuantities().get(0).isConsumption()) {
       averageForPeriod = measurementJpaRepository.getAverageForPeriodConsumption(
-        parameter.getPhysicalMeterIds(),
+        parameter.getLogicalMeterIds(),
         parameter.getResolution().asInterval(),
-        parameter.getQuantity().name,
+        parameter.getQuantities().get(0).name,
         parameter.getResolution().getStart(parameter.getFrom()),
         parameter.getResolution().getStart(parameter.getTo())
       );
     } else {
       averageForPeriod = measurementJpaRepository.getAverageForPeriod(
-        parameter.getPhysicalMeterIds(),
+        parameter.getLogicalMeterIds(),
         parameter.getResolution().asInterval(),
-        parameter.getQuantity().name,
+        parameter.getQuantities().get(0).name,
         parameter.getResolution().getStart(parameter.getFrom()),
         parameter.getResolution().getStart(parameter.getTo())
       );
     }
 
     return averageForPeriod.stream()
-      .map(projection -> toMeasurementValue(
+      .map(projection -> toMeasurementValueConvertedToUnitFromQuantity(
         projection.getInstant(),
         projection.getValue(),
-        parameter.getQuantity()
+        parameter.getQuantities().get(0)
       ))
       .collect(toList());
   }
 
   @Override
-  public Map<UUID, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter) {
-    try {
-      ResultQuery<Record3<UUID, Double, OffsetDateTime>> q;
-      if (parameter.getQuantity().isConsumption()) {
-        q = getConsumptionSeriesQuery(parameter);
-      } else {
-        q = getReadoutSeriesQuery(parameter);
-      }
+  public Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(
+    MeasurementParameter parameter
+  ) {
+    Map<MeasurementKey, List<MeasurementValue>> result = new HashMap<>();
 
-      return q.fetch().stream()
-        .collect(groupingBy(
-          k -> k.get(k.field1()),
-          mapping(
-            t -> toMeasurementValue(
-              t.get(t.field3()).toInstant(),
-              t.get(t.field2()),
-              parameter.getQuantity()
-            ), toList())
-          )
-        );
-    } catch (DataIntegrityViolationException ex) {
-      throw SqlErrorMapper.mapDataIntegrityViolation(
-        ex,
-        parameter.getQuantity().presentationUnit()
-      );
+    MeasurementParameter readoutParameter = parameter.toBuilder()
+      .quantities(parameter.getQuantities()
+        .stream()
+        .filter(q -> !q.isConsumption())
+        .collect(toList()))
+      .build();
+    if (!readoutParameter.getQuantities().isEmpty()) {
+      var r = getReadoutSeriesQuery(readoutParameter);
+      result.putAll(mapSeriesForPeriod(readoutParameter, r));
     }
+
+    MeasurementParameter consumptionParameter = parameter.toBuilder()
+      .quantities(parameter.getQuantities()
+        .stream()
+        .filter(q -> q.isConsumption())
+        .collect(toList()))
+      .build();
+    if (!consumptionParameter.getQuantities().isEmpty()) {
+      var r = getConsumptionSeriesQuery(consumptionParameter);
+      result.putAll(mapSeriesForPeriod(consumptionParameter, r));
+    }
+
+    return result;
   }
 
   @Override
@@ -173,45 +183,76 @@ public class MeasurementRepository implements Measurements {
       .map(measurementEntityMapper::toDomainModel);
   }
 
-  private Condition getSeriesJoinCondition(
+  private Map<MeasurementKey, List<MeasurementValue>> mapSeriesForPeriod(
     MeasurementParameter parameter,
-    Field<UUID> meterIdField,
-    Field<OffsetDateTime> dateTimeField
+    ResultQuery<Record4<UUID, String, Double, OffsetDateTime>> r
   ) {
-    return MEASUREMENT.PHYSICAL_METER_ID.equal(meterIdField)
-      .and(MEASUREMENT.CREATED.equal(dateTimeField))
-      .and(MEASUREMENT.QUANTITY.equal(
-        dsl.select(QUANTITY.ID)
-          .from(QUANTITY)
-          .where(QUANTITY.NAME.equal(parameter.getQuantity().name))));
+
+    Map<String, Quantity> quantityMap = parameter.getQuantities()
+      .stream()
+      .collect(toMap(q -> q.name, q -> q));
+
+    return r.fetch().stream()
+      .collect(groupingBy(
+        k -> new MeasurementKey(k.get(k.field1()), k.get(k.field2())),
+        mapping(
+          t -> toMeasurementValueConvertedToUnitFromQuantity(
+            t.get(t.field4()).toInstant(),
+            t.get(t.field3()),
+            quantityMap.get(t.get(t.field2()))
+          ), toList())
+        )
+      );
   }
 
-  private ResultQuery<Record3<UUID, Double, OffsetDateTime>> getConsumptionSeriesQuery(
+  private Condition getSeriesJoinCondition(
+    MeasurementParameter parameter,
+    Field<OffsetDateTime> dateTimeField
+  ) {
+    return MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+      .and(MEASUREMENT.CREATED.equal(dateTimeField))
+      .and(MEASUREMENT.QUANTITY.equal(QUANTITY.ID));
+  }
+
+  private ResultQuery<Record4<UUID, String, Double, OffsetDateTime>> getConsumptionSeriesQuery(
     MeasurementParameter parameter
   ) {
     String dateSerie = "date_serie";
     Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerie);
 
-    Field<UUID> meterIdField = DSL.field("meters.id", UUID.class);
     Field<UUID> meterId = DSL.field("meter_id", UUID.class);
+    Field<String> quantity = DSL.field("quantity", String.class);
     Field<OffsetDateTime> dateTimeField = DSL.field(dateSerie, OffsetDateTime.class);
 
-    Row1<UUID>[] meterIdRows = getMeterIdRows(parameter);
-    Condition condition = getSeriesJoinCondition(parameter, meterIdField, dateTimeField);
+    Condition measurementCondition = getSeriesJoinCondition(parameter, dateTimeField);
+    Condition quantityCondition = getQuantityCondition(parameter);
+    Condition organisationCondition = getOrganisationJoinCondition();
+
     var measurementSeries = dsl.select(
-      meterIdField.as(meterId),
+      LOGICAL_METER.ID.as(meterId),
+      QUANTITY.NAME.as(quantity),
       DSL.lead(MEASUREMENT.VALUE)
-        .over(DSL.orderBy(meterIdField.asc(), MEASUREMENT.CREATED.asc()))
+        .over(DSL.orderBy(LOGICAL_METER.ID.asc(), MEASUREMENT.CREATED.asc()))
         .minus(MEASUREMENT.VALUE)
         .as("value"),
       dateTimeField.as("when")
-    ).from(DSL.values(meterIdRows).as("meters", "id"))
-      .crossJoin(dateSerieTable)
-      .leftJoin(MEASUREMENT).on(condition).asTable("measurement_serie");
+    ).from(LOGICAL_METER)
+      .join(METER_DEFINITION_QUANTITIES)
+      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
+      .innerJoin(QUANTITY)
+      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
+      .innerJoin(PHYSICAL_METER)
+      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID).and(organisationCondition))
+      .rightOuterJoin(dateSerieTable)
+      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, dateTimeField))
+      .leftJoin(MEASUREMENT)
+      .on(measurementCondition)
+      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
 
     Field<OffsetDateTime> when = measurementSeries.field("when", OffsetDateTime.class);
     return dsl.select(
       meterId,
+      measurementSeries.field("quantity", String.class),
       measurementSeries.field("value", Double.class),
       when
     ).from(measurementSeries)
@@ -222,31 +263,50 @@ public class MeasurementRepository implements Measurements {
       .orderBy(when.asc());
   }
 
-  private ResultQuery<Record3<UUID, Double, OffsetDateTime>> getReadoutSeriesQuery(
+  private Condition getOrganisationJoinCondition() {
+    return LOGICAL_METER.ORGANISATION_ID.eq(PHYSICAL_METER.ORGANISATION_ID);
+  }
+
+  private Condition getQuantityCondition(MeasurementParameter parameter) {
+    if (parameter.getQuantities().isEmpty()) {
+      return trueCondition();
+    }
+    return QUANTITY.NAME.in(parameter.getQuantities().stream().map(q -> q.name).collect(toList()));
+  }
+
+  private ResultQuery<Record4<UUID, String, Double, OffsetDateTime>> getReadoutSeriesQuery(
     MeasurementParameter parameter
   ) {
     String dateSerie = "date_serie";
     Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerie);
-
     Field<OffsetDateTime> dateTimeField = DSL.field(dateSerie, OffsetDateTime.class);
-    Field<UUID> meterIdField = DSL.field("meters.id", UUID.class);
 
-    Condition condition = getSeriesJoinCondition(parameter, meterIdField, dateTimeField);
+    Condition measurementCondition = getSeriesJoinCondition(parameter, dateTimeField);
+    Condition quantityCondition = getQuantityCondition(parameter);
+    Condition organisationCondition = getOrganisationJoinCondition();
 
-    Row1<UUID>[] meterIdRows = getMeterIdRows(parameter);
     return dsl.select(
-      meterIdField,
+      LOGICAL_METER.ID,
+      QUANTITY.NAME,
       MEASUREMENT.VALUE,
       dateTimeField
-    ).from(DSL.values(meterIdRows).as("meters", "id"))
-      .crossJoin(dateSerieTable)
+    ).from(LOGICAL_METER)
+      .join(METER_DEFINITION_QUANTITIES)
+      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
+      .innerJoin(QUANTITY)
+      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
+      .innerJoin(PHYSICAL_METER)
+      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID).and(organisationCondition))
+      .rightOuterJoin(dateSerieTable)
+      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, dateTimeField))
       .leftJoin(MEASUREMENT)
-      .on(condition);
+      .on(measurementCondition)
+      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
   }
 
   @SuppressWarnings("unchecked")
   private Row1<UUID>[] getMeterIdRows(MeasurementParameter parameter) {
-    return (Row1<UUID>[]) parameter.getPhysicalMeterIds()
+    return (Row1<UUID>[]) parameter.getLogicalMeterIds()
       .stream()
       .map(DSL::row)
       .toArray(Row1[]::new);
@@ -254,7 +314,7 @@ public class MeasurementRepository implements Measurements {
 
   private Table<Record> dateSerieFor(MeasurementParameter parameter) {
     String expr;
-    if (parameter.getQuantity().isConsumption()) {
+    if (parameter.getQuantities().get(0).isConsumption()) {
       expr = "generate_series({0}, {1} + cast({2} as interval), {2}::interval)";
     } else {
       expr = "generate_series({0}, {1}, {2}::interval)";
@@ -267,7 +327,7 @@ public class MeasurementRepository implements Measurements {
     );
   }
 
-  private MeasurementValue toMeasurementValue(
+  private MeasurementValue toMeasurementValueConvertedToUnitFromQuantity(
     Instant when,
     Double fromValue,
     Quantity quantity
@@ -275,7 +335,11 @@ public class MeasurementRepository implements Measurements {
     Double value = Optional.ofNullable(fromValue)
       .map(unitValue ->
         new MeasurementUnit(quantityProvider.getByName(quantity.name).storageUnit, unitValue))
-      .map(measurementUnit -> unitConverter.convert(measurementUnit, quantity.presentationUnit()))
+      .map(measurementUnit ->
+        Optional.ofNullable(quantity.presentationUnit())
+          .map(u -> unitConverter.convert(measurementUnit, quantity.presentationUnit()))
+          .orElse(measurementUnit)
+      )
       .map(MeasurementUnit::getValue)
       .orElse(null);
     return new MeasurementValue(value, when);

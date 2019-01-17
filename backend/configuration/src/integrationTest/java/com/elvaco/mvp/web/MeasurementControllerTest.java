@@ -23,11 +23,14 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static com.elvaco.mvp.core.domainmodels.Quantity.DIFFERENCE_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
+import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
+import static com.elvaco.mvp.core.domainmodels.Quantity.HUMIDITY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.groups.Tuple.tuple;
 
 public class MeasurementControllerTest extends IntegrationTest {
 
@@ -36,7 +39,10 @@ public class MeasurementControllerTest extends IntegrationTest {
   private static final double ENERGY_VALUE = 9999.0;
   private static final double DIFF_TEMP_VALUE_CELSIUS = 285.59;
   private static final double DIFF_TEMP_VALUE_KELVIN = 558.74;
+  private static final double HUMIDITY_VALUE = 55.3;
+  private static final double TEMP_VALUE = 21.7;
   private static final String DEGREES_CELSIUS = "°C";
+  private static final String PERCENT_HUMIDITY = "%";
 
   @After
   public void tearDown() {
@@ -235,6 +241,36 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void fetchMeasurementsWithoutQuantityGivesAllQuantities() {
+
+    ZonedDateTime date = context().now();
+
+    LogicalMeter roomSensorMeter = given(logicalMeter()
+      .meterDefinition(MeterDefinition.ROOM_SENSOR_METER));
+    given(
+      tempMeasurement(roomSensorMeter, date),
+      humidityMeasurement(roomSensorMeter, date)
+    );
+
+    List<MeasurementSeriesDto> contents =
+      getListAsSuperAdmin("/measurements?"
+        + "after=" + date
+        + "&before=" + date
+        + "&logicalMeterId=" + roomSensorMeter.id.toString()
+        + "&resolution=hour");
+
+    assertThat(contents).hasSize(2);
+
+    assertThat(contents).filteredOn(dto -> dto.quantity.equals(EXTERNAL_TEMPERATURE.name))
+      .extracting(d -> d.unit, d -> d.values.size(), d -> d.values.get(0).value)
+      .containsOnly(tuple(DEGREES_CELSIUS, 1, TEMP_VALUE));
+
+    assertThat(contents).filteredOn(dto -> dto.quantity.equals(HUMIDITY.name))
+      .extracting(d -> d.unit, d -> d.values.size(), d -> d.values.get(0).value)
+      .containsOnly(tuple(PERCENT_HUMIDITY, 1, HUMIDITY_VALUE));
+  }
+
+  @Test
   public void fetchMeasurementsForMeterUsingTwoDifferentQuantities() {
 
     ZonedDateTime date = context().now();
@@ -401,9 +437,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime when = context().now();
     var consumptionMeter = given(logicalMeter().meterDefinition(GAS_METER));
 
-    given(
-      series(consumptionMeter, VOLUME, 25, 35, 55)
-    );
+    given(series(consumptionMeter, VOLUME, 25, 35, 55));
 
     List<MeasurementSeriesDto> seriesDto = asUser()
       .getList(String.format(
@@ -474,18 +508,16 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime before = context().now().plusDays(1);
     var logicalMeter = given(logicalMeter().meterDefinition(GAS_METER));
 
-    ResponseEntity<ErrorMessageDto> responseEntity = asUser()
-      .get(
+    List<MeasurementSeriesDto> response = asUser()
+      .getList(String.format(
         "/measurements"
           + "?after=" + after
           + "&before=" + before
           + "&quantity=Floop"
-          + "&logicalMeterId=" + logicalMeter.id,
-        ErrorMessageDto.class
-      );
+          + "&logicalMeterId=" + logicalMeter.id
+      ), MeasurementSeriesDto.class).getBody();
 
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(responseEntity.getBody().message).contains("Invalid quantity 'Floop' for Gas meter");
+    assertThat(response).hasSize(0);
   }
 
   private Measurement.MeasurementBuilder energyMeasurement(LogicalMeter meter, ZonedDateTime date) {
@@ -494,6 +526,25 @@ public class MeasurementControllerTest extends IntegrationTest {
       .unit("J")
       .quantity(ENERGY.name)
       .value(ENERGY_VALUE);
+  }
+
+  private Measurement.MeasurementBuilder tempMeasurement(LogicalMeter meter, ZonedDateTime date) {
+    return measurement(meter)
+      .created(date)
+      .unit(DEGREES_CELSIUS)
+      .quantity(EXTERNAL_TEMPERATURE.name)
+      .value(TEMP_VALUE);
+  }
+
+  private Measurement.MeasurementBuilder humidityMeasurement(
+    LogicalMeter meter,
+    ZonedDateTime date
+  ) {
+    return measurement(meter)
+      .created(date)
+      .unit(PERCENT_HUMIDITY)
+      .quantity(HUMIDITY.name)
+      .value(HUMIDITY_VALUE);
   }
 
   private Measurement.MeasurementBuilder diffTempMeasurement(
