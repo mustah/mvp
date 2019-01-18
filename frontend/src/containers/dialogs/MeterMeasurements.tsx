@@ -163,10 +163,14 @@ class MeterMeasurements extends React.Component<Props, State> {
       getMediumType(medium),
     );
 
+    const dateRange = customDateRange
+      .map((dateRange) => newDateRange(period, Maybe.just(dateRange)))
+      .orElseGet(() => newDateRange(period));
+
     const readings: Readings = fillMissingMeasurements({
       existingReadings,
       readIntervalMinutes,
-      dateRange: customDateRange.orElseGet(() => newDateRange(period)),
+      dateRange,
     });
 
     const wrapperProps: WrapperProps = {isFetching, readings, quantities};

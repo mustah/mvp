@@ -6,16 +6,10 @@ import {SelectionInterval} from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
 import {RequestParameter, RequestParameters} from './urlFactory';
-import StartOf = moment.unitOfTime.StartOf;
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
 export const momentFrom = (input?: moment.MomentInput): moment.Moment => moment(input).tz('UTC');
-
-const intervalMinutesToString = (minutes: number): StartOf => minutes === 60 ? 'hour' : 'day';
-
-export const startOfLatestInterval = (now: moment.MomentInput, intervalInMinutes: number): Date =>
-  momentFrom(now).startOf(intervalMinutesToString(intervalInMinutes)).toDate();
 
 export const changeLocale = (language: string): string => moment.locale(language);
 
@@ -37,8 +31,8 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
       };
     case Period.previous7Days:
       return {
-        start: zonedDate.clone().subtract(6, 'days').toDate(),
-        end: zonedDate.toDate(),
+        start: zonedDate.clone().startOf('day').subtract(6, 'days').toDate(),
+        end: zonedDate.clone().startOf('day').toDate(),
       };
     case Period.previousMonth:
       const prevMonth = zonedDate.clone().subtract(1, 'month');
@@ -49,8 +43,11 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
     case Period.custom:
       return customDateRange.map(({start, end}) => ({
         start: momentFrom(start).startOf('day').toDate(),
-        end: momentFrom(end).clone().add(1, 'days').startOf('day').toDate(),
-      })).orElse({start: zonedDate.toDate(), end: zonedDate.toDate()});
+        end: momentFrom(end).add(1, 'days').startOf('day').toDate(),
+      })).orElse({
+        start: zonedDate.clone().startOf('day').toDate(),
+        end: zonedDate.clone().startOf('day').toDate()
+      });
     case Period.latest:
     default:
       const yesterday = zonedDate.clone().subtract(1, 'days');
