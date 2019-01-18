@@ -11,6 +11,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "passwords don't match"
+msgstr "lösenorden är inte lika"
+
+msgid "successfully updated password"
+msgstr "lösenordet uppdaterades"
+
+msgid "passwords are not equal"
+msgstr "lösenorden är inte lika"
+
+msgid "change password"
+msgstr "ändra lösenord"
+
 msgid "admin"
 msgstr "admin"
 
@@ -131,8 +143,14 @@ msgstr "användarroller"
 msgid "user language"
 msgstr "användarspråk"
 
+msgid "old password"
+msgstr "lösenord"
+
 msgid "new password"
 msgstr "nytt lösenord"
+
+msgid "confirm new password"
+msgstr "bekräfta nytt lösenord"
 
 msgid "password"
 msgstr "lösenord"

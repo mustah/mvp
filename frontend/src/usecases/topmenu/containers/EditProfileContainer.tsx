@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
+import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
@@ -13,12 +14,12 @@ import {translate} from '../../../services/translationService';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {modifyProfile} from '../../../state/domain-models/user/userApiActions';
-import {Role, User} from '../../../state/domain-models/user/userModels';
+import {changePassword, modifyProfile} from '../../../state/domain-models/user/userApiActions';
+import {Password, Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {Fetch} from '../../../types/Types';
+import {Fetch, uuid} from '../../../types/Types';
 import {getUser} from '../../auth/authSelectors';
 
 interface StateToProps {
@@ -30,10 +31,19 @@ interface StateToProps {
 
 interface DispatchToProps {
   modifyProfile: (user: User) => void;
+  changePassword: (password: Password, userId: uuid) => void;
   fetchOrganisations: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps;
+
+const userEditStyle: React.CSSProperties = {
+  marginRight: 24,
+};
+
+const passwordChangeStyle: React.CSSProperties = {
+  marginLeft: 24,
+};
 
 class EditProfile extends React.Component<Props> {
 
@@ -46,7 +56,7 @@ class EditProfile extends React.Component<Props> {
   }
 
   render() {
-    const {user, organisations, roles, modifyProfile, languages} = this.props;
+    const {user, organisations, roles, modifyProfile, changePassword, languages} = this.props;
     const userOrganisations: Organisation[] = organisations.length > 0
       ? organisations
       : [user.organisation];
@@ -58,7 +68,8 @@ class EditProfile extends React.Component<Props> {
           </MainTitle>
         </Row>
         <Paper style={paperStyle}>
-          <Column className="EditProfileContainer">
+          <Row>
+          <Column style={userEditStyle}>
             <UserEditForm
               onSubmit={modifyProfile}
               organisations={userOrganisations}
@@ -68,6 +79,13 @@ class EditProfile extends React.Component<Props> {
               languages={languages}
             />
           </Column>
+          <Column style={passwordChangeStyle}>
+            <PasswordEditForm
+              onSubmit={changePassword}
+              user={user}
+            />
+          </Column>
+          </Row>
         </Paper>
       </MvpPageContainer>
     );
@@ -83,6 +101,7 @@ const mapStateToProps = ({auth, domainModels: {organisations}}: RootState): Stat
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   modifyProfile,
+  changePassword,
   fetchOrganisations,
 }, dispatch);
 

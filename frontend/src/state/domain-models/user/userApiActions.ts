@@ -1,9 +1,11 @@
 import {Dispatch} from 'react-redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
+import {restClientWith} from '../../../services/restClient';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {ErrorResponse} from '../../../types/Types';
+import {ErrorResponse, uuid} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
+import {Authorized} from '../../../usecases/auth/authModels';
 import {changeLanguage} from '../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {
@@ -13,8 +15,9 @@ import {
   fetchIfNeeded,
   postRequest,
   putRequest,
+  putRequestToUrl,
 } from '../domainModelsActions';
-import {User} from './userModels';
+import {Password, User} from './userModels';
 import {usersDataFormatter} from './userSchema';
 
 export const fetchUsers = fetchIfNeeded<User>(
@@ -40,7 +43,7 @@ export const addUser = postRequest<User>(EndPoints.users, {
   },
 });
 
-export const modifyUser = putRequest<User>(EndPoints.users, {
+export const modifyUser = putRequest<User, User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(firstUpperTranslated(
       'successfully updated user {{name}} ({{email}})',
@@ -55,7 +58,7 @@ export const modifyUser = putRequest<User>(EndPoints.users, {
   },
 });
 
-export const modifyProfile = putRequest<User>(EndPoints.users, {
+export const modifyProfile = putRequest<User, User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(authSetUser(user));
     dispatch(changeLanguage(user.language));
@@ -68,6 +71,26 @@ export const modifyProfile = putRequest<User>(EndPoints.users, {
     )));
   },
 });
+
+export const changePassword = putRequestToUrl<Authorized, Password, uuid>
+(EndPoints.changePassword, {
+    afterSuccess: (authorized: Authorized, dispatch: Dispatch<RootState>) => {
+      const {user, token} = authorized;
+
+      restClientWith(token);
+      dispatch(authSetUser(user));
+      dispatch(changeLanguage(user.language));
+      dispatch(showSuccessMessage(firstUpperTranslated('successfully updated password')));
+    },
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
+      dispatch(showFailMessage(firstUpperTranslated(
+        'failed to update profile: {{error}}',
+        {error: firstUpperTranslated(message.toLowerCase())},
+      )));
+    },
+  },
+  (userId: uuid) => `${EndPoints.changePassword}/${userId}`
+);
 
 export const deleteUser = deleteRequest<User>(EndPoints.users, {
     afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {

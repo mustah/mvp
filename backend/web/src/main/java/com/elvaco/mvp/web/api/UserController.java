@@ -4,15 +4,26 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.UserUseCases;
+import com.elvaco.mvp.web.dto.PasswordDto;
 import com.elvaco.mvp.web.dto.UserDto;
+import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
+import com.elvaco.mvp.web.exception.InvalidParameter;
 import com.elvaco.mvp.web.exception.UserNotFound;
 import com.elvaco.mvp.web.mapper.UserDtoMapper;
+import com.elvaco.mvp.web.mapper.UserTokenDtoMapper;
+import com.elvaco.mvp.web.security.AuthenticationToken;
+import com.elvaco.mvp.web.security.MvpUserDetails;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +40,8 @@ import static java.util.stream.Collectors.toList;
 public class UserController {
 
   private final UserUseCases userUseCases;
+  private final TokenFactory tokenFactory;
+  private final TokenService tokenService;
 
   @GetMapping
   public List<UserDto> allUsers() {
@@ -52,17 +65,23 @@ public class UserController {
       .orElseGet(ResponseEntity.status(HttpStatus.FORBIDDEN)::build);
   }
 
+  @PutMapping("/change-password/{userId}")
+  public UserTokenDto changePassword(@PathVariable UUID userId, @RequestBody PasswordDto password) {
+    if (password.password == null || password.password.trim().isEmpty()) {
+      throw new InvalidParameter("password");
+    }
+
+    User user = userUseCases.changePassword(userId, password.password)
+      .orElseThrow(() -> UserNotFound.withId(userId));
+
+    return getUserTokenDto(user);
+  }
+
   @PutMapping
   public UserDto updateUser(@RequestBody UserWithPasswordDto user) {
-    if (user.password == null || user.password.trim().isEmpty()) {
-      return userUseCases.update(toDomainModel(user))
-        .map(UserDtoMapper::toDto)
-        .orElseThrow(() -> UserNotFound.withId(user.id));
-    } else {
-      return userUseCases.changePassword(toDomainModel(user))
-        .map(UserDtoMapper::toDto)
-        .orElseThrow(() -> UserNotFound.withId(user.id));
-    }
+    return userUseCases.update(toDomainModel(user))
+      .map(UserDtoMapper::toDto)
+      .orElseThrow(() -> UserNotFound.withId(user.id));
   }
 
   @DeleteMapping("{id}")
@@ -71,5 +90,31 @@ public class UserController {
       .orElseThrow(() -> UserNotFound.withId(id));
     userUseCases.delete(user);
     return toDto(user);
+  }
+
+  private UserTokenDto getUserTokenDto(User user) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    MvpUserDetails mvpUserDetails = ((MvpUserDetails) authentication.getPrincipal());
+
+    if (mvpUserDetails.getUserId() == user.id) {
+      AuthenticatedUser authenticatedUser = new MvpUserDetails(
+        user,
+        tokenFactory.newToken()
+      );
+
+      String token = authenticatedUser.getToken();
+      tokenService.saveToken(token, authenticatedUser);
+
+      SecurityContextHolder.getContext().setAuthentication(
+        new AuthenticationToken(
+          authenticatedUser.getToken(),
+          authenticatedUser
+        )
+      );
+
+      return UserTokenDtoMapper.toUserTokenDto(new MvpUserDetails(user, token));
+    } else {
+      return UserTokenDtoMapper.toUserTokenDto(mvpUserDetails);
+    }
   }
 }

@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
+import com.elvaco.mvp.web.dto.PasswordDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
@@ -364,7 +365,7 @@ public class UserControllerTest extends IntegrationTest {
     String newPassword = "asdf";
     userDto.password = newPassword;
 
-    asSuperAdmin().put("/users", userDto);
+    asSuperAdmin().put("/users/change-password/" + userDto.id, userDto);
 
     User updatedUser = users.findById(userDto.id).get();
 
@@ -385,7 +386,7 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(passwordEncoder.matches(oldPassword, updatedUser.password)).isTrue();
 
     userDto.password = "   ";
-    asSuperAdmin().put("/users", userDto);
+    asSuperAdmin().put("/users/change-password/" + userDto.id, userDto);
 
     updatedUser = users.findById(userDto.id).get();
 
@@ -399,11 +400,46 @@ public class UserControllerTest extends IntegrationTest {
     userDto.id = users.save(UserDtoMapper.toDomainModel(userDto)).id;
 
     userDto.password = "test";
-    asUser().put("/users", userDto);
+    asUser().put("/users/change-password/" + userDto.id, userDto);
 
     User updatedUser = users.findById(userDto.id).get();
 
     assertThat(passwordEncoder.matches(oldPassword, updatedUser.password)).isTrue();
+  }
+
+  @Test
+  public void changingOwnPasswordReturnNewToken() {
+    String oldPassword = "test";
+    String newPassword = "aaa";
+
+    User user = createUserIfNotPresent(new User(
+      "test",
+      "someuser@elvaco.se",
+      oldPassword,
+      Language.en,
+      context().organisation(),
+      List.of(SUPER_ADMIN)
+    ));
+
+    ResponseEntity<UserTokenDto> response =
+      restClient()
+        .loginWith(user.getUsername(), oldPassword)
+        .get("/authenticate", UserTokenDto.class);
+
+    String oldToken = response.getBody().token;
+    assertThat(oldToken).isNotNull();
+
+    response = restClient()
+      .loginWith(user.getUsername(), oldPassword)
+      .put("/users/change-password/" + user.id, new PasswordDto(newPassword), UserTokenDto.class);
+
+    UserTokenDto body = response.getBody();
+
+    assertThat(body.token).isNotEqualTo(oldToken);
+    assertThat(body.token).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(body.user.email).isEqualTo(user.email);
+    assertThat(body.token).isNotNull();
   }
 
   private UserWithPasswordDto createUserDto(String email) {

@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.exception.UserNotFound;
-import com.elvaco.mvp.web.mapper.UserDtoMapper;
+import com.elvaco.mvp.web.mapper.UserTokenDtoMapper;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +20,6 @@ import static com.elvaco.mvp.web.util.RequestHelper.bearerTokenFrom;
 @AllArgsConstructor
 @RestApi
 public class AuthController {
-
   private final TokenService tokenService;
 
   @GetMapping("/authenticate")
@@ -28,7 +27,7 @@ public class AuthController {
     String email = authentication.getName();
     return Optional.ofNullable(authentication.getPrincipal())
       .map(principal -> ((MvpUserDetails) principal))
-      .map(this::toUserTokenDto)
+      .map(UserTokenDtoMapper::toUserTokenDto)
       .orElseThrow(() -> UserNotFound.withUsername(email));
   }
 
@@ -37,12 +36,5 @@ public class AuthController {
     bearerTokenFrom(request).ifPresent(tokenService::removeToken);
     SecurityContextHolder.clearContext();
     return ResponseEntity.noContent().build();
-  }
-
-  private UserTokenDto toUserTokenDto(MvpUserDetails mvpUserDetails) {
-    return new UserTokenDto(
-      UserDtoMapper.toDto(mvpUserDetails.getUser()),
-      mvpUserDetails.getToken()
-    );
   }
 }

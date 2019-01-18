@@ -72,7 +72,7 @@ export const addSubOrganisation: CallbackWithDataAndUrlParameters =
   );
 
 export const updateOrganisation: CallbackWithData =
-  putRequest<Organisation>(
+  putRequest<Organisation, Organisation>(
     EndPoints.organisations,
     {
       afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
