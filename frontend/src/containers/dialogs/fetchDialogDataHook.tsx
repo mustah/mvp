@@ -5,6 +5,7 @@ import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {User} from '../../state/domain-models/user/userModels';
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
+import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {CallbackWithId, CallbackWithIds, EncodedUriParameters, uuid} from '../../types/Types';
 
 interface Props {
@@ -27,6 +28,7 @@ interface FetchMeterAndMapMarker {
   fetchMeterDetails: CallbackWithIds;
   fetchMeterMapMarker: CallbackWithId;
   selectedId: Maybe<uuid>;
+  periodDateRange: SelectionInterval;
 }
 
 export const useFetchOrganisation = ({fetchOrganisation, organisationId, user}: Props): void => {
@@ -52,13 +54,14 @@ export const useFetchGatewayAndItsMeters = ({
 };
 
 export const useFetchMeterAndMapMarker = ({
+  periodDateRange,
   fetchMeterDetails,
   fetchMeterMapMarker,
   selectedId
 }: FetchMeterAndMapMarker) => {
   React.useEffect(() => {
     selectedId.do((id: uuid) => {
-      fetchMeterDetails([id]);
+      fetchMeterDetails([id], makeApiParametersOf(periodDateRange));
       fetchMeterMapMarker(id);
     });
   });
