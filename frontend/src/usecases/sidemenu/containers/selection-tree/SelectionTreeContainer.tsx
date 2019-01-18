@@ -11,7 +11,6 @@ import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selecti
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
-import {centerMapOnMeter} from '../../../dashboard/dashboardActions';
 import {addToReport, toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {LoadingListItem} from '../../components/LoadingListItem';
 import {ItemOptions, renderSelectionTreeCity} from '../../components/selection-tree-list-item/SelectionTreeListItem';
@@ -32,7 +31,6 @@ interface DispatchToProps {
   toggleExpand: OnClickWithId;
   toggleSingleEntry: OnClickWithId;
   toggleIncludingChildren: OnClick;
-  centerMapOnMeter: OnClickWithId;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -47,7 +45,6 @@ const SelectionTreeComponent = ({
   toggleIncludingChildren,
   toggleSingleEntry,
   itemOptions,
-  centerMapOnMeter,
   parameters,
   primaryText,
 }: Props) => {
@@ -67,7 +64,6 @@ const SelectionTreeComponent = ({
         toggleIncludingChildren,
         toggleSingleEntry,
         itemOptions,
-        centerMapOnMeter,
       }))
     : [
       (
@@ -107,7 +103,6 @@ const mapStateToProps =
     });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  centerMapOnMeter,
   addToReport,
   fetchSelectionTree,
   toggleExpand: selectionTreeToggleId,

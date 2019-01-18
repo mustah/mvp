@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {menuItemStyle, nestedListItemStyle, sideBarInnerDivStyle} from '../../../../app/themes';
 import {MediumButton} from '../../../../components/buttons/MediumButton';
-import {ZoomButton} from '../../../../components/buttons/ZoomButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {FirstUpper} from '../../../../components/texts/Texts';
@@ -25,7 +24,6 @@ interface RenderProps {
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
   itemOptions: ItemOptions;
-  centerMapOnMeter: OnClickWithId;
 }
 
 export interface ItemOptions {
@@ -97,7 +95,6 @@ interface Props {
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
   itemOptions: ItemOptions;
-  centerMapOnMeter: OnClickWithId;
   medium?: Medium;
 }
 
@@ -122,7 +119,6 @@ const renderSelectableListItem = ({
   selectable,
   nestedItems,
   itemOptions: {zoomable, report},
-  centerMapOnMeter,
   medium = Medium.unknown,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
@@ -131,11 +127,6 @@ const renderSelectableListItem = ({
   if (nestedItems) {
     props.onClick = () => toggleIncludingChildren(id);
   }
-
-  const zoomInOn = (ev: React.SyntheticEvent<{}>) => {
-    ev.stopPropagation();
-    centerMapOnMeter(id);
-  };
 
   const addMeterToReport = (ev: React.SyntheticEvent<{}>) => {
     ev.stopPropagation();
@@ -158,7 +149,6 @@ const renderSelectableListItem = ({
           </OpenDialogInfoButton>
         </RowCenter>
         <Row style={iconRowStyle}>
-          {zoomable && <ZoomButton onClick={zoomInOn}/>}
           {report && medium && <MediumButton onClick={addMeterToReport} medium={medium}/>}
         </Row>
       </RowCenter>
