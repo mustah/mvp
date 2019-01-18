@@ -44,39 +44,45 @@ public class UserUseCases {
 
   public Optional<User> findById(UUID id) {
     return users.findById(id)
-      .filter(user -> organisationPermissions.isAllowed(currentUser, user, READ));
+      .filter(user -> organisationPermissions.isAllowed(currentUser, user, user, READ));
   }
 
   public Optional<User> create(User user) {
-    if (organisationPermissions.isAllowed(currentUser, user, CREATE)) {
+    if (organisationPermissions.isAllowed(currentUser, user, null, CREATE)) {
       return Optional.of(users.save(user));
     }
     return Optional.empty();
   }
 
   public Optional<User> update(User user) {
-    if (organisationPermissions.isAllowed(currentUser, user, UPDATE)) {
-      return users.findPasswordByUserId(user.id)
-        .map(user::withPassword)
-        .map(users::update)
-        .map(this::removeTokenForUser);
+    Optional<User> userBeforeUpdate = users.findById(user.id);
+    if (userBeforeUpdate.isPresent()
+      && organisationPermissions.isAllowed(currentUser, user, userBeforeUpdate.get(), UPDATE)
+    ) {
+
+      return Optional.of(
+        removeTokenForUser(users.update(user.withPassword(userBeforeUpdate.get().password)))
+      );
     }
     return Optional.empty();
   }
 
-  public void delete(User user) {
-    if (organisationPermissions.isAllowed(currentUser, user, DELETE)) {
-      users.deleteById(user.id);
-      removeTokenForUser(user);
-    }
+  public Optional<User> delete(UUID userId) {
+    return findById(userId)
+      .filter(u -> organisationPermissions.isAllowed(currentUser, u, u, DELETE))
+      .stream()
+      .peek(u -> users.deleteById(u.id))
+      .peek(u -> removeTokenForUser(u))
+      .findAny();
   }
 
   public Optional<User> changePassword(UUID userId, String password) {
-    Optional<User> user = this.findById(userId)
-      .map(u -> u.withPassword(password));
-
-    if (user.isPresent() && organisationPermissions.isAllowed(currentUser, user.get(), UPDATE)) {
-      return Optional.of(removeTokenForUser(users.save(user.get())));
+    Optional<User> originalUser = this.findById(userId);
+    if (originalUser.isPresent()) {
+      User updatedUser = originalUser.get().withPassword(password);
+      if (organisationPermissions.isAllowed(currentUser, updatedUser, originalUser.get(), UPDATE)) {
+        return Optional.of(removeTokenForUser(users.save(updatedUser)));
+      }
     }
 
     return Optional.empty();

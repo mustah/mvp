@@ -86,10 +86,7 @@ public class UserController {
 
   @DeleteMapping("{id}")
   public UserDto deleteUser(@PathVariable UUID id) {
-    User user = userUseCases.findById(id)
-      .orElseThrow(() -> UserNotFound.withId(id));
-    userUseCases.delete(user);
-    return toDto(user);
+    return toDto(userUseCases.delete(id).orElseThrow(() -> UserNotFound.withId(id)));
   }
 
   private UserTokenDto getUserTokenDto(User user) {
