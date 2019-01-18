@@ -105,9 +105,6 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
   </Column>
 );
 
-const makeSelectionInterval = ({customDateRange, period}: State): SelectionInterval =>
-  ({period, customDateRange: customDateRange.getOrElseUndefined()});
-
 type WrapperProps = Fetching & ReadingsProps;
 
 const MeasurementsTableComponent = withLargeLoader<ReadingsProps>(MeasurementsTable);
@@ -132,16 +129,29 @@ class MeterMeasurements extends React.Component<Props, State> {
 
   async componentDidMount() {
     const {meter: {id}, logout} = this.props;
+    const {period, customDateRange} = this.state;
 
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(id, makeSelectionInterval(this.state), this.onUpdateState, logout);
+    await fetchMeasurementsPaged(
+      id,
+      {period, customDateRange: customDateRange.getOrElseUndefined()},
+      this.onUpdateState,
+      logout
+    );
   }
 
   async componentWillReceiveProps({meter: {id}, logout}: Props) {
+    const {period, customDateRange} = this.state;
+
     this.setState({isFetching: true});
 
-    await fetchMeasurementsPaged(id, makeSelectionInterval(this.state), this.onUpdateState, logout);
+    await fetchMeasurementsPaged(
+      id,
+      {period, customDateRange: customDateRange.getOrElseUndefined()},
+      this.onUpdateState,
+      logout
+    );
   }
 
   render() {
@@ -156,7 +166,7 @@ class MeterMeasurements extends React.Component<Props, State> {
     const readings: Readings = fillMissingMeasurements({
       existingReadings,
       readIntervalMinutes,
-      dateRange: newDateRange(period),
+      dateRange: customDateRange.orElseGet(() => newDateRange(period)),
     });
 
     const wrapperProps: WrapperProps = {isFetching, readings, quantities};
@@ -171,24 +181,31 @@ class MeterMeasurements extends React.Component<Props, State> {
           style={style}
         />
         <MeasurementsTableComponent {...wrapperProps}/>
-      </Column>);
+      </Column>
+    );
   }
 
   selectPeriod = async (period: Period) => {
     this.setState({period, isFetching: true});
-    await this.doFetch();
+
+    await this.doFetch({period, customDateRange: this.state.customDateRange.getOrElseUndefined()});
   }
 
   setCustomDateRange = async (dateRange: DateRange) => {
-    this.setState({customDateRange: Maybe.maybe(dateRange), isFetching: true});
-    await this.doFetch();
+    const customDateRange = Maybe.maybe(dateRange);
+    const period = Period.custom;
+
+    this.setState({customDateRange, period, isFetching: true});
+
+    await this.doFetch({period, customDateRange: customDateRange.getOrElseUndefined()});
   }
 
   onUpdateState = (state: MeterMeasurementsState) => this.setState({...state});
 
-  doFetch = async () => {
-    const {meter: {id}} = this.props;
-    await fetchMeasurementsPaged(id, makeSelectionInterval(this.state), this.onUpdateState, logout);
+  doFetch = async (selectionInterval: SelectionInterval) => {
+    const {meter: {id}, logout} = this.props;
+
+    await fetchMeasurementsPaged(id, selectionInterval, this.onUpdateState, logout);
   }
 }
 
