@@ -1,16 +1,21 @@
 import * as React from 'react';
-import {RowMiddle} from '../layouts/row/Row';
+import {OnClick} from '../../types/Types';
+import {Row, RowMiddle} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
+import './ButtonInfoLink.scss';
 import {InfoButton, InfoButtonProps} from './InfoButton';
 
 interface Props extends InfoButtonProps {
   label: string | number;
   labelStyle?: React.CSSProperties;
+  onLabelClick?: OnClick;
 }
 
-export const ButtonInfoLink = ({color, iconStyle, label, onClick, labelStyle}: Props) => (
+export const ButtonInfoLink = ({color, iconStyle, label, onClick, onLabelClick, labelStyle}: Props) => (
   <RowMiddle>
     <InfoButton color={color} iconStyle={iconStyle} onClick={onClick}/>
-    <Normal style={labelStyle}>{label}</Normal>
+    <Row onClick={onLabelClick} className="ButtonInfoLink-Label">
+      <Normal style={labelStyle}>{label}</Normal>
+    </Row>
   </RowMiddle>
 );

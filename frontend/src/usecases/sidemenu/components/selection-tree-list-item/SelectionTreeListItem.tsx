@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {menuItemStyle, nestedListItemStyle, sideBarInnerDivStyle} from '../../../../app/themes';
-import {MediumButton} from '../../../../components/buttons/MediumButton';
 import {OpenDialogInfoButton} from '../../../../components/dialog/OpenDialogInfoButton';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {FirstUpper} from '../../../../components/texts/Texts';
@@ -23,13 +22,6 @@ interface RenderProps {
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
-  itemOptions: ItemOptions;
-}
-
-export interface ItemOptions {
-  hasInfoButton?: boolean;
-  zoomable?: boolean;
-  report?: boolean;
 }
 
 const makeNestedItems = (
@@ -84,6 +76,16 @@ const renderSelectionTreeMeters = ({id, selectionTree: {entities: {meters}}, ...
 
 const iconRowStyle: React.CSSProperties = {marginRight: '18px'};
 
+const labelStyle: React.CSSProperties = {
+  marginLeft: 4,
+  paddingLeft: 0,
+  paddingRight: 0,
+  cursor: 'normal',
+  width: 126,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+};
+
 interface Props {
   addToReport: OnClickWithId;
   id: uuid;
@@ -94,19 +96,8 @@ interface Props {
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
-  itemOptions: ItemOptions;
   medium?: Medium;
 }
-
-const labelStyle: React.CSSProperties = {
-  marginLeft: 4,
-  paddingLeft: 0,
-  paddingRight: 0,
-  cursor: 'normal',
-  width: 126,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
 
 const renderSelectableListItem = ({
   addToReport,
@@ -118,8 +109,6 @@ const renderSelectableListItem = ({
   toggleIncludingChildren,
   selectable,
   nestedItems,
-  itemOptions: {zoomable, report},
-  medium = Medium.unknown,
 }: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
 
@@ -127,11 +116,7 @@ const renderSelectableListItem = ({
   if (nestedItems) {
     props.onClick = () => toggleIncludingChildren(id);
   }
-
-  const addMeterToReport = (ev: React.SyntheticEvent<{}>) => {
-    ev.stopPropagation();
-    addToReport(id);
-  };
+  const addMeterToReport = () => addToReport(id);
 
   const selectedId: Maybe<uuid> = Maybe.maybe(id);
 
@@ -144,13 +129,12 @@ const renderSelectableListItem = ({
             title={primaryText}
             autoScrollBodyContent={true}
             labelStyle={labelStyle}
+            onLabelClick={addMeterToReport}
           >
             <MeterDetailsContainer selectedId={selectedId}/>
           </OpenDialogInfoButton>
         </RowCenter>
-        <Row style={iconRowStyle}>
-          {report && medium && <MediumButton onClick={addMeterToReport} medium={medium}/>}
-        </Row>
+        <Row style={iconRowStyle}/>
       </RowCenter>
     )
     : (

@@ -1,0 +1,12 @@
+@import "../../app/variables";
+
+.TreeListItem {
+  .ButtonInfoLink-Label {
+    cursor: pointer;
+    color: $blue;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

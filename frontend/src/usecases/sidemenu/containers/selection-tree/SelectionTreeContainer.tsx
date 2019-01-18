@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {FoldableMenuItem} from '../../../../components/layouts/foldable/Foldable';
 import {RootState} from '../../../../reducers/rootReducer';
-import {isDashboardPage, isReportPage} from '../../../../selectors/routerSelectors';
 import {translate} from '../../../../services/translationService';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {NormalizedSelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
@@ -13,7 +12,7 @@ import {getMeterParameters} from '../../../../state/user-selection/userSelection
 import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import {addToReport, toggleIncludingChildren, toggleSingleEntry} from '../../../report/reportActions';
 import {LoadingListItem} from '../../components/LoadingListItem';
-import {ItemOptions, renderSelectionTreeCity} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import {renderSelectionTreeCity} from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
 
 interface StateToProps {
@@ -21,7 +20,6 @@ interface StateToProps {
   selectionTree: NormalizedSelectionTree;
   openListItems: Set<uuid>;
   parameters: EncodedUriParameters;
-  itemOptions: ItemOptions;
   primaryText: string;
 }
 
@@ -44,7 +42,6 @@ const SelectionTreeComponent = ({
   openListItems,
   toggleIncludingChildren,
   toggleSingleEntry,
-  itemOptions,
   parameters,
   primaryText,
 }: Props) => {
@@ -63,7 +60,6 @@ const SelectionTreeComponent = ({
         openListItems,
         toggleIncludingChildren,
         toggleSingleEntry,
-        itemOptions,
       }))
     : [
       (
@@ -88,17 +84,12 @@ const mapStateToProps =
     userSelection: {userSelection},
     selectionTree,
     ui: {selectionTree: selectionTreeUi},
-    routing,
   }: RootState): StateToProps =>
     ({
       isFetching: selectionTree.isFetching,
       selectionTree,
       openListItems: getOpenListItems(selectionTreeUi),
       parameters: getMeterParameters({userSelection}),
-      itemOptions: {
-        zoomable: isDashboardPage(routing),
-        report: isReportPage(routing),
-      },
       primaryText: userSelection.name,
     });
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Children} from '../../types/Types';
+import {Children, OnClick} from '../../types/Types';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
 import {ButtonClose} from '../buttons/DialogButtons';
 import {InfoButtonProps} from '../buttons/InfoButton';
@@ -11,6 +11,7 @@ interface Props extends InfoButtonProps {
   label: string | number;
   labelStyle?: React.CSSProperties;
   title?: string;
+  onLabelClick?: OnClick;
 }
 
 interface State {
@@ -24,15 +25,16 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
   state: State = {isOpen: false};
 
   render() {
-    const {color, iconStyle, label, labelStyle, title} = this.props;
+    const {color, iconStyle, label, labelStyle, onLabelClick, title} = this.props;
     return (
       <div title={title}>
         <ButtonInfoLink
-          onClick={this.open}
           label={label}
           color={color}
           iconStyle={iconStyle}
           labelStyle={labelStyle || infoLabelStyle}
+          onClick={this.open}
+          onLabelClick={onLabelClick}
         />
         {this.renderDialog()}
       </div>
