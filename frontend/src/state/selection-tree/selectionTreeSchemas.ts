@@ -1,15 +1,14 @@
 import {normalize, Schema, schema} from 'normalizr';
-import {getMediumType} from '../ui/graph/measurement/measurementModels';
 import {DataFormatter} from '../domain-models/domainModelsActions';
+import {getMediumType} from '../ui/graph/measurement/measurementModels';
 import {NormalizedSelectionTree} from './selectionTreeModels';
 
 const idOfAddress: schema.SchemaFunction = (
   {name: entityName},
   {id: parentId},
-  key,
 ): string => `${parentId.toLowerCase()},${entityName.toLowerCase()}`;
 
-const processStrategyCity: schema.StrategyFunction = (entity, parent, key) => ({
+const processStrategyCity: schema.StrategyFunction = (entity) => ({
   ...entity,
   medium: entity.medium ? entity.medium.map(getMediumType) : [],
 });

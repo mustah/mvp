@@ -1,8 +1,8 @@
 import {uuid} from '../../../types/Types';
 import {ObjectsById} from '../../domain-models/domainModels';
 import {Medium} from '../../ui/graph/measurement/measurementModels';
-import {SelectedTreeEntities, SelectionTree, SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
-import {getMedia, getMeterIds, getMeterIdsWithLimit, getSelectionTree} from '../selectionTreeSelectors';
+import {SelectedTreeEntities, SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
+import {getMedia, getMeterIds, getMeterIdsWithLimit} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -123,82 +123,6 @@ describe('selectionTreeSelectors', () => {
       cities: ['sweden,kungsbacka', 'sweden,gothenburg'],
     },
   };
-
-  describe('getSelectionTree', () => {
-
-    it('regroups selectionTreeState into selectionTree', () => {
-      const expected: SelectionTree = {
-        entities: {
-          ...selectionTreeState.entities,
-          cities: {
-            'sweden,kungsbacka': {
-              id: 'sweden,kungsbacka',
-              name: 'kungsbacka',
-              clusters: ['sweden,kungsbacka:k'],
-            },
-            'sweden,gothenburg': {
-              id: 'sweden,gothenburg',
-              name: 'gothenburg',
-              clusters: [
-                'sweden,gothenburg:k',
-                'sweden,gothenburg:d',
-              ],
-            },
-          },
-          clusters: {
-            'sweden,kungsbacka:k': {
-              id: 'sweden,kungsbacka:k',
-              name: 'K...(2)',
-              addresses: ['sweden,kungsbacka,kabelgatan 2', 'sweden,kungsbacka,kabelgatan 3'],
-            },
-            'sweden,gothenburg:k': {
-              id: 'sweden,gothenburg:k',
-              name: 'K...(2)',
-              addresses: ['sweden,gothenburg,kungsgatan 2', 'sweden,gothenburg,kungsgatan 1'],
-            },
-            'sweden,gothenburg:d': {
-              id: 'sweden,gothenburg:d',
-              name: 'D...(1)',
-              addresses: ['sweden,gothenburg,drottninggatan 1'],
-            },
-          },
-        },
-        result: {...selectionTreeState.result},
-      };
-
-      expect(getSelectionTree(selectionTreeState)).toEqual(expected);
-
-    });
-
-    it('handles an empty state', () => {
-      const selectionTreeState: SelectionTreeState = {
-        isFetching: false,
-        isSuccessfullyFetched: true,
-        entities: {
-          cities: {},
-          addresses: {},
-          meters: {},
-        },
-        result: {cities: []},
-      };
-
-      expect(getSelectionTree(selectionTreeState)).toEqual({
-        entities: {
-          cities: {},
-          clusters: {},
-          addresses: {},
-          meters: {},
-        },
-        result: {cities: []},
-      });
-    });
-
-    it('memoizes result', () => {
-      const expected = getSelectionTree(selectionTreeState);
-      expect(getSelectionTree(selectionTreeState)).toBe(expected);
-    });
-
-  });
 
   describe('getMedia', () => {
 

@@ -402,43 +402,6 @@ describe('reportActions', () => {
       expect(ids).toHaveLength(0);
     });
 
-    it('selects given clusters and meters, if cluster not already selected', () => {
-      const store = configureMockStore(initialState);
-      store.dispatch(toggleIncludingChildren('sweden,höganäs:s'));
-
-      const actions = store.getActions();
-      expect(actions).toHaveLength(1);
-
-      const {type, payload: {ids}} = actions[0];
-      expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toContain('sweden,höganäs:s');
-      expect(ids).toContain('sweden,höganäs,storgatan 5');
-      expect(ids).toContain(33);
-    });
-
-    it('deselects given clusters and meters, if cluster already selected', () => {
-      const cluster = 'sweden,höganäs:h';
-
-      const store = configureMockStore({
-        ...initialState,
-        report: {
-          ...initialState.report,
-          selectedListItems: [
-            ...initialState.report!.selectedListItems,
-            cluster,
-          ],
-        },
-      });
-      store.dispatch(toggleIncludingChildren(cluster));
-
-      const actions = store.getActions();
-      expect(actions).toHaveLength(1);
-
-      const {type, payload: {ids}} = actions[0];
-      expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toHaveLength(0);
-    });
-
     describe('enforces a limit of 20 report meters/cities at a time', () => {
 
       const translations = {

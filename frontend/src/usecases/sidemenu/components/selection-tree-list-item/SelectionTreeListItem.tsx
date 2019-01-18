@@ -9,7 +9,7 @@ import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetails
 import {Maybe} from '../../../../helpers/Maybe';
 import {orUnknown} from '../../../../helpers/translations';
 import {firstUpper} from '../../../../services/translationService';
-import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
+import {NormalizedSelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {Medium} from '../../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import '../../../report/components/indicators/ReportIndicatorWidget.scss';
@@ -20,7 +20,7 @@ interface RenderProps {
   addToReport: OnClickWithId;
   id: uuid;
   openListItems: Set<uuid>;
-  selectionTree: SelectionTree;
+  selectionTree: NormalizedSelectionTree;
   toggleExpand: OnClickWithId;
   toggleIncludingChildren: OnClick;
   toggleSingleEntry: OnClickWithId;
@@ -34,101 +34,52 @@ export interface ItemOptions {
   report?: boolean;
 }
 
-export const renderSelectionTreeCities = ({
-  id,
-  selectionTree,
-  toggleSingleEntry,
-  openListItems,
-  ...other
-}: RenderProps) => {
-  const city = selectionTree.entities.cities[id];
-
-  let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
-  if (city.clusters) {
-    if (openListItems.has(id)) {
-      nestedItems = [...city.clusters].sort()
-        .map((id: uuid) => renderSelectionTreeClusters({
-          ...other,
-          openListItems,
-          toggleSingleEntry,
-          selectionTree,
-          id,
-        }));
-    } else {
-      // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
-      nestedItems = [<React.Fragment key="city123"/>];
-    }
+const makeNestedItems = (
+  props: RenderProps,
+  ids: uuid[],
+  key: string,
+  onRenderItem: (props: RenderProps) => React.ReactElement<ListItemProps>,
+): Array<React.ReactElement<ListItemProps>> => {
+  if (props.openListItems.has(props.id)) {
+    return ids.sort().map((id: uuid) => onRenderItem({...props, id}));
+  } else {
+    return [<React.Fragment key={key}/>];
   }
+};
+
+export const renderSelectionTreeCity = (props: RenderProps) => {
+  const {id, selectionTree: {entities: {cities}}, ...other} = props;
+  const city = cities[id];
 
   return renderSelectableListItem({
     ...other,
-    toggleSingleEntry,
-    openListItems,
     id,
     selectable: true,
     primaryText: orUnknown(city.name),
-    nestedItems,
+    nestedItems: makeNestedItems(props, city.addresses, 'city123', renderSelectionTreeAddresses),
   });
 };
 
-const renderSelectionTreeClusters = ({id, openListItems, selectionTree, ...other}: RenderProps) => {
-  const cluster = selectionTree.entities.clusters[id];
-
-  let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
-  if (cluster.addresses) {
-    if (openListItems.has(id)) {
-      nestedItems = [...cluster.addresses].sort().map((id) => renderSelectionTreeAddresses({
-        ...other,
-        selectionTree,
-        openListItems,
-        id,
-      }));
-    } else {
-      // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
-      nestedItems = [<React.Fragment key="cluster123"/>];
-    }
-  }
-
-  return renderSelectableListItem({
-    ...other,
-    id,
-    selectable: true,
-    primaryText: cluster.name,
-    openListItems,
-    nestedItems,
-  });
-};
-
-const renderSelectionTreeAddresses = ({id, openListItems, selectionTree, ...other}: RenderProps) => {
-  const address = selectionTree.entities.addresses[id];
-
-  let nestedItems: Array<React.ReactElement<ListItemProps>> = [];
-  if (openListItems.has(id)) {
-    nestedItems = [...address.meters]
-      .sort()
-      .map((id) => renderSelectionTreeMeters({...other, openListItems, selectionTree, id}));
-  } else {
-    // hack: let's not render stuff until we're expanded, but indicate that we are expandable by being non-empty
-    nestedItems = [<React.Fragment key="address123"/>];
-  }
+const renderSelectionTreeAddresses = (props: RenderProps) => {
+  const {id, selectionTree: {entities: {addresses}}, ...other} = props;
+  const address = addresses[id];
 
   return renderSelectableListItem({
     ...other,
     id,
     selectable: true,
     primaryText: orUnknown(address.name),
-    openListItems,
-    nestedItems,
+    nestedItems: makeNestedItems(props, address.meters, 'address123', renderSelectionTreeMeters),
   });
 };
 
-const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) => {
-  const {name, medium} = selectionTree.entities.meters[id];
+const renderSelectionTreeMeters = ({id, selectionTree: {entities: {meters}}, ...other}: RenderProps) => {
+  const {name: primaryText, medium} = meters[id];
   return renderSelectableListItem({
     ...other,
     id,
     selectable: false,
-    primaryText: name,
+    primaryText,
     medium,
   });
 };

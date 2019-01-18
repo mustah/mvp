@@ -1,7 +1,7 @@
-import {Medium} from '../ui/graph/measurement/measurementModels';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {ReportState} from '../../usecases/report/reportModels';
 import {ObjectsById} from '../domain-models/domainModels';
+import {Medium} from '../ui/graph/measurement/measurementModels';
 
 export interface SelectionTreeState extends NormalizedSelectionTree {
   isFetching: boolean;
@@ -40,26 +40,6 @@ export interface SelectionTreeAddress extends IdNamed {
   address: string;
   city: string;
   meters: uuid[];
-}
-
-export interface CityWithClusters extends IdNamed {
-  clusters: uuid[];
-}
-
-export interface ClusterWithAddresses extends IdNamed {
-  addresses: uuid[];
-}
-
-export interface SelectionTree {
-  entities: {
-    cities: ObjectsById<CityWithClusters>;
-    clusters: ObjectsById<ClusterWithAddresses>;
-    addresses: ObjectsById<SelectionTreeAddress>;
-    meters: ObjectsById<SelectionTreeMeter>;
-  };
-  result: {
-    cities: uuid[];
-  };
 }
 
 export type SelectedTreeEntities = Pick<ReportState, 'selectedListItems'> & Pick<SelectionTreeState, 'entities'>;

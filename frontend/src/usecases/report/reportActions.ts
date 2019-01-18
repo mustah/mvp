@@ -4,8 +4,7 @@ import {isDefined} from '../../helpers/commonUtils';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {SelectionTree, SelectionTreeMeter, SelectionTreeState} from '../../state/selection-tree/selectionTreeModels';
-import {getSelectionTree} from '../../state/selection-tree/selectionTreeSelectors';
+import {SelectionTreeMeter, SelectionTreeState} from '../../state/selection-tree/selectionTreeModels';
 import {isSelectedCity, isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
 import {
   allQuantities,
@@ -123,13 +122,10 @@ export const addToReport = (id: uuid) =>
     }
   };
 
-type Level = 'clusters' | 'cities' | 'addresses';
+type Level = 'cities' | 'addresses';
 
 // this is what you get when you model a DAG in a flat way..
 const levelFromId = (id: string): Level => {
-  if (id.indexOf(':') !== -1) {
-    return 'clusters';
-  }
   const levels: number = (id.match(/,/g) || []).length;
   return levels === 1 ? 'cities' : 'addresses';
 };
@@ -137,32 +133,20 @@ const levelFromId = (id: string): Level => {
 export const toggleIncludingChildren = (id: uuid) =>
   (dispatch, getState: GetState) => {
     const {report: {selectedListItems}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
-    const clustered: SelectionTree = getSelectionTree(selectionTree);
 
     const listItems: Set<uuid> = new Set(selectedListItems);
     listItems.has(id) ? listItems.delete(id) : listItems.add(id);
     const shouldShow: boolean = listItems.has(id);
 
-    const level: Level = levelFromId(id as string);
+    const addresses: uuid[] = [];
 
-    let addresses: uuid[] = [];
-    const clusters: uuid[] = [];
-
-    if (level === 'clusters') {
-      clusters.push(id);
-      addresses = addresses.concat(clustered.entities.clusters[id].addresses);
-    }
-
-    if (level === 'addresses') {
+    if (levelFromId(id as string) === 'addresses') {
       addresses.push(id);
     }
 
-    clusters.forEach((clusterId: uuid) =>
-      shouldShow ? listItems.add(clusterId) : listItems.delete(clusterId));
-
-    addresses.forEach((address: uuid) => {
-      shouldShow ? listItems.add(address) : listItems.delete(address);
-      clustered.entities.addresses[address].meters.forEach((meterId: uuid) =>
+    addresses.forEach((id: uuid) => {
+      shouldShow ? listItems.add(id) : listItems.delete(id);
+      selectionTree.entities.addresses[id].meters.forEach((meterId: uuid) =>
         shouldShow ? listItems.add(meterId) : listItems.delete(meterId));
     });
 
