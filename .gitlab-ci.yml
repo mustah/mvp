@@ -135,7 +135,7 @@ prepare:update-salt:
     - /^release-.*$/
     - tags
   script:
-    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
+    - pepper --fail-any -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 build:
   <<: *cache_gradle
@@ -277,11 +277,11 @@ deploy:staging:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export MVP_VERSION=$(cat .version)
     - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_VERSION=$CI_COMMIT_SHA
   script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
+    - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV
+    - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
+    - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
     - while [ 1 ]; do curl --fail --silent --user "$API_USER:$API_PASSWORD" "$API_URL/actuator/health" >/dev/null && exit 0; echo "Waiting for application to start"; sleep 1; done
 
 post-staging:acceptance:
@@ -338,11 +338,11 @@ deploy:production:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export MVP_VERSION=$(cat .version)
     - test "$CI_COMMIT_REF_NAME" == "develop" && export MVP_VERSION=$CI_COMMIT_SHA
   script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
+    - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV
+    - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
+    - pepper --fail-any -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
+    - pepper --fail-any -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp_version\":\"$MVP_VERSION\"}"
     - while [ 1 ]; do curl --fail --silent --user "$API_USER:$API_PASSWORD" "$API_URL/actuator/health" >/dev/null && exit 0; echo "Waiting for application to start"; sleep 1; done
 
 post-prod:acceptance:
