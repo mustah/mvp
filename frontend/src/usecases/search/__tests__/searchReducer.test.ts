@@ -2,7 +2,7 @@ import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../../app/routes';
 import {LOGOUT_USER} from '../../auth/authActions';
 import {search as searchAction} from '../searchActions';
-import {gatewayQuery, QueryParameter, selectionTreeQuery, meterQuery} from '../searchModels';
+import {gatewayQuery, meterQuery, QueryParameter} from '../searchModels';
 import {initialState, search, SearchState} from '../searchReducer';
 
 describe('searchReducer', () => {
@@ -63,56 +63,6 @@ describe('searchReducer', () => {
       state = search(initialState, searchAction(gatewayQuery('hop')));
       expect(state).toEqual({...initialState, collection: {query: 'hop'}});
     });
-  });
-
-  describe('selectionTreeSearch', () => {
-
-    it('defaults to empty', () => {
-      const payload: QueryParameter = selectionTreeQuery();
-      const state: SearchState = search(
-        initialState,
-        searchAction(payload),
-      );
-
-      const expected: SearchState = {...initialState, selectionTree: {}};
-
-      expect(state).toEqual(expected);
-    });
-
-    it('can search in selection tree', () => {
-      const payload: QueryParameter = selectionTreeQuery('bro');
-      const state: SearchState = search(initialState, searchAction(payload));
-      const expected: SearchState = {...initialState, selectionTree: {query: 'bro'}};
-
-      expect(state).toEqual(expected);
-    });
-
-    it('replaces previous selection tree search query', () => {
-      const firstState: SearchState = search(initialState, searchAction(selectionTreeQuery('bro')));
-      const firstExpected: SearchState = {...initialState, selectionTree: {query: 'bro'}};
-
-      expect(firstState).toEqual(firstExpected);
-
-      const secondState: SearchState = search(initialState, searchAction(selectionTreeQuery('hop')));
-      const secondExpected: SearchState = {...initialState, selectionTree: {query: 'hop'}};
-      expect(secondState).toEqual(secondExpected);
-    });
-
-    it('keeps the validation and collection queries when searching the selection tree', () => {
-      const state: SearchState = search(
-        {...initialState, validation: {query: 'asdf'}, collection: {query: 'fdsa'}},
-        searchAction(selectionTreeQuery('bro')),
-      );
-      const expected: SearchState = {
-        ...initialState,
-        validation: {query: 'asdf'},
-        collection: {query: 'fdsa'},
-        selectionTree: {query: 'bro'},
-      };
-
-      expect(state).toEqual(expected);
-    });
-
   });
 
   describe('gateway and meter search queries', () => {

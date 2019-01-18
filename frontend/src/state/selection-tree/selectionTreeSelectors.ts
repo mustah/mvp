@@ -2,7 +2,6 @@ import {createSelector} from 'reselect';
 import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
 import {limit} from '../../usecases/report/reportActions';
-import {Query} from '../../usecases/search/searchModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {isSelectedCity, isSelectedMeter} from '../ui/graph/measurement/measurementActions';
 import {allQuantities, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
@@ -48,69 +47,20 @@ const addOrInitialCluster = (
   };
 };
 
-type SelectionTreeQueried = SelectionTreeState & Query;
-
-const matches = (query: string | undefined) => {
-  if (!query || query.trim().length < 3) {
-    return (_: string) => true;
-  }
-  const re = new RegExp(query, 'i');
-  return (searchTerm: string) => re.test(searchTerm);
-};
-
 export const getSelectionTree =
-  createSelector<SelectionTreeQueried, SelectionTreeResult, SelectionTreeEntities, string | undefined, SelectionTree>(
+  createSelector<SelectionTreeState, SelectionTreeResult, SelectionTreeEntities, SelectionTree>(
     ({result}) => result,
     ({entities}) => entities,
-    ({query}) => query,
     (
       {cities: cityIds}: SelectionTreeResult,
       {cities, addresses, meters}: SelectionTreeEntities,
-      query
     ) => {
-
-      const shouldBeInTree = matches(query);
-
-      const idsMatchingSearch = new Set<uuid>();
-
-      if (query) {
-        cityIds.forEach((cityId) => {
-          const city = cities[cityId];
-          const cityIncluded = shouldBeInTree(city.name);
-          if (cityIncluded) {
-            idsMatchingSearch.add(cityId);
-          }
-
-          city.addresses.forEach((addressId) => {
-            const address = addresses[addressId];
-            const addressIncluded = shouldBeInTree(address.name);
-            if (cityIncluded || addressIncluded) {
-              idsMatchingSearch.add(cityId);
-              idsMatchingSearch.add(addressId);
-              address.meters.forEach((meterId) => idsMatchingSearch.add(meterId));
-            } else {
-              address.meters.forEach((meterId) => {
-                const meter = meters[meterId];
-                if (shouldBeInTree(meter.name)) {
-                  idsMatchingSearch.add(cityId);
-                  idsMatchingSearch.add(addressId);
-                  idsMatchingSearch.add(meterId);
-                }
-              });
-            }
-          });
-        });
-      }
-
       const citiesWithClusters: ObjectsById<CityWithClusters> = {};
-
-      const onlyMatches = (id: uuid) => !query || idsMatchingSearch.has(id);
 
       const createClustersByCity = (cityId: uuid): ObjectsById<ClusterWithAddresses> => {
         const city = cities[cityId];
         const {name, id} = city;
         const cityClusters: ObjectsById<ClusterWithAddresses> = city.addresses
-          .filter(onlyMatches)
           .map((id): SelectionTreeAddress => addresses[id])
           .reduce((clusters, address) => addOrInitialCluster(address, id, clusters), {});
 
@@ -124,7 +74,6 @@ export const getSelectionTree =
       };
 
       const clusters: ObjectsById<ClusterWithAddresses> = cityIds
-        .filter(onlyMatches)
         .map(createClustersByCity)
         .reduce((prev, curr) => ({...prev, ...curr}), {});
 
@@ -136,7 +85,7 @@ export const getSelectionTree =
           clusters,
         },
         result: {
-          cities: cityIds.filter(onlyMatches),
+          cities: cityIds,
         },
       };
     },

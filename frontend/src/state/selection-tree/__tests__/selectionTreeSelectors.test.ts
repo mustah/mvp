@@ -198,28 +198,6 @@ describe('selectionTreeSelectors', () => {
       expect(getSelectionTree(selectionTreeState)).toBe(expected);
     });
 
-    describe('handles wildcard query', () => {
-
-      it('limits city by searching for city', () => {
-        const withQuery = getSelectionTree({...selectionTreeState, query: 'kungsbacka'});
-        const withoutQuery = getSelectionTree({...selectionTreeState});
-
-        expect(withoutQuery.entities.cities).toHaveProperty('sweden,gothenburg');
-        expect(withQuery.entities.cities['sweden,gothenburg']).toBeUndefined();
-      });
-
-      it('limits city by searching for address name', () => {
-        const withQuery = getSelectionTree({...selectionTreeState, query: 'kabelgatan 3'});
-        const withoutQuery = getSelectionTree({...selectionTreeState});
-
-        expect(withoutQuery.entities.cities).toHaveProperty('sweden,gothenburg');
-        expect(withQuery.entities.cities['sweden,gothenburg']).toBeUndefined();
-
-        expect(withoutQuery.entities.clusters['sweden,kungsbacka:k'].name).toEqual('K...(2)');
-        expect(withQuery.entities.clusters['sweden,kungsbacka:k'].name).toEqual('K...(1)');
-      });
-    });
-
   });
 
   describe('getMedia', () => {
