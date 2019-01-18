@@ -25,7 +25,8 @@ begin
                                           max,
                                           expected_count,
                                           received_count,
-                                          average)
+                                          average,
+                                          is_consumption)
                                           values
                                           (cur_row.stat_date,
                                           cur_row.physical_meter_id,
@@ -34,8 +35,9 @@ begin
                                           cur_row.max,
                                           cur_row.expected_count,
                                           cur_row.received_count,
-                                          cur_row.average)
-          on CONFLICT (stat_date,physical_meter_id,quantity) do update
+                                          cur_row.average,
+                                          cur_row.is_consumption)
+          on CONFLICT (stat_date,physical_meter_id,quantity,is_consumption) do update
           set min = excluded.min,
               max = excluded.max,
               expected_count = excluded.expected_count,
@@ -46,7 +48,8 @@ begin
         delete from measurement_stat_data
           where measurement_stat_data.stat_date=cur_row.stat_date and
                 measurement_stat_data.physical_meter_id=cur_row.physical_meter_id and
-                measurement_stat_data.quantity = cur_row.quantity;
+                measurement_stat_data.quantity = cur_row.quantity and
+                measurement_stat_data.is_consumption = cur_row.is_consumption;
      end if;
 
    end loop;

@@ -48,6 +48,7 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
       collectionPercentageField = inline(0.0);
     } else {
       condition = measurementStatsConditionFor(period)
+        .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.isFalse())
         .and(MEASUREMENT_STAT_DATA.QUANTITY.equal(dsl.select(MEASUREMENT_STAT_DATA.QUANTITY)
           .from(MEASUREMENT_STAT_DATA)
           .where(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID))
@@ -56,10 +57,9 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
         .and(PHYSICAL_METER.LOGICAL_METER_ID.eq(LOGICAL_METER.ID));
 
       collectionPercentageField = sum(coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0))
-        .divide(
-          inline(60, Double.class)
-            .times(ChronoUnit.HOURS.between(period.start, period.stop))
-            .divide(min(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)))
+        .divide(inline(60, Double.class)
+          .times(ChronoUnit.HOURS.between(period.start, period.stop))
+          .divide(min(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)))
         ).times(100.0).cast(Double.class);
     }
 
