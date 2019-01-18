@@ -5,7 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
@@ -27,6 +29,25 @@ public class MeasurementDtoMapper {
       measurement.value,
       measurement.unit,
       measurement.created
+    );
+  }
+
+  public static MeasurementSeriesDto toSeries(
+    List<MeasurementValue> values,
+    LogicalMeter logicalMeter,
+    Quantity quantity
+  ) {
+    return new MeasurementSeriesDto(
+      logicalMeter.id.toString(),
+      quantity.name,
+      quantity.presentationUnit(),
+      logicalMeter.externalId,
+      logicalMeter.location.getCity(),
+      logicalMeter.location.getAddress(),
+      logicalMeter.meterDefinition.medium,
+      values.stream()
+        .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
+        .collect(toList())
     );
   }
 

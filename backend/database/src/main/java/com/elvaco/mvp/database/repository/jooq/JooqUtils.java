@@ -30,6 +30,10 @@ public class JooqUtils {
     return condition("range_contains_elem({0}, {1})", field, val(time));
   }
 
+  public static Condition periodContains(Field<PeriodRange> field, Field<OffsetDateTime> time) {
+    return condition("range_contains_elem({0}, {1})", field, time);
+  }
+
   public static Condition periodOverlaps(Field<PeriodRange> field, PeriodRange range) {
     return condition("range_overlaps({0}, {1})", field, range);
   }

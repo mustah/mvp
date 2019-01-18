@@ -2,7 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -79,7 +78,7 @@ public class MeasurementController {
       .flatMap(entry -> measurementUseCases.findAverageForPeriod(
         new MeasurementParameter(
           entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
-          entry.getKey(),
+          List.of(entry.getKey()),
           start,
           stop,
           resolutionOrDefault(start, stop, resolution)
@@ -111,65 +110,33 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
+
     List<LogicalMeter> logicalMeters = findLogicalMetersByIds(logicalMeterIds);
 
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, identity()));
 
-    Set<Quantity> quantities = optionalQuantities
-      .orElseGet(() -> logicalMeters.stream()
-        .flatMap(logicalMeter -> logicalMeter.getQuantities().stream())
-        .collect(toSet()));
+    Map<String, Quantity> quantityMap = getMappedQuantities(optionalQuantities, logicalMeters);
 
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
 
-    Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeter
-      = logicalMeterHelper.mapQuantitiesToPhysicalMeters(
-      logicalMeters,
-      quantities
+    MeasurementParameter parameter = new MeasurementParameter(
+      logicalMeterIds,
+      new ArrayList<>(quantityMap.values()),
+      start,
+      stop,
+      temporalResolution
     );
 
-    Map<UUID, PhysicalMeter> physicalMeters = quantityToPhysicalMeter
-      .values().stream().flatMap(Collection::stream)
-      .collect(toMap(PhysicalMeter::getId, identity(), (o, n) -> n));
-
-    List<LabeledMeasurementValue> labeledMeasurementValues =
-      quantityToPhysicalMeter.entrySet()
-        .stream()
-        .map(entry -> new MeasurementParameter(
-          entry.getValue().stream().map(PhysicalMeter::getId).collect(toList()),
-          entry.getKey(),
-          start,
-          stop,
-          temporalResolution
-        ))
-        .collect(toMap(MeasurementParameter::getQuantity, measurementUseCases::findSeriesForPeriod))
-        .entrySet().stream()
-        .flatMap(quantityMapEntry ->
-          quantityMapEntry.getValue()
-            .entrySet()
-            .stream()
-            .flatMap(uuidListEntry -> {
-              PhysicalMeter physicalMeter = physicalMeters.get(uuidListEntry.getKey());
-              LogicalMeter logicalMeter = logicalMetersMap.get(physicalMeter.logicalMeterId);
-              return uuidListEntry.getValue()
-                .stream().map(measurementValue ->
-                  LabeledMeasurementValue.builder()
-                    .id(logicalMeter.id.toString())
-                    .label(logicalMeter.externalId)
-                    .city(logicalMeter.location.getCity())
-                    .address(logicalMeter.location.getAddress())
-                    .medium(logicalMeter.meterDefinition.medium)
-                    .when(measurementValue.when)
-                    .value(measurementValue.value)
-                    .quantity(quantityMapEntry.getKey())
-                    .build()
-                );
-            })
-        ).collect(toList());
-
-    return toSeries(labeledMeasurementValues);
+    return measurementUseCases.findSeriesForPeriod(parameter)
+      .entrySet().stream().map(entry ->
+        toSeries(
+          entry.getValue(),
+          logicalMetersMap.get(entry.getKey().logicalMeterId),
+          quantityMap.get(entry.getKey().quantity)
+        )
+      ).collect(toList());
   }
 
   @GetMapping("/paged")
@@ -181,6 +148,19 @@ public class MeasurementController {
       .map(MeasurementDtoMapper::toDto)
       .collect(toList());
     return new PageImpl<>(measurements);
+  }
+
+  private Map<String, Quantity> getMappedQuantities(
+    Optional<Set<Quantity>> optionalQuantities,
+    List<LogicalMeter> logicalMeters
+  ) {
+    return optionalQuantities
+      .orElseGet(() -> logicalMeters.stream()
+        .flatMap(logicalMeter -> logicalMeter.getQuantities().stream())
+        .collect(toSet()))
+      .stream()
+      .map(q -> logicalMeterHelper.resolveQuantity(q))
+      .collect(toMap(q -> q.name, q -> q));
   }
 
   private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {
