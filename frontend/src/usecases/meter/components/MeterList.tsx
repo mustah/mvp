@@ -17,7 +17,7 @@ import {ErrorLabel} from '../../../components/texts/ErrorLabel';
 import {Normal} from '../../../components/texts/Texts';
 import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
-import {translate} from '../../../services/translationService';
+import {firstUpper, translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
@@ -29,6 +29,12 @@ const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
 const renderMedium = ({medium}: Meter) => medium;
 
 const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
+
+const gridStyle: React.CSSProperties = {
+  borderTopWidth: 0,
+  borderBottomWidth: 0,
+  maxHeight: '1000px',
+};
 
 export const MeterList = (
   {
@@ -57,11 +63,11 @@ export const MeterList = (
     (renderer) =>
       (props) => <td>{renderer(props.dataItem)}</td>;
 
-  const renderCityName = ({location: {city}}: Meter) => orUnknown(city);
+  const renderCityName = ({location: {city}}: Meter) => firstUpper(orUnknown(city));
 
-  const renderAddressName = ({location: {address}}: Meter) => orUnknown(address);
+  const renderAddressName = ({location: {address}}: Meter) => firstUpper(orUnknown(address));
 
-  const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
+  const renderManufacturer = ({manufacturer}: Meter) => firstUpper(orUnknown(manufacturer));
 
   const renderActions = ({id, manufacturer}: Meter) => (
     <RowRight className="ActionsDropdown-list">
@@ -88,9 +94,9 @@ export const MeterList = (
 
   const pageable: GridPagerSettings = {
     buttonCount: 5,
-    info: true,
+    info: false,
     type: 'numeric',
-    pageSizes: true,
+    pageSizes: false,
     previousNext: true,
   };
 
@@ -108,12 +114,16 @@ export const MeterList = (
         sortable={false}
         onSortChange={handleKendoSortChange}
         sort={sort}
+
+        scrollable="none"
+        style={gridStyle}
       >
         <GridColumn
           field="facility"
           cell={renderInKendo(renderMeterListItem)}
           title={translate('facility')}
           width={180}
+          headerClassName="left-most"
         />
 
         <GridColumn field="address" cell={renderInKendo(renderMeterId)} title={translate('meter id')}/>
@@ -129,7 +139,12 @@ export const MeterList = (
 
         <GridColumn field="manufacturer" cell={renderInKendo(renderManufacturer)} title={translate('manufacturer')}/>
 
-        <GridColumn field="medium" cell={renderInKendo(renderMedium)} title={translate('medium')}/>
+        <GridColumn
+          field="medium"
+          cell={renderInKendo(renderMedium)}
+          title={translate('medium')}
+          width={180}
+        />
 
         <GridColumn field="alarm" cell={renderInKendo(renderAlarm)} title={translate('alarm')}/>
 
