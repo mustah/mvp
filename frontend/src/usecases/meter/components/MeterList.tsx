@@ -1,12 +1,12 @@
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridPageChangeEvent,
   GridPagerSettings,
   GridSortChangeEvent
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
-import '../../../app/kendo.scss';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
@@ -18,17 +18,12 @@ import {Normal} from '../../../components/texts/Texts';
 import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpper, translate} from '../../../services/translationService';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
 
-const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
+const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><MeterAlarm alarm={alarm}/></td>;
 
-const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
-
-const renderMedium = ({medium}: Meter) => medium;
-
-const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
+const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
 
 const gridStyle: React.CSSProperties = {
   borderTopWidth: 0,
@@ -52,43 +47,47 @@ export const MeterList = (
     sortTable,
   }: MeterListProps) => {
 
-  const renderMeterId = ({address, isReported}: Meter) => (
-    <Column>
-      <Normal>{address}</Normal>
-      <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
-    </Column>
+  const renderMeterId = ({dataItem: {address, isReported}}: GridCellProps) => (
+    <td>
+      <Column>
+        <Normal>{address}</Normal>
+        <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+      </Column>
+    </td>
   );
 
-  const renderInKendo =
-    (renderer) =>
-      (props) => <td>{renderer(props.dataItem)}</td>;
+  const renderCityName = ({dataItem: {location: {city}}}: GridCellProps) =>
+    <td>{firstUpper(orUnknown(city))}</td>;
 
-  const renderCityName = ({location: {city}}: Meter) => firstUpper(orUnknown(city));
+  const renderAddressName = ({dataItem: {location: {address}}}: GridCellProps) =>
+    <td>{firstUpper(orUnknown(address))}</td>;
 
-  const renderAddressName = ({location: {address}}: Meter) => firstUpper(orUnknown(address));
+  const renderManufacturer = ({dataItem: {manufacturer}}: GridCellProps) =>
+    <td>{firstUpper(orUnknown(manufacturer))}</td>;
 
-  const renderManufacturer = ({manufacturer}: Meter) => firstUpper(orUnknown(manufacturer));
-
-  const renderActions = ({id, manufacturer}: Meter) => (
-    <RowRight className="ActionsDropdown-list">
-      <ListActionsDropdown
-        item={{id, name: manufacturer}}
-        selectEntryAdd={selectEntryAdd}
-        syncWithMetering={syncWithMetering}
-      />
-    </RowRight>
+  const renderActions = ({dataItem: {id, manufacturer}}: GridCellProps) => (
+    <td>
+      <RowRight className="ActionsDropdown-list">
+        <ListActionsDropdown
+          item={{id, name: manufacturer}}
+          selectEntryAdd={selectEntryAdd}
+          syncWithMetering={syncWithMetering}
+        />
+      </RowRight>
+    </td>
   );
 
-  const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
-    formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
+  const renderCollectionStatus = ({dataItem: {collectionPercentage, readIntervalMinutes}}: GridCellProps) =>
+    <td>{formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin)}</td>;
 
-  const handleKendoPageChange = ({page: {skip}}: GridPageChangeEvent) => {
-    changePage({entityType, componentId, page: skip / paginationPageSize});
-  };
+  const handleKendoPageChange = ({page: {skip}}: GridPageChangeEvent) =>
+    changePage({
+      entityType,
+      componentId,
+      page: skip / paginationPageSize
+    });
 
-  const handleKendoSortChange = ({sort}: GridSortChangeEvent) => {
-    sortTable(sort as ApiRequestSortingOptions[]);
-  };
+  const handleKendoSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 
   const data = result.map((key) => entities[key]);
 
@@ -120,43 +119,42 @@ export const MeterList = (
       >
         <GridColumn
           field="facility"
-          cell={renderInKendo(renderMeterListItem)}
+          cell={renderMeterListItem}
           title={translate('facility')}
           width={180}
           headerClassName="left-most"
         />
 
-        <GridColumn field="address" cell={renderInKendo(renderMeterId)} title={translate('meter id')}/>
+        <GridColumn field="address" cell={renderMeterId} title={translate('meter id')}/>
 
-        <GridColumn field="location" cell={renderInKendo(renderCityName)} title={translate('city')}/>
+        <GridColumn field="location" cell={renderCityName} title={translate('city')}/>
 
         <GridColumn
           field="location"
-          cell={renderInKendo(renderAddressName)}
+          cell={renderAddressName}
           title={translate('address')}
           width={180}
         />
 
-        <GridColumn field="manufacturer" cell={renderInKendo(renderManufacturer)} title={translate('manufacturer')}/>
+        <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
 
         <GridColumn
           field="medium"
-          cell={renderInKendo(renderMedium)}
           title={translate('medium')}
           width={180}
         />
 
-        <GridColumn field="alarm" cell={renderInKendo(renderAlarm)} title={translate('alarm')}/>
+        <GridColumn field="alarm" cell={renderAlarm} title={translate('alarm')}/>
 
-        <GridColumn field="gateway" cell={renderInKendo(renderGatewaySerial)} title={translate('gateway')}/>
+        <GridColumn field="gatewaySerial" title={translate('gateway')}/>
 
         <GridColumn
           sortable={false}
-          cell={renderInKendo(renderCollectionStatus)}
+          cell={renderCollectionStatus}
           title={translate('collection percentage')}
         />
 
-        <GridColumn sortable={false} cell={renderInKendo(renderActions)}/>
+        <GridColumn sortable={false} cell={renderActions}/>
       </Grid>
     </>
   );
