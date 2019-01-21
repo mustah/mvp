@@ -101,7 +101,13 @@
     "typescript": "2.8.3"
   },
   "dependencies": {
+    "@progress/kendo-data-query": "^1.5.0",
     "@progress/kendo-react-animation": "^2.6.1",
+    "@progress/kendo-react-dateinputs": "^2.6.1",
+    "@progress/kendo-react-dropdowns": "^2.6.1",
+    "@progress/kendo-react-grid": "^2.6.1",
+    "@progress/kendo-react-inputs": "^2.6.1",
+    "@progress/kendo-react-intl": "^2.6.1",
     "@progress/kendo-react-ripple": "^2.6.1",
     "@progress/kendo-react-treeview": "^2.6.1",
     "@progress/kendo-theme-material": "^2.2.0",
