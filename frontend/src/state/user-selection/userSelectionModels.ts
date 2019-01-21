@@ -3,7 +3,7 @@ import {IdNamed, Selected, uuid} from '../../types/Types';
 import {Query} from '../../usecases/search/searchModels';
 import {Address, City} from '../domain-models/location/locationModels';
 import {Quantity} from '../ui/graph/measurement/measurementModels';
-import {Pagination} from '../ui/pagination/paginationModels';
+import {ApiRequestSortingOptions, Pagination} from '../ui/pagination/paginationModels';
 
 export const enum ParameterName {
   addresses = 'addresses',
@@ -19,6 +19,7 @@ export const enum ParameterName {
   manufacturers = 'manufacturers',
   productModels = 'productModels',
   threshold = 'threshold',
+  sort = 'sort',
 }
 
 export type SelectionItem = IdNamed | City | Address;
@@ -99,6 +100,7 @@ export interface UriLookupState extends UserSelectionState, Query {
 
 export interface UriLookupStatePaginated extends UriLookupState {
   pagination: Pagination;
+  sort?: ApiRequestSortingOptions[];
 }
 
 export type OnSelectPeriod = (period: Period) => void;

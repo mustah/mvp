@@ -1,19 +1,35 @@
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridPageChangeEvent,
+  GridPagerSettings,
+  GridSortChangeEvent
+} from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {MeterListProps} from '../../../components/meters/MeterListContent';
 import {MeterListItem} from '../../../components/meters/MeterListItem';
-import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {MeterAlarm} from '../../../components/status/MeterAlarm';
-import {Table, TableColumn} from '../../../components/table/Table';
-import {TableHead} from '../../../components/table/TableHead';
 import {ErrorLabel} from '../../../components/texts/ErrorLabel';
 import {Normal} from '../../../components/texts/Texts';
 import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
-import {translate} from '../../../services/translationService';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {firstUpper, translate} from '../../../services/translationService';
+import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
+import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
+
+const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><MeterAlarm alarm={alarm}/></td>;
+
+const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
+
+const gridStyle: React.CSSProperties = {
+  borderTopWidth: 0,
+  borderBottomWidth: 0,
+  maxHeight: '1000px',
+};
 
 export const MeterList = (
   {
@@ -27,84 +43,119 @@ export const MeterList = (
     isFetching,
     isSuperAdmin,
     pagination,
+    sort,
+    sortTable,
   }: MeterListProps) => {
 
-  const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-  const renderMeterId = ({address, isReported}: Meter) => (
-    <Column>
-      <Normal>{address}</Normal>
-      <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
-    </Column>);
-  const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
-  const renderCityName = ({location: {city}}: Meter) => orUnknown(city);
-  const renderAddressName = ({location: {address}}: Meter) => orUnknown(address);
-  const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
-  const renderManufacturer = ({manufacturer}: Meter) => orUnknown(manufacturer);
-  const renderActions = ({id, manufacturer}: Meter) => (
-    <RowRight className="ActionsDropdown-list">
-      <ListActionsDropdown
-        item={{id, name: manufacturer}}
-        selectEntryAdd={selectEntryAdd}
-        syncWithMetering={syncWithMetering}
-      />
-    </RowRight>
+  const renderMeterId = ({dataItem: {address, isReported}}: GridCellProps) => (
+    <td>
+      <Column>
+        <Normal>{address}</Normal>
+        <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+      </Column>
+    </td>
   );
 
-  const renderMedium = ({medium}: Meter) => medium;
-  const renderCollectionStatus = ({collectionPercentage, readIntervalMinutes}: Meter) =>
-    formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin);
+  const renderCityName = ({dataItem: {location: {city}}}: GridCellProps) =>
+    <td>{firstUpper(orUnknown(city))}</td>;
 
-  const onChangePage = (page: number) => changePage({entityType, componentId, page});
+  const renderAddressName = ({dataItem: {location: {address}}}: GridCellProps) =>
+    <td>{firstUpper(orUnknown(address))}</td>;
+
+  const renderManufacturer = ({dataItem: {manufacturer}}: GridCellProps) =>
+    <td>{firstUpper(orUnknown(manufacturer))}</td>;
+
+  const renderActions = ({dataItem: {id, manufacturer}}: GridCellProps) => (
+    <td>
+      <RowRight className="ActionsDropdown-list">
+        <ListActionsDropdown
+          item={{id, name: manufacturer}}
+          selectEntryAdd={selectEntryAdd}
+          syncWithMetering={syncWithMetering}
+        />
+      </RowRight>
+    </td>
+  );
+
+  const renderCollectionStatus = ({dataItem: {collectionPercentage, readIntervalMinutes}}: GridCellProps) =>
+    <td>{formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin)}</td>;
+
+  const handleKendoPageChange = ({page: {skip}}: GridPageChangeEvent) =>
+    changePage({
+      entityType,
+      componentId,
+      page: skip / paginationPageSize
+    });
+
+  const handleKendoSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
+
+  const data = result.map((key) => entities[key]);
+
+  const pageable: GridPagerSettings = {
+    buttonCount: 5,
+    info: false,
+    type: 'numeric',
+    pageSizes: false,
+    previousNext: true,
+  };
 
   return (
-    <div className="MeterList">
-      <Table result={result} entities={entities}>
-        <TableColumn
-          header={<TableHead className="first">{translate('facility')}</TableHead>}
-          cellClassName="icon"
-          renderCell={renderMeterListItem}
+    <>
+      <Grid
+        data={{data, total: pagination.totalElements}}
+
+        pageable={pageable}
+        pageSize={pagination.size}
+        take={pagination.size}
+        skip={pagination.page * pagination.size}
+        onPageChange={handleKendoPageChange}
+
+        sortable={false}
+        onSortChange={handleKendoSortChange}
+        sort={sort}
+
+        scrollable="none"
+        style={gridStyle}
+      >
+        <GridColumn
+          field="facility"
+          cell={renderMeterListItem}
+          title={translate('facility')}
+          width={180}
+          headerClassName="left-most"
         />
-        <TableColumn
-          header={<TableHead>{translate('meter id')}</TableHead>}
-          renderCell={renderMeterId}
+
+        <GridColumn field="address" cell={renderMeterId} title={translate('meter id')}/>
+
+        <GridColumn field="location" cell={renderCityName} title={translate('city')}/>
+
+        <GridColumn
+          field="location"
+          cell={renderAddressName}
+          title={translate('address')}
+          width={180}
         />
-        <TableColumn
-          header={<TableHead>{translate('city')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderCityName}
+
+        <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
+
+        <GridColumn
+          field="medium"
+          title={translate('medium')}
+          width={180}
         />
-        <TableColumn
-          header={<TableHead>{translate('address')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderAddressName}
+
+        <GridColumn field="alarm" cell={renderAlarm} title={translate('alarm')}/>
+
+        <GridColumn field="gatewaySerial" title={translate('gateway')}/>
+
+        <GridColumn
+          sortable={false}
+          cell={renderCollectionStatus}
+          title={translate('collection percentage')}
         />
-        <TableColumn
-          header={<TableHead>{translate('manufacturer')}</TableHead>}
-          renderCell={renderManufacturer}
-        />
-        <TableColumn
-          header={<TableHead>{translate('medium')}</TableHead>}
-          renderCell={renderMedium}
-        />
-        <TableColumn
-          header={<TableHead>{translate('alarm')}</TableHead>}
-          renderCell={renderAlarm}
-        />
-        <TableColumn
-          header={<TableHead>{translate('gateway')}</TableHead>}
-          renderCell={renderGatewaySerial}
-        />
-        <TableColumn
-          cellClassName="number"
-          header={<TableHead className="number">{translate('collection percentage')}</TableHead>}
-          renderCell={renderCollectionStatus}
-        />
-        <TableColumn
-          header={<TableHead/>}
-          renderCell={renderActions}
-        />
-      </Table>
-      <PaginationControl pagination={pagination} changePage={onChangePage}/>
-    </div>
+
+        <GridColumn sortable={false} cell={renderActions}/>
+      </Grid>
+    </>
   );
 };

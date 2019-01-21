@@ -3,8 +3,14 @@ import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {
+  ApiRequestSortingOptions,
+  EntityTypes,
+  OnChangePage,
+  Pagination
+} from '../../state/ui/pagination/paginationModels';
+import {
+  CallbackWith,
   CallbackWithIds,
   ClearErrorPaginated,
   ComponentId,
@@ -29,6 +35,7 @@ export interface MeterListStateToProps {
   entities: ObjectsById<Meter>;
   isFetching: boolean;
   parameters: EncodedUriParameters;
+  sort?: ApiRequestSortingOptions[];
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
@@ -42,6 +49,7 @@ export interface MeterListDispatchToProps {
   fetchMeters: FetchPaginated;
   changePage: OnChangePage;
   clearError: ClearErrorPaginated;
+  sortTable: CallbackWith<ApiRequestSortingOptions[]>;
 }
 
 export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps & ComponentId;
@@ -57,9 +65,10 @@ const MeterListActionsDropdownEnhanced =
 
 export const MeterListContent = (props: MeterListProps & WithChildren) => {
   React.useEffect(() => {
-    const {fetchMeters, parameters, pagination: {page}} = props;
-    fetchMeters(page, parameters);
+    const {fetchMeters, parameters, pagination: {page}, sort} = props;
+    fetchMeters(page, parameters, sort);
   });
+
   const {
     clearError,
     syncMeters,
@@ -68,6 +77,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     isFetching,
     error
   } = props;
+
   const {children, ...otherProps} = props;
   const hasContent = result.length > 0;
   const wrapperProps: MeterListProps & WithEmptyContentProps = {

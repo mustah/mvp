@@ -1,6 +1,6 @@
 import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {Entities, ObjectsById} from '../domain-models/domainModels';
-import {SortingOptions} from '../ui/pagination/paginationModels';
+import {ApiRequestSortingOptions, ApiResultSortingOptions} from '../ui/pagination/paginationModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
 
@@ -16,7 +16,7 @@ export interface NormalizedPaginatedResult {
   number?: number;
   numberOfElements?: number;
   size?: number;
-  sort?: SortingOptions[] | null;
+  sort?: ApiResultSortingOptions[] | null;
   totalElements: number;
   totalPages: number;
 }
@@ -35,6 +35,7 @@ export type SingleEntityFailure = Identifiable & ErrorResponse;
 export interface NormalizedPaginatedState<T extends Identifiable = Identifiable> extends Entities<T> {
   isFetchingSingle: boolean;
   nonExistingSingles: Dictionary<SingleEntityFailure>;
+  sort?: ApiRequestSortingOptions[];
   result: {
     [page: number]: PaginatedResult;
   };

@@ -3,6 +3,7 @@ import {Dispatch} from 'react-redux';
 import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {Maybe} from '../helpers/Maybe';
 import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
+import {ApiRequestSortingOptions} from '../state/ui/pagination/paginationModels';
 
 export type uuid = string | number;
 export type UnixTimestamp = number;
@@ -12,7 +13,8 @@ export type EncodedUriParameters = string;
 export type OnClick = (...args) => void;
 export type OnChange = OnClick;
 export type Callback = () => void;
-export type CallbackWith<T> = (result: T) => void;
+export type CallbackWith<T> = (arg1: T) => void;
+export type CallbackWith3<T, T2, T3> = (arg1: T, arg2: T2, arg3: T3) => void;
 export type OnClickWithId = CallbackWith<uuid>;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
 export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
@@ -23,7 +25,7 @@ export type RenderFunction<T> = (props: T) => Children;
 export type Fetch = (parameters?: EncodedUriParameters) => void;
 export type ClearError = () => void;
 
-export type FetchPaginated = (page: number, requestModel?: string) => void;
+export type FetchPaginated = (page: number, requestModel?: string, sortingOptions?: ApiRequestSortingOptions[]) => void;
 export type ClearErrorPaginated = (payload: PageNumbered) => void;
 
 export type Predicate<T> = (value: T) => boolean;

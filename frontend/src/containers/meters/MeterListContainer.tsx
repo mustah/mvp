@@ -9,6 +9,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {isSelectionPage} from '../../selectors/routerSelectors';
 import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
+import {sortTable} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
   getPageError,
   getPageIsFetching,
@@ -38,15 +39,18 @@ const mapStateToProps = (
   const entityType: EntityTypes = 'meters';
   const pagination: Pagination = getPagination({componentId, entityType, pagination: paginationModel});
   const {page} = pagination;
+  const {sort} = meters;
 
   return ({
     entities: getPaginatedEntities<Meter>(meters),
     result: getPageResult(meters, page),
     parameters: getPaginatedMeterParameters({
+      sort,
       pagination,
       userSelection,
       query: isSelectionPage(routing) ? undefined : query,
     }),
+    sort,
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
     pagination,
@@ -63,6 +67,7 @@ const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCre
   fetchMeters,
   changePage,
   clearError: clearErrorMeters,
+  sortTable,
 }, dispatch);
 
 export const MeterListContainer =

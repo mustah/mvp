@@ -16,11 +16,13 @@ const labelStyle: React.CSSProperties = {
   overflow: 'hidden',
 };
 
-export const MeterListItem = ({meter}: Props) => {
-  const selectedId = Maybe.just<uuid>(meter.id);
-  return (
-    <OpenDialogInfoButton label={meter.facility} autoScrollBodyContent={true} labelStyle={labelStyle}>
-      <MeterDetailsContainer selectedId={selectedId}/>
-    </OpenDialogInfoButton>
-  );
+const iconStyle: React.CSSProperties = {
+  height: 40,
+  padding: 0,
 };
+
+export const MeterListItem = ({meter: {facility, id}}: Props) => (
+  <OpenDialogInfoButton label={facility} autoScrollBodyContent={true} labelStyle={labelStyle} iconStyle={iconStyle}>
+    <MeterDetailsContainer selectedId={Maybe.just<uuid>(id)}/>
+  </OpenDialogInfoButton>
+);

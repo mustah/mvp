@@ -13,13 +13,13 @@ import {
   PaginationState,
 } from './paginationModels';
 
-export const limit = 20;
+export const paginationPageSize = 20;
 
 export const initialPaginationModel: PaginationModel = {
   useCases: {},
   totalElements: -1,
   totalPages: -1,
-  size: limit,
+  size: paginationPageSize,
 };
 
 export const initialPaginationState: PaginationState = {
@@ -49,7 +49,7 @@ const updateMetaData = (
   {payload: {entityType, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
 ): PaginationState => ({
   ...state,
-  [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
+  [entityType]: {useCases: {}, size: paginationPageSize, ...state[entityType], totalElements, totalPages},
 });
 
 const hasQuery = ({query}: Query) => isDefined(query);
