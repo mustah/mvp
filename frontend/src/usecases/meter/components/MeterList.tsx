@@ -105,7 +105,7 @@ export const MeterList = (
         skip={pagination.page * pagination.size}
         onPageChange={handleKendoPageChange}
 
-        sortable={true}
+        sortable={false}
         onSortChange={handleKendoSortChange}
         sort={sort}
       >
