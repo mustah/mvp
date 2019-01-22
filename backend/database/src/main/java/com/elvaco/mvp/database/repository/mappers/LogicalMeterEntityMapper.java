@@ -128,7 +128,7 @@ public final class LogicalMeterEntityMapper {
         .collect(toList()))
       .location(LocationEntityMapper.toDomainModel(entity.location))
       .collectionPercentage(collectionPercentage)
-      .alarm(MeterAlarmLogEntityMapper.toLatestActiveAlarm(physicalMeters))
+      .alarms(MeterAlarmLogEntityMapper.toLatestActiveAlarms(physicalMeters))
       .utcOffset(entity.utcOffset)
       .build();
   }

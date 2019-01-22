@@ -60,7 +60,7 @@ const MeterDetailsInfo = ({
     manufacturer,
     medium,
     organisationId,
-    alarm,
+    alarms,
     statusChanged,
     facility,
     isReported,
@@ -80,6 +80,11 @@ const MeterDetailsInfo = ({
     readIntervalMinutes,
     isSuperAdmin(user),
   );
+
+  const sum = alarms ? alarms.reduce((previous, current) => previous + current.mask, 0) : 0;
+
+  // tslint:disable-next-line:no-bitwise
+  const alarmCode = alarms && alarms.length ? (sum >>> 0).toString(2) : '-';
 
   return (
     <Row>
@@ -127,7 +132,10 @@ const MeterDetailsInfo = ({
             </Row>
           </Column>
           <Info className="First-column" label={translate('alarm')}>
-            <MeterAlarm alarm={alarm}/>
+            <MeterAlarm alarms={alarms}/>
+          </Info>
+          <Info label={translate('alarm code')}>
+            {alarmCode}
           </Info>
           <Info label={translate('status change')}>
             <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>

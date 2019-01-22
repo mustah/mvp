@@ -25,6 +25,7 @@ import lombok.experimental.UtilityClass;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationDtoMapper.toLocationDto;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class LogicalMeterDtoMapper {
@@ -117,9 +118,10 @@ public class LogicalMeterDtoMapper {
 
     meterDto.eventLog = getEventLog(logicalMeter);
 
-    meterDto.alarm = Optional.ofNullable(logicalMeter.alarm)
+    meterDto.alarms = logicalMeter.alarms
+      .stream()
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask, alarm.description))
-      .orElse(null);
+      .collect(toList());
 
     meterDto.organisationId = logicalMeter.organisationId;
 

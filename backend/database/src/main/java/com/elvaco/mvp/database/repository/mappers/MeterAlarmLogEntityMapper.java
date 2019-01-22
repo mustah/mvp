@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -12,6 +11,8 @@ import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 
 import lombok.experimental.UtilityClass;
+
+import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class MeterAlarmLogEntityMapper {
@@ -42,12 +43,10 @@ public class MeterAlarmLogEntityMapper {
   }
 
   @Nullable
-  static AlarmLogEntry toLatestActiveAlarm(List<PhysicalMeter> physicalMeters) {
+  static List<AlarmLogEntry> toLatestActiveAlarms(List<PhysicalMeter> physicalMeters) {
     return physicalMeters.stream()
-      .findFirst()
       .flatMap(physicalMeter -> physicalMeter.alarms.stream()
-        .filter(AlarmLogEntry::isActive)
-        .max(Comparator.comparing(o -> o.start)))
-      .orElse(null);
+        .filter(AlarmLogEntry::isActive))
+      .collect(toList());
   }
 }

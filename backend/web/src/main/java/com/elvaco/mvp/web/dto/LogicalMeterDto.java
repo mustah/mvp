@@ -23,8 +23,7 @@ public class LogicalMeterDto {
   public List<EventLogDto> eventLog;
   public String created;
   public boolean isReported;
-  @Nullable
-  public AlarmDto alarm;
+  public List<AlarmDto> alarms;
   @Nullable
   public Double collectionPercentage;
   public Long readIntervalMinutes;

@@ -26,6 +26,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterDetailsControllerTest extends IntegrationTest {
@@ -491,38 +492,48 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
+    assertThat(logicalMeterDto.alarms).isEqualTo(List.of(new AlarmDto(
       alarm.id,
       alarm.mask,
       alarm.description
-    ));
+    )));
   }
 
   @Test
-  public void findById_ShouldHaveMeterWithLatestActiveAlarm() {
+  public void findById_ShouldHaveMeterWithAllActiveAlarms() {
     LogicalMeter logicalMeter = given(
       logicalMeter(), physicalMeter().activePeriod(PeriodRange.halfOpenFrom(
         context().now(),
         context().now().plusHours(5)
       )));
 
-    AlarmLogEntry alarm1 = given(
+    List<AlarmLogEntry> alarms = given(
       alarm(logicalMeter).mask(12)
         .start(context().now().plusHours(2))
         .description("something is wrong"),
-      alarm(logicalMeter).mask(33).start(context().now()).description("testing")
-    ).stream().filter(a -> a.mask == 12).findAny().orElseThrow();
+      alarm(logicalMeter).mask(33).start(context().now()).description("testing"),
+      alarm(logicalMeter).mask(1)
+        .start(context().now().minusHours(10))
+        .stop(context().now().minusHours(5))
+        .description("testing")
+    ).stream().collect(toList());
 
     LogicalMeterDto logicalMeterDto = asUser()
       .getList(meterDetailsUrl(logicalMeter.id), LogicalMeterDto.class)
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.alarm).isEqualTo(new AlarmDto(
-      alarm1.id,
-      alarm1.mask,
-      alarm1.description
-    ));
+    assertThat(logicalMeterDto.alarms).containsExactlyInAnyOrder(
+      new AlarmDto(
+        alarms.get(0).id,
+        alarms.get(0).mask,
+        alarms.get(0).description
+      ), new AlarmDto(
+        alarms.get(1).id,
+        alarms.get(1).mask,
+        alarms.get(1).description
+      )
+    );
   }
 
   @Test
@@ -540,7 +551,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
-    assertThat(logicalMeterDto.alarm).isNull();
+    assertThat(logicalMeterDto.alarms).isEmpty();
   }
 
   @Test

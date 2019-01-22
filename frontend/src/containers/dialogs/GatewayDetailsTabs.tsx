@@ -49,7 +49,7 @@ const iconStyle: React.CSSProperties = {
   height: 24,
 };
 
-const renderAlarm = ({alarm}: Meter) => <MeterAlarm alarm={alarm}/>;
+const renderAlarm = ({alarms}: Meter) => <MeterAlarm alarms={alarms}/>;
 
 const renderFacility = ({id, facility}: Meter) => {
   const selectedId: Maybe<uuid> = Maybe.maybe(id);

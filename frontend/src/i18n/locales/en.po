@@ -29,6 +29,9 @@ msgstr "m-bus device type"
 msgid "revision"
 msgstr "revision"
 
+msgid "alarm code"
+msgstr "alarm code"
+
 msgid "admin"
 msgstr "admin"
 
