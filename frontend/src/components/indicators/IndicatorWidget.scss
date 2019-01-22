@@ -22,10 +22,10 @@
     border-radius: $border-radius;
     box-shadow: $box-shadow;
     cursor: pointer;
-    height: $status-box-height;
     justify-content: space-around;
-    width: $status-box-width;
     margin-bottom: $sm-space;
+    height: 118px;
+    width: 150px;
 
     .Indicator-name {
       font-size: $normal;
