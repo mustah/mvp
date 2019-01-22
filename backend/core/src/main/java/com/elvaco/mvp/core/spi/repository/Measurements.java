@@ -25,7 +25,7 @@ public interface Measurements {
     double value
   );
 
-  List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter);
+  Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter);
 
   Map<MeasurementKey, List<MeasurementValue>> findSeriesForPeriod(MeasurementParameter parameter);
 

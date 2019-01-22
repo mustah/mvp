@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 public class MockMeasurements extends MockRepository<Measurement.Id, Measurement>
@@ -48,8 +47,8 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter) {
-    return emptyList();
+  public Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter) {
+    return emptyMap();
   }
 
   @Override

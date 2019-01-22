@@ -33,7 +33,7 @@ public class MeasurementUseCases {
     return measurements.findAll(parameters.ensureOrganisationFilters(currentUser));
   }
 
-  public List<MeasurementValue> findAverageForPeriod(MeasurementParameter parameter) {
+  public Map<String, List<MeasurementValue>> findAverageForPeriod(MeasurementParameter parameter) {
     return measurements.findAverageForPeriod(parameter);
   }
 

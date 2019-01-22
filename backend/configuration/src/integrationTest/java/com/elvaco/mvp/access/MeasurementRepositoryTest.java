@@ -5,13 +5,13 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
@@ -20,10 +20,8 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
 
-import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.offset;
 
 public class MeasurementRepositoryTest extends IntegrationTest {
 
@@ -138,7 +136,6 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
   @Test
   public void getSeriesForConsumption_MissingMeasurementAtEndOfIntervalButLaterExists() {
-
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
     given(series(meter, Quantity.VOLUME, start, 3.0, 6.0));
@@ -307,66 +304,116 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void correctScaleIsReturned() {
-    var meter = newPhysicalMeter();
-    newMeasurement(meter, START_TIME, 2.0, "kW");
+  public void readoutValuesAreFilteredOnActivePeriod() {
+    ZonedDateTime start = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start.minusDays(2), start)),
+      physicalMeter().activePeriod(PeriodRange.from(start))
+    );
 
-    List<MeasurementValue> results = measurements.findAverageForPeriod(
+    var physicalMeterOne = logicalMeter.physicalMeters.get(0);
+    var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
+    var interval = Duration.ofDays(1);
+
+    given(series(physicalMeterOne, Quantity.VOLUME_FLOW, start.minusDays(2), interval, 2.0, 4.0));
+    given(series(physicalMeterTwo, Quantity.VOLUME_FLOW, start, interval, 6.0, 12.0));
+
+    Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        List.of(logicalMeter.id),
+        List.of(Quantity.VOLUME_FLOW),
+        start.minusDays(2),
+        start.plusDays(1),
+        TemporalResolution.day
+      ));
+
+    assertThat(result.get(getKey(logicalMeter, Quantity.VOLUME_FLOW)))
+      .extracting(l -> l.value)
+      .containsExactly(2.0, 4.0, 6.0, 12.0);
+  }
+
+  @Test
+  public void consumptionValuesAreFilteredOnActivePeriod() {
+    ZonedDateTime start = context().now();
+    var logicalMeter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.halfOpenFrom(start.minusDays(2), start)),
+      physicalMeter().activePeriod(PeriodRange.from(start))
+    );
+
+    var physicalMeterOne = logicalMeter.physicalMeters.get(0);
+    var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
+    var interval = Duration.ofDays(1);
+
+    given(series(physicalMeterOne, Quantity.VOLUME, start.minusDays(2), interval, 2.0, 4.0));
+    given(series(physicalMeterTwo, Quantity.VOLUME, start, interval, 6.0, 12.0));
+
+    Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
+      new MeasurementParameter(
+        List.of(logicalMeter.id),
+        List.of(Quantity.VOLUME),
+        start.minusDays(2),
+        start,
+        TemporalResolution.day
+      ));
+
+    assertThat(result.get(getKey(logicalMeter, Quantity.VOLUME)))
+      .extracting(l -> l.value)
+      .containsExactly(2.0, 2.0, 6.0);
+  }
+
+  @Test
+  public void correctScaleIsReturned() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+
+    newMeasurement(meter.activePhysicalMeter().get(), start, 2.0, "kW", "Power");
+
+    Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
         List.of(Quantity.POWER),
-        START_TIME.toZonedDateTime(),
-        START_TIME.plusHours(1).toZonedDateTime(),
+        start,
+        start.plusSeconds(1),
         TemporalResolution.hour
       ));
 
-    assertThat(results.get(0).value).isCloseTo(2000.0, offset(0.1));
+    assertThat(results.get(Quantity.POWER.name)).extracting(v -> v.value).containsOnly(2000.0);
   }
 
   @Test
   public void allValuesHaveSameScale() {
-    var meter = newPhysicalMeter();
-    var oneHourLater = START_TIME.plusHours(1);
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
 
-    newMeasurement(meter, START_TIME, 2.0, "W");
-    newMeasurement(meter, oneHourLater, 0.002, "kW");
+    var physicalMeter = meter.activePhysicalMeter().get();
 
-    List<MeasurementValue> results = measurements.findAverageForPeriod(
+    newMeasurement(physicalMeter, start, 2.0, "W", "Power");
+    newMeasurement(physicalMeter, start.plusHours(1), 0.002, "kW", "Power");
+
+    Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
         List.of(Quantity.POWER),
-        START_TIME.toZonedDateTime(),
-        oneHourLater.toZonedDateTime(),
+        start,
+        start.plusHours(1),
         TemporalResolution.hour
       ));
 
-    assertThat(results).hasSize(2);
-    assertThat(results.get(0).value).isCloseTo(results.get(1).value, offset(0.01));
-  }
-
-  @Test
-  public void valuesAreScaledAccordingToSpecifiedUnit() {
-    var meter = newPhysicalMeter();
-    newMeasurement(meter, START_TIME, 2.0, "kW");
-
-    List<MeasurementValue> results = measurements.findAverageForPeriod(
-      new MeasurementParameter(
-        List.of(meter.id),
-        List.of(Quantity.POWER),
-        START_TIME.toZonedDateTime(),
-        START_TIME.plusSeconds(1).toZonedDateTime(),
-        TemporalResolution.hour
-      ));
-
-    assertThat(results.get(0).value).isCloseTo(2000.0, offset(0.01));
+    assertThat(results.get(Quantity.POWER.name)).extracting(v -> v.value).containsOnly(2.0, 2.0);
   }
 
   @Test
   public void mixedDimensionsAreRejected() {
-    var meter = newPhysicalMeter();
-    newMeasurement(meter, START_TIME, 1.0, "m³", "Volume");
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+    var physicalMeter = meter.activePhysicalMeter().get();
+
+    newMeasurement(physicalMeter, start, 1.0, "m³", "Volume");
+
     assertThatThrownBy(() ->
-      newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "m³/s", "Volume")
+      newMeasurement(physicalMeter, start.plusMinutes(1), 2.0, "m³/s", "Volume")
     ).isInstanceOf(UnitConversionError.class);
   }
 
@@ -376,7 +423,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
   private void newMeasurement(
     PhysicalMeter meter,
-    OffsetDateTime when,
+    ZonedDateTime when,
     double value,
     String unit,
     String quantity
@@ -386,36 +433,9 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         .unit(unit)
         .value(value)
         .physicalMeter(meter)
-        .created(when.toZonedDateTime())
+        .created(when)
         .quantity(quantity)
         .build()
     );
-  }
-
-  private void newMeasurement(
-    PhysicalMeter meter,
-    OffsetDateTime when,
-    double value,
-    String unit
-  ) {
-    newMeasurement(meter, when, value, unit, "Power");
-  }
-
-  private PhysicalMeter newPhysicalMeter() {
-    UUID uuid = UUID.randomUUID();
-    return physicalMeters.save(PhysicalMeter.builder()
-      .id(uuid)
-      .organisationId(context().organisationId())
-      .externalId(uuid.toString())
-      .address("")
-      .medium("")
-      .manufacturer("")
-      .logicalMeterId(null)
-      .readIntervalMinutes(60)
-      .revision(1)
-      .mbusDeviceType(1)
-      .statuses(emptySet())
-      .alarms(emptySet())
-      .build());
   }
 }
