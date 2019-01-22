@@ -132,6 +132,14 @@ public final class RestClient {
   }
 
   public <T> ResponseEntity<List<T>> getList(
+    Url.UrlBuilder urlBuilder,
+    Class<T> listedClass
+  ) {
+    var urlTemplate = urlBuilder.build();
+    return getList(urlTemplate.template(), listedClass, urlTemplate.variables());
+  }
+
+  public <T> ResponseEntity<List<T>> getList(
     String url,
     Class<T> listedClass,
     Object... urlVariables

@@ -192,7 +192,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
   ) {
     return meters.stream()
-      .map(entity -> logicalMeterEntityMapper.toDomainModel(entity, mappedStatuses))
+      .map(entity -> logicalMeterEntityMapper.toDomainModel(entity, mappedStatuses, null))
       .collect(toList());
   }
 

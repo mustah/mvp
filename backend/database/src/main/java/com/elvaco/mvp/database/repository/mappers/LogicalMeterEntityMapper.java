@@ -59,17 +59,6 @@ public final class LogicalMeterEntityMapper {
 
   public LogicalMeter toDomainModel(
     LogicalMeterEntity logicalMeterEntity,
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
-  ) {
-    return toDomainModel(
-      logicalMeterEntity,
-      mappedStatuses,
-      null
-    );
-  }
-
-  public LogicalMeter toDomainModel(
-    LogicalMeterEntity logicalMeterEntity,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap,
     @Nullable Double collectionPercentage
   ) {

@@ -22,11 +22,7 @@ public class GatewayEntityMapper {
   }
 
   public static Gateway toDomainModel(GatewayEntity entity) {
-    return Gateway.builder()
-      .id(entity.pk.id)
-      .organisationId(entity.pk.organisationId)
-      .serial(entity.serial)
-      .productModel(entity.productModel)
+    return toDomainModelWithoutStatusLogs(entity).toBuilder()
       .statusLogs(entity.statusLogs.stream()
         .map(GatewayStatusLogEntityMapper::toDomainModel)
         .collect(toList()))
