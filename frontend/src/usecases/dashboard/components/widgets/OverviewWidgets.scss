@@ -2,8 +2,13 @@
 
 .OverviewWidgets {
   .Widget {
-    min-width: $status-box-width;
-    height: $status-box-height;
+    width: $overview-widget-width;
     padding-top: 0;
+
+    .Indicator-wrapper {
+      .Indicator {
+        cursor: default;
+      }
+    }
   }
 }
