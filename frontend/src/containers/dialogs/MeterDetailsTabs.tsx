@@ -62,6 +62,13 @@ const renderDate = ({start}: EventLog): Children =>
 
 const renderSerial = ({serial}: Gateway): string => serial;
 
+const renderProductModel = ({productModel}: Gateway): string => productModel;
+
+const renderStatus = ({status: {name}}: Gateway) => <Status label={name}/>;
+
+const renderStatusChange = ({statusChanged}: Gateway) =>
+  <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
+
 const MapContent = ({meter, meterMapMarker}: MapProps) => (
   <MapComponent height={400} viewCenter={meter.location.position}>
     {meterMapMarker.isJust() && <ClusterContainer markers={meterMapMarker.get()}/>}
@@ -148,6 +155,18 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
                 <TableColumn
                   header={<TableHead>{translate('gateway serial')}</TableHead>}
                   renderCell={renderSerial}
+                />
+                <TableColumn
+                  header={<TableHead>{translate('product model')}</TableHead>}
+                  renderCell={renderProductModel}
+                />
+                <TableColumn
+                  header={<TableHead>{translate('collection')}</TableHead>}
+                  renderCell={renderStatus}
+                />
+                <TableColumn
+                  header={<TableHead>{translate('status change')}</TableHead>}
+                  renderCell={renderStatusChange}
                 />
               </Table>
             </Row>
