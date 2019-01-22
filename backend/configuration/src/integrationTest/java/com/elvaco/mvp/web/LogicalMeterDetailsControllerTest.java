@@ -594,7 +594,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
     assertThat(content)
       .hasSize(1)
       .extracting(m -> m.gateway.status)
-      .containsExactly(String.valueOf(OK));
+      .containsExactly("ok");
   }
 
   private static void assertThatStatusIsOk(ResponseEntity<?> response) {
