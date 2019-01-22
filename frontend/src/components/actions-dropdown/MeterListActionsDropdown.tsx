@@ -10,6 +10,7 @@ const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(Ac
 
 export const MeterListActionsDropdown =
   ({syncMeters}: MeterListActionDropdownProps) => {
+
     const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
       const syncMetersProps: ActionMenuItemProps = {
         name: translate('sync all meters on this page'),
@@ -28,5 +29,6 @@ export const MeterListActionsDropdown =
       <ActionsDropdown
         renderPopoverContent={renderPopoverContent}
         className="SelectionResultActionDropdown"
-      />);
+      />
+    );
   };

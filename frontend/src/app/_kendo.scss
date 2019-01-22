@@ -1,9 +1,20 @@
+@import 'variables';
+
 /* grid */
 $grid-cell-padding-x: 2px;
 $grid-cell-padding-y: 0;
+
 $grid-header-padding-x: 2px;
 $grid-header-padding-y: 8px;
+
+$grid-header-border: 0 1px 0 0 solid $border-color;
+
+$grid-header-text: $black;
+
 $grid-alt-bg: #fbfbfb;
+
+$grid-hovered-bg: $light-blue;
+
 $grid-cell-horizontal-border-width: 0;
 @import '~@progress/kendo-theme-material/scss/grid.scss';
 
@@ -12,11 +23,12 @@ $grid-cell-horizontal-border-width: 0;
 
 /* overrides */
 .k-header {
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .k-grid th {
   text-align: left;
+  font-size: $normal;
 
   &.left-most {
     padding-left: 16px;
