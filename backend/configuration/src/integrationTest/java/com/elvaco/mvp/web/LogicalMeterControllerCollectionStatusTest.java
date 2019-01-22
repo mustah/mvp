@@ -272,6 +272,78 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .contains(100.0);
   }
 
+  @Test
+  public void collectionPercentageWithMeterReplacement_100percent() {
+    var meterId = randomUUID();
+
+    PeriodRange firstMeterActivePeriod = PeriodRange.halfOpenFrom(
+      context().yesterday().minusDays(2), context().yesterday().minusDays(1)
+    );
+
+    PeriodRange secondMeterActivePeriod = PeriodRange.halfOpenFrom(
+      context().yesterday().minusDays(1), null
+    );
+
+    var districtHeatingMeter = given(
+      logicalMeter().meterDefinition(DISTRICT_HEATING_METER),
+      physicalMeter().logicalMeterId(meterId).activePeriod(firstMeterActivePeriod),
+      physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
+    );
+
+    given(series(
+      districtHeatingMeter,
+      Quantity.RETURN_TEMPERATURE,
+      context().now(),
+      DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        metersUrl(context().now(), context().now().plusDays(2)),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .contains(100.0);
+  }
+
+  @Test
+  public void collectionPercentageWithMeterReplacement_75percent() {
+    var meterId = randomUUID();
+
+    PeriodRange firstMeterActivePeriod = PeriodRange.halfOpenFrom(
+      context().yesterday().minusDays(2), context().yesterday().minusDays(1)
+    );
+
+    PeriodRange secondMeterActivePeriod = PeriodRange.halfOpenFrom(
+      context().yesterday().minusDays(1), null
+    );
+
+    var districtHeatingMeter = given(
+      logicalMeter().meterDefinition(DISTRICT_HEATING_METER),
+      physicalMeter().logicalMeterId(meterId).activePeriod(firstMeterActivePeriod),
+      physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
+    );
+
+    given(series(
+      districtHeatingMeter,
+      Quantity.RETURN_TEMPERATURE,
+      context().now().plusHours(12),
+      DoubleStream.iterate(1, d -> d + 1.0).limit(36).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        metersUrl(context().now(), context().now().plusDays(2)),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .contains(75.0);
+  }
+
   private static UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
       .path("/meters")
