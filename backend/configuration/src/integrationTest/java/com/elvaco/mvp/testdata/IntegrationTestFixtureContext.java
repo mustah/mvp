@@ -30,6 +30,7 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -59,6 +60,7 @@ public class IntegrationTestFixtureContext {
   private final Gateways gateways;
   private final PhysicalMeters physicalMeters;
   private final MeterStatusLogs meterStatusLogs;
+  private final GatewayStatusLogs gatewayStatusLogs;
   private final MeterAlarmLogs meterAlarmLogs;
   private final Measurements measurements;
 
@@ -208,6 +210,10 @@ public class IntegrationTestFixtureContext {
       );
   }
 
+  StatusLogEntryBuilder statusLog(Gateway gateway) {
+    return StatusLogEntry.builder().primaryKey(gateway.primaryKey());
+  }
+
   AlarmLogEntryBuilder alarm(LogicalMeter logicalMeter) {
     return AlarmLogEntry.builder()
       .primaryKey(logicalMeter.activePhysicalMeter(now()).orElseThrow().primaryKey())
@@ -289,6 +295,12 @@ public class IntegrationTestFixtureContext {
   void given(StatusLogEntryBuilder... statusLogEntryBuilders) {
     meterStatusLogs.save(Arrays.stream(statusLogEntryBuilders)
       .map(StatusLogEntryBuilder::build)
+      .collect(toList()));
+  }
+
+  void given(GatewayStatusLogEntryBuilderDelegate... gatewayStatusLogEntryBuilderDelegates) {
+    gatewayStatusLogs.save(Arrays.stream(gatewayStatusLogEntryBuilderDelegates)
+      .map(GatewayStatusLogEntryBuilderDelegate::build)
       .collect(toList()));
   }
 

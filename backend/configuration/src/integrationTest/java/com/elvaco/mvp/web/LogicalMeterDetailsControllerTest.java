@@ -34,6 +34,7 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
   public void tearDown() {
     measurementJpaRepository.deleteAll();
     meterAlarmLogJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
   }
 
@@ -569,6 +570,31 @@ public class LogicalMeterDetailsControllerTest extends IntegrationTest {
 
     assertThat(logicalMeterDto.manufacturer).isEqualTo("KAM");
     assertThat(logicalMeterDto.address).isEqualTo("5678");
+  }
+
+  @Test
+  public void gateway_StatusIsIncluded() {
+    var meter = given(
+      logicalMeter(),
+      physicalMeter().activePeriod(PeriodRange.from(context().yesterday()))
+    );
+    var gateway = given(gateway().meter(meter));
+
+    given(statusLog(gateway).status(OK).start(context().yesterday()));
+
+    var url = Url.builder()
+      .path("/meters/details")
+      .period(context().now(), context().now().plusDays(1))
+      .logicalMeterId(meter.id);
+
+    var content = asUser()
+      .getList(url, LogicalMeterDto.class)
+      .getBody();
+
+    assertThat(content)
+      .hasSize(1)
+      .extracting(m -> m.gateway.status)
+      .containsExactly("ok");
   }
 
   private static void assertThatStatusIsOk(ResponseEntity<?> response) {

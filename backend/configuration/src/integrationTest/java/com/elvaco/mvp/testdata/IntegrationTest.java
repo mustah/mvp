@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -112,6 +113,9 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   protected Gateways gateways;
+
+  @Autowired
+  protected GatewayStatusLogs gatewayStatusLogs;
 
   @Autowired
   private TokenFactory tokenFactory;
@@ -285,7 +289,8 @@ public abstract class IntegrationTest implements ContextDsl {
         meterStatusLogs,
         meterAlarmLogs,
         measurements,
-        gateways
+        gateways,
+        gatewayStatusLogs
       );
     }
     return integrationTestFixtureContextFactory;

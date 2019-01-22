@@ -53,6 +53,10 @@ public interface ContextDsl {
     context().given(statusLogEntryBuilder);
   }
 
+  default void given(GatewayStatusLogEntryBuilderDelegate... statusLogEntryBuilder) {
+    context().given(statusLogEntryBuilder);
+  }
+
   default Collection<? extends AlarmLogEntry> given(
     AlarmLogEntryBuilder... alarmLogEntryBuilders
   ) {
@@ -77,6 +81,10 @@ public interface ContextDsl {
 
   default StatusLogEntryBuilder statusLog(LogicalMeter logicalMeter) {
     return context().statusLog(logicalMeter);
+  }
+
+  default GatewayStatusLogEntryBuilderDelegate statusLog(Gateway gateway) {
+    return new GatewayStatusLogEntryBuilderDelegate(context().statusLog(gateway));
   }
 
   default AlarmLogEntryBuilder alarm(LogicalMeter logicalMeter) {

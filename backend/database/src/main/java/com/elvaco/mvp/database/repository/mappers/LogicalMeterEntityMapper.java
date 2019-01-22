@@ -2,16 +2,13 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
@@ -53,17 +50,6 @@ public final class LogicalMeterEntityMapper {
     return newLogicalMeter(
       entity,
       toDomainModels(entity.physicalMeters),
-      null
-    );
-  }
-
-  public LogicalMeter toDomainModel(
-    LogicalMeterEntity logicalMeterEntity,
-    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses
-  ) {
-    return toDomainModel(
-      logicalMeterEntity,
-      mappedStatuses,
       null
     );
   }
@@ -137,17 +123,13 @@ public final class LogicalMeterEntityMapper {
       .meterDefinition(meterDefinitionEntityMapper.toDomainModel(entity.meterDefinition))
       .created(entity.created)
       .physicalMeters(physicalMeters)
-      .gateways(toGatewaysWithoutStatusLogs(entity.gateways))
+      .gateways(entity.gateways.stream()
+        .map(GatewayEntityMapper::toDomainModel)
+        .collect(toList()))
       .location(LocationEntityMapper.toDomainModel(entity.location))
       .collectionPercentage(collectionPercentage)
       .alarm(MeterAlarmLogEntityMapper.toLatestActiveAlarm(physicalMeters))
       .utcOffset(entity.utcOffset)
       .build();
-  }
-
-  private List<Gateway> toGatewaysWithoutStatusLogs(Set<GatewayEntity> gateways) {
-    return gateways.stream()
-      .map(GatewayEntityMapper::toDomainModelWithoutStatusLogs)
-      .collect(toList());
   }
 }

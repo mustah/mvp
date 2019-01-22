@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -33,6 +34,7 @@ class IntegrationTestFixtureContextFactory {
   private final MeterAlarmLogs meterAlarmLogs;
   private final Measurements measurements;
   private final Gateways gateways;
+  private final GatewayStatusLogs gatewayStatusLogs;
 
   @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
@@ -123,6 +125,7 @@ class IntegrationTestFixtureContextFactory {
       gateways,
       physicalMeters,
       meterStatusLogs,
+      gatewayStatusLogs,
       meterAlarmLogs,
       measurements
     );
