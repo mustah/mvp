@@ -110,7 +110,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
+  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
     RequestParameters parameters
   ) {
     return emptyList();
@@ -131,8 +131,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       .created(logicalMeter.created)
       .physicalMeters(logicalMeter.physicalMeters)
       .location(logicalMeter.location)
-      .expectedMeasurementCount(logicalMeter.expectedMeasurementCount)
-      .missingMeasurementCount(logicalMeter.missingMeasurementCount)
+      .collectionPercentage(logicalMeter.collectionPercentage)
       .alarm(logicalMeter.alarm)
       .build();
   }

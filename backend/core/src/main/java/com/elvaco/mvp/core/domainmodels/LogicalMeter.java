@@ -34,9 +34,7 @@ public class LogicalMeter implements Identifiable<UUID> {
   @Singular
   public final List<Gateway> gateways;
   @Nullable
-  public final Long expectedMeasurementCount;
-  @Nullable
-  public final Long missingMeasurementCount;
+  public final Double collectionPercentage;
   @Nullable
   public final AlarmLogEntry alarm;
   @Nullable
@@ -77,19 +75,6 @@ public class LogicalMeter implements Identifiable<UUID> {
     newPhysicalMeters.add(physicalMeter);
 
     return toBuilder().physicalMeters(newPhysicalMeters).build();
-  }
-
-  @Nullable
-  public Double getCollectionPercentage() {
-    Double collectionPercentage = getCollectionStats().collectionPercentage;
-    return collectionPercentage.isNaN() ? null : collectionPercentage;
-  }
-
-  public CollectionStats getCollectionStats() {
-    return new CollectionStats(
-      missingMeasurementCount == null ? 0L : missingMeasurementCount,
-      expectedMeasurementCount == null ? 0L : expectedMeasurementCount
-    );
   }
 
   public String getMedium() {

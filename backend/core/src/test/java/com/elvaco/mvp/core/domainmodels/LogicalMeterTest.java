@@ -278,80 +278,10 @@ public class LogicalMeterTest {
     assertThat(meter.currentStatus()).isEqualTo(ERROR);
   }
 
-  @Test
-  public void getCollectionStats_noneExpected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(null, null);
-
-    CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.expected).isEqualTo(0L);
-    assertThat(collectionStats.missing).isEqualTo(0L);
-    assertThat(collectionStats.collectionPercentage).isEqualTo(Double.NaN);
-  }
-
-  @Test
-  public void getCollectionStatsOneExpectedAndNoneMissing() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(1L, 0L);
-
-    CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.expected).isEqualTo(1.0);
-    assertThat(collectionStats.missing).isEqualTo(0.0);
-    assertThat(collectionStats.collectionPercentage).isEqualTo(100.0);
-  }
-
-  @Test
-  public void getCollectionStatsAllExpectedReadoutsAreMissing() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(1L, 1L);
-
-    CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.expected).isEqualTo(1.0);
-    assertThat(collectionStats.missing).isEqualTo(1.0);
-    assertThat(collectionStats.collectionPercentage).isEqualTo(0);
-  }
-
-  @Test
-  public void getCollectionStats_SevenExpected_allCollected() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(7L, 7L);
-
-    CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.expected).isEqualTo(7.0);
-    assertThat(collectionStats.missing).isEqualTo(7.0);
-    assertThat(collectionStats.collectionPercentage).isEqualTo(0);
-  }
-
-  @Test
-  public void getCollectionStatsHaveSomeMissingReadouts() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(7L, 3L);
-
-    CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.expected).isEqualTo(7.0);
-    assertThat(collectionStats.missing).isEqualTo(3.0);
-    assertThat(collectionStats.collectionPercentage).isEqualTo(57.14285714285714);
-  }
-
-  @Test
-  public void getCollectionStats_noneExpectedOneReceived() {
-    LogicalMeter meter = newLogicalMeterWithExpectedAndMissing(0L, 1L);
-
-    CollectionStats collectionStats = meter.getCollectionStats();
-    assertThat(collectionStats.collectionPercentage).isEqualTo(Double.NaN);
-    assertThat(collectionStats.expected).isEqualTo(0.0);
-    assertThat(collectionStats.missing).isEqualTo(1.0);
-  }
-
   private static LogicalMeter.LogicalMeterBuilder logicalMeterBuilder() {
     return LogicalMeter.builder()
       .organisationId(randomUUID())
       .externalId("an-external-id");
-  }
-
-  private static LogicalMeter newLogicalMeterWithExpectedAndMissing(
-    Long expectedMeasurementCount,
-    Long missingMeasurementCount
-  ) {
-    return logicalMeterBuilder()
-      .expectedMeasurementCount(expectedMeasurementCount)
-      .missingMeasurementCount(missingMeasurementCount)
-      .build();
   }
 
   private static LogicalMeter.LogicalMeterBuilder logicalMeter() {

@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 public class MeasurementStatTest extends IntegrationTest {
 
@@ -51,7 +52,7 @@ public class MeasurementStatTest extends IntegrationTest {
       powerMeasurementFor(meter).created(TIME).value(1.0).build()
     );
 
-    MeasurementStatDto stat = fetchMeasurementStats();
+    MeasurementStatDto stat = fetchMeasurementStats().get(0);
 
     assertThat(stat).isEqualTo(
       newStatDto(measurement)
@@ -78,7 +79,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build()
     );
 
-    MeasurementStatDto stat = fetchMeasurementStats();
+    MeasurementStatDto stat = fetchMeasurementStats().get(0);
 
     assertThat(stat).isEqualTo(
       newStatDto(measurement)
@@ -101,9 +102,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build())
     );
 
-    List<MeasurementStatDto> result = dsl.select()
-      .from(statData).orderBy(statData.STAT_DATE.asc())
-      .fetchInto(MeasurementStatDto.class);
+    List<MeasurementStatDto> result = fetchMeasurementStats();
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).receivedCount).isEqualTo(19);
@@ -129,7 +128,7 @@ public class MeasurementStatTest extends IntegrationTest {
 
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
-    MeasurementStatDto stat = fetchMeasurementStats();
+    MeasurementStatDto stat = fetchMeasurementStats().get(0);
 
     assertThat(stat).isEqualTo(
       newStatDto(measurement)
@@ -155,7 +154,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build()
     );
 
-    MeasurementStatDto stat = fetchMeasurementStats();
+    MeasurementStatDto stat = fetchMeasurementStats().get(0);
 
     assertThat(stat).isEqualTo(
       newStatDto(measurement)
@@ -191,7 +190,7 @@ public class MeasurementStatTest extends IntegrationTest {
       powerMeasurementFor(meter).created(TIME).value(1.0).build()
     );
 
-    MeasurementStatDto stat = fetchMeasurementStats();
+    MeasurementStatDto stat = fetchMeasurementStats().get(0);
 
     assertThat(stat).isEqualTo(
       newStatDto(measurement)
@@ -215,9 +214,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build())
     );
 
-    List<MeasurementStatDto> result = dsl.select()
-      .from(statData).orderBy(statData.STAT_DATE.asc())
-      .fetchInto(MeasurementStatDto.class);
+    List<MeasurementStatDto> result = fetchConsumptionMeasurementStats();
 
     assertThat(result).hasSize(1);
     assertThat(result.get(0).receivedCount).isEqualTo(24);
@@ -242,9 +239,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .build())
     );
 
-    List<MeasurementStatDto> result = dsl.select()
-      .from(statData).orderBy(statData.STAT_DATE.asc())
-      .fetchInto(MeasurementStatDto.class);
+    List<MeasurementStatDto> result = fetchConsumptionMeasurementStats();
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).receivedCount).isEqualTo(23);
@@ -259,9 +254,7 @@ public class MeasurementStatTest extends IntegrationTest {
         .value((double) 48)
         .created(UTC_TIME.plusDays(2))
         .build());
-    result = dsl.select()
-      .from(statData).orderBy(statData.STAT_DATE.asc())
-      .fetchInto(MeasurementStatDto.class);
+    result = fetchConsumptionMeasurementStats();
 
     assertThat(result).hasSize(3);
     assertThat(result.get(0).receivedCount).isEqualTo(23);
@@ -291,25 +284,27 @@ public class MeasurementStatTest extends IntegrationTest {
         .build());
     measurementJpaRepository.delete(measurementEntityMapper.toEntity(measurement));
 
-    List<MeasurementStatDto> result = dsl.select()
-      .from(statData).orderBy(statData.STAT_DATE.asc())
-      .fetchInto(MeasurementStatDto.class);
-
-    assertThat(result).hasSize(0);
+    assertThat(fetchConsumptionMeasurementStats()).hasSize(0);
   }
 
   @Test
   public void consumptionFor24hReadInterval() {
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(24 * 60));
     given(series(meter, Quantity.VOLUME, 1, 2, 3));
-    var result = dsl.select()
-      .from(statData).orderBy(statData.STAT_DATE.asc())
-      .fetchInto(MeasurementStatDto.class);
+    var result = fetchConsumptionMeasurementStats();
 
-    //This documents the current behaviour. I'm not sure it's correct, however, since we've received
-    // measurements for 3 days, shouldn't we have three entries even though one of them won't be
-    // applicable as a "consumption" entry?
-    assertThat(result).hasSize(2);
+    assertThat(result)
+      .extracting(
+        r -> r.min,
+        r -> r.max,
+        r -> r.average,
+        r -> r.expectedCount,
+        r -> r.receivedCount
+      )
+      .containsExactly(
+        tuple(1.0, 1.0, 1.0, 1, 1),
+        tuple(1.0, 1.0, 1.0, 1, 1)
+      );
   }
 
   private Measurement.MeasurementBuilder powerMeasurementFor(PhysicalMeter meter) {
@@ -327,10 +322,18 @@ public class MeasurementStatTest extends IntegrationTest {
       .physicalMeter(meter);
   }
 
-  private MeasurementStatDto fetchMeasurementStats() {
+  private List<MeasurementStatDto> fetchConsumptionMeasurementStats() {
     return dsl.select()
       .from(statData)
-      .fetchOneInto(MeasurementStatDto.class);
+      .where(statData.IS_CONSUMPTION.isTrue())
+      .orderBy(statData.STAT_DATE.asc())
+      .fetchInto(MeasurementStatDto.class);
+  }
+
+  private List<MeasurementStatDto> fetchMeasurementStats() {
+    return dsl.select()
+      .from(statData).orderBy(statData.STAT_DATE.asc())
+      .fetchInto(MeasurementStatDto.class);
   }
 
   private MeasurementStatDto.MeasurementStatDtoBuilder newStatDto(Measurement measurement) {
@@ -381,8 +384,9 @@ public class MeasurementStatTest extends IntegrationTest {
     public final int quantityId;
     public final double min;
     public final double max;
-    public final double expectedCount;
-    public final double receivedCount;
+    public final int expectedCount;
+    public final int receivedCount;
     public final double average;
+    public final boolean isConsumption;
   }
 }

@@ -35,7 +35,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
-import static com.elvaco.mvp.core.util.ExpectedReadouts.expectedReadouts;
 import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_METER;
@@ -44,8 +43,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition.METER_D
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
-import static com.elvaco.mvp.database.repository.jooq.JooqUtils.MISSING_MEASUREMENT_COUNT;
-import static java.util.stream.Collectors.toList;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -134,7 +132,7 @@ class LogicalMeterQueryDslJpaRepository
       LOGICAL_METER.CREATED,
       METER_DEFINITION.MEDIUM,
       GATEWAY.SERIAL,
-      MISSING_MEASUREMENT_COUNT,
+      COLLECTION_PERCENTAGE,
       PHYSICAL_METER_STATUS_LOG.STATUS,
       PHYSICAL_METER.MANUFACTURER,
       PHYSICAL_METER.ADDRESS,
@@ -165,11 +163,7 @@ class LogicalMeterQueryDslJpaRepository
       .offset(Long.valueOf(pageable.getOffset()).intValue())
       .fetchInto(LogicalMeterSummaryDto.class);
 
-    List<LogicalMeterSummaryDto> allMeters = parameters.getPeriod()
-      .map(period -> logicalMeters.stream().map(withExpectedReadoutsFor(period)).collect(toList()))
-      .orElse(logicalMeters);
-
-    return getPage(allMeters, pageable, () -> dsl.fetchCount(countQuery));
+    return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
   }
 
   @Override
@@ -191,14 +185,13 @@ class LogicalMeterQueryDslJpaRepository
   }
 
   @Override
-  public List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(
+  public List<LogicalMeterCollectionStats> findMeterCollectionStats(
     RequestParameters parameters
   ) {
     var query = dsl.select(
       LOGICAL_METER.ID,
-      DSL.coalesce(MISSING_MEASUREMENT_COUNT, 0L),
-      PHYSICAL_METER.READ_INTERVAL_MINUTES
-    ).distinctOn(LOGICAL_METER.ID, PHYSICAL_METER.READ_INTERVAL_MINUTES)
+      DSL.coalesce(COLLECTION_PERCENTAGE, 0)
+    ).distinctOn(LOGICAL_METER.ID)
       .from(LOGICAL_METER);
 
     logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
@@ -257,10 +250,6 @@ class LogicalMeterQueryDslJpaRepository
     SelectionPeriod period
   ) {
     return logicalMeterSummaryDto -> logicalMeterSummaryDto.toBuilder()
-      .expectedReadingCount(
-        Optional.ofNullable(logicalMeterSummaryDto.readIntervalMinutes)
-          .map(readInterval -> expectedReadouts(readInterval, period))
-          .orElse(0L))
       .build();
   }
 }

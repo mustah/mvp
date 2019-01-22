@@ -39,16 +39,8 @@ begin
     return null;
   end if;
 
-  if(consumption) then
-    measurement_date := ((rec.created - cast((case when read_interval=0 then 60 else read_interval end)||' minutes' AS INTERVAL)) at time zone measurement_tz)::date;
-  else
-    measurement_date := (rec.created at time zone measurement_tz)::date;
-  end if;
-  measurement_date_to := measurement_date;
-
-
+  measurement_date := (rec.created at time zone measurement_tz)::date;
   if (TG_OP = 'INSERT')then
-    if( not consumption) then
       select * into current_stat
         from measurement_stat_data
           where measurement_stat_data.physical_meter_id = rec.physical_meter_id and
@@ -69,8 +61,9 @@ begin
             --expected_count
             0,
             -- actual_count
-            0
+            0,
             -- average
+            false
              ));
         do_update := false;
       end if;
@@ -88,7 +81,8 @@ begin
                                      received_count = current_stat.received_count
             where stat_date = measurement_date and
               quantity = rec.quantity and
-              physical_meter_id = rec.physical_meter_id;
+              physical_meter_id = rec.physical_meter_id and
+              is_consumption = false;
 
       else
          current_stat.stat_date := measurement_date;
@@ -101,7 +95,8 @@ begin
                                  max,
                                  average,
                                  expected_count,
-                                 received_count)
+                                 received_count,
+                                 is_consumption)
              values (current_stat.stat_date,
                current_stat.physical_meter_id,
                current_stat.quantity,
@@ -109,22 +104,26 @@ begin
                current_stat.max,
                current_stat.average,
                current_stat.expected_count,
-               current_stat.received_count);
+               current_stat.received_count,
+               false);
          end if;
        end if;
-       return null;
+       else
+         measurement_date_to := measurement_date;
+         perform calculate_and_write_statistics(rec.quantity, rec.physical_meter_id, measurement_date, measurement_date_to, measurement_tz, read_interval,false);
      end if;
-  end if;
     --expand date-range for consumption and missing measurements situations
     if( consumption) then
+      measurement_date := ((rec.created - cast((case when read_interval=0 then 60 else read_interval end)||' minutes' AS INTERVAL)) at time zone measurement_tz)::date;
+      measurement_date_to := measurement_date;
       select coalesce((min(created at time zone measurement_tz)::date),measurement_date_to)
                into measurement_date_to
          from measurement
          where physical_meter_id=rec.physical_meter_id
            and quantity=rec.quantity
            and created > rec.created;
+      perform calculate_and_write_statistics(rec.quantity, rec.physical_meter_id, measurement_date, measurement_date_to, measurement_tz, read_interval,true);
     end if;
-    perform calculate_and_write_statistics(rec.quantity, rec.physical_meter_id, measurement_date, measurement_date_to, measurement_tz, read_interval,consumption);
 
   return null;
 end;

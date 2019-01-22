@@ -20,11 +20,13 @@ public class DashboardUseCases {
   private final LogicalMeters logicalMeters;
   private final AuthenticatedUser currentUser;
 
-  public static Optional<CollectionStats> sumCollectionStats(
+  static Optional<CollectionStats> sumCollectionStats(
     List<CollectionStats> collectionStats
   ) {
-    return Optional.of(CollectionStats.asSumOf(collectionStats))
-      .filter(sumStats -> sumStats.expected != 0.0);
+    if (collectionStats.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(CollectionStats.asSumOf(collectionStats));
   }
 
   public Optional<CollectionStats> findCollectionStats(RequestParameters parameters) {
@@ -33,8 +35,8 @@ public class DashboardUseCases {
     }
 
     List<CollectionStats> meterStats = logicalMeters
-      .findMissingMeterReadingsCounts(parameters.ensureOrganisationFilters(currentUser)).stream()
-      .map(entry -> new CollectionStats(entry.missingReadingCount, entry.readInterval))
+      .findMeterCollectionStats(parameters.ensureOrganisationFilters(currentUser)).stream()
+      .map(entry -> new CollectionStats(entry.collectionPercentage))
       .collect(toList());
 
     return sumCollectionStats(meterStats);

@@ -40,7 +40,7 @@ public interface LogicalMeters {
 
   MeterSummary summary(RequestParameters parameters);
 
-  List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
+  List<LogicalMeterCollectionStats> findMeterCollectionStats(RequestParameters parameters);
 
   LogicalMeter delete(LogicalMeter logicalMeter);
 }

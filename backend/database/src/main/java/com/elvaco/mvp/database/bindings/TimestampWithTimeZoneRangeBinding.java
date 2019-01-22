@@ -59,7 +59,7 @@ public class TimestampWithTimeZoneRangeBinding implements Binding<Object, Period
     if (ctx.render().paramType() == ParamType.INLINED) {
       ctx.render().visit(DSL.inline(ctx.convert(converter()).value())).sql("::tstzrange");
     } else {
-      ctx.render().sql("?::tstzrange");
+      ctx.render().sql("cast(? as tstzrange)");
     }
   }
 

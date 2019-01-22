@@ -13,16 +13,13 @@ describe('dashboardReducer', () => {
   it('extracts valid widgets from JSON response', () => {
     const widgets: WidgetModel[] = [
       {
-        total: 1000,
-        pending: 20,
+        collectionPercentage: 99.98
       },
       {
-        total: 3000,
-        pending: 17,
+        collectionPercentage: 99.99
       },
       {
-        total: 1000,
-        pending: 122,
+        collectionPercentage: 99.87
       },
     ];
 

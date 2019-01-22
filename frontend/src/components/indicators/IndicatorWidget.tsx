@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {thresholdClassName} from '../../helpers/thresholds';
-import {firstUpperTranslated, translate} from '../../services/translationService';
+import {firstUpperTranslated} from '../../services/translationService';
 import {Children} from '../../types/Types';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
@@ -41,14 +41,13 @@ const NoExpectedMeasurementsWidget =
   );
 
 export const IndicatorWidget =
-  ({className, title, widget: {total, pending}}: Props) => {
+  ({className, title, widget: {collectionPercentage}}: Props) => {
 
-    if (pending === 0 && total === 0) {
-      return <NoExpectedMeasurementsWidget title={title} className={className} />;
+    if (isNaN(collectionPercentage)) {
+      return <NoExpectedMeasurementsWidget title={title} className={className}/>;
     }
-    const collectionPercent = total ? ((1 - (pending / total)) * 100) : 0;
-    const value = collectionPercent.toFixed(1);
-    const statusCss = thresholdClassName(collectionPercent);
+    const value = collectionPercentage.toFixed(collectionPercentage === 100.0 ? 0 : 1);
+    const statusCss = thresholdClassName(collectionPercentage);
 
     return (
       <Column className={classNames('Indicator-wrapper', className)}>
@@ -59,13 +58,6 @@ export const IndicatorWidget =
           <Row className="Row-center Row-bottom">
             <Xlarge className="Indicator-value">{value}</Xlarge>
             <Normal className="Indicator-unit">%</Normal>
-          </Row>
-          <Row className="Indicator-subtitle Row-center">
-            <IconGateway className="Indicator-icon" color={colors.white}/>
-            <Column className="Indicator-details">
-              <Normal>{translate('{{pending}} of {{count}}', {pending, count: total})}</Normal>
-              <Normal>{translate('measurement missing', {count: total})}</Normal>
-            </Column>
           </Row>
         </ColumnCenter>
       </Column>

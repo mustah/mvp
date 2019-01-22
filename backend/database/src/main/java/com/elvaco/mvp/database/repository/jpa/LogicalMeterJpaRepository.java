@@ -38,7 +38,7 @@ public interface LogicalMeterJpaRepository {
 
   Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 
-  List<LogicalMeterCollectionStats> findMissingMeterReadingsCounts(RequestParameters parameters);
+  List<LogicalMeterCollectionStats> findMeterCollectionStats(RequestParameters parameters);
 
   void delete(UUID id, UUID organisationId);
 

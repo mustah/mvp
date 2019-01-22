@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -58,17 +57,17 @@ public class LogicalMeterDtoMapper {
     meterDto.alarm = Optional.ofNullable(logicalMeter.activeAlarm)
       .map(alarm -> new AlarmDto(alarm.id, alarm.mask))
       .orElse(null);
-
     meterDto.isReported = Optional.ofNullable(logicalMeter.activeStatus)
       .filter(StatusType::isNotUnknown)
       .map(StatusType::isReported)
       .orElse(false);
 
     meterDto.readIntervalMinutes = logicalMeter.readIntervalMinutes;
-    meterDto.collectionPercentage = CollectionStats.of(
-      logicalMeter.missingReadingCount,
-      logicalMeter.expectedReadingCount
-    ).getCollectionPercentage();
+    meterDto.collectionPercentage = Optional.ofNullable(logicalMeter.collectionPercentage)
+      .orElseGet(() ->
+        logicalMeter.readIntervalMinutes == null || logicalMeter.readIntervalMinutes == 0
+          ? null
+          : 0.0);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
@@ -101,7 +100,7 @@ public class LogicalMeterDtoMapper {
       .map(m -> m.readIntervalMinutes)
       .orElse(null);
 
-    meterDto.collectionPercentage = logicalMeter.getCollectionPercentage();
+    meterDto.collectionPercentage = logicalMeter.collectionPercentage;
 
     meterDto.gateway = logicalMeter.gateways.stream()
       .findFirst()

@@ -1,0 +1,54 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="add measurement_stat_data consumption column" author="Anton Löfgren">
+    <addColumn tableName="measurement_stat_data">
+      <column defaultValueBoolean="false" type="boolean" name="is_consumption">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <sqlFile
+      path="../sql/postgresql/update_existing_stats_rows_with_is_consumption.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="true"
+    />
+
+    <dropPrimaryKey
+      tableName="measurement_stat_data"
+      constraintName="measurement_stat_data_quantity_physical_meter_id_stat_date_key"
+    />
+
+    <addPrimaryKey
+      tableName="measurement_stat_data"
+      columnNames="quantity,physical_meter_id,stat_date,is_consumption"
+    />
+
+    <dropIndex tableName="measurement_stat_data" indexName="measurement_stat_data_physical_meter_id_quantity_stat_date_max_"/>
+    <dropIndex tableName="measurement_stat_data" indexName="measurement_stat_data_physical_meter_id_quantity_stat_date_min_"/>
+    <createIndex tableName="measurement_stat_data"
+                 indexName="measurement_stat_data_meter_id_quantity_is_consum_stat_date_max"
+                 unique="true">
+      <column name="physical_meter_id"/>
+      <column name="quantity"/>
+      <column name="is_consumption"/>
+      <column name="stat_date"/>
+      <column name="max"/>
+    </createIndex>
+
+    <createIndex tableName="measurement_stat_data"
+                 indexName="measurement_stat_data_meter_id_quantity_is_consum_stat_date_min"
+                 unique="true">
+      <column name="physical_meter_id"/>
+      <column name="quantity"/>
+      <column name="is_consumption"/>
+      <column name="stat_date"/>
+      <column name="min"/>
+    </createIndex>
+
+  </changeSet>
+
+</databaseChangeLog>

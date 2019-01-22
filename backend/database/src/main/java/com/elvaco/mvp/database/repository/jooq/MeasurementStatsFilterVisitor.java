@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.jooq;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
@@ -20,7 +19,7 @@ import org.jooq.Table;
 import org.jooq.impl.SQLDataType;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT_STAT_DATA;
-import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
+import static com.elvaco.mvp.database.repository.jooq.JooqUtils.measurementStatsConditionFor;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.valueConditionFor;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.falseCondition;
@@ -50,19 +49,7 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
   public void visit(PeriodFilter filter) {
     SelectionPeriod period = filter.getPeriod();
     selectionDurationInDays = ChronoUnit.DAYS.between(period.start, period.stop);
-    LocalDate startDate = period.start.toLocalDate();
-    LocalDate stopDate = period.stop.toLocalDate();
-
-    if (stopDate.isEqual(startDate)) {
-      measurementStatsCondition =
-        MEASUREMENT_STAT_DATA.STAT_DATE.equal(Date.valueOf(startDate))
-          .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
-    } else {
-      measurementStatsCondition =
-        MEASUREMENT_STAT_DATA.STAT_DATE.greaterOrEqual(Date.valueOf(startDate))
-          .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
-          .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
-    }
+    measurementStatsCondition = measurementStatsConditionFor(period);
   }
 
   @Override
@@ -72,10 +59,13 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
       measurementThresholdDuringDuration = threshold.duration.toDays();
       measurementThresholdDuringFilter =
         MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+          .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(threshold.quantity.isConsumption()))
           .and(valueConditionFor(threshold));
     } else {
-      measurementStatsFilter = MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
-        .and(valueConditionFor(threshold));
+      measurementStatsFilter =
+        MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
+          .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(threshold.quantity.isConsumption()))
+          .and(valueConditionFor(threshold));
     }
   }
 
