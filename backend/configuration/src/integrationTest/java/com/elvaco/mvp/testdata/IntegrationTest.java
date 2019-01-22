@@ -27,7 +27,6 @@ import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
@@ -86,9 +85,6 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   protected MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
-
-  @Autowired
-  protected MissingMeasurementJpaRepository missingMeasurementJpaRepository;
 
   @Autowired
   protected PropertiesJpaRepository propertiesJpaRepository;

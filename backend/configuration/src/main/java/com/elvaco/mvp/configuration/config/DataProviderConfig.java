@@ -1,7 +1,6 @@
 package com.elvaco.mvp.configuration.config;
 
 import java.util.UUID;
-
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
@@ -18,7 +17,6 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.MissingMeasurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
@@ -36,7 +34,6 @@ import com.elvaco.mvp.database.repository.access.MeasurementRepository;
 import com.elvaco.mvp.database.repository.access.MeterAlarmLogsRepository;
 import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
-import com.elvaco.mvp.database.repository.access.MissingMeasurementRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.PropertiesRepository;
@@ -54,7 +51,6 @@ import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MissingMeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
@@ -102,7 +98,6 @@ class DataProviderConfig {
   private final SummaryJpaRepository summaryJpaRepository;
   private final PropertiesJpaRepository propertiesJpaRepository;
   private final QuantityJpaRepository quantityJpaRepository;
-  private final MissingMeasurementJpaRepository missingMeasurementJpaRepository;
   private final MeterAlarmLogJpaRepository meterAlarmLogJpaRepository;
   private final UnitConverter unitConverter;
   private final EntityManager entityManager;
@@ -270,10 +265,5 @@ class DataProviderConfig {
   @Bean
   Quantities quantities(QuantityEntityMapper quantityEntityMapper) {
     return new QuantityRepository(quantityJpaRepository, quantityEntityMapper);
-  }
-
-  @Bean
-  MissingMeasurements missingMeasurements() {
-    return new MissingMeasurementRepository(missingMeasurementJpaRepository);
   }
 }

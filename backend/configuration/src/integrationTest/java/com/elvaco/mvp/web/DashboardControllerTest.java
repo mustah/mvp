@@ -113,8 +113,6 @@ public class DashboardControllerTest extends IntegrationTest {
       1.0
     ));
 
-    missingMeasurementJpaRepository.refreshLocked();
-
     ResponseEntity<DashboardDto> response = asUser()
       .get(
         Url.builder()
@@ -144,8 +142,6 @@ public class DashboardControllerTest extends IntegrationTest {
       start,
       1
     ));
-
-    missingMeasurementJpaRepository.refreshLocked();
 
     ResponseEntity<DashboardDto> response = asUser()
       .get(

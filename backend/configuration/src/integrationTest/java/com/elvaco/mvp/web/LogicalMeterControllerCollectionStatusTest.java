@@ -55,8 +55,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
   public void zeroPercentWhenNoMeasurements() {
     given(logicalMeter());
 
-    missingMeasurementJpaRepository.refreshLocked();
-
     var meters = asUser()
       .getPage(
         metersUrl(context().yesterday(), context().yesterday().plusHours(1)),
@@ -74,7 +72,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     LogicalMeter districtHeatingMeter = given(logicalMeter());
 
     given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, 1.0));
-    missingMeasurementJpaRepository.refreshLocked();
 
     Page<PagedLogicalMeterDto> response = asUser()
       .getPage(
@@ -94,7 +91,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     LogicalMeter districtHeatingMeter = given(logicalMeter());
 
     given(series(districtHeatingMeter, Quantity.ENERGY, 1.0));
-    missingMeasurementJpaRepository.refreshLocked();
 
     Page<PagedLogicalMeterDto> response = asUser()
       .getPage(
@@ -128,8 +124,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0, 2.0)
     );
 
-    missingMeasurementJpaRepository.refreshLocked();
-
     var response = asUser()
       .getPage(
         metersUrl(context().yesterday(), context().yesterday().plusHours(5)),
@@ -159,8 +153,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0, 2.0)
     );
 
-    missingMeasurementJpaRepository.refreshLocked();
-
     var content = asUser()
       .getPage(
         metersUrl(context().yesterday(), context().yesterday().plusHours(4)),
@@ -176,8 +168,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
 
     given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0));
-
-    missingMeasurementJpaRepository.refreshLocked();
 
     PagedLogicalMeterDto logicalMeterDto = asUser()
       .getPage(
@@ -216,8 +206,6 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       secondMeterActivePeriod.getStartDateTime().get().plusHours(1),
       DoubleStream.iterate(2, d -> d + 1.0).limit(23).toArray()
     ));
-
-    missingMeasurementJpaRepository.refreshLocked();
 
     List<PagedLogicalMeterDto> pagedMeters = asUser()
       .getPage(

@@ -8,7 +8,6 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.MissingMeasurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Properties;
@@ -23,7 +22,6 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.MeterAlarmUseCases;
-import com.elvaco.mvp.core.usecase.MissingMeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
@@ -111,14 +109,6 @@ class UseCaseConfig {
   @Bean
   PropertiesUseCases propertiesUseCases(AuthenticatedUser currentUser) {
     return new PropertiesUseCases(currentUser, properties);
-  }
-
-  @Bean
-  MissingMeasurementUseCases missingMeasurementUseCases(
-    AuthenticatedUser currentUser,
-    MissingMeasurements missingMeasurements
-  ) {
-    return new MissingMeasurementUseCases(currentUser, missingMeasurements);
   }
 
   @Bean
