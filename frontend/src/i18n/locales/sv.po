@@ -23,6 +23,12 @@ msgstr "lösenorden är inte lika"
 msgid "change password"
 msgstr "ändra lösenord"
 
+msgid "m-bus device type"
+msgstr "m-bus mätartyp"
+
+msgid "revision"
+msgstr "revision"
+
 msgid "admin"
 msgstr "admin"
 

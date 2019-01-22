@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -104,6 +105,9 @@ class CsvDemoDataLoader implements CommandLineRunner {
               .manufacturer(csvData.meterManufacturer)
               .organisationId(rootOrganisation.id)
               .readIntervalMinutes(counter.incrementAndGet() > 10 ? 1440 : 60)
+              .mbusDeviceType((int) Math.floor(Math.random() * 10))
+              .revision((int) Math.floor(Math.random() * 10))
+              .activePeriod(PeriodRange.openFrom(ZonedDateTime.parse("2018-01-01T08:00:00Z"), null))
               .build();
             Gateway gateway = Gateway.builder()
               .organisationId(rootOrganisation.id)

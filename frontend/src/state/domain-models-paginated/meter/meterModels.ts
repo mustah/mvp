@@ -33,4 +33,6 @@ export interface Meter extends Identifiable, LocationHolder {
   statusChanged?: string;
   gatewaySerial: string;
   organisationId: uuid;
+  mbusDeviceType?: number;
+  revision?: number;
 }

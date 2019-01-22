@@ -64,6 +64,8 @@ const MeterDetailsInfo = ({
     statusChanged,
     facility,
     isReported,
+    mbusDeviceType,
+    revision,
   },
   fetchOrganisation,
   organisation,
@@ -142,6 +144,12 @@ const MeterDetailsInfo = ({
           </Info>
           <Info label={translate('meter id')}>
             <BoldFirstUpper>{address}</BoldFirstUpper>
+          </Info>
+          <Info label={translate('m-bus device type')}>
+            <BoldFirstUpper>{mbusDeviceType}</BoldFirstUpper>
+          </Info>
+          <Info label={translate('revision')}>
+            <BoldFirstUpper>{revision}</BoldFirstUpper>
           </Info>
           <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
         </RowMiddle>
