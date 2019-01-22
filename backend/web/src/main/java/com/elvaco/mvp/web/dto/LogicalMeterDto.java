@@ -29,6 +29,10 @@ public class LogicalMeterDto {
   public Double collectionPercentage;
   public Long readIntervalMinutes;
   public UUID organisationId;
+  @Nullable
+  public Integer revision;
+  @Nullable
+  public Integer mbusDeviceType;
 
   @Nullable
   public GatewayMandatoryDto gateway;

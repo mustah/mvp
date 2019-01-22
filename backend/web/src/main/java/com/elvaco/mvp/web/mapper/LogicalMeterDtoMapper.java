@@ -99,6 +99,12 @@ public class LogicalMeterDtoMapper {
     meterDto.readIntervalMinutes = physicalMeter
       .map(m -> m.readIntervalMinutes)
       .orElse(null);
+    meterDto.mbusDeviceType = physicalMeter
+      .map(m -> m.mbusDeviceType)
+      .orElse(null);
+    meterDto.revision = physicalMeter
+      .map(m -> m.revision)
+      .orElse(null);
 
     meterDto.collectionPercentage = logicalMeter.collectionPercentage;
 

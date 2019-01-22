@@ -23,6 +23,12 @@ msgstr "The passwords are not equal"
 msgid "change password"
 msgstr "change password"
 
+msgid "m-bus device type"
+msgstr "m-bus device type"
+
+msgid "revision"
+msgstr "revision"
+
 msgid "admin"
 msgstr "admin"
 
