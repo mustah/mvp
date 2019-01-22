@@ -1,5 +1,8 @@
 package com.elvaco.mvp.core.security;
 
+import java.util.List;
+
+import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testing.repository.MockUsers;
@@ -22,6 +25,7 @@ import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class OrganisationPermissionsTest {
 
@@ -180,15 +184,138 @@ public class OrganisationPermissionsTest {
   }
 
   @Test
+  public void userCanNotElevateRoleToAdmin() {
+    assertFalse(
+      hasPermission(ELVACO_USER, userWithRole(ELVACO_USER, Role.ADMIN), ELVACO_USER, UPDATE)
+    );
+  }
+
+  @Test
+  public void userCanNotElevateRoleToSuperAdmin() {
+    assertFalse(
+      hasPermission(ELVACO_USER, userWithRole(ELVACO_USER, Role.SUPER_ADMIN), ELVACO_USER, UPDATE)
+    );
+  }
+
+  @Test
+  public void adminCanNotElevateRoleToSuperAdmin() {
+    assertFalse(
+      hasPermission(
+        ELVACO_ADMIN_USER,
+        userWithRole(ELVACO_ADMIN_USER, Role.SUPER_ADMIN),
+        ELVACO_ADMIN_USER,
+        UPDATE
+      )
+    );
+  }
+
+  @Test
+  public void adminCanNotElevateUserToSuperAdmin() {
+    assertFalse(
+      hasPermission(
+        ELVACO_ADMIN_USER,
+        userWithRole(ELVACO_USER, Role.SUPER_ADMIN),
+        ELVACO_USER,
+        UPDATE
+      )
+    );
+  }
+
+  @Test
+  public void adminCanElevateUserToAdmin() {
+    assertTrue(
+      hasPermission(
+        ELVACO_ADMIN_USER,
+        userWithRole(ELVACO_USER, Role.ADMIN),
+        ELVACO_USER,
+        UPDATE
+      )
+    );
+  }
+
+  @Test
+  public void adminCanDemoteAdminToUser() {
+    assertTrue(
+      hasPermission(
+        ELVACO_ADMIN_USER,
+        userWithRole(ELVACO_ADMIN_USER, Role.USER),
+        ELVACO_ADMIN_USER,
+        UPDATE
+      )
+    );
+  }
+
+  @Test
+  public void superAdminCanElevateUserToSuperAdmin() {
+    assertTrue(
+      hasPermission(
+        ELVACO_SUPER_ADMIN_USER,
+        userWithRole(ELVACO_USER, Role.SUPER_ADMIN),
+        ELVACO_USER,
+        UPDATE
+      )
+    );
+  }
+
+  @Test
+  public void superAdminCanDemoteSuperAdminToUser() {
+    assertTrue(
+      hasPermission(
+        ELVACO_SUPER_ADMIN_USER,
+        userWithRole(ELVACO_SUPER_ADMIN_USER, Role.USER),
+        ELVACO_ADMIN_USER,
+        UPDATE
+      )
+    );
+  }
+
+  @Test
+  public void unhandledRoleThrowsException() {
+    RuntimeException exception = null;
+
+    try {
+      hasPermission(
+        ELVACO_SUPER_ADMIN_USER,
+        userWithRole(ELVACO_SUPER_ADMIN_USER, new Role("Dictator")),
+        ELVACO_ADMIN_USER,
+        UPDATE
+      );
+    } catch (RuntimeException ex) {
+      exception = ex;
+    }
+
+    assertNotNull(exception);
+  }
+
+  @Test
   public void userCannotDeleteSelf() {
     assertFalse(hasPermission(ELVACO_USER, ELVACO_USER, DELETE));
   }
 
   private boolean hasPermission(User currentUser, User targetUser, Permission permission) {
+    return hasPermission(currentUser, targetUser, targetUser, permission);
+  }
+
+  private boolean hasPermission(
+    User currentUser, User targetUser, User beforeUpdate, Permission permission
+  ) {
     return permissionEvaluator.isAllowed(
       new MockAuthenticatedUser(currentUser, randomUUID().toString()),
       targetUser,
+      beforeUpdate,
       permission
+    );
+  }
+
+  public User userWithRole(User user, Role role) {
+    return new User(
+      user.id,
+      user.name,
+      user.email,
+      user.password,
+      user.language,
+      user.organisation,
+      List.of(role)
     );
   }
 }

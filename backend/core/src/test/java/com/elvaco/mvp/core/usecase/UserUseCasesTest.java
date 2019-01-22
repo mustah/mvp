@@ -76,7 +76,7 @@ public class UserUseCasesTest {
     String token = randomUUID().toString();
     tokenService.saveToken(token, new MockAuthenticatedUser(marvelUser, token));
 
-    useCases.delete(marvelUser);
+    useCases.delete(marvelUser.id);
 
     assertThat(useCases.findById(marvelUser.id).isPresent()).isFalse();
     assertThat(tokenService.getToken(token).isPresent()).isFalse();

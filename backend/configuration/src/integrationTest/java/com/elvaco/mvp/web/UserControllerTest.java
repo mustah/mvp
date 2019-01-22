@@ -211,6 +211,34 @@ public class UserControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void regularUserCannotElevateOwnRole() {
+    String password = "ttt123";
+    User user = users.save(
+      new UserBuilder()
+        .name("First Name")
+        .email("t@b.com")
+        .password(password)
+        .language(Language.en)
+        .organisation(context().organisation())
+        .asUser()
+        .build()
+    ).withPassword(password);
+
+    UserDto userDto = UserDtoMapper.toDto(user);
+    userDto.roles = List.of(ADMIN.role);
+
+    ResponseEntity<UserDto> response = as(user).put("/users", userDto, UserDto.class);
+    assertThat(response.getStatusCode().value()).isEqualTo(404);
+    assertThat(users.findById(user.id).get().roles).containsExactly(USER);
+
+    userDto.roles = List.of(SUPER_ADMIN.role);
+
+    response = as(user).put("/users", userDto, UserDto.class);
+    assertThat(response.getStatusCode().value()).isEqualTo(404);
+    assertThat(users.findById(user.id).get().roles).containsExactly(USER);
+  }
+
+  @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
     ResponseEntity<List<UserDto>> response = asUser().getList("/users", UserDto.class);
 
@@ -311,6 +339,86 @@ public class UserControllerTest extends IntegrationTest {
 
     assertThat(responseList.getBody()).doesNotContain(batman);
     assertThat(responseList.getBody()).contains(colleague);
+  }
+
+  @Test
+  public void adminCannotElevateOwnRole() {
+    String password = "ttt123";
+    User user = users.save(
+      new UserBuilder()
+        .name("First Name")
+        .email("t@b.com")
+        .password(password)
+        .language(Language.en)
+        .organisation(context().organisation())
+        .asAdmin()
+        .build()
+    ).withPassword(password);
+
+    UserDto userDto = UserDtoMapper.toDto(user);
+    userDto.roles = List.of(SUPER_ADMIN.role);
+
+    ResponseEntity<UserDto> response = as(user).put("/users", userDto, UserDto.class);
+    assertThat(response.getStatusCode().value()).isEqualTo(404);
+    assertThat(users.findById(user.id).get().roles).containsExactly(ADMIN);
+  }
+
+  @Test
+  public void adminCannotCreateSuperUser() {
+    String email = "ca@aaa.se";
+    UserDto userDto = createUserDto(email);
+    userDto.roles = List.of(SUPER_ADMIN.role);
+
+    ResponseEntity<UserDto> response = asAdmin().put("/users", userDto, UserDto.class);
+    assertThat(response.getStatusCode().value()).isEqualTo(404);
+    assertThat(users.findByEmail(email).isPresent()).isFalse();
+  }
+
+  @Test
+  public void adminCannotEditSuperUser() {
+    String oldEmail = "aasssshjsh@a.se";
+
+    User user = users.save(
+      new UserBuilder()
+        .name("First Name")
+        .email(oldEmail)
+        .password("asdf")
+        .language(Language.en)
+        .organisation(context().organisation())
+        .asSuperAdmin()
+        .build()
+    );
+
+    UserDto userDto = UserDtoMapper.toDto(user);
+    userDto.email = "new@email.com";
+
+    ResponseEntity<UserDto> response = asAdmin().put("/users", userDto, UserDto.class);
+    assertThat(response.getStatusCode().value()).isEqualTo(404);
+    assertThat(users.findById(user.id).get().email).isEqualTo(oldEmail);
+  }
+
+  @Test
+  public void adminCannotDeleteSuperUser() {
+    String oldEmail = "aasssshjsh@a.se";
+
+    User user = users.save(
+      new UserBuilder()
+        .name("First Name")
+        .email(oldEmail)
+        .password("asdf")
+        .language(Language.en)
+        .organisation(context().organisation())
+        .asSuperAdmin()
+        .build()
+    );
+
+    UserDto userDto = UserDtoMapper.toDto(user);
+    userDto.email = "new@email.com";
+
+    ResponseEntity<UserDto> response = asAdmin().delete("/users/" + user.id, UserDto.class);
+
+    assertThat(response.getStatusCode().value()).isEqualTo(404);
+    assertThat(users.findById(user.id).isPresent()).isTrue();
   }
 
   @Test
