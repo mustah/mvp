@@ -145,4 +145,13 @@ public interface ContextDsl {
   ) {
     return context().series(physicalMeter, quantity, start, interval, values);
   }
+
+  default Collection<Measurement> series(
+    PhysicalMeter physicalMeter,
+    Quantity quantity,
+    ZonedDateTime start,
+    double... values
+  ) {
+    return context().series(physicalMeter, quantity, start, values);
+  }
 }

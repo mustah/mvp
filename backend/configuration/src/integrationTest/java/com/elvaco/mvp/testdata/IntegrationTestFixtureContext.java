@@ -169,6 +169,21 @@ public class IntegrationTestFixtureContext {
   }
 
   Collection<Measurement> series(
+    PhysicalMeter physicalMeter,
+    Quantity quantity,
+    ZonedDateTime start,
+    double... values
+  ) {
+    return series(
+      physicalMeter,
+      quantity,
+      start,
+      Duration.ofMinutes(physicalMeter.readIntervalMinutes),
+      values
+    );
+  }
+
+  Collection<Measurement> series(
     LogicalMeter logicalMeter,
     Quantity quantity,
     TemporalAmount interval,
