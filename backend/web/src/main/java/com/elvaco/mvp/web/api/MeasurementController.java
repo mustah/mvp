@@ -22,7 +22,6 @@ import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.exception.MissingParameter;
-import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -61,40 +60,31 @@ public class MeasurementController {
   ) {
     RequestParameters parameters = RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID);
 
-    Set<Quantity> quantities = parameters.getValues(QUANTITY).stream()
-      .map(Quantity::of)
-      .collect(toSet());
-
-    if (quantities.isEmpty()) {
-      throw new MissingParameter(QUANTITY);
-    }
-
     List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
 
-    ZonedDateTime stop = beforeOrNow(before);
+    Map<String, Quantity> quantityMap = getMappedQuantities(parameters);
 
-    return toSeries(logicalMeterHelper.groupByQuantity(logicalMeters, quantities)
-      .entrySet().stream()
-      .flatMap(entry -> measurementUseCases.findAverageForPeriod(
-        new MeasurementParameter(
-          entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
-          List.of(entry.getKey()),
-          start,
-          stop,
-          resolutionOrDefault(start, stop, resolution)
-        ))
-        .stream()
-        .map(measurementValue -> LabeledMeasurementValue.builder()
-          .id(String.format("average-%s", entry.getKey().name))
-          .label(label)
-          .when(measurementValue.when)
-          .value(measurementValue.value)
-          .quantity(entry.getKey())
-          .city(singleCityOrNull(parameters))
-          .build()
-        ))
-      .collect(toList())
+    ZonedDateTime stop = beforeOrNow(before);
+    TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
+
+    var parameter = new MeasurementParameter(
+      logicalMeters.stream().map(l -> l.id).collect(toList()),
+      new ArrayList<>(quantityMap.values()),
+      start,
+      stop,
+      temporalResolution
     );
+
+    return measurementUseCases.findAverageForPeriod(parameter)
+      .entrySet().stream().map(entry ->
+        toSeries(
+          entry.getValue(),
+          label,
+          String.format("average-%s", entry.getKey()),
+          singleCityOrNull(parameters),
+          quantityMap.get(entry.getKey())
+        ))
+      .collect(toList());
   }
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -148,6 +138,20 @@ public class MeasurementController {
       .map(MeasurementDtoMapper::toDto)
       .collect(toList());
     return new PageImpl<>(measurements);
+  }
+
+  private Map<String, Quantity> getMappedQuantities(
+    RequestParameters parameters
+  ) {
+    var quantities = parameters.getValues(QUANTITY).stream()
+      .map(Quantity::of)
+      .map(q -> logicalMeterHelper.resolveQuantity(q))
+      .collect(toMap(q -> q.name, q -> q));
+
+    if (quantities.isEmpty()) {
+      throw new MissingParameter(QUANTITY);
+    }
+    return quantities;
   }
 
   private Map<String, Quantity> getMappedQuantities(

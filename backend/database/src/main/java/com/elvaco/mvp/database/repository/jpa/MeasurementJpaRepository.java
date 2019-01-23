@@ -1,8 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,63 +14,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface MeasurementJpaRepository
   extends MeasurementJpaRepositoryCustom, JpaRepository<MeasurementEntity, MeasurementPk> {
-
-  @Query(nativeQuery = true, value = ""
-    + " SELECT"
-    + "   avg(consumption) AS value,"
-    + "   interval_start AS when"
-    + " FROM"
-    + "   (SELECT"
-    + "      lead(value) over (PARTITION BY physical_meter_id order by created ASC) "
-    + "            - value as consumption,"
-    + "      date_serie.date as interval_start"
-    + "    FROM"
-    + "      (SELECT generate_series("
-    + "                cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
-    + "                cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC' + cast(:resolution AS INTERVAL),"
-    + "                cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS date) as date_serie"
-    + "       LEFT JOIN measurement"
-    + "          ON physical_meter_id IN :physical_meter_ids"
-    + "         AND date_serie.date = created"
-    + "         AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
-
-    + "   ) as consumption_values"
-    + " WHERE"
-    + "   interval_start <= cast(:to AS TIMESTAMPTZ)"
-    + " GROUP BY interval_start"
-    + " ORDER BY interval_start"
-  )
-  List<MeasurementValueProjection> getAverageForPeriodConsumption(
-    @Param("physical_meter_ids") List<UUID> physicalMeterIds,
-    @Param("resolution") String resolution,
-    @Param("quantity") String quantity,
-    @Param("from") OffsetDateTime from,
-    @Param("to") OffsetDateTime to
-  );
-
-  @Query(nativeQuery = true, value = ""
-    + " SELECT"
-    + "   avg(value) as value,"
-    + "   date_serie.date as when"
-    + " FROM"
-    + "     (SELECT generate_series("
-    + "                  cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
-    + "                  cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC',"
-    + "                  cast(:resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS DATE"
-    + "     ) AS date_serie"
-    + "     LEFT JOIN measurement"
-    + "            ON physical_meter_id IN :physical_meter_ids"
-    + "           AND date_serie.date = created"
-    + "           AND quantity = (SELECT id FROM quantity WHERE quantity.name = :quantity)"
-    + " GROUP BY date_serie.date"
-    + " ORDER BY date_serie.date")
-  List<MeasurementValueProjection> getAverageForPeriod(
-    @Param("physical_meter_ids") List<UUID> meterIds,
-    @Param("resolution") String resolution,
-    @Param("quantity") String quantity,
-    @Param("from") OffsetDateTime from,
-    @Param("to") OffsetDateTime to
-  );
 
   @Modifying
   @Query(nativeQuery = true, value =

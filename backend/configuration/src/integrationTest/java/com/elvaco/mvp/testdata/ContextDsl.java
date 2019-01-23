@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
@@ -133,5 +134,15 @@ public interface ContextDsl {
     double... values
   ) {
     return context().series(logicalMeter, quantity, start, interval, values);
+  }
+
+  default Collection<Measurement> series(
+    PhysicalMeter physicalMeter,
+    Quantity quantity,
+    ZonedDateTime start,
+    TemporalAmount interval,
+    double... values
+  ) {
+    return context().series(physicalMeter, quantity, start, interval, values);
   }
 }

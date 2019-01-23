@@ -106,6 +106,30 @@ public class IntegrationTestFixtureContext {
   }
 
   Collection<Measurement> series(
+    PhysicalMeter physicalMeter,
+    Quantity quantity,
+    ZonedDateTime start,
+    TemporalAmount interval,
+    double... values
+  ) {
+    List<Measurement> series = new ArrayList<>();
+    ZonedDateTime t = start;
+    for (double value : values) {
+      series.add(
+        measurement(physicalMeter, quantity)
+          .value(value)
+          .created(t)
+          .quantity(quantity.name)
+          .unit(quantity.storageUnit)
+          .build()
+      );
+
+      t = t.plus(interval);
+    }
+    return series;
+  }
+
+  Collection<Measurement> series(
     LogicalMeter logicalMeter,
     Quantity quantity,
     ZonedDateTime start,
@@ -172,6 +196,15 @@ public class IntegrationTestFixtureContext {
     Quantity quantity = logicalMeter.getQuantities().iterator().next();
     return Measurement.builder()
       .physicalMeter(logicalMeter.activePhysicalMeter(now()).orElseThrow())
+      .unit(quantity.presentationUnit())
+      .value(0.0)
+      .quantity(quantity.name)
+      .created(now());
+  }
+
+  MeasurementBuilder measurement(PhysicalMeter physicalMeter, Quantity quantity) {
+    return Measurement.builder()
+      .physicalMeter(physicalMeter)
       .unit(quantity.presentationUnit())
       .value(0.0)
       .quantity(quantity.name)

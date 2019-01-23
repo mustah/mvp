@@ -1,18 +1,12 @@
 package com.elvaco.mvp.database;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.Period;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
@@ -22,18 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Transactional
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
-  private static final String HOUR_RESOLUTION = "1 hour";
-  private static final String DAY_RESOLUTION = "1 day";
-  private static final String MONTH_RESOLUTION = "1 month";
   private static final OffsetDateTime START_TIME =
     OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
+
+  @Autowired
+  private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
   private QuantityProvider quantityProvider;
@@ -41,320 +34,9 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private QuantityEntityMapper quantityEntityMapper;
 
-  @Autowired
-  private MeasurementJpaRepository measurementJpaRepository;
-
   @After
   public void tearDown() {
     measurementJpaRepository.deleteAll();
-  }
-
-  @Test
-  public void correctNumberOfValuesAreReturnedRelativeToStart() {
-    var meter = newPhysicalMeterEntity();
-
-    generateSeries(meter, Duration.ofHours(1));
-
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        List.of(meter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME.plusHours(5),
-        START_TIME.plusHours(9)
-      );
-
-    assertThat(results).hasSize(5);
-  }
-
-  @Test
-  public void resultsCanBeFetchedWithDayResolution() {
-    var meter = newPhysicalMeterEntity();
-    var dayTwo = START_TIME.plus(Period.ofDays(1));
-
-    newMeasurement(meter, START_TIME, 2.0);
-    newMeasurement(meter, dayTwo, 4.0);
-
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        List.of(meter.id),
-        DAY_RESOLUTION,
-        "Energy",
-        START_TIME,
-        dayTwo
-      );
-
-    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(
-      2.0,
-      4.0
-    );
-  }
-
-  @Test
-  public void resultsCanBeFetchedWithMonthResolution() {
-    var meter = newPhysicalMeterEntity();
-    var nextMonth = START_TIME.plus(Period.ofMonths(1));
-
-    newMeasurement(meter, START_TIME, 2.0);
-    newMeasurement(meter, nextMonth, 4.0);
-
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id),
-        MONTH_RESOLUTION,
-        "Energy",
-        START_TIME,
-        nextMonth
-      );
-
-    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(
-      2.0,
-      4.0
-    );
-  }
-
-  @Test
-  public void missingIntervalValuesAreRepresentedAsNull() {
-    var meter = newPhysicalMeterEntity();
-    var twoHoursLater = START_TIME.plusHours(2);
-
-    newMeasurement(meter, START_TIME, 2.0);
-    newMeasurement(meter, twoHoursLater, 3.0);
-
-    List<MeasurementValueProjection> results = measurementJpaRepository.getAverageForPeriod(
-      singletonList(meter.id),
-      HOUR_RESOLUTION,
-      "Energy",
-      START_TIME,
-      twoHoursLater
-    );
-
-    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(
-      2.0,
-      null,
-      3.0
-    );
-  }
-
-  @Test
-  public void averageShouldOnlyIncludeValuesAtResolutionPoints() {
-    var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0);
-    newMeasurement(meter, START_TIME.plusMinutes(1), 100.0);
-
-    var oneHourLater = START_TIME.plusHours(1);
-    newMeasurement(meter, oneHourLater, 1.0);
-    newMeasurement(meter, oneHourLater.plusMinutes(1), 9.0);
-
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME,
-        oneHourLater.plusMinutes(1)
-      );
-
-    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(
-      2.0,
-      1.0
-    );
-  }
-
-  @Test
-  public void unspecifiedMetersAreNotIncluded() {
-    var firstMeter = newPhysicalMeterEntity();
-    var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(firstMeter, START_TIME, 12);
-    newMeasurement(secondMeter, START_TIME, 99.8);
-
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(firstMeter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME,
-        START_TIME.plusSeconds(1)
-      );
-
-    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(12.0);
-  }
-
-  @Test
-  public void valuesAreFilteredByQuantity() {
-    var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0, Quantity.TEMPERATURE.name);
-    newMeasurement(meter, START_TIME, 6.0, Quantity.RETURN_TEMPERATURE.name);
-
-    List<MeasurementValueProjection> results = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id),
-        HOUR_RESOLUTION,
-        Quantity.TEMPERATURE.name,
-        START_TIME,
-        START_TIME.plusSeconds(1)
-      );
-
-    assertThat(results).extracting(MeasurementValueProjection::getValue).containsExactly(2.0);
-  }
-
-  @Test
-  public void timesAreCorrect() {
-    var meter = newPhysicalMeterEntity();
-    newMeasurement(meter, START_TIME, 2.0);
-
-    List<MeasurementValueProjection> resultsWithHourResolution = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME,
-        START_TIME.plusSeconds(1)
-      );
-
-    List<MeasurementValueProjection> resultsWithDayResolution = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id),
-        DAY_RESOLUTION,
-        "Energy",
-        START_TIME,
-        START_TIME.plusSeconds(1)
-      );
-
-    List<MeasurementValueProjection> resultsWithMonthResolution = measurementJpaRepository
-      .getAverageForPeriod(
-        singletonList(meter.id),
-        MONTH_RESOLUTION,
-        "Energy",
-        START_TIME,
-        START_TIME.plusSeconds(1)
-      );
-
-    assertThat(resultsWithDayResolution).hasSize(1);
-    assertThat(resultsWithHourResolution.get(0)
-      .getWhen()
-      .toInstant()).isEqualTo(START_TIME.toInstant());
-
-    assertThat(resultsWithDayResolution).hasSize(1);
-    assertThat(resultsWithDayResolution.get(0)
-      .getWhen()
-      .toInstant()).isEqualTo(START_TIME.toInstant());
-
-    assertThat(resultsWithMonthResolution).hasSize(1);
-    assertThat(resultsWithMonthResolution.get(0)
-      .getWhen()
-      .toInstant()).isEqualTo(START_TIME.toInstant());
-  }
-
-  @Test
-  public void averageForConsumptionSeries() {
-    var firstMeter = newPhysicalMeterEntity();
-
-    newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
-
-    var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
-
-    List<MeasurementValueProjection> result =
-      measurementJpaRepository.getAverageForPeriodConsumption(
-        Arrays.asList(firstMeter.id, secondMeter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME.plusHours(1),
-        START_TIME.plusHours(3)
-      );
-
-    assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
-      1.0, // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
-      2.5, // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
-      null
-    );
-  }
-
-  @Test
-  public void averageForConsumptionSeries_lastIsNotNullWhenValueExistAfterPeriod() {
-    var firstMeter = newPhysicalMeterEntity();
-    newMeasurement(firstMeter, START_TIME.plusHours(1), 0.0, "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
-
-    var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 1.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
-
-    List<MeasurementValueProjection> result = measurementJpaRepository
-      .getAverageForPeriodConsumption(
-        Arrays.asList(firstMeter.id, secondMeter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME.plusHours(1),
-        START_TIME.plusHours(2)
-      );
-
-    assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
-      1.0,  // ((1.0 - 0.0) + (2.0 - 1.0)) / 2
-      2.5  // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
-    );
-  }
-
-  @Test
-  public void averageForMissingMeasurements() {
-    var firstMeter = newPhysicalMeterEntity();
-
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
-
-    var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 7.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
-
-    List<MeasurementValueProjection> result = measurementJpaRepository.getAverageForPeriod(
-      Arrays.asList(firstMeter.id, secondMeter.id),
-      HOUR_RESOLUTION,
-      "Energy",
-      START_TIME.plusHours(1),
-      START_TIME.plusHours(4)
-    );
-
-    // note: we average only over present measurement count for an interval
-    assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
-      7.0,
-      1.5,
-      4.0,
-      null
-    );
-  }
-
-  @Test
-  public void averageForConsumptionSeries_missingMeasurementsForOneMeter() {
-    var firstMeter = newPhysicalMeterEntity();
-    newMeasurement(firstMeter, START_TIME.plusHours(2), 1.0, "Energy");
-    newMeasurement(firstMeter, START_TIME.plusHours(3), 5.0, "Energy");
-
-    var secondMeter = newPhysicalMeterEntity();
-    newMeasurement(secondMeter, START_TIME.plusHours(1), 0.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(2), 2.0, "Energy");
-    newMeasurement(secondMeter, START_TIME.plusHours(3), 3.0, "Energy");
-
-    List<MeasurementValueProjection> result =
-      measurementJpaRepository.getAverageForPeriodConsumption(
-        Arrays.asList(firstMeter.id, secondMeter.id),
-        HOUR_RESOLUTION,
-        "Energy",
-        START_TIME.plusHours(1),
-        START_TIME.plusHours(2)
-      );
-
-    assertThat(result).extracting(MeasurementValueProjection::getValue).containsExactly(
-      2.0, // (2.0 - 0.0) / 1
-      2.5 // ((5.0 - 1.0) + (3.0 - 2.0)) / 2
-    );
   }
 
   @Test
@@ -416,21 +98,5 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       value,
       meter
     ));
-  }
-
-  private void newMeasurement(
-    PhysicalMeterEntity meter,
-    OffsetDateTime when,
-    double value
-  ) {
-    newMeasurement(meter, when, value, "Energy");
-  }
-
-  private void generateSeries(PhysicalMeterEntity meter, Duration interval) {
-    OffsetDateTime when = START_TIME;
-    for (int i = 0; i < 10; i++) {
-      newMeasurement(meter, START_TIME, 2.0);
-      when = when.plus(interval);
-    }
   }
 }
