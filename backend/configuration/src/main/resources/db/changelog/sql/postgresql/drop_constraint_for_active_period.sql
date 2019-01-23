@@ -1,0 +1,2 @@
+alter table physical_meter
+drop constraint non_overlapping_active_periods;
