@@ -65,8 +65,10 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
       };
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
       const selectAndNavigateToMeters: Callback = () => {
-        history.push(routes.meter);
-        selectSavedSelection(item.id);
+        if (item.id !== selection.id) {
+          history.push(routes.meter);
+          selectSavedSelection(item.id);
+        }
       };
       return (
         <Column key={`saved-${item.id}`}>
