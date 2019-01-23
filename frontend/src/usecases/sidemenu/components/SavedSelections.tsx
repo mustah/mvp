@@ -2,6 +2,7 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {routes} from '../../../app/routes';
 import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
+import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
@@ -9,7 +10,7 @@ import {Normal} from '../../../components/texts/Texts';
 import {history} from '../../../index';
 import {translate} from '../../../services/translationService';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {Callback, Identifiable, OnClickWithId, Opened, uuid} from '../../../types/Types';
+import {Callback, OnClickWithId, uuid} from '../../../types/Types';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
 import {SelectionTreeContainer} from '../containers/SelectionTreeContainer';
 import {LoadingTreeViewItems} from './LoadingTreeViewItems';
@@ -93,18 +94,12 @@ const ListItems = ({
   return <>{items}</>;
 };
 
-type State = Opened & Partial<Identifiable>;
-
 export const SavedSelections = (props: Props) => {
-  const [{isOpen, id}, setOpened] = React.useState<State>({isOpen: false});
-  const closeConfirm = () => setOpened({isOpen: false});
-  const openConfirm = (id: uuid) => setOpened({isOpen: true, id});
-  const onConfirm = () => props.deleteUserSelection(id!);
-
+  const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(props.deleteUserSelection);
   return (
     <>
       <ListItems {...props} confirmDelete={openConfirm}/>
-      <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={onConfirm}/>
+      <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
     </>
   );
 };
