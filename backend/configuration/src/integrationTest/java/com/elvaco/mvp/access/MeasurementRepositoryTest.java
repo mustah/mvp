@@ -19,6 +19,7 @@ import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -361,6 +362,23 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     assertThat(result.get(getKey(logicalMeter, Quantity.VOLUME)))
       .extracting(l -> l.value)
       .containsExactly(2.0, 2.0, 6.0);
+  }
+
+  @Test
+  @Transactional
+  public void valuesAreSavedWithStorageUnit() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+
+    measurements.createOrUpdate(Measurement.builder()
+      .unit("MWh")
+      .value(2.0)
+      .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+      .created(start)
+      .quantity("Energy")
+      .build());
+
+    assertThat(measurementJpaRepository.findAll()).extracting(e -> e.value).containsOnly(2000.0);
   }
 
   @Test

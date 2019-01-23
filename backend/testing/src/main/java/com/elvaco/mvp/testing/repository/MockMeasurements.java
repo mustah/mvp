@@ -11,7 +11,6 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
@@ -27,22 +26,7 @@ public class MockMeasurements extends MockRepository<Measurement.Id, Measurement
   }
 
   @Override
-  public void createOrUpdate(
-    PhysicalMeter physicalMeter,
-    ZonedDateTime created,
-    String quantity,
-    String unit,
-    double value
-  ) {
-    Measurement.MeasurementBuilder builder = Measurement.builder()
-      .physicalMeter(physicalMeter)
-      .created(created)
-      .quantity(quantity)
-      .unit(unit)
-      .value(value);
-
-    Measurement measurement = builder.build();
-
+  public void createOrUpdate(Measurement measurement) {
     saveMock(measurement);
   }
 

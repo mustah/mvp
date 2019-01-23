@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -89,20 +88,15 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public void createOrUpdate(
-    PhysicalMeter physicalMeter,
-    ZonedDateTime created,
-    String quantity,
-    String unit,
-    double value
-  ) {
+  public void createOrUpdate(Measurement measurement) {
     try {
-      MeasurementUnit measurementUnit = new MeasurementUnit(unit, value);
+      MeasurementUnit measurementUnit = new MeasurementUnit(measurement.unit, measurement.value);
+      Quantity quantity = quantityProvider.getByName(measurement.quantity);
       measurementJpaRepository.createOrUpdate(
-        physicalMeter.id,
-        created,
-        quantityProvider.getByName(quantity).getId(),
-        measurementUnit.getValue()
+        measurement.physicalMeter.id,
+        measurement.created,
+        quantity.id,
+        unitConverter.convert(measurementUnit, quantity.storageUnit).getValue()
       );
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex);
