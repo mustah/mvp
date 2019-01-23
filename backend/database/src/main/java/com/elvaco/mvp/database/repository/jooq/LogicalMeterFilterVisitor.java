@@ -69,10 +69,10 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
       .on(GATEWAY.ORGANISATION_ID.equal(GATEWAYS_METERS.ORGANISATION_ID)
         .and(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID)))
 
-      .leftJoin(METER_DEFINITION)
+      .innerJoin(METER_DEFINITION)
       .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
 
-      .leftJoin(LOCATION)
+      .innerJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));
   }

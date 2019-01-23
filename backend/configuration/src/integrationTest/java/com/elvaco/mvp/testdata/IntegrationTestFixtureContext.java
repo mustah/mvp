@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,8 @@ public class IntegrationTestFixtureContext {
   private final GatewayStatusLogs gatewayStatusLogs;
   private final MeterAlarmLogs meterAlarmLogs;
   private final Measurements measurements;
+
+  private final Random random = new Random();
 
   public Organisation organisation() {
     return OrganisationEntityMapper.toDomainModel(organisationEntity);
@@ -245,7 +248,7 @@ public class IntegrationTestFixtureContext {
     return PhysicalMeter.builder()
       .id(physicalMeterId)
       .externalId(physicalMeterId.toString())
-      .address(physicalMeterId.toString())
+      .address(String.valueOf(random.nextInt(999999)))
       .readIntervalMinutes(60)
       .organisationId(organisationId())
       .activePeriod(PeriodRange.closedFrom(null, null));

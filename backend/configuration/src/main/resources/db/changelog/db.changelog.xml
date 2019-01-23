@@ -69,6 +69,7 @@
   <include file="xml/add_zip_ip_and_phonbe_number.xml" relativeToChangelogFile="true"/>
   <include file="xml/replace_missing_read_interval_with_hour_again.xml" relativeToChangelogFile="true"/>
   <include file="xml/update_active_period_for_existing_meters_with_constraints_disabled.xml" relativeToChangelogFile="true"/>
+  <include file="xml/add_indexes_for_quick_meterlist_sorting.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

@@ -1,0 +1,87 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create natural order collation" author="Anton Löfgren">
+    <sqlFile path="../sql/postgresql/create_natural_order_collation.sql"
+             dbms="postgresql"
+             relativeToChangelogFile="true"
+    />
+
+  </changeSet>
+
+  <changeSet id="Update collation for naturally ordered columns" author="Anton Löfgren">
+    <sqlFile path="../sql/postgresql/set_natural_collation_for_gateway_serial_and_meter_address.sql"
+             dbms="postgresql"
+             relativeToChangelogFile="true"
+    />
+  </changeSet>
+
+
+
+  <changeSet id="Update collation for location columns" author="Anton Löfgren">
+    <sqlFile path="../sql/postgresql/set_swedish_collation_for_location_columns.sql"
+             dbms="postgresql"
+             relativeToChangelogFile="true"
+    />
+  </changeSet>
+
+  <changeSet id="Add indexes for quick meterlist sorting" author="Anton Löfgren">
+    <createIndex
+      indexName="physical_meter_organisation_id_manufacturer_idx"
+      tableName="physical_meter"
+      schemaName="public">
+      <column name="organisation_id"/>
+      <column name="manufacturer"/>
+    </createIndex>
+
+    <createIndex
+      indexName="physical_meter_organisation_id_address_idx"
+      tableName="physical_meter"
+      schemaName="public">
+      <column name="organisation_id"/>
+      <column name="address"/>
+    </createIndex>
+
+    <createIndex
+      tableName="location"
+      indexName="location_organisation_id_lower_address_idx">
+      <column name="organisation_id"/>
+      <column name="lower(street_address)"/>
+    </createIndex>
+
+
+    <createIndex
+      tableName="location"
+      indexName="location_organisation_id_lower_city_idx">
+      <column name="organisation_id"/>
+      <column name="lower(city)"/>
+    </createIndex>
+
+    <createIndex
+      indexName="gateway_organisation_id_serial_idx"
+      tableName="gateway"
+      schemaName="public">
+      <column name="organisation_id"/>
+      <column name="serial"/>
+    </createIndex>
+
+    <createIndex
+      indexName="meter_definition_type_medium_idx"
+      tableName="meter_definition"
+      schemaName="public">
+      <column name="type"/>
+      <column name="medium"/>
+    </createIndex>
+
+    <createIndex
+      indexName="logical_meter_organisation_id_meter_definition_type_idx"
+      tableName="logical_meter"
+      schemaName="public">
+      <column name="organisation_id"/>
+      <column name="meter_definition_type"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>

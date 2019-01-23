@@ -1,16 +1,17 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
-import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
@@ -20,11 +21,15 @@ import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
 import com.querydsl.jpa.impl.JPADeleteClause;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.SelectForUpdateStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SortField;
 import org.jooq.TableField;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
@@ -44,12 +49,26 @@ import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
+import static org.jooq.impl.DSL.field;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
+@Slf4j
 @Repository
 class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
+
+  private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
+    "facility", LOGICAL_METER.EXTERNAL_ID,
+    "address", LOCATION.STREET_ADDRESS,
+    "city", LOCATION.CITY,
+    "manufacturer", PHYSICAL_METER.MANUFACTURER,
+    "gatewaySerial", GATEWAY.SERIAL,
+    "secondaryAddress", PHYSICAL_METER.ADDRESS,
+    "medium", METER_DEFINITION.MEDIUM,
+    "collectionPercentage", COLLECTION_PERCENTAGE
+  );
 
   private final DSLContext dsl;
   private final FilterAcceptor logicalMeterFilters;
@@ -159,9 +178,16 @@ class LogicalMeterQueryDslJpaRepository
       .andJoinsOn(selectQuery)
       .andJoinsOn(countQuery);
 
-    List<LogicalMeterSummaryDto> logicalMeters = selectQuery
+    Collection<SortField<?>> sortFields = resolveSortFields(parameters, SORT_FIELDS_MAP);
+    if (sortFields.isEmpty()) {
+      sortFields.add(LOGICAL_METER.EXTERNAL_ID.asc());
+    }
+    SelectForUpdateStep<Record> select = selectQuery
+      .orderBy(sortFields)
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue())
+      .offset(Long.valueOf(pageable.getOffset()).intValue());
+
+    List<LogicalMeterSummaryDto> logicalMeters = select
       .fetchInto(LogicalMeterSummaryDto.class);
 
     return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
@@ -248,10 +274,14 @@ class LogicalMeterQueryDslJpaRepository
       .findAny();
   }
 
-  private static Function<LogicalMeterSummaryDto, LogicalMeterSummaryDto> withExpectedReadoutsFor(
-    SelectionPeriod period
-  ) {
-    return logicalMeterSummaryDto -> logicalMeterSummaryDto.toBuilder()
-      .build();
+  private static SortField<?> getSortField(Sort sort) {
+    Iterator<Sort.Order> orderIterator = sort.iterator();
+    Sort.Order order = orderIterator.next(); //only consider first sort for now
+    if (orderIterator.hasNext()) {
+      log.warn("Sorting on more than one property requested in: '%'", sort);
+    }
+    Field<?> sortField = field(order.getProperty());
+
+    return order.getDirection().isAscending() ? sortField.asc() : sortField.desc();
   }
 }

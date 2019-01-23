@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
@@ -27,7 +26,6 @@ import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -116,6 +114,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void pagedMeter_Has_Gateway() {
     var meter = given(logicalMeter());
+
     given(gateway().serial("gateway-serial").meter(meter));
 
     PagedLogicalMeterDto logicalMeterDto = asUser()
@@ -179,56 +178,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(3);
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(2);
-  }
-
-  @Ignore
-  @Test
-  public void findAllPagedAndSorted() {
-    // Address asc
-    testSorting(
-      "/meters?size=20&page=0&sort=address,asc",
-      "Unexpected address, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.address,
-      "Drottninggatan 2"
-    );
-
-    // Address desc
-    testSorting(
-      "/meters?size=20&page=0&sort=address,desc",
-      "Unexpected address, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.address,
-      "Kungsgatan 55"
-    );
-
-    // Manufacturer asc
-    testSorting(
-      "/meters?size=20&page=0&sort=manufacturer,asc",
-      "Unexpected manufacturer, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.manufacturer,
-      "ELV1"
-    );
-
-    // Manufacturer desc
-    testSorting(
-      "/meters?size=20&page=0&sort=manufacturer,desc",
-      "Unexpected manufacturer, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.manufacturer,
-      "ELV55"
-    );
-
-    testSorting(
-      "/meters?size=20&page=0&sort=city,asc",
-      "Unexpected city, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.city,
-      "Varberg"
-    );
-
-    testSorting(
-      "/meters?size=20&page=0&sort=city,desc",
-      "Unexpected city, sorting failed",
-      (PagedLogicalMeterDto meter) -> meter.location.city,
-      "Östersund"
-    );
   }
 
   @Test
@@ -1074,22 +1023,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurements.size())
       .as("Measurements should not be removed")
       .isEqualTo(1);
-  }
-
-  private void testSorting(
-    String url,
-    String errorMessage,
-    Function<PagedLogicalMeterDto, String> actual,
-    String expected
-  ) {
-    Page<PagedLogicalMeterDto> response = asUser()
-      .getPage(url, PagedLogicalMeterDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(55);
-
-    assertThat(actual.apply(response.getContent().get(0)))
-      .as(errorMessage)
-      .isEqualTo(expected);
   }
 
   private static UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {

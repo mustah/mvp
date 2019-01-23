@@ -114,6 +114,14 @@ public class Url implements UrlTemplate {
       return parameter(RESOLUTION, resolution);
     }
 
+    public UrlBuilder page(long pageNum) {
+      return parameter("page", pageNum);
+    }
+
+    public UrlBuilder size(long pageSize) {
+      return parameter("size", pageSize);
+    }
+
     public UrlBuilder sortBy(Object value) {
       return parameter(SORT, value);
     }

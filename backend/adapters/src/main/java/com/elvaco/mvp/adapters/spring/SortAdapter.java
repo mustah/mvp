@@ -11,7 +11,7 @@ public class SortAdapter implements Sort {
 
   private final List<Order> orders;
 
-  SortAdapter(org.springframework.data.domain.Sort sort) {
+  public SortAdapter(org.springframework.data.domain.Sort sort) {
     this.orders = new ArrayList<>();
 
     if (sort != null) {
