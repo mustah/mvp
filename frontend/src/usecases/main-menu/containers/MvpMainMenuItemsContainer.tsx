@@ -7,14 +7,14 @@ import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconMeter} from '../../../components/icons/IconMeter';
 import {IconReport} from '../../../components/icons/IconReport';
 import {Column} from '../../../components/layouts/column/Column';
-import {FoldableMainMenuItem} from '../../../components/layouts/foldable/Foldable';
+import {FoldableMainMenuItem} from '../../../components/layouts/foldable/FoldableMainMenuItem';
+import {InfoText} from '../../../components/texts/Texts';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname, isReportPage} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
 import {resetSelection} from '../../../state/user-selection/userSelectionActions';
 import {OnClick, PathNamed} from '../../../types/Types';
-import {SavedSelectionsContainer} from '../../sidemenu/containers/savedSelections/SavedSelectionsContainer';
-import {SelectionTreeContainer} from '../../sidemenu/containers/selection-tree/SelectionTreeContainer';
+import {SavedSelectionsContainer} from '../../sidemenu/containers/SavedSelectionsContainer';
 import {mainMenuIconProps, MainMenuItem} from '../components/menu-items/MainMenuItem';
 
 interface StateToProps extends PathNamed {
@@ -26,6 +26,8 @@ interface DispatchToProps {
 }
 
 type Props = StateToProps & DispatchToProps;
+
+const infoTextStyle: React.CSSProperties = {paddingTop: 8, paddingLeft: 16};
 
 const MvpMainMenuItems = ({isReportPage, pathName, resetSelection}: Props) => (
   <Column>
@@ -57,7 +59,7 @@ const MvpMainMenuItems = ({isReportPage, pathName, resetSelection}: Props) => (
       pathName={pathName}
       title={translate('report')}
     >
-      {isReportPage && <SelectionTreeContainer/>}
+      <InfoText style={infoTextStyle}>{translate('your saved reports will appear here')}</InfoText>
     </FoldableMainMenuItem>
   </Column>
 );

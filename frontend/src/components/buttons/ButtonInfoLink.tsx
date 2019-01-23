@@ -12,7 +12,7 @@ interface Props extends InfoButtonProps {
 }
 
 export const ButtonInfoLink = ({color, iconStyle, label, onClick, onLabelClick, labelStyle}: Props) => (
-  <RowMiddle>
+  <RowMiddle className="flex-nowrap">
     <InfoButton color={color} iconStyle={iconStyle} onClick={onClick}/>
     <Row onClick={onLabelClick} className="ButtonInfoLink-Label">
       <Normal style={labelStyle}>{label}</Normal>

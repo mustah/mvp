@@ -38,3 +38,6 @@ export const Xsmall = ({className, ...props}: TextProps) =>
 
 export const Error = ({className, ...props}: TextProps) =>
   <Normal {...props} className={classNames('Error', className)}/>;
+
+export const InfoText = ({className, ...props}: TextProps) =>
+  <Normal {...props} className={classNames('InfoText', className)}/>;

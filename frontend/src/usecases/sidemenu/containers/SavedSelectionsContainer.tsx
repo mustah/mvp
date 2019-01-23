@@ -2,27 +2,28 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {routes} from '../../../../app/routes';
-import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../../app/themes';
-import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
-import {FoldableMenuItem} from '../../../../components/layouts/foldable/Foldable';
-import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
-import {Normal} from '../../../../components/texts/Texts';
-import {history} from '../../../../index';
-import {RootState} from '../../../../reducers/rootReducer';
-import {translate} from '../../../../services/translationService';
-import {NormalizedState} from '../../../../state/domain-models/domainModels';
+import {history} from '../../..';
+import {routes} from '../../../app/routes';
+import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
+import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
+import {Normal} from '../../../components/texts/Texts';
+import {RootState} from '../../../reducers/rootReducer';
+import {translate} from '../../../services/translationService';
+import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   deleteUserSelection,
   fetchUserSelections,
   selectSavedSelection,
-} from '../../../../state/user-selection/userSelectionActions';
-import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {getUserSelection} from '../../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackWithId, OnClick, uuid} from '../../../../types/Types';
-import {LoadingListItem} from '../../components/LoadingListItem';
-import {SavedSelectionActionsDropdown} from '../../components/saved-selections/SavedSelectionActionsDropdown';
+} from '../../../state/user-selection/userSelectionActions';
+import {UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
+import {Callback, CallbackWithId, OnClick, uuid} from '../../../types/Types';
+import {LoadingTreeViewItems} from '../components/LoadingTreeViewItems';
+import {SavedSelectionActionsDropdown} from '../components/SavedSelectionActionsDropdown';
 import './SavedSelectionsContainer.scss';
+import {SelectionTreeContainer} from './SelectionTreeContainer';
 
 interface StateToProps {
   selection: UserSelection;
@@ -59,33 +60,35 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
     const renderListItem = (id: uuid) => {
       const item: UserSelection = entities[id];
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
-      const navigateToMeters: Callback = () => {
+      const selectAndNavigateToMeters: Callback = () => {
         history.push(routes.meter);
         selectSavedSelection(item.id);
       };
-
       return (
-        <ListItem
-          className="UserSelection-ListItem"
-          style={item.id === selection.id ? listItemStyleSelected : listItemStyle}
-          innerDivStyle={innerDivStyle}
-          hoverColor={secondaryBgHover}
-          value={item}
-          key={item.id}
-        >
-          <Row className="space-between">
-            <RowMiddle className="UserSelectionName flex-1" onClick={navigateToMeters}>
-              <Normal>{item.name}</Normal>
-            </RowMiddle>
-            <Row className="UserSelectionAction">
-              <SavedSelectionActionsDropdown
-                id={item.id}
-                confirmDelete={this.openDialog}
-                onSelectSelection={onSelectSelection}
-              />
-            </Row>
-          </Row>
-        </ListItem>
+        <Column key={`saved-${item.id}`}>
+          <ListItem
+            className="UserSelection-ListItem"
+            style={item.id === selection.id ? listItemStyleSelected : listItemStyle}
+            innerDivStyle={innerDivStyle}
+            hoverColor={secondaryBgHover}
+            value={item}
+            key={item.id}
+          >
+            <RowSpaceBetween>
+              <RowMiddle className="UserSelectionName flex-1" onClick={selectAndNavigateToMeters}>
+                <Normal>{item.name}</Normal>
+              </RowMiddle>
+              <Row className="UserSelectionAction">
+                <SavedSelectionActionsDropdown
+                  id={item.id}
+                  confirmDelete={this.openDialog}
+                  onSelectSelection={onSelectSelection}
+                />
+              </Row>
+            </RowSpaceBetween>
+          </ListItem>
+          {item.id === selection.id && <SelectionTreeContainer/>}
+        </Column>
       );
     };
 
@@ -93,7 +96,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
       ? result.map(renderListItem)
       : [
         (
-          <LoadingListItem
+          <LoadingTreeViewItems
             isFetching={isFetching}
             text={translate('no saved selections')}
             key="loading-list-item"
@@ -103,9 +106,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
 
     return (
       <>
-        <FoldableMenuItem title={translate('saved selections')} containerClassName="SavedSelectionsContainer">
-          {listItems}
-        </FoldableMenuItem>
+        {listItems}
 
         <ConfirmDialog
           isOpen={this.state.isDeleteDialogOpen}

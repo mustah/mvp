@@ -103,10 +103,6 @@ export const selectedStyle: React.CSSProperties = {
   backgroundColor: colors.selectedListItem
 };
 
-export const sideBarInnerDivStyle: React.CSSProperties = {
-  padding: '5px 0 5px 11px',
-};
-
 export const menuItemStyle: React.CSSProperties = {
   fontSize: fontSize.normal,
   textStyle: {
@@ -114,9 +110,6 @@ export const menuItemStyle: React.CSSProperties = {
     maxWidth: 150,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    // instead of hardcoding a height, the padding alleviates the "inline-block"
-    // that causes descenders (g j p etc) to be cut off (tested in Chrome and Firefox)
-    padding: '1px 0',
   },
 };
 
@@ -136,11 +129,6 @@ export const menuItemInnerDivStyle: React.CSSProperties = {
   ...menuItemStyle,
   lineHeight: '32px',
   minHeight: 32,
-};
-
-export const nestedListItemStyle: React.CSSProperties = {
-  paddingTop: 0,
-  paddingBottom: 0,
 };
 
 export const popoverStyle: React.CSSProperties = {

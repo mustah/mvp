@@ -2,12 +2,12 @@ import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
-import {routes} from '../../../../app/routes';
-import {actionMenuItemIconStyle} from '../../../../app/themes';
-import {ActionMenuItem} from '../../../../components/actions-dropdown/ActionMenuItem';
-import {ActionsDropdown} from '../../../../components/actions-dropdown/ActionsDropdown';
-import {translate} from '../../../../services/translationService';
-import {Callback, OnClick, OnClickWithId, RenderFunction, uuid} from '../../../../types/Types';
+import {routes} from '../../../app/routes';
+import {actionMenuItemIconStyle} from '../../../app/themes';
+import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
+import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
+import {translate} from '../../../services/translationService';
+import {Callback, OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
 
 interface Props {
   id: uuid;

@@ -64,16 +64,16 @@ export interface Styled {
   style?: React.CSSProperties;
 }
 
-export interface Styled {
-  style?: React.CSSProperties;
-}
-
 export interface Selectable {
   isSelected?: boolean;
 }
 
 export interface Selected {
   selected: boolean;
+}
+
+export interface Visible {
+  isVisible?: boolean;
 }
 
 export interface HasContent {

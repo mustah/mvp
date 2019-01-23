@@ -1,8 +1,10 @@
 import {uuid} from '../../../types/Types';
 import {ObjectsById} from '../../domain-models/domainModels';
 import {Medium} from '../../ui/graph/measurement/measurementModels';
+import {SelectionTreeItemType, SelectionTreeViewComposite} from '../../ui/selection-tree/selectionTreeModels';
 import {SelectedTreeEntities, SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
-import {getMedia, getMeterIds, getMeterIdsWithLimit} from '../selectionTreeSelectors';
+import {initialState} from '../selectionTreeReducer';
+import {getMedia, getMeterIdsWithLimit, getSelectionTreeViewItems} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -152,17 +154,6 @@ describe('selectionTreeSelectors', () => {
 
   });
 
-  describe('getMeterIds', () => {
-
-    it('gets all the meters', () => {
-      const expected: uuid[] = ['1', '2', '3', '4', '5', '6'];
-      const actual: uuid[] = getMeterIds(selectionTreeState);
-
-      expect(actual).toEqual(expected);
-    });
-
-  });
-
   describe('getMeterIdsWithLimit', () => {
 
     it('handles no selection tree meters', () => {
@@ -189,7 +180,69 @@ describe('selectionTreeSelectors', () => {
       };
       expect(getMeterIdsWithLimit(meters)).toEqual(['1', '2']);
     });
+  });
 
+  describe('getSelectionTreeViewItems', () => {
+
+    it('has no items', () => {
+      const items: SelectionTreeViewComposite[] = getSelectionTreeViewItems(initialState);
+      expect(items).toEqual([]);
+    });
+
+    it('has no expanded items', () => {
+      const items: SelectionTreeViewComposite[] = getSelectionTreeViewItems(selectionTreeState);
+
+      const expected: SelectionTreeViewComposite[] = [
+        {
+          id: 'sweden,kungsbacka',
+          text: 'kungsbacka',
+          type: SelectionTreeItemType.city,
+          items:
+            [
+              {
+                id: 'sweden,kungsbacka,kabelgatan 2',
+                text: 'kabelgatan 2',
+                type: SelectionTreeItemType.address,
+                items: [{id: 1, text: 'extId1', type: SelectionTreeItemType.meter, items: []}]
+              },
+              {
+                id: 'sweden,kungsbacka,kabelgatan 3',
+                text: 'kabelgatan 3',
+                type: SelectionTreeItemType.address,
+                items: [{id: 2, text: 'extId2', type: SelectionTreeItemType.meter, items: []}]
+              }
+            ]
+        },
+        {
+          id: 'sweden,gothenburg',
+          text: 'gothenburg',
+          type: SelectionTreeItemType.city,
+          items:
+            [
+              {
+                id: 'sweden,gothenburg,drottninggatan 1',
+                text: 'drottninggatan 1',
+                type: SelectionTreeItemType.address,
+                items: [{id: 5, text: 'extId5', type: SelectionTreeItemType.meter, items: []}]
+              },
+              {
+                id: 'sweden,gothenburg,kungsgatan 1',
+                text: 'kungsgatan 1',
+                type: SelectionTreeItemType.address,
+                items: [{id: 4, text: 'extId4', type: SelectionTreeItemType.meter, items: []}]
+              },
+              {
+                id: 'sweden,gothenburg,kungsgatan 2',
+                text: 'kungsgatan 2',
+                type: SelectionTreeItemType.address,
+                items: [{id: 3, text: 'extId3', type: SelectionTreeItemType.meter, items: []}]
+              }
+            ]
+        }
+      ];
+
+      expect(items).toEqual(expected);
+    });
   });
 
 });
