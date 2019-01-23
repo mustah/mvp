@@ -42,6 +42,9 @@ const useForceUpdate = () => React.useState(null)[1];
 
 type Props = StateToProps & DispatchToProps;
 
+const isNotActionDropdownClick = (event: TreeViewItemClickEvent): boolean =>
+  event.nativeEvent.path && event.nativeEvent.path[0].nodeName !== 'svg';
+
 const TreeViewComponent = ({
   fetchSelectionTree,
   isFetching,
@@ -64,8 +67,10 @@ const TreeViewComponent = ({
   };
 
   const onItemClick = (event: TreeViewItemClickEvent) => {
-    event.item.expanded = !event.item.expanded;
-    forceUpdate(null);
+    if (isNotActionDropdownClick(event)) {
+      event.item.expanded = !event.item.expanded;
+      forceUpdate(null);
+    }
   };
 
   return selectionTreeViewItems.length

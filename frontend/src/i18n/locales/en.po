@@ -59,6 +59,9 @@ msgstr "add organisation"
 msgid "show all in report"
 msgstr "show all in report"
 
+msgid "show average in report"
+msgstr "show average in report"
+
 msgid "edit user"
 msgstr "edit user"
 

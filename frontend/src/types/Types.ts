@@ -14,7 +14,6 @@ export type OnClick = (...args) => void;
 export type OnChange = OnClick;
 export type Callback = () => void;
 export type CallbackWith<T> = (arg1: T) => void;
-export type CallbackWith3<T, T2, T3> = (arg1: T, arg2: T2, arg3: T3) => void;
 export type OnClickWithId = CallbackWith<uuid>;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
 export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;

@@ -16,6 +16,7 @@ import {SelectionTreeContainer} from '../containers/SelectionTreeContainer';
 import {LoadingTreeViewItems} from './LoadingTreeViewItems';
 import {SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
 import './SavedSelections.scss';
+import './UserSelectionActionDropdown.scss';
 
 const innerDivStyle: React.CSSProperties = {
   padding: 0,
@@ -65,7 +66,7 @@ const ListItems = ({
             <RowMiddle className="UserSelectionName flex-1" onClick={selectAndNavigateToMeters}>
               <Normal>{item.name}</Normal>
             </RowMiddle>
-            <Row className="UserSelectionAction">
+            <Row className="UserSelectionActionDropdown">
               <SavedSelectionActionsDropdown
                 id={item.id}
                 confirmDelete={confirmDelete}

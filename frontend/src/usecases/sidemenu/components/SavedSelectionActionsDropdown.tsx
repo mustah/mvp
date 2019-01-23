@@ -33,6 +33,7 @@ export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToRepo
       onClick();
       confirmDelete(id);
     };
+
     return [
       (
         <Link to={`${routes.selection}`} className="link" key={`edit-user-selection-${id}`}>
