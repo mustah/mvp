@@ -8,13 +8,13 @@ import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {translate} from '../../../services/translationService';
 import {User} from '../../../state/domain-models/user/userModels';
-import {DispatchToProps, StateToProps} from '../containers/UserAdministrationContainer';
+import {DispatchToProps, StateToProps} from '../containers/UsersContainer';
 import {AddUserButton} from './AddUserButton';
 import {UserActions} from './UserActions';
 
 type Props = StateToProps & DispatchToProps;
 
-export const UserAdministration = ({
+export const UserList = ({
   isFetching,
   clearError,
   deleteUser,

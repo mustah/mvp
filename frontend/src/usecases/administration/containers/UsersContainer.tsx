@@ -7,7 +7,7 @@ import {getDomainModel, getError} from '../../../state/domain-models/domainModel
 import {clearUserError, deleteUser, fetchUsers} from '../../../state/domain-models/user/userApiActions';
 import {User} from '../../../state/domain-models/user/userModels';
 import {ClearError, ErrorResponse, Fetch, OnClickWithId} from '../../../types/Types';
-import {UserAdministration} from '../components/UserAdministration';
+import {UserList} from '../components/UserList';
 
 export interface StateToProps {
   users: DomainModel<User>;
@@ -33,5 +33,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: clearUserError,
 }, dispatch);
 
-export const UserAdministrationContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(UserAdministration);
+export const UsersContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(UserList);

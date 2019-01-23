@@ -4,7 +4,7 @@ import {paperStyle} from '../../../app/themes';
 import {PageTitle} from '../../../components/texts/Titles';
 import {AdminPageComponent} from '../../../containers/PageComponent';
 import {translate} from '../../../services/translationService';
-import {UserAdministrationContainer} from '../containers/UserAdministrationContainer';
+import {UsersContainer} from '../containers/UsersContainer';
 
 export const Users = () => (
   <AdminPageComponent>
@@ -13,7 +13,7 @@ export const Users = () => (
     </PageTitle>
 
     <Paper style={paperStyle}>
-      <UserAdministrationContainer/>
+      <UsersContainer/>
     </Paper>
   </AdminPageComponent>
 );
