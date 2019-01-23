@@ -56,6 +56,9 @@ msgstr "delete organisation"
 msgid "add organisation"
 msgstr "add organisation"
 
+msgid "show all in report"
+msgstr "show all in report"
+
 msgid "edit user"
 msgstr "edit user"
 

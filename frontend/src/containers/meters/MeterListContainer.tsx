@@ -22,8 +22,8 @@ import {EntityTypes, Pagination} from '../../state/ui/pagination/paginationModel
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {ComponentId} from '../../types/Types';
-import {selectEntryAdd, showMetersInGraph} from '../../usecases/report/reportActions';
 import {syncMeters, syncWithMetering} from '../../usecases/meter/meterActions';
+import {selectEntryAdd} from '../../usecases/report/reportActions';
 
 const mapStateToProps = (
   {
@@ -65,7 +65,6 @@ const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCre
   selectEntryAdd,
   syncWithMetering,
   syncMeters,
-  showMetersInGraph,
   fetchMeters,
   changePage,
   clearError: clearErrorMeters,

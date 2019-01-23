@@ -56,6 +56,9 @@ msgstr "ta bort organisation"
 msgid "add organisation"
 msgstr "lägg till organisation"
 
+msgid "show all in report"
+msgstr "visa alla i rapport"
+
 msgid "edit user"
 msgstr "redigera användare"
 

@@ -59,6 +59,10 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
 
     const renderListItem = (id: uuid) => {
       const item: UserSelection = entities[id];
+      const onAddAllToReport: Callback = () => {
+        history.push(routes.report);
+        selectSavedSelection(item.id);
+      };
       const onSelectSelection: Callback = () => selectSavedSelection(item.id);
       const selectAndNavigateToMeters: Callback = () => {
         history.push(routes.meter);
@@ -82,6 +86,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
                 <SavedSelectionActionsDropdown
                   id={item.id}
                   confirmDelete={this.openDialog}
+                  onAddAllToReport={onAddAllToReport}
                   onSelectSelection={onSelectSelection}
                 />
               </Row>
