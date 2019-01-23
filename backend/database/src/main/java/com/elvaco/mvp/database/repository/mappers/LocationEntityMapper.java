@@ -24,6 +24,7 @@ public class LocationEntityMapper {
       .city(location.city)
       .address(location.streetAddress)
       .coordinate(toGeoCoordinate(location))
+      .zip(location.zip)
       .build()
       : UNKNOWN_LOCATION;
   }
@@ -36,6 +37,7 @@ public class LocationEntityMapper {
       .city(entity.city)
       .address(entity.streetAddress)
       .coordinate(toGeoCoordinate(entity))
+      .zip(entity.zip)
       .buildLocationWithId();
   }
 
@@ -47,6 +49,7 @@ public class LocationEntityMapper {
         .country(location.getCountry())
         .city(location.getCity())
         .streetAddress(location.getAddress())
+        .zip(location.getZip())
         .build();
       if (location.hasCoordinates()) {
         GeoCoordinate coordinate = location.getCoordinate();

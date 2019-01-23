@@ -38,7 +38,7 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = MockAuthenticatedUser.user();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
-    assertThatThrownBy(() -> meteringRequestPublisher.request(null))
+    assertThatThrownBy(() -> meteringRequestPublisher.request((LogicalMeter) null))
       .isInstanceOf(Unauthorized.class)
       .hasMessageContaining("not allowed to publish synchronization requests");
 
@@ -50,7 +50,7 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = MockAuthenticatedUser.admin();
     MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
 
-    assertThatThrownBy(() -> meteringRequestPublisher.request(null))
+    assertThatThrownBy(() -> meteringRequestPublisher.request((LogicalMeter) null))
       .isInstanceOf(Unauthorized.class)
       .hasMessageContaining("not allowed to publish synchronization requests");
 
@@ -167,7 +167,9 @@ public class MeteringRequestPublisherTest {
   @Test
   public void gatewayIdIsNotSet() {
     MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
-    MeteringRequestPublisher meteringRequestPublisher = makeMeteringRequestPublisher(user);
+    MockJobService jobService = new MockJobService();
+    MeteringRequestPublisher meteringRequestPublisher =
+      makeMeteringRequestPublisher(user, jobService);
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .address("physical-meter-address")
       .build();
@@ -187,6 +189,27 @@ public class MeteringRequestPublisherTest {
     meteringRequestPublisher.request(logicalMeter);
 
     assertThat(spy.deserialize(0).gateway).isEqualTo(null);
+
+    assertThat(jobService.getAll().size()).isEqualTo(1);
+  }
+
+  @Test
+  public void syncGatewayId() {
+    MockAuthenticatedUser user = MockAuthenticatedUser.superAdmin();
+    MockJobService jobService = new MockJobService();
+    MeteringRequestPublisher meteringRequestPublisher =
+      makeMeteringRequestPublisher(user, jobService);
+    Gateway gateway = Gateway.builder()
+      .organisationId(user.getOrganisationId())
+      .serial("gateway-serial")
+      .productModel("gateway-product-model")
+      .build();
+
+    meteringRequestPublisher.request(gateway);
+
+    assertThat(spy.deserialize(0).gateway.id).isEqualTo("gateway-serial");
+
+    assertThat(jobService.getAll().size()).isEqualTo(1);
   }
 
   @Test
@@ -211,11 +234,16 @@ public class MeteringRequestPublisherTest {
   }
 
   private MeteringRequestPublisher makeMeteringRequestPublisher(MockAuthenticatedUser user) {
+    return makeMeteringRequestPublisher(user,new MockJobService());
+  }
+
+  private MeteringRequestPublisher makeMeteringRequestPublisher(MockAuthenticatedUser user,
+                                                                MockJobService service) {
     return new MeteringRequestPublisher(
       user,
       new MockOrganisations(singletonList(user.getOrganisation())),
       spy,
-      new MockJobService()
+      service
     );
   }
 

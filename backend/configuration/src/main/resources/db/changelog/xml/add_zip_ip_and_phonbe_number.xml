@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet id="Add zip to location" author="erimel">
+    <addColumn tableName="location">
+      <column name="zip" type="text"/>
+    </addColumn>
+    <addColumn tableName="location_aud" schemaName="evoaudit">
+      <column name="zip" type="text"/>
+      <column name="zip_mod" type="BOOLEAN"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="Add ip to gateway" author="erimel">
+    <addColumn tableName="gateway">
+      <column name="ip" type="text"/>
+    </addColumn>
+    <addColumn tableName="gateway_aud" schemaName="evoaudit">
+      <column name="ip" type="text"/>
+      <column name="ip_mod" type="BOOLEAN"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="Add phoneNumber to gateway" author="erimel">
+    <addColumn tableName="gateway">
+      <column name="phone_number" type="text"/>
+    </addColumn>
+    <addColumn tableName="gateway_aud" schemaName="evoaudit">
+      <column name="phone_number" type="text"/>
+      <column name="phone_number_mod" type="BOOLEAN"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

@@ -23,6 +23,8 @@ public final class GatewayWithMetersMapper {
       .organisationId(entity.pk.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
+      .ip(entity.ip)
+      .phoneNumber(entity.phoneNumber)
       .meters(toLogicalMeters(entity.meters))
       .statusLogs(entity.statusLogs.stream()
         .map(GatewayStatusLogEntityMapper::toDomainModel)

@@ -143,6 +143,7 @@ class LogicalMeterQueryDslJpaRepository
       LOCATION.COUNTRY,
       LOCATION.CITY,
       LOCATION.STREET_ADDRESS,
+      LOCATION.ZIP,
       METER_ALARM_LOG.ID,
       METER_ALARM_LOG.PHYSICAL_METER_ID,
       METER_ALARM_LOG.START,
@@ -176,6 +177,7 @@ class LogicalMeterQueryDslJpaRepository
       LOCATION.COUNTRY,
       LOCATION.CITY,
       LOCATION.STREET_ADDRESS,
+      LOCATION.ZIP,
       METER_DEFINITION.MEDIUM
     ).from(LOGICAL_METER);
 

@@ -18,6 +18,8 @@ public class GatewayEntityMapper {
       .organisationId(entity.pk.organisationId)
       .serial(entity.serial)
       .productModel(entity.productModel)
+      .ip(entity.ip)
+      .phoneNumber(entity.phoneNumber)
       .build();
   }
 
@@ -34,6 +36,8 @@ public class GatewayEntityMapper {
       new EntityPk(domainModel.id, domainModel.organisationId),
       domainModel.serial,
       domainModel.productModel,
+      domainModel.ip,
+      domainModel.phoneNumber,
       domainModel.statusLogs.stream().map(GatewayStatusLogEntityMapper::toEntity).collect(toSet())
     );
   }

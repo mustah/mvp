@@ -19,9 +19,10 @@ public class LocationWithId extends Location implements Identifiable<PrimaryKey>
     @Nullable String country,
     @Nullable String city,
     @Nullable String address,
+    @Nullable String zip,
     boolean shouldForceUpdate
   ) {
-    super(coordinate, country, city, address);
+    super(coordinate, country, city, address, zip);
     this.pk = pk;
     this.shouldForceUpdate = shouldForceUpdate;
   }

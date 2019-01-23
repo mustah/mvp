@@ -1,9 +1,11 @@
 package com.elvaco.mvp.web.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -28,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -44,9 +45,9 @@ public class LogicalMeterSyncController {
   @ResponseStatus(HttpStatus.ACCEPTED)
   @PostMapping("{id}")
   public List<SyncRequestResponseDto> synchronizeMeter(@PathVariable UUID id) {
-    return singletonList(logicalMeterUseCases.findById(id)
+    return logicalMeterUseCases.findById(id)
       .map(this::sync)
-      .orElseThrow(() -> new MeterNotFound(id)));
+      .orElseThrow(() -> new MeterNotFound(id));
   }
 
   @ResponseStatus(HttpStatus.ACCEPTED)
@@ -58,7 +59,7 @@ public class LogicalMeterSyncController {
       .setAllIds(LOGICAL_METER_ID, logicalMetersIds);
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
-      .map(this::sync)
+      .flatMap(logicalMeter -> sync(logicalMeter).stream())
       .collect(toList());
   }
 
@@ -77,8 +78,7 @@ public class LogicalMeterSyncController {
       .add(RequestParameter.ORGANISATION, id.toString());
 
     return logicalMeterUseCases.findAllBy(parameters).stream()
-      .map(this::sync)
-      .collect(toList());
+      .flatMap(logicalMeter -> sync(logicalMeter).stream()).collect(toList());
   }
 
   @GetMapping
@@ -97,9 +97,17 @@ public class LogicalMeterSyncController {
       .collect(toList());
   }
 
-  private SyncRequestResponseDto sync(LogicalMeter logicalMeter) {
+  private List<SyncRequestResponseDto> sync(LogicalMeter logicalMeter) {
     String jobId = meteringRequestPublisher.request(logicalMeter);
     propertiesUseCases.forceUpdateGeolocation(logicalMeter.id, logicalMeter.organisationId);
-    return new SyncRequestResponseDto(logicalMeter.id, jobId);
+    List<SyncRequestResponseDto> result = new ArrayList<>();
+    result.add(new SyncRequestResponseDto(logicalMeter.id,null, jobId));
+    result.addAll(logicalMeter.gateways.stream().map(this::syncGateway).collect(toList()));
+    return result;
+  }
+
+  private SyncRequestResponseDto syncGateway(Gateway gateway) {
+    String jobId = meteringRequestPublisher.request(gateway);
+    return new SyncRequestResponseDto(gateway.id,null, jobId);
   }
 }

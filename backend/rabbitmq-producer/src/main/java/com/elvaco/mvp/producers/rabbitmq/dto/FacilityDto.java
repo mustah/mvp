@@ -10,4 +10,5 @@ public class FacilityDto {
   public final String country;
   public final String city;
   public final String address;
+  public final String zip;
 }

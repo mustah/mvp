@@ -44,6 +44,10 @@ public class GatewayEntity extends IdentifiableType<EntityPk> {
   @Column(nullable = false)
   public String productModel;
 
+  public String ip;
+
+  public String phoneNumber;
+
   @ManyToMany(mappedBy = "gateways")
   public Set<LogicalMeterEntity> meters = new HashSet<>();
 
@@ -57,11 +61,15 @@ public class GatewayEntity extends IdentifiableType<EntityPk> {
     EntityPk pk,
     String serial,
     String productModel,
+    String ip,
+    String phoneNumber,
     Set<GatewayStatusLogEntity> statusLogs
   ) {
     this.pk = pk;
     this.serial = serial;
     this.productModel = productModel;
+    this.ip = ip;
+    this.phoneNumber = phoneNumber;
     this.meters = emptySet();
     this.statusLogs = unmodifiableSet(statusLogs);
   }
