@@ -93,8 +93,8 @@ export const actionMenuItemIconStyle: React.CSSProperties = {
   margin: '7px 0 0 4px',
 };
 
-export const sideBarStyle: React.CSSProperties = {
-  color: colors.lightGrey,
+export const dividerStyle: React.CSSProperties = {
+  backgroundColor: colors.dividerColor
 };
 
 export const selectedStyle: React.CSSProperties = {

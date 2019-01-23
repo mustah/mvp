@@ -1,9 +1,10 @@
+import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageEdit from 'material-ui/svg-icons/image/edit';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {actionMenuItemIconStyle} from '../../../app/themes';
+import {actionMenuItemIconStyle, dividerStyle} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {IconReport} from '../../../components/icons/IconReport';
@@ -50,6 +51,7 @@ export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToRepo
           key={`add-all-to-report-${id}`}
         />
       ),
+      (<Divider style={dividerStyle} key={`user-selection-divider-${id}`}/>),
       (
         <ActionMenuItem
           leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
