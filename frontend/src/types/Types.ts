@@ -76,6 +76,10 @@ export interface Selected {
   selected: boolean;
 }
 
+export interface Opened {
+  isOpen: boolean;
+}
+
 export interface Visible {
   isVisible?: boolean;
 }

@@ -9,17 +9,12 @@ import {Normal} from '../../../components/texts/Texts';
 import {history} from '../../../index';
 import {translate} from '../../../services/translationService';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {Callback, OnClickWithId, uuid} from '../../../types/Types';
+import {Callback, Identifiable, OnClickWithId, Opened, uuid} from '../../../types/Types';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
 import {SelectionTreeContainer} from '../containers/SelectionTreeContainer';
 import {LoadingTreeViewItems} from './LoadingTreeViewItems';
 import {SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
 import './SavedSelections.scss';
-
-interface State {
-  isDeleteDialogOpen: boolean;
-  selectionToDelete?: uuid;
-}
 
 const innerDivStyle: React.CSSProperties = {
   padding: 0,
@@ -37,7 +32,9 @@ const ListItems = ({
   selectSavedSelection,
   selection
 }: Props) => {
-  React.useEffect(() => fetchUserSelections(), [savedSelections]);
+  React.useEffect(() => {
+    fetchUserSelections();
+  }, [savedSelections]);
 
   const renderListItem = (id: uuid) => {
     const item: UserSelection = savedSelections.entities[id];
@@ -96,27 +93,18 @@ const ListItems = ({
   return <>{items}</>;
 };
 
-export class SavedSelections extends React.Component<Props, State> {
+type State = Opened & Partial<Identifiable>;
 
-  state: State = {isDeleteDialogOpen: false};
+export const SavedSelections = (props: Props) => {
+  const [{isOpen, id}, setOpened] = React.useState<State>({isOpen: false});
+  const closeConfirm = () => setOpened({isOpen: false});
+  const openConfirm = (id: uuid) => setOpened({isOpen: true, id});
+  const onConfirm = () => props.deleteUserSelection(id!);
 
-  render() {
-    return (
-      <>
-        <ListItems {...this.props} confirmDelete={this.openDialog}/>
-
-        <ConfirmDialog
-          isOpen={this.state.isDeleteDialogOpen}
-          close={this.closeDialog}
-          confirm={this.deleteSelectedUser}
-        />
-      </>
-    );
-  }
-
-  openDialog = (id: uuid) => this.setState({isDeleteDialogOpen: true, selectionToDelete: id});
-
-  closeDialog = () => this.setState({isDeleteDialogOpen: false});
-
-  deleteSelectedUser = () => this.props.deleteUserSelection(this.state.selectionToDelete!);
-}
+  return (
+    <>
+      <ListItems {...props} confirmDelete={openConfirm}/>
+      <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={onConfirm}/>
+    </>
+  );
+};
