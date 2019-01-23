@@ -12,9 +12,9 @@ import {SelectionTreeViewComposite} from '../../../state/ui/selection-tree/selec
 import {getOpenListItems} from '../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../types/Types';
-import {addToReport, toggleIncludingChildren, toggleSingleEntry} from '../../report/reportActions';
+import {toggleIncludingChildren, toggleSingleEntry} from '../../report/reportActions';
 import {LoadingTreeViewItems} from '../components/LoadingTreeViewItems';
-import {TreeViewListItem} from '../components/TreeViewItem';
+import {TreeViewListItem} from '../components/TreeViewListItem';
 
 const loadingStyle: React.CSSProperties = {paddingTop: 12, paddingBottom: 12};
 const emptyContentTextStyle: React.CSSProperties = {
@@ -32,7 +32,6 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  addToReport: OnClickWithId;
   fetchSelectionTree: Fetch;
   toggleExpanded: OnClickWithId;
   toggleSingleEntry: OnClickWithId;
@@ -44,7 +43,6 @@ const useForceUpdate = () => React.useState(null)[1];
 type Props = StateToProps & DispatchToProps;
 
 const TreeViewComponent = ({
-  addToReport,
   fetchSelectionTree,
   isFetching,
   selectionTree,
@@ -106,7 +104,6 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  addToReport,
   fetchSelectionTree,
   toggleExpanded,
   toggleSingleEntry,

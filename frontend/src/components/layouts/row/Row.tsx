@@ -3,8 +3,8 @@ import * as React from 'react';
 import {LayoutProps} from '../layout/Layout';
 import './Row.scss';
 
-export const Row = ({children, className, onClick, style}: LayoutProps) => (
-  <div className={classNames('Row', className)} onClick={onClick} style={style}>
+export const Row = ({children, className, onClick, style, title}: LayoutProps) => (
+  <div className={classNames('Row', className)} onClick={onClick} style={style} title={title}>
     {children}
   </div>
 );

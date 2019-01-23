@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {Children, OnClick, Styled} from '../../types/Types';
+import {Children, OnClick, Styled, Titled} from '../../types/Types';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
 import {ButtonClose} from '../buttons/DialogButtons';
 import {InfoButtonProps} from '../buttons/InfoButton';
 import {Row} from '../layouts/row/Row';
 import {Dialog} from './Dialog';
 
-interface Props extends InfoButtonProps, Styled {
+interface Props extends InfoButtonProps, Styled, Titled {
   autoScrollBodyContent: boolean;
   children: Children;
   label: string | number;
   labelStyle?: React.CSSProperties;
-  title?: string;
   onLabelClick?: OnClick;
 }
 
@@ -26,7 +25,7 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
   state: State = {isOpen: false};
 
   render() {
-    const {color, iconStyle, label, labelStyle, onLabelClick, style} = this.props;
+    const {color, iconStyle, label, labelStyle, onLabelClick, style, title} = this.props;
     return (
       <Row style={style}>
         <ButtonInfoLink
@@ -36,6 +35,7 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
           labelStyle={labelStyle || infoLabelStyle}
           onClick={this.open}
           onLabelClick={onLabelClick}
+          title={title}
         />
         {this.renderDialog()}
       </Row>

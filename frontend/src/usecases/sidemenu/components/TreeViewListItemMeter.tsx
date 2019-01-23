@@ -1,12 +1,13 @@
-import {ItemRenderProps} from '@progress/kendo-react-treeview';
 import * as React from 'react';
+import {routes} from '../../../app/routes';
 import {menuItemStyle} from '../../../app/themes';
 import {OpenDialogInfoButton} from '../../../components/dialog/OpenDialogInfoButton';
-import {FirstUpper} from '../../../components/texts/Texts';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
-import {SelectionTreeItemType, SelectionTreeViewComposite} from '../../../state/ui/selection-tree/selectionTreeModels';
-import {Styled, uuid} from '../../../types/Types';
+import {history} from '../../../index';
+import {firstUpperTranslated} from '../../../services/translationService';
+import {uuid} from '../../../types/Types';
+import {TreeViewMeterListItemProps} from '../containers/TreeViewListItemMeterContainer';
 
 const labelStyle: React.CSSProperties = {
   marginLeft: 4,
@@ -26,19 +27,16 @@ const iconStyle: React.CSSProperties = {
   height: 24,
 };
 
-const treeViewItemStyle: React.CSSProperties = {
-  paddingLeft: 8,
-  paddingTop: 6,
-  paddingBottom: 6,
-  ...menuItemStyle.textStyle,
-};
-
 const treeViewMeterStyle: React.CSSProperties = {
   ...menuItemStyle.textStyle,
+  cursor: 'pointer',
 };
 
-const TreeViewItemMeter = ({text, id, style}: SelectionTreeViewComposite & Styled) => {
-  const addMeterToReport = () => console.log('addMeterToReport'); // addToReport(item.id);
+export const TreeViewListItemMeter = ({text, id, addToReport}: TreeViewMeterListItemProps) => {
+  const addMeterToReport = () => {
+    addToReport(id);
+    history.push(`${routes.report}/${id}`);
+  };
   const selectedId: Maybe<uuid> = Maybe.maybe(id);
 
   return (
@@ -48,17 +46,10 @@ const TreeViewItemMeter = ({text, id, style}: SelectionTreeViewComposite & Style
       iconStyle={iconStyle}
       labelStyle={labelStyle}
       onLabelClick={addMeterToReport}
-      style={style}
+      style={treeViewMeterStyle}
+      title={firstUpperTranslated('add to report')}
     >
       <MeterDetailsContainer selectedId={selectedId}/>
     </OpenDialogInfoButton>
   );
-};
-
-export const TreeViewListItem = ({item}: ItemRenderProps) => {
-  const element: SelectionTreeViewComposite = item as SelectionTreeViewComposite;
-
-  return element.type === SelectionTreeItemType.meter
-    ? <TreeViewItemMeter {...element} style={treeViewMeterStyle}/>
-    : <FirstUpper style={treeViewItemStyle}>{element.text}</FirstUpper>;
 };

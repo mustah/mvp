@@ -59,7 +59,9 @@ const MvpMainMenuItems = ({isReportPage, pathName, resetSelection}: Props) => (
       pathName={pathName}
       title={translate('report')}
     >
-      <InfoText style={infoTextStyle}>{translate('your saved reports will appear here')}</InfoText>
+      <InfoText className="first-uppercase" style={infoTextStyle}>
+        {translate('your saved reports will appear here')}
+      </InfoText>
     </FoldableMainMenuItem>
   </Column>
 );

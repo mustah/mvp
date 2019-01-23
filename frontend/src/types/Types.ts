@@ -64,6 +64,10 @@ export interface Styled {
   style?: React.CSSProperties;
 }
 
+export interface Titled {
+  title?: string;
+}
+
 export interface Selectable {
   isSelected?: boolean;
 }
