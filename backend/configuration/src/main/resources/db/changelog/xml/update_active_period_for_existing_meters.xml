@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
   <changeSet id="Update active period for existing meters" author="Anton Löfgren">
-    <validCheckSum>8:903134b4d6ef09cb07a61adc31b4eedd</validCheckSum>
+    <validCheckSum>8:d58867afd08be76479ddea8d3528d855</validCheckSum>
     <sqlFile
       path="../sql/postgresql/update_active_period_for_existing_meters.sql"
       dbms="postgresql"
