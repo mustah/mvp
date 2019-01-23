@@ -21,7 +21,7 @@ from (select logical_meter.id,
                        --   or the next one's earliest, whichever is the greatest. This is necessary to avoid
                        --   overlapping periods when faulty meters have delivered measurements with erroneous
                        --   (too early) timestamps
-                       greatest(m.cmax, lag(m.cmin) over w)
+                       greatest(m.cmax, lead(m.cmin) over w)
                      end
                    )
                end as period
