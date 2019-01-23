@@ -30,8 +30,9 @@ import {OnLogout} from '../../usecases/auth/authModels';
 import {fillMissingMeasurements} from './dialogHelper';
 import './MeterMeasurements.scss';
 
-const renderValue = ({value, unit}: Measurement): string =>
-  value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '';
+const renderValue = (measurement?: Measurement): string =>
+  measurement !== undefined &&  measurement.value !== undefined && measurement.unit
+      ? `${roundMeasurement(measurement.value)} ${measurement.unit}` : '';
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
