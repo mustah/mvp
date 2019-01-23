@@ -94,6 +94,8 @@ public class LogicalMeterDtoMapperTest {
         .build()
     );
 
+    expected.alarms = List.of();
+
     ZonedDateTime statusChanged = ZonedDateTime.parse(CREATED_DATE_STRING);
     expected.gateway = new GatewayMandatoryDto(
       randomUUID(),

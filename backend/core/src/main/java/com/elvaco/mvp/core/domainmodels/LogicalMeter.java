@@ -35,8 +35,8 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final List<Gateway> gateways;
   @Nullable
   public final Double collectionPercentage;
-  @Nullable
-  public final AlarmLogEntry alarm;
+  @Singular
+  public final List<AlarmLogEntry> alarms;
   @Nullable
   public final StatusType status;
   @Builder.Default

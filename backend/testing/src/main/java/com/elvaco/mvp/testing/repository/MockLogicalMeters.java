@@ -132,7 +132,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       .physicalMeters(logicalMeter.physicalMeters)
       .location(logicalMeter.location)
       .collectionPercentage(logicalMeter.collectionPercentage)
-      .alarm(logicalMeter.alarm)
+      .alarms(logicalMeter.alarms)
       .build();
   }
 

@@ -22,7 +22,7 @@ export interface Alarm {
 export type MetersState = NormalizedPaginatedState<Meter>;
 
 export interface Meter extends Identifiable, LocationHolder {
-  alarm?: Alarm;
+  alarms?: Alarm[];
   address?: string;
   collectionPercentage?: number;
   readIntervalMinutes?: number;

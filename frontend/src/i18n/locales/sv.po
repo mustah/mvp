@@ -29,6 +29,9 @@ msgstr "m-bus mätartyp"
 msgid "revision"
 msgstr "revision"
 
+msgid "alarm code"
+msgstr "felkod"
+
 msgid "admin"
 msgstr "admin"
 
