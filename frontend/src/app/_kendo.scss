@@ -17,6 +17,12 @@ $grid-hovered-bg: $primary-bg-hover;
 
 $grid-cell-horizontal-border-width: 0;
 
+$pager-number-bg: null;
+$pager-number-text: $primary-fg;
+$pager-number-selected-bg: $primary-bg;
+$pager-number-hovered-bg: $primary-bg-active;
+$pager-number-hovered-text: $primary-fg-active;
+
 @import '~@progress/kendo-theme-material/scss/grid.scss';
 
 .k-header {
@@ -28,8 +34,29 @@ $grid-cell-horizontal-border-width: 0;
     border-width: 0;
 
     .k-grid-pager {
+      border-width: 0;
       justify-content: center;
       padding: $space $space $space - 4 $space;
+
+      .k-pager-numbers {
+        .k-link {
+          margin-right: $xs-space;
+          box-shadow: $box-shadow;
+
+          &:hover {
+            box-shadow: $box-shadow-hover;
+          }
+
+          &.k-state-selected {
+            font-weight: bold;
+
+            &:hover {
+              color: $white;
+              background-color: $pager-number-selected-bg;
+            }
+          }
+        }
+      }
     }
 
     th {
