@@ -13,10 +13,36 @@ $grid-header-text: $black;
 
 $grid-alt-bg: #fbfbfb;
 
-$grid-hovered-bg: $light-blue;
+$grid-hovered-bg: $primary-bg-hover;
 
 $grid-cell-horizontal-border-width: 0;
+
 @import '~@progress/kendo-theme-material/scss/grid.scss';
+
+.k-header {
+  text-transform: capitalize;
+}
+
+.k-widget {
+  &.k-grid {
+    border-width: 0;
+
+    .k-grid-pager {
+      justify-content: center;
+      padding: $space $space $space - 4 $space;
+    }
+
+    th {
+      text-align: left;
+      font-size: $medium;
+      cursor: default;
+
+      &.left-most {
+        padding-left: 16px;
+      }
+    }
+  }
+}
 
 /* tree view */
 $treeview-item-padding-x: 0;
@@ -43,18 +69,4 @@ ul.k-treeview-lines {
   margin: 0;
   line-height: 1;
   padding-left: 36px;
-}
-
-/* overrides */
-.k-header {
-  text-transform: capitalize;
-}
-
-.k-grid th {
-  text-align: left;
-  font-size: $normal;
-
-  &.left-most {
-    padding-left: 16px;
-  }
 }

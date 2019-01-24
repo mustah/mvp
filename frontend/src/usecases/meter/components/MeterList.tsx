@@ -8,6 +8,7 @@ import {
   GridSortSettings
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
+import {borderRadius} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
@@ -31,6 +32,9 @@ const gridStyle: React.CSSProperties = {
   borderTopWidth: 0,
   borderBottomWidth: 0,
   maxHeight: '1000px',
+  marginBottom: borderRadius,
+  borderBottomLeftRadius: borderRadius,
+  borderBottomRightRadius: borderRadius,
 };
 
 const sortable: GridSortSettings = {
