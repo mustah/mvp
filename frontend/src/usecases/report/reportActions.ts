@@ -122,10 +122,10 @@ export const addToReport = (id: uuid) =>
     }
   };
 
-type Level = 'cities' | 'addresses';
+type GroupingLevel = 'cities' | 'addresses';
 
 // this is what you get when you model a DAG in a flat way..
-const levelFromId = (id: string): Level => {
+const levelFromId = (id: string): GroupingLevel => {
   const levels: number = (id.match(/,/g) || []).length;
   return levels === 1 ? 'cities' : 'addresses';
 };
