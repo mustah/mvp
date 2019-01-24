@@ -4,15 +4,13 @@ import {routes} from '../../../app/routes';
 import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
-import {Column} from '../../../components/layouts/column/Column';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {Normal} from '../../../components/texts/Texts';
 import {history} from '../../../index';
-import {translate} from '../../../services/translationService';
-import {UserSelection} from '../../../state/user-selection/userSelectionModels';
-import {Callback, OnClickWithId, uuid} from '../../../types/Types';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
+import {Callback, IdNamed, OnClickWithId, uuid} from '../../../types/Types';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
-import {SelectionTreeContainer} from '../containers/SelectionTreeContainer';
 import {LoadingTreeViewItems} from './LoadingTreeViewItems';
 import {SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
 import './SavedSelections.scss';
@@ -26,65 +24,72 @@ interface ConfirmDelete {
   confirmDelete: OnClickWithId;
 }
 
-type ListItemProps = StateToProps & DispatchToProps & ConfirmDelete;
+type Props = DispatchToProps & StateToProps;
 
 const ListItems = ({
   confirmDelete,
   isFetching,
+  isMeterPage,
   fetchUserSelections,
+  resetSelection,
   savedSelections,
   selectSavedSelection,
   selection
-}: ListItemProps) => {
+}: Props & ConfirmDelete) => {
   React.useEffect(() => {
     fetchUserSelections();
   }, [savedSelections]);
 
-  const renderListItem = (id: uuid) => {
-    const item: UserSelection = savedSelections.entities[id];
+  const allMetersSelectionListItem = {id: initialSelectionId, name: firstUpperTranslated('all')};
+
+  const renderListItem = (savedSelectionId: uuid) => {
+    const {id, name}: IdNamed = savedSelectionId === initialSelectionId
+      ? allMetersSelectionListItem
+      : savedSelections.entities[savedSelectionId];
+
     const onAddAllToReport: Callback = () => {
       history.push(routes.report);
-      selectSavedSelection(item.id);
+      selectSavedSelection(id);
     };
-    const onSelectSelection: Callback = () => selectSavedSelection(item.id);
-    const selectAndNavigateToMeters: Callback = () => {
-      if (item.id !== selection.id) {
-        history.push(routes.meter);
-        selectSavedSelection(item.id);
+    const onEditSelection: Callback = () => selectSavedSelection(id);
+    const onSelect: Callback = () => {
+      history.push(routes.meter);
+      if (id === initialSelectionId) {
+        resetSelection();
+      } else {
+        selectSavedSelection(id);
       }
     };
 
     return (
-      <Column key={`saved-${item.id}`}>
-        <ListItem
-          className="UserSelection-ListItem"
-          style={item.id === selection.id ? listItemStyleSelected : listItemStyle}
-          innerDivStyle={innerDivStyle}
-          hoverColor={secondaryBgHover}
-          value={item}
-          key={item.id}
-        >
-          <RowSpaceBetween>
-            <RowMiddle className="UserSelectionName flex-1" onClick={selectAndNavigateToMeters}>
-              <Normal>{item.name}</Normal>
-            </RowMiddle>
-            <Row className="UserSelectionActionDropdown">
-              <SavedSelectionActionsDropdown
-                id={item.id}
-                confirmDelete={confirmDelete}
-                onAddAllToReport={onAddAllToReport}
-                onSelectSelection={onSelectSelection}
-              />
-            </Row>
-          </RowSpaceBetween>
-        </ListItem>
-        {item.id === selection.id && <SelectionTreeContainer/>}
-      </Column>
+      <ListItem
+        className="UserSelection-ListItem"
+        style={id === selection.id && isMeterPage ? listItemStyleSelected : listItemStyle}
+        innerDivStyle={innerDivStyle}
+        hoverColor={secondaryBgHover}
+        key={`saved-${id}`}
+      >
+        <RowSpaceBetween>
+          <RowMiddle className="UserSelectionName flex-1" onClick={onSelect}>
+            <Normal>{name}</Normal>
+          </RowMiddle>
+          <Row className="UserSelectionActionDropdown">
+            <SavedSelectionActionsDropdown
+              id={id}
+              confirmDelete={confirmDelete}
+              onAddAllToReport={onAddAllToReport}
+              onEditSelection={onEditSelection}
+            />
+          </Row>
+        </RowSpaceBetween>
+      </ListItem>
     );
   };
 
-  const items = savedSelections.result.length
-    ? savedSelections.result.map(renderListItem)
+  const savedSelectionIds = savedSelections.result;
+
+  const items = savedSelectionIds.length
+    ? [initialSelectionId, ...savedSelectionIds].map(renderListItem)
     : [
       (
         <LoadingTreeViewItems
@@ -96,8 +101,6 @@ const ListItems = ({
     ];
   return <>{items}</>;
 };
-
-type Props = DispatchToProps & StateToProps;
 
 export const SavedSelections = (props: Props) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(props.deleteUserSelection);

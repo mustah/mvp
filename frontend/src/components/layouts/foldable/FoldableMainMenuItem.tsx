@@ -1,7 +1,6 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
-import {Clickable} from '../../../types/Types';
+import {Selectable} from '../../../types/Types';
 import {MainMenuItem} from '../../../usecases/main-menu/components/menu-items/MainMenuItem';
 import {IconRightArrow} from '../../icons/IconRightArrow';
 import {Column} from '../column/Column';
@@ -11,10 +10,8 @@ import './Foldable.scss';
 import {useToggleVisibility} from './foldableHook';
 import './FoldableMainMenuItem.scss';
 
-interface Props extends FoldableProps, Partial<Clickable> {
+interface Props extends FoldableProps, Required<Selectable> {
   icon: React.ReactElement<any>;
-  isSelected: boolean;
-  linkTo: string;
 }
 
 export const FoldableMainMenuItem = ({
@@ -24,8 +21,6 @@ export const FoldableMainMenuItem = ({
   containerClassName,
   fontClassName,
   isSelected,
-  linkTo,
-  onClick,
   title,
   isVisible: initialVisibility = true
 }: Props) => {
@@ -35,15 +30,9 @@ export const FoldableMainMenuItem = ({
 
   return (
     <Column className={classNames('Foldable', containerClassName)}>
-      <RowMiddle className={classNames('Foldable-title', 'clickable', selected)}>
-        <IconRightArrow onClick={showHide} className={classNames('Foldable-arrow', visible)}/>
-        <Link to={linkTo} className="link" onClick={onClick}>
-          <MainMenuItem
-            name={title}
-            fontClassName={fontClassName}
-            icon={icon}
-          />
-        </Link>
+      <RowMiddle onClick={showHide} className={classNames('Foldable-title', 'clickable', selected)}>
+        <IconRightArrow className={classNames('Foldable-arrow', visible)}/>
+        <MainMenuItem name={title} fontClassName={fontClassName} icon={icon}/>
       </RowMiddle>
       <Row className={classNames('Foldable-content', className, visible)}>
         {children}

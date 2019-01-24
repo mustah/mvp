@@ -17,6 +17,7 @@ import {
   SET_THRESHOLD,
 } from './userSelectionActions';
 import {
+  initialSelectionId,
   ParameterName,
   SelectionItem,
   SelectionParameter,
@@ -27,7 +28,7 @@ import {
 
 export const initialState: UserSelectionState = {
   userSelection: {
-    id: -1,
+    id: initialSelectionId,
     name: 'all',
     isChanged: false,
     selectionParameters: {

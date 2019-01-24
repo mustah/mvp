@@ -14,16 +14,16 @@ import {Callback, OnClick, OnClickWithId, RenderFunction, uuid} from '../../../t
 interface Props {
   id: uuid;
   confirmDelete: OnClickWithId;
-  onSelectSelection: Callback;
+  onEditSelection: Callback;
   onAddAllToReport: Callback;
 }
 
-export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToReport, onSelectSelection}: Props) => {
+export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToReport, onEditSelection}: Props) => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
-    const onClickEdit = () => {
+    const onClickEditSelection = () => {
       onClick();
-      onSelectSelection();
+      onEditSelection();
     };
     const onClickAddAllToReport = () => {
       onClick();
@@ -40,7 +40,7 @@ export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToRepo
           <ActionMenuItem
             leftIcon={<ImageEdit style={actionMenuItemIconStyle}/>}
             name={translate('edit user selection')}
-            onClick={onClickEdit}
+            onClick={onClickEditSelection}
           />
         </Link>
       ),

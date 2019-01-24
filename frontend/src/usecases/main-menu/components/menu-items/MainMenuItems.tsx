@@ -9,12 +9,12 @@ import {FoldableMainMenuItem} from '../../../../components/layouts/foldable/Fold
 import {InfoText} from '../../../../components/texts/Texts';
 import {translate} from '../../../../services/translationService';
 import {SavedSelectionsContainer} from '../../../sidemenu/containers/SavedSelectionsContainer';
-import {MainMenuItemProps} from '../../containers/MvpMainMenuItemsContainer';
+import {StateToProps} from '../../containers/MvpMainMenuItemsContainer';
 import {mainMenuIconProps, MainMenuItem} from './MainMenuItem';
 
 const infoTextStyle: React.CSSProperties = {paddingTop: 8, paddingLeft: 16};
 
-export const MainMenuItems = ({isMeterPage, isReportPage, pathName, resetSelection}: MainMenuItemProps) => {
+export const MainMenuItems = ({isMeterPage, isReportPage, pathName}: StateToProps) => {
   const canShowReportMenuItemContent = isReportPage && !pathName.includes('selection');
   const canShowMeterMenuItemContent = isMeterPage;
 
@@ -32,8 +32,6 @@ export const MainMenuItems = ({isMeterPage, isReportPage, pathName, resetSelecti
         icon={<IconMeter {...mainMenuIconProps}/>}
         isSelected={canShowMeterMenuItemContent}
         isVisible={canShowMeterMenuItemContent}
-        linkTo={routes.meter}
-        onClick={resetSelection}
         title={translate('meter')}
       >
         <SavedSelectionsContainer/>
@@ -43,7 +41,6 @@ export const MainMenuItems = ({isMeterPage, isReportPage, pathName, resetSelecti
         icon={<IconReport {...mainMenuIconProps}/>}
         isSelected={canShowReportMenuItemContent}
         isVisible={canShowReportMenuItemContent}
-        linkTo={routes.report}
         title={translate('report')}
       >
         <InfoText className="first-uppercase" style={infoTextStyle}>
