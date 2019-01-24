@@ -63,14 +63,14 @@ const ListItems = ({
 
     return (
       <ListItem
-        className="UserSelection-ListItem"
+        className="SavedSelection-ListItem"
         style={id === selection.id && isMeterPage ? listItemStyleSelected : listItemStyle}
         innerDivStyle={innerDivStyle}
         hoverColor={secondaryBgHover}
         key={`saved-${id}`}
       >
         <RowSpaceBetween>
-          <RowMiddle className="UserSelectionName flex-1" onClick={onSelect}>
+          <RowMiddle className="SavedSelection-Name flex-1" onClick={onSelect}>
             <Normal>{name}</Normal>
           </RowMiddle>
           <Row className="UserSelectionActionDropdown">
