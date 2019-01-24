@@ -59,7 +59,7 @@ public class BasicTest {
 
   @Test
   public void fetchByFullAddressInfo() {
-    Address address = new Address("Kabelgatan 2T", "Kungsbacka", "Sweden");
+    Address address = new Address("Kabelgatan 2T", "", "Kungsbacka", "Sweden");
 
     GeoLocation geo = addrService.getGeoByAddress(address);
 
@@ -72,6 +72,7 @@ public class BasicTest {
     request.setStreet("Kabelgatan 2T");
     request.setCity("Kungsbacka");
     request.setCountry("Sweden");
+    request.setZip("");
     request.setCallbackUrl(callbackUrl());
     request.setErrorCallbackUrl(callbackUrl());
 
@@ -87,7 +88,10 @@ public class BasicTest {
       1.0
     ));
 
-    assertThat(response.address).isEqualTo(new AddressDto("Kabelgatan 2T", "Kungsbacka", "Sweden"));
+    assertThat(response.address).isEqualTo(new AddressDto("Kabelgatan 2T",
+      "",
+      "Kungsbacka",
+      "Sweden"));
   }
 
   @Test
@@ -95,6 +99,7 @@ public class BasicTest {
     GeoRequest request = new GeoRequest();
     request.setStreet("Kabelgatan 2T");
     request.setCity("Kungsbacka");
+    request.setZip("");
     request.setCountry("Sweden");
     request.setCallbackUrl(callbackUrl());
     request.setErrorCallbackUrl(callbackUrl());
@@ -120,6 +125,7 @@ public class BasicTest {
   public void fetchTwoWithoutForce() throws URISyntaxException {
     GeoRequest request = new GeoRequest();
     request.setStreet("Kabelgatan 2T");
+    request.setZip("");
     request.setCity("Kungsbacka");
     request.setCountry("Sweden");
     request.setCallbackUrl(callbackUrl());
@@ -146,6 +152,7 @@ public class BasicTest {
   public void fetchAndRespondToEncodedCallbackUrl() throws URISyntaxException {
     GeoRequest request = new GeoRequest();
     request.setStreet("Drottningvägen 1");
+    request.setZip("");
     request.setCity("Växjö");
     request.setCountry("Sweden");
     request.setCallbackUrl(callbackUrl());
@@ -167,6 +174,7 @@ public class BasicTest {
 
     assertThat(lastResponse.address).isEqualTo(new AddressDto(
       "Drottningvägen 1",
+      "",
       "Växjö",
       "Sweden"
     ));
@@ -176,7 +184,7 @@ public class BasicTest {
   public void notFound() {
     ResponseEntity<String> response = new TestRestTemplate()
       .getForEntity(
-        urlOf("/address?city=kungsbacka&country=sverige&street=Eriksgatan 435&callbackUrl="
+        urlOf("/address?city=kungsbacka&country=sverige&street=Eriksgatan 435&zip=&callbackUrl="
               + callbackUrl()
               + "&errorCallbackUrl=" + errorCallbackUrl()),
         String.class
@@ -210,7 +218,8 @@ public class BasicTest {
       "Callback URL must be provided.",
       "Street must be provided.",
       "Error callback URL must be provided.",
-      "Country must be provided."
+      "Country must be provided.",
+      "Zip must be provided but might be blank."
     );
   }
 

@@ -39,10 +39,10 @@ public class CallbackService {
 
   @Async
   public CallbackEntity enqueueCallback(URI callbackUrl, Address address, GeoLocation geo) {
-    // TODO: Add to callback queue
     GeoResponse response = new GeoResponse(
       new AddressDto(
         address.street,
+        address.zip,
         address.city,
         address.country
       ),
@@ -66,7 +66,7 @@ public class CallbackService {
 
   @Async
   public CallbackEntity enqueueCallback(URI callbackUrl, Address address, ErrorDto error) {
-    error.address = new AddressDto(address.street, address.city, address.country);
+    error.address = new AddressDto(address.street, address.zip, address.city, address.country);
 
     CallbackEntity callback = new CallbackEntity();
     callback.setCallback(callbackUrl);

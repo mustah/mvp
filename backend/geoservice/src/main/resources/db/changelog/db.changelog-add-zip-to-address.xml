@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet id="add-force-flag" author="erimel">
+    <addColumn tableName="geo_request_entity">
+      <column name="zip" type="varchar(255)" defaultValue="" value="">
+      </column>
+    </addColumn>
+    <addNotNullConstraint tableName="geo_request_entity" columnName="zip" columnDataType="varchar(255)"/>
+
+    <addColumn tableName="address_geo_entity">
+      <column name="zip" type="varchar(255)" defaultValue="" value="">
+      </column>
+    </addColumn>
+    <addNotNullConstraint tableName="address_geo_entity" columnName="zip" columnDataType="varchar(255)"/>
+  </changeSet>
+  <changeSet id="add zip to address constraint" author="erimel">
+    <dropUniqueConstraint tableName="address_geo_entity" constraintName="i_street_city_country"/>
+    <addUniqueConstraint columnNames="street, zip, city, country" constraintName="i_street_zip_city_country" tableName="address_geo_entity"/>
+  </changeSet>
+  </databaseChangeLog>

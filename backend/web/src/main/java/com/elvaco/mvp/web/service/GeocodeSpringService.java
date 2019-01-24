@@ -34,6 +34,7 @@ public class GeocodeSpringService implements GeocodeService {
   private Optional<String> makeGeoServiceUrl(LocationWithId meterLocation) {
     return GeocodeUri.of(geoServiceUrl.trim() + "/address")
       .countryParam(meterLocation.getCountry())
+      .zipParam(meterLocation.getZip())
       .cityParam(meterLocation.getCity())
       .addressParam(meterLocation.getAddress())
       .forceUpdateParam(meterLocation.shouldForceUpdate)

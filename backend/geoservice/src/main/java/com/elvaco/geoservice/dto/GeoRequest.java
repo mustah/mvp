@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import static com.elvaco.geoservice.UriUtils.asDecodedUri;
 import static com.elvaco.geoservice.UriUtils.decode;
+import static com.elvaco.geoservice.UriUtils.decodeAllowBlank;
 
 @ToString
 @Getter
@@ -29,6 +30,9 @@ public class GeoRequest {
   @NotBlank(message = "Street must be provided.")
   private String street;
 
+  @NotNull(message = "Zip must be provided but might be blank.")
+  private String zip;
+
   @NotBlank(message = "City must be provided.")
   private String city;
 
@@ -47,6 +51,10 @@ public class GeoRequest {
 
   public void setStreet(String street) {
     this.street = decode(street);
+  }
+
+  public void setZip(String zip) {
+    this.zip = decodeAllowBlank(zip);
   }
 
   public void setCity(String city) {

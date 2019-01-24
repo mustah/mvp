@@ -44,6 +44,7 @@ public class RequestQueue {
   public void enqueueRequest(GeoRequest request) {
     Address address = new Address(
       request.getStreet(),
+      request.getZip(),
       request.getCity(),
       request.getCountry()
     );
