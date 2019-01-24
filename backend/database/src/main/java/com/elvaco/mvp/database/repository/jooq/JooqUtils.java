@@ -20,6 +20,7 @@ import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.inline;
+import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.table;
 import static org.jooq.impl.DSL.val;
 
@@ -97,7 +98,7 @@ public class JooqUtils {
   }
 
   private static Field<Double> asHourly(TableField<MeasurementStatDataRecord, Double> field) {
-    return field.divide(PHYSICAL_METER.READ_INTERVAL_MINUTES.divide(inline(60.0)));
+    return field.divide(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L).divide(inline(60.0)));
   }
 }
 

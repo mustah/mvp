@@ -35,13 +35,12 @@ import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DEFAULT_READ_INTERVAL_MINUTES;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mapToEvoMedium;
 
 @Slf4j
 @AllArgsConstructor
 public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessageConsumer {
-
-  private static final Long DEFAULT_READ_INTERVAL_MINUTES = 60L;
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;

@@ -420,7 +420,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .externalId(EXTERNAL_ID)
         .medium(Medium.UNKNOWN_MEDIUM.medium)
         .logicalMeterId(logicalMeter.id)
-        .readIntervalMinutes(0)
+        .readIntervalMinutes(60)
         .activePeriod(physicalMeter.activePeriod)
         .build()
       ).build());
