@@ -26,6 +26,8 @@ public class MeteringMessageMapper {
    */
   public static final ZoneId METERING_TIMEZONE = ZoneId.of("UTC+1");
 
+  public static final Long DEFAULT_READ_INTERVAL_MINUTES = 60L;
+
   static final Map<String, String> METERING_TO_MVP_UNITS = Map.of(
     "Celsius", "°C",
     "Kelvin", "K",

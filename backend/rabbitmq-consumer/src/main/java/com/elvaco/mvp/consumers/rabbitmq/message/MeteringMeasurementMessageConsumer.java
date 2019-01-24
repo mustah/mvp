@@ -26,6 +26,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DEFAULT_READ_INTERVAL_MINUTES;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantity;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
@@ -86,7 +87,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           .externalId(facilityId)
           .medium(UNKNOWN_MEDIUM.medium)
           .logicalMeterId(logicalMeter.id)
-          .readIntervalMinutes(0)
+          .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
           .activePeriod(PeriodRange.halfOpenFrom(zonedMeasurementTimestamp, null))
           .build()
         );
