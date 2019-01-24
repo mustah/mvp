@@ -19,7 +19,7 @@ import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record15;
+import org.jooq.Record16;
 import org.jooq.RecordHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -78,7 +78,8 @@ class GatewayJooqJpaRepository
       LOCATION.CONFIDENCE,
       LOCATION.COUNTRY,
       LOCATION.CITY,
-      LOCATION.STREET_ADDRESS
+      LOCATION.STREET_ADDRESS,
+      LOCATION.ZIP
     ).distinctOn(GATEWAY.ID, LOCATION.LOGICAL_METER_ID)
       .from(GATEWAY);
 
@@ -149,15 +150,15 @@ class GatewayJooqJpaRepository
   }
 
   private static class GatewaySummaryRecordHandler
-    implements RecordHandler<Record15<UUID, UUID, String, String, Long, String,
-    OffsetDateTime, OffsetDateTime, UUID, Double, Double, Double, String, String, String>> {
+    implements RecordHandler<Record16<UUID, UUID, String, String, Long, String,
+    OffsetDateTime, OffsetDateTime, UUID, Double, Double, Double, String, String, String, String>> {
 
     private final Map<UUID, GatewaySummaryDto> gatewaySummaryDtos = new HashMap<>();
 
     @Override
     public void next(
-      Record15<UUID, UUID, String, String, Long, String, OffsetDateTime, OffsetDateTime, UUID,
-        Double, Double, Double, String, String, String> record
+      Record16<UUID, UUID, String, String, Long, String, OffsetDateTime, OffsetDateTime, UUID,
+              Double, Double, Double, String, String, String,String> record
     ) {
       GatewaySummaryDto summaryDto = gatewaySummaryDtos.getOrDefault(
         record.value1(),
@@ -181,7 +182,8 @@ class GatewayJooqJpaRepository
             record.value12(),
             record.value13(),
             record.value14(),
-            record.value15()
+            record.value15(),
+            record.value16()
           )
         )
       );

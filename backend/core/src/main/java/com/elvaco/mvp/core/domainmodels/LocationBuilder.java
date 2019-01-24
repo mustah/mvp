@@ -10,6 +10,7 @@ public class LocationBuilder {
   private String country;
   private String city;
   private String address;
+  private String zip;
   private GeoCoordinate coordinate;
   private Double latitude;
   private Double longitude;
@@ -49,6 +50,11 @@ public class LocationBuilder {
     return this;
   }
 
+  public LocationBuilder zip(String zip) {
+    this.zip = toUpperCaseOrNull(zip);
+    return this;
+  }
+
   public LocationBuilder latitude(Double latitude) {
     this.latitude = latitude;
     return this;
@@ -80,7 +86,7 @@ public class LocationBuilder {
 
   public Location build() {
     buildCoordinates();
-    return new Location(coordinate, country, city, address);
+    return new Location(coordinate, country, city, address, zip);
   }
 
   public LocationWithId buildLocationWithId() {
@@ -91,6 +97,7 @@ public class LocationBuilder {
       country,
       city,
       address,
+      zip,
       shouldForceUpdate
     );
   }
@@ -111,12 +118,17 @@ public class LocationBuilder {
 
   @Nullable
   private static String toLowerCaseOrNull(String str) {
-    return str != null ? trimToNull(str) : null;
+    return str != null ? trimToNull(str.toLowerCase()) : null;
   }
 
   @Nullable
   private static String trimToNull(String str) {
     String trimmed = str.trim();
-    return trimmed.isEmpty() ? null : trimmed.toLowerCase();
+    return trimmed.isEmpty() ? null : trimmed;
+  }
+
+  @Nullable
+  private static String toUpperCaseOrNull(String str) {
+    return str != null ? trimToNull(str.toUpperCase()) : null;
   }
 }

@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class SyncRequestResponseDto {
 
   public UUID meterId;
+  public UUID gatewayId;
   public String jobId;
 }

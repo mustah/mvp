@@ -37,6 +37,7 @@ public class LocationEntity extends IdentifiableType<EntityPk> {
   public String country;
   public String city;
   public String streetAddress;
+  public String zip;
   public Double latitude;
   public Double longitude;
   public Double confidence;

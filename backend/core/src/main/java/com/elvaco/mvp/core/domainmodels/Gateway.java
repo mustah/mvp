@@ -28,6 +28,9 @@ public class Gateway implements Identifiable<UUID>, PrimaryKeyed {
   public final UUID organisationId;
   public final String serial;
   public final String productModel;
+  public final String ip;
+  public final String phoneNumber;
+
   @Singular
   public List<LogicalMeter> meters;
   @Singular

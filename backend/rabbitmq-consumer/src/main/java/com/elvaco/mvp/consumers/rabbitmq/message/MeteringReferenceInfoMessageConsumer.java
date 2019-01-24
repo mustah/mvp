@@ -71,6 +71,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
       .country(facility.country)
       .city(facility.city)
       .address(facility.address)
+      .zip(facility.zip)
       .build();
 
     MeterDto meterDto = message.meter;
@@ -224,10 +225,14 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
           .serial(gatewayStatusDto.id)
           .productModel(gatewayStatusDto.productModel)
           .meter(logicalMeter)
+          .ip(gatewayStatusDto.ip)
+          .phoneNumber(gatewayStatusDto.phoneNumber)
           .build()
         ))
         .toBuilder()
         .productModel(gatewayStatusDto.productModel)
+        .ip(gatewayStatusDto.ip)
+        .phoneNumber(gatewayStatusDto.phoneNumber)
         .build()
         .replaceActiveStatus(StatusType.from(gatewayStatusDto.status));
     } else {

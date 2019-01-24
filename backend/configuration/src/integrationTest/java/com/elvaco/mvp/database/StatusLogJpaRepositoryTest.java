@@ -70,6 +70,8 @@ public class StatusLogJpaRepositoryTest extends IntegrationTest {
       new EntityPk(gatewayId, context().organisationId()),
       "",
       "",
+      "",
+      "",
       emptySet()
     ));
 

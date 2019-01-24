@@ -9,25 +9,28 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Location {
 
-  public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
+  public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null, null);
 
   public static final String UNKNOWN = "unknown";
 
   private final String address;
   private final String city;
   private final String country;
+  private final String zip;
   private final GeoCoordinate coordinate;
 
   protected Location(
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,
     @Nullable String city,
-    @Nullable String address
+    @Nullable String address,
+    @Nullable String zip
   ) {
     this.coordinate = coordinate;
     this.country = country;
     this.city = city;
     this.address = address;
+    this.zip = zip;
   }
 
   public Location(
@@ -36,13 +39,15 @@ public class Location {
     @Nullable Double confidence,
     @Nullable String country,
     @Nullable String city,
-    @Nullable String address
+    @Nullable String address,
+    @Nullable String zip
   ) {
     this(
       GeoCoordinate.newOrNull(latitude, longitude, confidence),
       country,
       city,
-      address
+      address,
+      zip
     );
   }
 
@@ -59,6 +64,11 @@ public class Location {
   @Nullable
   public String getCountry() {
     return country;
+  }
+
+  @Nullable
+  public String getZip() {
+    return zip;
   }
 
   public String getAddressOrUnknown() {

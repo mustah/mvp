@@ -65,8 +65,14 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
     MeteringReferenceInfoMessageDto newMessage = getMeteringReferenceInfoMessageDto()
       .withMeter(null)
-      .withFacility(new FacilityDto("facility-id", "Sweden", "Varberg", "Drottninggatan 1"))
-      .withGatewayStatus(new GatewayStatusDto("123987", "Gateway 3100", "OK"));
+      .withFacility(new FacilityDto(
+        "facility-id",
+        "Sweden",
+        "Varberg",
+        "Drottninggatan 1",
+        "43445"
+      ))
+      .withGatewayStatus(new GatewayStatusDto("123987", "Gateway 3100", "OK", "8.8.8.8", ""));
 
     publishMessage(toJson(newMessage).getBytes());
 
@@ -79,7 +85,8 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       "facility-id",
       "Sweden",
       "Varberg",
-      "Drottninggatan 1"
+      "Drottninggatan 1",
+      "43445"
     );
     assertGatewayModel(organisationId, "123987", "Gateway 3100");
   }
@@ -89,7 +96,13 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     throws Exception {
     MeteringReferenceInfoMessageDto newMessage = getMeteringReferenceInfoMessageDto()
       .withMeter(newMeterDto("Acme"))
-      .withFacility(new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"))
+      .withFacility(new FacilityDto(
+        "facility-id",
+        "Sweden",
+        "Kungsbacka",
+        "Kabelgatan 2T",
+        "43427"
+      ))
       .withGatewayStatus(null);
 
     publishMessage(toJson(newMessage).getBytes());
@@ -154,10 +167,10 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   private MeteringReferenceInfoMessageDto getMeteringReferenceInfoMessageDto() {
     return new MeteringReferenceInfoMessageDto(
       newMeterDto("A manufacturer"),
-      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T", "43437"),
       "test",
       "Some organisation",
-      new GatewayStatusDto("123987", "Gateway 2000", "OK"),
+      new GatewayStatusDto("123987", "Gateway 2000", "OK", "8.8.8.8", "070123123"),
       ""
     );
   }
@@ -191,14 +204,16 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     String externalId,
     String country,
     String city,
-    String address
+    String address,
+    String zip
   ) throws InterruptedException {
     assertThat(waitForCondition(() -> hasMeterAddress(
       organisationId,
       externalId,
       country,
       city,
-      address
+      address,
+      zip
     ))).as("Logical meter '" + externalId + "' has address").isTrue();
   }
 
@@ -207,13 +222,15 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     String externalId,
     String country,
     String city,
-    String address
+    String address,
+    String zip
   ) {
     return logicalMeterJpaRepository.findBy(organisationId, externalId)
       .filter(meter ->
         meter.location.country.equalsIgnoreCase(country)
           && meter.location.city.equalsIgnoreCase(city)
-          && meter.location.streetAddress.equalsIgnoreCase(address))
+          && meter.location.streetAddress.equalsIgnoreCase(address)
+          && meter.location.zip.equals(zip))
       .isPresent();
   }
 

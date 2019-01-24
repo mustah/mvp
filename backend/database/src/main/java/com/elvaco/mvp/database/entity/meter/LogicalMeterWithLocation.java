@@ -24,6 +24,7 @@ public class LogicalMeterWithLocation extends IdentifiableType<PrimaryKey> {
     String country,
     String city,
     String address,
+    String zip,
     String medium
   ) {
     this.id = id;
@@ -35,6 +36,7 @@ public class LogicalMeterWithLocation extends IdentifiableType<PrimaryKey> {
       .country(country)
       .city(city)
       .streetAddress(address)
+      .zip(zip)
       .build();
     this.medium = medium;
     this.primaryKey = new LogicalMeterPk(id, organisationId);

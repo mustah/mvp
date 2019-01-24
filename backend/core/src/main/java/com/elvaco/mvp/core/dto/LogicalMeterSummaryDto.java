@@ -60,6 +60,7 @@ public class LogicalMeterSummaryDto {
     String country,
     String city,
     String streetAddress,
+    @Nullable String zip,
     @Nullable Long alarmId,
     @Nullable UUID alarmPhysicalMeterId,
     @Nullable OffsetDateTime start,
@@ -79,7 +80,15 @@ public class LogicalMeterSummaryDto {
     this.manufacturer = manufacturer;
     this.address = address;
     this.readIntervalMinutes = readIntervalMinutes;
-    this.location = new Location(latitude, longitude, confidence, country, city, streetAddress);
+    this.location = new Location(
+      latitude,
+      longitude,
+      confidence,
+      country,
+      city,
+      streetAddress,
+      zip
+    );
     this.activeAlarm = alarmId != null
       ? AlarmLogEntry.builder()
       .id(alarmId)

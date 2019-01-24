@@ -385,7 +385,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   private MeteringReferenceInfoMessageDto newMeteringReferenceInfoMessageDto(String jobId) {
     return new MeteringReferenceInfoMessageDto(
       new MeterDto("meter-id", "some medium", "OK", "KAM", "0 * * * *", 1, 1),
-      new FacilityDto("facility-id", "Sverige", "Kungsbacka", "Teknikgatan"),
+      new FacilityDto("facility-id", "Sverige", "Kungsbacka", "Teknikgatan", "43437"),
       "Test system",
       "organisation-id",
       null,

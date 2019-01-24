@@ -78,7 +78,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private static final String EXTERNAL_ID = "ABC-123";
   private static final Location LOCATION_KUNGSBACKA = locationWithoutCoordinates().build();
   private static final long EXPECTED_DEFAULT_READ_INTERVAL = 60L;
-
+  private static final String IP = "8.8.8.8";
+  private static final String PHONE_NUMBER = "+4670123123";
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
   private LogicalMeters logicalMeters;
@@ -184,7 +185,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
-  public void updatesExistingGatewayWithNewProductModel() {
+  public void updatesExistingGatewayWithNewProductModelZipAndPhoneNumber() {
     UUID gatewayId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(Gateway.builder()
@@ -192,15 +193,21 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .organisationId(organisation.id)
       .serial(GATEWAY_EXTERNAL_ID)
       .productModel("OldValue")
+      .ip("1.1.1.1")
+      .phoneNumber("1234567")
       .build());
 
     messageHandler.accept(messageBuilder().gatewayExternalId(GATEWAY_EXTERNAL_ID)
       .productModel(PRODUCT_MODEL)
+      .ip(IP)
+      .phoneNumber(PHONE_NUMBER)
       .build());
 
     Gateway gateway = gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get();
     assertThat(gateway.id).isEqualTo(gatewayId);
     assertThat(gateway.productModel).isEqualTo(PRODUCT_MODEL);
+    assertThat(gateway.ip).isEqualTo(IP);
+    assertThat(gateway.phoneNumber).isEqualTo(PHONE_NUMBER);
   }
 
   @Test
@@ -218,6 +225,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .country("")
       .city("Växjö")
       .address("Gatvägen 41")
+      .zip("12345")
       .build();
     messageHandler.accept(messageBuilder().location(newLocation).build());
 
@@ -525,11 +533,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
         externalId,
         "locationCountry",
         "locationCity",
-        "locationAddress"
+        "locationAddress",
+        "locationZip"
       ),
       "Test source system",
       "organisationExternalId",
-      new GatewayStatusDto(null, null, null),
+      new GatewayStatusDto(null, null, null, null, null),
       "jobId"
     );
 
@@ -545,7 +554,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void nullFacilityIdIsRejected() {
     MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
       null,
-      new FacilityDto(null, null, null, null),
+      new FacilityDto(null, null, null, null, null),
       "Test source system",
       "organisation id",
       null,
@@ -561,7 +570,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void physicalMeterRequiresMeterId() {
     MeteringReferenceInfoMessageDto message = new MeteringReferenceInfoMessageDto(
       new MeterDto(null, null, "ok", null, null, null, null),
-      new FacilityDto("valid facility id", null, null, null),
+      new FacilityDto("valid facility id", null, null, null, null),
       "Test source system",
       "organisation id",
       null,
@@ -653,7 +662,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
         externalId,
         location.getCountry(),
         location.getCity(),
-        location.getAddress()
+        location.getAddress(),
+        location.getZip()
       ),
       "Test source system",
       "an organisation",
@@ -812,7 +822,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(
       messageBuilder().location(new LocationBuilder().city("Borås").build()).build()
-        .withGatewayStatus(new GatewayStatusDto(null, null, null))
+        .withGatewayStatus(new GatewayStatusDto(null, null, null, null, null))
     );
 
     assertThat(logicalMeters.findById(meterId).get().location.getCity()).isEqualTo("borås");
@@ -825,7 +835,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     messageHandler.accept(
       messageBuilder().location(new LocationBuilder().city("Borås").build()).build()
-        .withGatewayStatus(new GatewayStatusDto(null, null, null))
+        .withGatewayStatus(new GatewayStatusDto(null, null, null, null, null))
     );
 
     assertThat(logicalMeters.findByOrganisationIdAndExternalId(
@@ -969,6 +979,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
     private String productModel = PRODUCT_MODEL;
     private String organisationExternalId = ORGANISATION_EXTERNAL_ID;
     private String jobId = "";
+    private String ip = IP;
+    private String phoneNumber = PHONE_NUMBER;
 
     public MeteringReferenceInfoMessageDtoBuilder medium(String medium) {
       this.medium = medium;
@@ -1042,6 +1054,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
       return this;
     }
 
+    private MeteringReferenceInfoMessageDtoBuilder ip(String ip) {
+      this.ip = ip;
+      return this;
+    }
+
+    private MeteringReferenceInfoMessageDtoBuilder phoneNumber(String phoneNumber) {
+      this.phoneNumber = phoneNumber;
+      return this;
+    }
+
     private MeteringReferenceInfoMessageDto build() {
       return new MeteringReferenceInfoMessageDto(
         new MeterDto(
@@ -1057,14 +1079,17 @@ public class MeteringReferenceInfoMessageConsumerTest {
           externalId,
           location.getCountry(),
           location.getCity(),
-          location.getAddress()
+          location.getAddress(),
+          location.getZip()
         ),
         "Test source system",
         organisationExternalId,
         new GatewayStatusDto(
           gatewayExternalId,
           productModel,
-          gatewayStatus
+          gatewayStatus,
+          ip,
+          phoneNumber
         ),
         jobId
       );

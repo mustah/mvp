@@ -9,4 +9,6 @@ public class GatewayStatusDto {
   public final String id;
   public final String productModel;
   public final String status;
+  public final String ip;
+  public final String phoneNumber;
 }
