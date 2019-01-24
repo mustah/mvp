@@ -36,6 +36,3 @@ export const Foldable = ({
     </Column>
   );
 };
-
-export const FoldableMenuItem = (props: FoldableProps) =>
-  <Foldable containerClassName="FoldableMenuItem" fontClassName="Normal" {...props}/>;

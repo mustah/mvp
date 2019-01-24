@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {SelectionTreeViewComposite} from '../../../state/ui/selection-tree/selectionTreeModels';
 import {OnClickWithId} from '../../../types/Types';
-import {addToReport} from '../../report/reportActions';
+import {toggleGroupItems} from '../../report/reportActions';
 import {TreeViewListItemFolder} from '../components/TreeViewListItemFolder';
 
 interface DispatchToProps {
@@ -12,8 +12,8 @@ interface DispatchToProps {
 export type TreeViewListItemProps = DispatchToProps & SelectionTreeViewComposite;
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  addToReport,
+  addToReport: toggleGroupItems,
 }, dispatch);
 
-export const TreeViewListItemFolderContainer =
+export const TreeViewListItemGroupContainer =
   connect<{}, DispatchToProps, SelectionTreeViewComposite>(null, mapDispatchToProps)(TreeViewListItemFolder);

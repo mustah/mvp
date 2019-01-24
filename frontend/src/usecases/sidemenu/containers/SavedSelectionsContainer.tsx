@@ -38,7 +38,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const SavedSelectionsContainer =
-  connect<StateToProps, DispatchToProps>(
-    mapStateToProps,
-    mapDispatchToProps
-  )(SavedSelections);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SavedSelections);

@@ -28,24 +28,22 @@ export const MainMenuItems = ({isMeterPage, isReportPage, pathName, resetSelecti
         />
       </Link>
       <FoldableMainMenuItem
-        containerClassName="FoldableMenuItem"
+        containerClassName="FoldableMainMenuItem"
         icon={<IconMeter {...mainMenuIconProps}/>}
         isSelected={canShowMeterMenuItemContent}
         isVisible={canShowMeterMenuItemContent}
         linkTo={routes.meter}
-        pathName={pathName}
         onClick={resetSelection}
         title={translate('meter')}
       >
         <SavedSelectionsContainer/>
       </FoldableMainMenuItem>
       <FoldableMainMenuItem
-        containerClassName="FoldableMenuItem"
+        containerClassName="FoldableMainMenuItem"
         icon={<IconReport {...mainMenuIconProps}/>}
         isSelected={canShowReportMenuItemContent}
         isVisible={canShowReportMenuItemContent}
         linkTo={routes.report}
-        pathName={pathName}
         title={translate('report')}
       >
         <InfoText className="first-uppercase" style={infoTextStyle}>

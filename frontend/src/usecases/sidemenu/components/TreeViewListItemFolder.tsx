@@ -9,7 +9,7 @@ import {FirstUpper} from '../../../components/texts/Texts';
 import {history} from '../../../index';
 import {translate} from '../../../services/translationService';
 import {Identifiable, OnClick, OnClickWithId, RenderFunction} from '../../../types/Types';
-import {TreeViewListItemProps} from '../containers/TreeViewListItemFolderContainer';
+import {TreeViewListItemProps} from '../containers/TreeViewListItemGroupContainer';
 import './UserSelectionActionDropdown.scss';
 
 const treeViewItemStyle: React.CSSProperties = {

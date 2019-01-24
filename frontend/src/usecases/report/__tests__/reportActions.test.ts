@@ -14,7 +14,7 @@ import {
   selectEntryAdd,
   SET_SELECTED_ENTRIES,
   showMetersInGraph,
-  toggleIncludingChildren,
+  toggleGroupItems,
   toggleSingleEntry,
 } from '../reportActions';
 
@@ -375,11 +375,12 @@ describe('reportActions', () => {
 
   });
 
-  describe('toggleIncludingChildren', () => {
+  describe('toggleGroupItems', () => {
 
     it('selects given address and meters, if address not already selected', () => {
       const store = configureMockStore(initialState);
-      store.dispatch(toggleIncludingChildren('sweden,höganäs,storgatan 5'));
+
+      store.dispatch(toggleGroupItems('sweden,höganäs,storgatan 5'));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
@@ -392,7 +393,8 @@ describe('reportActions', () => {
 
     it('deselects given address and meters, if address already selected', () => {
       const store = configureMockStore(initialState);
-      store.dispatch(toggleIncludingChildren('sweden,höganäs,hasselgatan 4'));
+
+      store.dispatch(toggleGroupItems('sweden,höganäs,hasselgatan 4'));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
@@ -441,7 +443,7 @@ describe('reportActions', () => {
         }
 
         const store = configureMockStore(state);
-        store.dispatch(toggleIncludingChildren(addressId));
+        store.dispatch(toggleGroupItems(addressId));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);

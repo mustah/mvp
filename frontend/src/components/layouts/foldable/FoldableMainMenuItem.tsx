@@ -1,7 +1,7 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
-import {Clickable, PathNamed} from '../../../types/Types';
+import {Clickable} from '../../../types/Types';
 import {MainMenuItem} from '../../../usecases/main-menu/components/menu-items/MainMenuItem';
 import {IconRightArrow} from '../../icons/IconRightArrow';
 import {Column} from '../column/Column';
@@ -11,7 +11,7 @@ import './Foldable.scss';
 import {useToggleVisibility} from './foldableHook';
 import './FoldableMainMenuItem.scss';
 
-interface Props extends FoldableProps, PathNamed, Partial<Clickable> {
+interface Props extends FoldableProps, Partial<Clickable> {
   icon: React.ReactElement<any>;
   isSelected: boolean;
   linkTo: string;
@@ -26,7 +26,6 @@ export const FoldableMainMenuItem = ({
   isSelected,
   linkTo,
   onClick,
-  pathName,
   title,
   isVisible: initialVisibility = true
 }: Props) => {

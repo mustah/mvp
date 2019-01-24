@@ -11,8 +11,8 @@ import {toggleExpanded} from '../../../state/ui/selection-tree/selectionTreeActi
 import {SelectionTreeViewComposite} from '../../../state/ui/selection-tree/selectionTreeModels';
 import {getOpenListItems} from '../../../state/ui/selection-tree/selectionTreeSelectors';
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {EncodedUriParameters, Fetch, OnClick, OnClickWithId, uuid} from '../../../types/Types';
-import {toggleIncludingChildren, toggleSingleEntry} from '../../report/reportActions';
+import {EncodedUriParameters, Fetch, OnClickWithId, uuid} from '../../../types/Types';
+import {toggleSingleEntry} from '../../report/reportActions';
 import {LoadingTreeViewItems} from '../components/LoadingTreeViewItems';
 import {TreeViewListItem} from '../components/TreeViewListItem';
 
@@ -35,7 +35,6 @@ interface DispatchToProps {
   fetchSelectionTree: Fetch;
   toggleExpanded: OnClickWithId;
   toggleSingleEntry: OnClickWithId;
-  toggleIncludingChildren: OnClick;
 }
 
 const useForceUpdate = () => React.useState(null)[1];
@@ -51,7 +50,6 @@ const TreeViewComponent = ({
   selectionTree,
   toggleExpanded,
   openListItems,
-  toggleIncludingChildren,
   toggleSingleEntry,
   selectionTreeViewItems,
   parameters,
@@ -112,7 +110,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchSelectionTree,
   toggleExpanded,
   toggleSingleEntry,
-  toggleIncludingChildren,
 }, dispatch);
 
 export const SelectionTreeContainer =

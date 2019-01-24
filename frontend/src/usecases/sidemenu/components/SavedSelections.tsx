@@ -22,9 +22,11 @@ const innerDivStyle: React.CSSProperties = {
   padding: 0,
 };
 
-interface Props extends StateToProps, DispatchToProps {
+interface ConfirmDelete {
   confirmDelete: OnClickWithId;
 }
+
+type ListItemProps = StateToProps & DispatchToProps & ConfirmDelete;
 
 const ListItems = ({
   confirmDelete,
@@ -33,7 +35,7 @@ const ListItems = ({
   savedSelections,
   selectSavedSelection,
   selection
-}: Props) => {
+}: ListItemProps) => {
   React.useEffect(() => {
     fetchUserSelections();
   }, [savedSelections]);
@@ -94,6 +96,8 @@ const ListItems = ({
     ];
   return <>{items}</>;
 };
+
+type Props = DispatchToProps & StateToProps;
 
 export const SavedSelections = (props: Props) => {
   const {isOpen, openConfirm, closeConfirm, confirm} = useConfirmDialog(props.deleteUserSelection);

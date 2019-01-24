@@ -130,7 +130,7 @@ const levelFromId = (id: string): GroupingLevel => {
   return levels === 1 ? 'cities' : 'addresses';
 };
 
-export const toggleIncludingChildren = (id: uuid) =>
+export const toggleGroupItems = (id: uuid) =>
   (dispatch, getState: GetState) => {
     const {report: {selectedListItems}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
 
