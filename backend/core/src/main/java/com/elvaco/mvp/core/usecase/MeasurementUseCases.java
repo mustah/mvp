@@ -20,13 +20,7 @@ public class MeasurementUseCases {
   private final Measurements measurements;
 
   public void createOrUpdate(Measurement m) {
-    measurements.createOrUpdate(
-      m.physicalMeter,
-      m.created,
-      m.quantity,
-      m.unit,
-      m.value
-    );
+    measurements.createOrUpdate(m);
   }
 
   public List<Measurement> findAll(RequestParameters parameters) {

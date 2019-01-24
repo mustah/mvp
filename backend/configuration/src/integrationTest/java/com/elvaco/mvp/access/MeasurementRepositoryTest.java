@@ -12,13 +12,15 @@ import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -364,22 +366,59 @@ public class MeasurementRepositoryTest extends IntegrationTest {
   }
 
   @Test
+  @Transactional
+  public void valuesAreSavedWithStorageUnit() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+
+    measurements.createOrUpdate(Measurement.builder()
+      .unit("MWh")
+      .value(2.0)
+      .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+      .created(start)
+      .quantity("Energy")
+      .build());
+
+    assertThat(measurementJpaRepository.findAll()).extracting(e -> e.value).containsOnly(2000.0);
+  }
+
+  @Test
+  @Transactional
+  public void valuesAreSavedWithStorageUnitUsingSave() {
+    ZonedDateTime start = context().now();
+    var meter = given(logicalMeter());
+
+    measurements.save(Measurement.builder()
+      .unit("MWh")
+      .value(2.0)
+      .physicalMeter(meter.activePhysicalMeter().orElseThrow())
+      .created(start)
+      .quantity("Energy")
+      .build());
+
+    assertThat(measurementJpaRepository.findAll()).extracting(e -> e.value).containsOnly(2000.0);
+  }
+
+  @Test
   public void correctScaleIsReturned() {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    newMeasurement(meter.activePhysicalMeter().get(), start, 2.0, "kW", "Power");
+    given(series(meter.activePhysicalMeter().orElseThrow(), Quantity.POWER, start, 2000.0));
+
+    Quantity presentationQuantity = Quantity.of(Quantity.POWER.name).complementedBy(
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT), null);
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
-        List.of(Quantity.POWER),
+        List.of(presentationQuantity),
         start,
         start.plusSeconds(1),
         TemporalResolution.hour
       ));
 
-    assertThat(results.get(Quantity.POWER.name)).extracting(v -> v.value).containsOnly(2000.0);
+    assertThat(results.get(Quantity.POWER.name)).extracting(v -> v.value).containsOnly(2.0);
   }
 
   @Test
@@ -387,10 +426,14 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    var physicalMeter = meter.activePhysicalMeter().get();
+    var physicalMeter = meter.activePhysicalMeter().orElseThrow();
 
-    newMeasurement(physicalMeter, start, 2.0, "W", "Power");
-    newMeasurement(physicalMeter, start.plusHours(1), 0.002, "kW", "Power");
+    var presentationInformation = Quantity.POWER.getPresentationInformation();
+    var quantity1 = Quantity.of(Quantity.POWER.name).complementedBy(presentationInformation, "W");
+    var quantity2 = Quantity.of(Quantity.POWER.name).complementedBy(presentationInformation, "kW");
+
+    given(series(physicalMeter, quantity1, start, 2.0));
+    given(series(physicalMeter, quantity2, start.plusHours(1), 0.002));
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
@@ -410,32 +453,19 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var meter = given(logicalMeter());
     var physicalMeter = meter.activePhysicalMeter().get();
 
-    newMeasurement(physicalMeter, start, 1.0, "m³", "Volume");
+    given(series(physicalMeter, Quantity.VOLUME, start, 2.0));
 
-    assertThatThrownBy(() ->
-      newMeasurement(physicalMeter, start.plusMinutes(1), 2.0, "m³/s", "Volume")
+    assertThatThrownBy(() -> measurements.save(Measurement.builder()
+      .physicalMeter(physicalMeter)
+      .created(start.plusMinutes(1))
+      .value(2.0)
+      .unit("m³/s")
+      .quantity("Volume")
+      .build())
     ).isInstanceOf(UnitConversionError.class);
   }
 
   private MeasurementKey getKey(LogicalMeter meter, Quantity quantity) {
     return new MeasurementKey(meter.id, quantity.name);
-  }
-
-  private void newMeasurement(
-    PhysicalMeter meter,
-    ZonedDateTime when,
-    double value,
-    String unit,
-    String quantity
-  ) {
-    measurements.save(
-      Measurement.builder()
-        .unit(unit)
-        .value(value)
-        .physicalMeter(meter)
-        .created(when)
-        .quantity(quantity)
-        .build()
-    );
   }
 }
