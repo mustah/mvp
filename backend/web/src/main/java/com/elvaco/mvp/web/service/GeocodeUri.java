@@ -18,6 +18,7 @@ class GeocodeUri {
   private String country;
   private String city;
   private String address;
+  private String zip;
   private String callbackUrl;
   private String errorCallbackUrl;
   private boolean forceUpdate;
@@ -45,6 +46,11 @@ class GeocodeUri {
     return this;
   }
 
+  GeocodeUri zipParam(String zip) {
+    this.zip = zip;
+    return this;
+  }
+
   GeocodeUri callbackUrl(String callbackUrl) {
     this.callbackUrl = callbackUrl;
     return this;
@@ -65,6 +71,7 @@ class GeocodeUri {
       return Optional.of(
         delegate
           .queryParam("country", encode(country))
+          .queryParam("zip", encodeNullIsBlank(zip))
           .queryParam("city", encode(city))
           .queryParam("street", encode(address))
           .queryParam("callbackUrl", encode(callbackUrl))
@@ -81,5 +88,9 @@ class GeocodeUri {
 
   private static String encode(String s) throws UnsupportedEncodingException {
     return URLEncoder.encode(s, StandardCharsets.UTF_8);
+  }
+
+  private static String encodeNullIsBlank(String s) throws UnsupportedEncodingException {
+    return s == null ? "" : encode(s);
   }
 }

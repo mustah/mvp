@@ -116,7 +116,7 @@ public class GeocodeSpringServiceTest {
 
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address?"
-        + "country=sweden&city=stockholm&street=drottninggatan 1"
+        + "country=sweden&zip=&city=stockholm&street=drottninggatan 1"
         + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
         + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId
         + "&force=false");
@@ -135,6 +135,30 @@ public class GeocodeSpringServiceTest {
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address"
         + "?country=sweden"
+        + "&zip="
+        + "&city=växjö"
+        + "&street=drottingvägen 1"
+        + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
+        + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId
+        + "&force=false");
+  }
+
+  @Test
+  public void zipIsAdded() {
+    UUID logicalMeterId = randomUUID();
+
+    LocationWithId location = locationBuilder()
+      .id(logicalMeterId)
+      .zip("12345")
+      .buildLocationWithId()
+      ;
+
+    geocodeService.fetchCoordinates(location);
+
+    assertThat(httpClientMock.url).isEqualTo(
+      "http://geoservice.com:8080/address"
+        + "?country=sweden"
+        + "&zip=12345"
         + "&city=växjö"
         + "&street=drottingvägen 1"
         + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
@@ -155,7 +179,7 @@ public class GeocodeSpringServiceTest {
 
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address?"
-        + "country=sweden&city=växjö&street=drottingvägen 1"
+        + "country=sweden&zip=&city=växjö&street=drottingvägen 1"
         + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
         + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId
         + "&force=true");

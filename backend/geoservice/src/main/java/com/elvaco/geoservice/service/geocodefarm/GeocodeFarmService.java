@@ -63,7 +63,7 @@ public class GeocodeFarmService implements AddressToGeoService {
     GeocodingFarmResult result = new RestTemplate().getForObject(
       url,
       GeocodingFarmResult.class,
-      address.street + " " + address.city + " " + address.country,
+      address.street + " " + address.zip + " " + address.city + " " + address.country,
       countryCode
     );
 

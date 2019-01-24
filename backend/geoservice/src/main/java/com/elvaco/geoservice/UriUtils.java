@@ -30,6 +30,13 @@ public class UriUtils {
     );
   }
 
+  public static String decodeAllowBlank(String encodedUrlParameter) {
+    return URLDecoder.decode(
+      requireNonNull(trimOrBlank(encodedUrlParameter)),
+      StandardCharsets.UTF_8
+    );
+  }
+
   private static String trimOrNull(String str) {
     if (str != null) {
       String trimmed = str.trim();
@@ -38,4 +45,13 @@ public class UriUtils {
       return null;
     }
   }
+
+  private static String trimOrBlank(String str) {
+    if (str != null) {
+      return  str.trim();
+    } else {
+      return "";
+    }
+  }
+
 }

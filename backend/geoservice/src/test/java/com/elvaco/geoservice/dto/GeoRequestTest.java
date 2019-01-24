@@ -33,7 +33,8 @@ public class GeoRequestTest {
       "Callback URL must be provided.",
       "Country must be provided.",
       "City must be provided.",
-      "Street must be provided."
+      "Street must be provided.",
+      "Zip must be provided but might be blank."
     );
   }
 
@@ -47,7 +48,8 @@ public class GeoRequestTest {
     assertThat(violations).containsExactlyInAnyOrder(
       "Error callback URL must be provided.",
       "Callback URL must be provided.",
-      "Street must be provided."
+      "Street must be provided.",
+      "Zip must be provided but might be blank."
     );
   }
 
@@ -61,7 +63,8 @@ public class GeoRequestTest {
     assertThat(violations).containsExactlyInAnyOrder(
       "Error callback URL must be provided.",
       "Callback URL must be provided.",
-      "City must be provided."
+      "City must be provided.",
+      "Zip must be provided but might be blank."
     );
   }
 
@@ -75,7 +78,8 @@ public class GeoRequestTest {
     assertThat(violations).containsExactlyInAnyOrder(
       "Error callback URL must be provided.",
       "Callback URL must be provided.",
-      "Country must be provided."
+      "Country must be provided.",
+      "Zip must be provided but might be blank."
     );
   }
 
@@ -84,6 +88,7 @@ public class GeoRequestTest {
     request.setStreet("kabelgatan");
     request.setCity("kungsbacka");
     request.setCountry("sverige");
+    request.setZip("43437");
 
     List<String> violations = validate(request);
 
@@ -96,6 +101,7 @@ public class GeoRequestTest {
   @Test
   public void isValid_WhenAddressInfoIsAvailable() throws URISyntaxException {
     request.setStreet("kabelgatan");
+    request.setZip("43437");
     request.setCity("kungsbacka");
     request.setCountry("sverige");
     request.setCallbackUrl("/callback");
