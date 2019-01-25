@@ -42,6 +42,7 @@ $pager-number-hovered-text: $primary-fg-active;
         .k-link {
           margin-right: $xs-space;
           box-shadow: $box-shadow;
+          transition: background-color 250ms linear;
 
           &:hover {
             box-shadow: $box-shadow-hover;
