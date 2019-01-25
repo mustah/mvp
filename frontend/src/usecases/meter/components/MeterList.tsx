@@ -42,23 +42,22 @@ const sortable: GridSortSettings = {
   mode: 'single'
 };
 
-export const MeterList = (
-  {
-    componentId,
-    changePage,
-    deleteMeter,
-    result,
-    entities,
-    entityType,
-    selectEntryAdd,
-    syncWithMetering,
-    isFetching,
-    isSuperAdmin,
-    pagination,
-    page,
-    sort,
-    sortTable,
-  }: MeterListProps) => {
+export const MeterList = ({
+  componentId,
+  changePage,
+  deleteMeter,
+  result,
+  entities,
+  entityType,
+  selectEntryAdd,
+  syncWithMetering,
+  isFetching,
+  isSuperAdmin,
+  pagination,
+  page,
+  sort,
+  sortTable,
+}: MeterListProps) => {
 
   const renderMeterId = ({dataItem: {address, isReported}}: GridCellProps) => (
     <td>
@@ -130,54 +129,59 @@ export const MeterList = (
     previousNext: true,
   };
 
+  const gridData = {data, total: pagination.totalElements};
+
   return (
-    <>
-      <Grid
-        data={{data, total: pagination.totalElements}}
+    <Grid
+      data={gridData}
 
-        pageable={pageable}
-        pageSize={pagination.size}
-        take={pagination.size}
-        skip={pagination.page * pagination.size}
-        onPageChange={handleKendoPageChange}
+      pageable={pageable}
+      pageSize={pagination.size}
+      take={pagination.size}
+      skip={pagination.page * pagination.size}
+      onPageChange={handleKendoPageChange}
 
-        sortable={sortable}
-        onSortChange={handleKendoSortChange}
-        sort={sort}
+      sortable={sortable}
+      onSortChange={handleKendoSortChange}
+      sort={sort}
 
-        scrollable="none"
-        style={gridStyle}
-      >
-        <GridColumn
-          field="facility"
-          cell={renderMeterListItem}
-          title={translate('facility')}
-          width={180}
-          headerClassName="left-most"
-        />
+      scrollable="none"
+      style={gridStyle}
+    >
+      <GridColumn
+        field="facility"
+        cell={renderMeterListItem}
+        title={translate('facility')}
+        width={180}
+        headerClassName="left-most"
+      />
 
-        <GridColumn field="secondaryAddress" cell={renderMeterId} title={translate('meter id')}/>
+      <GridColumn field="secondaryAddress" cell={renderMeterId} title={translate('meter id')}/>
 
-        <GridColumn field="city" cell={renderCityName} title={translate('city')}/>
+      <GridColumn field="city" cell={renderCityName} title={translate('city')}/>
 
-        <GridColumn field="address" cell={renderAddressName} title={translate('address')} width={180}/>
+      <GridColumn
+        field="address"
+        cell={renderAddressName}
+        title={translate('address')}
+        width={180}
+      />
 
-        <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
+      <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
 
-        <GridColumn field="medium" title={translate('medium')} width={180} />
+      <GridColumn field="medium" title={translate('medium')} width={180}/>
 
-        <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')}/>
+      <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')}/>
 
-        <GridColumn field="gatewaySerial" title={translate('gateway')}/>
+      <GridColumn field="gatewaySerial" title={translate('gateway')}/>
 
-        <GridColumn
-          sortable={false}
-          cell={renderCollectionStatus}
-          title={translate('collection percentage')}
-        />
+      <GridColumn
+        sortable={false}
+        cell={renderCollectionStatus}
+        title={translate('collection percentage')}
+      />
 
-        <GridColumn sortable={false} cell={renderActions}/>
-      </Grid>
-    </>
+      <GridColumn sortable={false} cell={renderActions}/>
+    </Grid>
   );
 };
