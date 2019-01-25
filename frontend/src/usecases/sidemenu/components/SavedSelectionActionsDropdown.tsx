@@ -9,6 +9,7 @@ import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuIte
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
 import {IconReport} from '../../../components/icons/IconReport';
 import {translate} from '../../../services/translationService';
+import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
 
 interface Props {
@@ -34,7 +35,7 @@ export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToRepo
       confirmDelete(id);
     };
 
-    return [
+    const actionMenuItems = [
       (
         <Link to={`${routes.selection}`} className="link" key={`edit-user-selection-${id}`}>
           <ActionMenuItem
@@ -51,17 +52,23 @@ export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToRepo
           onClick={onClickAddAllToReport}
           key={`add-all-to-report-${id}`}
         />
-      ),
-      (<Divider style={dividerStyle} key={`user-selection-divider-${id}`}/>),
-      (
-        <ActionMenuItem
-          leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
-          name={translate('delete user selection')}
-          onClick={onClickDelete}
-          key={`delete-user-selection-${id}`}
-        />
       )
     ];
+
+    return id !== initialSelectionId
+      ? [
+        ...actionMenuItems,
+        (<Divider style={dividerStyle} key={`user-selection-divider-${id}`}/>),
+        (
+          <ActionMenuItem
+            leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
+            name={translate('delete user selection')}
+            onClick={onClickDelete}
+            key={`delete-user-selection-${id}`}
+          />
+        )
+      ]
+      : actionMenuItems;
   };
 
   return <ActionsDropdown renderPopoverContent={renderPopoverContent}/>;
