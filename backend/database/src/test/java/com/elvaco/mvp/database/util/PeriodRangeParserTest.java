@@ -57,6 +57,24 @@ public class PeriodRangeParserTest {
 
   @Test
   public void parseHalfBoundedRanges() {
+    assertThat(PeriodRangeParser.parse("[\"2019-01-08 15:01:50.97411+01\",)"))
+      .isEqualTo(PeriodRange.halfOpenFrom(
+        ZonedDateTime.parse("2019-01-08T15:01:50.97411+01"),
+        null
+      ));
+
+    assertThat(PeriodRangeParser.parse("[\"2019-01-08 17:01:00.8583+01\",)"))
+      .isEqualTo(PeriodRange.halfOpenFrom(
+        ZonedDateTime.parse("2019-01-08T17:01:00.8583+01"),
+        null
+      ));
+
+    assertThat(PeriodRangeParser.parse("[\"2019-01-08 15:01:50.974+01\",)"))
+      .isEqualTo(PeriodRange.halfOpenFrom(
+        ZonedDateTime.parse("2019-01-08T15:01:50.974+01"),
+        null
+      ));
+
     assertThat(PeriodRangeParser.parse("[\"2018-01-01 08:00:00+01\",)"))
       .isEqualTo(PeriodRange.halfOpenFrom(
         ZonedDateTime.parse("2018-01-01T08:00:00+01"),

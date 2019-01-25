@@ -145,7 +145,7 @@ public class PeriodRangeParser {
   static final class PostgresTimestampParser {
 
     private static final DateTimeFormatter POSTGRES_DATE_TIME_PARSE_FORMATTER =
-      DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss[.SSS][xxx][xx][X]");
+      DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss[.SSSSSS][.SSSSS][.SSSS][.SSS][xxx][xx][X]");
 
     private static final DateTimeFormatter POSTGRES_DATE_TIME_FMT_FORMATTER =
       DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSSxxx");
