@@ -4,7 +4,8 @@
     "id": "ABC-123",
     "country": "Sweden",
     "city": "Perstorp",
-    "address": "Duvstigen 8C"
+    "address": "Duvstigen 8C",
+    "zip": "123 45"
   },
   "gateway": {
     "id": "12031925",
