@@ -22,6 +22,7 @@ public class LocationBuilder {
       .coordinate(location.getCoordinate())
       .country(location.getCountry())
       .city(location.getCity())
+      .zip(location.getZip())
       .address(location.getAddress());
   }
 

@@ -33,6 +33,7 @@ public class MeteringReferenceInfoMessageParserTest {
     assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
     assertThat(parsedMessage.facility.city).isEqualTo("Perstorp");
     assertThat(parsedMessage.facility.address).isEqualTo("Duvstigen 8C");
+    assertThat(parsedMessage.facility.zip).isEqualTo("123 45");
     assertThat(parsedMessage.gateway).isNotNull();
     assertThat(parsedMessage.gateway.id).isEqualTo("12031925");
     assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
