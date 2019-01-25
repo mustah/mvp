@@ -56,7 +56,6 @@ const mapStateToProps = (
     pagination,
     error: getPageError<Meter>(meters, page),
     entityType,
-    page,
   });
 };
 

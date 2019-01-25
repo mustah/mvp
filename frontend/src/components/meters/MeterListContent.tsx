@@ -41,7 +41,6 @@ export interface MeterListStateToProps {
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
   isSuperAdmin: boolean;
-  page: number;
 }
 
 export interface MeterListDispatchToProps {

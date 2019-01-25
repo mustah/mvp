@@ -37,6 +37,14 @@ const gridStyle: React.CSSProperties = {
   borderBottomRightRadius: borderRadius,
 };
 
+const pageable: GridPagerSettings = {
+  buttonCount: 5,
+  info: false,
+  type: 'numeric',
+  pageSizes: false,
+  previousNext: true,
+};
+
 const sortable: GridSortSettings = {
   allowUnsort: true,
   mode: 'single'
@@ -53,8 +61,7 @@ export const MeterList = ({
   syncWithMetering,
   isFetching,
   isSuperAdmin,
-  pagination,
-  page,
+  pagination: {page, size, totalElements: total},
   sort,
   sortTable,
 }: MeterListProps) => {
@@ -110,39 +117,31 @@ export const MeterList = ({
   const renderCollectionStatus = ({dataItem: {collectionPercentage, readIntervalMinutes}}: GridCellProps) =>
     <td>{formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin)}</td>;
 
-  const handleKendoPageChange = ({page: {skip}}: GridPageChangeEvent) =>
+  const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
     changePage({
       entityType,
       componentId,
       page: skip / paginationPageSize
     });
 
-  const handleKendoSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
+  const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 
   const data = result.map((key) => entities[key]);
 
-  const pageable: GridPagerSettings = {
-    buttonCount: 5,
-    info: false,
-    type: 'numeric',
-    pageSizes: false,
-    previousNext: true,
-  };
-
-  const gridData = {data, total: pagination.totalElements};
+  const gridData = {data, total};
 
   return (
     <Grid
       data={gridData}
 
       pageable={pageable}
-      pageSize={pagination.size}
-      take={pagination.size}
-      skip={pagination.page * pagination.size}
-      onPageChange={handleKendoPageChange}
+      pageSize={size}
+      take={size}
+      skip={page * size}
+      onPageChange={handlePageChange}
 
       sortable={sortable}
-      onSortChange={handleKendoSortChange}
+      onSortChange={handleSortChange}
       sort={sort}
 
       scrollable="none"
@@ -152,7 +151,6 @@ export const MeterList = ({
         field="facility"
         cell={renderMeterListItem}
         title={translate('facility')}
-        width={180}
         headerClassName="left-most"
       />
 
@@ -160,28 +158,24 @@ export const MeterList = ({
 
       <GridColumn field="city" cell={renderCityName} title={translate('city')}/>
 
-      <GridColumn
-        field="address"
-        cell={renderAddressName}
-        title={translate('address')}
-        width={180}
-      />
+      <GridColumn field="address" cell={renderAddressName} title={translate('address')}/>
 
-      <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
+      <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')} width={112}/>
 
-      <GridColumn field="medium" title={translate('medium')} width={180}/>
+      <GridColumn field="medium" title={translate('medium')} width={112}/>
 
-      <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')}/>
+      <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')} width={112}/>
 
-      <GridColumn field="gatewaySerial" title={translate('gateway')}/>
+      <GridColumn field="gatewaySerial" title={translate('gateway')} width={112}/>
 
       <GridColumn
         sortable={false}
         cell={renderCollectionStatus}
         title={translate('collection percentage')}
+        width={112}
       />
 
-      <GridColumn sortable={false} cell={renderActions}/>
+      <GridColumn sortable={false} cell={renderActions} width={30}/>
     </Grid>
   );
 };
