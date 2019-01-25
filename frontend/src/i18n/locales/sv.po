@@ -452,8 +452,8 @@ msgstr "ditt lösenord"
 msgid "dashboard"
 msgstr "dashboard"
 
-msgid "all meters in selection"
-msgstr "alla mätare i urvalet"
+msgid "all meters"
+msgstr "alla mätare"
 
 msgid "gateway"
 msgstr "gateway"

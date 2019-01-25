@@ -453,8 +453,8 @@ msgstr "your password"
 msgid "dashboard"
 msgstr "dashboard"
 
-msgid "all meters in selection"
-msgstr "all meters in selection"
+msgid "all meters"
+msgstr "all meters"
 
 msgid "gateway"
 msgstr "gateway"
