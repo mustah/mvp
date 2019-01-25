@@ -15,6 +15,9 @@ export const RowCenter = (props: LayoutProps) =>
 export const RowRight = (props: LayoutProps) =>
   <Row {...props} className={classNames(props.className, 'Row-right')}/>;
 
+export const RowLeft = (props: LayoutProps) =>
+  <Row {...props} className={classNames(props.className, 'Row-Left')}/>;
+
 export const RowMiddle = (props: LayoutProps) =>
   <Row {...props} className={classNames(props.className, 'Row-middle')}/>;
 

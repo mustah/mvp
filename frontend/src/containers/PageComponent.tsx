@@ -5,10 +5,7 @@ import {Layout} from '../components/layouts/layout/Layout';
 import {WithChildren} from '../types/Types';
 import {TopMenu} from '../usecases/topmenu/component/TopMenu';
 import {LogoContainer} from '../usecases/topmenu/containers/LogoContainer';
-
-interface Props extends WithChildren {
-  topMenuSearch: JSX.Element;
-}
+import {GlobalSearchContainer} from './GlobalSearchContainer';
 
 const Content = ({children}: WithChildren) => (
   <Column className="PageContent flex-1">
@@ -17,11 +14,11 @@ const Content = ({children}: WithChildren) => (
   </Column>
 );
 
-export const PageComponent = ({topMenuSearch, ...props}: Props) => (
+export const PageComponent = (props: WithChildren) => (
   <Layout className="flex-1">
     <TopMenu>
       <LogoContainer/>
-      {topMenuSearch}
+      <GlobalSearchContainer/>
     </TopMenu>
     <Content {...props}/>
   </Layout>

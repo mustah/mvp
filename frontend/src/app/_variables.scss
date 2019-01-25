@@ -1,4 +1,4 @@
-// colors
+// Material design colors from
 $blackest: #000000;
 $black: #0f2228;
 $light-black: #3c3c3c;
@@ -8,8 +8,14 @@ $light-grey: #f9f9f9;
 $grey: #f2f2f2;
 $dark-grey: #eaeaea;
 $darkest-grey: #cccccc;
-$dark-blue: #006da3;
-$blue: #00b6f7;
+
+// light-blue: http://zavoloklom.github.io/material-design-color-palette/colors.html#light-blue
+$blue-900: #01579b;
+$blue-200: #81d4fa;
+$blue-100: #b3e5fc;
+$blue-50: #e1f5fe;
+$blue-A400: #00b0ff;
+
 $green: #41c300;
 $orange: #ff9800;
 $dark-orange: #e65100;
@@ -17,16 +23,15 @@ $red: #e84d6f;
 $pink: #ff4081;
 
 $border-color: $grey;
-$main-menu-color: $dark-blue;
-
+$main-menu-color: $blue-900;
 
 $box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 $box-shadow-hover: 0px 1px 6px 0px rgba(0, 0, 0, 0.22), 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 2px -1px rgba(0, 0, 0, 0.14);
 
 // interaction
-$primary-bg: #00b6f7;
-$primary-bg-active: #81d4fa;
-$primary-bg-hover: #e6f8ff;
+$primary-bg: $blue-A400;
+$primary-bg-active: $blue-200;
+$primary-bg-hover: $blue-50;
 
 $primary-fg: #3c3c3c;
 $primary-fg-active: #044462;

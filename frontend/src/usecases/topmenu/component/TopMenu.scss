@@ -17,23 +17,6 @@
     align-items: center;
   }
 
-  .SelectionSearch {
-    position: fixed;
-    left: $side-menu-width + $lg-space;
-
-    &.SelectionMenuSummary {
-      color: $white;
-
-      .Normal {
-        margin-right: $space;
-      }
-
-      .SelectionIcon-margin {
-        margin-right: 15px;
-      }
-    }
-  }
-
   .TopMenu-RightContent {
     margin-right: $space;
 

@@ -1,13 +1,62 @@
+import IconButton from 'material-ui/IconButton';
+import ContentClear from 'material-ui/svg-icons/content/clear';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
 import {ButtonLink} from '../../../../components/buttons/ButtonLink';
-import {Row, RowBottom} from '../../../../components/layouts/row/Row';
+import {RowBottom, RowLeft} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {OnSelectSelection, UserSelection} from '../../../../state/user-selection/userSelectionModels';
-import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
+import {Clickable, IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
+
+const textFieldStyle: React.CSSProperties = {
+  marginLeft: 4,
+  fontSize: 24,
+  fontWeight: 'bold',
+  width: 280,
+};
+
+const inputStyle: React.CSSProperties = {
+  color: colors.black,
+};
+
+const hintStyle: React.CSSProperties = {
+  color: colors.borderColor,
+};
+
+const underlineStyle: React.CSSProperties = {
+  borderWidth: 0,
+};
+
+const style: React.CSSProperties = {
+  cursor: 'pointer',
+  position: 'relative',
+  padding: 0,
+  left: -22,
+  top: 0,
+  width: 24
+};
+
+const iconStyle: React.CSSProperties = {
+  width: 22,
+  height: 22,
+  color: colors.lightBlack,
+};
+
+const ResetIconButton = ({onClick}: Clickable) => (
+  <IconButton
+    onClick={onClick}
+    style={style}
+    iconStyle={iconStyle}
+    touch={true}
+    tooltip={translate('reset selection')}
+    tooltipPosition="top-center"
+  >
+    <ContentClear hoverColor={colors.black} style={iconStyle}/>
+  </IconButton>
+);
 
 interface Props {
   isChanged: boolean;
@@ -21,20 +70,6 @@ interface Props {
 interface State extends IdNamed {
   isChanged: boolean;
 }
-
-const textFieldStyle: React.CSSProperties = {
-  marginLeft: 16,
-  fontSize: 14,
-  width: 180,
-};
-
-const inputStyle: React.CSSProperties = {
-  color: colors.white,
-};
-
-const hintStyle: React.CSSProperties = {
-  color: colors.dividerColor,
-};
 
 const isInitialSelection = (id: uuid) => id === -1;
 const isSavedSelection = (id: uuid) => id !== -1;
@@ -54,19 +89,16 @@ export class InlineEditInput extends React.Component<Props, State> {
   renderActionButtons = (): React.ReactNode => {
     const {id} = this.state;
     return (
-      <Row>
+      <RowLeft>
         {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
         <ButtonLink onClick={this.onSaveAs}>{translate('save as')}</ButtonLink>
-      </Row>
+      </RowLeft>
     );
   }
 
-  renderResetButton = (): React.ReactNode =>
-    <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>
-
   renderSelectionResetButton = (): React.ReactNode => {
-    const {id} = this.props.selection;
-    const reset = () => this.props.selectSavedSelection(id);
+    const {selection: {id}, selectSavedSelection} = this.props;
+    const reset = () => selectSavedSelection(id);
     return <ButtonLink onClick={reset}>{translate('discard changes')}</ButtonLink>;
   }
 
@@ -88,11 +120,11 @@ export class InlineEditInput extends React.Component<Props, State> {
   }
 
   render() {
+    const {isChanged: changed, resetSelection} = this.props;
     const {isChanged, name, id} = this.state;
-    const shouldRenderActionButtons = name && (isChanged || this.props.isChanged || isInitialSelection(id));
-    const shouldRenderResetButton = this.props.isChanged && isInitialSelection(id) ||
-                                    isSavedSelection(id) && !this.props.isChanged;
-    const shouldRenderResetSelectionButton = isSavedSelection(id) && this.props.isChanged;
+    const shouldRenderActionButtons = name && (isChanged || changed || isInitialSelection(id));
+    const shouldRenderResetButton = changed && isInitialSelection(id) || isSavedSelection(id) && !changed;
+    const shouldRenderResetSelectionButton = isSavedSelection(id) && changed;
 
     return (
       <RowBottom className="InlineEditInput">
@@ -102,13 +134,14 @@ export class InlineEditInput extends React.Component<Props, State> {
           inputStyle={inputStyle}
           hintStyle={hintStyle}
           underlineFocusStyle={underlineFocusStyle}
+          underlineStyle={underlineStyle}
           hintText={firstUpperTranslated('give the selection a name')}
           value={name}
           onChange={this.onChange}
           id={`selection-${id}`}
         />
+        {shouldRenderResetButton && <ResetIconButton onClick={resetSelection}/>}
         {shouldRenderActionButtons && this.renderActionButtons()}
-        {shouldRenderResetButton && this.renderResetButton()}
         {shouldRenderResetSelectionButton && this.renderSelectionResetButton()}
       </RowBottom>
     );

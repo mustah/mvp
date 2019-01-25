@@ -23,7 +23,7 @@ export const popoverBoxShadow =
 export const colors = {
   darkBlue: '#006da3',
   darkGreen: '#4caf50',
-  blue: '#00b6f7',
+  blue: '#00b0ff',
   orange: '#ff9800',
   red: '#e84d6f',
   white: '#ffffff',
@@ -144,6 +144,7 @@ export const dropdownStyle: Styles = {
 
 export const underlineFocusStyle = {
   borderColor: colors.blue,
+  borderWidth: 2,
 };
 
 export const floatingLabelFocusStyle = {

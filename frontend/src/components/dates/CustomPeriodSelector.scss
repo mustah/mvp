@@ -8,7 +8,7 @@
     margin-top: 6px;
 
     $day-width-height: 39px;
-    $range-bg-color: rgba($blue, 0.7);
+    $range-bg-color: rgba($blue-A400, 0.7);
 
     .CalendarDay__default {
       width: $day-width-height !important;
@@ -40,7 +40,7 @@
     .CalendarDay__selected,
     .CalendarDay__selected:active,
     .CalendarDay__selected:hover {
-      background: $dark-blue !important;
+      background: $blue-900 !important;
       border: none;
       color: $white !important;
     }
@@ -60,7 +60,7 @@
     }
 
     .CalendarDay__hovered_span:active {
-      background: $dark-blue !important;
+      background: $blue-900 !important;
       border: none;
       color: $white !important;
     }
@@ -89,10 +89,10 @@
     border-radius: 20px;
 
     &:hover {
-      border: 1px solid $blue;
+      border: 1px solid $blue-A400;
 
       .DayPickerNavigation_svg__horizontal {
-        fill: $blue;
+        fill: $blue-A400;
       }
     }
 
@@ -101,6 +101,7 @@
       background: $primary-bg-hover;
     }
   }
+
   .DayPickerNavigation_svg__horizontal {
     padding: 10px 0 0 10px;
   }

@@ -15,7 +15,7 @@
     @extend .rounded;
 
     &:disabled {
-      background: $blue !important;
+      background: $blue-A400 !important;
       color: $white !important;
       box-shadow: $box-shadow;
     }

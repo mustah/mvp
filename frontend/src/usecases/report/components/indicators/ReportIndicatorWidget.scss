@@ -27,10 +27,10 @@
         }
 
         &.enabled {
-          background-color: rgba($blue, 0.85);
+          background-color: rgba($blue-A400, 0.85);
 
           &:hover {
-            background-color: rgba($blue, 1);
+            background-color: rgba($blue-A400, 1);
           }
         }
 
@@ -54,7 +54,7 @@
 
     &.isSelected {
       &.enabled {
-        background-color: $blue;
+        background-color: $blue-A400;
       }
 
       &.disabled {

@@ -31,7 +31,6 @@ const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem me
 const gridStyle: React.CSSProperties = {
   borderTopWidth: 0,
   borderBottomWidth: 0,
-  maxHeight: '1000px',
   marginBottom: borderRadius,
   borderBottomLeftRadius: borderRadius,
   borderBottomRightRadius: borderRadius,

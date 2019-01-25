@@ -7,14 +7,14 @@ import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
-import {MeterTabsContainer} from './MeterTabsContainer';
+import {GatewayTabsContainer} from './GatewayTabsContainer';
 
-export const MeterContainer = () => (
+export const GatewayPage = () => (
   <MvpPageContainer>
     <Row className="space-between">
       <RowCenter>
-        <MainTitle>
-          {translate('meter', {count: 2})}
+        <MainTitle subtitle={translate('gateways')}>
+          {translate('collection')}
         </MainTitle>
       </RowCenter>
       <Row>
@@ -24,7 +24,7 @@ export const MeterContainer = () => (
     </Row>
 
     <Paper style={mainContentPaperStyle}>
-      <MeterTabsContainer/>
+      <GatewayTabsContainer/>
     </Paper>
   </MvpPageContainer>
 );

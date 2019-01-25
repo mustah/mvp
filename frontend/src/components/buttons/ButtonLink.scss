@@ -4,7 +4,7 @@
   cursor: pointer;
 
   .Normal {
-    color: $pink;
+    color: $blue-A400;
 
     &:hover {
       text-decoration: underline;
@@ -13,7 +13,7 @@
 
   &.blue {
     .Normal {
-      color: $blue;
+      color: $blue-A400;
     }
   }
 }

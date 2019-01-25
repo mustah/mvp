@@ -27,7 +27,7 @@
 
         &:hover {
           .TabUnderline {
-            border-bottom: solid 4px $blue;
+            border-bottom: solid 4px $blue-A400;
           }
         }
       }
@@ -43,7 +43,7 @@
       height: 4px;
 
       &.isSelected {
-        border-bottom: solid 4px $blue;
+        border-bottom: solid 4px $blue-A400;
       }
     }
   }

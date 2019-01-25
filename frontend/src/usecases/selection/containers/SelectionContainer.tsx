@@ -3,13 +3,13 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {mainContentPaperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
-import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {SelectionContentContainer} from './SelectionContentContainer';
+import {SelectionMenuContainer} from './SelectionMenuContainer';
 
 interface StateToProps {
   title: string;
@@ -18,7 +18,7 @@ interface StateToProps {
 const SelectionContainerComponent = ({title}: StateToProps) => (
   <MvpPageContainer>
     <Row className="space-between">
-      <MainTitle>{title}</MainTitle>
+      <SelectionMenuContainer/>
       <Row>
         <SummaryContainer/>
         <PeriodContainer/>

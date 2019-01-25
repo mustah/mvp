@@ -7,8 +7,6 @@ import {resetSelection, selectSavedSelection} from '../state/user-selection/user
 import {UserSelection} from '../state/user-selection/userSelectionModels';
 import {getUserSelection} from '../state/user-selection/userSelectionSelectors';
 import {OnClick, OnClickWithId} from '../types/Types';
-import {SelectionMenuSummary} from '../usecases/selection/components/selection-menu/SelectionMenuSummary';
-import {SelectionMenuContainer} from '../usecases/selection/containers/SelectionMenuContainer';
 import {PageComponent} from './PageComponent';
 
 interface StateToProps {
@@ -24,30 +22,11 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
-const MvpPageComponent = ({
-  children,
-  selection,
-  isSelectionPage,
-  selectSavedSelection,
-  resetSelection,
-}: Props) => {
-
-  const SelectionSearch = isSelectionPage
-    ? <SelectionMenuContainer/>
-    : (
-      <SelectionMenuSummary
-        selection={selection}
-        selectSavedSelection={selectSavedSelection}
-        resetSelection={resetSelection}
-      />
-    );
-
-  return (
-    <PageComponent topMenuSearch={SelectionSearch}>
-      {children}
-    </PageComponent>
-  );
-};
+const MvpPageComponent = ({children}: Props) => (
+  <PageComponent>
+    {children}
+  </PageComponent>
+);
 
 const mapStateToProps = ({routing, userSelection}: RootState): StateToProps => ({
   selection: getUserSelection(userSelection),

@@ -1,0 +1,41 @@
+@import "../../app/variables";
+
+.GlobalSearch-Container {
+  position: fixed;
+  left: $side-menu-width + $lg-space;
+
+  .GlobalSearch {
+    width: 512px;
+    position: relative;
+
+    &:hover {
+      .GlobalSearch-input {
+        background-color: $white;
+        box-shadow: $box-shadow-hover;
+        border: none;
+        outline: none;
+      }
+    }
+
+    .GlobalSearch-input {
+      flex: 1;
+      background-color: $blue-100;
+      transition: background-color 200ms ease-in;
+      color: $lightest-black;
+      font-size: $medium;
+      font-family: $font-family;
+      margin: 0;
+      padding: 0 0 0 44px;
+      border: none;
+      border-radius: 24px;
+      line-height: 42px;
+      outline: none;
+
+      &:focus {
+        box-shadow: $box-shadow-hover;
+        background-color: $white;
+        color: $blackest;
+      }
+    }
+  }
+}
