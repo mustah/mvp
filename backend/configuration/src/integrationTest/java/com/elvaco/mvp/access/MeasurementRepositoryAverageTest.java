@@ -426,6 +426,6 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
     assertThat(result.get(Quantity.VOLUME.name))
       .extracting(l -> l.value)
-      .containsExactly(2.0, 2.0, 6.0);
+      .containsExactly(2.0, null, 6.0);
   }
 }

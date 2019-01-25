@@ -29,13 +29,14 @@ public class MeasurementDtoMapper {
   public static MeasurementSeriesDto toSeries(
     List<MeasurementValue> values,
     LogicalMeter logicalMeter,
+    String physicalMeterAddress,
     Quantity quantity
   ) {
     return new MeasurementSeriesDto(
       logicalMeter.id.toString(),
       quantity.name,
       quantity.presentationUnit(),
-      logicalMeter.externalId,
+      logicalMeter.externalId + "-" + physicalMeterAddress,
       logicalMeter.location.getCity(),
       logicalMeter.location.getAddress(),
       logicalMeter.meterDefinition.medium,

@@ -10,5 +10,6 @@ import lombok.EqualsAndHashCode;
 public class MeasurementKey {
 
   public final UUID logicalMeterId;
+  public final String physicalMeterAddress;
   public final String quantity;
 }
