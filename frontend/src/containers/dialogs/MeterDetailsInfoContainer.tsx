@@ -137,7 +137,7 @@ const MeterDetailsInfo = ({
             <MeterAlarm alarms={alarms}/>
           </Info>
           <Info label={translate('alarm code')}>
-            {alarmCode}
+            <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
           </Info>
           <Info label={translate('status change')}>
             <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
@@ -156,10 +156,10 @@ const MeterDetailsInfo = ({
             <BoldFirstUpper>{address}</BoldFirstUpper>
           </Info>
           <Info label={translate('m-bus device type')}>
-            <BoldFirstUpper>{mbusDeviceType}</BoldFirstUpper>
+            <BoldFirstUpper>{mbusDeviceType || '-'}</BoldFirstUpper>
           </Info>
           <Info label={translate('revision')}>
-            <BoldFirstUpper>{revision}</BoldFirstUpper>
+            <BoldFirstUpper>{revision || '-'}</BoldFirstUpper>
           </Info>
           <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
         </RowMiddle>
