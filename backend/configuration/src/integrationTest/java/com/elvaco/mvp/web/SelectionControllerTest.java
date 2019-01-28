@@ -91,10 +91,10 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
     assertThat(response.getContent()).containsExactly(
-      new AddressDto("finland", "helsinki", "joksigatan 2"),
-      new AddressDto("sweden", "kungsbacka", "kabelgatan 1"),
-      new AddressDto("sweden", "kungsbacka", "kabelgatan 2"),
-      new AddressDto("sweden", "gothenburg", "snabelgatan 3")
+      new AddressDto("finland", "helsinki", "joksigatan 2", null),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 1", "43437"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 2", "43437"),
+      new AddressDto("sweden", "gothenburg", "snabelgatan 3", null)
     );
   }
 
@@ -108,10 +108,10 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
     assertThat(response.getContent()).containsExactly(
-      new AddressDto("sweden", "gothenburg", "snabelgatan 3"),
-      new AddressDto("sweden", "kungsbacka", "kabelgatan 2"),
-      new AddressDto("sweden", "kungsbacka", "kabelgatan 1"),
-      new AddressDto("finland", "helsinki", "joksigatan 2")
+      new AddressDto("sweden", "gothenburg", "snabelgatan 3", null),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 2", "43437"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 1", "43437"),
+      new AddressDto("finland", "helsinki", "joksigatan 2", null)
     );
   }
 
@@ -128,10 +128,10 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
     assertThat(response.getContent()).containsExactly(
-      new AddressDto("finland", "helsinki", "joksigatan 2"),
-      new AddressDto("sweden", "kungsbacka", "kabelgatan 1"),
-      new AddressDto("sweden", "kungsbacka", "kabelgatan 2"),
-      new AddressDto("sweden", "gothenburg", "snabelgatan 3")
+      new AddressDto("finland", "helsinki", "joksigatan 2", null),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 1", "43437"),
+      new AddressDto("sweden", "kungsbacka", "kabelgatan 2", "43437"),
+      new AddressDto("sweden", "gothenburg", "snabelgatan 3", null)
     );
   }
 
@@ -475,7 +475,7 @@ public class SelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(response.getContent()).containsExactly(
-      new AddressDto("sverige", "kungsbacka", "kabelgatan 1")
+      new AddressDto("sverige", "kungsbacka", "kabelgatan 1", null)
     );
   }
 
@@ -595,6 +595,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .location(kungsbacka().address("kabelgatan 1")
           .city("kungsbacka")
           .country("sweden")
+          .zip("43437")
           .build()),
       physicalMeter().address("111")
     );
@@ -605,6 +606,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .location(kungsbacka().address("kabelgatan 2")
           .city("kungsbacka")
           .country("sweden")
+          .zip("43437")
           .build()),
       physicalMeter().address("222")
     );
@@ -615,6 +617,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .location(kungsbacka().address("snabelgatan 3")
           .city("gothenburg")
           .country("sweden")
+          .zip("")
           .build()),
       physicalMeter().address("333")
     );
@@ -625,6 +628,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .location(kungsbacka().address("joksigatan 2")
           .city("helsinki")
           .country("finland")
+          .zip("")
           .build()),
       physicalMeter().address("444")
     );

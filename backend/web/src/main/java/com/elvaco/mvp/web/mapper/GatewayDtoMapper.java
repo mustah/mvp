@@ -59,6 +59,7 @@ public class GatewayDtoMapper {
         toCountry(logicalMeter),
         toCity(logicalMeter),
         toAddress(logicalMeter),
+        toZip(logicalMeter),
         toGeoPosition(logicalMeter)
       ),
       connectedMeterIds(gateway),
@@ -100,6 +101,13 @@ public class GatewayDtoMapper {
   private static String toAddress(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
       .map(LocationDtoMapper::toAddress)
+      .orElse(UNKNOWN_LOCATION)
+      .name;
+  }
+
+  private static String toZip(Optional<LogicalMeter> logicalMeter) {
+    return logicalMeter.map(meter -> meter.location)
+      .map(LocationDtoMapper::toZip)
       .orElse(UNKNOWN_LOCATION)
       .name;
   }

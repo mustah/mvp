@@ -185,7 +185,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   }
 
   @Test
-  public void updatesExistingGatewayWithNewProductModelZipAndPhoneNumber() {
+  public void updatesExistingGatewayWithNewProductModelIpAndPhoneNumber() {
     UUID gatewayId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(Gateway.builder()
@@ -198,6 +198,42 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .build());
 
     messageHandler.accept(messageBuilder().gatewayExternalId(GATEWAY_EXTERNAL_ID)
+      .productModel(PRODUCT_MODEL)
+      .ip(IP)
+      .phoneNumber(PHONE_NUMBER)
+      .build());
+
+    Gateway gateway = gateways.findBy(organisation.id, GATEWAY_EXTERNAL_ID).get();
+    assertThat(gateway.id).isEqualTo(gatewayId);
+    assertThat(gateway.productModel).isEqualTo(PRODUCT_MODEL);
+    assertThat(gateway.ip).isEqualTo(IP);
+    assertThat(gateway.phoneNumber).isEqualTo(PHONE_NUMBER);
+  }
+
+  @Test
+  public void updatesExistingGatewayWithNewZipAndIpOnlyGwDtoInMessage() {
+    UUID gatewayId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
+    gateways.save(Gateway.builder()
+      .id(gatewayId)
+      .organisationId(organisation.id)
+      .serial(GATEWAY_EXTERNAL_ID)
+      .productModel("PRODUCT_MODEL")
+      .ip("1.1.1.1")
+      .phoneNumber("1234567")
+      .build());
+
+    messageHandler.accept(messageBuilder()
+      .location(null)
+      .cron(null)
+      .externalId(null)
+      .manufacturer(null)
+      .mbusDeviceType(null)
+      .medium(null)
+      .meterStatus(null)
+      .physicalMeterId(null)
+      .revision(null)
+      .gatewayExternalId(GATEWAY_EXTERNAL_ID)
       .productModel(PRODUCT_MODEL)
       .ip(IP)
       .phoneNumber(PHONE_NUMBER)
@@ -1075,7 +1111,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
           revision,
           mbusDeviceType
         ),
-        new FacilityDto(
+        externalId == null ? null : new FacilityDto(
           externalId,
           location.getCountry(),
           location.getCity(),

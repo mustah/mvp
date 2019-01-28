@@ -6,7 +6,7 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
-import com.elvaco.mvp.core.domainmodels.PrimaryKey;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
@@ -22,15 +22,13 @@ public class LocationDtoMapper {
 
   static final IdNamedDto UNKNOWN_LOCATION = new IdNamedDto("unknown");
 
-  public static LocationWithId toLocationWithId(GeoResponseDto geoResponse, PrimaryKey pk) {
+  public static LocationWithId toLocationWithId(GeoResponseDto geoResponse,
+                                                LogicalMeter logicalMeter) {
     AddressDto address = geoResponse.address;
     GeoPositionDto geoData = geoResponse.geoData;
-    return new LocationBuilder()
-      .id(pk.getId())
-      .organisationId(pk.getOrganisationId())
-      .country(address.country)
-      .city(address.city)
-      .address(address.street)
+    return LocationBuilder.from(logicalMeter.location)
+      .id(logicalMeter.id)
+      .organisationId(logicalMeter.organisationId)
       .coordinate(new GeoCoordinate(
         geoData.latitude,
         geoData.longitude,
@@ -44,6 +42,7 @@ public class LocationDtoMapper {
       toCountry(location).name,
       toCity(location).name,
       toAddress(location).name,
+      toZip(location).name,
       toGeoPositionDto(location)
     );
   }
@@ -66,6 +65,13 @@ public class LocationDtoMapper {
     return Optional.ofNullable(location)
       .filter(l -> nonNull(l.getAddress()))
       .map(l -> new IdNamedDto(l.getAddress()))
+      .orElse(UNKNOWN_LOCATION);
+  }
+
+  static IdNamedDto toZip(Location location) {
+    return Optional.ofNullable(location)
+      .filter(l -> nonNull(l.getZip()))
+      .map(l -> new IdNamedDto(l.getZip()))
       .orElse(UNKNOWN_LOCATION);
   }
 

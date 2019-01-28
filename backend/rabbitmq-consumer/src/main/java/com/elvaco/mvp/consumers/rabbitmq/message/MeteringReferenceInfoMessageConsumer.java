@@ -57,9 +57,17 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     }
 
     FacilityDto facility = message.facility;
+
     if (facility == null || facility.id == null || facility.id.trim().isEmpty()) {
-      log.warn("Discarding message with invalid facility id: '{}'", message);
-      return;
+      if (message.gateway != null
+        && message.gateway.id != null
+        && !message.gateway.id.trim().isEmpty()) {
+        updateGateway(message);
+        return;
+      } else {
+        log.warn("Discarding message with invalid facility id: '{}'", message);
+        return;
+      }
     }
 
     logInvalidStatus(message);
@@ -102,6 +110,17 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
     physicalMeter.ifPresent(physicalMeterUseCases::saveWithStatuses);
     gateway.ifPresent(gatewayUseCases::save);
+  }
+
+  private void updateGateway(MeteringReferenceInfoMessageDto message) {
+    Organisation organisation = organisationUseCases.findOrCreate(message.organisationId);
+    GatewayStatusDto gwDto = message.gateway;
+    Optional<Gateway> gw = gatewayUseCases.findBy(organisation.id, message.gateway.id);
+    gw.map(g -> g.toBuilder()
+      .phoneNumber(gwDto.phoneNumber)
+      .ip(gwDto.ip)
+      .productModel(gwDto.productModel).build())
+      .map(gatewayUseCases::save);
   }
 
   private void logInvalidStatus(MeteringReferenceInfoMessageDto message) {

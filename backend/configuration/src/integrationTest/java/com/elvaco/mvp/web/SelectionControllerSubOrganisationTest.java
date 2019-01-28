@@ -50,8 +50,8 @@ public class SelectionControllerSubOrganisationTest extends IntegrationTest {
     var response = as(user).getPage(url, AddressDto.class);
 
     assertThat(response.getContent()).containsExactly(
-      new AddressDto("sverige", "stockholm", "drottninggatan 1337"),
-      new AddressDto("sverige", "kungsbacka", "kabelgatan 1")
+      new AddressDto("sverige", "stockholm", "drottninggatan 1337", null),
+      new AddressDto("sverige", "kungsbacka", "kabelgatan 1",null)
     );
   }
 

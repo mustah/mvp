@@ -14,5 +14,6 @@ public class LocationDto {
   public String country;
   public String city;
   public String address;
+  public String zip;
   public GeoPositionDto position;
 }
