@@ -191,7 +191,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           heatMeter.id.toString(),
           "Difference temperature",
           "K",
-          heatMeter.externalId,
+          getExpecedLabel(heatMeter),
           MeterDefinition.DISTRICT_HEATING_METER.medium,
           asList(
             new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
@@ -202,7 +202,7 @@ public class MeasurementControllerTest extends IntegrationTest {
           heatMeter.id.toString(),
           "Energy",
           "kWh",
-          heatMeter.externalId,
+          getExpecedLabel(heatMeter),
           MeterDefinition.DISTRICT_HEATING_METER.medium,
           asList(
             new MeasurementValueDto(date.toInstant(), null),
@@ -296,7 +296,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         heatMeter.id.toString(),
         "Difference temperature",
         "K",
-        heatMeter.externalId,
+        getExpecedLabel(heatMeter),
         MeterDefinition.DISTRICT_HEATING_METER.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), DIFF_TEMP_VALUE_KELVIN),
@@ -307,7 +307,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         heatMeter.id.toString(),
         "Energy",
         "kWh",
-        heatMeter.externalId,
+        getExpecedLabel(heatMeter),
         MeterDefinition.DISTRICT_HEATING_METER.medium,
         asList(
           new MeasurementValueDto(date.toInstant(), null),
@@ -335,7 +335,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
-    assertThat(dto.label).isEqualTo(logicalMeter.externalId);
+    assertThat(dto.label).isEqualTo(getExpecedLabel(logicalMeter));
   }
 
   @Test
@@ -421,7 +421,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         consumptionMeter.id.toString(),
         "Volume",
         "m³",
-        consumptionMeter.externalId,
+        getExpecedLabel(consumptionMeter),
         consumptionMeter.meterDefinition.medium,
         asList(
           new MeasurementValueDto(when.toInstant(), 10.0),
@@ -453,7 +453,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         consumptionMeter.id.toString(),
         "Volume",
         "m³",
-        consumptionMeter.externalId,
+        getExpecedLabel(consumptionMeter),
         consumptionMeter.meterDefinition.medium,
         asList(
           new MeasurementValueDto(when.plusHours(0).toInstant(), 10.0),
@@ -518,6 +518,11 @@ public class MeasurementControllerTest extends IntegrationTest {
       ), MeasurementSeriesDto.class).getBody();
 
     assertThat(response).hasSize(0);
+  }
+
+  private String getExpecedLabel(LogicalMeter meter) {
+    assertThat(meter.physicalMeters.size()).isEqualTo(1);
+    return meter.externalId + "-" + meter.physicalMeters.get(0).address;
   }
 
   private Measurement.MeasurementBuilder energyMeasurement(LogicalMeter meter, ZonedDateTime date) {

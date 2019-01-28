@@ -30,7 +30,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record3;
-import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.ResultQuery;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -138,7 +138,7 @@ public class MeasurementRepository implements Measurements {
 
     MeasurementParameter consumptionParameter = getConsumptionParameter(parameter);
     if (!consumptionParameter.getQuantities().isEmpty()) {
-      var r = getConsumptionSeriesQuery(consumptionParameter);
+      var r = getConsumptionQuery(consumptionParameter);
       result.putAll(mapSeriesForPeriod(consumptionParameter, r));
     }
 
@@ -180,19 +180,19 @@ public class MeasurementRepository implements Measurements {
 
   private Map<MeasurementKey, List<MeasurementValue>> mapSeriesForPeriod(
     MeasurementParameter parameter,
-    ResultQuery<Record4<UUID, String, Double, OffsetDateTime>> r
+    ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> r
   ) {
 
     Map<String, Quantity> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()
       .collect(groupingBy(
-        k -> new MeasurementKey(k.get(k.field1()), k.get(k.field2())),
+        k -> new MeasurementKey(k.get(k.field1()), k.get(k.field2()), k.get(k.field3())),
         mapping(
           t -> toMeasurementValueConvertedToUnitFromQuantity(
-            t.get(t.field4()).toInstant(),
-            t.get(t.field3()),
-            quantityMap.get(t.get(t.field2()))
+            t.get(t.field5()).toInstant(),
+            t.get(t.field4()),
+            quantityMap.get(t.get(t.field3()))
           ), toList())
         )
       );
@@ -224,13 +224,14 @@ public class MeasurementRepository implements Measurements {
       .collect(toMap(q -> q.name, q -> q));
   }
 
-  private ResultQuery<Record4<UUID, String, Double, OffsetDateTime>> getConsumptionSeriesQuery(
+  private ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> getConsumptionQuery(
     MeasurementParameter parameter
   ) {
     String dateSerie = "date_serie";
     Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerie);
 
-    Field<UUID> meterId = DSL.field("meter_id", UUID.class);
+    Field<UUID> logicalMeterId = DSL.field("logical_meter", UUID.class);
+    Field<String> physicalMeterAddress = DSL.field("physical_meter_address", String.class);
     Field<String> quantity = DSL.field("quantity", String.class);
     Field<OffsetDateTime> dateTimeField = DSL.field(dateSerie, OffsetDateTime.class);
 
@@ -239,10 +240,12 @@ public class MeasurementRepository implements Measurements {
     Condition organisationCondition = getOrganisationJoinCondition();
 
     var measurementSeries = dsl.select(
-      LOGICAL_METER.ID.as(meterId),
+      LOGICAL_METER.ID.as(logicalMeterId),
+      PHYSICAL_METER.ADDRESS.as(physicalMeterAddress),
       QUANTITY.NAME.as(quantity),
-      lead(MEASUREMENT.VALUE)
-        .over(DSL.orderBy(LOGICAL_METER.ID.asc(), MEASUREMENT.CREATED.asc()))
+      lead(MEASUREMENT.VALUE).over()
+        .partitionBy(PHYSICAL_METER.ID, MEASUREMENT.QUANTITY)
+        .orderBy(MEASUREMENT.CREATED.asc())
         .minus(MEASUREMENT.VALUE)
         .as("value"),
       dateTimeField.as("when")
@@ -261,7 +264,8 @@ public class MeasurementRepository implements Measurements {
 
     Field<OffsetDateTime> when = measurementSeries.field("when", OffsetDateTime.class);
     return dsl.select(
-      meterId,
+      logicalMeterId,
+      physicalMeterAddress,
       measurementSeries.field("quantity", String.class),
       measurementSeries.field("value", Double.class),
       when
@@ -273,7 +277,7 @@ public class MeasurementRepository implements Measurements {
       .orderBy(when.asc());
   }
 
-  private ResultQuery<Record4<UUID, String, Double, OffsetDateTime>> getReadoutSeriesQuery(
+  private ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> getReadoutSeriesQuery(
     MeasurementParameter parameter
   ) {
     String dateSerie = "date_serie";
@@ -286,6 +290,7 @@ public class MeasurementRepository implements Measurements {
 
     return dsl.select(
       LOGICAL_METER.ID,
+      PHYSICAL_METER.ADDRESS,
       QUANTITY.NAME,
       MEASUREMENT.VALUE,
       dateTimeField
@@ -350,7 +355,8 @@ public class MeasurementRepository implements Measurements {
 
     var series = dsl.select(
       lead(MEASUREMENT.VALUE).over()
-        .partitionBy(LOGICAL_METER.ID, MEASUREMENT.QUANTITY).orderBy(MEASUREMENT.CREATED.asc())
+        .partitionBy(PHYSICAL_METER.ID, MEASUREMENT.QUANTITY)
+        .orderBy(MEASUREMENT.CREATED.asc())
         .minus(MEASUREMENT.VALUE).as(consumptionName),
       QUANTITY.NAME.as("quantity"),
       dateTimeField.as(intervalStart)

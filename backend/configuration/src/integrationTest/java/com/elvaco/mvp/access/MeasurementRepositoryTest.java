@@ -330,9 +330,13 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         TemporalResolution.day
       ));
 
-    assertThat(result.get(getKey(logicalMeter, Quantity.VOLUME_FLOW)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterOne.address, Quantity.VOLUME_FLOW)))
       .extracting(l -> l.value)
-      .containsExactly(2.0, 4.0, 6.0, 12.0);
+      .containsExactly(2.0, 4.0);
+
+    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo.address, Quantity.VOLUME_FLOW)))
+      .extracting(l -> l.value)
+      .containsExactly(6.0, 12.0);
   }
 
   @Test
@@ -360,9 +364,13 @@ public class MeasurementRepositoryTest extends IntegrationTest {
         TemporalResolution.day
       ));
 
-    assertThat(result.get(getKey(logicalMeter, Quantity.VOLUME)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterOne.address, Quantity.VOLUME)))
       .extracting(l -> l.value)
-      .containsExactly(2.0, 2.0, 6.0);
+      .containsExactly(2.0, null);
+
+    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo.address, Quantity.VOLUME)))
+      .extracting(l -> l.value)
+      .containsExactly(6.0);
   }
 
   @Test
@@ -465,7 +473,16 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ).isInstanceOf(UnitConversionError.class);
   }
 
+  private MeasurementKey getKey(
+    LogicalMeter meter,
+    String physicalMeterAddress,
+    Quantity quantity
+  ) {
+    return new MeasurementKey(meter.id, physicalMeterAddress, quantity.name);
+  }
+
   private MeasurementKey getKey(LogicalMeter meter, Quantity quantity) {
-    return new MeasurementKey(meter.id, quantity.name);
+    assertThat(meter.physicalMeters.size()).isEqualTo(1);
+    return new MeasurementKey(meter.id, meter.physicalMeters.get(0).address, quantity.name);
   }
 }

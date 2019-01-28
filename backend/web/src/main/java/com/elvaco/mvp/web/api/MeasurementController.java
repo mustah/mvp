@@ -124,6 +124,7 @@ public class MeasurementController {
         toSeries(
           entry.getValue(),
           logicalMetersMap.get(entry.getKey().logicalMeterId),
+          entry.getKey().physicalMeterAddress,
           quantityMap.get(entry.getKey().quantity)
         )
       ).collect(toList());
