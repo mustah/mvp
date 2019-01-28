@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-01-08T15:20:15.363Z\n"
+"POT-Creation-Date: 2019-01-28T10:57:21.105Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,38 +11,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "passwords don't match"
-msgstr "passwords don't match"
-
-msgid "successfully updated password"
-msgstr "successfully updated password"
-
-msgid "passwords are not equal"
-msgstr "The passwords are not equal"
-
-msgid "change password"
-msgstr "change password"
-
-msgid "m-bus device type"
-msgstr "m-bus device type"
-
-msgid "revision"
-msgstr "revision"
-
-msgid "alarm code"
-msgstr "alarm code"
-
 msgid "admin"
 msgstr "admin"
-
-msgid "day"
-msgstr "day"
-
-msgid "hour"
-msgstr "hour"
-
-msgid "month"
-msgstr "month"
 
 msgid "metering"
 msgstr "metering"
@@ -64,9 +34,6 @@ msgstr "delete organisation"
 
 msgid "add organisation"
 msgstr "add organisation"
-
-msgid "add all to report"
-msgstr "add all to report"
 
 msgid "edit user"
 msgstr "edit user"
@@ -116,11 +83,23 @@ msgstr "previous month"
 msgid "custom period"
 msgstr "custom period"
 
+msgid "hour"
+msgstr "hour"
+
+msgid "day"
+msgstr "day"
+
+msgid "month"
+msgstr "month"
+
 msgid "are you sure you want to delete this item"
 msgstr "are you sure you want to delete this item"
 
 msgid "all"
 msgstr "all"
+
+msgid "select quantities"
+msgstr "select quantities"
 
 msgid "version"
 msgstr "version"
@@ -137,6 +116,18 @@ msgstr "parent organisation"
 msgid "selection"
 msgstr "selection"
 
+msgid "new password"
+msgstr "new password"
+
+msgid "confirm new password"
+msgstr "confirm new password"
+
+msgid "change password"
+msgstr "change password"
+
+msgid "passwords don't match"
+msgstr "passwords don't match"
+
 msgid "name"
 msgstr "name"
 
@@ -152,29 +143,11 @@ msgstr "user roles"
 msgid "user language"
 msgstr "user language"
 
-msgid "new password"
-msgstr "new password"
-
-msgid "old password"
-msgstr "password"
-
-msgid "confirm new password"
-msgstr "confirm new password"
-
 msgid "password"
 msgstr "password"
 
 msgid "no measurements expected for the selected period"
 msgstr "no measurements expected for the selected period"
-
-msgid "{{pending}} of {{count}}"
-msgstr "{{pending}} of {{count}}"
-
-msgid "measurement missing"
-msgstr "measurement missing"
-
-msgid "measurements"
-msgstr "measurements"
 
 msgid "no meters"
 msgstr "no meters"
@@ -251,14 +224,26 @@ msgstr "resolution"
 msgid "validation"
 msgstr "validation"
 
+msgid "alarm code"
+msgstr "alarm code"
+
 msgid "labels"
 msgstr "labels"
 
 msgid "meter id"
 msgstr "meter-id"
 
+msgid "m-bus device type"
+msgstr "m-bus device type"
+
+msgid "revision"
+msgstr "revision"
+
 msgid "new meter: {{name}}"
 msgstr "new meter: {{name}}"
+
+msgid "measurements"
+msgstr "measurements"
 
 msgid "events"
 msgstr "events"
@@ -271,6 +256,12 @@ msgstr "date"
 
 msgid "event"
 msgstr "event"
+
+msgid "ip"
+msgstr "ip"
+
+msgid "phone number"
+msgstr "phone number"
 
 msgid "readout"
 msgstr "readout"
@@ -384,6 +375,9 @@ msgstr "successfully updated profile"
 msgid "failed to update profile: {{error}}"
 msgstr "failed to update profile: {{error}"
 
+msgid "successfully updated password"
+msgstr "successfully updated password"
+
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "successfully deleted the user {{name}} ({{email}})"
 
@@ -423,17 +417,17 @@ msgstr "your email address"
 msgid "your password"
 msgstr "your password"
 
-msgid "gateway"
-msgstr "gateway"
-
-msgid "no gateways"
-msgstr "no gateways"
-
 msgid "dashboard"
 msgstr "dashboard"
 
 msgid "all meters in selection"
 msgstr "all meters in selection"
+
+msgid "gateway"
+msgstr "gateway"
+
+msgid "no gateways"
+msgstr "no gateways"
 
 msgid "report"
 msgstr "report"
@@ -450,14 +444,20 @@ msgstr "{{count}} gateway of your selection, are not displayed in the map"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
 msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
 
+msgid "meter will soon be synchronized"
+msgstr "meter will soon be synchronized"
+
 msgid "facility"
 msgstr "facility"
 
+msgid "{{count}} meter will soon be synchronized"
+msgstr "{{count}} meter will soon be synchronized"
+
+msgid "remove all"
+msgstr "remove all"
+
 msgid "value"
 msgstr "value"
-
-msgid "select quantities"
-msgstr "select quantities"
 
 msgid "select meters to include in graph"
 msgstr "select meters to include in graph"
@@ -513,11 +513,17 @@ msgstr "secondary address"
 msgid "thresholds"
 msgstr "thresholds"
 
-msgid "during"
-msgstr "during"
+msgid "at least once"
+msgstr "at least once"
 
-msgid "days"
-msgstr "days"
+msgid "during {{count}} days (or more)"
+msgstr "during one day (or more)"
+
+msgid "clear threshold"
+msgstr "clear threshold"
+
+msgid "add all to report"
+msgstr "add all to report"
 
 msgid "delete user selection"
 msgstr "delete selection"
@@ -528,44 +534,11 @@ msgstr "no saved selections"
 msgid "saved selections"
 msgstr "saved selections"
 
-msgid "selection overview"
-msgstr "selection overview"
-
 msgid "profile"
 msgstr "profile"
 
 msgid "logout"
 msgstr "logout"
-
-msgid "remove all"
-msgstr "remove all"
-
-msgid "at least once"
-msgstr "at least once"
-
-msgid "clear threshold"
-msgstr "clear threshold"
-
-msgid "meter will soon be synchronized"
-msgstr "meter will soon be synchronized"
-
-msgid "{{count}} meter will soon be synchronized"
-msgstr "{{count}} meter will soon be synchronized"
-
-msgid "during {{count}} days (or more)"
-msgstr "during one day (or more)"
-
-msgctxt "°plural"
-msgid "during {{count}} days (or more)°"
-msgstr "during {{count}} days (or more)"
-
-msgctxt "°plural"
-msgid "{{pending}} of {{count}}°"
-msgstr "{{pending}} of {{count}}"
-
-msgctxt "°plural"
-msgid "measurement missing°"
-msgstr "measurements missing"
 
 msgctxt "°plural"
 msgid "city°"
@@ -602,6 +575,39 @@ msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} meters will soon be synchronized"
+
+msgctxt "°plural"
+msgid "during {{count}} days (or more)°"
+msgstr "during {{count}} days (or more)"
+
+#~ msgid "passwords are not equal"
+#~ msgstr "The passwords are not equal"
+
+#~ msgid "old password"
+#~ msgstr "password"
+
+#~ msgid "{{pending}} of {{count}}"
+#~ msgstr "{{pending}} of {{count}}"
+
+#~ msgid "measurement missing"
+#~ msgstr "measurement missing"
+
+#~ msgid "during"
+#~ msgstr "during"
+
+#~ msgid "days"
+#~ msgstr "days"
+
+#~ msgid "selection overview"
+#~ msgstr "selection overview"
+
+#~ msgctxt "°plural"
+#~ msgid "{{pending}} of {{count}}°"
+#~ msgstr "{{pending}} of {{count}}"
+
+#~ msgctxt "°plural"
+#~ msgid "measurement missing°"
+#~ msgstr "measurements missing"
 
 #~ msgid "other"
 #~ msgstr "other"

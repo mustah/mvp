@@ -26,7 +26,7 @@ public class GatewayDto extends GatewayMandatoryDto {
     List<UUID> meterIds,
     UUID organisationId
   ) {
-    super(id, productModel, serial, status, statusChanged);
+    super(id, productModel, serial, status, statusChanged, null, null);
     this.location = location;
     this.meterIds = meterIds;
     this.organisationId = organisationId;

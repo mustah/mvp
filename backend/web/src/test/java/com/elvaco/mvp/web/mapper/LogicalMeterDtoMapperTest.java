@@ -98,13 +98,13 @@ public class LogicalMeterDtoMapperTest {
     expected.alarms = List.of();
 
     ZonedDateTime statusChanged = ZonedDateTime.parse(CREATED_DATE_STRING);
-    expected.gateway = new GatewayMandatoryDto(
-      randomUUID(),
-      "CMi2110",
-      "123123",
-      StatusType.OK.name,
-      formatUtc(statusChanged)
-    );
+    expected.gateway = GatewayMandatoryDto.builder()
+      .id(randomUUID())
+      .productModel("CMi2110")
+      .serial("123123")
+      .status(StatusType.OK.name)
+      .statusChanged(formatUtc(statusChanged))
+      .build();
     expected.collectionPercentage = 75.0;
     expected.readIntervalMinutes = 15L;
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-01-08T15:20:15.363Z\n"
+"POT-Creation-Date: 2019-01-28T10:57:21.105Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,38 +11,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
-msgid "passwords don't match"
-msgstr "lösenorden är inte lika"
-
-msgid "successfully updated password"
-msgstr "lösenordet uppdaterades"
-
-msgid "passwords are not equal"
-msgstr "lösenorden är inte lika"
-
-msgid "change password"
-msgstr "ändra lösenord"
-
-msgid "m-bus device type"
-msgstr "m-bus mätartyp"
-
-msgid "revision"
-msgstr "revision"
-
-msgid "alarm code"
-msgstr "felkod"
-
 msgid "admin"
 msgstr "admin"
-
-msgid "day"
-msgstr "dag"
-
-msgid "hour"
-msgstr "timme"
-
-msgid "month"
-msgstr "månad"
 
 msgid "metering"
 msgstr "mätning"
@@ -64,9 +34,6 @@ msgstr "ta bort organisation"
 
 msgid "add organisation"
 msgstr "lägg till organisation"
-
-msgid "add all to report"
-msgstr "lägg till alla i rapport"
 
 msgid "edit user"
 msgstr "redigera användare"
@@ -116,11 +83,23 @@ msgstr "förra månaden"
 msgid "custom period"
 msgstr "anpassad period"
 
+msgid "hour"
+msgstr "timme"
+
+msgid "day"
+msgstr "dag"
+
+msgid "month"
+msgstr "månad"
+
 msgid "are you sure you want to delete this item"
 msgstr "är du säker på att du vill ta bort detta objekt"
 
 msgid "all"
 msgstr "alla"
+
+msgid "select quantities"
+msgstr "välj storheter"
 
 msgid "version"
 msgstr "version"
@@ -137,6 +116,18 @@ msgstr "huvudorganisation"
 msgid "selection"
 msgstr "urval"
 
+msgid "new password"
+msgstr "nytt lösenord"
+
+msgid "confirm new password"
+msgstr "bekräfta nytt lösenord"
+
+msgid "change password"
+msgstr "ändra lösenord"
+
+msgid "passwords don't match"
+msgstr "lösenorden är inte lika"
+
 msgid "name"
 msgstr "namn"
 
@@ -152,29 +143,11 @@ msgstr "användarroller"
 msgid "user language"
 msgstr "användarspråk"
 
-msgid "old password"
-msgstr "lösenord"
-
-msgid "new password"
-msgstr "nytt lösenord"
-
-msgid "confirm new password"
-msgstr "bekräfta nytt lösenord"
-
 msgid "password"
 msgstr "lösenord"
 
 msgid "no measurements expected for the selected period"
 msgstr "inga mätvärden förväntades under den valda perioden"
-
-msgid "{{pending}} of {{count}}"
-msgstr "{{pending}} av {{count}}"
-
-msgid "measurement missing"
-msgstr "mätvärde saknas"
-
-msgid "measurements"
-msgstr "mätvärden"
 
 msgid "no meters"
 msgstr "inga mätare"
@@ -251,14 +224,26 @@ msgstr "upplösning"
 msgid "validation"
 msgstr "validering"
 
+msgid "alarm code"
+msgstr "felkod"
+
 msgid "labels"
 msgstr "etiketter"
 
 msgid "meter id"
 msgstr "mätar-id"
 
+msgid "m-bus device type"
+msgstr "m-bus mätartyp"
+
+msgid "revision"
+msgstr "revision"
+
 msgid "new meter: {{name}}"
 msgstr "ny mätare: {{name}}"
+
+msgid "measurements"
+msgstr "mätvärden"
 
 msgid "events"
 msgstr "händelser"
@@ -271,6 +256,12 @@ msgstr "datum"
 
 msgid "event"
 msgstr "händelse"
+
+msgid "ip"
+msgstr "ip"
+
+msgid "phone number"
+msgstr "telefonnummer"
 
 msgid "readout"
 msgstr "avläsning"
@@ -383,6 +374,9 @@ msgstr "uppdaterade profil"
 msgid "failed to update profile: {{error}}"
 msgstr "misslyckades uppdatera profil: {{error}}"
 
+msgid "successfully updated password"
+msgstr "lösenordet uppdaterades"
+
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "användaren {{name}} ({{email}}) togs bort"
 
@@ -422,17 +416,17 @@ msgstr "din e-post"
 msgid "your password"
 msgstr "ditt lösenord"
 
-msgid "gateway"
-msgstr "gateway"
-
-msgid "no gateways"
-msgstr "inga gateways"
-
 msgid "dashboard"
 msgstr "dashboard"
 
 msgid "all meters in selection"
 msgstr "alla mätare i urvalet"
+
+msgid "gateway"
+msgstr "gateway"
+
+msgid "no gateways"
+msgstr "inga gateways"
 
 msgid "report"
 msgstr "rapport"
@@ -450,14 +444,20 @@ msgstr "{{count}} gateway of your selection, are not displayed in the map"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
 msgstr "{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
 
+msgid "meter will soon be synchronized"
+msgstr "mätaren uppdateras snart"
+
 msgid "facility"
 msgstr "anläggning"
 
+msgid "{{count}} meter will soon be synchronized"
+msgstr "{{count}} mätare kommer snart att uppdateras"
+
+msgid "remove all"
+msgstr "Ta bort alla"
+
 msgid "value"
 msgstr "värde"
-
-msgid "select quantities"
-msgstr "välj storheter"
 
 msgid "select meters to include in graph"
 msgstr "välj mätare för att inkludera dem i grafen"
@@ -513,11 +513,17 @@ msgstr "sekundäradress"
 msgid "thresholds"
 msgstr "gränsvärden"
 
-msgid "during"
-msgstr "under"
+msgid "at least once"
+msgstr "ett värde (eller fler)"
 
-msgid "days"
-msgstr "dagar"
+msgid "during {{count}} days (or more)"
+msgstr "under en dag (eller mer)"
+
+msgid "clear threshold"
+msgstr "rensa gränsvärde"
+
+msgid "add all to report"
+msgstr "lägg till alla i rapport"
 
 msgid "delete user selection"
 msgstr "ta bort urval"
@@ -528,44 +534,11 @@ msgstr "inga sparade urval"
 msgid "saved selections"
 msgstr "sparade urval"
 
-msgid "selection overview"
-msgstr "urvalsöversikt"
-
 msgid "profile"
 msgstr "profil"
 
 msgid "logout"
 msgstr "logga ut"
-
-msgid "remove all"
-msgstr "Ta bort alla"
-
-msgid "at least once"
-msgstr "ett värde (eller fler)"
-
-msgid "clear threshold"
-msgstr "rensa gränsvärde"
-
-msgid "meter will soon be synchronized"
-msgstr "mätaren uppdateras snart"
-
-msgid "{{count}} meter will soon be synchronized"
-msgstr "{{count}} mätare kommer snart att uppdateras"
-
-msgid "during {{count}} days (or more)"
-msgstr "under en dag (eller mer)"
-
-msgctxt "°plural"
-msgid "during {{count}} days (or more)°"
-msgstr "under {{count}} dagar (eller mer)"
-
-msgctxt "°plural"
-msgid "{{pending}} of {{count}}°"
-msgstr "{{pending}} av {{count}}"
-
-msgctxt "°plural"
-msgid "measurement missing°"
-msgstr "mätvärden saknas"
 
 msgctxt "°plural"
 msgid "city°"
@@ -604,6 +577,39 @@ msgstr ""
 msgctxt "°plural"
 msgid "{{count}} meter will soon be synchronized°"
 msgstr "{{count}} mätare kommer snart att uppdateras"
+
+msgctxt "°plural"
+msgid "during {{count}} days (or more)°"
+msgstr "under {{count}} dagar (eller mer)"
+
+#~ msgid "passwords are not equal"
+#~ msgstr "lösenorden är inte lika"
+
+#~ msgid "old password"
+#~ msgstr "lösenord"
+
+#~ msgid "{{pending}} of {{count}}"
+#~ msgstr "{{pending}} av {{count}}"
+
+#~ msgid "measurement missing"
+#~ msgstr "mätvärde saknas"
+
+#~ msgid "during"
+#~ msgstr "under"
+
+#~ msgid "days"
+#~ msgstr "dagar"
+
+#~ msgid "selection overview"
+#~ msgstr "urvalsöversikt"
+
+#~ msgctxt "°plural"
+#~ msgid "{{pending}} of {{count}}°"
+#~ msgstr "{{pending}} av {{count}}"
+
+#~ msgctxt "°plural"
+#~ msgid "measurement missing°"
+#~ msgstr "mätvärden saknas"
 
 #~ msgid "other"
 #~ msgstr "övriga"

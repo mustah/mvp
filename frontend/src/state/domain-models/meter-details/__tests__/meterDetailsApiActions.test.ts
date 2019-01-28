@@ -75,6 +75,8 @@ describe('meterDetailsApiActions', () => {
         productModel: 'pro123',
         status: Status.ok,
         id: 2,
+        phoneNumber: '911',
+        ip: '127.0.0.1',
       },
       organisationId: 'org123',
       location: {

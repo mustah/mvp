@@ -64,6 +64,10 @@ const renderSerial = ({serial}: Gateway): string => serial;
 
 const renderProductModel = ({productModel}: Gateway): string => productModel;
 
+const renderIp = ({ip}: Gateway): string => ip;
+
+const renderPhoneNumber = ({phoneNumber}: Gateway): string => phoneNumber;
+
 const renderStatus = ({status: {name}}: Gateway) => <Status label={name}/>;
 
 const renderStatusChange = ({statusChanged}: Gateway) =>
@@ -159,6 +163,14 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
                 <TableColumn
                   header={<TableHead>{translate('product model')}</TableHead>}
                   renderCell={renderProductModel}
+                />
+                <TableColumn
+                  header={<TableHead>{translate('ip')}</TableHead>}
+                  renderCell={renderIp}
+                />
+                <TableColumn
+                  header={<TableHead>{translate('phone number')}</TableHead>}
+                  renderCell={renderPhoneNumber}
                 />
                 <TableColumn
                   header={<TableHead>{translate('collection')}</TableHead>}
