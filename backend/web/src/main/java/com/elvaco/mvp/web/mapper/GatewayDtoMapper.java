@@ -69,13 +69,15 @@ public class GatewayDtoMapper {
 
   static GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
     StatusLogEntry gatewayStatusLog = gateway.currentStatus();
-    return new GatewayMandatoryDto(
-      gateway.id,
-      formatProductModel(gateway.productModel),
-      gateway.serial,
-      gatewayStatusLog.status.name,
-      formatUtc(gatewayStatusLog.start)
-    );
+    return GatewayMandatoryDto.builder()
+      .id(gateway.id)
+      .productModel(formatProductModel(gateway.productModel))
+      .serial(gateway.serial)
+      .status(gatewayStatusLog.status.name)
+      .statusChanged(formatUtc(gatewayStatusLog.start))
+      .ip(gateway.ip)
+      .phoneNumber(gateway.phoneNumber)
+      .build();
   }
 
   private static List<UUID> connectedMeterIds(Gateway gateway) {

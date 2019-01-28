@@ -12,6 +12,8 @@ export interface GatewayMandatory extends Identifiable {
   serial: string;
   productModel: string;
   status: IdNamed;
+  ip: string;
+  phoneNumber: string;
 }
 
 export interface Gateway extends LocationHolder, GatewayMandatory {
