@@ -43,7 +43,7 @@ public class LocationDtoMapper {
       toCity(location).name,
       toAddress(location).name,
       toZip(location).name,
-      toGeoPositionDto(location)
+      toGeoPositionDto(location).orElse(null)
     );
   }
 
@@ -75,16 +75,12 @@ public class LocationDtoMapper {
       .orElse(UNKNOWN_LOCATION);
   }
 
-  static Optional<GeoPositionDto> toGeoPosition(Location location) {
+  static Optional<GeoPositionDto> toGeoPositionDto(Location location) {
     return Optional.ofNullable(location.getCoordinate())
       .map(coordinate -> new GeoPositionDto(
         coordinate.getLatitude(),
         coordinate.getLongitude(),
         coordinate.getConfidence()
       ));
-  }
-
-  private static GeoPositionDto toGeoPositionDto(Location location) {
-    return toGeoPosition(location).orElseGet(GeoPositionDto::new);
   }
 }

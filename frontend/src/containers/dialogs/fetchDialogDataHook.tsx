@@ -62,7 +62,6 @@ export const useFetchMeterAndMapMarker = ({
   React.useEffect(() => {
     selectedId.do((id: uuid) => {
       fetchMeterDetails([id], makeApiParametersOf(periodDateRange));
-      fetchMeterMapMarker(id);
     });
   });
 };
