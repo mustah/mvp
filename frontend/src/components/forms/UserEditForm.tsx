@@ -76,6 +76,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         hintText={newPasswordLabel}
         type="password"
         value={password}
+        autoComplete="new-password"
         onChange={this.onChange}
       />
     );
@@ -88,6 +89,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             hintText={nameLabel}
             id="name"
             value={name}
+            autoComplete="new-password"
             onChange={this.onChange}
           />
           <TextFieldInput
@@ -95,6 +97,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             hintText={emailLabel}
             id="email"
             value={email}
+            autoComplete="new-password"
             onChange={this.onChange}
           />
           <SelectFieldInput
