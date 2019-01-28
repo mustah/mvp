@@ -34,7 +34,7 @@ export const domainModelsPostSuccess: ActionTypeFactory = domainModelsSuccess(Re
 export const domainModelsPutSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.PUT);
 export const domainModelsDeleteSuccess: ActionTypeFactory = domainModelsSuccess(RequestType.DELETE);
 
-export const domainModelsClearError = (endPoint: EndPoints) => `DOMAIN_MODELS_CLEAR_ERROR${endPoint}`;
+export const domainModelsClearError = (endPoint: EndPoints): string => `DOMAIN_MODELS_CLEAR_ERROR${endPoint}`;
 
 export const clearError = (endPoint: EndPoints) => emptyActionOf(domainModelsClearError(endPoint));
 

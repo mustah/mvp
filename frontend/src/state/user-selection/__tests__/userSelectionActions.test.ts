@@ -79,6 +79,7 @@ describe('userSelectionActions', () => {
         result: [1, 21, 33],
       },
     },
+    previousSession: {},
   };
   const rootStateNoSaved = {
     ...rootState,
