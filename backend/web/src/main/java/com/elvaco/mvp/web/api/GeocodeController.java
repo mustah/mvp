@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.Pk;
 import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.web.dto.geoservice.GeoResponseDto;
@@ -27,7 +26,7 @@ public class GeocodeController {
   @PostMapping("/callback/{id}")
   public void callback(@PathVariable UUID id, @RequestBody GeoResponseDto geoResponse) {
     logicalMeters.findById(id)
-      .map(logicalMeter -> toLocationWithId(geoResponse, new Pk(id, logicalMeter.organisationId)))
+      .map(logicalMeter -> toLocationWithId(geoResponse,logicalMeter))
       .map(locations::save);
   }
 

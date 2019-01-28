@@ -39,7 +39,8 @@ public class GeocodeControllerTest extends IntegrationTest {
       new AddressDto(
         "sweden",
         "kungsbacka",
-        "kabelgatan 1"
+        "kabelgatan 1",
+        "43437"
       ),
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
@@ -49,7 +50,7 @@ public class GeocodeControllerTest extends IntegrationTest {
 
     var pk = new EntityPk(meter.id, meter.organisationId);
 
-    var expected = toLocationWithId(geoResponse, pk);
+    var expected = toLocationWithId(geoResponse, meter);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(findLocationBy(pk)).isEqualTo(expected);
@@ -57,13 +58,15 @@ public class GeocodeControllerTest extends IntegrationTest {
 
   @Test
   public void saveLocationAsLowercaseStringForLogicalMeter() {
-    var meter = given(logicalMeter());
+    var meter = given(logicalMeter().location(new LocationBuilder().country("Sweden")
+      .city("Växjö").address("Drottninggatan 3").zip("").build()));
 
     var geoResponse = new GeoResponseDto(
       new AddressDto(
         "Sweden",
         "Växjö",
-        "Drottninggatan 3"
+        "Drottninggatan 3",
+        ""
       ),
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
@@ -82,9 +85,10 @@ public class GeocodeControllerTest extends IntegrationTest {
       .country("sweden")
       .city("växjö")
       .address("drottninggatan 3")
+      .zip("")
       .buildLocationWithId();
-
-    assertThat(findLocationBy(pk)).isEqualTo(expected);
+    var actual = findLocationBy(pk);
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -95,7 +99,8 @@ public class GeocodeControllerTest extends IntegrationTest {
       new AddressDto(
         "  ",
         " ",
-        "Drottninggatan 3"
+        "Drottninggatan 3",
+        ""
       ),
       new GeoPositionDto(11.23332, 12.12323, 1.0)
     );
@@ -120,7 +125,8 @@ public class GeocodeControllerTest extends IntegrationTest {
       new AddressDto(
         "sweden",
         "kungsbacka",
-        "kabelgatan 1"
+        "kabelgatan 1",
+        "43437"
       )
     );
     var response = restClient()

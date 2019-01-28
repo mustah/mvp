@@ -72,7 +72,7 @@ public class SelectionController {
     PageableAdapter adapter = new PageableAdapter(pageable);
 
     Page<AddressDto> page = locationUseCases.findAllAddresses(parameters, adapter)
-      .map(address -> new AddressDto(address.country, address.city, address.street));
+      .map(address -> new AddressDto(address.country, address.city, address.street, address.zip));
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
   }

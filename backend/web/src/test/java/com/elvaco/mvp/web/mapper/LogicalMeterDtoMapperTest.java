@@ -75,6 +75,7 @@ public class LogicalMeterDtoMapperTest {
       "sverige",
       "kungsbacka",
       "kabelgatan 2t",
+      "43437",
       new GeoPositionDto(57.5052592, 56.123, 1.0)
     );
     expected.manufacturer = "ELV";
@@ -150,6 +151,7 @@ public class LogicalMeterDtoMapperTest {
             .city("kungsbacka")
             .address("kabelgatan 2t")
             .country("sverige")
+            .zip("43437")
             .latitude(57.5052592)
             .longitude(56.123)
             .confidence(1.0)

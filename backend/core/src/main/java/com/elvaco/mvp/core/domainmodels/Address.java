@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 public class Address extends IdentifiableType<String> {
 
   public final String street;
+  public final String zip;
   public final String city;
   public final String country;
 

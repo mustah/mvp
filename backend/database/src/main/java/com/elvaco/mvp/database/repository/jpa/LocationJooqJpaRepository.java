@@ -68,6 +68,7 @@ class LocationJooqJpaRepository
   public Page<Address> findAllAddresses(RequestParameters parameters, Pageable pageable) {
     var query = dsl.selectDistinct(
       LOCATION.STREET_ADDRESS,
+      LOCATION.ZIP,
       LOCATION.CITY,
       LOCATION.COUNTRY
     ).from(LOCATION);
