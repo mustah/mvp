@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 
@@ -60,6 +61,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
       .antMatchers(API_V1 + "/geocodes/**").permitAll()
       .antMatchers(API_V1 + "/logout").permitAll();
+    http.headers().referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN);
     http.csrf().disable();
     http.headers().frameOptions().disable();
 
