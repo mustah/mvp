@@ -55,7 +55,6 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusNoMeters_ReturnsEmptyCollectionStatus() {
-
     ZonedDateTime start = context().now();
     ZonedDateTime end = start.plusHours(2);
     ResponseEntity<DashboardDto> response = asUser()

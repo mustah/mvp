@@ -242,4 +242,8 @@
     </module>
     <module name="CommentsIndentation"/>
   </module>
+  <module name="RegexpMultiline">
+    <property name="format" value="\) \{\n\n"/>
+    <property name="message" value="Empty line is not allowed here"/>
+  </module>
 </module>

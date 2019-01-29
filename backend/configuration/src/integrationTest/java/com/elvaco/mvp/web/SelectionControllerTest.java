@@ -588,7 +588,6 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   private void prepareMeters() {
-
     given(
       logicalMeter()
         .externalId("extId1")

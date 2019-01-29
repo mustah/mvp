@@ -80,7 +80,6 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
     if (measurementThresholdDuringFilter != null
       && !measurementStatsCondition.equals(falseCondition())
       && measurementThresholdDuringDuration != null) {
-
       if (selectionDurationInDays != null
         && measurementThresholdDuringDuration > selectionDurationInDays) {
         throw new DurationLongerThanSelectionException();

@@ -329,7 +329,6 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> r
   ) {
-
     Map<String, Quantity> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()
@@ -349,7 +348,6 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> r
   ) {
-
     Map<String, Quantity> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()

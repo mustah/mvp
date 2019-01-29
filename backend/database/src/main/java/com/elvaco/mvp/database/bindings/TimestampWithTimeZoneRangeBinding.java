@@ -27,7 +27,6 @@ public class TimestampWithTimeZoneRangeBinding implements Binding<Object, Period
   @Override
   public Converter<Object, PeriodRange> converter() {
     return new Converter<>() {
-
       private static final long serialVersionUID = 692440657729988729L;
 
       @Nullable
