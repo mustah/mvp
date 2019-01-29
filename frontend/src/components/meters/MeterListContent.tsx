@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated} from '../../services/translationService';
+import {OnDeleteMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {
@@ -40,9 +41,11 @@ export interface MeterListStateToProps {
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
   isSuperAdmin: boolean;
+  page: number;
 }
 
 export interface MeterListDispatchToProps {
+  deleteMeter: OnDeleteMeter;
   selectEntryAdd: OnClickWithId;
   syncWithMetering: OnClickWithId;
   syncMeters: CallbackWithIds;

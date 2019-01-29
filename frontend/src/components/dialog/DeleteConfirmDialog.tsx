@@ -8,9 +8,15 @@ interface Props {
   isOpen: boolean;
   confirm: OnClick;
   close: OnClick;
+  text?: string;
 }
 
-export const ConfirmDialog = ({isOpen, close, confirm}: Props) => {
+export const ConfirmDialog = ({
+  isOpen,
+  close,
+  confirm,
+  text = firstUpperTranslated('are you sure you want to delete this item')
+}: Props) => {
   const confirmAndClose = () => {
     confirm();
     close();
@@ -27,7 +33,7 @@ export const ConfirmDialog = ({isOpen, close, confirm}: Props) => {
       onRequestClose={close}
       open={isOpen}
     >
-      {`${firstUpperTranslated('are you sure you want to delete this item')}?`}
+      {`${text}?`}
     </MaterialDialog>
   );
 };

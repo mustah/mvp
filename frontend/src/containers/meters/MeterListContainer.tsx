@@ -7,7 +7,7 @@ import {
 } from '../../components/meters/MeterListContent';
 import {RootState} from '../../reducers/rootReducer';
 import {isSelectionPage} from '../../selectors/routerSelectors';
-import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {clearErrorMeters, deleteMeter, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {sortTable} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
@@ -56,10 +56,12 @@ const mapStateToProps = (
     pagination,
     error: getPageError<Meter>(meters, page),
     entityType,
+    page,
   });
 };
 
 const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCreators({
+  deleteMeter,
   selectEntryAdd,
   syncWithMetering,
   syncMeters,

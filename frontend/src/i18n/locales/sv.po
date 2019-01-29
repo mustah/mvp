@@ -11,6 +11,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "delete meter"
+msgstr "ta bort mätare"
+
+msgid "are you sure you want to delete the meter {{facility}}"
+msgstr "är du säkert på att du vill ta bort mätare '{{facility}}'"
+
+msgid "successfully deleted the meter {{facility}}"
+msgstr "lyckades ta bort mätare '{{facility}}'"
+
+msgid "failed to delete the meter: {{error}}"
+msgstr "lyckades inte ta bort mätaren: {{error}}"
+
 msgid "admin"
 msgstr "admin"
 

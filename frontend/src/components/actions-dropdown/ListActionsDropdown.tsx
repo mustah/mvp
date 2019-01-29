@@ -1,5 +1,8 @@
+import Divider from 'material-ui/Divider';
 import * as React from 'react';
+import {branch, renderNothing} from 'recompose';
 import {routes} from '../../app/routes';
+import {isDefined} from '../../helpers/commonUtils';
 import {history} from '../../index';
 import {translate} from '../../services/translationService';
 import {IdNamed, OnClick, OnClickWithId, RenderFunction} from '../../types/Types';
@@ -7,15 +10,25 @@ import {connectedSuperAdminOnly} from '../hoc/withRoles';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
-interface Props {
+interface DeleteMeter {
+  deleteMeter?: OnClickWithId;
+}
+
+interface Props extends DeleteMeter {
   item: IdNamed;
   selectEntryAdd: OnClickWithId;
   syncWithMetering?: OnClickWithId;
 }
 
-const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
+type DeleteMeterMenuItemProps = ActionMenuItemProps & DeleteMeter;
 
-export const ListActionsDropdown = ({item: {id}, selectEntryAdd, syncWithMetering}: Props) => {
+const withDeleteMeterActionButton = branch<DeleteMeterMenuItemProps>(
+  ({deleteMeter}) => isDefined(deleteMeter), connectedSuperAdminOnly, renderNothing);
+
+const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
+const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
+
+export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, syncWithMetering}: Props) => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onAddToReport = () => {
@@ -24,7 +37,7 @@ export const ListActionsDropdown = ({item: {id}, selectEntryAdd, syncWithMeterin
       selectEntryAdd(id);
     };
 
-    const menuItemProps: ActionMenuItemProps = {
+    const syncMenuItemProps: ActionMenuItemProps = {
       name: translate('sync'),
       onClick: () => {
         onClick();
@@ -33,9 +46,20 @@ export const ListActionsDropdown = ({item: {id}, selectEntryAdd, syncWithMeterin
         }
       },
     };
+
+    const deleteMenuItemProps: DeleteMeterMenuItemProps = {
+      name: translate('delete meter'),
+      deleteMeter,
+      onClick: () => {
+        onClick();
+        deleteMeter!(id);
+      },
+    };
     return ([
-      <SyncWithMeteringMenuItem {...menuItemProps} key={`sync-${id}`}/>,
+      <SyncWithMeteringMenuItem {...syncMenuItemProps} key={`sync-${id}`}/>,
       <ActionMenuItem name={translate('add to report')} onClick={onAddToReport} key={`add-to-report-${id}`}/>,
+      <Divider key={`list-divider-${id}`}/>,
+      <DeleteMeterActionMenuItem {...deleteMenuItemProps} key={`delete-meter-${id}`}/>
     ]);
   };
 

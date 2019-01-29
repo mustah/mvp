@@ -13,9 +13,10 @@ import {
   NormalizedPaginatedState,
   PageNumbered,
   PaginatedDomainModelsState,
+  SingleEntityFailure,
 } from '../paginatedDomainModels';
 import {makeRequestActionsOf, sortTable} from '../paginatedDomainModelsActions';
-import {makeEntityRequestActionsOf} from '../paginatedDomainModelsEntityActions';
+import {makeEntityRequestActionsOf, makePaginatedDeleteRequestActions} from '../paginatedDomainModelsEntityActions';
 import {makeInitialState, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
@@ -105,7 +106,6 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('appends entities', () => {
-
       const populatedState: MetersState =
         meters(initialState, getRequest.success(normalizedMeters));
 
@@ -193,6 +193,72 @@ describe('paginatedDomainModelsReducer', () => {
       };
       expect(stateAfterFailure).toEqual(failedState);
     });
+
+    describe('delete meter', () => {
+      const deleteRequest = makePaginatedDeleteRequestActions<Meter & PageNumbered>(EndPoints.meters);
+
+      it('dispatches delete meter request', () => {
+        const state: MetersState = meters(initialState, deleteRequest.request());
+
+        const expectedState: MetersState = {
+          ...initialState,
+          isFetchingSingle: true,
+        };
+
+        expect(state).toEqual(expectedState);
+      });
+
+      it('dispatches delete meter failure', () => {
+        const failure: SingleEntityFailure = {id: 1, message: 'could not find meter'};
+
+        const state: MetersState = meters(initialState, deleteRequest.failure(failure));
+
+        const expectedState: MetersState = {
+          ...initialState,
+          nonExistingSingles: {1: failure},
+        };
+
+        expect(state).toEqual(expectedState);
+      });
+
+      it('removes meter with id', () => {
+        const meter1: Meter = makeMeter(1, 'stockholm', 'king street');
+        const meter2: Meter = makeMeter(2, 'stockholm', 'king street');
+
+        const initialState: MetersState = {
+          isFetchingSingle: false,
+          nonExistingSingles: {},
+          entities: {
+            1: {...meter1},
+            2: {...meter2}
+          },
+          result: {
+            [page]: {
+              result: [1, 2],
+              isFetching: false,
+              isSuccessfullyFetched: true,
+            },
+          },
+        };
+
+        const state: MetersState = meters(initialState, deleteRequest.success({...meter1, page}));
+
+        const expectedState: MetersState = {
+          ...initialState,
+          entities: {2: {...meter2}},
+          result: {
+            ...initialState.result,
+            [page]: {
+              ...initialState.result[page],
+              result: [2],
+            }
+          }
+        };
+
+        expect(state).toEqual(expectedState);
+      });
+    });
+
   });
 
   describe('clear error', () => {
@@ -243,7 +309,7 @@ describe('paginatedDomainModelsReducer', () => {
     it('can start sorting', () => {
       const state: MetersState = makeInitialState();
 
-      const payload: ApiRequestSortingOptions[]  = [{field: RequestParameter.city}];
+      const payload: ApiRequestSortingOptions[] = [{field: RequestParameter.city}];
       const newState: MetersState = meters(state, sortTable(payload));
 
       expect(newState).toHaveProperty('sort', payload);
@@ -345,4 +411,5 @@ describe('paginatedDomainModelsReducer', () => {
       expect(state).toEqual(expected);
     });
   });
+
 });

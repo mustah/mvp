@@ -1,6 +1,8 @@
 import {EndPoints} from '../../../services/endPoints';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {makePaginatedDeleteRequestActions} from '../../domain-models-paginated/paginatedDomainModelsEntityActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -153,6 +155,55 @@ describe('summaryReducer', () => {
       state = summary(state, {type: LOGOUT_USER});
 
       expect(state).toEqual({...initialState});
+    });
+  });
+
+  describe('delete meter', () => {
+    const deleteRequestActions = makePaginatedDeleteRequestActions(EndPoints.meters);
+
+    it('should show loading animation when delete meter request is dispatched', () => {
+      const someState: SummaryState = {...initialState};
+
+      const state: SummaryState = summary(someState, deleteRequestActions.request());
+
+      const expected: SummaryState = {...initialState, isFetching: true};
+      expect(state).toEqual(expected);
+    });
+
+    it('should decrease meter count upon success', () => {
+      const someState: SummaryState = {
+        ...initialState,
+        isFetching: true,
+        payload: {...initialState.payload, numMeters: 2}
+      };
+
+      const meter = {id: 1};
+
+      const state: SummaryState = summary(someState, deleteRequestActions.success(meter as Meter));
+
+      const expected: SummaryState = {
+        ...initialState,
+        isFetching: false,
+        isSuccessfullyFetched: true,
+        payload: {...initialState.payload, numMeters: 1},
+      };
+      expect(state).toEqual(expected);
+    });
+
+    it('should reset state when delete meter fails', () => {
+      const someState: SummaryState = {
+        ...initialState,
+        isFetching: true,
+        payload: {...initialState.payload, numMeters: 2}
+      };
+
+      const state: SummaryState = summary(someState, deleteRequestActions.failure({id: 1, message: 'not ok'}));
+
+      const expected: SummaryState = {
+        ...initialState,
+        payload: {...initialState.payload, numMeters: 2},
+      };
+      expect(state).toEqual(expected);
     });
   });
 

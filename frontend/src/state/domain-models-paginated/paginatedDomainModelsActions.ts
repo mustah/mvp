@@ -45,7 +45,7 @@ interface AsyncRequest<REQUEST_MODEL, DATA> extends PaginatedRequestHandler<DATA
   dispatch: Dispatch<RootState>;
 }
 
-const asyncRequest = async <REQ, DAT>(
+const asyncRequest = async <REQUEST_MODEL, DATA>(
   {
     request,
     success,
@@ -57,7 +57,7 @@ const asyncRequest = async <REQ, DAT>(
     requestData,
     page,
     dispatch,
-  }: AsyncRequest<REQ, DAT>) => {
+  }: AsyncRequest<REQUEST_MODEL, DATA>) => {
   try {
     dispatch(request(page));
     const {data: domainModelData} = await requestFunc(requestData);
