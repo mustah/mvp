@@ -8,7 +8,7 @@ import {EndPoints} from '../../services/endPoints';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {User} from '../../state/domain-models/user/userModels';
 import {changeLanguage} from '../../state/language/languageActions';
-import {payloadActionOf} from '../../types/Types';
+import {payloadActionOf, uuid} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -32,15 +32,28 @@ const translatedError = (error?: Unauthorized): Unauthorized | undefined =>
 
 const isAuthenticated = (auth: AuthState): boolean => !!auth.user && auth.isAuthenticated;
 
+interface AuthApiResponse {
+  data: {
+    token: string;
+    user: User;
+  };
+}
+
 export const login = (username: string, password: string) =>
-  async (dispatch) => {
+  async (dispatch, getState: GetState) => {
     dispatch(loginRequest());
     try {
       const basicToken = makeToken(username, password);
-      const {data: {user, token}} = await authenticate(basicToken).get(EndPoints.authenticate);
+      const previousUserId: uuid | undefined = getState().previousSession.lastLoggedInUserId;
+      const {data: {user, token}}: AuthApiResponse = await authenticate(basicToken).get(EndPoints.authenticate);
       restClientWith(token);
       await dispatch(changeLanguage(user.language));
       dispatch(loginSuccess({token, user}));
+      if (previousUserId && previousUserId !== user.id) {
+        // cannot dispatch resetSelection() here when running tests (running application in browser is fine).
+        // reason: unknown, possibly related to circular imports in non-bundled modes, such as yarn test
+        dispatch({type: 'RESET_SELECTION'});
+      }
     } catch (error) {
       const {response: {data}} = error;
       dispatch(loginFailure(translatedError(data)!));

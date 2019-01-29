@@ -9,6 +9,7 @@ import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
 import {LanguageState} from '../state/language/languageModels';
 import {language} from '../state/language/languageReducer';
+import {previousSession, PreviousSessionState} from '../state/previous-session/previousSessionReducer';
 import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
 import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
@@ -39,13 +40,14 @@ export interface RootState {
   ui: UiState;
   map: MapState;
   search: SearchState;
+  previousSession: PreviousSessionState;
 }
 
 export type AppState = RootState | undefined;
 
 export type GetState = () => RootState;
 
-const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection', 'report'];
+const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection', 'report', 'previousSession'];
 
 const migrate: MigrationDispatch = createMigrate(migrations, {debug: false});
 
@@ -72,4 +74,5 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     ui,
     map,
     search,
+    previousSession,
   });

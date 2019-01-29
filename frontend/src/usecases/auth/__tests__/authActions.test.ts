@@ -37,9 +37,10 @@ describe('authActions', () => {
     store = configureMockStore({
       domainModels: initialState,
       language: initialLanguageState,
+      previousSession: {},
     });
     mockRestClient = new MockAdapter(axios);
-    window.location.reload = () => void(0);
+    window.location.reload = () => void (0);
     authenticate('test');
     initTranslations({
       code: 'en',
