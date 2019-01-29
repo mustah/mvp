@@ -9,10 +9,16 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse} from '../../../../types/Types';
 import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
+import {SHOW_FAIL_MESSAGE, SHOW_SUCCESS_MESSAGE} from '../../../ui/message/messageActions';
 import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
 import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
-import {clearErrorMeters, fetchMeters} from '../meterApiActions';
+import {
+  domainModelsPaginatedDeleteFailure,
+  domainModelsPaginatedDeleteRequest,
+  domainModelsPaginatedDeleteSuccess
+} from '../../paginatedDomainModelsEntityActions';
+import {clearErrorMeters, deleteMeter, fetchMeters} from '../meterApiActions';
 import {Meter} from '../meterModels';
 import {meterDataFormatter} from '../meterSchema';
 
@@ -239,6 +245,73 @@ describe('meterApiActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: domainModelPaginatedClearError(EndPoints.meters), payload},
+      ]);
+    });
+  });
+
+  describe('deleteMeter', () => {
+
+    it('cannot delete meter when request times out', async () => {
+      const deleteMeterWithTimeout = async (id: number) => {
+        mockRestClient.onDelete(`${EndPoints.meters}/${id}`).timeout();
+        return store.dispatch(deleteMeter(id, 0));
+      };
+
+      await deleteMeterWithTimeout(1);
+
+      expect(store.getActions()).toEqual([
+        {type: domainModelsPaginatedDeleteRequest(EndPoints.meters)},
+        {
+          type: domainModelsPaginatedDeleteFailure(EndPoints.meters),
+          payload: {id: 1, message: 'Looks like the server is taking to long to respond, please try again in soon'}
+        },
+      ]);
+    });
+
+    it('has error response when deleting meter', async () => {
+      const payload = {message: 'my bad', id: 1};
+
+      const deleteMeterWithTimeout = async (id: number) => {
+        mockRestClient.onDelete(`${EndPoints.meters}/${id}`).reply(401, payload);
+        return store.dispatch(deleteMeter(id, 1));
+      };
+
+      await deleteMeterWithTimeout(payload.id);
+
+      expect(store.getActions()).toEqual([
+        {type: domainModelsPaginatedDeleteRequest(EndPoints.meters)},
+        {
+          type: domainModelsPaginatedDeleteFailure(EndPoints.meters),
+          payload
+        },
+        {
+          type: SHOW_FAIL_MESSAGE,
+          payload: 'Failed to delete the meter: my bad'
+        }
+      ]);
+    });
+
+    it('deletes meter successfully', async () => {
+      const page = 2;
+      const payload = {id: 1, facility: `demo-1`, page};
+
+      const deleteMeterWithTimeout = async (id: number, page: number) => {
+        mockRestClient.onDelete(`${EndPoints.meters}/${id}`).reply(200, payload);
+        return store.dispatch(deleteMeter(id, page));
+      };
+
+      await deleteMeterWithTimeout(1, page);
+
+      expect(store.getActions()).toEqual([
+        {type: domainModelsPaginatedDeleteRequest(EndPoints.meters)},
+        {
+          type: domainModelsPaginatedDeleteSuccess(EndPoints.meters),
+          payload,
+        },
+        {
+          type: SHOW_SUCCESS_MESSAGE,
+          payload: 'Successfully deleted the meter demo-1'
+        }
       ]);
     });
   });

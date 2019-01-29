@@ -16,11 +16,8 @@ export interface Normalized<T extends Identifiable> {
   };
 }
 
-export interface Entities<T extends Identifiable> {
+export interface DomainModel<T extends Identifiable> {
   entities: ObjectsById<T>;
-}
-
-export interface DomainModel<T extends Identifiable> extends Entities<T> {
   result: uuid[];
 }
 

@@ -9,14 +9,30 @@ import {Action, emptyActionOf, ErrorResponse, Identifiable, payloadActionOf, uui
 import {logout} from '../../usecases/auth/authActions';
 import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../api/apiActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
-import {NormalizedPaginatedState, PaginatedDomainModelsState, SingleEntityFailure} from './paginatedDomainModels';
+import {
+  NormalizedPaginatedState,
+  PageNumbered,
+  PaginatedDomainModelsState,
+  SingleEntityFailure
+} from './paginatedDomainModels';
 
 export const domainModelsPaginatedEntityRequest = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_REQUEST${endPoint}`;
+
 export const domainModelsPaginatedEntitySuccess = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_SUCCESS${endPoint}`;
+
 export const domainModelsPaginatedEntityFailure = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_FAILURE${endPoint}`;
+
+export const domainModelsPaginatedDeleteRequest = (endPoint: EndPoints) =>
+  `DOMAIN_MODELS_PAGINATED_DELETE_REQUEST${endPoint}`;
+
+export const domainModelsPaginatedDeleteSuccess = (endPoint: EndPoints) =>
+  `DOMAIN_MODELS_PAGINATED_DELETE_SUCCESS${endPoint}`;
+
+export const domainModelsPaginatedDeleteFailure = (endPoint: EndPoints) =>
+  `DOMAIN_MODELS_PAGINATED_DELETE_FAILURE${endPoint}`;
 
 interface PaginatedRequestEntityHandler<T> {
   request: () => EmptyAction<string>;
@@ -25,10 +41,11 @@ interface PaginatedRequestEntityHandler<T> {
 }
 
 interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, RequestCallbacks<DATA> {
-  requestFunc: () => any;
+  requestFunc: (id?: uuid) => any;
   formatData?: (response) => any;
   dispatch: Dispatch<RootState>;
   id?: uuid;
+  page?: number;
 }
 
 export const makeEntityRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
@@ -37,23 +54,23 @@ export const makeEntityRequestActionsOf = <T>(endPoint: EndPoints): PaginatedReq
   failure: payloadActionOf<SingleEntityFailure>(domainModelsPaginatedEntityFailure(endPoint)),
 });
 
-const asyncRequestEntities = async <DAT>(
-  {
-    request,
-    success,
-    failure,
-    afterSuccess,
-    afterFailure,
-    requestFunc,
-    formatData = (identity) => identity,
-    id = -1,
-    dispatch,
-  }: AsyncRequestEntity<DAT>) => {
+const asyncRequestEntities = async <DATA>({
+  request,
+  success,
+  failure,
+  afterSuccess,
+  afterFailure,
+  requestFunc,
+  formatData = (identity) => identity,
+  id,
+  dispatch,
+  page
+}: AsyncRequestEntity<DATA>) => {
   try {
     dispatch(request());
-    const {data} = await requestFunc();
+    const {data} = await requestFunc(id);
     const formattedData = formatData(data);
-    dispatch(success(formattedData));
+    dispatch(success({...formattedData, page}));
     if (afterSuccess) {
       afterSuccess(formattedData, dispatch);
     }
@@ -63,12 +80,12 @@ const asyncRequestEntities = async <DAT>(
     } else if (wasRequestCanceled(error)) {
       return;
     } else if (isTimeoutError(error)) {
-      dispatch(failure({id, ...requestTimeout()}));
+      dispatch(failure({id: id || -1, ...requestTimeout()}));
     } else if (!error.response) {
-      dispatch(failure({id, ...noInternetConnection()}));
+      dispatch(failure({id: id || -1, ...noInternetConnection()}));
     } else {
       const errorResponse: ErrorResponse = responseMessageOrFallback(error.response);
-      dispatch(failure({id, ...errorResponse}));
+      dispatch(failure({id: id || -1, ...errorResponse}));
       if (afterFailure) {
         afterFailure(errorResponse, dispatch);
       }
@@ -105,3 +122,22 @@ export const fetchEntityIfNeeded = <T>(
         return null;
       }
     };
+
+export const makePaginatedDeleteRequestActions =
+  <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
+    request: emptyActionOf(domainModelsPaginatedDeleteRequest(endPoint)),
+    success: payloadActionOf<T & PageNumbered>(domainModelsPaginatedDeleteSuccess(endPoint)),
+    failure: payloadActionOf<SingleEntityFailure>(domainModelsPaginatedDeleteFailure(endPoint)),
+  });
+
+export const paginatedDeleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) =>
+  (id: uuid, page: number) =>
+    (dispatch) =>
+      asyncRequestEntities<T>({
+        ...makePaginatedDeleteRequestActions<T & PageNumbered>(endPoint),
+        requestFunc: (id: uuid) => restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(id.toString())}`)),
+        id,
+        ...requestCallbacks,
+        dispatch,
+        page,
+      });

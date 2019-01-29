@@ -1,5 +1,6 @@
 import {Location} from 'history';
 import {isEqual} from 'lodash';
+import {EmptyAction} from 'react-redux-typescript';
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
 import {routes} from '../../app/routes';
@@ -28,6 +29,9 @@ import {
   SORT_TABLE,
 } from './paginatedDomainModelsActions';
 import {
+  domainModelsPaginatedDeleteFailure,
+  domainModelsPaginatedDeleteRequest,
+  domainModelsPaginatedDeleteSuccess,
   domainModelsPaginatedEntityFailure,
   domainModelsPaginatedEntityRequest,
   domainModelsPaginatedEntitySuccess,
@@ -115,6 +119,27 @@ const addEntities = <T extends Identifiable>(
   });
 };
 
+const removePagedEntity = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+  {id, page}: Meter & PageNumbered,
+): NormalizedPaginatedState<T> => {
+  const entities = {...state.entities};
+  delete entities[id];
+  const uuids = state.result[page].result || [];
+  return ({
+    ...state,
+    isFetchingSingle: false,
+    entities,
+    result: {
+      ...state.result,
+      [page]: {
+        ...state.result[page],
+        result: uuids.filter((it) => it !== id)
+      },
+    }
+  });
+};
+
 const entityFailure = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
   payload: SingleEntityFailure,
@@ -124,15 +149,17 @@ const entityFailure = <T extends Identifiable>(
   nonExistingSingles: {...state.nonExistingSingles, [payload.id]: payload},
 });
 
-type ActionTypes<T extends Identifiable> = Action<NormalizedPaginated<T>
-  | number
-  | undefined
-  | ErrorResponse & PageNumbered
-  | PageNumbered
-  | T | T[]
-  | SingleEntityFailure
-  | Location
-  | ApiRequestSortingOptions[]>;
+type ActionTypes<T extends Identifiable> = EmptyAction<string> |
+  Action<NormalizedPaginated<T>
+    | Meter & PageNumbered
+    | number
+    | undefined
+    | ErrorResponse & PageNumbered
+    | PageNumbered
+    | T | T[]
+    | SingleEntityFailure
+    | Location
+    | ApiRequestSortingOptions[]>;
 
 const metersReducer = <T extends Identifiable>(
   state: NormalizedPaginatedState<T> = makeInitialState<T>(),
@@ -146,7 +173,7 @@ const metersReducer = <T extends Identifiable>(
       }
       break;
     case SORT_TABLE:
-      return sortTable(state, action.payload as ApiRequestSortingOptions[]);
+      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
   }
   return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
 };
@@ -179,19 +206,23 @@ const reducerFor = <T extends Identifiable>(
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
       case domainModelsPaginatedRequest(endPoint):
-        return setRequest(state, action.payload as number);
+        return setRequest(state, (action as Action<number>).payload);
       case domainModelsPaginatedGetSuccess(endPoint):
-        return setEntities<T>(entity, state, action.payload as NormalizedPaginated<T>);
+        return setEntities<T>(entity, state, (action as Action<NormalizedPaginated<T>>).payload);
       case domainModelsPaginatedFailure(endPoint):
-        return setError<T>(state, action.payload as ErrorResponse & PageNumbered);
+        return setError<T>(state, (action as Action<ErrorResponse & PageNumbered>).payload);
       case domainModelPaginatedClearError(endPoint):
-        return clearError(state, action.payload as PageNumbered);
+        return clearError(state, (action as Action<PageNumbered>).payload);
       case domainModelsPaginatedEntityRequest(endPoint):
+      case domainModelsPaginatedDeleteRequest(endPoint):
         return entityRequest(state);
       case domainModelsPaginatedEntitySuccess(endPoint):
-        return addEntities(state, action.payload as T | T[]);
+        return addEntities(state, (action as Action<T | T[]>).payload);
+      case domainModelsPaginatedDeleteSuccess(endPoint):
+        return removePagedEntity(state, (action as Action<Meter & PageNumbered>).payload);
       case domainModelsPaginatedEntityFailure(endPoint):
-        return entityFailure(state, action.payload as SingleEntityFailure);
+      case domainModelsPaginatedDeleteFailure(endPoint):
+        return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
       case LOGOUT_USER:
       case SEARCH:
         return {...makeInitialState()};

@@ -4,7 +4,8 @@ import {translate} from '../../../services/translationService';
 import {SelectedTab, TabName} from '../../../state/ui/tabs/tabsModels';
 import {
   CallbackWith,
-  Children, ClassNamed,
+  Children,
+  ClassNamed,
   ClearError,
   EncodedUriParameters,
   ErrorResponse,
