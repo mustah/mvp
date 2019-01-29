@@ -1,9 +1,10 @@
 import Divider from 'material-ui/Divider';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
 import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
 import {branch, renderNothing} from 'recompose';
 import {routes} from '../../app/routes';
-import {actionMenuItemIconStyle} from '../../app/themes';
+import {actionMenuItemIconStyle, dividerStyle} from '../../app/themes';
 import {isDefined} from '../../helpers/commonUtils';
 import {history} from '../../index';
 import {translate} from '../../services/translationService';
@@ -12,6 +13,11 @@ import {connectedSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
+
+const deleteDividerStyle: React.CSSProperties = {
+  ...dividerStyle,
+  marginBottom: 6,
+};
 
 interface DeleteMeter {
   deleteMeter?: OnClickWithId;
@@ -30,6 +36,7 @@ const withDeleteMeterActionButton = branch<DeleteMeterMenuItemProps>(
 
 const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
+const DeleteDivider = withDeleteMeterActionButton(Divider);
 
 export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, syncWithMetering}: Props) => {
 
@@ -75,8 +82,19 @@ export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, sy
           key={`add-to-report-${id}`}
         />
       ),
-      <Divider key={`list-divider-${id}`}/>,
-      <DeleteMeterActionMenuItem {...deleteMenuItemProps} key={`delete-meter-${id}`}/>
+      (
+        <DeleteDivider
+          {...deleteMenuItemProps}
+          style={deleteDividerStyle}
+          key={`list-divider-${id}`}
+        />
+      ),
+      (
+        <DeleteMeterActionMenuItem
+          leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
+          {...deleteMenuItemProps}
+          key={`delete-meter-${id}`}
+        />)
     ]);
   };
 
