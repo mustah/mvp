@@ -116,7 +116,7 @@ public class GatewayDtoMapper {
 
   private static GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .flatMap(LocationDtoMapper::toGeoPosition)
+      .flatMap(LocationDtoMapper::toGeoPositionDto)
       .orElseGet(GeoPositionDto::new);
   }
 
