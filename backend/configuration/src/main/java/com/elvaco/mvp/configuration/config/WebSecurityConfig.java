@@ -61,9 +61,10 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
       .antMatchers(API_V1 + "/geocodes/**").permitAll()
       .antMatchers(API_V1 + "/logout").permitAll();
-    http.headers().referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN);
+    http.headers()
+      .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN)
+      .and().frameOptions().deny();
     http.csrf().disable();
-    http.headers().frameOptions().disable();
 
     http
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
