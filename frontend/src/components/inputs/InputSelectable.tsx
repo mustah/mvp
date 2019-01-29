@@ -6,12 +6,12 @@ import {floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
 import {ClassNamed, IdNamed, OnChange, uuid} from '../../types/Types';
 import SelectFieldProps = __MaterialUI.SelectFieldProps;
 
-const renderMenuItem = ({id, name}: IdNamed) =>
+export const renderMenuItem = ({id, name}: IdNamed) =>
   <MenuItem key={id} value={id} primaryText={name}/>;
 
-type MultipleOrSingle = {multiple: false; value: uuid} | {multiple: true; value: uuid[]};
+export type MultipleOrSingle = {multiple: false; value: uuid} | {multiple: true; value: uuid[]};
 
-interface SelectFieldInputProps extends ClassNamed {
+export interface SelectFieldInputProps extends ClassNamed {
   id: string;
   options: IdNamed[];
   floatingLabelText: string;
@@ -26,7 +26,7 @@ type Props = SelectFieldInputProps & MultipleOrSingle;
  * WrappedSelectField is used as a workaround until @types/material-ui/SelectField is
  * supporting floatingLabelFocusStyle.
  */
-interface WrappedSelectFieldProps extends SelectFieldProps {
+export interface WrappedSelectFieldProps extends SelectFieldProps {
   floatingLabelFocusStyle?: React.CSSProperties;
 }
 

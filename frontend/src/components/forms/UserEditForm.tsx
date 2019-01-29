@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {ValidatorForm} from 'react-material-ui-form-validator';
 import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
@@ -6,8 +7,8 @@ import {Role, User} from '../../state/domain-models/user/userModels';
 import {Language} from '../../state/language/languageModels';
 import {IdNamed, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
-import {SelectFieldInput} from '../inputs/InputSelectable';
-import {TextFieldInput} from '../inputs/TextFieldInput';
+import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
+import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
 import {Column} from '../layouts/column/Column';
 import './UserEditForm.scss';
 
@@ -65,77 +66,96 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const languageLabel = firstUpperTranslated('user language');
     const newPasswordLabel = isEditSelf ?
       firstUpperTranslated('new password') : firstUpperTranslated('password');
+    const requiredLabel = firstUpperTranslated('required field');
+    const requiredEmailLabel = firstUpperTranslated('email not valid');
 
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
     const languageOptions: IdNamed[] = languages.map(({code, name}) => ({id: code, name}));
 
     const passwordElement = user ? null : (
-      <TextFieldInput
+      <ValidatedFieldInput
         id="password"
         floatingLabelText={newPasswordLabel}
         hintText={newPasswordLabel}
         type="password"
         value={password}
+        validators={['required']}
+        errorMessages={[requiredLabel]}
         autoComplete="new-password"
         onChange={this.onChange}
       />
     );
 
     return (
-      <form onSubmit={this.wrappedSubmit}>
+      <ValidatorForm
+        onSubmit={this.wrappedSubmit}
+      >
         <Column className="EditUserContainer">
-          <TextFieldInput
+          <ValidatedFieldInput
             floatingLabelText={nameLabel}
             hintText={nameLabel}
             id="name"
             value={name}
+            validators={['required']}
+            errorMessages={[requiredLabel]}
             autoComplete="new-password"
             onChange={this.onChange}
           />
-          <TextFieldInput
+          <ValidatedFieldInput
             floatingLabelText={emailLabel}
             hintText={emailLabel}
             id="email"
             value={email}
+            validators={['required', 'isEmail']}
+            errorMessages={[requiredLabel, requiredEmailLabel]}
             autoComplete="new-password"
             onChange={this.onChange}
           />
-          <SelectFieldInput
+
+          <ValidatedInputSelectable
             options={organisations}
             floatingLabelText={organisationLabel}
             hintText={organisationLabel}
             id="organisation"
             multiple={false}
             onChange={this.changeOrganisation}
+            validators={['required']}
+            errorMessages={[requiredLabel]}
             value={organisation.id}
             disabled={isEditSelf}
           />
-          <SelectFieldInput
+          <ValidatedInputSelectable
             options={roleOptions}
             floatingLabelText={rolesLabel}
             hintText={rolesLabel}
             id="roles"
             multiple={true}
             onChange={this.changeRoles}
+            validators={['required']}
+            errorMessages={[requiredLabel]}
             value={roles}
             disabled={isEditSelf}
           />
-          <SelectFieldInput
+
+          <ValidatedInputSelectable
             options={languageOptions}
             floatingLabelText={languageLabel}
             hintText={languageLabel}
             id="language"
             multiple={false}
             onChange={this.changeLanguage}
+            validators={['required']}
+            errorMessages={[requiredLabel]}
             value={language}
           />
+
           {passwordElement}
           <ButtonSave
             className="SaveButton"
             type="submit"
           />
         </Column>
-      </form>
+      </ValidatorForm>
     );
   }
 
