@@ -9,7 +9,7 @@ interface Styles {
 export const fontSize = {
   small: 12,
   normal: 14,
-  large: 16,
+  medium: 16,
 };
 
 export const borderRadius = 4;

@@ -19,7 +19,7 @@ export interface MenuItemProps extends Selectable {
   fontClassName?: string;
 }
 
-export const MainMenuItem = ({name, fontClassName = 'Medium', icon, isSelected}: MenuItemProps) => (
+export const MainMenuItem = ({name, fontClassName = 'Large', icon, isSelected}: MenuItemProps) => (
   <RowMiddle className={classNames('MainMenuItem', {isSelected})}>
     {icon}
     <Normal className={classNames('first-uppercase', fontClassName)}>{name}</Normal>

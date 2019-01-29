@@ -5,7 +5,7 @@ import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../a
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
-import {Normal} from '../../../components/texts/Texts';
+import {Medium} from '../../../components/texts/Texts';
 import {history} from '../../../index';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
@@ -71,7 +71,7 @@ const ListItems = ({
       >
         <RowSpaceBetween>
           <RowMiddle className="SavedSelection-Name flex-1" onClick={onSelect}>
-            <Normal>{name}</Normal>
+            <Medium>{name}</Medium>
           </RowMiddle>
           <Row className="UserSelectionActionDropdown">
             <SavedSelectionActionsDropdown
