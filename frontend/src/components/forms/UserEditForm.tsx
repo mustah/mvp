@@ -72,6 +72,11 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
     const languageOptions: IdNamed[] = languages.map(({code, name}) => ({id: code, name}));
 
+    const requiredMessage = [requiredLabel];
+    const requiredValidator = ['required'];
+    const requiredEmailValidator = ['required', 'isEmail'];
+    const requiredEmailMessage = [requiredLabel, requiredEmailLabel];
+
     const passwordElement = user ? null : (
       <ValidatedFieldInput
         id="password"
@@ -79,8 +84,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         hintText={newPasswordLabel}
         type="password"
         value={password}
-        validators={['required']}
-        errorMessages={[requiredLabel]}
+        validators={requiredValidator}
+        errorMessages={requiredMessage}
         autoComplete="new-password"
         onChange={this.onChange}
       />
@@ -96,8 +101,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             hintText={nameLabel}
             id="name"
             value={name}
-            validators={['required']}
-            errorMessages={[requiredLabel]}
+            validators={requiredValidator}
+            errorMessages={requiredMessage}
             autoComplete="new-password"
             onChange={this.onChange}
           />
@@ -106,8 +111,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             hintText={emailLabel}
             id="email"
             value={email}
-            validators={['required', 'isEmail']}
-            errorMessages={[requiredLabel, requiredEmailLabel]}
+            validators={requiredEmailValidator}
+            errorMessages={requiredEmailMessage}
             autoComplete="new-password"
             onChange={this.onChange}
           />
@@ -119,8 +124,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             id="organisation"
             multiple={false}
             onChange={this.changeOrganisation}
-            validators={['required']}
-            errorMessages={[requiredLabel]}
+            validators={requiredValidator}
+            errorMessages={requiredMessage}
             value={organisation.id}
             disabled={isEditSelf}
           />
@@ -131,8 +136,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             id="roles"
             multiple={true}
             onChange={this.changeRoles}
-            validators={['required']}
-            errorMessages={[requiredLabel]}
+            validators={requiredValidator}
+            errorMessages={requiredMessage}
             value={roles}
             disabled={isEditSelf}
           />
@@ -144,8 +149,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             id="language"
             multiple={false}
             onChange={this.changeLanguage}
-            validators={['required']}
-            errorMessages={[requiredLabel]}
+            validators={requiredValidator}
+            errorMessages={requiredMessage}
             value={language}
           />
 
