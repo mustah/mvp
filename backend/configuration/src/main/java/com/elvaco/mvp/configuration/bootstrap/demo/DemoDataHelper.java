@@ -63,7 +63,6 @@ public class DemoDataHelper {
     PhysicalMeterEntity meter,
     double previousMeterReading
   ) {
-
     return asList(
       new MeasurementEntity(
         created,

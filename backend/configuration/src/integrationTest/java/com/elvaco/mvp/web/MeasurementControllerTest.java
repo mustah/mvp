@@ -214,7 +214,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForMeterByQuantityInPeriodWithNonDefaultUnit() {
-
     ZonedDateTime date = context().now();
 
     LogicalMeter heatMeter = given(logicalMeter()
@@ -242,7 +241,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsWithoutQuantityGivesAllQuantities() {
-
     ZonedDateTime date = context().now();
 
     LogicalMeter roomSensorMeter = given(logicalMeter()
@@ -272,7 +270,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForMeterUsingTwoDifferentQuantities() {
-
     ZonedDateTime date = context().now();
 
     LogicalMeter heatMeter = given(logicalMeter()
@@ -364,7 +361,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void wrongDimensionForQuantitySuppliedForScaling() {
-
     ZonedDateTime date = context().now();
     LogicalMeter heatMeter = given(
       logicalMeter().meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)

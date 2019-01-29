@@ -226,7 +226,6 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
 
   @Test
   public void atAnyTime_15mIntervalAsHourConsumption() {
-
     ZonedDateTime now = context().now();
     var meter = given(logicalMeter(), physicalMeter().readIntervalMinutes(15));
     given(series(

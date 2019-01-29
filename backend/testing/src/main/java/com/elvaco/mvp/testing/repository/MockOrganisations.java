@@ -45,9 +45,7 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  public void deleteById(UUID id) {
-
-  }
+  public void deleteById(UUID id) {}
 
   @Override
   public Optional<Organisation> findBySlug(String slug) {

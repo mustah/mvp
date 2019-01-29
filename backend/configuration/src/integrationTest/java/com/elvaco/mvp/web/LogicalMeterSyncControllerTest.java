@@ -216,7 +216,6 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
   @Test
   public void sync_MessageIncludedForMultipleJobs() {
-
     MeteringReferenceInfoMessageDto response1 = newMeteringReferenceInfoMessageDto("12345");
     MeteringReferenceInfoMessageDto response2 = newMeteringReferenceInfoMessageDto("54321");
     meterSyncJobService.update("12345", response1);
@@ -443,9 +442,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     }
 
     @Override
-    public void addConnectionListener(ConnectionListener listener) {
-
-    }
+    public void addConnectionListener(ConnectionListener listener) {}
 
     @Override
     public boolean removeConnectionListener(ConnectionListener listener) {
@@ -453,8 +450,6 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
     }
 
     @Override
-    public void clearConnectionListeners() {
-
-    }
+    public void clearConnectionListeners() {}
   }
 }

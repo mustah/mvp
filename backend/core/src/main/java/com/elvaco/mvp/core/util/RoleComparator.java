@@ -16,9 +16,7 @@ public class RoleComparator implements Comparator<Role>, Serializable {
 
   @Override
   public int compare(Role role1, Role role2) {
-
     if (isRoleImplemented(role1.role) && isRoleImplemented(role2.role)) {
-
       if (role1.role.equals(role2.role)) {
         return 0;
       }

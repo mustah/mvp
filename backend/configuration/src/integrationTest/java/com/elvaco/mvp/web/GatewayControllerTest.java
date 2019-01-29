@@ -466,7 +466,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void findGateways_WithManufacturer() {
-
     Gateway gatewayElv = saveGateway(dailyPlanet.id);
     Gateway gatewayKam = saveGateway(dailyPlanet.id);
 

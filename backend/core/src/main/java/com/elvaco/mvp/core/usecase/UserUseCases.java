@@ -59,7 +59,6 @@ public class UserUseCases {
     if (userBeforeUpdate.isPresent()
       && organisationPermissions.isAllowed(currentUser, user, userBeforeUpdate.get(), UPDATE)
     ) {
-
       return Optional.of(
         removeTokenForUser(users.update(user.withPassword(userBeforeUpdate.get().password)))
       );

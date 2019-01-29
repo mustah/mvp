@@ -33,6 +33,7 @@ import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.ResultQuery;
 import org.jooq.Table;
+import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -51,6 +52,10 @@ import static org.jooq.impl.DSL.lead;
 import static org.jooq.impl.DSL.trueCondition;
 
 public class MeasurementRepository implements Measurements {
+
+  private static final String VALUE_DATE_FIELD_NAME = "value_date";
+  private static final String VALUE_FIELD_NAME = "value";
+  private static final String QUANTITY_FIELD_NAME = "quantity";
 
   private final DSLContext dsl;
   private final MeasurementJpaRepository measurementJpaRepository;
@@ -160,6 +165,148 @@ public class MeasurementRepository implements Measurements {
       .map(measurementEntityMapper::toDomainModel);
   }
 
+  private ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> getReadoutSeriesQuery(
+    MeasurementParameter parameter
+  ) {
+    Field<OffsetDateTime> valueDate = DSL.field(VALUE_DATE_FIELD_NAME, OffsetDateTime.class);
+
+    return dsl.select(
+      LOGICAL_METER.ID,
+      PHYSICAL_METER.ADDRESS,
+      QUANTITY.NAME,
+      getValueField(false),
+      valueDate
+    ).from(joinedSourceTables(parameter, VALUE_DATE_FIELD_NAME))
+      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
+  }
+
+  private ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> getConsumptionQuery(
+    MeasurementParameter parameter
+  ) {
+    String physicalMeterFieldName = "physicalmeter_address";
+    String logicalMeterFieldName = "logicalmeter";
+
+    Field<OffsetDateTime> valueDate = DSL.field(VALUE_DATE_FIELD_NAME, OffsetDateTime.class);
+    Field<Double> value = DSL.field(VALUE_FIELD_NAME, Double.class);
+    Field<String> physicalMeterAddress = DSL.field(physicalMeterFieldName, String.class);
+    Field<String> quantity = DSL.field(QUANTITY_FIELD_NAME, String.class);
+    Field<UUID> logicalMeterId = DSL.field(logicalMeterFieldName, UUID.class);
+
+    var measurementSeries = dsl.select(
+      LOGICAL_METER.ID.as(logicalMeterId),
+      PHYSICAL_METER.ADDRESS.as(physicalMeterAddress),
+      QUANTITY.NAME.as(quantity),
+      getValueField(true).as(value),
+      valueDate
+    ).from(joinedSourceTables(parameter, VALUE_DATE_FIELD_NAME))
+      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
+
+    return dsl.select(
+      logicalMeterId,
+      physicalMeterAddress,
+      quantity,
+      value,
+      valueDate
+    ).from(measurementSeries)
+      .where(
+        valueDate.greaterOrEqual(parameter.getResolution().getStart(parameter.getFrom())),
+        valueDate.lessOrEqual(parameter.getResolution().getStart(parameter.getTo()))
+      )
+      .orderBy(valueDate.asc());
+  }
+
+  private ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> getReadoutAverageQuery(
+    MeasurementParameter parameter
+  ) {
+    Field<OffsetDateTime> valueDate = DSL.field(VALUE_DATE_FIELD_NAME, OffsetDateTime.class);
+
+    return dsl.select(
+      avg(MEASUREMENT.VALUE),
+      QUANTITY.NAME,
+      valueDate
+    ).from(joinedSourceTables(parameter, VALUE_DATE_FIELD_NAME))
+      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()))
+      .groupBy(valueDate, QUANTITY.NAME)
+      .orderBy(valueDate, QUANTITY.NAME);
+  }
+
+  private ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> getConsumptionAverageQuery(
+    MeasurementParameter parameter
+  ) {
+    Field<OffsetDateTime> valueDate = DSL.field(VALUE_DATE_FIELD_NAME, OffsetDateTime.class);
+    Field<Double> value = DSL.field(VALUE_FIELD_NAME, Double.class);
+    Field<String> quantity = DSL.field(QUANTITY_FIELD_NAME, String.class);
+
+    var series = dsl.select(
+      getValueField(true).as(value),
+      QUANTITY.NAME.as(quantity),
+      valueDate
+    ).from(joinedSourceTables(parameter, VALUE_DATE_FIELD_NAME))
+      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
+
+    return dsl.select(
+      avg(value),
+      quantity,
+      valueDate
+    ).from(series)
+      .where(valueDate.lessOrEqual(parameter.getResolution().getStart(parameter.getTo())))
+      .groupBy(valueDate, quantity)
+      .orderBy(valueDate, quantity);
+  }
+
+  private TableOnConditionStep<Record> joinedSourceTables(
+    MeasurementParameter parameter,
+    String dateFieldName
+  ) {
+    Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateFieldName);
+    Field<OffsetDateTime> valueDate = DSL.field(dateFieldName, OffsetDateTime.class);
+
+    Condition quantityCondition = parameter.getQuantities().isEmpty()
+      ? trueCondition()
+      : QUANTITY.NAME.in(parameter.getQuantities().stream().map(q -> q.name).collect(toList()));
+
+    return LOGICAL_METER
+      .join(METER_DEFINITION_QUANTITIES)
+      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
+      .innerJoin(QUANTITY)
+      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
+      .innerJoin(PHYSICAL_METER)
+      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID)
+        .and(LOGICAL_METER.ORGANISATION_ID.eq(PHYSICAL_METER.ORGANISATION_ID)))
+      .rightOuterJoin(dateSerieTable)
+      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, valueDate))
+      .leftJoin(MEASUREMENT)
+      .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
+        .and(MEASUREMENT.CREATED.equal(valueDate))
+        .and(MEASUREMENT.QUANTITY.equal(QUANTITY.ID)));
+  }
+
+  private Field<Double> getValueField(boolean isConsumption) {
+    if (isConsumption) {
+      return lead(MEASUREMENT.VALUE).over()
+        .partitionBy(PHYSICAL_METER.ID, MEASUREMENT.QUANTITY)
+        .orderBy(MEASUREMENT.CREATED.asc())
+        .minus(MEASUREMENT.VALUE);
+    } else {
+      return MEASUREMENT.VALUE;
+    }
+  }
+
+  private Table<Record> dateSerieFor(MeasurementParameter parameter) {
+    String expr;
+    if (parameter.getQuantities().get(0).isConsumption()) {
+      expr = "generate_series({0}, {1} + cast({2} as interval), {2}::interval)";
+    } else {
+      expr = "generate_series({0}, {1}, {2}::interval)";
+    }
+    return DSL.table(
+      expr,
+      parameter.getResolution().getStart(parameter.getFrom()),
+      parameter.getResolution().getStart(parameter.getTo()),
+      parameter.getResolution().asInterval()
+    );
+  }
+
   private MeasurementParameter getReadoutParameter(MeasurementParameter parameter) {
     return parameter.toBuilder()
       .quantities(parameter.getQuantities()
@@ -182,7 +329,6 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> r
   ) {
-
     Map<String, Quantity> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()
@@ -202,7 +348,6 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> r
   ) {
-
     Map<String, Quantity> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()
@@ -222,203 +367,6 @@ public class MeasurementRepository implements Measurements {
     return parameter.getQuantities()
       .stream()
       .collect(toMap(q -> q.name, q -> q));
-  }
-
-  private ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> getConsumptionQuery(
-    MeasurementParameter parameter
-  ) {
-    String dateSerie = "date_serie";
-    Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerie);
-
-    Field<UUID> logicalMeterId = DSL.field("logical_meter", UUID.class);
-    Field<String> physicalMeterAddress = DSL.field("physical_meter_address", String.class);
-    Field<String> quantity = DSL.field("quantity", String.class);
-    Field<OffsetDateTime> dateTimeField = DSL.field(dateSerie, OffsetDateTime.class);
-
-    Condition measurementCondition = getMeasurementJoinCondition(dateTimeField);
-    Condition quantityCondition = getQuantityCondition(parameter);
-    Condition organisationCondition = getOrganisationJoinCondition();
-
-    var measurementSeries = dsl.select(
-      LOGICAL_METER.ID.as(logicalMeterId),
-      PHYSICAL_METER.ADDRESS.as(physicalMeterAddress),
-      QUANTITY.NAME.as(quantity),
-      lead(MEASUREMENT.VALUE).over()
-        .partitionBy(PHYSICAL_METER.ID, MEASUREMENT.QUANTITY)
-        .orderBy(MEASUREMENT.CREATED.asc())
-        .minus(MEASUREMENT.VALUE)
-        .as("value"),
-      dateTimeField.as("when")
-    ).from(LOGICAL_METER)
-      .join(METER_DEFINITION_QUANTITIES)
-      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
-      .innerJoin(QUANTITY)
-      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
-      .innerJoin(PHYSICAL_METER)
-      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID).and(organisationCondition))
-      .rightOuterJoin(dateSerieTable)
-      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, dateTimeField))
-      .leftJoin(MEASUREMENT)
-      .on(measurementCondition)
-      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
-
-    Field<OffsetDateTime> when = measurementSeries.field("when", OffsetDateTime.class);
-    return dsl.select(
-      logicalMeterId,
-      physicalMeterAddress,
-      measurementSeries.field("quantity", String.class),
-      measurementSeries.field("value", Double.class),
-      when
-    ).from(measurementSeries)
-      .where(
-        when.greaterOrEqual(parameter.getResolution().getStart(parameter.getFrom())),
-        when.lessOrEqual(parameter.getResolution().getStart(parameter.getTo()))
-      )
-      .orderBy(when.asc());
-  }
-
-  private ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> getReadoutSeriesQuery(
-    MeasurementParameter parameter
-  ) {
-    String dateSerie = "date_serie";
-    Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerie);
-    Field<OffsetDateTime> dateTimeField = DSL.field(dateSerie, OffsetDateTime.class);
-
-    Condition measurementCondition = getMeasurementJoinCondition(dateTimeField);
-    Condition quantityCondition = getQuantityCondition(parameter);
-    Condition organisationCondition = getOrganisationJoinCondition();
-
-    return dsl.select(
-      LOGICAL_METER.ID,
-      PHYSICAL_METER.ADDRESS,
-      QUANTITY.NAME,
-      MEASUREMENT.VALUE,
-      dateTimeField
-    ).from(LOGICAL_METER)
-      .join(METER_DEFINITION_QUANTITIES)
-      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
-      .innerJoin(QUANTITY)
-      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
-      .innerJoin(PHYSICAL_METER)
-      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID).and(organisationCondition))
-      .rightOuterJoin(dateSerieTable)
-      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, dateTimeField))
-      .leftJoin(MEASUREMENT)
-      .on(measurementCondition)
-      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
-  }
-
-  private ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> getReadoutAverageQuery(
-    MeasurementParameter parameter
-  ) {
-    String dateSerie = "date_serie";
-    Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerie);
-    Field<OffsetDateTime> dateTimeField = DSL.field(dateSerie, OffsetDateTime.class);
-
-    Condition measurementCondition = getMeasurementJoinCondition(dateTimeField);
-    Condition quantityCondition = getQuantityCondition(parameter);
-    Condition organisationCondition = getOrganisationJoinCondition();
-
-    return dsl.select(
-      avg(MEASUREMENT.VALUE),
-      QUANTITY.NAME,
-      dateTimeField
-    ).from(LOGICAL_METER)
-      .join(METER_DEFINITION_QUANTITIES)
-      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
-      .innerJoin(QUANTITY)
-      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
-      .innerJoin(PHYSICAL_METER)
-      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID).and(organisationCondition))
-      .rightOuterJoin(dateSerieTable)
-      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, dateTimeField))
-      .leftJoin(MEASUREMENT)
-      .on(measurementCondition)
-      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()))
-      .groupBy(dateTimeField, QUANTITY.NAME)
-      .orderBy(dateTimeField, QUANTITY.NAME);
-  }
-
-  private ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> getConsumptionAverageQuery(
-    MeasurementParameter parameter
-  ) {
-    String dateSerieName = "date_serie";
-    String consumptionName = "consumption";
-    Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateSerieName);
-
-    Field<String> intervalStart = DSL.field("interval_start", String.class);
-    Field<OffsetDateTime> dateTimeField = DSL.field(dateSerieName, OffsetDateTime.class);
-
-    Condition measurementCondition = getMeasurementJoinCondition(dateTimeField);
-    Condition quantityCondition = getQuantityCondition(parameter);
-    Condition organisationCondition = getOrganisationJoinCondition();
-
-    var series = dsl.select(
-      lead(MEASUREMENT.VALUE).over()
-        .partitionBy(PHYSICAL_METER.ID, MEASUREMENT.QUANTITY)
-        .orderBy(MEASUREMENT.CREATED.asc())
-        .minus(MEASUREMENT.VALUE).as(consumptionName),
-      QUANTITY.NAME.as("quantity"),
-      dateTimeField.as(intervalStart)
-    ).from(LOGICAL_METER)
-      .join(METER_DEFINITION_QUANTITIES)
-      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
-      .innerJoin(QUANTITY)
-      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
-      .innerJoin(PHYSICAL_METER)
-      .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID).and(organisationCondition))
-      .rightOuterJoin(dateSerieTable)
-      .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, dateTimeField))
-      .leftJoin(MEASUREMENT)
-      .on(measurementCondition)
-      .where(LOGICAL_METER.ID.in(parameter.getLogicalMeterIds()));
-
-    Field<OffsetDateTime> when = series.field("interval_start", OffsetDateTime.class);
-    Field<BigDecimal> consumption = series.field(consumptionName, BigDecimal.class);
-    Field<String> quantity = series.field("quantity", String.class);
-
-    return dsl.select(
-      avg(consumption),
-      quantity,
-      when
-    ).from(series)
-      .where(when.lessOrEqual(parameter.getResolution().getStart(parameter.getTo())))
-      .groupBy(intervalStart, quantity)
-      .orderBy(when.asc(), quantity);
-  }
-
-  private Condition getOrganisationJoinCondition() {
-    return LOGICAL_METER.ORGANISATION_ID.eq(PHYSICAL_METER.ORGANISATION_ID);
-  }
-
-  private Condition getQuantityCondition(MeasurementParameter parameter) {
-    if (parameter.getQuantities().isEmpty()) {
-      return trueCondition();
-    }
-    return QUANTITY.NAME.in(parameter.getQuantities().stream().map(q -> q.name).collect(toList()));
-  }
-
-  private Condition getMeasurementJoinCondition(
-    Field<OffsetDateTime> dateTimeField
-  ) {
-    return MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
-      .and(MEASUREMENT.CREATED.equal(dateTimeField))
-      .and(MEASUREMENT.QUANTITY.equal(QUANTITY.ID));
-  }
-
-  private Table<Record> dateSerieFor(MeasurementParameter parameter) {
-    String expr;
-    if (parameter.getQuantities().get(0).isConsumption()) {
-      expr = "generate_series({0}, {1} + cast({2} as interval), {2}::interval)";
-    } else {
-      expr = "generate_series({0}, {1}, {2}::interval)";
-    }
-    return DSL.table(
-      expr,
-      parameter.getResolution().getStart(parameter.getFrom()),
-      parameter.getResolution().getStart(parameter.getTo()),
-      parameter.getResolution().asInterval()
-    );
   }
 
   private MeasurementValue toMeasurementValueConvertedToUnitFromQuantity(

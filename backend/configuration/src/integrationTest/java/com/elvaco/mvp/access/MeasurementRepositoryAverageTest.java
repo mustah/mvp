@@ -167,7 +167,6 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
   @Test
   public void fetchMultipleReadoutQuantities() {
-
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter().meterDefinition(MeterDefinition.ROOM_SENSOR_METER));
 
@@ -212,7 +211,6 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
   @Test
   public void quantitiesAreFilteredOnMeterDefinition() {
-
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
@@ -369,7 +367,6 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
   @Test
   public void readoutValuesAverageAreFilteredOnActivePeriod() {
-
     ZonedDateTime start = context().now();
     var logicalMeter = given(
       logicalMeter(),
@@ -400,7 +397,6 @@ public class MeasurementRepositoryAverageTest extends IntegrationTest {
 
   @Test
   public void consumptionValuesAverageAreFilteredOnActivePeriod() {
-
     ZonedDateTime start = context().now();
     var logicalMeter = given(
       logicalMeter(),

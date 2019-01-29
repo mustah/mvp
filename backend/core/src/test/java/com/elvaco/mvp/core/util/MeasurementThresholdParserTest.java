@@ -128,7 +128,6 @@ public class MeasurementThresholdParserTest {
 
   @Test
   public void parse_invalidComparisonMode() {
-
     assertThatThrownBy(() -> parser.parse("Energy >== 10 kWh")).hasMessage(
       "Malformed expression 'Energy >== 10 kWh' for measurement threshold");
     assertThatThrownBy(() -> parser.parse("Energy >< 10 kWh")).hasMessage(
