@@ -27,16 +27,20 @@ public class SortUtil {
     RequestParameters parameters,
     Map<String, Field<?>> sortFieldsMap
   ) {
-    return getSort(parameters).stream()
+    return getSort(parameters)
+      .stream()
       .flatMap(Streamable::stream)
+      .filter(order -> sortFieldsMap.containsKey(order.getProperty()))
       .map(order -> sortFieldsMap.get(order.getProperty())
-        .sort(SortOrder.valueOf(order.getDirection().name())))
+        .sort(SortOrder.valueOf(order.getDirection().name()))
+      )
       .collect(toList());
   }
 
   private static Optional<Sort> getSort(RequestParameters parameters) {
     return parameters.has(SORT)
       .map(p -> p.getValues(SORT).stream()
+        .filter(s -> !s.isEmpty())
         .map(s -> new Sort.Order(getDirection(s), getProperty(s)))
         .collect(toList()))
       .map(Sort::by);

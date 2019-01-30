@@ -4,7 +4,8 @@ import {
   GridColumn,
   GridPageChangeEvent,
   GridPagerSettings,
-  GridSortChangeEvent
+  GridSortChangeEvent,
+  GridSortSettings
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
@@ -30,6 +31,11 @@ const gridStyle: React.CSSProperties = {
   borderTopWidth: 0,
   borderBottomWidth: 0,
   maxHeight: '1000px',
+};
+
+const sortable: GridSortSettings = {
+  allowUnsort: true,
+  mode: 'single'
 };
 
 export const MeterList = (
@@ -131,7 +137,7 @@ export const MeterList = (
         skip={pagination.page * pagination.size}
         onPageChange={handleKendoPageChange}
 
-        sortable={false}
+        sortable={sortable}
         onSortChange={handleKendoSortChange}
         sort={sort}
 
@@ -146,26 +152,17 @@ export const MeterList = (
           headerClassName="left-most"
         />
 
-        <GridColumn field="address" cell={renderMeterId} title={translate('meter id')}/>
+        <GridColumn field="secondaryAddress" cell={renderMeterId} title={translate('meter id')}/>
 
-        <GridColumn field="location" cell={renderCityName} title={translate('city')}/>
+        <GridColumn field="city" cell={renderCityName} title={translate('city')}/>
 
-        <GridColumn
-          field="location"
-          cell={renderAddressName}
-          title={translate('address')}
-          width={180}
-        />
+        <GridColumn field="address" cell={renderAddressName} title={translate('address')} width={180}/>
 
         <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
 
-        <GridColumn
-          field="medium"
-          title={translate('medium')}
-          width={180}
-        />
+        <GridColumn field="medium" title={translate('medium')} width={180} />
 
-        <GridColumn field="alarm" cell={renderAlarm} title={translate('alarm')}/>
+        <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')}/>
 
         <GridColumn field="gatewaySerial" title={translate('gateway')}/>
 

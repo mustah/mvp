@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -115,8 +116,8 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void metersWithNoLocation() {
-    given(logicalMeter().location(null));
+  public void metersWithUnknownLocation() {
+    given(logicalMeter().location(Location.UNKNOWN_LOCATION));
     given(logicalMeter().location(stockholm().address("kungsgatan 1").build()));
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
 
