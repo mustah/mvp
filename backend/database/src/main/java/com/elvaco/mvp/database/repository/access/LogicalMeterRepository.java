@@ -27,6 +27,7 @@ import com.elvaco.mvp.database.repository.mappers.SortMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -183,6 +184,18 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Transactional
   @Override
+  @Caching(evict = {
+    @CacheEvict(
+      value = "logicalMeter.organisationIdExternalId",
+      key = "#logicalMeter.organisationId + #logicalMeter.externalId"
+    ),
+    @CacheEvict(
+      value = {"physicalMeter.organisationIdExternalIdAddress",
+               "physicalMeter.organisationIdExternalIdAddress.withStatuses",
+               "gateway.organisationIdSerial"},
+      allEntries = true
+    )
+  })
   public LogicalMeter delete(LogicalMeter logicalMeter) {
     logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
     return logicalMeter;
