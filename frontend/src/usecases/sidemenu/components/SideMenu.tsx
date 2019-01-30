@@ -1,6 +1,6 @@
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
-import {mvpTheme} from '../../../app/themes';
+import {mvpTheme, sideMenuWidth} from '../../../app/themes';
 import {OwnProps, StateToProps} from '../containers/SideMenuContainer';
 import './SideMenu.scss';
 
@@ -19,6 +19,7 @@ export const SideMenu = ({isSideMenuOpen, children, containerStyle}: StateToProp
       open={isSideMenuOpen}
       docked={true}
       containerStyle={menuStyle}
+      width={sideMenuWidth}
     >
       {children}
     </Drawer>

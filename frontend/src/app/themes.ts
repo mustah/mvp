@@ -75,6 +75,8 @@ export const mvpTheme = getMuiTheme({
   }
 });
 
+export const sideMenuWidth = 300;
+
 export const iconStyle: React.CSSProperties = {
   padding: 0,
   width: 30,
