@@ -31,7 +31,7 @@ begin
   if (not consumption)
   then
     return query (
-      select (gen.d2::date at time zone current_tz)::date,
+      select gen.d2,
              p_meter_id,
              quantity_id,
              mg.min,
@@ -51,7 +51,10 @@ begin
                    coalesce(60 * 24 / nullif(read_interval, 0), 0) as expected_count,
                    count(value)::int as received_count,
                    avg(value) as average
-            from measurement m
+            from generate_series(stat_date::timestamp at time zone current_tz,
+                                 (stop_date::timestamp + interval '1 day') at time zone current_tz,
+                                 read_interval_interval(read_interval)) as date_serie
+                   join measurement m on (m.created = date_serie)
             where m.physical_meter_id = p_meter_id and
                   m.quantity = quantity_id and
                   m.created >= stat_date::timestamp
@@ -92,8 +95,10 @@ begin
                                      measurement_serie.value as value
                               from (select value, date_serie.date as when
                                     from (select generate_series(
-                                                     stat_date::timestamp at time zone current_tz - cast('2 day' as interval),
-                                                     stop_date::timestamp at time zone current_tz + cast('2 day' as interval),
+                                                     stat_date::timestamp at time zone
+                                                     current_tz - cast('2 day' as interval),
+                                                     stop_date::timestamp at time zone
+                                                     current_tz + cast('2 day' as interval),
                                                      read_interval_interval(read_interval)
                                                    ) as date) as date_serie
                                            left join measurement on date_serie.date = created

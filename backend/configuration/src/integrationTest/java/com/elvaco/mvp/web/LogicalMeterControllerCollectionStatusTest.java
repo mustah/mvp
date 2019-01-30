@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.DoubleStream;
@@ -84,6 +85,27 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     assertThat(response.getContent())
       .extracting(m -> m.collectionPercentage)
       .containsExactly(50.0);
+  }
+
+  @Test
+  public void collectionPercentageOnlyConsidersExpectedMeasurements() {
+    LogicalMeter districtHeatingMeter = given(logicalMeter());
+
+    given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().now().plusMinutes(5),
+      Duration.ofMinutes(5), DoubleStream.iterate(1, d -> d).limit(24 * 12 - 1).toArray()
+    ));
+
+    Page<PagedLogicalMeterDto> response = asUser()
+      .getPage(
+        metersUrl(context().now(), context().now().plusDays(1)),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(response.getTotalElements()).isEqualTo(1);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+    assertThat(response.getContent())
+      .extracting(m -> m.collectionPercentage)
+      .containsExactly(23.0 / 24.0 * 100);
   }
 
   @Test
