@@ -23,7 +23,7 @@ import {firstUpper, firstUpperTranslated, translate} from '../../../services/tra
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
 import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer';
 
-const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><MeterAlarm alarms={alarm}/></td>;
+const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><MeterAlarm alarm={alarm}/></td>;
 
 const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
 

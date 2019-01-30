@@ -14,6 +14,7 @@ interface Props {
 
 interface MeterAlarmProps {
   alarms?: Alarm[];
+  alarm?: Alarm;
 }
 
 const AlarmComponent = (props: Props) => (
@@ -22,8 +23,8 @@ const AlarmComponent = (props: Props) => (
   </Row>
 );
 
-export const MeterAlarm = ({alarms}: MeterAlarmProps) => (
-  alarms && alarms.length
+export const MeterAlarm = ({alarms, alarm}: MeterAlarmProps) => (
+  (alarms && alarms.length) || alarm
     ? <AlarmComponent label={translate('yes')} status={Status.error} />
     : <Normal>-</Normal>
 );
