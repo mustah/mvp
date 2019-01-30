@@ -23,6 +23,12 @@ msgstr "lyckades ta bort mätare '{{facility}}'"
 msgid "failed to delete the meter: {{error}}"
 msgstr "lyckades inte ta bort mätaren: {{error}}"
 
+msgid "email not valid"
+msgstr "ogiltlig mejladress"
+
+msgid "required field"
+msgstr "obligatoriskt fält"
+
 msgid "admin"
 msgstr "admin"
 

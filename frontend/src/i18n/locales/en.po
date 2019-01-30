@@ -23,6 +23,12 @@ msgstr "successfully deleted the meter '{{facility}}'"
 msgid "failed to delete the meter: {{error}}"
 msgstr "failed to delete the meter: {{error}}"
 
+msgid "email not valid"
+msgstr "email not valid"
+
+msgid "required field"
+msgstr "required field"
+
 msgid "admin"
 msgstr "admin"
 

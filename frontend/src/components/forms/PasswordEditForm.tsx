@@ -1,14 +1,15 @@
 import {FlatButton} from 'material-ui';
 import * as React from 'react';
+import {ValidatorForm} from 'react-material-ui-form-validator';
 import {buttonStyle} from '../../app/themes';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Password, User} from '../../state/domain-models/user/userModels';
 import {uuid} from '../../types/Types';
 import {ErrorMessage} from '../error-message/ErrorMessage';
-import {TextFieldInput} from '../inputs/TextFieldInput';
+import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
 import {Column} from '../layouts/column/Column';
-import './PasswordEditForm.scss';
 import {Row} from '../layouts/row/Row';
+import './PasswordEditForm.scss';
 
 interface PasswordFormProps {
   onSubmit: (password: Password, userId: uuid) => void;
@@ -43,23 +44,30 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
     const newPasswordLabel = firstUpperTranslated('new password');
     const confirmPasswordLabel = firstUpperTranslated('confirm new password');
 
+    const requiredMessage = [firstUpperTranslated('required field')];
+    const requiredValidator = ['required'];
+
     return (
-      <form onSubmit={this.wrappedSubmit}>
+      <ValidatorForm onSubmit={this.wrappedSubmit}>
         <Column>
-          <TextFieldInput
+          <ValidatedFieldInput
             id="password"
             floatingLabelText={newPasswordLabel}
             hintText={newPasswordLabel}
             type="password"
             value={password}
+            validators={requiredValidator}
+            errorMessages={requiredMessage}
             onChange={this.onChange}
           />
-          <TextFieldInput
+          <ValidatedFieldInput
             id="passwordConfirm"
             floatingLabelText={confirmPasswordLabel}
             hintText={confirmPasswordLabel}
             type="password"
             value={passwordConfirm}
+            validators={requiredValidator}
+            errorMessages={requiredMessage}
             onChange={this.onChange}
           />
           <Row className="Error-message-container">
@@ -72,7 +80,7 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
             style={buttonStyle}
           />
         </Column>
-      </form>
+      </ValidatorForm>
     );
   }
 

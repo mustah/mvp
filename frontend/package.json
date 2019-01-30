@@ -132,6 +132,7 @@
     "react-leaflet": "^1.7.1",
     "react-leaflet-control": "^1.4.1",
     "react-leaflet-markercluster": "^1.1.8",
+    "react-material-ui-form-validator": "0.5.1",
     "react-redux": "^5.0.7",
     "react-redux-typescript": "3.0.0-rc.3",
     "react-router": "^4.2.0",
