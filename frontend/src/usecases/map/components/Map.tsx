@@ -7,11 +7,11 @@ import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
 import {Column} from '../../../components/layouts/column/Column';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
 import {Children} from '../../../types/Types';
+import {useFallbackTilesUrl} from '../helper/fallbackTilesUrlHook';
 import {maxZoom} from '../helper/mapHelper';
 import {Bounds} from '../mapModels';
 import {LowConfidenceInfo} from './LowConfidenceInfo';
 import './Map.scss';
-import {useFallbackTilesUrl} from '../helper/fallbackTilesUrlHook';
 
 interface Props {
   height?: number;

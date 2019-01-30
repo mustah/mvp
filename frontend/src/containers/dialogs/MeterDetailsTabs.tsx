@@ -151,7 +151,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <TimestampInfoMessage/>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <MapContentWrapper {...wrapperProps}/>
+            {selectedTab === TabName.map && <MapContentWrapper {...wrapperProps}/>}
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>
