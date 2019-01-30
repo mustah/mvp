@@ -23,6 +23,9 @@ interface UserFormProps {
 
 type State = Overwrite<User, {id?: uuid; password: string}>;
 
+const requiredValidator: string[] = ['required'];
+const requiredEmailValidator: string[] = ['required', 'isEmail'];
+
 export class UserEditForm extends React.Component<UserFormProps, State> {
 
   constructor(props: UserFormProps) {
@@ -73,8 +76,6 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const languageOptions: IdNamed[] = languages.map(({code, name}) => ({id: code, name}));
 
     const requiredMessage = [requiredLabel];
-    const requiredValidator = ['required'];
-    const requiredEmailValidator = ['required', 'isEmail'];
     const requiredEmailMessage = [requiredLabel, requiredEmailLabel];
 
     const passwordElement = user ? null : (

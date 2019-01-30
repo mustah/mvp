@@ -23,6 +23,8 @@ interface PasswordEditFormState {
   userId: uuid;
 }
 
+const requiredValidator: string[] = ['required'];
+
 type State = PasswordEditFormState;
 
 export class PasswordEditForm extends React.Component<PasswordFormProps, State> {
@@ -45,7 +47,6 @@ export class PasswordEditForm extends React.Component<PasswordFormProps, State> 
     const confirmPasswordLabel = firstUpperTranslated('confirm new password');
 
     const requiredMessage = [firstUpperTranslated('required field')];
-    const requiredValidator = ['required'];
 
     return (
       <ValidatorForm onSubmit={this.wrappedSubmit}>
