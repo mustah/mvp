@@ -12,12 +12,14 @@ import com.elvaco.geoservice.service.AddressToGeoService;
 
 import farm.geocoding.beans.Account;
 import farm.geocoding.beans.GeocodingFarmResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Component
 public class GeocodeFarmService implements AddressToGeoService {
 
@@ -114,7 +116,12 @@ public class GeocodeFarmService implements AddressToGeoService {
         target.setSource(getId());
         return target;
       })
-      .orElse(null);
+      .orElseGet(() -> {
+          log.warn("STATUS: " + source.getGeocodingResults().getStatus().getStatus() + "\n"
+            + " ACCESS: " + source.getGeocodingResults().getStatus().getAccess());
+          return null;
+      }
+      );
   }
 
   private void adjustQuota(Account account) {
