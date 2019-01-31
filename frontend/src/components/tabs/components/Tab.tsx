@@ -3,7 +3,7 @@ import * as React from 'react';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {CallbackWith} from '../../../types/Types';
 import {Column} from '../../layouts/column/Column';
-import {FirstUpper} from '../../texts/Texts';
+import {Medium} from '../../texts/Texts';
 import {TabUnderline} from './TabUnderliner';
 
 export interface TabProps {
@@ -19,7 +19,7 @@ export const Tab = (props: TabProps) => {
   const isSelected = tab === selectedTab;
   return (
     <Column className={classNames('Tab', {isSelected})} onClick={selectTab}>
-      <FirstUpper className="Tab-header">{title}</FirstUpper>
+      <Medium className="Tab-header Bold first-uppercase">{title}</Medium>
       <TabUnderline isSelected={isSelected}/>
     </Column>
   );
