@@ -212,6 +212,9 @@ msgstr "felrapporterad"
 msgid "no reliable position"
 msgstr "ingen tillförlitlig position"
 
+msgid "no gateway connected"
+msgstr "ingen gateway är ansluten"
+
 msgid "meter"
 msgstr "mätare"
 

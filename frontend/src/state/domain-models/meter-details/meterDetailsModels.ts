@@ -6,5 +6,5 @@ import {LocationHolder} from '../location/locationModels';
 export interface MeterDetails extends Meter, Identifiable, LocationHolder {
   eventLog: EventLog[];
   date?: string;
-  gateway: GatewayMandatory;
+  gateway?: GatewayMandatory;
 }

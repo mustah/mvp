@@ -36,6 +36,10 @@ export interface MeterDetailsState {
   selectedTab: TabName;
 }
 
+interface MeterGatewayProps {
+  gateways: DomainModel<GatewayMandatory>;
+}
+
 interface MapProps {
   meter: MeterDetails;
   meterMapMarker: Maybe<MapMarker>;
@@ -79,9 +83,42 @@ const MapContent = ({meter, meterMapMarker}: MapProps) => (
   </MapComponent>
 );
 
+const GatewayContent = ({gateways}: MeterGatewayProps) => (
+  <Row>
+    <Table result={gateways.result} entities={gateways.entities}>
+      <TableColumn
+        header={<TableHead>{translate('gateway serial')}</TableHead>}
+        renderCell={renderSerial}
+      />
+      <TableColumn
+        header={<TableHead>{translate('product model')}</TableHead>}
+        renderCell={renderProductModel}
+      />
+      <TableColumn
+        header={<TableHead>{translate('ip')}</TableHead>}
+        renderCell={renderIp}
+      />
+      <TableColumn
+        header={<TableHead>{translate('phone number')}</TableHead>}
+        renderCell={renderPhoneNumber}
+      />
+      <TableColumn
+        header={<TableHead>{translate('collection')}</TableHead>}
+        renderCell={renderStatus}
+      />
+      <TableColumn
+        header={<TableHead>{translate('status change')}</TableHead>}
+        renderCell={renderStatusChange}
+      />
+    </Table>
+  </Row>
+);
+
 export const initialMeterDetailsState: MeterDetailsState = {
   selectedTab: TabName.values,
 };
+
+const ConnectedGatewaysWrapper = withEmptyContent<MeterGatewayProps & WithEmptyContentProps>(GatewayContent);
 
 const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
@@ -96,24 +133,33 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
     const {selectedTab} = this.state;
     const {meter, meterMapMarker, selectEntryAdd, syncWithMetering} = this.props;
 
-    const gateway = meter.gateway;
-
-    const normalizedGateways: DomainModel<GatewayMandatory> = {
-      entities: {[gateway.id]: gateway},
-      result: [gateway.id],
-    };
+    const {gateway} = meter;
+    const gateways: DomainModel<GatewayMandatory> =
+      gateway ?
+        {
+          entities: {[gateway.id]: gateway},
+          result: [gateway.id],
+        } :
+        {
+          entities: {},
+          result: [],
+        };
 
     const eventLog = eventsDataFormatter(meter);
 
-    const hasContent: boolean = meterMapMarker
-      .filter(({status}: MapMarker) => status !== undefined)
-      .isJust();
-
-    const wrapperProps: MapProps & WithEmptyContentProps = {
+    const mapWrapperProps: MapProps & WithEmptyContentProps = {
       meter,
       meterMapMarker,
       noContentText: firstUpperTranslated('no reliable position'),
-      hasContent,
+      hasContent: meterMapMarker
+        .filter(({status}: MapMarker) => status !== undefined)
+        .isJust(),
+    };
+
+    const connectedGatewaysWrapperProps: MeterGatewayProps & WithEmptyContentProps = {
+      gateways,
+      noContentText: firstUpperTranslated('no gateway connected'),
+      hasContent: gateways.result.length > 0
     };
 
     return (
@@ -151,37 +197,10 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <TimestampInfoMessage/>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            {selectedTab === TabName.map && <MapContentWrapper {...wrapperProps}/>}
+            {selectedTab === TabName.map && <MapContentWrapper {...mapWrapperProps}/>}
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
-            <Row>
-              <Table result={normalizedGateways.result} entities={normalizedGateways.entities}>
-                <TableColumn
-                  header={<TableHead>{translate('gateway serial')}</TableHead>}
-                  renderCell={renderSerial}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('product model')}</TableHead>}
-                  renderCell={renderProductModel}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('ip')}</TableHead>}
-                  renderCell={renderIp}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('phone number')}</TableHead>}
-                  renderCell={renderPhoneNumber}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('collection')}</TableHead>}
-                  renderCell={renderStatus}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('status change')}</TableHead>}
-                  renderCell={renderStatusChange}
-                />
-              </Table>
-            </Row>
+            <ConnectedGatewaysWrapper {...connectedGatewaysWrapperProps}/>
           </TabContent>
         </Tabs>
       </Row>
