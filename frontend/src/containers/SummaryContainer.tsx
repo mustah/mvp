@@ -5,7 +5,6 @@ import {SummaryComponent} from '../components/summary/SummaryComponent';
 import {RootState} from '../reducers/rootReducer';
 import {fetchSummary} from '../state/summary/summaryApiActions';
 import {SelectionSummary} from '../state/summary/summaryModels';
-import {getSelectionSummary} from '../state/summary/summarySelection';
 import {getMeterParameters} from '../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch} from '../types/Types';
 
@@ -23,12 +22,12 @@ export type Props = StateToProps & DispatchToProps;
 
 const mapStateToProps = ({
   userSelection: {userSelection},
-  summary,
+  summary: {payload, isFetching},
   search: {validation: {query}}
 }: RootState): StateToProps =>
   ({
-    selectionSummary: getSelectionSummary(summary),
-    isFetching: summary.isFetching,
+    selectionSummary: payload,
+    isFetching,
     parameters: getMeterParameters({userSelection, query}),
   });
 
