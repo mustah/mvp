@@ -145,11 +145,11 @@ export const toThresholdParameter = (threshold: ThresholdQuery | undefined): Enc
     ? ['threshold=' + encodeURIComponent(thresholdAsString(threshold!))]
     : [];
 
-export const toEntityApiParametersMeters =
+export const entityApiParametersMetersFactory =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
     parametersById(selectionParameters, meterParameters);
 
-export const toEntityApiParametersGateways =
+export const entityApiParametersGatewaysFactory =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
     parametersById(selectionParameters, gatewayParameters);
 

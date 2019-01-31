@@ -80,6 +80,28 @@ describe('userSelectionSelectors', () => {
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=${paginationPageSize}&page=0`);
     });
 
+    it('has only wildcard and period parameters when query parameter is set', () => {
+      const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
+      const state: UserSelectionState = userSelection(
+        initialState,
+        addParameterToSelection(payload),
+      );
+      const query = 'KAM';
+
+      const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
+        userSelection: state.userSelection,
+        pagination: getPagination({
+          entityType: 'meters',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
+        query,
+        start,
+      });
+
+      expect(uriParameters).toEqual(`${latestUrlParameters}&size=${paginationPageSize}&page=0&w=${query}`);
+    });
+
     it('has two selected cities', () => {
       const payloadGot: SelectionParameter = {
         item: {...gothenburg},
@@ -194,6 +216,37 @@ describe('userSelectionSelectors', () => {
       const url: URL = urlFromParameters(parameters);
 
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
+    });
+
+    it('excludes threshold query when global meter query paramter is set', () => {
+      const threshold: ThresholdQuery = {
+        relationalOperator: '>=' as RelationalOperator,
+        quantity: Quantity.power,
+        unit: 'kW',
+        value: '3',
+      };
+
+      const state: UserSelectionState = {
+        ...initialState,
+        userSelection: {
+          ...initialState.userSelection,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            threshold
+          },
+        },
+      };
+
+      const query = '123123';
+      const parameters: EncodedUriParameters = getPaginatedMeterParameters({
+        ...initialUriLookupState,
+        userSelection: state.userSelection,
+        start,
+        query,
+      });
+
+      expect(parameters).toEqual(`${latestUrlParameters}&size=${paginationPageSize}&page=0&w=${query}`);
+      expect(urlFromParameters(parameters).searchParams.get('threshold')).toBeNull();
     });
 
     it('includes a threshold for duration query', () => {
@@ -359,7 +412,7 @@ describe('userSelectionSelectors', () => {
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
     });
 
-    it('has wildcard search parameter for meters', () => {
+    it('has wildcard and period search parameter for meters and no other parameters', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(
         initialState,
@@ -372,7 +425,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`${latestUrlParameters}&w=sto`);
     });
 
     it('has meter search parameters', () => {
@@ -386,12 +439,11 @@ describe('userSelectionSelectors', () => {
       );
 
       const uriParameters: EncodedUriParameters = getMeterParameters({
-        query: 'sto',
         userSelection: state.userSelection,
         start,
       });
 
-      expect(uriParameters).toEqual(`facility=112&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`facility=112&${latestUrlParameters}`);
     });
 
     it('search meters with alarms', () => {
@@ -478,7 +530,7 @@ describe('userSelectionSelectors', () => {
       expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
     });
 
-    it('has wildcard search parameter for gateways', () => {
+    it('has wildcard and period search parameter for gateways', () => {
       const payload: SelectionParameter = {item: {...stockholm}, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(
         initialState,
@@ -491,7 +543,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`${latestUrlParameters}&w=sto`);
     });
 
     it('has gateways search parameters', () => {
@@ -505,12 +557,11 @@ describe('userSelectionSelectors', () => {
       );
 
       const uriParameters: EncodedUriParameters = getGatewayParameters({
-        query: 'sto',
         userSelection: state.userSelection,
         start,
       });
 
-      expect(uriParameters).toEqual(`gatewaySerial=666&${latestUrlParameters}&w=sto`);
+      expect(uriParameters).toEqual(`gatewaySerial=666&${latestUrlParameters}`);
     });
 
   });
