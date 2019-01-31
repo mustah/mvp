@@ -82,10 +82,7 @@ export const pagination = (
     case UPDATE_PAGE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
     case SEARCH:
-      return changePage(
-        state,
-        toPaginationChangePayload((action as Action<QueryParameter>).payload),
-      );
+      return changePage(state, toPaginationChangePayload((action as Action<QueryParameter>).payload));
     default:
       return resetReducer<PaginationState>(state, action, {...initialPaginationState});
   }

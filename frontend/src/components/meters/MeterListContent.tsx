@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated} from '../../services/translationService';
+import {useFetchMeters} from '../../state/domain-models-paginated/meter/fetchMetersHook';
 import {OnDeleteMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
@@ -66,19 +67,18 @@ const MeterListActionsDropdownEnhanced =
   withContent<HasContent & MeterListActionDropdownProps>(MeterListActionsDropdown);
 
 export const MeterListContent = (props: MeterListProps & WithChildren) => {
-  React.useEffect(() => {
-    const {fetchMeters, parameters, pagination: {page}, sort} = props;
-    fetchMeters(page, parameters, sort);
-  });
-
   const {
     clearError,
-    syncMeters,
-    pagination: {page},
-    result,
+    error,
+    fetchMeters,
     isFetching,
-    error
+    pagination: {page},
+    parameters,
+    result,
+    sort,
+    syncMeters,
   } = props;
+  useFetchMeters({fetchMeters, parameters, sort, page});
 
   const {children, ...otherProps} = props;
   const hasContent = result.length > 0;
