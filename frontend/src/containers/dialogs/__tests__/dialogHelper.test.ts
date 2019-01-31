@@ -104,7 +104,8 @@ describe('dialogHelper', () => {
     const startHour: UnixTimestamp = dateRange.start.valueOf() / 1000;
 
     const missingReadouts24h = {
-      1514678400: {id: 1514678400},
+      1_514_674_800: {id: 1_514_674_800},
+      1_514_678_400: {id: 1_514_678_400},
       1514682000: {id: 1514682000},
       1514685600: {id: 1514685600},
       1514689200: {id: 1514689200},
@@ -127,7 +128,6 @@ describe('dialogHelper', () => {
       1514750400: {id: 1514750400},
       1514754000: {id: 1514754000},
       1514757600: {id: 1514757600},
-      1514761200: {id: 1514761200}
     };
 
     const measurement = (timestampAndValue: UnixTimestamp): MeasurementsByQuantity => ({
