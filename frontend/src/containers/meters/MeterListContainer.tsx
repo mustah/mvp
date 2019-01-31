@@ -6,7 +6,6 @@ import {
   MeterListStateToProps
 } from '../../components/meters/MeterListContent';
 import {RootState} from '../../reducers/rootReducer';
-import {isSelectionPage} from '../../selectors/routerSelectors';
 import {clearErrorMeters, deleteMeter, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {sortTable} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
@@ -44,12 +43,7 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities<Meter>(meters),
     result: getPageResult(meters, page),
-    parameters: getPaginatedMeterParameters({
-      sort,
-      pagination,
-      userSelection,
-      query: isSelectionPage(routing) ? undefined : query,
-    }),
+    parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
     sort,
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
