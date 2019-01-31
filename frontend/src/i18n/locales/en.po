@@ -212,6 +212,9 @@ msgstr "reported"
 msgid "no reliable position"
 msgstr "no reliable position"
 
+msgid "no gateway connected"
+msgstr "no gateway connected"
+
 msgid "meter"
 msgstr "meter"
 
