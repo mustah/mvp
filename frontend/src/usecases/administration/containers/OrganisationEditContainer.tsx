@@ -9,7 +9,7 @@ import {paperStyle} from '../../../app/themes';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
-import {PageTitle} from '../../../components/texts/Titles';
+import {MainTitle} from '../../../components/texts/Titles';
 import {AdminPageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
@@ -96,9 +96,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
 
     return (
       <AdminPageComponent>
-        <PageTitle>
-          {title}
-        </PageTitle>
+        <MainTitle>{title}</MainTitle>
 
         <Paper style={paperStyle}>
           <RowIndented>

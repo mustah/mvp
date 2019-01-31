@@ -16,10 +16,6 @@ import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import './AdminApp.scss';
 import {AdminPages} from './AdminPages';
 
-const containerStyle: React.CSSProperties = {
-  left: 0
-};
-
 interface StateToProps {
   isSideMenuOpen: boolean;
 }
@@ -33,7 +29,7 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 const AdminApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
   <Row className="AdminApp">
     <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
-      <SideMenuContainer containerStyle={containerStyle}>
+      <SideMenuContainer>
         <AdminMainMenuItemsContainer/>
       </SideMenuContainer>
     </Layout>

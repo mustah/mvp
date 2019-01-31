@@ -54,9 +54,9 @@ const updateMetaData = (
 
 const hasQuery = ({query}: Query) => isDefined(query);
 
-const resetGatewaysPage: PaginationChangePayload = {
-  entityType: 'gateways',
-  componentId: 'collectionGatewayList',
+const resetSearchResultPage: PaginationChangePayload = {
+  entityType: 'meters',
+  componentId: 'searchResultList',
   page: 0,
 };
 
@@ -69,7 +69,7 @@ const resetMetersPage: PaginationChangePayload = {
 const toPaginationChangePayload = (payload: QueryParameter): PaginationChangePayload =>
   Maybe.maybe(payload[UseCases.collection])
     .filter(hasQuery)
-    .map(() => resetGatewaysPage)
+    .map(() => resetSearchResultPage)
     .orElse(resetMetersPage);
 
 export const pagination = (

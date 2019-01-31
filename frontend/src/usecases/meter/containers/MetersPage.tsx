@@ -1,30 +1,26 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {mainContentPaperStyle} from '../../../app/themes';
-import {Row, RowCenter} from '../../../components/layouts/row/Row';
+import {Row, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {MvpPageContainer} from '../../../containers/MvpPageContainer';
+import {PageComponent} from '../../../containers/PageComponent';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {MeterTabsContainer} from './MeterTabsContainer';
 
-export const MeterContainer = () => (
-  <MvpPageContainer>
-    <Row className="space-between">
-      <RowCenter>
-        <MainTitle>
-          {translate('meter', {count: 2})}
-        </MainTitle>
-      </RowCenter>
+export const MetersPage = () => (
+  <PageComponent>
+    <RowSpaceBetween>
+      <MainTitle>{translate('meter', {count: 2})}</MainTitle>
       <Row>
         <SummaryContainer/>
         <PeriodContainer/>
       </Row>
-    </Row>
+    </RowSpaceBetween>
 
     <Paper style={mainContentPaperStyle}>
       <MeterTabsContainer/>
     </Paper>
-  </MvpPageContainer>
+  </PageComponent>
 );

@@ -122,7 +122,6 @@ describe('userSelectionSelectors', () => {
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
-        query: 'bro',
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
@@ -132,7 +131,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=bro`);
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
     });
 
     it('includes organisations', () => {
@@ -306,7 +305,6 @@ describe('userSelectionSelectors', () => {
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
-        query: 'sto',
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'gateways',
@@ -316,7 +314,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0&w=sto`);
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
     });
 
     it('has gateway search parameters', () => {
@@ -330,7 +328,6 @@ describe('userSelectionSelectors', () => {
       );
 
       const uriParameters: EncodedUriParameters = getPaginatedGatewayParameters({
-        query: 'sto',
         userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'gateways',
@@ -340,7 +337,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`gatewaySerial=123abc&${latestUrlParameters}&size=20&page=0&w=sto`);
+      expect(uriParameters).toEqual(`gatewaySerial=123abc&${latestUrlParameters}&size=20&page=0`);
     });
 
   });

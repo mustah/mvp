@@ -573,6 +573,12 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "search result"
+msgstr "sökresultat"
+
+msgid "find meters"
+msgstr "hitta mätare"
+
 msgctxt "°plural"
 msgid "city°"
 msgstr "städer"

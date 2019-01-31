@@ -28,7 +28,6 @@ import {
   uuid
 } from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
-import {Query} from '../../search/searchModels';
 import {GatewayList} from '../components/GatewayList';
 
 interface ListProps {
@@ -38,7 +37,7 @@ interface ListProps {
   result: uuid[];
 }
 
-interface StateToProps extends ListProps, Query {
+interface StateToProps extends ListProps {
   parameters: string;
   error: Maybe<ErrorResponse>;
   isFetching: boolean;
@@ -74,7 +73,6 @@ class GatewayListComponent extends React.Component<Props> {
       parameters,
       isFetching,
       error,
-      query,
       result,
       ...otherProps
     } = this.props;
@@ -98,7 +96,7 @@ class GatewayListComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}, search: {collection: {query}}}: RootState,
+  {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}}: RootState,
   {componentId}: ComponentId,
 ): StateToProps => {
   const entityType: EntityTypes = 'gateways';
@@ -108,12 +106,7 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities<Gateway>(gateways),
     result: getPageResult(gateways, page),
-    parameters: getPaginatedGatewayParameters({
-      query,
-      pagination: paginationData,
-      ...userSelection,
-    }),
-    query,
+    parameters: getPaginatedGatewayParameters({pagination: paginationData, ...userSelection}),
     isFetching: getPageIsFetching(gateways, page),
     pagination: paginationData,
     error: getPageError<Gateway>(gateways, page),

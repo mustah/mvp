@@ -6,9 +6,6 @@ export interface Query {
   query?: string;
 }
 
-export type QueryParameter = Partial<{
-  [key in keyof SearchState]: Query;
-}>;
+export type QueryParameter = Partial<{ [key in keyof SearchState]: Query; }>;
 
-export const gatewayQuery = (query?: string): QueryParameter => ({collection: {query}});
-export const meterQuery = (query?: string): QueryParameter => ({validation: {query}});
+export const makeMeterQuery = (query?: string): QueryParameter => ({validation: {query}});

@@ -7,18 +7,17 @@ import {clearValidationSearch, validationSearch} from '../usecases/search/search
 import {OnSearch, Query} from '../usecases/search/searchModels';
 
 interface DispatchToProps {
-  onChange: OnSearch;
+  onSearch: OnSearch;
   onClear: OnClick;
 }
 
 export type GlobalSearchProps = Query & DispatchToProps;
 
-const mapStateToProps = ({search: {validation: {query}}}: RootState): Query =>
-  ({query});
+const mapStateToProps = ({search: {validation: {query}}}: RootState): Query => ({query});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   onClear: clearValidationSearch,
-  onChange: validationSearch,
+  onSearch: validationSearch,
 }, dispatch);
 
 export const GlobalSearchContainer =

@@ -1,10 +1,13 @@
+import {default as classNames} from 'classnames';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {GlobalSearchProps} from '../../containers/GlobalSearchContainer';
+import {firstUpperTranslated} from '../../services/translationService';
 import {Row, RowMiddle} from '../layouts/row/Row';
 import './GlobalSearch.scss';
+import {useGlobalSearch} from './globalSearchHook';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 const style: React.CSSProperties = {
@@ -21,30 +24,19 @@ const iconProps: SvgIconProps = {
   hoverColor: colors.iconHover,
 };
 
-export const GlobalSearch = ({onChange, onClear, query = ''}: GlobalSearchProps) => {
-  const [value, setValue] = React.useState<string>(query);
-
-  const onChangeValue = (event) => {
-    event.preventDefault();
-    const value = event.target.value;
-    setValue(value);
-    onChange(value);
-  };
-
-  const onClearValue = () => {
-    setValue('');
-    onClear('');
-  };
+export const GlobalSearch = (props: GlobalSearchProps) => {
+  const {value, onChange, onEnter, onClearValue} = useGlobalSearch(props);
 
   return (
     <RowMiddle className="GlobalSearch-Container">
-      <Row className="GlobalSearch">
+      <Row className={classNames('GlobalSearch', {hasValue: !!value})}>
         <input
           type="textfield"
           className="GlobalSearch-input"
           value={value}
-          onChange={onChangeValue}
-          placeholder="Hitta mätare"
+          onChange={onChange}
+          onKeyPress={onEnter}
+          placeholder={firstUpperTranslated('find meters')}
         />
         {value ? <ContentClear onClick={onClearValue} {...iconProps}/> : <ActionSearch {...iconProps}/>}
       </Row>

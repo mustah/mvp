@@ -10,8 +10,8 @@ import {
   toEntityApiParametersGateways,
   toEntityApiParametersMeters,
   toPaginationApiParameters,
-  toQueryApiParameters,
   toThresholdParameter,
+  toWildcardApiParameter,
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters, uuid} from '../../types/Types';
@@ -105,7 +105,7 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
-        ...toQueryApiParameters(query),
+        ...toWildcardApiParameter(query),
       ]),
   );
 
@@ -119,7 +119,7 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
         ...toThresholdParameter(threshold),
         ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
-        ...toQueryApiParameters(query),
+        ...toWildcardApiParameter(query),
       ]),
   );
 

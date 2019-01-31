@@ -122,8 +122,7 @@ const setError = <T extends Identifiable>(
 });
 
 const canResetEntities = (entity: keyof DomainModelsState, payload: QueryParameter): boolean =>
-  !!((entity === 'meterMapMarkers' && payload.validation && payload.validation.query) ||
-     (entity === 'gatewayMapMarkers' && payload.collection && payload.collection.query));
+  !!(entity === 'meterMapMarkers' && payload.validation && payload.validation.query);
 
 const resetDomainModel = <T extends Identifiable>(
   state: NormalizedState<T>,

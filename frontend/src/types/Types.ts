@@ -12,6 +12,7 @@ export type EncodedUriParameters = string;
 
 export type OnClick = (...args) => void;
 export type OnChange = OnClick;
+export type OnKeyPress = OnClick;
 export type Callback = () => void;
 export type CallbackWith<T> = (arg1: T) => void;
 export type OnClickWithId = CallbackWith<uuid>;

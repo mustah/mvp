@@ -129,7 +129,7 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
   `page=${encodeURIComponent(page.toString())}`,
 ];
 
-export const toQueryApiParameters = (query?: string): string[] => query ? [`w=${query}`] : [];
+export const toWildcardApiParameter = (query?: string): string[] => query ? [`w=${query}`] : [];
 
 type SelectedParametersById = Omit<SelectedParameters, 'dateRange' | 'threshold'>;
 export type EntityApiParametersFactory =

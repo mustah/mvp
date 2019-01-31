@@ -8,11 +8,12 @@
     width: 512px;
     position: relative;
 
-    &:hover {
+    &:hover, &.hasValue {
       .GlobalSearch-input {
         background-color: $white;
         box-shadow: $box-shadow-hover;
         border: none;
+        color: $blackest;
         outline: none;
       }
     }

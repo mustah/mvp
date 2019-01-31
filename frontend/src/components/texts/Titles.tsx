@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Children} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
-import {Bold, Normal, Small, Xlarge} from './Texts';
+import {Medium, Small, Xlarge} from './Texts';
 import './Titles.scss';
 
 interface TitleProps {
@@ -9,14 +9,6 @@ interface TitleProps {
   className?: string;
   subtitle?: string;
 }
-
-export const PageTitle = ({children}: {children?: Children}) => (
-  <Row className="space-between">
-    <MainTitle>
-      {children}
-    </MainTitle>
-  </Row>
-);
 
 export const MainTitle = ({children, subtitle}: TitleProps) => (
   <Row className="MainTitle">
@@ -27,10 +19,6 @@ export const MainTitle = ({children, subtitle}: TitleProps) => (
 
 export const Subtitle = ({children}: TitleProps) => (
   <Row className="Subtitle">
-    <Bold>{children}</Bold>
+    <Medium className="Bold first-uppercase">{children}</Medium>
   </Row>
-);
-
-export const AppTitle = ({children}: TitleProps) => (
-  <Normal className="AppTitle">{children}</Normal>
 );

@@ -21,7 +21,6 @@ const getTotalMeters = (state: RootState): number => state.summary.payload.numMe
 const getMeterMapMarkers = (state: RootState) => state.domainModels.meterMapMarkers;
 const getGatewayMapMarkers = (state: RootState) => state.domainModels.gatewayMapMarkers;
 const getValidationQuery = (state: RootState): string | undefined => state.search.validation.query;
-const getCollectionQuery = (state: RootState): string | undefined => state.search.collection.query;
 
 const totalMapMarkers = (markers: NormalizedState<MapMarker>): number => markers.total;
 
@@ -46,8 +45,7 @@ export const getMeterLowConfidenceTextInfo =
   );
 
 export const getGatewayLowConfidenceTextInfo =
-  createSelector<RootState, string | undefined, number, number, string | undefined>(
-    getCollectionQuery,
+  createSelector<RootState, number, number, string | undefined>(
     getTotalMeters,
     getTotalGatewayMapMarkers,
     gatewayLowConfidenceTextInfo,

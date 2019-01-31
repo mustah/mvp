@@ -32,18 +32,6 @@
 .Subtitle {
   margin-left: $space;
   margin-bottom: $space;
-
-  &:first-letter {
-    text-transform: uppercase;
-  }
-
-  .Normal {
-    font-size: $medium;
-
-    &:first-letter {
-      text-transform: uppercase;
-    }
-  }
 }
 
 .AppTitle {
