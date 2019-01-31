@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
@@ -65,6 +67,35 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
 
     List<MeasurementEntity> all = measurementJpaRepository.findAll();
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).id.created).isEqualTo(CREATED);
+    assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
+  }
+
+  @Test
+  @Transactional
+  public void measurementsForDeletedMeterRecreatesMeter() {
+    LocalDateTime when = CREATED.toLocalDateTime();
+    measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(
+      when,
+      1.0
+    ))));
+    measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(
+      when.plusHours(1),
+      1.0
+    ))));
+    List<MeasurementEntity> all = measurementJpaRepository.findAll();
+    assertThat(all).hasSize(2);
+
+    commitTransaction();
+
+    logicalMeters.delete(logicalMeters.findAllBy(new RequestParametersAdapter()).get(0));
+
+    commitTransaction();
+
+    measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
+
+    all = measurementJpaRepository.findAll();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).id.created).isEqualTo(CREATED);
     assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
@@ -143,5 +174,11 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   private ValueDto newValueDto(LocalDateTime when, double value, String unit) {
     return new ValueDto(when, value, unit, "Energy");
+  }
+
+  private static void commitTransaction() {
+    TestTransaction.flagForCommit();
+    TestTransaction.end();
+    TestTransaction.start();
   }
 }

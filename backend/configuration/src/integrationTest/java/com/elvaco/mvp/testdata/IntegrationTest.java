@@ -250,6 +250,7 @@ public abstract class IntegrationTest implements ContextDsl {
   private void removeEntities() {
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
   }
 
