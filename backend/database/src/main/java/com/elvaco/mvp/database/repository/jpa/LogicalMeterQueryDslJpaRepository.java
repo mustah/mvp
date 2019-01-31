@@ -61,8 +61,8 @@ class LogicalMeterQueryDslJpaRepository
 
   private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
     "facility", LOGICAL_METER.EXTERNAL_ID,
-    "address", LOCATION.STREET_ADDRESS,
-    "city", LOCATION.CITY,
+    "address", LOCATION.STREET_ADDRESS.lower(),
+    "city", LOCATION.CITY.lower(),
     "manufacturer", PHYSICAL_METER.MANUFACTURER,
     "gatewaySerial", GATEWAY.SERIAL,
     "secondaryAddress", PHYSICAL_METER.ADDRESS,
