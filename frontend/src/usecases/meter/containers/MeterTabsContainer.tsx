@@ -20,7 +20,6 @@ const mapStateToProps =
       userSelection: {userSelection},
       map,
       domainModels: {meterMapMarkers},
-      search: {validation: {query}},
     }: RootState = rootState;
     return ({
       bounds: getBounds(meterMapMarkers),
@@ -29,7 +28,7 @@ const mapStateToProps =
       mapMarkers: getDomainModel(meterMapMarkers),
       noContentText: firstUpperTranslated('no meters'),
       selectedId: getSelectedMapMarker(map),
-      parameters: getMeterParameters({userSelection, query}),
+      parameters: getMeterParameters({userSelection}),
       error: getError(meterMapMarkers),
       isFetching: meterMapMarkers.isFetching,
     });

@@ -30,8 +30,8 @@ export type DashboardProps = StateToProps & DispatchToProps & InjectedAuthRouter
 const mapStateToProps =
   ({
     dashboard: {record: dashboard, isFetching},
-    userSelection: {userSelection},
     domainModels: {meterMapMarkers},
+    userSelection: {userSelection},
   }: RootState): StateToProps =>
     ({
       dashboard,
