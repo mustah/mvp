@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodBound;
@@ -159,7 +160,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeter.id)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
       .created(logicalMeter.created)
       .location(locationWithoutCoordinates().build())
       .build();
@@ -297,7 +298,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(physicalMeter.organisationId).isEqualTo(organisation.id);
 
     LogicalMeter logicalMeter = logicalMeters.findById(physicalMeter.logicalMeterId).get();
-    assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.HOT_WATER_METER);
+    assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.DEFAULT_HOT_WATER);
     assertThat(gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID)
       .isPresent()).isTrue();
   }
@@ -339,7 +340,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     List<LogicalMeter> meters = logicalMeters.findAllWithDetails(new MockRequestParameters());
     assertThat(meters).hasSize(1);
-    assertThat(meters.get(0).getMedium()).isEqualTo("Unknown medium");
+    assertThat(meters.get(0).getMedium().name).isEqualTo("Unknown medium");
   }
 
   @Test
@@ -347,12 +348,13 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.getMedium()).isEqualTo("Unknown medium");
+    assertThat(meter.getMedium().name).isEqualTo("Unknown medium");
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+    assertThat(meter.meterDefinition.medium)
+      .isEqualTo(Medium.DISTRICT_HEATING);
   }
 
   @Test
@@ -396,15 +398,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void mapsMeterMediumToEvoDefinitionType() {
     messageHandler.accept(messageBuilder().medium("Cold water").build());
     var meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.WATER_METER.type);
+    assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.DEFAULT_WATER.medium);
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+    assertThat(meter.meterDefinition.medium)
+      .isEqualTo(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium);
 
     messageHandler.accept(messageBuilder().medium("Roomsensor").build());
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.ROOM_SENSOR_METER.type);
+    assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.DEFAULT_ROOM_SENSOR.medium);
   }
 
   @Test
@@ -412,12 +415,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.getMedium()).isEqualTo("Unknown medium");
+    assertThat(meter.getMedium().name).isEqualTo("Unknown medium");
 
     messageHandler.accept(messageBuilder().medium("I don't even know what this is?").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.UNKNOWN_METER.type);
+    assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.UNKNOWN.medium);
   }
 
   @Test
@@ -493,7 +496,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeterId)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
       .created(ZonedDateTime.now())
       .location(UNKNOWN_LOCATION)
       .build());
@@ -794,7 +797,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeterId)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
       .created(ZonedDateTime.now())
       .location(UNKNOWN_LOCATION)
       .build());

@@ -20,7 +20,7 @@ public class MeteringMessageMapperTest {
 
   @Test
   public void unknownMediumIsMappedFromEmptyValueSet() {
-    assertThat(resolveMeterDefinition(emptyList())).isEqualTo(MeterDefinition.UNKNOWN_METER);
+    assertThat(resolveMeterDefinition(emptyList())).isEqualTo(MeterDefinition.UNKNOWN);
   }
 
   @Test
@@ -29,7 +29,7 @@ public class MeteringMessageMapperTest {
       new ValueDto(LocalDateTime.now(), 0.0, "MW", "UnknownQuantity")
     );
 
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN_METER);
+    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN);
   }
 
   @Test
@@ -39,7 +39,7 @@ public class MeteringMessageMapperTest {
       newValueDto("Bluahe")
     );
 
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN_METER);
+    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN);
   }
 
   @Test
@@ -80,7 +80,7 @@ public class MeteringMessageMapperTest {
       newValueDto("Energy")
     );
 
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
+    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.DEFAULT_DISTRICT_HEATING);
   }
 
   private static ValueDto newValueDto(String quantity) {

@@ -65,10 +65,10 @@ public class MeteringMessageMapper {
       .collect(toSet());
 
     if (quantities.equals(DISTRICT_HEATING_METER_QUANTITIES)) {
-      return MeterDefinition.DISTRICT_HEATING_METER;
+      return MeterDefinition.DEFAULT_DISTRICT_HEATING;
     }
 
-    return MeterDefinition.UNKNOWN_METER;
+    return MeterDefinition.UNKNOWN;
   }
 
   static Optional<Quantity> mappedQuantity(String quantityName) {

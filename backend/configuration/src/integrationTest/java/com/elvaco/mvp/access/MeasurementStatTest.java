@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.jooq.tables.MeasurementStatData;
@@ -354,6 +355,7 @@ public class MeasurementStatTest extends IntegrationTest {
       LogicalMeter.builder()
         .organisationId(context().organisationId())
         .externalId(logicalMeterId.toString())
+        .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
         .id(logicalMeterId)
         .utcOffset(utcOffset)
         .build()

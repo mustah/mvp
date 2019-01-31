@@ -309,14 +309,14 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway districtHeatingGateway = saveGateway(dailyPlanet.id);
 
     logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.GAS_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_GAS)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gasGateway)
       .build());
 
     logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(districtHeatingGateway)
@@ -335,7 +335,7 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway = saveGateway(dailyPlanet.id);
 
     LogicalMeter meter = logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
@@ -369,7 +369,7 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway = saveGateway(dailyPlanet.id);
 
     LogicalMeter meter = logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gateway)
@@ -404,14 +404,14 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gateway5678 = saveGateway(dailyPlanet.id);
 
     LogicalMeter meter1234 = logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.GAS_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_GAS)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gateway1234)
       .build());
 
     LogicalMeter meter5678 = logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gateway5678)
@@ -470,7 +470,7 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway gatewayKam = saveGateway(dailyPlanet.id);
 
     LogicalMeter meterElv = logicalMeters.save(LogicalMeter.builder()
-      .meterDefinition(MeterDefinition.GAS_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_GAS)
       .externalId(randomUUID().toString())
       .organisationId(dailyPlanet.id)
       .gateway(gatewayElv)

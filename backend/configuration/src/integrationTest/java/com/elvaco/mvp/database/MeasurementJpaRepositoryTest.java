@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.exception.NoSuchQuantityException;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -94,7 +95,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   ) {
     measurementJpaRepository.save(new MeasurementEntity(
       when.toZonedDateTime(),
-      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)),
+      quantityEntityMapper.toEntity(quantityProvider.getByName(quantity)
+        .orElseThrow(() -> new NoSuchQuantityException(quantity))),
       value,
       meter
     ));

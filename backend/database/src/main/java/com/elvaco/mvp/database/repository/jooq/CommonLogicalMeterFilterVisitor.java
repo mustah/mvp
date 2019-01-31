@@ -6,13 +6,13 @@ import com.elvaco.mvp.core.filter.LogicalMeterIdFilter;
 import com.elvaco.mvp.core.filter.MediumFilter;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
-import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
 
 interface CommonLogicalMeterFilterVisitor extends FilterVisitor, ConditionAdding {
 
   @Override
   default void visit(MediumFilter filter) {
-    addCondition(METER_DEFINITION.MEDIUM.in(filter.values()));
+    addCondition(MEDIUM.NAME.in(filter.values()));
   }
 
   @Override

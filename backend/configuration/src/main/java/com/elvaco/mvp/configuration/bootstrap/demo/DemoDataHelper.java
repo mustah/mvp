@@ -6,8 +6,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.exception.NoSuchQuantityException;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ public class DemoDataHelper {
     return List.of(
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(Quantity.VOLUME.name)),
+        getQuantityEntity(Quantity.VOLUME),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2),
         meter
       )
@@ -43,15 +45,13 @@ public class DemoDataHelper {
     return asList(
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.EXTERNAL_TEMPERATURE.name)),
+        getQuantityEntity(Quantity.EXTERNAL_TEMPERATURE),
         RANDOM.nextDouble(15, 40),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.HUMIDITY.name)),
+        getQuantityEntity(Quantity.HUMIDITY),
         RANDOM.nextDouble(40, 90),
         meter
       )
@@ -66,27 +66,25 @@ public class DemoDataHelper {
     return asList(
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(Quantity.ENERGY.name)),
+        getQuantityEntity(Quantity.ENERGY),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 4),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.ENERGY_RETURN.name)),
+        getQuantityEntity(Quantity.ENERGY_RETURN),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 1),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.REACTIVE_ENERGY.name)),
+        getQuantityEntity(Quantity.REACTIVE_ENERGY),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(Quantity.POWER.name)),
+        getQuantityEntity(Quantity.POWER),
         RANDOM.nextDouble(previousMeterReading, previousMeterReading + 3),
         meter
       )
@@ -103,48 +101,43 @@ public class DemoDataHelper {
     return asList(
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.FORWARD_TEMPERATURE.name)),
+        getQuantityEntity(Quantity.FORWARD_TEMPERATURE),
         tempIn,
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.RETURN_TEMPERATURE.name)),
+        getQuantityEntity(Quantity.RETURN_TEMPERATURE),
         tempOut,
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.DIFFERENCE_TEMPERATURE.name)),
+        getQuantityEntity(Quantity.DIFFERENCE_TEMPERATURE),
         tempIn - tempOut,
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.VOLUME_FLOW.name)),
+        getQuantityEntity(Quantity.VOLUME_FLOW),
         RANDOM.nextDouble(0.0, 3.0),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(
-          quantityProvider.getByName(Quantity.POWER.name)),
+        getQuantityEntity(Quantity.POWER),
         RANDOM.nextDouble(100.0, 200.0),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(Quantity.ENERGY.name)),
+        getQuantityEntity(Quantity.ENERGY),
         RANDOM.nextDouble(1000.0, 3000.0),
         meter
       ),
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(Quantity.VOLUME.name)),
+        getQuantityEntity(Quantity.VOLUME),
         RANDOM.nextDouble(1.0, 3.0),
         meter
       )
@@ -161,10 +154,15 @@ public class DemoDataHelper {
     return List.of(
       new MeasurementEntity(
         created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(Quantity.VOLUME.name)),
+        getQuantityEntity(Quantity.VOLUME),
         value,
         meter
       )
     );
+  }
+
+  private QuantityEntity getQuantityEntity(Quantity quantity) {
+    return quantityEntityMapper.toEntity(quantityProvider.getByName(quantity.name)
+      .orElseThrow(() -> new NoSuchQuantityException(quantity.name)));
   }
 }

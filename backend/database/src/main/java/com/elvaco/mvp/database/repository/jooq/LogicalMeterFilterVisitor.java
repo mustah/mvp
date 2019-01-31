@@ -13,6 +13,7 @@ import org.jooq.SelectJoinStep;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewaysMeters.GATEWAYS_METERS;
@@ -34,23 +35,23 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   }
 
   @Override
-  public void visit(WildcardFilter filter) {
-    String value = filter.oneValue().toLowerCase();
-
-    addCondition(LOGICAL_METER.EXTERNAL_ID.lower().contains(value)
-      .or(METER_DEFINITION.MEDIUM.lower().contains(value))
-      .or(LOCATION.CITY.lower().contains(value))
-      .or(LOCATION.STREET_ADDRESS.lower().contains(value))
-      .or(PHYSICAL_METER.MANUFACTURER.lower().contains(value))
-      .or(PHYSICAL_METER.ADDRESS.lower().contains(value)));
-  }
-
-  @Override
   public void visit(PeriodFilter filter) {
     SelectionPeriod period = filter.getPeriod();
 
     physicalMeterCondition =
       periodContains(PHYSICAL_METER.ACTIVE_PERIOD, period.stop.toOffsetDateTime());
+  }
+
+  @Override
+  public void visit(WildcardFilter filter) {
+    String value = filter.oneValue().toLowerCase();
+
+    addCondition(LOGICAL_METER.EXTERNAL_ID.lower().contains(value)
+      .or(MEDIUM.NAME.lower().contains(value))
+      .or(LOCATION.CITY.lower().contains(value))
+      .or(LOCATION.STREET_ADDRESS.lower().contains(value))
+      .or(PHYSICAL_METER.MANUFACTURER.lower().contains(value))
+      .or(PHYSICAL_METER.ADDRESS.lower().contains(value)));
   }
 
   @Override
@@ -70,7 +71,10 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
         .and(GATEWAY.ID.equal(GATEWAYS_METERS.GATEWAY_ID)))
 
       .innerJoin(METER_DEFINITION)
-      .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
+      .on(METER_DEFINITION.ID.equal(LOGICAL_METER.METER_DEFINITION_ID))
+
+      .innerJoin(MEDIUM)
+      .on(MEDIUM.ID.equal(METER_DEFINITION.MEDIUM_ID))
 
       .innerJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)

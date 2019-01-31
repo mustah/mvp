@@ -3,9 +3,7 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.core.access.QuantityAccess;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.repository.access.QuantityProviderRepository;
 import com.elvaco.mvp.database.repository.jpa.QuantityProviderJpaRepository;
@@ -46,10 +44,8 @@ class QuantityProviderConfig {
         .findByName(quantity.name)
         .orElseGet(() -> initialQuantityProviderRepository.save(
           QuantityEntity.builder()
-            .displayUnit(quantity.presentationUnit())
             .name(quantity.name)
             .storageUnit(quantity.storageUnit)
-            .seriesDisplayMode(quantity.seriesDisplayMode())
             .build()
         ))
     );
@@ -59,20 +55,11 @@ class QuantityProviderConfig {
       .map(quantityEntity -> new Quantity(
         quantityEntity.id,
         quantityEntity.name,
-        new QuantityPresentationInformation(
-          quantityEntity.displayUnit,
-          quantityEntity.seriesDisplayMode
-        ),
         quantityEntity.storageUnit
       ))
       .collect(toList());
 
     return new QuantityAccess(savedQuantities);
-  }
-
-  @Bean
-  LogicalMeterHelper logicalMeterHelper(QuantityProvider quantityProvider) {
-    return new LogicalMeterHelper(quantityProvider);
   }
 
   @Bean
@@ -82,10 +69,9 @@ class QuantityProviderConfig {
 
   @Bean
   MeterDefinitionEntityMapper meterDefinitionEntityMapper(
-    QuantityEntityMapper quantityEntityMapper,
-    QuantityProvider quantityProvider
+    QuantityEntityMapper quantityEntityMapper
   ) {
-    return new MeterDefinitionEntityMapper(quantityEntityMapper, quantityProvider);
+    return new MeterDefinitionEntityMapper(quantityEntityMapper);
   }
 
   @Bean
@@ -108,6 +94,8 @@ class QuantityProviderConfig {
     QuantityProvider quantityProvider,
     QuantityEntityMapper quantityEntityMapper
   ) {
-    return new MeasurementEntityMapper(unitConverter, quantityProvider, quantityEntityMapper);
+    return new MeasurementEntityMapper(unitConverter,
+      quantityProvider, quantityEntityMapper
+    );
   }
 }

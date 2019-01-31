@@ -118,7 +118,7 @@ public class LogicalMeterDtoMapperTest {
           .id(meterId)
           .externalId("an-external-id")
           .organisationId(organisationId)
-          .meterDefinition(MeterDefinition.HOT_WATER_METER)
+          .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
           .created(statusChanged)
           .physicalMeter(PhysicalMeter.builder()
             .organisationId(ELVACO.id)

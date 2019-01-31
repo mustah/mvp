@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class MeasurementParameter {
 
   private final List<UUID> logicalMeterIds;
-  private final List<Quantity> quantities;
+  private final List<QuantityParameter> quantities;
   private final ZonedDateTime from;
   private final ZonedDateTime to;
   private final TemporalResolution resolution;

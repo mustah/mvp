@@ -5,7 +5,7 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
@@ -30,16 +30,16 @@ public class MeasurementDtoMapper {
     List<MeasurementValue> values,
     LogicalMeter logicalMeter,
     String physicalMeterAddress,
-    Quantity quantity
+    QuantityParameter quantityParameter
   ) {
     return new MeasurementSeriesDto(
       logicalMeter.id.toString(),
-      quantity.name,
-      quantity.presentationUnit(),
+      quantityParameter.name,
+      quantityParameter.unit,
       logicalMeter.externalId + "-" + physicalMeterAddress,
       logicalMeter.location.getCity(),
       logicalMeter.location.getAddress(),
-      logicalMeter.meterDefinition.medium,
+      logicalMeter.meterDefinition.medium.name.toString(),
       values.stream()
         .map(measurement -> new MeasurementValueDto(measurement.when, measurement.value))
         .collect(toList())
@@ -51,12 +51,12 @@ public class MeasurementDtoMapper {
     String label,
     String id,
     String city,
-    Quantity quantity
+    QuantityParameter quantityParameter
   ) {
     return new MeasurementSeriesDto(
       id,
-      quantity.name,
-      quantity.presentationUnit(),
+      quantityParameter.name,
+      quantityParameter.unit,
       label,
       city,
       null,

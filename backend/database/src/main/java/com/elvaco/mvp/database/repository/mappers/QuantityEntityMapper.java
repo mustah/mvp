@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,6 @@ public class QuantityEntityMapper {
     return new Quantity(
       quantityEntity.id,
       quantityEntity.name,
-      new QuantityPresentationInformation(
-        quantityEntity.displayUnit,
-        quantityEntity.seriesDisplayMode
-      ),
       quantityEntity.storageUnit
     );
   }
@@ -28,18 +23,13 @@ public class QuantityEntityMapper {
     return new QuantityEntity(
       quantityProvider.getId(quantity),
       quantity.name,
-      quantity.presentationUnit(),
-      getStorageUnit(quantity),
-      quantity.seriesDisplayMode()
+      getStorageUnit(quantity)
     );
   }
 
   private String getStorageUnit(Quantity inputQuantity) {
-    Quantity preloadedQty = quantityProvider.getByName(inputQuantity.name);
-
-    if (preloadedQty == null) {
-      return inputQuantity.presentationUnit();
-    }
-    return preloadedQty.storageUnit;
+    return quantityProvider.getByName(inputQuantity.name)
+      .map(q -> q.storageUnit)
+      .orElse(inputQuantity.storageUnit);
   }
 }

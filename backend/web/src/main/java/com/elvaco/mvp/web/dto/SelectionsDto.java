@@ -35,7 +35,7 @@ public class SelectionsDto {
 
   public static final List<IdNamedDto> MEDIA = unmodifiableList(
     Stream.of(Medium.values())
-      .map(medium -> new IdNamedDto(medium.medium))
+      .map(medium -> new IdNamedDto(medium.name))
       .collect(toList())
   );
 }

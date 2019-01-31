@@ -166,7 +166,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
 
     MeterDefinition meterDefinition = meter
       .map(dto -> MeterDefinition.fromMedium(mapToEvoMedium(dto.medium)))
-      .orElse(MeterDefinition.UNKNOWN_METER);
+      .orElse(MeterDefinition.UNKNOWN);
 
     // TODO: if utcOffset change we do not recalculate historical measurement_stat.
     return logicalMeterUseCases.findBy(organisationId, facilityId)

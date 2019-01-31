@@ -9,58 +9,50 @@ public class MeterDefinitionTest {
   @Test
   public void mapMediumToMeterDefinition() {
     assertThat(MeterDefinition.fromMedium(Medium.from("Hot water")))
-      .isEqualTo(MeterDefinition.HOT_WATER_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_HOT_WATER);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("District heating")))
-      .isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_DISTRICT_HEATING);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("District cooling")))
-      .isEqualTo(MeterDefinition.DISTRICT_COOLING_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_DISTRICT_COOLING);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Gas")))
-      .isEqualTo(MeterDefinition.GAS_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_GAS);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Water")))
-      .isEqualTo(MeterDefinition.WATER_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_WATER);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Electricity")))
-      .isEqualTo(MeterDefinition.ELECTRICITY_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_ELECTRICITY);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Room sensor")))
-      .isEqualTo(MeterDefinition.ROOM_SENSOR_METER);
+      .isEqualTo(MeterDefinition.DEFAULT_ROOM_SENSOR);
   }
 
   @Test
   public void meteringMediumIsMappedToUnknown() {
-    MeterDefinition unkonwMeterDefinition = MeterDefinition.systemOwned(
-      MeterDefinitionType.UNKNOWN_METER_TYPE,
-      "Unknown medium",
-      Medium.UNKNOWN_MEDIUM.quantities()
-    );
+    MeterDefinition unknownMeterDefinition = MeterDefinition.UNKNOWN;
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Heat, Return temp")))
-      .isEqualTo(unkonwMeterDefinition);
+      .isEqualTo(unknownMeterDefinition);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("Heat, Flow temp")))
-      .isEqualTo(unkonwMeterDefinition);
+      .isEqualTo(unknownMeterDefinition);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("HeatCoolingLoadMeter")))
-      .isEqualTo(unkonwMeterDefinition);
+      .isEqualTo(unknownMeterDefinition);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("HeatFlow Temp")))
-      .isEqualTo(unkonwMeterDefinition);
+      .isEqualTo(unknownMeterDefinition);
 
     assertThat(MeterDefinition.fromMedium(Medium.from("HeatReturn Temp")))
-      .isEqualTo(unkonwMeterDefinition);
+      .isEqualTo(unknownMeterDefinition);
   }
 
   @Test
   public void unknownMediumIsMappedToUnknownMeterDefinition() {
     assertThat(MeterDefinition.fromMedium(Medium.from("Some unsupported, unknown medium")))
-      .isEqualTo(MeterDefinition.systemOwned(
-        MeterDefinitionType.UNKNOWN_METER_TYPE,
-        "Unknown medium",
-        Medium.UNKNOWN_MEDIUM.quantities()
-      ));
+      .isEqualTo(MeterDefinition.UNKNOWN);
   }
 }

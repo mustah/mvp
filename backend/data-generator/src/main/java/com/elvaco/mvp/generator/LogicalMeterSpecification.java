@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -16,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 
 import static java.util.Arrays.asList;
 
@@ -74,20 +74,20 @@ class LogicalMeterSpecification {
 
   GeneratedData create() {
     UUID logicalMeterId = UUID.randomUUID();
-    String externalId = meterDefinition.medium + "-" + logicalMeterId;
+    String externalId = meterDefinition.medium.name + "-" + logicalMeterId;
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .logicalMeterId(logicalMeterId)
       .organisationId(organisation.id)
       .address(generateAddress())
       .externalId(externalId)
-      .medium(meterDefinition.medium)
+      .medium(meterDefinition.medium.name)
       .manufacturer("ELV")
       .readIntervalMinutes(intervalDuration.toMinutes())
       .build();
 
     List<Measurement> measurements = new ArrayList<>();
-    for (Quantity quantity : meterDefinition.quantities) {
+    for (DisplayQuantity quantity : meterDefinition.quantities) {
       measurements.addAll(measurementSpecification.createWith(
         quantity,
         defaultSeriesGenerator,

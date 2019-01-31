@@ -10,6 +10,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -30,7 +31,6 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DE
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantity;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
-import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
@@ -85,7 +85,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           .organisationId(organisation.id)
           .address(address)
           .externalId(facilityId)
-          .medium(UNKNOWN_MEDIUM.medium)
+          .medium(Medium.UNKNOWN_MEDIUM.name)
           .logicalMeterId(logicalMeter.id)
           .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
           .activePeriod(PeriodRange.halfOpenFrom(zonedMeasurementTimestamp, null))
@@ -159,11 +159,11 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       );
       return Optional.empty();
     }
-    if (!unitConverter.isSameDimension(quantity.get().presentationUnit(), value.unit)) {
+    if (!unitConverter.isSameDimension(quantity.get().storageUnit, value.unit)) {
       log.warn(
         "Discarding measurement with invalid unit for facility '{}', expecting '{}', got {}",
         physicalMeter.externalId,
-        quantity.get().presentationUnit(),
+        quantity.get().storageUnit,
         value
       );
       return Optional.empty();

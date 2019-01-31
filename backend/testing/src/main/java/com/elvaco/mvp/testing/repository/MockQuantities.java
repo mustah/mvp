@@ -26,7 +26,7 @@ public class MockQuantities extends MockRepository<Integer, Quantity> implements
 
   @Override
   protected Quantity copyWithId(Integer id, Quantity entity) {
-    return new Quantity(id, entity.name, entity.getPresentationInformation());
+    return new Quantity(id, entity.name, entity.storageUnit);
   }
 
   @Override

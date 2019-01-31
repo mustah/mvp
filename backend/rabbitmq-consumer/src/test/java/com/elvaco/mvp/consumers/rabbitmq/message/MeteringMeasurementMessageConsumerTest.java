@@ -51,8 +51,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ELECTRICITY;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -65,7 +65,6 @@ public class MeteringMeasurementMessageConsumerTest {
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
   private static final String ADDRESS = "1234";
-  private static final String SECOND_METER_ADDRESS = "9876";
   private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   private static final String ORGANISATION_SLUG = "some-organisation";
 
@@ -418,7 +417,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .organisationId(organisation.id)
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
-        .medium(Medium.UNKNOWN_MEDIUM.medium)
+        .medium(Medium.UNKNOWN_MEDIUM.name)
         .logicalMeterId(logicalMeter.id)
         .readIntervalMinutes(60)
         .activePeriod(physicalMeter.activePeriod)
@@ -536,7 +535,7 @@ public class MeteringMeasurementMessageConsumerTest {
     logicalMeters.save(LogicalMeter.builder()
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .build());
 
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
@@ -583,7 +582,7 @@ public class MeteringMeasurementMessageConsumerTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(HOT_WATER_METER)
+        .meterDefinition(DEFAULT_HOT_WATER)
         .location(kungsbacka().build())
         .build()
     );
@@ -603,7 +602,7 @@ public class MeteringMeasurementMessageConsumerTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(HOT_WATER_METER)
+        .meterDefinition(DEFAULT_HOT_WATER)
         .location(kungsbacka().build())
         .build()
     );
@@ -628,7 +627,7 @@ public class MeteringMeasurementMessageConsumerTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(HOT_WATER_METER)
+        .meterDefinition(DEFAULT_HOT_WATER)
         .build()
     );
 
@@ -657,7 +656,7 @@ public class MeteringMeasurementMessageConsumerTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(HOT_WATER_METER)
+        .meterDefinition(DEFAULT_HOT_WATER)
         .location(kungsbacka().build())
         .build()
     );
@@ -677,17 +676,16 @@ public class MeteringMeasurementMessageConsumerTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(ELECTRICITY_METER)
+        .meterDefinition(DEFAULT_ELECTRICITY)
         .build());
     var physicalMeter = physicalMeters.save(
       PhysicalMeter.builder()
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
         .manufacturer("ELV")
-        .medium(Medium.UNKNOWN_MEDIUM.medium)
         .readIntervalMinutes(15)
         .organisationId(organisation.id)
-        .medium(ELECTRICITY_METER.medium)
+        .medium(Medium.ELECTRICITY.name)
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
         .build());
@@ -745,7 +743,7 @@ public class MeteringMeasurementMessageConsumerTest {
       .address(ADDRESS)
       .externalId(EXTERNAL_ID)
       .manufacturer("ELV")
-      .medium(Medium.UNKNOWN_MEDIUM.medium)
+      .medium(Medium.UNKNOWN_MEDIUM.name)
       .readIntervalMinutes(15);
   }
 }

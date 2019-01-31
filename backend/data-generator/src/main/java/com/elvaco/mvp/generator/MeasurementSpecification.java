@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 
 class MeasurementSpecification {
 
@@ -27,7 +27,7 @@ class MeasurementSpecification {
   }
 
   Collection<? extends Measurement> createWith(
-    Quantity quantity,
+    DisplayQuantity quantity,
     QuantitySeriesGenerator seriesGenerator,
     PhysicalMeter physicalMeter
   ) {
@@ -39,9 +39,9 @@ class MeasurementSpecification {
       if (random.nextDouble() > lossFactor) {
         generatedMeasurements.add(Measurement.builder()
           .created(value.when.atZone(start.getZone()))
-          .quantity(quantity.name)
+          .quantity(quantity.quantity.name)
           .value(value.value)
-          .unit(quantity.presentationUnit())
+          .unit(quantity.unit)
           .physicalMeter(physicalMeter)
           .build());
       }

@@ -14,8 +14,8 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,10 +29,10 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   @Test
   public void isPageable() {
     var date = context().now();
-    var logicalGasMeter = given(logicalMeter().meterDefinition(GAS_METER));
+    var logicalGasMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
     given(series(logicalGasMeter, Quantity.VOLUME, 1, 2, 5, 6));
 
-    var logicalMeter2 = given(logicalMeter().meterDefinition(GAS_METER));
+    var logicalMeter2 = given(logicalMeter().meterDefinition(DEFAULT_GAS));
     given(series(logicalMeter2, Quantity.VOLUME, date.plusHours(4), 7));
 
     var url = urlFrom(logicalGasMeter.id);
@@ -58,7 +58,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   @Test
   public void unableToAccessOtherOrganisation() {
     var created = context().now();
-    var meter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER)
+    var meter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING)
       .organisationId(context().organisationId2()));
 
     given(series(meter, Quantity.DIFFERENCE_TEMPERATURE, created, 285.59));
@@ -76,7 +76,7 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   @Test
   public void defaultsToDecidedUponUnits() {
     var after = context().now();
-    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
     given(series(districtHeatingMeter, Quantity.ENERGY, after, 1.0));
 
     var url = urlFrom(districtHeatingMeter.id);

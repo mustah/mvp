@@ -6,17 +6,15 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.IdentifiableType;
-import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
+import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -28,28 +26,36 @@ import org.hibernate.envers.Audited;
 @NoArgsConstructor
 @AllArgsConstructor
 @Audited
-public class MeterDefinitionEntity extends IdentifiableType<MeterDefinitionType> {
+public class MeterDefinitionEntity extends IdentifiableType<Integer> {
 
   private static final long serialVersionUID = -8819531921424251045L;
 
   @Id
-  @Enumerated(EnumType.ORDINAL)
-  public MeterDefinitionType type;
+  public Integer id;
 
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinTable(
-    name = "meter_definition_quantities",
-    joinColumns = @JoinColumn(name = "meter_definition_type", referencedColumnName = "type"),
-    inverseJoinColumns = @JoinColumn(name = "quantity_id", referencedColumnName = "id")
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "organisation_id", nullable = false)
+  @Audited(modifiedColumnName = "organisation_id_mod")
+  public OrganisationEntity organisation;
+
+  @OneToMany(
+    mappedBy = "pk.meterDefinitionId",
+    fetch = FetchType.EAGER,
+    cascade = CascadeType.MERGE
   )
-  public Set<QuantityEntity> quantities = new HashSet<>();
+  public Set<DisplayQuantityEntity> quantities = new HashSet<>();
 
-  public String medium;
+  public String name;
 
-  public boolean systemOwned;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "medium_id", nullable = false)
+  @Audited(modifiedColumnName = "medium_id_mod")
+  public MediumEntity medium;
+
+  public boolean autoApply;
 
   @Override
-  public MeterDefinitionType getId() {
-    return type;
+  public Integer getId() {
+    return id;
   }
 }

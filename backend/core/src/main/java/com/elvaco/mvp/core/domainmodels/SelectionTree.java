@@ -46,7 +46,7 @@ public class SelectionTree {
   public static class City {
     public final String name;
     public final String id;
-    public final Set<String> medium = new HashSet<>();
+    public final Set<Medium> medium = new HashSet<>();
     private final Map<String, Address> addresses = new HashMap<>();
 
     private City(String id, String name) {
@@ -62,7 +62,7 @@ public class SelectionTree {
       return new ArrayList<>(addresses.values());
     }
 
-    private City addMedium(String medium) {
+    private City addMedium(Medium medium) {
       this.medium.add(medium);
       return this;
     }
@@ -86,7 +86,7 @@ public class SelectionTree {
       return new ArrayList<>(meters.values());
     }
 
-    void addMeter(UUID id, String name, String medium) {
+    void addMeter(UUID id, String name, Medium medium) {
       meters.computeIfAbsent(id, (key) -> new Meter(key, name, medium));
     }
   }
@@ -96,9 +96,9 @@ public class SelectionTree {
   public static class Meter {
     public final String name;
     public final UUID id;
-    public final String medium;
+    public final Medium medium;
 
-    private Meter(UUID id, String name, String medium) {
+    private Meter(UUID id, String name, Medium medium) {
       this.id = id;
       this.name = name;
       this.medium = medium;

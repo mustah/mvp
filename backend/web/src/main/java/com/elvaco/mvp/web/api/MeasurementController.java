@@ -3,25 +3,27 @@ package com.elvaco.mvp.web.api;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
-import com.elvaco.mvp.web.exception.MissingParameter;
 import com.elvaco.mvp.web.mapper.MeasurementDtoMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -34,12 +36,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
-import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.web.mapper.MeasurementDtoMapper.toSeries;
+import static java.util.Collections.emptySet;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 @RequiredArgsConstructor
@@ -48,11 +49,11 @@ public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
   private final LogicalMeterUseCases logicalMeterUseCases;
-  private final LogicalMeterHelper logicalMeterHelper;
 
   @GetMapping("/average")
   public List<MeasurementSeriesDto> average(
     @RequestParam MultiValueMap<String, String> requestParams,
+    @RequestParam(name = "quantity") Set<QuantityParameter> optionalQuantityParameters,
     @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution,
@@ -62,7 +63,10 @@ public class MeasurementController {
 
     List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAllBy(parameters);
 
-    Map<String, Quantity> quantityMap = getMappedQuantities(parameters);
+    Map<String, QuantityParameter> quantityMap = getMappedQuantities(
+      optionalQuantityParameters,
+      logicalMeters
+    );
 
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
@@ -91,7 +95,7 @@ public class MeasurementController {
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
     @RequestParam(name = "logicalMeterId") List<UUID> logicalMeterIds,
-    @RequestParam(name = "quantity") Optional<Set<Quantity>> optionalQuantities,
+    @RequestParam(name = "quantity") Optional<Set<QuantityParameter>> optionalQuantityParameters,
     @RequestParam(name = "after") @DateTimeFormat(iso = DATE_TIME) ZonedDateTime start,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution
@@ -106,7 +110,10 @@ public class MeasurementController {
     Map<UUID, LogicalMeter> logicalMetersMap = logicalMeters.stream()
       .collect(toMap(LogicalMeter::getId, identity()));
 
-    Map<String, Quantity> quantityMap = getMappedQuantities(optionalQuantities, logicalMeters);
+    Map<String, QuantityParameter> quantityMap = getMappedQuantities(
+      optionalQuantityParameters.orElse(emptySet()),
+      logicalMeters
+    );
 
     ZonedDateTime stop = beforeOrNow(before);
     TemporalResolution temporalResolution = resolutionOrDefault(start, stop, resolution);
@@ -141,31 +148,36 @@ public class MeasurementController {
     return new PageImpl<>(measurements);
   }
 
-  private Map<String, Quantity> getMappedQuantities(
-    RequestParameters parameters
-  ) {
-    var quantities = parameters.getValues(QUANTITY).stream()
-      .map(Quantity::of)
-      .map(q -> logicalMeterHelper.resolveQuantity(q))
-      .collect(toMap(q -> q.name, q -> q));
-
-    if (quantities.isEmpty()) {
-      throw new MissingParameter(QUANTITY);
-    }
-    return quantities;
-  }
-
-  private Map<String, Quantity> getMappedQuantities(
-    Optional<Set<Quantity>> optionalQuantities,
+  private Map<String, QuantityParameter> getMappedQuantities(
+    Set<QuantityParameter> quantityParameters,
     List<LogicalMeter> logicalMeters
   ) {
-    return optionalQuantities
-      .orElseGet(() -> logicalMeters.stream()
-        .flatMap(logicalMeter -> logicalMeter.getQuantities().stream())
-        .collect(toSet()))
+    Collector<QuantityParameter, ?, Map<String, QuantityParameter>> quantityParameterMapCollector =
+      toMap(qParam -> qParam.name, qParam -> qParam);
+
+    Map<String, QuantityParameter> meterQuantitites = logicalMeters.stream()
+      .flatMap(logicalMeter -> logicalMeter.getQuantities()
+        .stream()
+        .map(QuantityParameter::of))
+      .collect(Collectors.toSet())
       .stream()
-      .map(q -> logicalMeterHelper.resolveQuantity(q))
-      .collect(toMap(q -> q.name, q -> q));
+      .collect(quantityParameterMapCollector);
+
+    if (quantityParameters.isEmpty()) {
+      return meterQuantitites;
+    }
+
+    return quantityParameters.stream()
+      .filter(qp -> meterQuantitites.containsKey(qp.name))
+      .map(qp -> {
+        var meterQuantity = meterQuantitites.get(qp.name);
+        return QuantityParameter.builder()
+          .name(qp.name)
+          .displayMode(qp.displayMode != null ? qp.displayMode : meterQuantity.displayMode)
+          .unit(qp.unit != null ? qp.unit : meterQuantity.unit)
+          .build();
+      })
+      .collect(quantityParameterMapCollector);
   }
 
   private List<LogicalMeter> findLogicalMetersByIds(List<UUID> logicalMeterIds) {
@@ -191,5 +203,10 @@ public class MeasurementController {
   ) {
     return Optional.ofNullable(resolution)
       .orElseGet(() -> TemporalResolution.defaultResolutionFor(Duration.between(start, stop)));
+  }
+
+  @SafeVarargs
+  private static <T> T coalesce(T... things) {
+    return Arrays.stream(things).filter(Objects::nonNull).findFirst().orElse(null);
   }
 }

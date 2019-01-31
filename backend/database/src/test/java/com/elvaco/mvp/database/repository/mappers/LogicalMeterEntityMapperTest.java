@@ -4,17 +4,20 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.database.entity.meter.DisplayQuantityEntity;
+import com.elvaco.mvp.database.entity.meter.DisplayQuantityPk;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.MediumEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
@@ -32,14 +35,12 @@ public class LogicalMeterEntityMapperTest {
 
   private static final QuantityProvider QUANTITY_PROVIDER = name -> QUANTITIES.stream()
     .filter(quantity -> quantity.name.equals(name))
-    .findAny()
-    .orElse(null);
+    .findAny();
 
   private static final LogicalMeterEntityMapper logicalMeterEntityMapper =
     new LogicalMeterEntityMapper(
       new MeterDefinitionEntityMapper(
-        new QuantityEntityMapper(QUANTITY_PROVIDER),
-        QUANTITY_PROVIDER
+        new QuantityEntityMapper(QUANTITY_PROVIDER)
       )
     );
 
@@ -48,7 +49,7 @@ public class LogicalMeterEntityMapperTest {
     LogicalMeter logicalMeter = LogicalMeter.builder()
       .externalId("an-external-id")
       .organisationId(ELVACO.id)
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .physicalMeter(PhysicalMeter.builder()
         .organisationId(ELVACO.id)
         .address("1234")
@@ -99,15 +100,15 @@ public class LogicalMeterEntityMapperTest {
     assertThat(expectedLocation.getCoordinate()).isEqualTo(logicalMeter.location.getCoordinate());
 
     var meterDefinition = new MeterDefinition(
-      MeterDefinitionType.UNKNOWN_METER_TYPE,
+      0,
+      null,
       "speed-o-meter",
-      singleton(new Quantity(
-        1,
-        "Speed",
-        new QuantityPresentationInformation("kmh", SeriesDisplayMode.READOUT),
-        "kmh"
-      )),
-      false
+      Medium.UNKNOWN_MEDIUM,
+      false,
+      singleton(
+        new DisplayQuantity(new Quantity(1, "Speed", "kmh"), DisplayMode.READOUT, "kmh")
+
+      )
     );
     assertThat(logicalMeter).isEqualTo(
       LogicalMeter.builder()
@@ -135,17 +136,18 @@ public class LogicalMeterEntityMapperTest {
         LogicalMeter.UTC_OFFSET
       );
 
-    MeterDefinition meterDefinition = new MeterDefinition(
-      MeterDefinitionType.UNKNOWN_METER_TYPE,
-      "My energy meter",
-      singleton(new Quantity(
-        1,
-        "Energy",
-        new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT),
-        "kWh"
-      )),
-      false
-    );
+    MeterDefinition meterDefinition =
+      new MeterDefinition(
+        0,
+        null,
+        "My energy meter",
+        Medium.UNKNOWN_MEDIUM,
+        false,
+        singleton(
+          new DisplayQuantity(new Quantity(1, "Energy", "kWh"), DisplayMode.READOUT, "kWh")
+
+        )
+      );
 
     LogicalMeter logicalMeter = logicalMeterEntityMapper.toDomainModel(logicalMeterEntity);
 
@@ -178,16 +180,19 @@ public class LogicalMeterEntityMapperTest {
       .confidence(1.0)
       .build();
 
-    MeterDefinition meterDefinition = new MeterDefinition(
-      MeterDefinitionType.UNKNOWN_METER_TYPE,
-      "Energy meter",
-      singleton(new Quantity(
-        1,
-        "Energy",
-        new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
-      )),
-      false
-    );
+    MeterDefinition meterDefinition =
+      new MeterDefinition(
+        0,
+        null,
+        "Energy meter",
+        Medium.UNKNOWN_MEDIUM,
+        false,
+        singleton(
+          new DisplayQuantity(new Quantity(null, "Energy", "kWh"), DisplayMode.READOUT, "kWh")
+
+        )
+      );
+
     LogicalMeterEntity logicalMeterEntity = logicalMeterEntityMapper.toEntity(
       LogicalMeter.builder()
         .id(meterId)
@@ -215,15 +220,17 @@ public class LogicalMeterEntityMapperTest {
     String name
   ) {
     return new MeterDefinitionEntity(
-      MeterDefinitionType.UNKNOWN_METER_TYPE,
-      singleton(new QuantityEntity(
-        1,
-        quantityName,
+      0,
+      null,
+      singleton(new DisplayQuantityEntity(
+        new DisplayQuantityPk(
+          new QuantityEntity(1, quantityName, quantityUnit), 0, DisplayMode.READOUT
+        ),
         quantityUnit,
-        quantityUnit,
-        SeriesDisplayMode.READOUT
+        3
       )),
       name,
+      new MediumEntity((long)Medium.UNKNOWN_MEDIUM.ordinal(), Medium.UNKNOWN_MEDIUM.name),
       false
     );
   }

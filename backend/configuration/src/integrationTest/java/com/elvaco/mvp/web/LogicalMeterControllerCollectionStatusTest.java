@@ -18,7 +18,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
@@ -129,7 +129,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   @Test
   public void fortyPercentWhenMeterHasStatuses() {
-    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     given(
       statusLog(districtHeatingMeter)
@@ -159,7 +159,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   @Test
   public void fiftyPercentWhenMeterHasMultipleActiveStatusesWithinPeriod() {
-    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     given(
       statusLog(districtHeatingMeter)
@@ -187,7 +187,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   @Test
   public void twoOutOfThreeMissing() {
-    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0));
 
@@ -215,7 +215,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     var districtHeatingMeter = given(
-      logicalMeter().meterDefinition(DISTRICT_HEATING_METER),
+      logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING),
       physicalMeter().logicalMeterId(meterId)
         .activePeriod(firstMeterActivePeriod)
         .readIntervalMinutes(0),
@@ -248,7 +248,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   @Test
   public void oneHundredPercent() {
-    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     given(series(
       districtHeatingMeter,
@@ -272,7 +272,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
   @Test
   public void oneHundredPercentForTwoDays() {
-    var districtHeatingMeter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var districtHeatingMeter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     given(series(
       districtHeatingMeter,
@@ -307,7 +307,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     var districtHeatingMeter = given(
-      logicalMeter().meterDefinition(DISTRICT_HEATING_METER),
+      logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING),
       physicalMeter().logicalMeterId(meterId).activePeriod(firstMeterActivePeriod),
       physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
     );
@@ -343,7 +343,7 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     );
 
     var districtHeatingMeter = given(
-      logicalMeter().meterDefinition(DISTRICT_HEATING_METER),
+      logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING),
       physicalMeter().logicalMeterId(meterId).activePeriod(firstMeterActivePeriod),
       physicalMeter().logicalMeterId(meterId).activePeriod(secondMeterActivePeriod)
     );

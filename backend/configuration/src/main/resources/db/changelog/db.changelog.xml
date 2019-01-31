@@ -72,6 +72,7 @@
   <include file="xml/add_indexes_for_quick_meterlist_sorting.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_index_for_quick_sorting_of_meters_by_medium.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_indexes_for_quick_sorting_of_meters_without_organisation.xml" relativeToChangelogFile="true"/>
+  <include file="xml/update_meter_definition_and_quantites.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

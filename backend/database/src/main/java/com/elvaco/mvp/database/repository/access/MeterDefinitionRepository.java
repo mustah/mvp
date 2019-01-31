@@ -5,6 +5,7 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
+import com.elvaco.mvp.database.repository.jpa.MediumJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 
@@ -16,16 +17,14 @@ import static java.util.stream.Collectors.toList;
 public class MeterDefinitionRepository implements MeterDefinitions {
 
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+  private final MediumJpaRepository mediumJpaRepository;
   private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
     MeterDefinitionEntity entity = meterDefinitionEntityMapper.toEntity(meterDefinition);
-
-    if (meterDefinition.systemOwned) {
-      meterDefinitionJpaRepository.findByMedium(meterDefinition.medium)
-        .ifPresent(systemOwned -> entity.type = systemOwned.type);
-    }
+    entity.medium = mediumJpaRepository.findById(entity.medium.id)
+      .orElseGet(() -> mediumJpaRepository.save(entity.medium)); //FIXME: maybe not do this? // hoho
     return meterDefinitionEntityMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
   }
 

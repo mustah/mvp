@@ -538,7 +538,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
       .externalId(randomUUID().toString())
       .organisationId(context().organisationId())
       .created(NOW)
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .gateway(gateway)
       .location(location)
       .build());

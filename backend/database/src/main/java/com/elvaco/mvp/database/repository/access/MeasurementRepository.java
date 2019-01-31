@@ -17,6 +17,8 @@ import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
+import com.elvaco.mvp.core.exception.NoSuchQuantityException;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
@@ -39,9 +41,10 @@ import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.elvaco.mvp.database.entity.jooq.Tables.DISPLAY_QUANTITY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.MEASUREMENT;
-import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION_QUANTITIES;
+import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.QUANTITY;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.periodContains;
@@ -100,7 +103,9 @@ public class MeasurementRepository implements Measurements {
   public void createOrUpdate(Measurement measurement) {
     try {
       MeasurementUnit measurementUnit = new MeasurementUnit(measurement.unit, measurement.value);
-      Quantity quantity = quantityProvider.getByName(measurement.quantity);
+      Quantity quantity = quantityProvider.getByName(measurement.quantity)
+        .orElseThrow(() -> new NoSuchQuantityException(measurement.quantity));
+
       measurementJpaRepository.createOrUpdate(
         measurement.physicalMeter.id,
         measurement.created,
@@ -270,14 +275,18 @@ public class MeasurementRepository implements Measurements {
 
     Condition quantityCondition = parameter.getQuantities().isEmpty()
       ? trueCondition()
-      : QUANTITY.NAME.in(parameter.getQuantities().stream().map(q -> q.name).collect(toList()));
+      : QUANTITY.NAME.in(parameter.getQuantities()
+        .stream()
+        .map(q -> q.name)
+        .collect(toList()));
 
     Field<OffsetDateTime> valueDate = joinStep.field(dateFieldName, OffsetDateTime.class);
     return LOGICAL_METER
-      .join(METER_DEFINITION_QUANTITIES)
-      .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
-      .innerJoin(QUANTITY)
-      .on(QUANTITY.ID.eq(METER_DEFINITION_QUANTITIES.QUANTITY_ID).and(quantityCondition))
+      .join(METER_DEFINITION)
+      .on(LOGICAL_METER.METER_DEFINITION_ID.eq(METER_DEFINITION.ID))
+      .innerJoin(DISPLAY_QUANTITY)
+      .on(METER_DEFINITION.ID.eq(DISPLAY_QUANTITY.METER_DEFINITION_ID))
+      .innerJoin(QUANTITY).on(DISPLAY_QUANTITY.QUANTITY_ID.eq(QUANTITY.ID).and(quantityCondition))
       .innerJoin(PHYSICAL_METER)
       .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID)
         .and(LOGICAL_METER.ORGANISATION_ID.eq(PHYSICAL_METER.ORGANISATION_ID)))
@@ -341,7 +350,7 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     ResultQuery<Record5<UUID, String, String, Double, OffsetDateTime>> r
   ) {
-    Map<String, Quantity> quantityMap = getQuantityMap(parameter);
+    Map<String, QuantityParameter> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()
       .collect(groupingBy(
@@ -360,7 +369,7 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     ResultQuery<Record3<BigDecimal, String, OffsetDateTime>> r
   ) {
-    Map<String, Quantity> quantityMap = getQuantityMap(parameter);
+    Map<String, QuantityParameter> quantityMap = getQuantityMap(parameter);
 
     return r.fetch().stream()
       .collect(groupingBy(
@@ -375,7 +384,7 @@ public class MeasurementRepository implements Measurements {
       );
   }
 
-  private Map<String, Quantity> getQuantityMap(MeasurementParameter parameter) {
+  private Map<String, QuantityParameter> getQuantityMap(MeasurementParameter parameter) {
     return parameter.getQuantities()
       .stream()
       .collect(toMap(q -> q.name, q -> q));
@@ -384,17 +393,18 @@ public class MeasurementRepository implements Measurements {
   private MeasurementValue toMeasurementValueConvertedToUnitFromQuantity(
     Instant when,
     Number fromValue,
-    Quantity quantity
+    QuantityParameter quantity
   ) {
     Double value = Optional.ofNullable(fromValue)
       .map(unitValue ->
         new MeasurementUnit(
-          quantityProvider.getByName(quantity.name).storageUnit,
+          quantityProvider.getByName(quantity.name)
+            .orElseThrow(() -> new NoSuchQuantityException(quantity.name)).storageUnit,
           unitValue.doubleValue()
         ))
       .map(measurementUnit ->
-        Optional.ofNullable(quantity.presentationUnit())
-          .map(u -> unitConverter.convert(measurementUnit, quantity.presentationUnit()))
+        Optional.ofNullable(quantity.unit)
+          .map(u -> unitConverter.convert(measurementUnit, quantity.unit))
           .orElse(measurementUnit)
       )
       .map(MeasurementUnit::getValue)

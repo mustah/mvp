@@ -97,33 +97,33 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
 
       List<MeasurementEntity> measurements;
       if (meter.medium.equals("Heat, Return temp")
-        || meter.medium.equals(Medium.DISTRICT_HEATING.medium)) {
+        || meter.medium.equals(Medium.DISTRICT_HEATING.name)) {
         measurements = demoDataHelper.heatMeasurement(created, meter);
-      } else if (meter.medium.equals(Medium.GAS.medium)) {
+      } else if (meter.medium.equals(Medium.GAS.name)) {
         measurements = demoDataHelper.gasMeasurement(
           created,
           meter,
           consumingMediumMeterReading
         );
-      } else if (meter.medium.equals(Medium.WATER.medium)) {
+      } else if (meter.medium.equals(Medium.WATER.name)) {
         measurements = demoDataHelper.waterMeasurement(
           created,
           meter,
           consumingMediumMeterReading
         );
-      } else if (meter.medium.equals(Medium.HOT_WATER.medium)) {
+      } else if (meter.medium.equals(Medium.HOT_WATER.name)) {
         measurements = demoDataHelper.waterMeasurement(
           created,
           meter,
           consumingMediumMeterReading
         );
-      } else if (meter.medium.equals(Medium.ELECTRICITY.medium)) {
+      } else if (meter.medium.equals(Medium.ELECTRICITY.name)) {
         measurements = demoDataHelper.electricityMeasurement(
           created,
           meter,
           consumingMediumMeterReading
         );
-      } else if (meter.medium.equals(Medium.ROOM_SENSOR.medium)) {
+      } else if (meter.medium.equals(Medium.ROOM_SENSOR.name)) {
         measurements = demoDataHelper.roomSensorMeasurement(created, meter);
       } else {
         throw new RuntimeException("You need to add support for mocking the medium " + meter

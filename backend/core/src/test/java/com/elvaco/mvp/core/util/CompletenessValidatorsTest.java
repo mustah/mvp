@@ -48,7 +48,7 @@ public class CompletenessValidatorsTest {
     LogicalMeter logicalMeter = LogicalMeter.builder()
       .externalId("external-id")
       .organisationId(randomUUID())
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .location(KNOWN_LOCATION)
       .build();
     assertThat(logicalMeterValidator().isComplete(logicalMeter)).isTrue();
@@ -59,7 +59,7 @@ public class CompletenessValidatorsTest {
     LogicalMeter logicalMeter = LogicalMeter.builder()
       .externalId("external-id")
       .organisationId(randomUUID())
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .location(Location.UNKNOWN_LOCATION)
       .build();
     assertThat(logicalMeterValidator().isComplete(logicalMeter)).isFalse();
@@ -68,7 +68,7 @@ public class CompletenessValidatorsTest {
   @Test
   public void physicalMeterValidatorUnknownMedium() {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .medium(Medium.UNKNOWN_MEDIUM.medium)
+      .medium(Medium.UNKNOWN_MEDIUM.name)
       .manufacturer("ELV")
       .readIntervalMinutes(15)
       .build();
@@ -78,7 +78,7 @@ public class CompletenessValidatorsTest {
   @Test
   public void physicalMeterValidatorComplete() {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .medium(Medium.DISTRICT_HEATING.medium)
+      .medium(Medium.DISTRICT_HEATING.name)
       .manufacturer("ELV")
       .readIntervalMinutes(15)
       .revision(1)
@@ -90,7 +90,7 @@ public class CompletenessValidatorsTest {
   @Test
   public void physicalMeterValidatorUnknownManufacturer() {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .medium(Medium.DISTRICT_HEATING.medium)
+      .medium(Medium.DISTRICT_HEATING.name)
       .manufacturer(null)
       .readIntervalMinutes(15)
       .revision(1)
@@ -101,7 +101,7 @@ public class CompletenessValidatorsTest {
   @Test
   public void physicalMeterValidatorExplicitlyUnknownManufacturer() {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .medium(Medium.DISTRICT_HEATING.medium)
+      .medium(Medium.DISTRICT_HEATING.name)
       .manufacturer("UNKNOWN")
       .readIntervalMinutes(15)
       .revision(1)
@@ -112,7 +112,7 @@ public class CompletenessValidatorsTest {
   @Test
   public void physicalMeterValidatorZeroReportInterval() {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .medium(Medium.DISTRICT_HEATING.medium)
+      .medium(Medium.DISTRICT_HEATING.name)
       .manufacturer("ELV")
       .readIntervalMinutes(0)
       .revision(1)
@@ -123,7 +123,7 @@ public class CompletenessValidatorsTest {
   @Test
   public void physicalMeterValidatorRevisionNullIsIncomplete() {
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
-      .medium(Medium.DISTRICT_HEATING.medium)
+      .medium(Medium.DISTRICT_HEATING.name)
       .manufacturer("ELV")
       .readIntervalMinutes(0)
       .revision(null)

@@ -57,7 +57,7 @@ class GeneratedDataLoader implements CommandLineRunner {
     long start = System.nanoTime();
     ZonedDateTime now = ZonedDateTime.now();
     MeterPopulationSpecification specification = new MeterPopulationSpecification(1L)
-      .withDefinitionsFrom(singleton(MeterDefinition.DISTRICT_HEATING_METER))
+      .withDefinitionsFrom(singleton(MeterDefinition.DEFAULT_DISTRICT_HEATING))
       .withMeterCount(10)
       .withMeasurementLossFactor(0.0001)
       .withMeasurementsBetween(now.minusMonths(2), now)

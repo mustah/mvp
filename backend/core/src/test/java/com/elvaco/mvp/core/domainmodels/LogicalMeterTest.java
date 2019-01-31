@@ -6,12 +6,9 @@ import javax.annotation.Nullable;
 
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_COOLING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_COOLING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
@@ -26,66 +23,14 @@ public class LogicalMeterTest {
   @Test
   public void medium() {
     LogicalMeter heatingMeter = logicalMeterBuilder()
-      .meterDefinition(DISTRICT_HEATING_METER)
+      .meterDefinition(DEFAULT_DISTRICT_HEATING)
       .build();
-    assertThat(heatingMeter.getMedium()).isEqualTo("District heating");
+    assertThat(heatingMeter.getMedium()).isEqualTo(Medium.DISTRICT_HEATING);
 
     LogicalMeter coolingMeter = heatingMeter.toBuilder()
-      .meterDefinition(DISTRICT_COOLING_METER)
+      .meterDefinition(DEFAULT_DISTRICT_COOLING)
       .build();
-    assertThat(coolingMeter.getMedium()).isEqualTo("District cooling");
-  }
-
-  @Test
-  public void quantitiesDistrictHeatingMeter() {
-    LogicalMeter heatingMeter = logicalMeterBuilder()
-      .meterDefinition(DISTRICT_HEATING_METER)
-      .build();
-
-    assertThat(heatingMeter.getQuantities()).containsOnly(
-      Quantity.ENERGY,
-      Quantity.VOLUME,
-      Quantity.POWER,
-      Quantity.VOLUME_FLOW,
-      Quantity.FORWARD_TEMPERATURE,
-      Quantity.RETURN_TEMPERATURE,
-      Quantity.DIFFERENCE_TEMPERATURE
-    );
-  }
-
-  @Test
-  public void quantitiesWaterMeters() {
-    LogicalMeter waterMeter = logicalMeterBuilder()
-      .meterDefinition(WATER_METER)
-      .build();
-
-    assertThat(waterMeter.getQuantities()).containsOnly(Quantity.VOLUME);
-  }
-
-  @Test
-  public void quantitiesElectricityMeter() {
-    LogicalMeter meter = logicalMeterBuilder()
-      .meterDefinition(ELECTRICITY_METER)
-      .build();
-
-    assertThat(meter.getQuantities()).containsOnly(
-      Quantity.ENERGY,
-      Quantity.ENERGY_RETURN,
-      Quantity.REACTIVE_ENERGY,
-      Quantity.POWER
-    );
-  }
-
-  @Test
-  public void quantitiesRoomTempMeter() {
-    LogicalMeter meter = logicalMeterBuilder()
-      .meterDefinition(ROOM_SENSOR_METER)
-      .build();
-
-    assertThat(meter.getQuantities()).containsOnly(
-      Quantity.EXTERNAL_TEMPERATURE,
-      Quantity.HUMIDITY
-    );
+    assertThat(coolingMeter.getMedium()).isEqualTo(Medium.DISTRICT_COOLING);
   }
 
   @Test
@@ -97,14 +42,14 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = logicalMeterBuilder()
       .id(meterId)
       .organisationId(organisationId)
-      .meterDefinition(HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(now)
       .build();
 
     LogicalMeter otherLogicalMeter = logicalMeterBuilder()
       .id(meterId)
       .organisationId(organisationId)
-      .meterDefinition(HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(now)
       .build();
 
@@ -113,7 +58,7 @@ public class LogicalMeterTest {
 
   @Test
   public void getQuantity() {
-    LogicalMeter logicalMeter = logicalMeterBuilder().meterDefinition(HOT_WATER_METER).build();
+    LogicalMeter logicalMeter = logicalMeterBuilder().meterDefinition(DEFAULT_HOT_WATER).build();
 
     assertThat(logicalMeter.getQuantity(Quantity.VOLUME.name)).isNotEmpty();
     assertThat(logicalMeter.getQuantity("Bildäck")).isEmpty();
@@ -121,7 +66,7 @@ public class LogicalMeterTest {
 
   @Test
   public void getManufacturerNoPhysicalMeter() {
-    LogicalMeter logicalMeter = logicalMeterBuilder().meterDefinition(HOT_WATER_METER).build();
+    LogicalMeter logicalMeter = logicalMeterBuilder().meterDefinition(DEFAULT_HOT_WATER).build();
 
     assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
   }
@@ -133,7 +78,7 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = logicalMeterBuilder()
       .id(logicalMeterId)
       .organisationId(organisationId)
-      .meterDefinition(HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .physicalMeter(newPhysicalMeter(logicalMeterId, null))
       .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
@@ -146,7 +91,7 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = logicalMeterBuilder()
       .id(logicalMeterId)
       .organisationId(organisationId)
-      .meterDefinition(HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .physicalMeter(newPhysicalMeter(logicalMeterId, "KAM"))
       .build();
     assertThat(logicalMeter.getManufacturer()).isEqualTo("KAM");
@@ -160,7 +105,7 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = logicalMeterBuilder()
       .id(logicalMeterId)
       .organisationId(organisationId)
-      .meterDefinition(HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .physicalMeter(
         newPhysicalMeter(logicalMeterId, "KAM", PeriodRange.halfOpenFrom(now.minusDays(1), now)
         ))
@@ -287,7 +232,7 @@ public class LogicalMeterTest {
   private static LogicalMeter.LogicalMeterBuilder logicalMeter() {
     return LogicalMeter.builder()
       .organisationId(OTHER_ORGANISATION.id)
-      .meterDefinition(DISTRICT_HEATING_METER);
+      .meterDefinition(DEFAULT_DISTRICT_HEATING);
   }
 
   private static PhysicalMeter newPhysicalMeter(

@@ -27,13 +27,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MeasurementThresholdParserTest {
 
   private static final List<Quantity> RECOGNIZED_QUANTITIES = List.of(
-    Quantity.ENERGY, Quantity.FORWARD_TEMPERATURE
+    Quantity.ENERGY,
+    Quantity.FORWARD_TEMPERATURE
   );
 
   private final QuantityProvider provider = name -> RECOGNIZED_QUANTITIES.stream()
     .filter(quantity -> quantity.name.equals(name))
-    .findAny()
-    .orElse(null);
+    .findAny();
 
   private MeasurementThresholdParser parser;
 

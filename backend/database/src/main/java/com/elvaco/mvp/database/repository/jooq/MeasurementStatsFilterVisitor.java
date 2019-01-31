@@ -59,12 +59,14 @@ class MeasurementStatsFilterVisitor extends EmptyFilterVisitor {
       measurementThresholdDuringDuration = threshold.duration.toDays();
       measurementThresholdDuringFilter =
         MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
-          .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(threshold.quantity.isConsumption()))
+          .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(
+            threshold.quantity.isConsumptionByDefault()))
           .and(valueConditionFor(threshold));
     } else {
       measurementStatsFilter =
         MEASUREMENT_STAT_DATA.QUANTITY.equal(threshold.quantity.getId())
-          .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(threshold.quantity.isConsumption()))
+          .and(MEASUREMENT_STAT_DATA.IS_CONSUMPTION.equal(
+            threshold.quantity.isConsumptionByDefault()))
           .and(valueConditionFor(threshold));
     }
   }

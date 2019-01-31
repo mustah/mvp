@@ -19,8 +19,8 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
@@ -102,7 +102,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatusForMediumGas() {
-    var meter = given(logicalMeter().meterDefinition(GAS_METER));
+    var meter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
     ZonedDateTime start = context().now();
     ZonedDateTime end = start.plusHours(2);
     given(series(
@@ -134,7 +134,7 @@ public class DashboardControllerTest extends IntegrationTest {
   public void findAllWithCollectionStatus() {
     ZonedDateTime start = context().now();
     ZonedDateTime end = start.plusHours(2);
-    var meter = given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    var meter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
     given(series(
       meter,
       Quantity.POWER,

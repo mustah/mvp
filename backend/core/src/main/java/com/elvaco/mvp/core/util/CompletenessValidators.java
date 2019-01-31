@@ -14,12 +14,12 @@ public class CompletenessValidators {
   private static final CompletenessValidator<LogicalMeter> LOGICAL_METER_COMPLETENESS_VALIDATOR =
     new CompletenessValidator<>(
       logicalMeter -> logicalMeter.location.isKnown(),
-      logicalMeter -> !logicalMeter.meterDefinition.equals(MeterDefinition.UNKNOWN_METER)
+      logicalMeter -> !logicalMeter.meterDefinition.equals(MeterDefinition.UNKNOWN)
     );
 
   private static final CompletenessValidator<PhysicalMeter> PHYSICAL_METER_COMPLETENESS_VALIDATOR =
     new CompletenessValidator<>(
-      physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM.medium),
+      physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM.name),
       physicalMeter -> physicalMeter.manufacturer != null
         && !physicalMeter.manufacturer.equals("UNKNOWN"),
       physicalMeter -> physicalMeter.readIntervalMinutes != 0,

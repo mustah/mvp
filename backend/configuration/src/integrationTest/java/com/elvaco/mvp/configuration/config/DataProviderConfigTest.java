@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.config;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -103,8 +104,14 @@ public class DataProviderConfigTest extends IntegrationTest {
           .isEqualToIgnoringGivenFields(saved, "quantities");
 
         assertQuantitiesMatchFixtureIgnoringId(
-          saved.quantities,
-          unsavedMeterDefinition.get().quantities
+          saved.quantities.stream()
+            .map(displayQuantity -> displayQuantity.quantity)
+            .collect(
+              Collectors.toSet()),
+          unsavedMeterDefinition.get().quantities.stream()
+            .map(displayQuantity -> displayQuantity.quantity)
+            .collect(
+              Collectors.toSet())
         );
       });
   }

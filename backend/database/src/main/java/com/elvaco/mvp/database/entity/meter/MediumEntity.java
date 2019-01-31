@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.entity.meter;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,24 +21,21 @@ import org.hibernate.envers.Audited;
 @AllArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "quantity")
+@Table(name = "medium")
 @Audited
-public class QuantityEntity extends IdentifiableType<Integer> {
+public class MediumEntity extends IdentifiableType<Long> {
 
-  private static final long serialVersionUID = -8628799320716504900L;
+  private static final long serialVersionUID = 2942332009835061326L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(columnDefinition = "INT")
-  public Integer id;
+  public Long id;
 
   @NaturalId
   public String name;
 
-  public String storageUnit;
-
   @Override
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 }
