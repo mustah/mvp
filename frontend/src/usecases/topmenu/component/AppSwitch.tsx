@@ -1,10 +1,12 @@
 import MenuItem from 'material-ui/MenuItem';
+import ActionDashboard from 'material-ui/svg-icons/action/dashboard';
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import * as React from 'react';
 import {Route, Switch} from 'react-router';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {colors, menuItemInnerDivStyle} from '../../../app/themes';
+import {actionMenuItemIconStyle, colors, menuItemInnerDivStyle} from '../../../app/themes';
+import {IconMeter} from '../../../components/icons/IconMeter';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
 import {Xsmall} from '../../../components/texts/Texts';
@@ -32,20 +34,44 @@ const MenuIcon = ({onClick}: Clickable) => (
 );
 
 interface Props {
+  leftIcon?: React.ReactElement<any>;
   text: string;
   to: string;
 }
 
-const LinkMenuItem = ({text, to}: Props) => (
+const innerDivStyle: React.CSSProperties = {padding: '0 0 0 38px'};
+
+const LinkMenuItem = ({leftIcon, text, to}: Props) => (
   <Link to={to} className="link">
-    <MenuItem className="first-uppercase" style={menuItemInnerDivStyle}>{text}</MenuItem>
+    <MenuItem
+      leftIcon={leftIcon}
+      className="first-uppercase"
+      innerDivStyle={innerDivStyle}
+      style={menuItemInnerDivStyle}
+    >
+      {text}
+    </MenuItem>
   </Link>
 );
 
 export const AppSwitch = () => {
   const renderPopoverContent: RenderFunction<OnClick> = () => ([
-      <LinkMenuItem to={routes.home} text={translate('metering')} key="metering-pages"/>,
-      <LinkMenuItem to={routes.admin} text={translate('admin')} key="admin-pages"/>,
+      (
+        <LinkMenuItem
+          to={routes.home}
+          text={translate('metering')}
+          leftIcon={<IconMeter style={actionMenuItemIconStyle} color={colors.black}/>}
+          key="metering-pages"
+        />
+      ),
+      (
+        <LinkMenuItem
+          to={routes.admin}
+          text={translate('admin')}
+          leftIcon={<ActionDashboard style={actionMenuItemIconStyle} color={colors.black}/>}
+          key="admin-pages"
+        />
+      ),
     ]
   );
 
