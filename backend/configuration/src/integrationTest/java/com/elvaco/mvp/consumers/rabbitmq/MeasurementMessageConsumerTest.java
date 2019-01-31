@@ -13,7 +13,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
-import com.elvaco.mvp.testdata.RabbitIntegrationTest;
+import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,9 +30,8 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.offset;
-import static org.junit.Assume.assumeTrue;
 
-public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
+public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   private static final ZonedDateTime CREATED = ZonedDateTime.of(
     LocalDateTime.parse("2018-03-07T16:13:09"),
@@ -47,8 +46,6 @@ public class MeasurementMessageConsumerTest extends RabbitIntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isRabbitConnected());
-
     authenticate(context().superAdmin);
   }
 

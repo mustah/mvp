@@ -17,7 +17,7 @@ import com.elvaco.mvp.database.entity.meter.MeterAlarmLogEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterPk;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
-import com.elvaco.mvp.testdata.RabbitIntegrationTest;
+import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,9 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 
-public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
+public class AlarmMessageConsumerTest extends IntegrationTest {
 
   private static final LocalDateTime START = LocalDateTime.parse("2018-03-07T16:13:09");
 
@@ -52,8 +51,6 @@ public class AlarmMessageConsumerTest extends RabbitIntegrationTest {
 
   @Before
   public void setUp() {
-    assumeTrue(isRabbitConnected());
-
     authenticate(context().superAdmin);
 
     meteringAlarmMessageConsumer = new MeteringAlarmMessageConsumer(
