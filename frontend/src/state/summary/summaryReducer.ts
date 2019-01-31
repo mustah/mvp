@@ -2,6 +2,7 @@ import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
+import {SEARCH} from '../../usecases/search/searchActions';
 import {failureAction, requestAction, successAction} from '../api/apiActions';
 import {
   domainModelsPaginatedDeleteFailure,
@@ -60,6 +61,7 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
         isFetching: false,
         isSuccessfullyFetched: false,
       };
+    case SEARCH:
     case LOGOUT_USER:
       return {...initialState};
     default:
