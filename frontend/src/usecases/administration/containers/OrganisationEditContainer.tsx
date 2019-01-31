@@ -10,7 +10,7 @@ import {OrganisationEditForm} from '../../../components/forms/OrganisationEditFo
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageComponent} from '../../../containers/PageComponent';
+import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -95,7 +95,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
         : translate('add organisation');
 
     return (
-      <AdminPageComponent>
+      <AdminPageLayout>
         <MainTitle>{title}</MainTitle>
 
         <Paper style={paperStyle}>
@@ -122,7 +122,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
             </Loader>
           </RowIndented>
         </Paper>
-      </AdminPageComponent>
+      </AdminPageLayout>
     );
   }
 }

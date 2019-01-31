@@ -14,7 +14,7 @@ const Content = ({children}: WithChildren) => (
   </Column>
 );
 
-export const PageComponent = (props: WithChildren) => (
+export const PageLayout = (props: WithChildren) => (
   <Layout className="flex-1">
     <TopMenu>
       <LogoContainer/>
@@ -24,7 +24,7 @@ export const PageComponent = (props: WithChildren) => (
   </Layout>
 );
 
-export const AdminPageComponent = (props: WithChildren) => (
+export const AdminPageLayout = (props: WithChildren) => (
   <Layout className="flex-1">
     <TopMenu>
       <LogoContainer/>

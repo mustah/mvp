@@ -10,7 +10,7 @@ import {Column} from '../../../components/layouts/column/Column';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageComponent} from '../../../containers/PageComponent';
+import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -84,7 +84,7 @@ class UserEdit extends React.Component<Props, {}> {
     } = this.props;
 
     return (
-      <AdminPageComponent>
+      <AdminPageLayout>
         <MainTitle>{translate('edit user')}</MainTitle>
 
         <Paper style={paperStyle}>
@@ -110,7 +110,7 @@ class UserEdit extends React.Component<Props, {}> {
             </RowIndented>
           </Loader>
         </Paper>
-      </AdminPageComponent>
+      </AdminPageLayout>
     );
   }
 }

@@ -18,7 +18,6 @@ import {
   ThresholdQuery
 } from '../../../../state/user-selection/userSelectionModels';
 import {CallbackWith, ClassNamed, Styled} from '../../../../types/Types';
-import '../SelectionResultList.scss';
 import {DropDownMenu} from './DropDownMenu';
 
 const dropDownStyle: React.CSSProperties = {

@@ -8,7 +8,7 @@ import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageComponent} from '../../../containers/PageComponent';
+import {PageLayout} from '../../../containers/PageLayout';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
@@ -61,7 +61,7 @@ class EditProfile extends React.Component<Props> {
       ? organisations
       : [user.organisation];
     return (
-      <PageComponent>
+      <PageLayout>
         <Row className="space-between">
           <MainTitle>
             {translate('profile')}
@@ -87,7 +87,7 @@ class EditProfile extends React.Component<Props> {
             </Column>
           </Row>
         </Paper>
-      </PageComponent>
+      </PageLayout>
     );
   }
 }

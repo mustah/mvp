@@ -2,7 +2,7 @@ import * as React from 'react';
 import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageComponent} from '../../../containers/PageComponent';
+import {PageLayout} from '../../../containers/PageLayout';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
@@ -13,7 +13,7 @@ import {OverviewWidgets} from './widgets/OverviewWidgets';
 export const Dashboard = ({dashboard, isFetching, meterMapMarkers}: DashboardProps) => {
   const widgets: WidgetModel[] = isFetching || !dashboard ? [] : dashboard.widgets;
   return (
-    <PageComponent>
+    <PageLayout>
       <Row className="space-between">
         <MainTitle>{translate('dashboard')}</MainTitle>
         <Row>
@@ -26,6 +26,6 @@ export const Dashboard = ({dashboard, isFetching, meterMapMarkers}: DashboardPro
         <MapWidgetContainer markers={meterMapMarkers}/>
         <OverviewWidgets widgets={widgets} isFetching={isFetching}/>
       </Row>
-    </PageComponent>
+    </PageLayout>
   );
 };

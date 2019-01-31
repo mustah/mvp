@@ -2,16 +2,16 @@ import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {paperStyle} from '../../../app/themes';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageComponent} from '../../../containers/PageComponent';
+import {AdminPageLayout} from '../../../containers/PageLayout';
 import {translate} from '../../../services/translationService';
 import {UsersContainer} from '../containers/UsersContainer';
 
 export const Users = () => (
-  <AdminPageComponent>
+  <AdminPageLayout>
     <MainTitle>{translate('users')}</MainTitle>
 
     <Paper style={paperStyle}>
       <UsersContainer/>
     </Paper>
-  </AdminPageComponent>
+  </AdminPageLayout>
 );

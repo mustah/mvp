@@ -7,7 +7,7 @@ import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {AdminPageComponent} from '../../../containers/PageComponent';
+import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -55,7 +55,7 @@ class UserAdd extends React.Component<Props> {
   render() {
     const {addUser, clearError, isFetching, error, organisations, roles, languages} = this.props;
     return (
-      <AdminPageComponent>
+      <AdminPageLayout>
         <MainTitle>{translate('add user')}</MainTitle>
 
         <Paper style={paperStyle}>
@@ -71,7 +71,7 @@ class UserAdd extends React.Component<Props> {
             </RowIndented>
           </Loader>
         </Paper>
-      </AdminPageComponent>
+      </AdminPageLayout>
     );
   }
 }

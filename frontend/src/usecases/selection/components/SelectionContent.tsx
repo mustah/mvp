@@ -10,6 +10,7 @@ import {connectedSuperAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {Foldable} from '../../../components/layouts/foldable/Foldable';
 import {Row} from '../../../components/layouts/row/Row';
+import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import {isDefined} from '../../../helpers/commonUtils';
 import {translate} from '../../../services/translationService';
 import {Address, City} from '../../../state/domain-models/location/locationModels';
@@ -29,7 +30,6 @@ import {
 import {ParameterName, SelectionListItem} from '../../../state/user-selection/userSelectionModels';
 import {SelectionContentProps} from '../containers/SelectionContentContainer';
 import './SelectionContent.scss';
-import {SearchResultList} from './SelectionResultList';
 import {Thresholds} from './thresholds/Thresholds';
 
 const unknownCity: City = mapSelectedIdToCity('unknown,unknown');
@@ -156,7 +156,7 @@ export const SelectionContent = ({
         />
       </Foldable>
 
-      <SearchResultList/>
+      <MeterListContainer componentId="selectionMeterList"/>
     </Column>
   );
 };
