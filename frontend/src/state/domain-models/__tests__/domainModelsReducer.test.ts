@@ -6,7 +6,7 @@ import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {search} from '../../../usecases/search/searchActions';
-import {gatewayQuery, meterQuery} from '../../../usecases/search/searchModels';
+import {makeMeterQuery} from '../../../usecases/search/searchModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {DomainModelsState, Normalized, NormalizedState} from '../domainModels';
 import {
@@ -233,46 +233,14 @@ describe('domainModelsReducer', () => {
 
       expect(nextState).toEqual(expected);
 
-      const state = meterMapMarkers(nextState, search(meterQuery('test')));
+      const state = meterMapMarkers(nextState, search(makeMeterQuery('test')));
 
       expect(state).toEqual(initialDomain<MapMarker>());
     });
-
-    it('reset meterMapMarkers state when new search query is typed', () => {
-      const initialState: NormalizedState<MapMarker> = initialDomain<MapMarker>();
-
-      const gatewayAction: Action<Normalized<MapMarker>> = {
-        type: domainModelsGetSuccess(EndPoints.gatewayMapMarkers),
-        payload: {
-          result: [1],
-          entities: {
-            gatewayMapMarkers: {
-              1: {id: 1, status: Status.ok, latitude: 1.2, longitude: 2.2},
-            },
-          },
-        },
-      };
-
-      const nextState = gatewayMapMarkers(initialState, gatewayAction);
-
-      const expected: NormalizedState<MapMarker> = {
-        result: [1],
-        entities: {1: {id: 1, status: Status.ok, latitude: 1.2, longitude: 2.2}},
-        isFetching: false,
-        isSuccessfullyFetched: true,
-        total: 1,
-      };
-
-      expect(nextState).toEqual(expected);
-
-      const state = gatewayMapMarkers(nextState, search(gatewayQuery('test')));
-
-      expect(state).toEqual(initialDomain<MapMarker>());
-    });
-
   });
 
   describe('clear domainModels', () => {
+
     it('resets all domain models', () => {
       const errorState: NormalizedState<MapMarker> = {
         ...initialDomain<MapMarker>(),

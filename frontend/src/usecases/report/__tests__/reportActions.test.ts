@@ -14,7 +14,7 @@ import {
   selectEntryAdd,
   SET_SELECTED_ENTRIES,
   showMetersInGraph,
-  toggleIncludingChildren,
+  toggleGroupItems,
   toggleSingleEntry,
 } from '../reportActions';
 
@@ -375,11 +375,12 @@ describe('reportActions', () => {
 
   });
 
-  describe('toggleIncludingChildren', () => {
+  describe('toggleGroupItems', () => {
 
     it('selects given address and meters, if address not already selected', () => {
       const store = configureMockStore(initialState);
-      store.dispatch(toggleIncludingChildren('sweden,höganäs,storgatan 5'));
+
+      store.dispatch(toggleGroupItems('sweden,höganäs,storgatan 5'));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
@@ -392,44 +393,8 @@ describe('reportActions', () => {
 
     it('deselects given address and meters, if address already selected', () => {
       const store = configureMockStore(initialState);
-      store.dispatch(toggleIncludingChildren('sweden,höganäs,hasselgatan 4'));
 
-      const actions = store.getActions();
-      expect(actions).toHaveLength(1);
-
-      const {type, payload: {ids}} = actions[0];
-      expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toHaveLength(0);
-    });
-
-    it('selects given clusters and meters, if cluster not already selected', () => {
-      const store = configureMockStore(initialState);
-      store.dispatch(toggleIncludingChildren('sweden,höganäs:s'));
-
-      const actions = store.getActions();
-      expect(actions).toHaveLength(1);
-
-      const {type, payload: {ids}} = actions[0];
-      expect(type).toEqual(SET_SELECTED_ENTRIES);
-      expect(ids).toContain('sweden,höganäs:s');
-      expect(ids).toContain('sweden,höganäs,storgatan 5');
-      expect(ids).toContain(33);
-    });
-
-    it('deselects given clusters and meters, if cluster already selected', () => {
-      const cluster = 'sweden,höganäs:h';
-
-      const store = configureMockStore({
-        ...initialState,
-        report: {
-          ...initialState.report,
-          selectedListItems: [
-            ...initialState.report!.selectedListItems,
-            cluster,
-          ],
-        },
-      });
-      store.dispatch(toggleIncludingChildren(cluster));
+      store.dispatch(toggleGroupItems('sweden,höganäs,hasselgatan 4'));
 
       const actions = store.getActions();
       expect(actions).toHaveLength(1);
@@ -478,7 +443,7 @@ describe('reportActions', () => {
         }
 
         const store = configureMockStore(state);
-        store.dispatch(toggleIncludingChildren(addressId));
+        store.dispatch(toggleGroupItems(addressId));
 
         const actions = store.getActions();
         expect(actions).toHaveLength(1);

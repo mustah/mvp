@@ -1,15 +1,16 @@
 @import "../../../app/variables";
 
-.ProfileWrapper {
+.ProfileContainer {
   color: $white;
-  width: $main-menu-width;
+  width: 86px;
+  height: $main-menu-height;
 
-  .MenuItem {
-    padding: $sm-space 0;
+  .TopMenu-Item {
+    cursor: pointer;
   }
 
   .Profile {
-    padding: 0;
+    padding: $sm-space $space;
     justify-content: center;
 
     .Username {

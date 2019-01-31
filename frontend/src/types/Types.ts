@@ -12,9 +12,9 @@ export type EncodedUriParameters = string;
 
 export type OnClick = (...args) => void;
 export type OnChange = OnClick;
+export type OnKeyPress = OnClick;
 export type Callback = () => void;
 export type CallbackWith<T> = (arg1: T) => void;
-export type CallbackWith3<T, T2, T3> = (arg1: T, arg2: T2, arg3: T3) => void;
 export type OnClickWithId = CallbackWith<uuid>;
 export type CallbackWithId = (id: uuid, parameters?: EncodedUriParameters) => void;
 export type CallbackWithIds = (ids: uuid[], parameters?: EncodedUriParameters) => void;
@@ -64,8 +64,8 @@ export interface Styled {
   style?: React.CSSProperties;
 }
 
-export interface Styled {
-  style?: React.CSSProperties;
+export interface Titled {
+  title?: string;
 }
 
 export interface Selectable {
@@ -74,6 +74,14 @@ export interface Selectable {
 
 export interface Selected {
   selected: boolean;
+}
+
+export interface Opened {
+  isOpen: boolean;
+}
+
+export interface Visible {
+  isVisible?: boolean;
 }
 
 export interface HasContent {
@@ -98,6 +106,10 @@ export interface IdNamed extends Identifiable {
 
 export interface ComponentId {
   componentId: string;
+}
+
+export interface PathNamed {
+  pathName: string;
 }
 
 export interface ErrorResponse {

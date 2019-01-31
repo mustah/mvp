@@ -3,12 +3,12 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
-import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
+import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {MvpPageContainer} from '../../../containers/MvpPageContainer';
+import {PageLayout} from '../../../containers/PageLayout';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
@@ -61,7 +61,7 @@ class EditProfile extends React.Component<Props> {
       ? organisations
       : [user.organisation];
     return (
-      <MvpPageContainer>
+      <PageLayout>
         <Row className="space-between">
           <MainTitle>
             {translate('profile')}
@@ -69,25 +69,25 @@ class EditProfile extends React.Component<Props> {
         </Row>
         <Paper style={paperStyle}>
           <Row>
-          <Column style={userEditStyle}>
-            <UserEditForm
-              onSubmit={modifyProfile}
-              organisations={userOrganisations}
-              possibleRoles={roles}
-              isEditSelf={true}
-              user={user}
-              languages={languages}
-            />
-          </Column>
-          <Column style={passwordChangeStyle}>
-            <PasswordEditForm
-              onSubmit={changePassword}
-              user={user}
-            />
-          </Column>
+            <Column style={userEditStyle}>
+              <UserEditForm
+                onSubmit={modifyProfile}
+                organisations={userOrganisations}
+                possibleRoles={roles}
+                isEditSelf={true}
+                user={user}
+                languages={languages}
+              />
+            </Column>
+            <Column style={passwordChangeStyle}>
+              <PasswordEditForm
+                onSubmit={changePassword}
+                user={user}
+              />
+            </Column>
           </Row>
         </Paper>
-      </MvpPageContainer>
+      </PageLayout>
     );
   }
 }

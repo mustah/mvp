@@ -10,6 +10,7 @@ import {User} from '../../state/domain-models/user/userModels';
 import {changeLanguage} from '../../state/language/languageActions';
 import {payloadActionOf, uuid} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
+import {getOrganisationSlug} from './authSelectors';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -66,7 +67,7 @@ export const logout = (error?: Unauthorized) =>
     if (isAuthenticated(auth)) {
       try {
         dispatch(logoutUser(translatedError(error)));
-        dispatch(routerActions.push(`${routes.login}/${auth.user!.organisation.slug}`));
+        dispatch(routerActions.push(`${routes.login}/${getOrganisationSlug(auth)}`));
         await restClient.get(EndPoints.logout);
       } catch (ignore) {
         // tslint:disable

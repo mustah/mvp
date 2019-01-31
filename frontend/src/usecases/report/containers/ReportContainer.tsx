@@ -18,7 +18,7 @@ import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MainTitle} from '../../../components/texts/Titles';
-import {MvpPageContainer} from '../../../containers/MvpPageContainer';
+import {PageLayout} from '../../../containers/PageLayout';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {Maybe} from '../../../helpers/Maybe';
@@ -136,7 +136,7 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
     const canShowResolutionDropdown = selectedIndicators.length > 0;
 
     return (
-      <MvpPageContainer>
+      <PageLayout>
         <Row className="space-between">
           <MainTitle>{translate('report')}</MainTitle>
           <Row>
@@ -189,7 +189,7 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
             <LegendContainer/>
           </Paper>
         </Loader>
-      </MvpPageContainer>
+      </PageLayout>
     );
   }
 

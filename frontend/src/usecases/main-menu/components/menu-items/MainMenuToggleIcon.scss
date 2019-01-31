@@ -1,0 +1,12 @@
+@import "../../../../app/variables";
+
+.MainMenuToggleIcon {
+  top: 400px;
+  left: 5px;
+  position: fixed;
+  z-index: $main-menu-z-index;
+
+  &.isSideMenuOpen {
+    left: $side-menu-width;
+  }
+}

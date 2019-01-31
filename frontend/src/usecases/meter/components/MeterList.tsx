@@ -8,6 +8,7 @@ import {
   GridSortSettings
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
+import {borderRadius} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
@@ -30,7 +31,17 @@ const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem me
 const gridStyle: React.CSSProperties = {
   borderTopWidth: 0,
   borderBottomWidth: 0,
-  maxHeight: '1000px',
+  marginBottom: borderRadius,
+  borderBottomLeftRadius: borderRadius,
+  borderBottomRightRadius: borderRadius,
+};
+
+const pageable: GridPagerSettings = {
+  buttonCount: 5,
+  info: false,
+  type: 'numeric',
+  pageSizes: false,
+  previousNext: true,
 };
 
 const sortable: GridSortSettings = {
@@ -38,23 +49,21 @@ const sortable: GridSortSettings = {
   mode: 'single'
 };
 
-export const MeterList = (
-  {
-    componentId,
-    changePage,
-    deleteMeter,
-    result,
-    entities,
-    entityType,
-    selectEntryAdd,
-    syncWithMetering,
-    isFetching,
-    isSuperAdmin,
-    pagination,
-    page,
-    sort,
-    sortTable,
-  }: MeterListProps) => {
+export const MeterList = ({
+  componentId,
+  changePage,
+  deleteMeter,
+  result,
+  entities,
+  entityType,
+  selectEntryAdd,
+  syncWithMetering,
+  isFetching,
+  isSuperAdmin,
+  pagination: {page, size, totalElements: total},
+  sort,
+  sortTable,
+}: MeterListProps) => {
 
   const renderMeterId = ({dataItem: {address, isReported}}: GridCellProps) => (
     <td>
@@ -107,73 +116,65 @@ export const MeterList = (
   const renderCollectionStatus = ({dataItem: {collectionPercentage, readIntervalMinutes}}: GridCellProps) =>
     <td>{formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin)}</td>;
 
-  const handleKendoPageChange = ({page: {skip}}: GridPageChangeEvent) =>
+  const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
     changePage({
       entityType,
       componentId,
       page: skip / paginationPageSize
     });
 
-  const handleKendoSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
+  const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 
   const data = result.map((key) => entities[key]);
 
-  const pageable: GridPagerSettings = {
-    buttonCount: 5,
-    info: false,
-    type: 'numeric',
-    pageSizes: false,
-    previousNext: true,
-  };
+  const gridData = {data, total};
 
   return (
-    <>
-      <Grid
-        data={{data, total: pagination.totalElements}}
+    <Grid
+      data={gridData}
 
-        pageable={pageable}
-        pageSize={pagination.size}
-        take={pagination.size}
-        skip={pagination.page * pagination.size}
-        onPageChange={handleKendoPageChange}
+      pageable={pageable}
+      pageSize={size}
+      take={size}
+      skip={page * size}
+      onPageChange={handlePageChange}
 
-        sortable={sortable}
-        onSortChange={handleKendoSortChange}
-        sort={sort}
+      sortable={sortable}
+      onSortChange={handleSortChange}
+      sort={sort}
 
-        scrollable="none"
-        style={gridStyle}
-      >
-        <GridColumn
-          field="facility"
-          cell={renderMeterListItem}
-          title={translate('facility')}
-          width={180}
-          headerClassName="left-most"
-        />
+      scrollable="none"
+      style={gridStyle}
+    >
+      <GridColumn
+        field="facility"
+        cell={renderMeterListItem}
+        title={translate('facility')}
+        headerClassName="left-most"
+      />
 
-        <GridColumn field="secondaryAddress" cell={renderMeterId} title={translate('meter id')}/>
+      <GridColumn field="secondaryAddress" cell={renderMeterId} title={translate('meter id')}/>
 
-        <GridColumn field="city" cell={renderCityName} title={translate('city')}/>
+      <GridColumn field="city" cell={renderCityName} title={translate('city')}/>
 
-        <GridColumn field="address" cell={renderAddressName} title={translate('address')} width={180}/>
+      <GridColumn field="address" cell={renderAddressName} title={translate('address')}/>
 
-        <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')}/>
+      <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')} width={112}/>
 
-        <GridColumn field="medium" title={translate('medium')} width={180} />
+      <GridColumn field="medium" title={translate('medium')} width={112}/>
 
-        <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')}/>
+      <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')} width={112}/>
 
-        <GridColumn field="gatewaySerial" title={translate('gateway')}/>
+      <GridColumn field="gatewaySerial" title={translate('gateway')} width={112}/>
 
-        <GridColumn
-          sortable={false}
-          cell={renderCollectionStatus}
-          title={translate('collection percentage')}
-        />
+      <GridColumn
+        sortable={false}
+        cell={renderCollectionStatus}
+        title={translate('collection percentage')}
+        width={112}
+      />
 
-        <GridColumn sortable={false} cell={renderActions}/>
-      </Grid>
-    </>
+      <GridColumn sortable={false} cell={renderActions} width={30}/>
+    </Grid>
   );
 };

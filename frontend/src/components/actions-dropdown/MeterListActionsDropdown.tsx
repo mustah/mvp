@@ -1,4 +1,6 @@
+import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
+import {actionMenuItemIconStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnClick, RenderFunction} from '../../types/Types';
 import {connectedSuperAdminOnly} from '../hoc/withRoles';
@@ -21,7 +23,13 @@ export const MeterListActionsDropdown =
       };
 
       return ([
-        <SyncWithMeteringMenuItem {...syncMetersProps} key="sync-meters-menu-item"/>,
+        (
+          <SyncWithMeteringMenuItem
+            {...syncMetersProps}
+            leftIcon={<NotificationSync style={actionMenuItemIconStyle}/>}
+            key="sync-meters-menu-item"
+          />
+        ),
       ]);
     };
 

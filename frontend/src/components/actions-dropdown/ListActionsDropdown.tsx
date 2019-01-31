@@ -1,14 +1,23 @@
 import Divider from 'material-ui/Divider';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
+import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
 import {branch, renderNothing} from 'recompose';
 import {routes} from '../../app/routes';
+import {actionMenuItemIconStyle, dividerStyle} from '../../app/themes';
 import {isDefined} from '../../helpers/commonUtils';
 import {history} from '../../index';
 import {translate} from '../../services/translationService';
 import {IdNamed, OnClick, OnClickWithId, RenderFunction} from '../../types/Types';
 import {connectedSuperAdminOnly} from '../hoc/withRoles';
+import {IconReport} from '../icons/IconReport';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
+
+const deleteDividerStyle: React.CSSProperties = {
+  ...dividerStyle,
+  marginBottom: 6,
+};
 
 interface DeleteMeter {
   deleteMeter?: OnClickWithId;
@@ -27,6 +36,7 @@ const withDeleteMeterActionButton = branch<DeleteMeterMenuItemProps>(
 
 const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
+const DeleteDivider = withDeleteMeterActionButton(Divider);
 
 export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, syncWithMetering}: Props) => {
 
@@ -55,11 +65,36 @@ export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, sy
         deleteMeter!(id);
       },
     };
+
     return ([
-      <SyncWithMeteringMenuItem {...syncMenuItemProps} key={`sync-${id}`}/>,
-      <ActionMenuItem name={translate('add to report')} onClick={onAddToReport} key={`add-to-report-${id}`}/>,
-      <Divider key={`list-divider-${id}`}/>,
-      <DeleteMeterActionMenuItem {...deleteMenuItemProps} key={`delete-meter-${id}`}/>
+      (
+        <SyncWithMeteringMenuItem
+          {...syncMenuItemProps}
+          key={`sync-${id}`}
+          leftIcon={<NotificationSync style={actionMenuItemIconStyle}/>}
+        />
+      ),
+      (
+        <ActionMenuItem
+          leftIcon={<IconReport style={actionMenuItemIconStyle}/>}
+          name={translate('add to report')}
+          onClick={onAddToReport}
+          key={`add-to-report-${id}`}
+        />
+      ),
+      (
+        <DeleteDivider
+          {...deleteMenuItemProps}
+          style={deleteDividerStyle}
+          key={`list-divider-${id}`}
+        />
+      ),
+      (
+        <DeleteMeterActionMenuItem
+          leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
+          {...deleteMenuItemProps}
+          key={`delete-meter-${id}`}
+        />)
     ]);
   };
 

@@ -11,8 +11,8 @@ import {
   encodeRequestParameters,
   encodedUriParametersFrom,
   requestParametersFrom,
-  toEntityApiParametersGateways,
-  toEntityApiParametersMeters,
+  entityApiParametersGatewaysFactory,
+  entityApiParametersMetersFactory,
   toGatewayIdsApiParameters,
   toMeterIdsApiParameters,
   toPaginationApiParameters,
@@ -100,34 +100,34 @@ describe('urlFactory', () => {
     it('returns empty parameters string when nothing is selected', () => {
       const selection = selectedParameters({cities: []});
 
-      expect(toEntityApiParametersMeters(selection))
+      expect(entityApiParametersMetersFactory(selection))
         .toEqual([]);
-      expect(toEntityApiParametersGateways(selection))
+      expect(entityApiParametersGatewaysFactory(selection))
         .toEqual([]);
     });
 
     it('returns selected city', () => {
       const selection = selectedParameters({cities: [toIdNamed('got')]});
 
-      expect(toEntityApiParametersMeters(selection)).toEqual(['city=got']);
-      expect(toEntityApiParametersGateways(selection)).toEqual(['city=got']);
+      expect(entityApiParametersMetersFactory(selection)).toEqual(['city=got']);
+      expect(entityApiParametersGatewaysFactory(selection)).toEqual(['city=got']);
     });
 
     it('returns selected cities', () => {
       const selection = selectedParameters({cities});
 
-      expect(toEntityApiParametersMeters(selection))
+      expect(entityApiParametersMetersFactory(selection))
         .toEqual(['city=got', 'city=sto', 'city=mmx']);
-      expect(toEntityApiParametersGateways(selection))
+      expect(entityApiParametersGatewaysFactory(selection))
         .toEqual(['city=got', 'city=sto', 'city=mmx']);
     });
 
     it('returns selected address', () => {
       const selection = selectedParameters({addresses: [toIdNamed('address 2')]});
 
-      expect(toEntityApiParametersMeters(selection))
+      expect(entityApiParametersMetersFactory(selection))
         .toEqual(['address=address%202']);
-      expect(toEntityApiParametersGateways(selection))
+      expect(entityApiParametersGatewaysFactory(selection))
         .toEqual(['address=address%202']);
     });
 
@@ -136,9 +136,9 @@ describe('urlFactory', () => {
         addresses: [toIdNamed('address 2'), toIdNamed('storgatan 5')],
       });
 
-      expect(toEntityApiParametersMeters(selection))
+      expect(entityApiParametersMetersFactory(selection))
         .toEqual(['address=address%202', 'address=storgatan%205']);
-      expect(toEntityApiParametersGateways(selection))
+      expect(entityApiParametersGatewaysFactory(selection))
         .toEqual(['address=address%202', 'address=storgatan%205']);
     });
 
@@ -148,7 +148,7 @@ describe('urlFactory', () => {
         somethingElse: [toIdNamed('ok')],
       });
 
-      expect(toEntityApiParametersGateways(selection))
+      expect(entityApiParametersGatewaysFactory(selection))
         .toEqual(['facility=123']);
     });
   });
@@ -197,8 +197,8 @@ describe('urlFactory', () => {
       'city=mmx',
       'reported=true',
     ];
-    expect(toEntityApiParametersMeters(selection)).toEqual(expectedParameters);
-    expect(toEntityApiParametersGateways(selection)).toEqual(expectedParameters);
+    expect(entityApiParametersMetersFactory(selection)).toEqual(expectedParameters);
+    expect(entityApiParametersGatewaysFactory(selection)).toEqual(expectedParameters);
   });
 
   describe('toPeriodApiParameters', () => {

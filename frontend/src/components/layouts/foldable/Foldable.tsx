@@ -1,35 +1,24 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
-import {Callback, ClassNamed, WithChildren} from '../../../types/Types';
+import {ClassNamed, Visible, WithChildren} from '../../../types/Types';
 import {IconRightArrow} from '../../icons/IconRightArrow';
 import {BoldFirstUpper} from '../../texts/Texts';
 import {Column} from '../column/Column';
 import {Row, RowMiddle} from '../row/Row';
 import './Foldable.scss';
+import {useToggleVisibility} from './foldableHook';
 
-interface Visible {
-  isVisible: boolean;
-}
-
-export interface FoldableProps extends ClassNamed, WithChildren, Partial<Visible> {
+export interface FoldableProps extends ClassNamed, WithChildren, Visible {
   title: string;
   containerClassName?: string;
+  fontClassName?: string;
 }
-
-interface ToggleVisibilityProps extends Visible {
-  showHide: Callback;
-}
-
-const useToggleVisibility = (initialState: boolean): ToggleVisibilityProps => {
-  const [isVisible, toggle] = React.useState<boolean>(initialState);
-  const showHide = () => toggle(!isVisible);
-  return {isVisible, showHide};
-};
 
 export const Foldable = ({
   children,
   className,
   containerClassName,
+  fontClassName = 'Medium',
   title,
   isVisible: initialVisibility = true
 }: FoldableProps) => {
@@ -39,7 +28,7 @@ export const Foldable = ({
     <Column className={classNames('Foldable', containerClassName)}>
       <RowMiddle onClick={showHide} className={classNames('Foldable-title', 'clickable')}>
         <IconRightArrow className={classNames('Foldable-arrow', {isVisible})}/>
-        <BoldFirstUpper className="Medium">{title}</BoldFirstUpper>
+        <BoldFirstUpper className={fontClassName}>{title}</BoldFirstUpper>
       </RowMiddle>
       <Row className={classNames('Foldable-content', className, {isVisible})}>
         {children}

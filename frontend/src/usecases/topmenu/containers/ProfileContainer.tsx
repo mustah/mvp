@@ -16,6 +16,7 @@ import {User} from '../../../state/domain-models/user/userModels';
 import {Clickable, OnClick, RenderFunction} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
 import {getUser} from '../../auth/authSelectors';
+import {MenuUnderline} from '../component/MenuUnderline';
 import './ProfileContainer.scss';
 
 interface StateToProps {
@@ -27,7 +28,7 @@ interface DispatchToProps {
 }
 
 const makeAvatarIcon = (name: string) => (props: Clickable) => (
-  <ColumnCenter {...props} className="MenuItem clickable">
+  <ColumnCenter {...props}>
     <RowCenter>
       <IconAvatar/>
     </RowCenter>
@@ -43,7 +44,7 @@ const Profile = ({user: {name}, logout}: Props) => {
   const wrappedLogout = () => logout();
 
   const renderPopoverContent: RenderFunction<OnClick> = () => (
-    <React.Fragment>
+    <>
       <Link to={routes.userProfile} className="link" key="goToProfile">
         <MenuItem
           style={menuItemInnerDivStyle}
@@ -55,11 +56,11 @@ const Profile = ({user: {name}, logout}: Props) => {
       <MenuItem style={menuItemInnerDivStyle} className="first-uppercase" onClick={wrappedLogout} key="logout">
         {translate('logout')}
       </MenuItem>
-    </React.Fragment>
+    </>
   );
 
   return (
-    <Column className="ProfileWrapper">
+    <Column className="ProfileContainer TopMenu-Item">
       <Row className="Profile">
         <PopoverMenu
           IconComponent={Icon}
@@ -68,6 +69,7 @@ const Profile = ({user: {name}, logout}: Props) => {
           renderPopoverContent={renderPopoverContent}
         />
       </Row>
+      <MenuUnderline/>
     </Column>
   );
 };

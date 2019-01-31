@@ -9,8 +9,8 @@ import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
-import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
-import {AdminMainMenuContainer} from '../../usecases/main-menu/containers/AdminMainMenuContainer';
+import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menu-items/MainMenuToggleIcon';
+import {AdminMainMenuItemsContainer} from '../../usecases/main-menu/containers/AdminMainMenuItemsContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import './AdminApp.scss';
@@ -28,9 +28,10 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 const AdminApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => (
   <Row className="AdminApp">
-    <AdminMainMenuContainer/>
     <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
-      <SideMenuContainer/>
+      <SideMenuContainer>
+        <AdminMainMenuItemsContainer/>
+      </SideMenuContainer>
     </Layout>
     <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
     <AdminPages/>

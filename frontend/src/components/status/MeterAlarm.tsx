@@ -4,7 +4,7 @@ import {Alarm} from '../../state/domain-models-paginated/meter/meterModels';
 import {Status} from '../../types/Types';
 import {IconStatus} from '../icons/IconStatus';
 import {Row} from '../layouts/row/Row';
-import {Normal} from '../texts/Texts';
+import {BoldFirstUpper} from '../texts/Texts';
 
 interface Props {
   status: Status;
@@ -25,6 +25,6 @@ const AlarmComponent = (props: Props) => (
 
 export const MeterAlarm = ({alarms, alarm}: MeterAlarmProps) => (
   (alarms && alarms.length) || alarm
-    ? <AlarmComponent label={translate('yes')} status={Status.error} />
-    : <Normal>-</Normal>
+    ? <AlarmComponent label={translate('yes')} status={Status.error}/>
+    : <BoldFirstUpper>-</BoldFirstUpper>
 );

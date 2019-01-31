@@ -2,4 +2,20 @@
 
 .AdminApp {
   @import "../material-design";
+
+  .SideMenuContainer {
+    width: $lg-space;
+
+    &.isSideMenuOpen {
+      width: $side-menu-width + $lg-space;
+    }
+  }
+
+  .MainMenuToggleIcon {
+    left: $sm-space;
+
+    &.isSideMenuOpen {
+      left: $side-menu-width;
+    }
+  }
 }

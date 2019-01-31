@@ -6,8 +6,8 @@ import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
-import {PageTitle} from '../../../components/texts/Titles';
-import {AdminPageComponent} from '../../../containers/PageComponent';
+import {MainTitle} from '../../../components/texts/Titles';
+import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -55,10 +55,8 @@ class UserAdd extends React.Component<Props> {
   render() {
     const {addUser, clearError, isFetching, error, organisations, roles, languages} = this.props;
     return (
-      <AdminPageComponent>
-        <PageTitle>
-          {translate('add user')}
-        </PageTitle>
+      <AdminPageLayout>
+        <MainTitle>{translate('add user')}</MainTitle>
 
         <Paper style={paperStyle}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
@@ -73,7 +71,7 @@ class UserAdd extends React.Component<Props> {
             </RowIndented>
           </Loader>
         </Paper>
-      </AdminPageComponent>
+      </AdminPageLayout>
     );
   }
 }

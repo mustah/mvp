@@ -1,5 +1,7 @@
 import {EndPoints} from '../../../services/endPoints';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {search} from '../../../usecases/search/searchActions';
+import {makeMeterQuery} from '../../../usecases/search/searchModels';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {makePaginatedDeleteRequestActions} from '../../domain-models-paginated/paginatedDomainModelsEntityActions';
@@ -204,6 +206,20 @@ describe('summaryReducer', () => {
         payload: {...initialState.payload, numMeters: 2},
       };
       expect(state).toEqual(expected);
+    });
+  });
+
+  describe('search query', () => {
+
+    it('should reset summary to initial state when global search is performed', () => {
+      const someState: SummaryState = {
+        ...initialState,
+        payload: {...initialState.payload, numMeters: 2}
+      };
+
+      const state: SummaryState = summary(someState, search(makeMeterQuery('123')));
+
+      expect(state).toEqual(initialState);
     });
   });
 

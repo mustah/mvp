@@ -20,7 +20,6 @@ const mapStateToProps =
       map,
       domainModels: {gatewayMapMarkers},
       userSelection: {userSelection},
-      search: {collection: {query}},
     }: RootState = rootState;
     return ({
       bounds: getBounds(gatewayMapMarkers),
@@ -28,7 +27,7 @@ const mapStateToProps =
       noContentText: firstUpperTranslated('no gateways'),
       selectedTab: getSelectedTab(tabs.collection),
       mapMarkers: getDomainModel(gatewayMapMarkers),
-      parameters: getGatewayParameters({userSelection, query}),
+      parameters: getGatewayParameters({userSelection}),
       selectedId: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),

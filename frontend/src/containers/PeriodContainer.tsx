@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DateRange, Period} from '../components/dates/dateModels';
 import {PeriodSelection} from '../components/dates/PeriodSelection';
-import '../components/summary/Summary.scss';
 import {Maybe} from '../helpers/Maybe';
 import {RootState} from '../reducers/rootReducer';
 import {selectPeriod, setCustomDateRange} from '../state/user-selection/userSelectionActions';

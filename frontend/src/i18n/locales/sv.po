@@ -23,6 +23,9 @@ msgstr "lyckades ta bort mätare '{{facility}}'"
 msgid "failed to delete the meter: {{error}}"
 msgstr "lyckades inte ta bort mätaren: {{error}}"
 
+msgid "your saved reports will appear here"
+msgstr "dina sparade rapporter kommer att synas här"
+
 msgid "email not valid"
 msgstr "ogiltlig mejladress"
 
@@ -53,8 +56,17 @@ msgstr "ta bort organisation"
 msgid "add organisation"
 msgstr "lägg till organisation"
 
+msgid "show all in report"
+msgstr "visa alla i rapport"
+
+msgid "show average in report"
+msgstr "visa medelvärde i rapport"
+
 msgid "edit user"
 msgstr "redigera användare"
+
+msgid "edit user selection"
+msgstr "redigera urval"
 
 msgid "delete user"
 msgstr "ta bort användare"
@@ -440,8 +452,8 @@ msgstr "ditt lösenord"
 msgid "dashboard"
 msgstr "dashboard"
 
-msgid "all meters in selection"
-msgstr "alla mätare i urvalet"
+msgid "all meters"
+msgstr "alla mätare"
 
 msgid "gateway"
 msgstr "gateway"
@@ -560,6 +572,12 @@ msgstr "profil"
 
 msgid "logout"
 msgstr "logga ut"
+
+msgid "search result"
+msgstr "sökresultat"
+
+msgid "find meters"
+msgstr "hitta mätare"
 
 msgctxt "°plural"
 msgid "city°"

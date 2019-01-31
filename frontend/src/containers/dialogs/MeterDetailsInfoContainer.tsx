@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {Column} from '../../components/layouts/column/Column';
-import {Row, RowMiddle} from '../../components/layouts/row/Row';
+import {Row} from '../../components/layouts/row/Row';
 import {MeterAlarm} from '../../components/status/MeterAlarm';
 import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {CityInfo} from '../../components/texts/Labels';
@@ -116,9 +116,7 @@ const MeterDetailsInfo = ({
         </Row>
         <Row>
           <Column>
-            <Row>
-              <Subtitle>{translate('collection')}</Subtitle>
-            </Row>
+            <Subtitle>{translate('collection')}</Subtitle>
           </Column>
           <Info className="First-column" label={translate('resolution')}>
             <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
@@ -129,25 +127,21 @@ const MeterDetailsInfo = ({
         </Row>
         <Row>
           <Column>
-            <Row>
-              <Subtitle>{translate('validation')}</Subtitle>
-            </Row>
+            <Subtitle>{translate('validation')}</Subtitle>
           </Column>
           <Info className="First-column" label={translate('alarm')}>
             <MeterAlarm alarms={alarms}/>
           </Info>
           <Info label={translate('alarm code')}>
-            {alarmCode}
+            <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
           </Info>
           <Info label={translate('status change')}>
             <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
           </Info>
         </Row>
-        <RowMiddle>
+        <Row>
           <Column>
-            <Row>
-              <Subtitle>{translate('labels')}</Subtitle>
-            </Row>
+            <Subtitle>{translate('labels')}</Subtitle>
           </Column>
           <Info label={translate('facility id')}>
             <BoldFirstUpper>{facility}</BoldFirstUpper>
@@ -156,13 +150,13 @@ const MeterDetailsInfo = ({
             <BoldFirstUpper>{address}</BoldFirstUpper>
           </Info>
           <Info label={translate('m-bus device type')}>
-            <BoldFirstUpper>{mbusDeviceType}</BoldFirstUpper>
+            <BoldFirstUpper>{mbusDeviceType || '-'}</BoldFirstUpper>
           </Info>
           <Info label={translate('revision')}>
-            <BoldFirstUpper>{revision}</BoldFirstUpper>
+            <BoldFirstUpper>{revision || '-'}</BoldFirstUpper>
           </Info>
           <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
-        </RowMiddle>
+        </Row>
       </Column>
     </Row>
   );

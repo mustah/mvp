@@ -14,6 +14,7 @@ export const routes = {
   report: '/report',
   validation: '/validation',
   selection: '/selection',
+  searchResult: '/search-result',
   userProfile: '/user-profile',
   admin: '/admin',
   adminUsers: '/admin/users',

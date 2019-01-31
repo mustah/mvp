@@ -1,0 +1,18 @@
+@import '../../../app/variables';
+
+.SavedSelection-ListItem {
+  &:hover {
+    .Normal {
+      color: $secondary-bg-hover;
+    }
+  }
+
+  .SavedSelection-Name {
+    height: $list-item-height;
+
+    .Normal {
+      color: $secondary-fg;
+      padding-left: 38px;
+    }
+  }
+}

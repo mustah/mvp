@@ -1,7 +1,7 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
-import {colors, fontSize, menuItemStyle} from '../../app/themes';
+import {borderRadius, colors, fontSize, menuItemStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {Children, OnClick, Styled, WithChildren} from '../../types/Types';
@@ -37,10 +37,10 @@ const menu: {[name: string]: React.CSSProperties} = {
     width: 210,
     fontSize: fontSize.normal,
     border: `2px solid ${colors.borderColor}`,
-    borderRadius: 4,
     marginLeft: 24,
     marginBottom: 16,
     borderWidth: 1,
+    borderRadius,
   },
   selectedMenuItemStyle: {color: colors.blue},
   underlineStyle: {border: 'none'},

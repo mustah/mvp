@@ -9,8 +9,6 @@
       cursor: pointer;
 
       .Tab-header {
-        font-weight: bold;
-        font-size: $normal;
         text-align: center;
         padding: 4px $lg-space;
         color: $lightest-black;
@@ -27,7 +25,7 @@
 
         &:hover {
           .TabUnderline {
-            border-bottom: solid 4px $blue;
+            border-bottom: solid 4px $blue-A400;
           }
         }
       }
@@ -43,7 +41,7 @@
       height: 4px;
 
       &.isSelected {
-        border-bottom: solid 4px $blue;
+        border-bottom: solid 4px $blue-A400;
       }
     }
   }

@@ -114,3 +114,5 @@ export type SelectionListItem = SelectionItem & Selected;
 export type OnSelectParameter = (selectionParameter: SelectionParameter) => void;
 
 export type OnChangeThreshold = (threshold: ThresholdQuery) => void;
+
+export const initialSelectionId = -1;

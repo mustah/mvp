@@ -11,19 +11,15 @@ import {
 } from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
-import {SEARCH, SEARCH_SELECTION_TREE} from './searchActions';
+import {SEARCH} from './searchActions';
 import {Query, QueryParameter} from './searchModels';
 
 export interface SearchState {
-  collection: Query;
   validation: Query;
-  selectionTree: Query;
 }
 
-export const initialState = {
-  collection: {},
-  validation: {},
-  selectionTree: {},
+export const initialState: SearchState = {
+  validation: {}
 };
 
 type Actions =
@@ -31,20 +27,12 @@ type Actions =
   | Action<Location>
   | EmptyAction<string>;
 
-const resetValidationQuery = (state: SearchState, {pathname}: Location): SearchState => {
-  if (pathname === routes.selection) {
-    // the selection page reuses the validation rendering view,
-    // resetting the search term shows potentially hidden items in the selection view
-    return {...state, validation: {}};
-  } else {
-    return state;
-  }
-};
+const resetValidationQuery = (state: SearchState, {pathname}: Location): SearchState =>
+  pathname === routes.selection ? {...state, validation: {}} : state;
 
 export const search = (state: SearchState = initialState, action: Actions): SearchState => {
   switch (action.type) {
     case SEARCH:
-    case SEARCH_SELECTION_TREE:
       return {...state, ...(action as Action<QueryParameter>).payload};
     case LOCATION_CHANGE:
       return resetValidationQuery(state, (action as Action<Location>).payload);

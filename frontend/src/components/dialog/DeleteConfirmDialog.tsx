@@ -4,6 +4,9 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {OnClick} from '../../types/Types';
 import {ButtonCancel, ButtonConfirm} from '../buttons/DialogButtons';
 
+const bodyStyle: React.CSSProperties = {fontSize: 18};
+const contentStyle: React.CSSProperties = {width: 450};
+
 interface Props {
   isOpen: boolean;
   confirm: OnClick;
@@ -32,6 +35,8 @@ export const ConfirmDialog = ({
       autoScrollBodyContent={true}
       onRequestClose={close}
       open={isOpen}
+      bodyStyle={bodyStyle}
+      contentStyle={contentStyle}
     >
       {`${text}?`}
     </MaterialDialog>

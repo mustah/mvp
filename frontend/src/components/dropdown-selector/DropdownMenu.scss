@@ -3,13 +3,13 @@
 .DropdownMenu {
   &:hover {
     .IconButton {
-      fill: $blue !important;
+      fill: $blue-A400 !important;
     }
   }
 
   .DropdownMenu-dropdown {
     &:hover {
-      border: 1px solid $blue !important;
+      border: 1px solid $blue-A400 !important;
     }
   }
 }
@@ -17,9 +17,5 @@
 .DropdownMenu-MenuItem {
   &:first-letter {
     text-transform: uppercase;
-  }
-
-  &:hover {
-    color: $black !important;
   }
 }

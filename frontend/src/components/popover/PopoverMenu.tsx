@@ -2,6 +2,7 @@ import {default as classNames} from 'classnames';
 import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
+import {popoverStyle} from '../../app/themes';
 import {Clickable, OnClick, RenderFunction} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
 import origin = __MaterialUI.propTypes.origin;
@@ -20,8 +21,8 @@ interface State {
   anchorElement?: React.ReactInstance;
 }
 
-export const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
-export const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
+export const anchorOrigin: origin = {horizontal: 'left', vertical: 'center'};
+export const targetOrigin: origin = {horizontal: 'middle', vertical: 'top'};
 
 export class PopoverMenu extends React.Component<Props, State> {
 
@@ -45,6 +46,7 @@ export class PopoverMenu extends React.Component<Props, State> {
           anchorOrigin={anchorOrigin}
           targetOrigin={targetOrigin}
           onRequestClose={this.close}
+          style={popoverStyle}
         >
           <Menu>
             {renderPopoverContent(this.close)}

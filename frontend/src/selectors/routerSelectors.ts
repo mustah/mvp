@@ -14,6 +14,11 @@ export const isSelectionPage = createSelector<RouterState, string, boolean>(
   (pathname) => pathname.match(/\/selection$/) !== null,
 );
 
+export const isMeterPage = createSelector<RouterState, string, boolean>(
+  getPathname,
+  (pathname) => pathname.match(/\/meter$/) !== null,
+);
+
 export const isReportPage = createSelector<RouterState, string, boolean>(
   getPathname,
   (pathname) => pathname.match(/\/report$/) !== null || pathname.match(/\/report\/(.*)$/) !== null,

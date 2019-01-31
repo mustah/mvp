@@ -7,11 +7,11 @@ import {getTranslationOrName} from '../../helpers/translations';
 import {
   encodedUriParametersFrom,
   EntityApiParametersFactory,
-  toEntityApiParametersGateways,
-  toEntityApiParametersMeters,
+  entityApiParametersGatewaysFactory,
+  entityApiParametersMetersFactory,
   toPaginationApiParameters,
-  toQueryApiParameters,
   toThresholdParameter,
+  toWildcardApiParameter,
 } from '../../helpers/urlFactory';
 
 import {EncodedUriParameters, uuid} from '../../types/Types';
@@ -98,15 +98,23 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
     ({sort}) => sort,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, pagination, sort, {dateRange, threshold, ...rest}, currentPeriod) =>
-      encodedUriParametersFrom([
+    (query, pagination, sort, {dateRange, threshold, ...rest}, currentPeriod) => {
+      const parametersToEncode = [
         ...toSortParameters(sort),
-        ...toThresholdParameter(threshold),
-        ...toEntityParameters(rest),
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
-        ...toQueryApiParameters(query),
-      ]),
+      ];
+      return query
+        ? encodedUriParametersFrom([
+          ...parametersToEncode,
+          ...toWildcardApiParameter(query)
+        ])
+        : encodedUriParametersFrom([
+          ...toThresholdParameter(threshold),
+          ...toEntityParameters(rest),
+          ...parametersToEncode,
+        ]);
+    },
   );
 
 const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
@@ -115,21 +123,25 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     getSelectionParameters,
     getCurrentPeriod,
     (query, {dateRange, threshold, ...rest}, currentPeriod) =>
-      encodedUriParametersFrom([
-        ...toThresholdParameter(threshold),
-        ...toEntityParameters(rest),
-        ...toPeriodApiParameters(currentPeriod),
-        ...toQueryApiParameters(query),
-      ]),
+      query
+        ? encodedUriParametersFrom([
+          ...toPeriodApiParameters(currentPeriod),
+          ...toWildcardApiParameter(query),
+        ])
+        : encodedUriParametersFrom([
+          ...toThresholdParameter(threshold),
+          ...toEntityParameters(rest),
+          ...toPeriodApiParameters(currentPeriod),
+        ]),
   );
 
-export const getPaginatedMeterParameters = getPaginatedParameters(toEntityApiParametersMeters);
+export const getPaginatedMeterParameters = getPaginatedParameters(entityApiParametersMetersFactory);
 
-export const getPaginatedGatewayParameters = getPaginatedParameters(toEntityApiParametersGateways);
+export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiParametersGatewaysFactory);
 
-export const getMeterParameters = getParameters(toEntityApiParametersMeters);
+export const getMeterParameters = getParameters(entityApiParametersMetersFactory);
 
-export const getGatewayParameters = getParameters(toEntityApiParametersGateways);
+export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
 
 export const getSelectedPeriod =
   createSelector<UserSelection, SelectionInterval, {period: Period, customDateRange: Maybe<DateRange>}>(

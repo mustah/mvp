@@ -1,13 +1,9 @@
 import {mockSelectionAction} from '../../../../__tests__/testActions';
 import {search} from '../../../../usecases/search/searchActions';
-import {gatewayQuery, meterQuery} from '../../../../usecases/search/searchModels';
+import {makeMeterQuery} from '../../../../usecases/search/searchModels';
 import {changePage, updatePageMetaData} from '../paginationActions';
-import {
-  PaginationChangePayload,
-  PaginationMetadataPayload,
-  PaginationState,
-} from '../paginationModels';
-import {initialPaginationState, paginationPageSize, pagination} from '../paginationReducer';
+import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
+import {initialPaginationState, pagination, paginationPageSize} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
@@ -121,23 +117,8 @@ describe('paginationReducer', () => {
           },
         },
       };
-      expect(pagination(paginatedState, search(meterQuery('ok')))).toEqual(expectedState);
+      expect(pagination(paginatedState, search(makeMeterQuery('ok')))).toEqual(expectedState);
     });
-
-    it('changes page when gateway wildcard search is performed', () => {
-      const expectedState: PaginationState = {
-        ...paginatedState,
-        gateways: {
-          ...paginatedState.meters,
-          useCases: {
-            ...paginatedState.meters.useCases,
-            collectionGatewayList: {page: 0},
-          },
-        },
-      };
-      expect(pagination(paginatedState, search(gatewayQuery('error')))).toEqual(expectedState);
-    });
-
   });
 
   describe('reset pagination', () => {

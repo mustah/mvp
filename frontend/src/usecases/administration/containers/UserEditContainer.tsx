@@ -9,8 +9,8 @@ import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowIndented} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
-import {PageTitle} from '../../../components/texts/Titles';
-import {AdminPageComponent} from '../../../containers/PageComponent';
+import {MainTitle} from '../../../components/texts/Titles';
+import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -84,23 +84,21 @@ class UserEdit extends React.Component<Props, {}> {
     } = this.props;
 
     return (
-      <AdminPageComponent>
-        <PageTitle>
-          {translate('edit user')}
-        </PageTitle>
+      <AdminPageLayout>
+        <MainTitle>{translate('edit user')}</MainTitle>
 
         <Paper style={paperStyle}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <RowIndented>
               <Column style={userEditStyle}>
-              <UserEditForm
-                organisations={organisations}
-                onSubmit={modifyUser}
-                possibleRoles={roles}
-                isEditSelf={false}
-                user={users[userId]}
-                languages={languages}
-              />
+                <UserEditForm
+                  organisations={organisations}
+                  onSubmit={modifyUser}
+                  possibleRoles={roles}
+                  isEditSelf={false}
+                  user={users[userId]}
+                  languages={languages}
+                />
               </Column>
 
               <Column style={passwordChangeStyle}>
@@ -112,7 +110,7 @@ class UserEdit extends React.Component<Props, {}> {
             </RowIndented>
           </Loader>
         </Paper>
-      </AdminPageComponent>
+      </AdminPageLayout>
     );
   }
 }

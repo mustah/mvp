@@ -19,7 +19,7 @@
     line-height: 32px;
 
     &:focus {
-      border: $border-focused solid $blue;
+      border: $border-focused solid $blue-A400;
       outline: none;
       margin: 0 5px;
     }
@@ -27,21 +27,8 @@
 
   &:hover {
     .SearchBox-input {
-      border: 1px solid $blue !important;
+      border: 1px solid $blue-A400 !important;
       outline: none;
     }
   }
-
-  &.SearchBox-list {
-    width: 240px;
-    margin-left: $lg-space;
-    margin-right: 10px;
-    margin-bottom: 12px;
-  }
-
-  &.SearchBox-tree {
-    margin-left: auto;
-    margin-bottom: 12px;
-  }
-
 }

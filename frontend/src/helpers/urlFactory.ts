@@ -129,7 +129,7 @@ export const toPaginationApiParameters = ({page, size}: Pagination) => [
   `page=${encodeURIComponent(page.toString())}`,
 ];
 
-export const toQueryApiParameters = (query?: string): string[] => query ? [`w=${query}`] : [];
+export const toWildcardApiParameter = (query?: string): string[] => query ? [`w=${query}`] : [];
 
 type SelectedParametersById = Omit<SelectedParameters, 'dateRange' | 'threshold'>;
 export type EntityApiParametersFactory =
@@ -145,11 +145,11 @@ export const toThresholdParameter = (threshold: ThresholdQuery | undefined): Enc
     ? ['threshold=' + encodeURIComponent(thresholdAsString(threshold!))]
     : [];
 
-export const toEntityApiParametersMeters =
+export const entityApiParametersMetersFactory =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
     parametersById(selectionParameters, meterParameters);
 
-export const toEntityApiParametersGateways =
+export const entityApiParametersGatewaysFactory =
   (selectionParameters: SelectedParametersById): EncodedUriParameters[] =>
     parametersById(selectionParameters, gatewayParameters);
 

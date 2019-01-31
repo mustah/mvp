@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {popoverStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
 import {OnSelectResolution} from '../../state/user-selection/userSelectionModels';
 import {DropdownMenu, MenuItemProps} from '../dropdown-selector/DropdownMenu';
@@ -13,7 +14,7 @@ export interface ResolutionProps {
 const width = 124;
 const style: React.CSSProperties = {marginRight: 24, marginBottom: 0, marginLeft: 0, width};
 const labelStyle: React.CSSProperties = {width};
-const listStyle: React.CSSProperties = {width};
+const listStyle: React.CSSProperties = {width, ...popoverStyle};
 
 export const ResolutionSelection = ({resolution, selectResolution}: ResolutionProps) => {
 

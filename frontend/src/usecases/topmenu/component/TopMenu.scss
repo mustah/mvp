@@ -1,0 +1,27 @@
+@import "../../../app/variables";
+
+.TopMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $selection-header-z-index;
+  padding: 0 0 0 $sm-space;
+  background-color: $main-menu-color;
+  height: $main-menu-height;
+  justify-content: space-between;
+  box-shadow: $box-shadow;
+
+  .SelectionMenu {
+    color: $blackest;
+    align-items: center;
+  }
+
+  .TopMenu-RightContent {
+    margin-right: $space;
+
+    .TopMenu-Item {
+      cursor: pointer;
+    }
+  }
+}
