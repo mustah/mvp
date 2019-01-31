@@ -3,4 +3,21 @@
 .TimestampInfoMessage {
   color: $lightest-black;
   margin: $space $space $sm-space $space;
+
+  &.Measurements {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: $white;
+    margin: 0;
+    height: 44px;
+    width: 100%;
+    box-shadow: $box-shadow;
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+
+    .Small {
+      padding-right: $space;
+    }
+  }
 }
