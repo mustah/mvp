@@ -6,3 +6,8 @@ input[type=text], input[type=password], input[type=submit] {
   height: $input-height;
   border: 1px solid $dark-grey;
 }
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: $white;
+  -webkit-box-shadow: 0 0 0 100px $white inset;
+}
