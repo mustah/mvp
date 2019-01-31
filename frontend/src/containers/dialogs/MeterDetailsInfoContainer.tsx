@@ -83,8 +83,10 @@ const MeterDetailsInfo = ({
 
   const sum = alarms ? alarms.reduce((previous, current) => previous + current.mask, 0) : 0;
 
-  // tslint:disable-next-line:no-bitwise
-  const alarmCode = alarms && alarms.length ? (sum >>> 0).toString(2) : '-';
+  const alarmCode = alarms && alarms.length
+    // tslint:disable-next-line:no-bitwise
+    ? ('00000000' + ((sum >>> 0).toString(2))).slice(-8) // zero-padded 8-bit string
+    : '-';
 
   return (
     <Row>
