@@ -1,4 +1,7 @@
+import {Location} from 'history';
 import {EmptyAction} from 'react-redux-typescript';
+import {LOCATION_CHANGE} from 'react-router-redux';
+import {routes} from '../../app/routes';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
@@ -20,7 +23,9 @@ export const initialState: SummaryState = {
 
 type ActionTypes =
   | EmptyAction<string>
-  | Action<SelectionSummary | ErrorResponse>;
+  | Action<SelectionSummary | ErrorResponse | Location>;
+
+const getPathname = (action: ActionTypes): string => (action as Action<Location>).payload.pathname;
 
 export const summary = (state: SummaryState = initialState, action: ActionTypes): SummaryState => {
   switch (action.type) {
@@ -61,10 +66,12 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
         isFetching: false,
         isSuccessfullyFetched: false,
       };
+    case LOCATION_CHANGE:
+      return getPathname(action) !== routes.searchResult ? initialState : state;
     case SEARCH:
     case LOGOUT_USER:
-      return {...initialState};
+      return initialState;
     default:
-      return resetReducer(state, action, {...initialState});
+      return resetReducer(state, action, initialState);
   }
 };
