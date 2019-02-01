@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Add indexes for quick sorting of meters without organisation" author="Anton Löfgren">
+    <createIndex
+      indexName="logical_meter_external_id_id_idx"
+      tableName="logical_meter"
+      schemaName="public">
+      <column name="external_id"/>
+      <column name="id"/>
+    </createIndex>
+
+    <createIndex
+      indexName="physical_meter_manufacturer_id_idx"
+      tableName="physical_meter"
+      schemaName="public">
+      <column name="manufacturer"/>
+      <column name="id"/>
+    </createIndex>
+
+    <createIndex
+      indexName="physical_meter_address_id_idx"
+      tableName="physical_meter"
+      schemaName="public">
+      <column name="address"/>
+      <column name="id"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>
