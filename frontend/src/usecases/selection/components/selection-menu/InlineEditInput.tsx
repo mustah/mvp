@@ -13,6 +13,7 @@ import './InlineEditInput.scss';
 
 const textFieldStyle: React.CSSProperties = {
   marginLeft: 4,
+  marginRight: 8,
   fontSize: 24,
   fontWeight: 'bold',
   width: 280,

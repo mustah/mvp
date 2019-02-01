@@ -127,6 +127,10 @@ export const listItemStyleSelected: React.CSSProperties = {
   color: secondaryFgActive
 };
 
+export const listItemInnerDivStyle: React.CSSProperties = {
+  padding: 0,
+};
+
 export const menuItemInnerDivStyle: React.CSSProperties = {
   ...menuItemStyle,
   lineHeight: '32px',
