@@ -1,7 +1,7 @@
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {routes} from '../../../app/routes';
-import {listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
+import {listItemInnerDivStyle, listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
@@ -11,14 +11,11 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, IdNamed, OnClickWithId, uuid} from '../../../types/Types';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
+import {CreateNewSelectionListItem} from './CreateNewSelectionListItem';
 import {LoadingTreeViewItems} from './LoadingTreeViewItems';
 import {SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
 import './SavedSelections.scss';
 import './UserSelectionActionDropdown.scss';
-
-const innerDivStyle: React.CSSProperties = {
-  padding: 0,
-};
 
 interface ConfirmDelete {
   confirmDelete: OnClickWithId;
@@ -65,13 +62,13 @@ const ListItems = ({
       <ListItem
         className="SavedSelection-ListItem"
         style={id === selection.id && isMeterPage ? listItemStyleSelected : listItemStyle}
-        innerDivStyle={innerDivStyle}
+        innerDivStyle={listItemInnerDivStyle}
         hoverColor={secondaryBgHover}
         key={`saved-${id}`}
       >
         <RowSpaceBetween>
           <RowMiddle className="SavedSelection-Name flex-1" onClick={onSelect}>
-            <Medium>{name}</Medium>
+            <Medium className="first-uppercase">{name}</Medium>
           </RowMiddle>
           <Row className="UserSelectionActionDropdown">
             <SavedSelectionActionsDropdown
@@ -99,7 +96,12 @@ const ListItems = ({
         />
       )
     ];
-  return <>{items}</>;
+  return (
+    <>
+      {items}
+      <CreateNewSelectionListItem resetSelection={resetSelection}/>
+    </>
+  );
 };
 
 export const SavedSelections = (props: Props) => {

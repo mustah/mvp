@@ -1,18 +1,28 @@
 @import '../../../app/variables';
 
 .SavedSelection-ListItem {
+  cursor: pointer;
+
   &:hover {
-    .Normal {
+    .Medium {
       color: $secondary-bg-hover;
+    }
+
+    svg {
+      fill: $secondary-fg-hover !important;
     }
   }
 
   .SavedSelection-Name {
     height: $list-item-height;
 
-    .Normal {
+    .Medium {
       color: $secondary-fg;
       padding-left: 38px;
+
+      &.CreateNewSelection {
+        padding-left: $sm-space;
+      }
     }
   }
 }
