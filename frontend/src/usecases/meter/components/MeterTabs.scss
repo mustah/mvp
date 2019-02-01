@@ -2,10 +2,12 @@
 
 .MeterTabs {
   .MeterListContent {
-    margin-top: -36px;
+    position: relative;
 
     .SelectionResultActionDropdown {
-      padding-right: 3px;
+      position: absolute;
+      top: -32px;
+      right: 0;
     }
   }
 }
