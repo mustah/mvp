@@ -1,17 +1,21 @@
 package com.elvaco.mvp.web;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
+import com.elvaco.mvp.web.mapper.OrganisationDtoMapper;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -95,12 +99,40 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void adminDoesNotFindOrganisations() {
-    ResponseEntity<List<OrganisationDto>> request = asUser()
+  public void adminFindsOwnOrganisationAndSubOrganisation() throws IOException {
+
+    createUserIfNotPresent(context().admin);
+
+    UserSelection selection = UserSelection.builder()
+      .id(randomUUID())
+      .organisationId(context().admin.organisation.id)
+      .name("")
+      .selectionParameters(OBJECT_MAPPER.readTree("{\"test\":\"test selection\"}"))
+      .ownerUserId(context().admin.id)
+      .build();
+
+    userSelections.save(selection);
+
+    Organisation scooter =
+      new Organisation(
+        randomUUID(),
+        "Scooter",
+        "faster-harder",
+        "Scooter",
+        context().admin.organisation,
+        selection
+      );
+
+    organisations.save(scooter);
+
+    ResponseEntity<List<OrganisationDto>> request = asAdmin()
       .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(request.getBody()).hasSize(0);
+    assertThat(request.getBody()).containsExactlyInAnyOrder(
+      OrganisationDtoMapper.toDto(context().admin.organisation),
+      OrganisationDtoMapper.toDto(scooter)
+    );
   }
 
   @Test

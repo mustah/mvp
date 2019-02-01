@@ -20,6 +20,7 @@ import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
@@ -92,6 +93,9 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   protected Users users;
+
+  @Autowired
+  protected UserSelections userSelections;
 
   @Autowired
   protected Measurements measurements;

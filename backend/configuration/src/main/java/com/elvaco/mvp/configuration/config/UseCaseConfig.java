@@ -58,7 +58,13 @@ class UseCaseConfig {
 
   @Bean
   UserUseCases userUseCases(AuthenticatedUser currentUser) {
-    return new UserUseCases(currentUser, users, new OrganisationPermissions(users), tokenService);
+    return new UserUseCases(
+      currentUser,
+      users,
+      new OrganisationPermissions(users),
+      tokenService,
+      organisations
+    );
   }
 
   @Bean

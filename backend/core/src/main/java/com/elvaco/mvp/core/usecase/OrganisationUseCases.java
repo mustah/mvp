@@ -35,6 +35,8 @@ public class OrganisationUseCases {
   public List<Organisation> findAll() {
     if (currentUser.isSuperAdmin()) {
       return organisations.findAll();
+    } else if (currentUser.isAdmin()) {
+      return organisations.findAllSubOrganisations(currentUser.getOrganisationId());
     }
     return emptyList();
   }

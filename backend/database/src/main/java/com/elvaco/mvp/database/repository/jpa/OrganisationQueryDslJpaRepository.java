@@ -8,11 +8,14 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 
 import com.querydsl.core.types.Predicate;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import static com.elvaco.mvp.database.entity.jooq.tables.Organisation.ORGANISATION;
+import static com.elvaco.mvp.database.entity.jooq.tables.OrganisationUserSelection.ORGANISATION_USER_SELECTION;
 import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisationEntity;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
@@ -21,9 +24,16 @@ class OrganisationQueryDslJpaRepository
   extends BaseQueryDslRepository<OrganisationEntity, UUID>
   implements OrganisationJpaRepository {
 
+  private final DSLContext dsl;
+
   @Autowired
-  OrganisationQueryDslJpaRepository(EntityManager entityManager) {
+  OrganisationQueryDslJpaRepository(
+    EntityManager entityManager,
+    DSLContext dsl
+  ) {
     super(entityManager, OrganisationEntity.class);
+
+    this.dsl = dsl;
   }
 
   @Override
@@ -39,6 +49,16 @@ class OrganisationQueryDslJpaRepository
   @Override
   public List<OrganisationEntity> findAllByOrderByNameAsc() {
     return createQuery().select(path).fetch();
+  }
+
+  @Override
+  public List<OrganisationEntity> findAllSubOrganisations(UUID organisationId) {
+    return nativeQuery(dsl.select().from(ORGANISATION)
+      .leftJoin(ORGANISATION_USER_SELECTION)
+      .on(ORGANISATION_USER_SELECTION.ORGANISATION_ID.equal(ORGANISATION.ID))
+      .where(
+      ORGANISATION.ID.equal(organisationId).or(ORGANISATION.PARENT_ID.equal(organisationId))
+    ));
   }
 
   @Override

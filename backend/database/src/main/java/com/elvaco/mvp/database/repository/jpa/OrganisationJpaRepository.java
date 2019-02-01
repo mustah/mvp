@@ -28,6 +28,8 @@ public interface OrganisationJpaRepository {
 
   List<OrganisationEntity> findAllByOrderByNameAsc();
 
+  List<OrganisationEntity> findAllSubOrganisations(UUID organisationId);
+
   Page<OrganisationEntity> findAllMainOrganisations(Predicate predicate, Pageable pageable);
 
   List<OrganisationEntity> findAll();

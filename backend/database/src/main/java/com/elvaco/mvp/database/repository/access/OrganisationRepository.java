@@ -38,6 +38,13 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
+  public List<Organisation> findAllSubOrganisations(UUID organisationId) {
+    return organisationJpaRepository.findAllSubOrganisations(organisationId).stream()
+      .map(OrganisationEntityMapper::toDomainModel)
+      .collect(toList());
+  }
+
+  @Override
   public Page<Organisation> findAllMainOrganisations(
     RequestParameters parameters,
     Pageable pageable

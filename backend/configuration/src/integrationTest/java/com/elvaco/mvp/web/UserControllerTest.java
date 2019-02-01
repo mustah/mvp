@@ -1,11 +1,13 @@
 package com.elvaco.mvp.web;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
@@ -26,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.core.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static com.elvaco.mvp.testing.fixture.UserTestData.userBuilder;
 import static java.util.Arrays.asList;
@@ -300,6 +303,41 @@ public class UserControllerTest extends IntegrationTest {
 
     assertThat(errorResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(errorResponse.getBody().message).isEqualTo("Email address already exists");
+  }
+
+  @Test
+  public void adminCanCreateUserInSubOrganisation() throws IOException {
+    createUserIfNotPresent(context().admin);
+
+    UserSelection selection = UserSelection.builder()
+      .id(randomUUID())
+      .organisationId(context().admin.organisation.id)
+      .name("")
+      .selectionParameters(OBJECT_MAPPER.readTree("{\"test\":\"test selection\"}"))
+      .ownerUserId(context().admin.id)
+      .build();
+
+    selection = userSelections.save(selection);
+
+    Organisation organisation = Organisation.builder()
+      .externalId("Superman")
+      .name("Sub organisation3")
+      .parent(context().organisation())
+      .selection(selection)
+      .slug("s")
+      .build();
+
+    organisations.save(organisation);
+
+    UserWithPasswordDto user = createUserDto("superman@dailyplanet.us", organisation);
+
+    ResponseEntity<UserDto> response = asAdmin().post("/users", user, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    UserDto savedUser = response.getBody();
+    assertThat(savedUser.id).isNotNull();
+    assertThat(savedUser.name).isEqualTo(user.name);
   }
 
   @Test
