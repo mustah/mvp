@@ -1,3 +1,5 @@
+import {LOCATION_CHANGE} from 'react-router-redux';
+import {routes} from '../../../app/routes';
 import {EndPoints} from '../../../services/endPoints';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {search} from '../../../usecases/search/searchActions';
@@ -218,6 +220,17 @@ describe('summaryReducer', () => {
       };
 
       const state: SummaryState = summary(someState, search(makeMeterQuery('123')));
+
+      expect(state).toEqual(initialState);
+    });
+
+    it('reset search query when location changes to dashboard page', () => {
+      let state: SummaryState = {
+        ...initialState,
+        payload: {...initialState.payload, numMeters: 2}
+      };
+
+      state = summary(state, {type: LOCATION_CHANGE, payload: {pathname: routes.dashboard}});
 
       expect(state).toEqual(initialState);
     });

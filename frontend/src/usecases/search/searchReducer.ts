@@ -28,7 +28,7 @@ type Actions =
   | EmptyAction<string>;
 
 const resetValidationQuery = (state: SearchState, {pathname}: Location): SearchState =>
-  pathname === routes.selection ? {...state, validation: {}} : state;
+  pathname !== routes.searchResult ? {...state, validation: {}} : state;
 
 export const search = (state: SearchState = initialState, action: Actions): SearchState => {
   switch (action.type) {

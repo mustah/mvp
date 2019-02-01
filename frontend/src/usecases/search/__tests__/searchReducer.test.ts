@@ -41,26 +41,34 @@ describe('searchReducer', () => {
     it('reset validation query when location changes to selection page', () => {
       let state: SearchState = {
         ...initialState,
-        validation: {query: 'bro'},
+        ...makeMeterQuery('kam')
       };
 
       state = search(state, {type: LOCATION_CHANGE, payload: {pathname: routes.selection}});
 
-      expect(state).toEqual({
-        ...initialState,
-        validation: {},
-      });
+      expect(state).toEqual(initialState);
     });
 
-    it('does not reset validation query when location does not changes to selection page', () => {
+    it('reset validation query when location changes to dashboard page', () => {
+      let state: SearchState = {
+        ...initialState,
+        ...makeMeterQuery('kam')
+      };
+
+      state = search(state, {type: LOCATION_CHANGE, payload: {pathname: routes.dashboard}});
+
+      expect(state).toEqual(initialState);
+    });
+
+    it('reset validation query when location changes to meter page', () => {
       const state: SearchState = {
         ...initialState,
-        validation: {query: 'bro'},
+        ...makeMeterQuery('kam')
       };
 
       const newState = search(state, {type: LOCATION_CHANGE, payload: {pathname: routes.collection}});
 
-      expect(newState).toBe(state);
+      expect(newState).toEqual(initialState);
     });
   });
 
