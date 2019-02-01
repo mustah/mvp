@@ -90,10 +90,10 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
         <Loader isFetching={isFetching} clearError={clearError} error={error}>
-          <div>
+          <>
             <MapClustersWrapper {...wrapperProps} />
             <DetailsDialog {...dialogProps}/>
-          </div>
+          </>
         </Loader>
       </TabContent>
     </Tabs>

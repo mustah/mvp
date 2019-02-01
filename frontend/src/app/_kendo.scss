@@ -11,6 +11,8 @@ $grid-header-border: 0 1px 0 0 solid $border-color;
 
 $grid-header-text: $black;
 
+$grid-sorted-bg: 'transparent';
+
 $grid-alt-bg: #fbfbfb;
 
 $grid-hovered-bg: $primary-bg-hover;
@@ -24,6 +26,11 @@ $pager-number-hovered-bg: $primary-bg-active;
 $pager-number-hovered-text: $primary-fg-active;
 
 @import '~@progress/kendo-theme-material/scss/grid.scss';
+
+.k-grid-header .k-header > .k-link > .k-icon.k-i-sort-desc-sm,
+.k-grid-header .k-header > .k-link > .k-icon.k-i-sort-asc-sm {
+  vertical-align: middle;
+}
 
 .k-header {
   text-transform: capitalize;
@@ -68,6 +75,10 @@ $pager-number-hovered-text: $primary-fg-active;
       &.left-most {
         padding-left: 16px;
       }
+    }
+
+    td {
+      color: $blackest;
     }
   }
 }

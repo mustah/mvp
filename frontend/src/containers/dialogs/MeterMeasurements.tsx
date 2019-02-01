@@ -31,8 +31,8 @@ import {fillMissingMeasurements} from './dialogHelper';
 import './MeterMeasurements.scss';
 
 const renderValue = (measurement?: Measurement): string =>
-  measurement !== undefined &&  measurement.value !== undefined && measurement.unit
-      ? `${roundMeasurement(measurement.value)} ${measurement.unit}` : '';
+  measurement !== undefined && measurement.value !== undefined && measurement.unit
+    ? `${roundMeasurement(measurement.value)} ${measurement.unit}` : '';
 
 const renderReadingRows =
   (quantities: Quantity[]) =>
@@ -102,7 +102,6 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
       {renderReadingRows(quantities)(readings)}
       </tbody>
     </table>
-    <TimestampInfoMessage/>
   </Column>
 );
 
@@ -186,6 +185,7 @@ class MeterMeasurements extends React.Component<Props, State> {
           style={style}
         />
         <MeasurementsTableComponent {...wrapperProps}/>
+        <TimestampInfoMessage className="Measurements"/>
       </Column>
     );
   }
