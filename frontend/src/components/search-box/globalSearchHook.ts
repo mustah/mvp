@@ -15,9 +15,9 @@ export const useGlobalSearch = ({onSearch, onClear, query = ''}: GlobalSearchPro
   const [value, setValue] = React.useState<string>(query);
 
   const onEnter = (event) => {
-    if (event.key === 'Enter') {
+    const value = event.target.value;
+    if (event.key === 'Enter' && value !== query) {
       event.preventDefault();
-      const value = event.target.value;
       setValue(value);
       onSearch(value);
       history.push(routes.searchResult);
