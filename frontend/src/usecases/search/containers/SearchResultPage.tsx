@@ -3,12 +3,12 @@ import * as React from 'react';
 import {mainContentPaperStyle} from '../../../app/themes';
 import {RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import {PageLayout} from '../../../containers/PageLayout';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
+import {MeterTabsContainer} from '../../meter/containers/MeterTabsContainer';
 
-export const SearchResult = () => (
+export const SearchResultPage = () => (
   <PageLayout>
     <RowSpaceBetween>
       <MainTitle>{translate('search result')}</MainTitle>
@@ -16,7 +16,7 @@ export const SearchResult = () => (
     </RowSpaceBetween>
 
     <Paper style={mainContentPaperStyle}>
-      <MeterListContainer componentId="searchResultList"/>
+      <MeterTabsContainer/>
     </Paper>
   </PageLayout>
 );
