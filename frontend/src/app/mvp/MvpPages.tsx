@@ -3,7 +3,7 @@ import {Redirect, Route, Switch} from 'react-router';
 import {DashboardContainer} from '../../usecases/dashboard/containers/DashboardContainer';
 import {MetersPage} from '../../usecases/meter/containers/MetersPage';
 import {ReportPageContainer} from '../../usecases/report/containers/ReportPageContainer';
-import {SearchResultContainer} from '../../usecases/search/containers/SearchResultContainer';
+import {SearchResultPage} from '../../usecases/search/containers/SearchResultPage';
 import {SelectionPage} from '../../usecases/selection/containers/SelectionPage';
 import {EditProfileContainer} from '../../usecases/topmenu/containers/EditProfileContainer';
 import {routes} from '../routes';
@@ -16,7 +16,7 @@ export const MvpPages = () => (
     <Route exact={true} path={`${routes.report}/:id?`} component={ReportPageContainer}/>
     <Route exact={true} path={routes.selection} component={SelectionPage}/>
     <Route exact={true} path={routes.userProfile} component={EditProfileContainer}/>
-    <Route exact={true} path={routes.searchResult} component={SearchResultContainer}/>
+    <Route exact={true} path={routes.searchResult} component={SearchResultPage}/>
     <Redirect to={routes.home}/>
   </Switch>
 );

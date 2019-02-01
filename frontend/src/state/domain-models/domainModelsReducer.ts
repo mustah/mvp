@@ -121,16 +121,6 @@ const setError = <T extends Identifiable>(
   error,
 });
 
-const canResetEntities = (entity: keyof DomainModelsState, payload: QueryParameter): boolean =>
-  !!(entity === 'meterMapMarkers' && payload.validation && payload.validation.query);
-
-const resetDomainModel = <T extends Identifiable>(
-  state: NormalizedState<T>,
-  entity: keyof DomainModelsState,
-  payload: QueryParameter,
-): NormalizedState<T> =>
-  canResetEntities(entity, payload) ? {...initialDomain<T>()} : state;
-
 type ActionTypes<T extends Identifiable> =
   | EmptyAction<string>
   | Action<Normalized<T>>
@@ -165,10 +155,9 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsFailure(endPoint):
         return setError(state, action as Action<ErrorResponse>);
       case domainModelsClearError(endPoint):
+      case SEARCH:
       case LOGOUT_USER:
         return {...initialDomain<T>()};
-      case SEARCH:
-        return resetDomainModel<T>(state, entity, (action as Action<QueryParameter>).payload);
       default:
         return resetState(state, action, endPoint);
     }
