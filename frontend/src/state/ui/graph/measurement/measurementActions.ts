@@ -75,7 +75,7 @@ export const isSelectedCity = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,]/g) || []).length === 1 &&
   (listItem.toString().match(/[:]/) || []).length === 0;
 
-type OnUpdateGraph = (state: MeasurementState) => void;
+type UpdateGraphCallback = (state: MeasurementState) => void;
 
 type GraphDataRequests = Array<Promise<GraphDataResponse>>;
 
@@ -169,77 +169,76 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
 });
 
 export interface MeasurementParameters {
-  logout: OnLogout;
   quantities: Quantity[];
   resolution: TemporalResolution;
   selectionTreeEntities: SelectionTreeEntities;
   selectedIndicators: Medium[];
   selectedListItems: uuid[];
   selectionParameters: SelectedParameters;
-  updateState: OnUpdateGraph;
 }
 
-export const fetchMeasurements =
-  async ({
+export const fetchMeasurements = async (
+  {
     resolution,
     selectionTreeEntities,
     selectedIndicators,
     quantities,
     selectedListItems,
-    updateState,
-    logout,
     selectionParameters,
-  }: MeasurementParameters): Promise<void> => {
-    const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
-      quantities,
-      resolution,
-      selectionTreeEntities,
-      selectedListItems,
-      selectionParameters
-    );
+  }: MeasurementParameters,
+  updateGraphCallback: UpdateGraphCallback,
+  logout: OnLogout,
+): Promise<void> => {
+  const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
+    quantities,
+    resolution,
+    selectionTreeEntities,
+    selectedListItems,
+    selectionParameters
+  );
 
-    if (
-      selectedIndicators.length === 0 ||
-      (cities.length + meters.length) === 0 ||
-      quantities.length === 0
-    ) {
-      updateState({...initialState});
+  if (
+    selectedIndicators.length === 0 ||
+    (cities.length + meters.length) === 0 ||
+    quantities.length === 0
+  ) {
+    updateGraphCallback({...initialState});
+    return;
+  }
+
+  try {
+    const [meterResponses, averageResponses, citiesResponses]: GraphDataResponse[][] =
+      await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
+    const graphData: MeasurementResponses = {
+      measurements: flatMap(meterResponses, 'data'),
+      average: map(
+        flatMap(averageResponses, 'data'),
+        removeUndefinedValues,
+      ),
+      cities: flatMap(citiesResponses, 'data'),
+    };
+
+    updateGraphCallback({
+      ...initialState,
+      measurementResponse: graphData,
+    });
+  } catch (error) {
+    if (error instanceof InvalidToken) {
+      await logout(error);
+    } else if (wasRequestCanceled(error)) {
       return;
-    }
-
-    try {
-      const [meterResponses, averageResponses, citiesResponses]: GraphDataResponse[][] =
-        await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
-      const graphData: MeasurementResponses = {
-        measurements: flatMap(meterResponses, 'data'),
-        average: map(
-          flatMap(averageResponses, 'data'),
-          removeUndefinedValues,
-        ),
-        cities: flatMap(citiesResponses, 'data'),
-      };
-
-      updateState({
+    } else if (isTimeoutError(error)) {
+      updateGraphCallback({...initialState, error: Maybe.maybe(requestTimeout())});
+    } else if (!error.response) {
+      updateGraphCallback({...initialState, error: Maybe.maybe(noInternetConnection())});
+    } else {
+      updateGraphCallback({
         ...initialState,
-        measurementResponse: graphData,
+        error: Maybe.maybe(responseMessageOrFallback(error.response)),
       });
-    } catch (error) {
-      if (error instanceof InvalidToken) {
-        await logout(error);
-      } else if (wasRequestCanceled(error)) {
-        return;
-      } else if (isTimeoutError(error)) {
-        updateState({...initialState, error: Maybe.maybe(requestTimeout())});
-      } else if (!error.response) {
-        updateState({...initialState, error: Maybe.maybe(noInternetConnection())});
-      } else {
-        updateState({
-          ...initialState,
-          error: Maybe.maybe(responseMessageOrFallback(error.response)),
-        });
-      }
     }
-  };
+  }
+};
 
 export type OnUpdate = (state: MeterMeasurementsState) => void;
 

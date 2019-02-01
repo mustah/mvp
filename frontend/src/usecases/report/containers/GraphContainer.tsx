@@ -242,17 +242,16 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
 
 }
 
-const mapStateToProps =
+const mapStateToProps = ({
+  report: {selectedListItems},
+  userSelection: {userSelection},
+  ui,
+}: RootState): StateToProps =>
   ({
-    report: {selectedListItems},
-    userSelection: {userSelection},
-    ui,
-  }: RootState): StateToProps =>
-    ({
-      ...getSelectedPeriod(userSelection),
-      isSideMenuOpen: isSideMenuOpen(ui),
-      selectedListItems,
-    });
+    ...getSelectedPeriod(userSelection),
+    isSideMenuOpen: isSideMenuOpen(ui),
+    selectedListItems,
+  });
 
 export const GraphContainer =
   connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps)(GraphComponent);

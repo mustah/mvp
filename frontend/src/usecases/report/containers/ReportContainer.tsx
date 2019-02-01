@@ -25,11 +25,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {
-  SelectedTreeEntities,
-  SelectionTreeEntities,
-  SelectionTreeMeter
-} from '../../../state/selection-tree/selectionTreeModels';
+import {SelectionTreeEntities, SelectionTreeMeter} from '../../../state/selection-tree/selectionTreeModels';
 import {getMedia, getMeterIdsWithLimit} from '../../../state/selection-tree/selectionTreeSelectors';
 import {mapApiResponseToGraphData} from '../../../state/ui/graph/measurement/helpers/apiResponseToGraphContents';
 import {fetchMeasurements, MeasurementParameters} from '../../../state/ui/graph/measurement/measurementActions';
@@ -54,13 +50,14 @@ import {MeasurementList} from '../components/MeasurementList';
 import {QuantityDropdown} from '../components/QuantityDropdown';
 import {selectResolution, showMetersInGraph} from '../reportActions';
 import {GraphContents, reportIndicators, ReportState} from '../reportModels';
+import {getMeasurementParameters} from '../reportSelectors';
 import {GraphContainer} from './GraphContainer';
 import {LegendContainer} from './LegendContainer';
 import './ReportContainer.scss';
 
 type SelectedIds = ReportState;
 
-interface StateToProps extends SelectedIds {
+interface StateToProps extends SelectedIds, SelectedIndicatorWidgetProps {
   enabledIndicatorTypes: Set<Medium>;
   isFetchingSelectionTree: boolean;
   resolution: TemporalResolution;
@@ -70,6 +67,7 @@ interface StateToProps extends SelectedIds {
   selectedTab: TabName;
   selectionParameters: SelectedParameters;
   userSelectionId: uuid;
+  requestParameters: MeasurementParameters;
 }
 
 interface DispatchToProps {
@@ -81,7 +79,7 @@ interface DispatchToProps {
   selectResolution: OnSelectResolution;
 }
 
-type Props = StateToProps & SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
 
@@ -103,16 +101,17 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
   }
 
   async componentDidMount() {
+    const {logout, requestParameters} = this.props;
     this.setState({isFetching: true});
-    await fetchMeasurements(this.makeRequestParameters(this.props));
+    await fetchMeasurements(requestParameters, this.updateState, logout);
   }
 
   async componentWillReceiveProps(nextProps: Props) {
-    const requestParameters = this.makeRequestParameters(nextProps);
-    if (!shallowEqual(requestParameters, this.makeRequestParameters(this.props))) {
+    const {logout, requestParameters} = this.props;
+    if (!shallowEqual(nextProps.requestParameters, requestParameters)) {
       this.showMetersInGraph(nextProps);
       this.setState({isFetching: true});
-      await fetchMeasurements(requestParameters);
+      await fetchMeasurements(nextProps.requestParameters, this.updateState, logout);
     }
   }
 
@@ -201,29 +200,10 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
   }
 
   clearError = async () => {
+    const {logout, requestParameters} = this.props;
     this.setState({error: Maybe.nothing(), isFetching: true});
-    await fetchMeasurements(this.makeRequestParameters(this.props));
+    await fetchMeasurements(requestParameters, this.updateState, logout);
   }
-
-  makeRequestParameters = ({
-    resolution,
-    selectionTreeEntities,
-    selectedIndicators,
-    selectedListItems,
-    selectedQuantities,
-    logout,
-    selectionParameters,
-  }: Props): MeasurementParameters =>
-    ({
-      quantities: selectedQuantities,
-      logout,
-      resolution,
-      selectedListItems,
-      selectedIndicators,
-      selectionTreeEntities,
-      updateState: this.updateState,
-      selectionParameters,
-    })
 
   private showMetersInGraph(nextProps: Props) {
     const {isFetchingSelectionTree, showMetersInGraph, selectionTreeEntities, userSelectionId} = this.props;
@@ -242,24 +222,25 @@ class ReportComponent extends React.Component<Props, MeasurementState> {
 }
 
 const mapStateToProps =
-  ({
-    report: {hiddenLines, resolution, selectedListItems},
-    selectionTree: {entities, isFetching},
-    userSelection: {userSelection: {selectionParameters, id: userSelectionId}},
-    ui: {
-      indicator: {
-        selectedIndicators: {report},
-        selectedQuantities,
+  (rootState: RootState): StateToProps => {
+    const {
+      report: {hiddenLines, resolution, selectedListItems},
+      selectionTree: {entities, isFetching},
+      userSelection: {userSelection: {selectionParameters, id: userSelectionId}},
+      ui: {
+        indicator: {
+          selectedIndicators: {report},
+          selectedQuantities,
+        },
+        tabs,
       },
-      tabs,
-    },
-  }: RootState): StateToProps & SelectedIndicatorWidgetProps => {
-    const selectedTreeState: SelectedTreeEntities = {selectedListItems, entities};
+    }: RootState = rootState;
     return ({
-      enabledIndicatorTypes: getMedia(selectedTreeState),
+      enabledIndicatorTypes: getMedia({selectedListItems, entities}),
       isFetchingSelectionTree: isFetching,
       hiddenLines,
       resolution,
+      requestParameters: getMeasurementParameters(rootState),
       selectedListItems,
       selectedQuantities,
       selectedIndicators: report,
@@ -281,4 +262,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const ReportContainer =
-  connect<SelectedIndicatorWidgetProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ReportComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ReportComponent);

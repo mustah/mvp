@@ -65,8 +65,6 @@ describe('measurementActions', () => {
         quantities: [],
         selectedListItems: [],
         resolution: TemporalResolution.day,
-        updateState,
-        logout,
         selectionParameters: {
           dateRange: {
             period: Period.currentMonth,
@@ -82,7 +80,7 @@ describe('measurementActions', () => {
         const fetching: MeasurementState = {...initialState};
         expect(state).not.toEqual(fetching);
 
-        await fetchMeasurements(defaultParameters);
+        await fetchMeasurements(defaultParameters, updateState, logout);
         const expected: MeasurementState = {...initialState};
         expect(state).toEqual(expected);
       });
@@ -93,12 +91,16 @@ describe('measurementActions', () => {
           mockMeter(Medium.districtHeating),
         );
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: ['sweden,höganäs,hasselgatan 4'],
-        });
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: ['sweden,höganäs,hasselgatan 4'],
+          },
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(0);
       });
@@ -108,12 +110,16 @@ describe('measurementActions', () => {
         const fetching: MeasurementState = {...initialState};
         expect(state).not.toEqual(fetching);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [],
-        });
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [],
+          },
+          updateState,
+          logout,
+        );
         const expected: MeasurementState = {...initialState};
         expect(state).toEqual(expected);
       });
@@ -127,18 +133,22 @@ describe('measurementActions', () => {
 
         const requestedUrls = onFetchAsync(unknownMeter, meter);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            meters: {
-              [unknownMeter.id]: unknownMeter,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              meters: {
+                [unknownMeter.id]: unknownMeter,
+              },
             },
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.energy],
+            selectedListItems: [unknownMeter.id],
           },
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.energy],
-          selectedListItems: [unknownMeter.id],
-        });
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(0);
       });
@@ -148,19 +158,23 @@ describe('measurementActions', () => {
         const gasMeter = mockMeter(Medium.gas);
         const requestedUrls: string[] = onFetchAsync(roomSensorMeter, gasMeter);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            meters: {
-              [roomSensorMeter.id]: roomSensorMeter,
-              [gasMeter.id]: gasMeter,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              meters: {
+                [roomSensorMeter.id]: roomSensorMeter,
+                [gasMeter.id]: gasMeter,
+              },
             },
+            selectedIndicators: [Medium.roomSensor, Medium.gas],
+            quantities: [Quantity.externalTemperature, Quantity.volume],
+            selectedListItems: [roomSensorMeter.id, gasMeter.id],
           },
-          selectedIndicators: [Medium.roomSensor, Medium.gas],
-          quantities: [Quantity.externalTemperature, Quantity.volume],
-          selectedListItems: [roomSensorMeter.id, gasMeter.id],
-        });
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(2);
         const [externalTemperature, volume] = requestedUrls.map(
@@ -193,19 +207,23 @@ describe('measurementActions', () => {
         const roomSensorMeter = mockCity(Medium.roomSensor, 'sweden,Borgholm');
         const gasMeter = mockCity(Medium.gas, 'sweden,Byxelkrok');
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            cities: {
-              [roomSensorMeter.id]: roomSensorMeter,
-              [gasMeter.id]: gasMeter,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              cities: {
+                [roomSensorMeter.id]: roomSensorMeter,
+                [gasMeter.id]: gasMeter,
+              },
             },
+            selectedIndicators: [Medium.roomSensor, Medium.gas],
+            quantities: [Quantity.externalTemperature, Quantity.volume],
+            selectedListItems: [roomSensorMeter.id, gasMeter.id],
           },
-          selectedIndicators: [Medium.roomSensor, Medium.gas],
-          quantities: [Quantity.externalTemperature, Quantity.volume],
-          selectedListItems: [roomSensorMeter.id, gasMeter.id],
-        });
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -245,19 +263,23 @@ describe('measurementActions', () => {
         const firstDistrictHeating = mockCity(Medium.districtHeating);
         const secondDistrictHeating = mockCity(Medium.districtHeating);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            cities: {
-              [firstDistrictHeating.id]: firstDistrictHeating,
-              [secondDistrictHeating.id]: secondDistrictHeating,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              cities: {
+                [firstDistrictHeating.id]: firstDistrictHeating,
+                [secondDistrictHeating.id]: secondDistrictHeating,
+              },
             },
           },
-        });
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -289,21 +311,25 @@ describe('measurementActions', () => {
         const mockedMeter = mockMeter(Medium.districtHeating);
         const mockedCity = mockCity(Medium.districtHeating);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [mockedMeter.id, mockedCity.id],
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            cities: {
-              [mockedCity.id]: mockedCity,
-            },
-            meters: {
-              [mockedMeter.id]: mockedMeter,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [mockedMeter.id, mockedCity.id],
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              cities: {
+                [mockedCity.id]: mockedCity,
+              },
+              meters: {
+                [mockedMeter.id]: mockedMeter,
+              },
             },
           },
-        });
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -336,28 +362,32 @@ describe('measurementActions', () => {
 
         const mockedCity = mockCity(Medium.districtHeating, 'sweden,göteborg');
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [mockedCity.id],
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            cities: {
-              [mockedCity.id]: mockedCity,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [mockedCity.id],
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              cities: {
+                [mockedCity.id]: mockedCity,
+              },
             },
-          },
-          selectionParameters: {
-            ...defaultParameters.selectionParameters,
-            media: [{...toIdNamed('Gas')}],
-            threshold: {
-              relationalOperator: '>=' as RelationalOperator,
-              value: '7',
-              unit: 'W',
-              quantity: Quantity.power,
+            selectionParameters: {
+              ...defaultParameters.selectionParameters,
+              media: [{...toIdNamed('Gas')}],
+              threshold: {
+                relationalOperator: '>=' as RelationalOperator,
+                value: '7',
+                unit: 'W',
+                quantity: Quantity.power,
+              }
             }
-          }
-        });
+          },
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(1);
 
@@ -383,19 +413,23 @@ describe('measurementActions', () => {
         const secondRoomSensor = mockMeter(Medium.roomSensor);
         const requestedUrls: string[] = onFetchAsync(firstRoomSensor, secondRoomSensor);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.roomSensor],
-          quantities: [Quantity.externalTemperature],
-          selectedListItems: [firstRoomSensor.id, secondRoomSensor.id],
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            meters: {
-              [firstRoomSensor.id]: firstRoomSensor,
-              [secondRoomSensor.id]: secondRoomSensor,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.roomSensor],
+            quantities: [Quantity.externalTemperature],
+            selectedListItems: [firstRoomSensor.id, secondRoomSensor.id],
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              meters: {
+                [firstRoomSensor.id]: firstRoomSensor,
+                [secondRoomSensor.id]: secondRoomSensor,
+              },
             },
           },
-        });
+          updateState,
+          logout,
+        );
         expect(requestedUrls).toHaveLength(2);
 
         const [averageUrl] = requestedUrls
@@ -416,19 +450,23 @@ describe('measurementActions', () => {
         const secondDistrictHeating = mockMeter(Medium.districtHeating);
         const requestedUrls: string[] = onFetchAsync(firstDistrictHeating, secondDistrictHeating);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            meters: {
-              [firstDistrictHeating.id]: firstDistrictHeating,
-              [secondDistrictHeating.id]: secondDistrictHeating,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              meters: {
+                [firstDistrictHeating.id]: firstDistrictHeating,
+                [secondDistrictHeating.id]: secondDistrictHeating,
+              },
             },
           },
-        });
+          updateState,
+          logout,
+        );
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -445,19 +483,23 @@ describe('measurementActions', () => {
 
         onFetchAsync(firstDistrictHeating, secondDistrictHeating);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            meters: {
-              [firstDistrictHeating.id]: firstDistrictHeating,
-              [secondDistrictHeating.id]: secondDistrictHeating,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              meters: {
+                [firstDistrictHeating.id]: firstDistrictHeating,
+                [secondDistrictHeating.id]: secondDistrictHeating,
+              },
             },
           },
-        });
+          updateState,
+          logout,
+        );
 
         expect(state.measurementResponse.average).toHaveLength(1);
         expect(state.measurementResponse.average[0].values).toHaveLength(2);
@@ -470,19 +512,23 @@ describe('measurementActions', () => {
 
         onFetchAsync(first, second);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectionTreeEntities: {
-            ...defaultParameters.selectionTreeEntities,
-            meters: {
-              [first.id]: first,
-              [second.id]: second,
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectionTreeEntities: {
+              ...defaultParameters.selectionTreeEntities,
+              meters: {
+                [first.id]: first,
+                [second.id]: second,
+              },
             },
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [first.id, second.id],
           },
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [first.id, second.id],
-        });
+          updateState,
+          logout,
+        );
 
         expect(state.measurementResponse.average[0].values).toHaveLength(2);
         expect(state.measurementResponse.average[0].values[0].value).toBe(0);
@@ -495,12 +541,16 @@ describe('measurementActions', () => {
 
         onFetchAsync(first, second);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: [first.id, second.id],
-        });
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: [first.id, second.id],
+          },
+          updateState,
+          logout,
+        );
 
         expect(state.measurementResponse).toEqual({average: [], measurements: [], cities: []});
       });
@@ -511,12 +561,16 @@ describe('measurementActions', () => {
 
         onFetchAsync(first, second);
 
-        await fetchMeasurements({
-          ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
-          quantities: [Quantity.power],
-          selectedListItems: ['sto,bkk'],
-        });
+        await fetchMeasurements(
+          {
+            ...defaultParameters,
+            selectedIndicators: [Medium.districtHeating],
+            quantities: [Quantity.power],
+            selectedListItems: ['sto,bkk'],
+          },
+          updateState,
+          logout,
+        );
 
         expect(state.measurementResponse).toEqual({average: [], measurements: [], cities: []});
       });
