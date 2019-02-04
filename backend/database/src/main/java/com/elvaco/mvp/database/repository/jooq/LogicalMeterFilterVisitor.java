@@ -37,12 +37,12 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
   public void visit(WildcardFilter filter) {
     String value = filter.oneValue().toLowerCase();
 
-    addCondition(LOGICAL_METER.EXTERNAL_ID.lower().startsWith(value)
-      .or(METER_DEFINITION.MEDIUM.lower().startsWith(value))
-      .or(LOCATION.CITY.lower().startsWith(value))
-      .or(LOCATION.STREET_ADDRESS.lower().startsWith(value))
-      .or(PHYSICAL_METER.MANUFACTURER.lower().startsWith(value))
-      .or(PHYSICAL_METER.ADDRESS.lower().startsWith(value)));
+    addCondition(LOGICAL_METER.EXTERNAL_ID.lower().contains(value)
+      .or(METER_DEFINITION.MEDIUM.lower().contains(value))
+      .or(LOCATION.CITY.lower().contains(value))
+      .or(LOCATION.STREET_ADDRESS.lower().contains(value))
+      .or(PHYSICAL_METER.MANUFACTURER.lower().contains(value))
+      .or(PHYSICAL_METER.ADDRESS.lower().contains(value)));
   }
 
   @Override

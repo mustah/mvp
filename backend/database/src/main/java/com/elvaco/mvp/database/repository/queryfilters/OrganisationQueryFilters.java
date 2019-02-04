@@ -31,7 +31,7 @@ public class OrganisationQueryFilters extends QueryFilters {
       case Q_ORGANISATION:
       case WILDCARD:
         String str = values.get(0);
-        return ORGANISATION.name.startsWithIgnoreCase(str);
+        return ORGANISATION.name.containsIgnoreCase(str);
       default:
         return null;
     }
