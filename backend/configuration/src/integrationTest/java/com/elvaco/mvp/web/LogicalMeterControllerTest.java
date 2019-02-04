@@ -689,13 +689,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void wildcardSearch_StartsWithSecondaryAddress() {
+  public void wildcardSearch_SecondaryAddress() {
     given(physicalMeter().address("123"));
     given(physicalMeter().address("456"));
-    Page<PagedLogicalMeterDto> page = asUser()
+
+    Page<PagedLogicalMeterDto> contains = asUser()
+      .getPage("/meters?w=23", PagedLogicalMeterDto.class);
+
+    assertThat(contains.getContent())
+      .extracting(m -> m.address)
+      .containsExactly("123");
+
+    Page<PagedLogicalMeterDto> startsWith = asUser()
       .getPage("/meters?w=12", PagedLogicalMeterDto.class);
 
-    assertThat(page.getContent())
+    assertThat(startsWith.getContent())
       .extracting(m -> m.address)
       .containsExactly("123");
   }

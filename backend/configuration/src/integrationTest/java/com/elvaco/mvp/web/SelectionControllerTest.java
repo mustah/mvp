@@ -6,6 +6,7 @@ import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SERIAL;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.WILDCARD;
 import static com.elvaco.mvp.core.util.Json.toJsonNode;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
@@ -352,18 +354,20 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void facilityWildcardSearch() {
-    given(
-      logicalMeter().externalId("abcdef")
-    );
+  public void wildcard_facility() {
+    given(logicalMeter().externalId("abcdef"));
 
-    var response = asUser().getPage(
+    var contains = asUser().getPage(
       Url.builder().path("/selections/facilities").parameter(Q, "bcd").build(),
       IdNamedDto.class
     );
+    assertThat(contains).extracting("name").containsExactly("abcdef");
 
-    assertThat(response).hasSize(1);
-    assertThat(response).extracting("name").containsExactly("abcdef");
+    var startsWith = asUser().getPage(
+      Url.builder().path("/selections/facilities").parameter(Q, "abcd").build(),
+      IdNamedDto.class
+    );
+    assertThat(startsWith).extracting("name").containsExactly("abcdef");
 
     var emptySearchResponse = asUser().getPage(
       Url.builder().path("/selections/facilities").parameter(Q, "qwerty").build(),
@@ -373,7 +377,7 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void secondaryAddressWildcardSearch() {
+  public void wildcard_secondaryAddress() {
     given(
       logicalMeter().externalId("1234"), physicalMeter().address("123456")
     );
@@ -395,52 +399,104 @@ public class SelectionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void gatewaySerialWildcardSearch() {
+  public void wildcard_gatewaySerial() {
     given(gateway().serial("1234567"));
 
-    var response = asUser().getPage(Url.builder().path("/selections/gateway-serials")
+    var contains = asUser().getPage(Url.builder().path("/selections/gateway-serials")
       .parameter(Q, "3456").build(), IdNamedDto.class);
+    assertThat(contains.getContent()).extracting(gw -> gw.name).containsExactly("1234567");
 
-    assertThat(response).hasSize(1);
-    assertThat(response.getContent().get(0).name).isEqualTo("1234567");
+    var startsWith = asUser().getPage(Url.builder().path("/selections/gateway-serials")
+      .parameter(Q, "1234").build(), IdNamedDto.class);
+    assertThat(startsWith.getContent()).extracting(gw -> gw.name).containsExactly("1234567");
+
     assertThat(asUser().getPage(
-      Url.builder().path("/selections/gateway-serials").parameter(Q, "90909090").build(),
+      Url.builder().path("/selections/gateway-serials")
+        .parameter(Q, "90909090")
+        .build(),
       IdNamedDto.class
     )).isEmpty();
   }
 
   @Test
-  public void cityWildcardSearch() {
+  public void wildcard_city() {
     given(logicalMeter().location(kungsbacka().build()));
 
-    Page<CityDto> response = asUser().getPage(
-      "/selections/cities?q=ngsback",
-      CityDto.class
-    );
+    Page<CityDto> contains = asUser().getPage("/selections/cities?q=ngsback", CityDto.class);
+    assertThat(contains.getContent()).extracting(c -> c.name).containsExactly("kungsbacka");
 
-    assertThat(response).hasSize(1);
-    assertThat(response.getContent().get(0).name).isEqualTo("kungsbacka");
-    assertThat(asUser().getPage(
-      "/selections/cities?q=tockholm",
-      IdNamedDto.class
-    )).hasSize(0);
+    Page<CityDto> startsWith = asUser().getPage("/selections/cities?q=kungs", CityDto.class);
+    assertThat(startsWith.getContent()).extracting(c -> c.name).containsExactly("kungsbacka");
+
+    assertThat(asUser().getPage("/selections/cities?q=tockholm", IdNamedDto.class)).hasSize(0);
   }
 
   @Test
-  public void addressWildcardSearch() {
+  public void wildcard_streetAddress() {
     given(logicalMeter().location(kungsbacka().address("Stora vägen 24").build()));
 
-    Page<AddressDto> response = asUser().getPage(
-      "/selections/addresses?q=tora",
+    Page<AddressDto> contains = asUser().getPage("/selections/addresses?q=tora", AddressDto.class);
+    assertThat(contains.getContent()).extracting(a -> a.street).containsExactly("stora vägen 24");
+
+    Page<AddressDto> startsWith = asUser().getPage(
+      "/selections/addresses?q=stora",
       AddressDto.class
     );
+    assertThat(startsWith.getContent()).extracting(a -> a.street).containsExactly("stora vägen 24");
 
-    assertThat(response).hasSize(1);
-    assertThat(response.getContent().get(0).street).isEqualTo("stora vägen 24");
     assertThat(asUser().getPage(
       "/selections/addresses?q=illa",
       AddressDto.class
     )).hasSize(0);
+  }
+
+  @Test
+  public void wildcard_organisation() {
+    var provideOrganisation = context().organisation2();
+
+    assertThat(asSuperAdmin()
+      .getPage(
+        Url.builder()
+          .path("/selections/organisations")
+          .parameter(WILDCARD, "com.elvaco")
+          .build(),
+        OrganisationDto.class
+      )
+    )
+      .as("Case insensitive substring in the start of term")
+      .extracting(o -> o.name)
+      .containsExactly(
+        "com.elvaco.mvp.web.SelectionControllerTest-organisation",
+        "com.elvaco.mvp.web.SelectionControllerTest-organisation"
+      );
+
+    assertThat(asSuperAdmin()
+      .getPage(
+        Url.builder()
+          .path("/selections/organisations")
+          .parameter(WILDCARD, "SelectionControllerTest")
+          .build(),
+        OrganisationDto.class
+      )
+    )
+      .as("Substring in the middle of term")
+      .extracting(o -> o.name)
+      .containsExactly(
+        "com.elvaco.mvp.web.SelectionControllerTest-organisation",
+        "com.elvaco.mvp.web.SelectionControllerTest-organisation"
+      );
+
+    assertThat(asSuperAdmin()
+      .getPage(
+        Url.builder()
+          .path("/selections/organisations")
+          .parameter(WILDCARD, "asdfasdf12341234osadkfj2435dsfkjdsfkjtnh42")
+          .build(),
+        OrganisationDto.class
+      )
+    )
+      .as("Wild card does not mean 'select everything'")
+      .hasSize(0);
   }
 
   @Test
