@@ -79,6 +79,10 @@ $pager-number-hovered-text: $primary-fg-active;
 
     td {
       color: $blackest;
+
+      &.left-most {
+        padding-left: 16px;
+      }
     }
   }
 }
