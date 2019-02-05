@@ -17,4 +17,5 @@ public class RabbitConsumerProperties {
   private Boolean requeueRejected = false;
   private Integer prefetchCount = 250;
   private Integer txSize = 1;
+  private Integer maxPriority = 10;
 }
