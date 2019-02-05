@@ -115,7 +115,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
       gateways.push(gateway);
     }
 
-    const eventLog = eventsDataFormatter(meter);
+    const eventLog = toArray(eventsDataFormatter(meter).entities);
 
     const mapWrapperProps: MapProps & WithEmptyContentProps = {
       meter,
@@ -155,7 +155,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid
-              data={toArray(eventLog.entities)}
+              data={eventLog}
               scrollable="none"
             >
               <GridColumn title={translate('date')} cell={renderDate}/>

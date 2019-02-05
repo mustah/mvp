@@ -1,14 +1,14 @@
+import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {PeriodSelection} from '../../components/dates/PeriodSelection';
-import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
-import {renderCreated} from '../../components/table/cellContentHelper';
 import '../../components/table/Table.scss';
+import {Error} from '../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
-import {newDateRange} from '../../helpers/dateHelpers';
+import {newDateRange, timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {translate} from '../../services/translationService';
@@ -19,12 +19,13 @@ import {
   initialMeterMeasurementsState,
   Measurement,
   MeterMeasurementsState,
+  PossibleReading,
   Quantity,
   Readings
 } from '../../state/ui/graph/measurement/measurementModels';
 import {groupMeasurementsByDate, MeasurementTableData} from '../../state/ui/graph/measurement/measurementSelectors';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {Fetching, UnixTimestamp} from '../../types/Types';
+import {Fetching, UnixTimestamp, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {fillMissingMeasurements} from './dialogHelper';
@@ -34,36 +35,12 @@ const renderValue = (measurement?: Measurement): string =>
   measurement !== undefined && measurement.value !== undefined && measurement.unit
     ? `${roundMeasurement(measurement.value)} ${measurement.unit}` : '';
 
-const renderReadingRows =
-  (quantities: Quantity[]) =>
-    (readings: Readings): Array<React.ReactElement<HTMLTableRowElement>> => {
-      const rowSpanOfMissingMeasurements = quantities.length;
-      const missingMeasurements = <td key={1} colSpan={rowSpanOfMissingMeasurements}/>;
-
-      return Object.keys(readings)
-        .map((key: string) => Number(key))
-        .sort()
-        .reverse()
-        .map((timestamp: UnixTimestamp) => {
-          const reading = readings[timestamp];
-          const row = reading.measurements
-            ? quantities
-              .map((quantity: Quantity) => reading.measurements![quantity])
-              .map((measurement: Measurement, index: number) => <td key={index}>{renderValue(measurement)}</td>)
-            : missingMeasurements;
-
-          return (
-            <tr key={timestamp}>
-              {renderCreated(timestamp, !!reading.measurements)}
-              {row}
-            </tr>
-          );
-        });
-    };
-
-const readoutColumnStyle: React.CSSProperties = {
-  width: 80,
-};
+const orderedReadings = (readings: Readings): PossibleReading[] =>
+  Object.keys(readings)
+    .map((key: string) => Number(key))
+    .sort()
+    .reverse()
+    .map((timestamp: UnixTimestamp) => readings[timestamp]);
 
 const style: React.CSSProperties = {
   marginTop: -46,
@@ -73,7 +50,8 @@ const style: React.CSSProperties = {
 };
 
 interface ReadingsProps {
-  readings: Readings;
+  readings: PossibleReading[];
+  facility: uuid;
   quantities: Quantity[];
 }
 
@@ -85,29 +63,51 @@ interface DispatchToProps {
   logout: OnLogout;
 }
 
-const renderQuantity =
+const measurementCell =
   (quantity: Quantity) =>
-    <th key={quantity}>{translate(quantity + ' short')}</th>;
+    ({dataItem}) =>
+      <td key={dataItem.id}>{renderValue(dataItem.measurements && dataItem.measurements[quantity])}</td>;
 
-const MeasurementsTable = ({readings, quantities}: ReadingsProps) => (
-  <Column>
-    <table key="1" className="Table" cellPadding="0" cellSpacing="0">
-      <thead>
-      <tr>
-        <th style={readoutColumnStyle} className="first" key="readout">{translate('readout')}</th>
-        {quantities.map(renderQuantity)}
-      </tr>
-      </thead>
-      <tbody>
-      {renderReadingRows(quantities)(readings)}
-      </tbody>
-    </table>
-  </Column>
-);
+const gridColumnOfQuantity = (q: Quantity) =>
+  <GridColumn key={`measurements.${q}`} cell={measurementCell(q)} title={translate(`${q} short`)}/>;
+
+const renderCreated = (created: UnixTimestamp, hasValues: boolean) => {
+  const textual = hasValues
+    ? timestamp(created * 1000)
+    : <Error>{timestamp(created * 1000)}</Error>;
+  return <td className="no-wrap" key="created">{textual}</td>;
+};
+
+const MeasurementsTable = ({readings, quantities, facility}: ReadingsProps) => {
+  const renderTimestamp =
+    (quantities) =>
+      ({dataItem}) => {
+        const hasValues = quantities.length
+                          && dataItem.measurements
+                          && Object.keys(dataItem.measurements).length === quantities.length;
+        return renderCreated(dataItem.id, hasValues);
+      };
+
+  const renderFacility = () => <td>{facility}</td>;
+
+  return (
+    <Grid
+      scrollable="none"
+      data={readings}
+    >
+      <GridColumn
+        cell={renderTimestamp(quantities)}
+        title={translate('readout')}
+        className="left-most"
+        headerClassName="left-most"
+      />
+      <GridColumn cell={renderFacility} title={translate('facility')}/>
+      {quantities.map(gridColumnOfQuantity)}
+    </Grid>
+  );
+};
 
 type WrapperProps = Fetching & ReadingsProps;
-
-const MeasurementsTableComponent = withLargeLoader<ReadingsProps>(MeasurementsTable);
 
 type Props = OwnProps & DispatchToProps;
 
@@ -156,7 +156,7 @@ class MeterMeasurements extends React.Component<Props, State> {
 
   render() {
     const {customDateRange, isFetching, measurementPages, period} = this.state;
-    const {meter: {medium, readIntervalMinutes}} = this.props;
+    const {meter: {medium, readIntervalMinutes, facility}} = this.props;
 
     const {readings: existingReadings, quantities}: MeasurementTableData = groupMeasurementsByDate(
       measurementPages,
@@ -167,13 +167,13 @@ class MeterMeasurements extends React.Component<Props, State> {
       .map((dateRange) => newDateRange(period, Maybe.just(dateRange)))
       .orElseGet(() => newDateRange(period));
 
-    const readings: Readings = fillMissingMeasurements({
+    const readings: PossibleReading[] = orderedReadings(fillMissingMeasurements({
       existingReadings,
       readIntervalMinutes,
       dateRange,
-    });
+    }));
 
-    const wrapperProps: WrapperProps = {isFetching, readings, quantities};
+    const wrapperProps: WrapperProps = {isFetching, readings, quantities, facility};
 
     return (
       <Column className="MeterMeasurements">
@@ -184,7 +184,7 @@ class MeterMeasurements extends React.Component<Props, State> {
           setCustomDateRange={this.setCustomDateRange}
           style={style}
         />
-        <MeasurementsTableComponent {...wrapperProps}/>
+        <MeasurementsTable {...wrapperProps}/>
         <TimestampInfoMessage className="Measurements"/>
       </Column>
     );
