@@ -28,7 +28,28 @@ public class OrganisationPermissions {
     Organisation target,
     Permission permission
   ) {
-    return authenticatedUser.isSuperAdmin();
+    if (authenticatedUser.isSuperAdmin()) {
+      return true;
+    }
+
+    if (authenticatedUser.isAdmin()
+      && authenticatedUser.isWithinOrganisation(target.id)
+    ) {
+      if (permission.equals(Permission.READ)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (authenticatedUser.isAdmin()
+      && target.parent != null
+      && authenticatedUser.isWithinOrganisation(target.parent.id)
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   public boolean isAllowed(

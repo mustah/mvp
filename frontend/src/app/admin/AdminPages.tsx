@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Redirect, Route, Switch} from 'react-router';
-import {superAdminIsAuthenticated} from '../../services/authService';
+import {adminIsAuthenticated} from '../../services/authService';
 import {Users} from '../../usecases/administration/components/Users';
 import {OrganisationEditContainer} from '../../usecases/administration/containers/OrganisationEditContainer';
 import {Organisations} from '../../usecases/administration/components/Organisations';
@@ -8,8 +8,8 @@ import {UserAddContainer} from '../../usecases/administration/containers/UserAdd
 import {UserEditContainer} from '../../usecases/administration/containers/UserEditContainer';
 import {routes} from '../routes';
 
-const OrganisationsPage = superAdminIsAuthenticated(Organisations);
-const OrganisationEditPage = superAdminIsAuthenticated(OrganisationEditContainer);
+const OrganisationsPage = adminIsAuthenticated(Organisations);
+const OrganisationEditPage = adminIsAuthenticated(OrganisationEditContainer);
 
 export const AdminPages = () => (
   <Switch>

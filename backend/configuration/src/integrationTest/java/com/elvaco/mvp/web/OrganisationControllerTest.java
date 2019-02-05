@@ -66,16 +66,34 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void adminDoesNotFindOwnOrganisationById() {
+  public void adminFindsOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asAdmin()
       .get("/organisations/" + context().organisationId(), OrganisationDto.class);
 
-    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(request.getBody()).isEqualTo(new OrganisationDto(
+      context().organisation().id,
+      context().organisation().name,
+      context().organisation().slug
+    ));
+  }
+
+  @Test
+  public void adminFindsSubOrgOfOwnOrganisationById() {
+    ResponseEntity<OrganisationDto> request = asAdmin()
+      .get("/organisations/" + context().organisationId(), OrganisationDto.class);
+
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(request.getBody()).isEqualTo(new OrganisationDto(
+      context().organisation().id,
+      context().organisation().name,
+      context().organisation().slug
+    ));
   }
 
   @Test
   public void adminDoesNotFindOtherOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asUser()
+    ResponseEntity<OrganisationDto> request = asAdmin()
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
