@@ -1,3 +1,5 @@
+import {Grid, GridColumn} from '@progress/kendo-react-grid';
+import {toArray} from 'lodash';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -19,12 +21,12 @@ import {TimestampInfoMessage} from '../../components/timestamp-info-message/Time
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {EventLog, EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
+import {EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
 import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
-import {Children, OnClickWithId} from '../../types/Types';
+import {OnClickWithId} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
@@ -56,13 +58,15 @@ interface DispatchToProps {
 
 type Props = OwnProps & DispatchToProps;
 
-const renderEvent = ({name, type}: EventLog): Children =>
-  type === EventLogType.newMeter
+const renderEvent = ({dataItem: {name, type}}) => {
+  const content = type === EventLogType.newMeter
     ? <ColoredEvent label={translate('new meter: {{name}}', {name})} type={type}/>
     : <Status label={name}/>;
+  return <td>{content}</td>;
+};
 
-const renderDate = ({start}: EventLog): Children =>
-  <WrappedDateTime date={start} hasContent={!!start}/>;
+const renderDate = ({dataItem: {start}}) =>
+  <td><WrappedDateTime date={start} hasContent={!!start}/></td>;
 
 const renderSerial = ({serial}: Gateway): string => serial;
 
@@ -184,16 +188,13 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <MeterMeasurementsContainer meter={meter}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Table {...eventLog}>
-              <TableColumn
-                header={<TableHead>{translate('date')}</TableHead>}
-                renderCell={renderDate}
-              />
-              <TableColumn
-                header={<TableHead>{translate('event')}</TableHead>}
-                renderCell={renderEvent}
-              />
-            </Table>
+            <Grid
+              data={toArray(eventLog.entities)}
+              scrollable="none"
+            >
+              <GridColumn title={translate('date')} cell={renderDate}/>
+              <GridColumn title={translate('event')} cell={renderEvent}/>
+            </Grid>
             <TimestampInfoMessage/>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
