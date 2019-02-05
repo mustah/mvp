@@ -1,7 +1,9 @@
 package com.elvaco.mvp.web;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
@@ -88,14 +90,17 @@ public class SubOrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void create_disallowOrganisationAdmin() {
+  public void create_allowOrganisationAdmin() {
     UserSelectionDto userSelection = createUserSelection(context().admin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<OrganisationDto> request = createNew(
       asAdmin(), context().organisationId(), subOrganisation
     );
 
-    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(request.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    Optional<Organisation> organisation = organisations.findBySlug(subOrganisation.slug);
+    assertThat(organisation.isPresent()).isTrue();
   }
 
   @Test

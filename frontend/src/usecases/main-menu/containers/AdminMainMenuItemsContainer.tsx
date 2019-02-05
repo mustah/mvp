@@ -4,7 +4,6 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {superAdminOnly} from '../../../components/hoc/withRoles';
 import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
@@ -28,8 +27,6 @@ const AdminOrganisationLinkMenuItem = ({pathname}: StateToProps) => (
   </Link>
 );
 
-const OrganisationMenuItem = superAdminOnly(AdminOrganisationLinkMenuItem);
-
 const AdminMainMenuItems = (props: StateToProps) => (
   <Column>
     <Link to={routes.admin} className="link">
@@ -39,7 +36,7 @@ const AdminMainMenuItems = (props: StateToProps) => (
         icon={<ActionSupervisorAccount {...mainMenuIconProps}/>}
       />
     </Link>
-    <OrganisationMenuItem {...props}/>
+    <AdminOrganisationLinkMenuItem {...props}/>
   </Column>
 );
 
