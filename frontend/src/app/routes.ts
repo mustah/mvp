@@ -23,6 +23,9 @@ export const routes = {
   adminOrganisations: '/admin/organisations',
   adminOrganisationsAdd: '/admin/organisations/add',
   adminOrganisationsModify: '/admin/organisations/modify',
+  adminMeterDefinitions: '/admin/meter-definitions',
+  adminMeterDefinitionsAdd: '/admin/meter-definitions/add',
+  adminMeterDefinitionsModify: '/admin/meter-definitions/modify',
 };
 
 const organisationLogo = {

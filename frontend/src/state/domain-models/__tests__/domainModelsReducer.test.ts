@@ -281,6 +281,8 @@ describe('domainModelsReducer', () => {
         organisations: initialDomain(),
         userSelections: initialDomain(),
         users: initialDomain(),
+        mediums: initialDomain(),
+        meterDefinitions: initialDomain(),
       };
 
       const isFetchingState: DomainModelsState = {
@@ -290,6 +292,8 @@ describe('domainModelsReducer', () => {
         organisations: {...initialState.organisations, isFetching: true},
         userSelections: {...initialState.userSelections, isFetching: false},
         users: {...initialState.users, isFetching: true},
+        mediums: {...initialState.mediums, isFetching: true},
+        meterDefinitions: {...initialState.meterDefinitions, isFetching: true},
       };
 
       const expected: DomainModelsState = {...initialState};

@@ -73,7 +73,6 @@
   <include file="xml/add_index_for_quick_sorting_of_meters_by_medium.xml" relativeToChangelogFile="true"/>
   <include file="xml/add_indexes_for_quick_sorting_of_meters_without_organisation.xml" relativeToChangelogFile="true"/>
   <include file="xml/update_meter_definition_and_quantites.xml" relativeToChangelogFile="true"/>
-  <include file="xml/update_meter_definition_and_quantites.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_fuzzystrmatch_extension.xml" relativeToChangelogFile="true"/>
   <include file="xml/drop_unit_extension.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_measurement_created_index.xml" relativeToChangelogFile="true"/>

@@ -4,6 +4,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
+import {IconMeter} from '../../../components/icons/IconMeter';
 import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
@@ -37,6 +38,13 @@ const AdminMainMenuItems = (props: StateToProps) => (
       />
     </Link>
     <AdminOrganisationLinkMenuItem {...props}/>
+    <Link to={routes.adminMeterDefinitions} className="link">
+      <MainMenuItem
+        name={translate('meter definitions')}
+        isSelected={routes.adminMeterDefinitions === props.pathname}
+        icon={<IconMeter {...mainMenuIconProps}/>}
+      />
+    </Link>
   </Column>
 );
 
