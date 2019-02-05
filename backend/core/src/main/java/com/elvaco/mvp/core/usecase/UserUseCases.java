@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 
@@ -21,17 +22,20 @@ public class UserUseCases {
   private final Users users;
   private final OrganisationPermissions organisationPermissions;
   private final TokenService tokenService;
+  private final Organisations organisations;
 
   public UserUseCases(
     AuthenticatedUser currentUser,
     Users users,
     OrganisationPermissions organisationPermissions,
-    TokenService tokenService
+    TokenService tokenService,
+    Organisations organisations
   ) {
     this.currentUser = currentUser;
     this.users = users;
     this.organisationPermissions = organisationPermissions;
     this.tokenService = tokenService;
+    this.organisations = organisations;
   }
 
   public List<User> findAll() {
@@ -48,6 +52,8 @@ public class UserUseCases {
   }
 
   public Optional<User> create(User user) {
+    user = user.withOrganisation(organisations.findById(user.organisation.id).orElseThrow());
+
     if (organisationPermissions.isAllowed(currentUser, user, null, CREATE)) {
       return Optional.of(users.save(user));
     }

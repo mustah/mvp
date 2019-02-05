@@ -5,10 +5,12 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testing.cache.MockTokenService;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
@@ -85,11 +87,13 @@ public class UserUseCasesTest {
   private void usersOf(AuthenticatedUser currentUser, User... users) {
     tokenService = new MockTokenService();
     Users usersRepository = new MockUsers(asList(users));
+    Organisations organisations = new MockOrganisations();
     useCases = new UserUseCases(
       currentUser,
       usersRepository,
       new OrganisationPermissions(usersRepository),
-      tokenService
+      tokenService,
+      organisations
     );
   }
 

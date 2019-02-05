@@ -47,7 +47,9 @@ public class OrganisationPermissions {
         || isNotLastSuperAdminUser();
     }
 
-    if (!isWithinSameOrganisation(authenticatedUser, target)) {
+    if (!isWithinSameOrganisation(authenticatedUser, target)
+      && !isTargetWithinSubOrganisation(authenticatedUser, target)
+    ) {
       return false;
     }
 
@@ -76,6 +78,11 @@ public class OrganisationPermissions {
 
   private boolean isWithinSameOrganisation(AuthenticatedUser authenticatedUser, User target) {
     return authenticatedUser.isWithinOrganisation(target.organisation.id);
+  }
+
+  private boolean isTargetWithinSubOrganisation(AuthenticatedUser authenticatedUser, User target) {
+    return target.organisation.parent != null
+      && authenticatedUser.isWithinOrganisation(target.organisation.parent.id);
   }
 
   private boolean isSelf(Usernamed authenticatedUser, Usernamed target) {

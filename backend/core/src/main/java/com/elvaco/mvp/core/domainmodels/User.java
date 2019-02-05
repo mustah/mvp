@@ -55,6 +55,10 @@ public class User implements Identifiable<UUID>, Usernamed {
     this(randomUUID(), name, email, password, language, organisation, roles);
   }
 
+  public User withOrganisation(Organisation organisation) {
+    return new User(id, name, email, password, language, organisation, roles);
+  }
+
   public User withPassword(String password) {
     return new User(id, name, email, password, language, organisation, roles);
   }
