@@ -12,7 +12,7 @@ export interface ResolutionProps {
 }
 
 const width = 124;
-const style: React.CSSProperties = {marginRight: 24, marginBottom: 0, marginLeft: 0, width};
+const style: React.CSSProperties = {marginRight: 16, marginBottom: 0, marginLeft: 0, width};
 const labelStyle: React.CSSProperties = {width};
 const listStyle: React.CSSProperties = {width, ...popoverStyle};
 
