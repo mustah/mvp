@@ -66,7 +66,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN)
       .and()
       .frameOptions().deny()
-      .contentSecurityPolicy("default-src 'self'");
+      .contentSecurityPolicy("default-src 'self'")
+      .and()
+      .httpStrictTransportSecurity();
 
     http.csrf().disable();
 
