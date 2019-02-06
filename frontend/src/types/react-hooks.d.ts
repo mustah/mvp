@@ -6,7 +6,7 @@ declare module 'react' {
   type Dispatch<A> = (value: A) => void;
   type Reducer<S, A> = (prevState: S, action: A) => S;
   type EffectCallback = () => (void | (() => void));
-  type InstanceFactory<T> = <T>() => T;
+  type InstanceFactory<T> = () => T;
   type IdentityCheckInputList = ReadonlyArray<any>;
 
   function useState<S>(initialState: S | InstanceFactory<S>): [S, Dispatch<SetStateAction<S>>];

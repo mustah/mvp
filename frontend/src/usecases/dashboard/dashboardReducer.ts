@@ -3,7 +3,6 @@ import {EndPoints} from '../../services/endPoints';
 import {failureAction, requestAction, successAction} from '../../state/api/apiActions';
 import {resetReducer} from '../../state/domain-models/domainModelsReducer';
 import {Action, ErrorResponse} from '../../types/Types';
-import {LOGOUT_USER} from '../auth/authActions';
 import {DashboardModel} from './dashboardModels';
 
 export interface DashboardState {
@@ -50,9 +49,7 @@ export const dashboard = (
       return success(state, action as Action<DashboardModel>);
     case failureAction(EndPoints.dashboard):
       return failure(state, action as Action<ErrorResponse>);
-    case LOGOUT_USER:
-      return {...initialState};
     default:
-      return resetReducer<DashboardState>(state, action, {...initialState});
+      return resetReducer<DashboardState>(state, action, initialState);
   }
 };

@@ -1,15 +1,7 @@
 import {logoutUser} from '../../../../usecases/auth/authActions';
 import {setSelectedEntries} from '../../../../usecases/report/reportActions';
-import {
-  RESET_SELECTION,
-  SELECT_SAVED_SELECTION,
-  SET_THRESHOLD
-} from '../../../user-selection/userSelectionActions';
-import {
-  RelationalOperator,
-  ThresholdQuery,
-  UserSelection
-} from '../../../user-selection/userSelectionModels';
+import {RESET_SELECTION, SELECT_SAVED_SELECTION, SET_THRESHOLD} from '../../../user-selection/userSelectionActions';
+import {RelationalOperator, ThresholdQuery, UserSelection} from '../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../user-selection/userSelectionReducer';
 import {Medium, Quantity, quantityAttributes} from '../../graph/measurement/measurementModels';
 import {indicator, IndicatorState, initialState} from '../indicatorReducer';
@@ -80,7 +72,7 @@ describe('indicatorReducer', () => {
 
   describe('setThreshold', () => {
 
-    it('Select medium and quantities from threshold', () => {
+    it('selects medium and quantities from threshold', () => {
       const payload: ThresholdQuery = {
         quantity: Quantity.returnTemperature,
         relationalOperator: RelationalOperator.lt,

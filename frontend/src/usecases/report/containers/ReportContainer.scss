@@ -4,17 +4,3 @@
   justify-content: space-between;
   align-items: flex-end;
 }
-
-
-.ReportTabs {
-  .TabList {
-    justify-content: space-between;
-    padding-right: $space;
-    height: 64px;
-
-    .ReportTabs-DropdownMenus {
-      align-self: center;
-      margin-top: 1px;
-    }
-  }
-}

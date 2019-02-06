@@ -1,7 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {failureAction, requestAction, successAction} from '../api/apiActions';
 import {resetReducer} from '../domain-models/domainModelsReducer';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
@@ -48,9 +47,7 @@ export const selectionTree = (
         isSuccessfullyFetched: false,
         error: (action as Action<ErrorResponse>).payload,
       };
-    case LOGOUT_USER:
-      return {...initialState};
     default:
-      return resetReducer<SelectionTreeState>(state, action, {...initialState});
+      return resetReducer<SelectionTreeState>(state, action, initialState);
   }
 };

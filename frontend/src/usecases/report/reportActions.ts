@@ -34,7 +34,9 @@ const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionT
     .reduce((all, current) => all.concat(current), []);
 
   const meterMedia: Medium[] = ids.filter(isSelectedMeter)
-    .map((meterId) => meters[meterId].medium);
+    .map((id) => meters[id])
+    .filter(isDefined)
+    .map(({medium}) => medium);
 
   return new Set<Medium>([...cityMedia, ...meterMedia]);
 };
@@ -52,7 +54,7 @@ interface DispatchWithinLimits {
   selectedQuantities: Quantity[];
 }
 
-export const limit: number = 130;
+export const limit: number = 20;
 
 const maxSelectedIndicators = 2;
 
@@ -194,7 +196,7 @@ export const showMetersInGraph = (meterIds: uuid[]) =>
     });
   };
 
-const emptyReportState = {ids: [], indicatorsToSelect: [], quantitiesToSelect: []};
+const emptyReportState: SelectedReportEntriesPayload = {ids: [], indicatorsToSelect: [], quantitiesToSelect: []};
 
 export const clearSelectedListItems = () =>
   (dispatch) => dispatch(setSelectedEntries(emptyReportState));

@@ -156,7 +156,6 @@ const reducerFor = <T extends Identifiable>(
         return setError(state, action as Action<ErrorResponse>);
       case domainModelsClearError(endPoint):
       case SEARCH:
-      case LOGOUT_USER:
         return {...initialDomain<T>()};
       default:
         return resetState(state, action, endPoint);
@@ -184,6 +183,7 @@ export const resetReducer = <S>(
     case RESET_SELECTION:
     case SELECT_PERIOD:
     case SET_CUSTOM_DATE_RANGE:
+    case LOGOUT_USER:
       return initialState;
     default:
       return state;

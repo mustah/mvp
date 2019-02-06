@@ -5,7 +5,7 @@ import {Medium} from '../../../../state/ui/graph/measurement/measurementModels';
 import {ClickableReportIndicatorProps, ReportIndicatorProps, ReportIndicatorWidget} from './ReportIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
-  selectedIndicatorTypes: Medium[];
+  selectedIndicators: Medium[];
 }
 
 export interface IndicatorWidgetsDispatchProps {
@@ -18,12 +18,12 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
 }
 
 export const ReportIndicatorWidgets =
-  ({indicators, selectedIndicatorTypes, enabledIndicatorTypes, onClick}: IndicatorWidgetProps) => {
+  ({indicators, selectedIndicators, enabledIndicatorTypes, onClick}: IndicatorWidgetProps) => {
     const indicatorWidgets = indicators.map((props: ClickableReportIndicatorProps) => (
       <ReportIndicatorWidget
         {...props}
         key={props.type}
-        isSelected={selectedIndicatorTypes.includes(props.type)}
+        isSelected={selectedIndicators.includes(props.type)}
         enabled={enabledIndicatorTypes.has(props.type)}
         onClick={onClick}
       />

@@ -11,6 +11,7 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getMeterLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {selectResolution} from '../../report/reportActions';
 import {MeterTabs} from '../components/MeterTabs';
 
 const mapStateToProps =
@@ -20,6 +21,7 @@ const mapStateToProps =
       userSelection: {userSelection},
       map,
       domainModels: {meterMapMarkers},
+      report: {resolution},
       search: {validation: {query}}
     }: RootState = rootState;
     return ({
@@ -28,6 +30,7 @@ const mapStateToProps =
       selectedTab: getSelectedTab(ui.tabs.validation),
       mapMarkers: getDomainModel(meterMapMarkers),
       noContentText: firstUpperTranslated('no meters'),
+      resolution,
       selectedId: getSelectedMapMarker(map),
       parameters: getMeterParameters({userSelection, query}),
       error: getError(meterMapMarkers),
@@ -40,6 +43,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   close: closeClusterDialog,
   clearError: clearErrorMeterMapMarkers,
   fetchMapMarkers: fetchMeterMapMarkers,
+  selectResolution,
 }, dispatch);
 
 export const MeterTabsContainer =

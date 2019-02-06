@@ -2,7 +2,7 @@ import {Overwrite} from 'react-redux-typescript';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
-import {TabName} from '../../tabs/tabsModels';
+import {MeasurementParameters} from './measurementActions';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;
@@ -13,12 +13,13 @@ export interface Measurement extends Identifiable {
 
 export interface MeasurementState {
   isFetching: boolean;
+  isSuccessfullyFetched: boolean;
   error: Maybe<ErrorResponse>;
-  selectedTab: TabName;
   measurementResponse: MeasurementResponses;
 }
 
 export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;
+export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
 
 export interface Reading {
   id: UnixTimestamp;
@@ -32,19 +33,6 @@ export interface ExistingReadings {
 export interface Readings {
   [key: number]: Overwrite<Reading, {measurements?: MeasurementsByQuantity}>;
 }
-
-const emptyMeasurementResponse: MeasurementResponses = {
-  measurements: [],
-  average: [],
-  cities: [],
-};
-
-export const initialState: MeasurementState = {
-  isFetching: false,
-  error: Maybe.nothing(),
-  selectedTab: TabName.graph,
-  measurementResponse: emptyMeasurementResponse,
-};
 
 type MeasurementValues = Array<{
   when: number;

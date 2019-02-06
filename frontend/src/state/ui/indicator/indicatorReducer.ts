@@ -41,7 +41,7 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
     case SET_SELECTED_ENTRIES:
       const payload: SelectedReportEntriesPayload = (action as Action<SelectedReportEntriesPayload>).payload;
       if (!payload.ids.length) {
-        return {...initialState};
+        return initialState;
       }
       return {
         ...state,
@@ -66,7 +66,7 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
     case SELECT_SAVED_SELECTION:
     case RESET_SELECTION:
     case LOGOUT_USER:
-      return {...initialState};
+      return initialState;
     default:
       return state;
   }

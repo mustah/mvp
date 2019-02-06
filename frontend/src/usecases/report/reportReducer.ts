@@ -5,7 +5,6 @@ import {resetReducer} from '../../state/domain-models/domainModelsReducer';
 import {NormalizedSelectionTree} from '../../state/selection-tree/selectionTreeModels';
 import {SELECT_PERIOD, SET_CUSTOM_DATE_RANGE} from '../../state/user-selection/userSelectionActions';
 import {Action, uuid} from '../../types/Types';
-import {LOGOUT_USER} from '../auth/authActions';
 import {SELECT_RESOLUTION, SET_SELECTED_ENTRIES, TOGGLE_LINE} from './reportActions';
 import {ReportState, SelectedReportEntriesPayload} from './reportModels';
 
@@ -38,8 +37,6 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
       };
     case TOGGLE_LINE:
       return toggleLine(state, (action as Action<uuid>));
-    case LOGOUT_USER:
-      return initialState;
     case SELECT_PERIOD:
     case SET_CUSTOM_DATE_RANGE:
       return state;

@@ -10,11 +10,21 @@ import {
   makeUrl,
   requestParametersFrom
 } from '../../../../helpers/urlFactory';
+import {GetState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
-import {EncodedUriParameters, uuid} from '../../../../types/Types';
+import {
+  CallbackWith,
+  Dispatcher,
+  emptyActionOf,
+  EncodedUriParameters,
+  ErrorResponse,
+  payloadActionOf,
+  uuid
+} from '../../../../types/Types';
+import {logout} from '../../../../usecases/auth/authActions';
 import {OnLogout} from '../../../../usecases/auth/authModels';
-import {noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
+import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {
   SelectionTreeCity,
@@ -25,7 +35,6 @@ import {SelectedParameters, SelectionInterval} from '../../../user-selection/use
 import {
   allQuantities,
   initialMeterMeasurementsState,
-  initialState,
   Measurement,
   MeasurementApiResponse,
   MeasurementResponsePart,
@@ -36,6 +45,18 @@ import {
   Quantity
 } from './measurementModels';
 import {measurementDataFormatter} from './measurementSchema';
+
+export const MEASUREMENT_REQUEST = 'MEASUREMENT_REQUEST';
+export const measurementRequest = emptyActionOf(MEASUREMENT_REQUEST);
+
+export const MEASUREMENT_SUCCESS = 'MEASUREMENT_SUCCESS';
+export const measurementSuccess = payloadActionOf<MeasurementResponses>(MEASUREMENT_SUCCESS);
+
+export const MEASUREMENT_FAILURE = 'MEASUREMENT_FAILURE';
+export const measurementFailure = payloadActionOf<Maybe<ErrorResponse>>(MEASUREMENT_FAILURE);
+
+export const MEASUREMENT_CLEAR_ERROR = 'MEASUREMENT_CLEAR_ERROR';
+export const measurementClearError = emptyActionOf(MEASUREMENT_CLEAR_ERROR);
 
 const measurementMeterUri = (
   quantity: Quantity,
@@ -75,14 +96,12 @@ export const isSelectedCity = (listItem: uuid): boolean =>
   (listItem.toString().match(/[,]/g) || []).length === 1 &&
   (listItem.toString().match(/[:]/) || []).length === 0;
 
-type UpdateGraphCallback = (state: MeasurementState) => void;
-
 type GraphDataRequests = Array<Promise<GraphDataResponse>>;
 
 interface GroupedRequests {
   average: GraphDataRequests;
-  meters: GraphDataRequests;
   cities: GraphDataRequests;
+  meters: GraphDataRequests;
 }
 
 const requestsPerQuantity = (
@@ -177,7 +196,7 @@ export interface MeasurementParameters {
   selectionParameters: SelectedParameters;
 }
 
-export const fetchMeasurements = async (
+const fetchMeasurementsAsync = async (
   {
     resolution,
     selectionTreeEntities,
@@ -186,8 +205,7 @@ export const fetchMeasurements = async (
     selectedListItems,
     selectionParameters,
   }: MeasurementParameters,
-  updateGraphCallback: UpdateGraphCallback,
-  logout: OnLogout,
+  dispatch: Dispatcher,
 ): Promise<void> => {
   const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
     quantities,
@@ -197,50 +215,49 @@ export const fetchMeasurements = async (
     selectionParameters
   );
 
-  if (
-    selectedIndicators.length === 0 ||
-    (cities.length + meters.length) === 0 ||
-    quantities.length === 0
-  ) {
-    updateGraphCallback({...initialState});
-    return;
-  }
+  if (selectedIndicators.length && quantities.length && (cities.length + meters.length)) {
+    dispatch(measurementRequest());
+    try {
+      const [meterResponses, averageResponses, citiesResponses]: GraphDataResponse[][] =
+        await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
 
-  try {
-    const [meterResponses, averageResponses, citiesResponses]: GraphDataResponse[][] =
-      await Promise.all([Promise.all(meters), Promise.all(average), Promise.all(cities)]);
-    const graphData: MeasurementResponses = {
-      measurements: flatMap(meterResponses, 'data'),
-      average: map(
-        flatMap(averageResponses, 'data'),
-        removeUndefinedValues,
-      ),
-      cities: flatMap(citiesResponses, 'data'),
-    };
+      const measurementResponse: MeasurementResponses = {
+        measurements: flatMap(meterResponses, 'data'),
+        average: map(
+          flatMap(averageResponses, 'data'),
+          removeUndefinedValues,
+        ),
+        cities: flatMap(citiesResponses, 'data'),
+      };
 
-    updateGraphCallback({
-      ...initialState,
-      measurementResponse: graphData,
-    });
-  } catch (error) {
-    if (error instanceof InvalidToken) {
-      await logout(error);
-    } else if (wasRequestCanceled(error)) {
-      return;
-    } else if (isTimeoutError(error)) {
-      updateGraphCallback({...initialState, error: Maybe.maybe(requestTimeout())});
-    } else if (!error.response) {
-      updateGraphCallback({...initialState, error: Maybe.maybe(noInternetConnection())});
-    } else {
-      updateGraphCallback({
-        ...initialState,
-        error: Maybe.maybe(responseMessageOrFallback(error.response)),
-      });
+      dispatch(measurementSuccess(measurementResponse));
+    } catch (error) {
+      if (error instanceof InvalidToken) {
+        await dispatch(logout(error));
+      } else if (wasRequestCanceled(error)) {
+        return;
+      } else if (isTimeoutError(error)) {
+        dispatch(measurementFailure(Maybe.maybe(requestTimeout())));
+      } else if (!error.response) {
+        dispatch(measurementFailure(Maybe.maybe(noInternetConnection())));
+      } else {
+        dispatch(measurementFailure(Maybe.maybe(responseMessageOrFallback(error.response))));
+      }
     }
   }
 };
 
-export type OnUpdate = (state: MeterMeasurementsState) => void;
+const shouldFetchMeasurements: FetchIfNeeded = (getState: GetState): boolean => {
+  const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().measurement;
+  return !isSuccessfullyFetched && !isFetching && error.isNothing();
+};
+
+export const fetchMeasurements = (requestParameters: MeasurementParameters) =>
+  async (dispatch, getState: GetState) => {
+    if (shouldFetchMeasurements(getState)) {
+      await fetchMeasurementsAsync(requestParameters, dispatch);
+    }
+  };
 
 interface MeasurementPagedApiResponse {
   data: NormalizedPaginated<Measurement>;
@@ -249,7 +266,7 @@ interface MeasurementPagedApiResponse {
 export const fetchMeasurementsPaged = async (
   id: uuid,
   selectionInterval: SelectionInterval,
-  updateState: OnUpdate,
+  updateCallback: CallbackWith<MeterMeasurementsState>,
   logout: OnLogout
 ): Promise<void> => {
   try {
@@ -260,7 +277,7 @@ export const fetchMeasurementsPaged = async (
     );
     const {data}: MeasurementPagedApiResponse = await restClient.get(measurementUrl);
 
-    updateState({
+    updateCallback({
       ...initialMeterMeasurementsState,
       measurementPages: measurementDataFormatter(data),
     });
@@ -270,11 +287,11 @@ export const fetchMeasurementsPaged = async (
     } else if (wasRequestCanceled(error)) {
       return;
     } else if (isTimeoutError(error)) {
-      updateState({...initialMeterMeasurementsState, error: Maybe.maybe(requestTimeout())});
+      updateCallback({...initialMeterMeasurementsState, error: Maybe.maybe(requestTimeout())});
     } else if (!error.response) {
-      updateState({...initialMeterMeasurementsState, error: Maybe.maybe(noInternetConnection())});
+      updateCallback({...initialMeterMeasurementsState, error: Maybe.maybe(noInternetConnection())});
     } else {
-      updateState({
+      updateCallback({
         ...initialMeterMeasurementsState,
         error: Maybe.maybe(responseMessageOrFallback(error.response)),
       });
