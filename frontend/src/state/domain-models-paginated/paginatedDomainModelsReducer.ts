@@ -7,7 +7,6 @@ import {routes} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../domain-models/domainModelsReducer';
@@ -169,7 +168,7 @@ const metersReducer = <T extends Identifiable>(
     case LOCATION_CHANGE:
       const location = (action as Action<Location>).payload;
       if (location.pathname === routes.selection) {
-        return {...makeInitialState()};
+        return {...makeInitialState<T>()};
       }
       break;
     case SORT_TABLE:
@@ -223,9 +222,8 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(endPoint):
       case domainModelsPaginatedDeleteFailure(endPoint):
         return entityFailure(state, (action as Action<SingleEntityFailure>).payload);
-      case LOGOUT_USER:
       case SEARCH:
-        return {...makeInitialState()};
+        return {...makeInitialState<T>()};
       default:
         return Maybe.maybe(additionalReducers)
           .map((reducer: Reducer<NormalizedPaginatedState<T>>) => reducer(state, action))

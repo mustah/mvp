@@ -32,16 +32,15 @@ import {Dot, DotReChartProps} from '../components/graph/Dot';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
 import './GraphContainer.scss';
 
+export interface GraphProps {
+  outerHiddenKeys: uuid[];
+  graphContents: GraphContents;
+}
+
 interface StateToProps {
   customDateRange: Maybe<DateRange>;
   isSideMenuOpen: boolean;
   period: Period;
-  selectedListItems: uuid[];
-}
-
-interface OwnProps {
-  outerHiddenKeys: uuid[];
-  graphContents: GraphContents;
 }
 
 interface GraphComponentState {
@@ -137,7 +136,7 @@ const GraphContent =
     </Column>
   );
 
-type Props = OwnProps & StateToProps;
+type Props = GraphProps & StateToProps;
 
 type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
@@ -169,7 +168,6 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       graphContents,
       isSideMenuOpen,
       outerHiddenKeys,
-      selectedListItems,
     } = this.props;
 
     const {hiddenKeys, resized} = this.state;
@@ -191,8 +189,8 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       key: `graph-update-${isSideMenuOpen}-${resized}`,
       legendClick: this.legendClick,
       setTooltipPayload: this.setTooltipPayload,
-      hasContent: selectedListItems.length > 0,
-      noContentText: firstUpperTranslated('select meters to include in graph'),
+      hasContent: data.length > 0,
+      noContentText: firstUpperTranslated('no meters'),
     };
 
     return <GraphContentWrapper {...wrapperProps}/>;
@@ -242,17 +240,11 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
 
 }
 
-const mapStateToProps =
+const mapStateToProps = ({userSelection: {userSelection}, ui}: RootState): StateToProps =>
   ({
-    report: {selectedListItems},
-    userSelection: {userSelection},
-    ui,
-  }: RootState): StateToProps =>
-    ({
-      ...getSelectedPeriod(userSelection),
-      isSideMenuOpen: isSideMenuOpen(ui),
-      selectedListItems,
-    });
+    ...getSelectedPeriod(userSelection),
+    isSideMenuOpen: isSideMenuOpen(ui),
+  });
 
 export const GraphContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps)(GraphComponent);
+  connect<StateToProps, DispatchToProps, GraphProps>(mapStateToProps)(GraphComponent);

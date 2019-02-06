@@ -1,8 +1,8 @@
 import * as chroma from 'chroma-js';
-import {firstUpper} from '../../../../../services/translationService';
-import {Dictionary} from '../../../../../types/Types';
-import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../../usecases/report/reportModels';
-import {AverageResponsePart, MeasurementResponsePart, MeasurementResponses, Quantity} from '../measurementModels';
+import {firstUpper} from '../../../../services/translationService';
+import {Dictionary} from '../../../../types/Types';
+import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {AverageResponsePart, MeasurementResponsePart, MeasurementResponses, Quantity} from './measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -43,7 +43,7 @@ const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined =
   return undefined;
 };
 
-export const mapApiResponseToGraphData =
+export const toGraphContents =
   ({measurements, average, cities}: MeasurementResponses): GraphContents => {
     const graphContents: GraphContents = {
       axes: {

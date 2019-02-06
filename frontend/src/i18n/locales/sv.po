@@ -492,9 +492,6 @@ msgstr "Ta bort alla"
 msgid "value"
 msgstr "värde"
 
-msgid "select meters to include in graph"
-msgstr "välj mätare för att inkludera dem i grafen"
-
 msgid "graph"
 msgstr "graf"
 

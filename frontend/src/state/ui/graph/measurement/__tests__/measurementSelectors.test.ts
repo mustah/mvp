@@ -1,8 +1,8 @@
-import {GraphContents} from '../../../../../../usecases/report/reportModels';
-import {MeasurementApiResponse, MeasurementResponses, Quantity} from '../../measurementModels';
-import {mapApiResponseToGraphData} from '../apiResponseToGraphContents';
+import {GraphContents} from '../../../../../usecases/report/reportModels';
+import {toGraphContents} from '../graphContentsMapper';
+import {MeasurementApiResponse, MeasurementResponses, Quantity} from '../measurementModels';
 
-describe('apiResponseToGraphContents', () => {
+describe('measurementSelectors', () => {
 
   const emptyResponses = (): MeasurementResponses => ({
     measurements: [],
@@ -10,7 +10,7 @@ describe('apiResponseToGraphContents', () => {
     cities: [],
   });
 
-  describe('mapApiResponseToGraphData', () => {
+  describe('toGraphContents', () => {
     describe('formats data for Rechart\'s LineGraph', () => {
       const emptyGraphContents = (): GraphContents => ({
         axes: {
@@ -23,7 +23,7 @@ describe('apiResponseToGraphContents', () => {
       });
 
       it('handles 0 entities gracefully', () => {
-        const graphDataFromZeroEntities = mapApiResponseToGraphData(emptyResponses());
+        const graphDataFromZeroEntities: GraphContents = toGraphContents(emptyResponses());
         expect(graphDataFromZeroEntities).toEqual(emptyGraphContents());
       });
     });
@@ -63,10 +63,7 @@ describe('apiResponseToGraphContents', () => {
           },
         ];
 
-        const graphContents = mapApiResponseToGraphData({
-          ...emptyResponses(),
-          measurements: sameUnit,
-        });
+        const graphContents: GraphContents = toGraphContents({...emptyResponses(), measurements: sameUnit});
 
         expect(graphContents.axes.left).toEqual('mW');
       });
@@ -105,7 +102,7 @@ describe('apiResponseToGraphContents', () => {
           },
         ];
 
-        const graphContents = mapApiResponseToGraphData({
+        const graphContents: GraphContents = toGraphContents({
           ...emptyResponses(),
           measurements: twoDifferentUnits,
         });
@@ -163,7 +160,7 @@ describe('apiResponseToGraphContents', () => {
           },
         ];
 
-        const graphContents = mapApiResponseToGraphData({
+        const graphContents: GraphContents = toGraphContents({
           ...emptyResponses(),
           measurements: threeDifferentUnits,
         });
@@ -227,7 +224,7 @@ describe('apiResponseToGraphContents', () => {
             },
           ];
 
-          const graphContents = mapApiResponseToGraphData({
+          const graphContents: GraphContents = toGraphContents({
             ...emptyResponses(),
             measurements: slightlyLaterThanFirstAverage,
             average,

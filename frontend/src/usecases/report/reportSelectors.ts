@@ -2,6 +2,7 @@ import {normalize, schema} from 'normalizr';
 import {createSelector} from 'reselect';
 import {isDefined} from '../../helpers/commonUtils';
 import {cityWithoutCountry} from '../../helpers/formatters';
+import {RootState} from '../../reducers/rootReducer';
 import {Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {
   SelectedTreeEntities,
@@ -9,7 +10,11 @@ import {
   SelectionTreeEntities,
   SelectionTreeMeter,
 } from '../../state/selection-tree/selectionTreeModels';
-import {isSelectedCity, isSelectedMeter} from '../../state/ui/graph/measurement/measurementActions';
+import {
+  isSelectedCity,
+  isSelectedMeter,
+  MeasurementParameters
+} from '../../state/ui/graph/measurement/measurementActions';
 import {uuid} from '../../types/Types';
 import {LegendItem} from './reportModels';
 
@@ -45,4 +50,27 @@ export const getLegendItems =
 
       return normalize([...cityLines, ...meterLines], lineSchema);
     },
+  );
+
+export const getMeasurementParameters =
+  createSelector<RootState, RootState, MeasurementParameters>(
+    (state) => state,
+    ({
+      report: {resolution, selectedListItems},
+      userSelection: {userSelection: {selectionParameters}},
+      selectionTree: {entities: selectionTreeEntities},
+      ui: {
+        indicator: {
+          selectedIndicators: {report: selectedIndicators},
+          selectedQuantities: quantities,
+        },
+      },
+    }) => ({
+      quantities,
+      resolution,
+      selectedListItems,
+      selectedIndicators,
+      selectionTreeEntities,
+      selectionParameters,
+    })
   );

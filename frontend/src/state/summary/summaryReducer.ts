@@ -4,7 +4,6 @@ import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../app/routes';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {failureAction, requestAction, successAction} from '../api/apiActions';
 import {
@@ -69,7 +68,6 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
     case LOCATION_CHANGE:
       return getPathname(action) !== routes.searchResult ? initialState : state;
     case SEARCH:
-    case LOGOUT_USER:
       return initialState;
     default:
       return resetReducer(state, action, initialState);

@@ -42,7 +42,7 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
     case DESELECT_SELECTION:
     case RESET_SELECTION:
     case LOGOUT_USER:
-      return {...initialState};
+      return initialState;
     default:
       return state;
   }

@@ -14,6 +14,8 @@ import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
 import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
 import {summary} from '../state/summary/summaryReducer';
+import {MeasurementState} from '../state/ui/graph/measurement/measurementModels';
+import {measurement} from '../state/ui/graph/measurement/measurementReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {UserSelectionState} from '../state/user-selection/userSelectionModels';
 import {userSelection} from '../state/user-selection/userSelectionReducer';
@@ -35,6 +37,7 @@ export interface RootState {
   dashboard: DashboardState;
   routing: RouterState;
   report: ReportState;
+  measurement: MeasurementState;
   language: LanguageState;
   userSelection: UserSelectionState;
   ui: UiState;
@@ -67,6 +70,7 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     dashboard,
     routing,
     report,
+    measurement,
     language,
     userSelection,
     summary,

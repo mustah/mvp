@@ -1,6 +1,17 @@
+import * as React from 'react';
 import {uuid} from '../../../../types/Types';
+import {GraphContents} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
-import {allQuantities, ExistingReadings, Measurement, Medium, Quantity, Reading} from './measurementModels';
+import {toGraphContents} from './graphContentsMapper';
+import {
+  allQuantities,
+  ExistingReadings,
+  Measurement,
+  MeasurementResponses,
+  Medium,
+  Quantity,
+  Reading
+} from './measurementModels';
 
 export interface MeasurementTableData {
   readings: ExistingReadings;
@@ -35,3 +46,6 @@ export const groupMeasurementsByDate =
       quantities: quantities.filter((q) => quantitiesFoundInResponse.has(q)),
     };
   };
+
+export const getGraphContents = (responses: MeasurementResponses): GraphContents =>
+  React.useMemo<GraphContents>(() => toGraphContents(responses), [responses]);

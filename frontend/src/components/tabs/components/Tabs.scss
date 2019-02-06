@@ -46,6 +46,35 @@
     }
   }
 
+  &.ReportTabs, &.MeterTabs {
+    .TabList {
+      justify-content: space-between;
+      height: 44px;
+
+      .Tabs-DropdownMenus {
+        align-self: center;
+        margin-top: 1px;
+      }
+    }
+  }
+
+  &.MeterTabs {
+    .Tabs-DropdownMenus {
+      display: none;
+
+      &.show {
+        display: flex;
+      }
+    }
+  }
+
+  &.ReportTabs {
+    .TabList {
+      padding-right: $space;
+      height: 64px;
+    }
+  }
+
   .TabContent {
     display: none;
 

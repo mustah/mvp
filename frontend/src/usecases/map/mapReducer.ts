@@ -2,7 +2,7 @@ import {EmptyAction} from 'react-redux-typescript';
 import {GeoPosition} from '../../state/domain-models/location/locationModels';
 import {Action, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
-import {CLOSE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG, CENTER_MAP} from './mapActions';
+import {CENTER_MAP, CLOSE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG} from './mapActions';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
@@ -37,7 +37,7 @@ export const map = (
         viewCenter: (action as Action<GeoPosition>).payload,
       };
     case LOGOUT_USER:
-      return {...initialState};
+      return initialState;
     default:
       return state;
   }

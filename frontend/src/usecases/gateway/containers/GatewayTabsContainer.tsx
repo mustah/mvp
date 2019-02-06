@@ -11,6 +11,7 @@ import {withMapMarkersFetcher} from '../../map/helper/mapMarkersEnhancer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/mapMarkerActions';
 import {getBounds, getGatewayLowConfidenceTextInfo, getSelectedMapMarker} from '../../map/mapSelectors';
+import {selectResolution} from '../../report/reportActions';
 import {GatewayTabs} from '../components/GatewayTabs';
 
 const mapStateToProps =
@@ -19,6 +20,7 @@ const mapStateToProps =
       ui: {tabs},
       map,
       domainModels: {gatewayMapMarkers},
+      report: {resolution},
       userSelection: {userSelection},
     }: RootState = rootState;
     return ({
@@ -28,6 +30,7 @@ const mapStateToProps =
       selectedTab: getSelectedTab(tabs.collection),
       mapMarkers: getDomainModel(gatewayMapMarkers),
       parameters: getGatewayParameters({userSelection}),
+      resolution,
       selectedId: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),
@@ -39,6 +42,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: clearErrorGatewayMapMarkers,
   close: closeClusterDialog,
   fetchMapMarkers: fetchGatewayMapMarkers,
+  selectResolution,
 }, dispatch);
 
 export const GatewayTabsContainer =

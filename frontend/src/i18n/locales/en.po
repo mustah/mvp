@@ -492,9 +492,6 @@ msgstr "remove all"
 msgid "value"
 msgstr "value"
 
-msgid "select meters to include in graph"
-msgstr "select meters to include in graph"
-
 msgid "graph"
 msgstr "graph"
 
