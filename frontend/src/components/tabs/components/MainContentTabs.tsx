@@ -16,7 +16,7 @@ import {
 } from '../../../types/Types';
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
-import {GraphTabContainer} from '../../../usecases/report/containers/GraphTabContainer';
+import {GraphContainer, MeasurementsContainer} from '../../../usecases/report/containers/MeasurementsContainer';
 import {TemporalResolution} from '../../dates/dateModels';
 import {ResolutionSelection} from '../../dates/ResolutionSelection';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
@@ -86,6 +86,7 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
     selectedId,
   };
 
+  const show = selectedTab === TabName.graph || selectedTab === TabName.values;
   return (
     <Tabs className={className}>
       <TabTopBar>
@@ -93,8 +94,9 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
           <Tab tab={TabName.list} title={translate('list')}/>
           <Tab tab={TabName.map} title={translate('map')}/>
           <Tab tab={TabName.graph} title={translate('graph')}/>
+          <Tab tab={TabName.values} title={translate('measurements')}/>
         </TabHeaders>
-        <RowRight className={classNames('Tabs-DropdownMenus', {show: TabName.graph === selectedTab})}>
+        <RowRight className={classNames('Tabs-DropdownMenus', {show})}>
           <ResolutionSelection
             resolution={resolution}
             selectResolution={selectResolution}
@@ -113,7 +115,10 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
         </Loader>
       </TabContent>
       <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-        {selectedTab === TabName.graph && <GraphTabContainer/>}
+        {selectedTab === TabName.graph && <GraphContainer/>}
+      </TabContent>
+      <TabContent tab={TabName.values} selectedTab={selectedTab}>
+        {selectedTab === TabName.values && <MeasurementsContainer/>}
       </TabContent>
     </Tabs>
   );

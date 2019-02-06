@@ -1,44 +1,27 @@
 import * as React from 'react';
 import {Loader} from '../../../../components/loading/Loader';
-import {useFetchSelectionTree} from '../../../../state/selection-tree/fetchSelectionTreeHook';
-import {getMeterIdsWithLimit} from '../../../../state/selection-tree/selectionTreeSelectors';
+import {useFetchMeasurements} from '../../../../state/ui/graph/measurement/measurementHook';
 import {getGraphContents} from '../../../../state/ui/graph/measurement/measurementSelectors';
-import {GraphContainer} from '../../containers/GraphContainer';
-import {DispatchToProps, StateToProps} from '../../containers/GraphTabContainer';
+import {LineChartsContainer} from '../../containers/LineChartsContainer';
+import {DispatchToProps, StateToProps} from '../../containers/MeasurementsContainer';
 import {GraphContents} from '../../reportModels';
 
 export type Props = StateToProps & DispatchToProps;
 
-export const Graph = ({
-  clearError,
-  fetchSelectionTree,
-  fetchMeasurements,
-  hiddenLines,
-  measurement,
-  parameters,
-  requestParameters,
-  selectionTree,
-  showMetersInGraph
-}: Props) => {
-  useFetchSelectionTree({parameters, fetchSelectionTree});
+export const Graph = (props: Props) => {
+  const {
+    clearError,
+    hiddenLines,
+    measurement: {error, isFetching, measurementResponse},
+    selectionTree,
+  } = props;
+  useFetchMeasurements(props);
 
-  React.useEffect(() => {
-    if (selectionTree.isSuccessfullyFetched) {
-      showMetersInGraph(getMeterIdsWithLimit(selectionTree.entities.meters));
-    }
-  }, [selectionTree]);
-
-  React.useEffect(() => {
-    fetchMeasurements(requestParameters);
-  }, [requestParameters, requestParameters.selectedListItems, selectionTree.isSuccessfullyFetched]);
-
-  const graphContents: GraphContents = getGraphContents(measurement.measurementResponse);
-
-  const isFetching = measurement.isFetching || selectionTree.isFetching;
+  const graphContents: GraphContents = getGraphContents(measurementResponse);
 
   return (
-    <Loader isFetching={isFetching} error={measurement.error} clearError={clearError}>
-      <GraphContainer graphContents={graphContents} outerHiddenKeys={hiddenLines}/>
+    <Loader isFetching={isFetching || selectionTree.isFetching} error={error} clearError={clearError}>
+      <LineChartsContainer graphContents={graphContents} outerHiddenKeys={hiddenLines}/>
     </Loader>
   );
 };

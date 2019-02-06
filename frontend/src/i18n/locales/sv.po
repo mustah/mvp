@@ -182,6 +182,9 @@ msgstr "inga mätvärden förväntades under den valda perioden"
 msgid "no meters"
 msgstr "inga mätare"
 
+msgid "no measurements"
+msgstr "inga mätvärden"
+
 msgid "yes"
 msgstr "ja"
 

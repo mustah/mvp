@@ -182,6 +182,9 @@ msgstr "no measurements expected for the selected period"
 msgid "no meters"
 msgstr "no meters"
 
+msgid "no measurements"
+msgstr "no measurements"
+
 msgid "yes"
 msgstr "yes"
 

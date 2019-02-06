@@ -6,7 +6,6 @@ import {paperStyle} from '../../../app/themes';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {ResolutionProps, ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {withContent} from '../../../components/hoc/withContent';
-import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -19,9 +18,9 @@ import {PageLayout} from '../../../containers/PageLayout';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {translate} from '../../../services/translationService';
 import {getMedia} from '../../../state/selection-tree/selectionTreeSelectors';
-import {Measurements, MeasurementState, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectQuantities, toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {changeTabReport} from '../../../state/ui/tabs/tabsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
@@ -30,17 +29,15 @@ import {OnSelectResolution} from '../../../state/user-selection/userSelectionMod
 import {CallbackWith, HasContent} from '../../../types/Types';
 import {ReportIndicatorProps} from '../components/indicators/ReportIndicatorWidget';
 import {ReportIndicatorWidgets, SelectedIndicatorWidgetProps} from '../components/indicators/ReportIndicatorWidgets';
-import {MeasurementList} from '../components/MeasurementList';
 import {QuantityDropdown} from '../components/QuantityDropdown';
 import {selectResolution} from '../reportActions';
 import {reportIndicators} from '../reportModels';
-import {GraphTabContainer} from './GraphTabContainer';
 import {LegendContainer} from './LegendContainer';
+import {GraphContainer, MeasurementsContainer} from './MeasurementsContainer';
 import './ReportContainer.scss';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   enabledIndicatorTypes: Set<Medium>;
-  measurement: MeasurementState;
   resolution: TemporalResolution;
   selectedQuantities: Quantity[];
   selectedTab: TabName;
@@ -55,8 +52,6 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
-const Measurements = withEmptyContent<Measurements & WithEmptyContentProps>(MeasurementList);
-
 const ResolutionDropdown = withContent<ResolutionProps & HasContent>(ResolutionSelection);
 
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16, paddingTop: 0};
@@ -64,7 +59,6 @@ const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 16, padding
 const ReportComponent = ({
   changeTab,
   enabledIndicatorTypes,
-  measurement: {measurementResponse: {measurements}},
   resolution,
   selectedTab,
   selectedIndicators,
@@ -99,7 +93,7 @@ const ReportComponent = ({
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
               <Tab tab={TabName.graph} title={translate('graph')}/>
-              <Tab tab={TabName.list} title={translate('table')}/>
+              <Tab tab={TabName.values} title={translate('measurements')}/>
             </TabHeaders>
             <RowRight className="Tabs-DropdownMenus">
               <ResolutionDropdown
@@ -115,14 +109,10 @@ const ReportComponent = ({
             </RowRight>
           </TabTopBar>
           <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-            <GraphTabContainer/>
+            <GraphContainer/>
           </TabContent>
-          <TabContent tab={TabName.list} selectedTab={selectedTab}>
-            <Measurements
-              hasContent={measurements.length > 0}
-              measurements={measurements}
-              noContentText={firstUpperTranslated('no meters')}
-            />
+          <TabContent tab={TabName.values} selectedTab={selectedTab}>
+            <MeasurementsContainer/>
           </TabContent>
         </Tabs>
         <LegendContainer/>
@@ -134,7 +124,6 @@ const ReportComponent = ({
 const mapStateToProps =
   (rootState: RootState): StateToProps => {
     const {
-      measurement,
       report: {resolution, selectedListItems},
       selectionTree: {entities},
       ui: {
@@ -147,7 +136,6 @@ const mapStateToProps =
     }: RootState = rootState;
     return ({
       enabledIndicatorTypes: getMedia({selectedListItems, entities}),
-      measurement,
       resolution,
       selectedQuantities,
       selectedIndicators: report,
