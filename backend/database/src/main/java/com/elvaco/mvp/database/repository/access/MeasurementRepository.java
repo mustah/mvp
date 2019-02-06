@@ -29,9 +29,11 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Record5;
 import org.jooq.ResultQuery;
+import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
@@ -48,7 +50,9 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jooq.impl.DSL.avg;
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lead;
+import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.trueCondition;
 
 public class MeasurementRepository implements Measurements {
@@ -258,13 +262,17 @@ public class MeasurementRepository implements Measurements {
     MeasurementParameter parameter,
     String dateFieldName
   ) {
-    Table<Record> dateSerieTable = dateSerieFor(parameter).as(dateFieldName);
-    Field<OffsetDateTime> valueDate = DSL.field(dateFieldName, OffsetDateTime.class);
+    Table<Record> dateSerieTable = dateSerieFor(parameter);
+    SelectJoinStep<Record1<OffsetDateTime>> joinStep = select(field(
+      dateFieldName + " at time zone 'UTC'",
+      OffsetDateTime.class
+    ).as(dateFieldName)).from(dateSerieTable);
 
     Condition quantityCondition = parameter.getQuantities().isEmpty()
       ? trueCondition()
       : QUANTITY.NAME.in(parameter.getQuantities().stream().map(q -> q.name).collect(toList()));
 
+    Field<OffsetDateTime> valueDate = joinStep.field(dateFieldName, OffsetDateTime.class);
     return LOGICAL_METER
       .join(METER_DEFINITION_QUANTITIES)
       .on(LOGICAL_METER.METER_DEFINITION_TYPE.eq(METER_DEFINITION_QUANTITIES.METER_DEFINITION_TYPE))
@@ -273,7 +281,7 @@ public class MeasurementRepository implements Measurements {
       .innerJoin(PHYSICAL_METER)
       .on(LOGICAL_METER.ID.eq(PHYSICAL_METER.LOGICAL_METER_ID)
         .and(LOGICAL_METER.ORGANISATION_ID.eq(PHYSICAL_METER.ORGANISATION_ID)))
-      .rightOuterJoin(dateSerieTable)
+      .rightOuterJoin(joinStep)
       .on(periodContains(PHYSICAL_METER.ACTIVE_PERIOD, valueDate))
       .leftJoin(MEASUREMENT)
       .on(MEASUREMENT.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID)
@@ -295,9 +303,13 @@ public class MeasurementRepository implements Measurements {
   private Table<Record> dateSerieFor(MeasurementParameter parameter) {
     String expr;
     if (parameter.getQuantities().get(0).isConsumption()) {
-      expr = "generate_series({0}, {1} + cast({2} as interval), {2}::interval)";
+      expr = "generate_series({0} at time zone 'UTC',"
+        + "{1} at time zone 'UTC' + cast({2} as interval),"
+        + "{2}::interval) as " + VALUE_DATE_FIELD_NAME;
     } else {
-      expr = "generate_series({0}, {1}, {2}::interval)";
+      expr = "generate_series({0} at time zone 'UTC',"
+        + "{1} at time zone 'UTC',"
+        + "{2}::interval) as " + VALUE_DATE_FIELD_NAME;
     }
     return DSL.table(
       expr,
