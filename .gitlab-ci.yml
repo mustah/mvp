@@ -146,7 +146,7 @@ build:
   dependencies:
     - prepare:version
   script:
-    - gradle classes checkstyle spotbugsMain test assemble -PisCI
+    - gradle classes checkstyle spotbugs test assemble -PisCI
   artifacts:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
