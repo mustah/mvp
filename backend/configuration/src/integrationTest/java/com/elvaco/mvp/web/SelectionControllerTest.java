@@ -452,7 +452,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void wildcard_organisation() {
-    var provideOrganisation = context().organisation2();
+    context().organisation2();
 
     assertThat(asSuperAdmin()
       .getPage(
