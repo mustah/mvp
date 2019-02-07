@@ -35,6 +35,7 @@ import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.ALARM;
@@ -1015,6 +1016,52 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
     assertThat(paginatedLogicalMeters.getContent().get(0).address)
       .isEqualTo("aaa");
+  }
+
+  @Test
+  public void alwaysShowLatestStatusEvenIfSelectionPeriodIsBefore() {
+    var interestingMeter = given(physicalMeter());
+
+    given(statusLog(interestingMeter).status(OK).start(context().now().minusDays(3))
+      .stop(context().now().minusDays(1)));
+    given(statusLog(interestingMeter).status(ERROR).start(context().now().minusDays(1)));
+
+
+    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+      .getPage(
+        Url.builder()
+          .path("/meters")
+          .parameter(AFTER, context().now().minusDays(3))
+          .parameter(BEFORE, context().now().minusDays(2))
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+
+    PagedLogicalMeterDto result = paginatedLogicalMeters.getContent().get(0);
+    assertThat(result.id).isEqualTo(interestingMeter.id);
+    assertThat(result.isReported).isEqualTo(true);
+
+    given(statusLog(interestingMeter).status(OK).start(context().now().minusHours(6)));
+
+    paginatedLogicalMeters = asUser()
+      .getPage(
+        Url.builder()
+          .path("/meters")
+          .parameter(AFTER, context().now().minusDays(3))
+          .parameter(BEFORE, context().now().minusDays(2))
+          .build(),
+        PagedLogicalMeterDto.class
+      );
+
+    assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
+    assertThat(paginatedLogicalMeters.getTotalPages()).isEqualTo(1);
+
+    result = paginatedLogicalMeters.getContent().get(0);
+    assertThat(result.id).isEqualTo(interestingMeter.id);
+    assertThat(result.isReported).isEqualTo(false);
   }
 
   private void assertNothingIsRemoved(LogicalMeter meter) {

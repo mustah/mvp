@@ -50,7 +50,6 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
     if (start == null || stop == null) {
       return null;
     }
-    return METER_STATUS_LOG.start.before(stop)
-      .and(METER_STATUS_LOG.stop.isNull().or(METER_STATUS_LOG.stop.after(start)));
+    return METER_STATUS_LOG.stop.isNull();
   }
 }

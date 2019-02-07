@@ -1,7 +1,5 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import java.time.OffsetDateTime;
-
 import com.elvaco.mvp.core.filter.PeriodFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -24,11 +22,7 @@ class PhysicalMeterStatusLogFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    OffsetDateTime stop = filter.getPeriod().stop.toOffsetDateTime();
-
-    condition = PHYSICAL_METER_STATUS_LOG.START.lessThan(stop)
-      .and(PHYSICAL_METER_STATUS_LOG.STOP.isNull()
-        .or(PHYSICAL_METER_STATUS_LOG.STOP.greaterOrEqual(stop)));
+    condition = PHYSICAL_METER_STATUS_LOG.STOP.isNull();
   }
 
   @Override
