@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import java.time.OffsetDateTime;
 import java.util.Collection;
 
 import com.elvaco.mvp.core.filter.OrganisationIdFilter;
@@ -50,12 +49,7 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    OffsetDateTime stop = filter.getPeriod().stop.toOffsetDateTime();
-
-    gatewayStatusLogCondition =
-      GATEWAY_STATUS_LOG.START.lessThan(stop)
-        .and(GATEWAY_STATUS_LOG.STOP.isNull()
-          .or(GATEWAY_STATUS_LOG.STOP.greaterOrEqual(stop)));
+    gatewayStatusLogCondition = GATEWAY_STATUS_LOG.STOP.isNull();
   }
 
   @Override

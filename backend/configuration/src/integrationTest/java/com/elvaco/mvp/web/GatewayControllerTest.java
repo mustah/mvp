@@ -109,7 +109,7 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void fetchGatewayAndStatusForPreviousMonth() {
+  public void fetchGatewayAndStatusForPreviousMonthContainsCurrentStatus() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
@@ -153,7 +153,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .collect(toList());
 
     assertThat(gatewayIds).containsExactlyInAnyOrder(
-      new IdStatus(gateway1.id, OK.name),
+      new IdStatus(gateway1.id, WARNING.name),
       new IdStatus(gateway2.id, OK.name)
     );
   }
