@@ -690,8 +690,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearch_SecondaryAddress() {
-    given(physicalMeter().address("123"));
-    given(physicalMeter().address("456"));
+    //Note: We don't want to accidentally match the external IDs, so we set them explicitly here
+    given(
+      logicalMeter().externalId("externalId1"),
+      physicalMeter().externalId("externalId1").address("123")
+    );
+    given(
+      logicalMeter().externalId("externalId2"),
+      physicalMeter().externalId("externalId2").address("456")
+    );
 
     Page<PagedLogicalMeterDto> contains = asUser()
       .getPage("/meters?w=23", PagedLogicalMeterDto.class);
