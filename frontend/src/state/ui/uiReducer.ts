@@ -9,6 +9,8 @@ import {SelectionTreeUiState} from './selection-tree/selectionTreeModels';
 import {selectionTree} from './selection-tree/selectionTreeReducer';
 import {TabsState} from './tabs/tabsModels';
 import {tabs} from './tabs/tabsReducer';
+import {ToolbarState} from './toolbar/toolbarModels';
+import {toolbar} from './toolbar/toolbarReducer';
 
 export interface UiState {
   indicator: IndicatorState;
@@ -17,6 +19,7 @@ export interface UiState {
   selectionTree: SelectionTreeUiState;
   sideMenu: SideMenuState;
   tabs: TabsState;
+  toolbar: ToolbarState;
 }
 
 export const ui = combineReducers<UiState>({
@@ -26,4 +29,5 @@ export const ui = combineReducers<UiState>({
   selectionTree,
   sideMenu,
   tabs,
+  toolbar,
 });

@@ -33,7 +33,7 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
-  listItemHover: '#e6f8ff',
+  listItemHover: '#e1f5fe',
   selectedListItem: '#b3ebff',
 };
 

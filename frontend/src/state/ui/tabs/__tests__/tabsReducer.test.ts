@@ -1,4 +1,4 @@
-import {changeTabGateway, changeTabReport, changeTabMeter} from '../tabsActions';
+import {changeTabGateway, changeTabMeter, changeTabReport} from '../tabsActions';
 import {TabName, TabsState} from '../tabsModels';
 import {initialState, tabs} from '../tabsReducer';
 

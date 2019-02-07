@@ -7,7 +7,7 @@ import {TemporalResolution} from '../../../components/dates/dateModels';
 import {ResolutionProps, ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {withContent} from '../../../components/hoc/withContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
-import {Row, RowRight} from '../../../components/layouts/row/Row';
+import {Row, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
@@ -34,7 +34,6 @@ import {selectResolution} from '../reportActions';
 import {reportIndicators} from '../reportModels';
 import {LegendContainer} from './LegendContainer';
 import {GraphContainer, MeasurementsContainer} from './MeasurementsContainer';
-import './ReportContainer.scss';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   enabledIndicatorTypes: Set<Medium>;
@@ -79,14 +78,14 @@ const ReportComponent = ({
         </Row>
       </Row>
 
-      <Row className="ReportContent-Container">
+      <RowSpaceBetween>
         <ReportIndicatorWidgets
           indicators={indicators}
           selectedIndicators={selectedIndicators}
           onClick={toggleReportIndicatorWidget}
           enabledIndicatorTypes={enabledIndicatorTypes}
         />
-      </Row>
+      </RowSpaceBetween>
 
       <Paper style={contentStyle}>
         <Tabs className="ReportTabs">

@@ -1,0 +1,23 @@
+@import "../../../app/variables";
+
+.Toolbar {
+  height: 48px;
+  border-bottom: 1px solid $border-color;
+
+  .ToolbarIconButton {
+
+    &:hover {
+      background-color: $primary-bg-hover !important;
+
+      svg {
+        fill: $blue-A400 !important;
+      }
+    }
+
+    &.isSelected {
+      svg {
+        fill: $blue-A400 !important;
+      }
+    }
+  }
+}

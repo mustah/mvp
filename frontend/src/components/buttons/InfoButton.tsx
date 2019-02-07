@@ -11,7 +11,7 @@ export interface InfoButtonProps {
 }
 
 export const InfoButton = ({color, iconStyle, onClick}: InfoButtonProps) => (
-  <IconButton onClick={onClick} className="InfoButton" style={iconStyle}>
+  <IconButton onClick={onClick} style={iconStyle}>
     <ActionInfoOutline style={iconStyle} color={color || colors.lightBlack} hoverColor={colors.iconHover}/>
   </IconButton>
 );

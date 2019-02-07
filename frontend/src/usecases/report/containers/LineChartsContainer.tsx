@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Column} from '../../../components/layouts/column/Column';
+import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {DispatchToProps} from '../../../components/tabs/components/MainContentTabs';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {toggle} from '../../../helpers/collections';
@@ -30,7 +30,6 @@ import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
 import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/graph/Dot';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
-import './LineChartsContainer.scss';
 
 export interface GraphProps {
   outerHiddenKeys: uuid[];
@@ -110,7 +109,7 @@ const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0}
 
 const LineChartComponent =
   ({content, data, key, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => (
-    <Column className="LineChartsContainer" key={key}>
+    <ColumnCenter className="align-items" key={key}>
       <ResponsiveContainer aspect={2.5} width="95%" height="99%">
         <LineChart
           width={10}
@@ -133,7 +132,7 @@ const LineChartComponent =
         </LineChart>
       </ResponsiveContainer>
       <TimestampInfoMessage/>
-    </Column>
+    </ColumnCenter>
   );
 
 type Props = GraphProps & StateToProps;
