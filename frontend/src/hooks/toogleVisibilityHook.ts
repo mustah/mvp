@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Callback, Visible} from '../../../types/Types';
+import {Callback, Visible} from '../types/Types';
 
 interface Props extends Visible {
   showHide: Callback;

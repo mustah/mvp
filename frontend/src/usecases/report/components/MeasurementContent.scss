@@ -1,0 +1,11 @@
+@import "../../../app/variables";
+
+.MeasurementContent {
+  .LegendContainer {
+    display: none;
+
+    &.isVisible {
+      display: flex;
+    }
+  }
+}

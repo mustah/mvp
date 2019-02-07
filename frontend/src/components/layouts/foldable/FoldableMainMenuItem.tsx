@@ -7,7 +7,7 @@ import {Column} from '../column/Column';
 import {Row, RowMiddle} from '../row/Row';
 import {FoldableProps} from './Foldable';
 import './Foldable.scss';
-import {useToggleVisibility} from './foldableHook';
+import {useToggleVisibility} from '../../../hooks/toogleVisibilityHook';
 import './FoldableMainMenuItem.scss';
 
 interface Props extends FoldableProps, Required<Selectable> {

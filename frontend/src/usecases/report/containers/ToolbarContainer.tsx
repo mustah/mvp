@@ -5,6 +5,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {OnSelectResolution} from '../../../state/user-selection/userSelectionModels';
+import {OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
 import {selectResolution} from '../reportActions';
 
@@ -18,7 +19,11 @@ interface DispatchToProps {
   selectResolution: OnSelectResolution;
 }
 
-export type Props = StateToProps & DispatchToProps;
+interface OwnProps {
+  toggleLegend?: OnClick;
+}
+
+export type Props = StateToProps & DispatchToProps & OwnProps;
 
 const mapStateToProps = ({
   report: {resolution},
@@ -32,4 +37,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const ToolbarContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Toolbar);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(Toolbar);

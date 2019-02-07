@@ -4,19 +4,25 @@
   height: 48px;
   border-bottom: 1px solid $border-color;
 
-  .ToolbarIconButton {
+  .Toolbar-ViewSettings {
+    border-right: 1px solid $border-color;
+    padding-right: $space;
+    margin-right: $space;
 
-    &:hover {
-      background-color: $primary-bg-hover !important;
+    .ToolbarIconButton {
 
-      svg {
-        fill: $blue-A400 !important;
+      &:hover {
+        background-color: $primary-bg-hover !important;
+
+        svg {
+          fill: $blue-A400 !important;
+        }
       }
-    }
 
-    &.isSelected {
-      svg {
-        fill: $blue-A400 !important;
+      &.isSelected {
+        svg {
+          fill: $blue-A400 !important;
+        }
       }
     }
   }
