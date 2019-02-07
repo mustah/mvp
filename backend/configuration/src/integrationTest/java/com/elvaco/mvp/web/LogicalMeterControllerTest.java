@@ -895,7 +895,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     var response = asUser()
       .getPage(
-        metersUrl(context().now().plusHours(4), context().now().plusHours(5)),
+        metersUrl(context().now().plusHours(3), context().now().plusHours(3).plusMinutes(30)),
         PagedLogicalMeterDto.class
       );
 
