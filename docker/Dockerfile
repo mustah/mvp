@@ -2,8 +2,8 @@ FROM openjdk:10-jre
 RUN mkdir -p /app
 RUN apt-get -y update && apt-get -y install curl
 ARG MVP_APPVER
-ARG APM_VERSION
-ARG APM_SERVER
+ARG APM_VERSION=1.1.0
+ARG APM_SERVER=localhost
 RUN groupadd -g 4000 mvp && \
 	useradd -r -u 4000 -g mvp mvp
 COPY ./backend/configuration/build/distributions/mvp-$MVP_APPVER.tar /app/mvp.tar
