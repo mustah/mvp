@@ -1,7 +1,5 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import java.time.OffsetDateTime;
-
 import com.elvaco.mvp.core.filter.PeriodFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -24,11 +22,7 @@ class MeterAlarmLogFilterVisitor extends EmptyFilterVisitor {
 
   @Override
   public void visit(PeriodFilter filter) {
-    OffsetDateTime stop = filter.getPeriod().stop.toOffsetDateTime();
-
-    condition = METER_ALARM_LOG.START.lessThan(stop)
-      .and(METER_ALARM_LOG.STOP.isNull()
-        .or(METER_ALARM_LOG.STOP.greaterOrEqual(stop)));
+    condition = METER_ALARM_LOG.STOP.isNull();
   }
 
   @Override
