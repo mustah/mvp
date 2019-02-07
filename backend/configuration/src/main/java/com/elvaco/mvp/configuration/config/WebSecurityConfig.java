@@ -62,11 +62,17 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(API_V1 + "/geocodes/**").permitAll()
       .antMatchers(API_V1 + "/logout").permitAll();
 
+    String policyDirectives = "default-src 'self';"
+      + "img-src 'self' https://*.openstreetmap.se https://*.basemaps.cartocdn.com;"
+      + "font-src 'self' data:;"
+      + "style-src 'self' 'unsafe-inline';"
+      + "object-src 'none'";
+
     http.headers()
       .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN)
       .and()
       .frameOptions().deny()
-      .contentSecurityPolicy("default-src 'self'")
+      .contentSecurityPolicy(policyDirectives)
       .and()
       .httpStrictTransportSecurity();
 
