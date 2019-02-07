@@ -1,0 +1,10 @@
+@import "../../app/variables";
+
+.Popover-Legend {
+  &.PopoverMenu-Component {
+    [role=menu] {
+      padding: 0 !important;
+    }
+  }
+}
+

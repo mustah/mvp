@@ -10,6 +10,7 @@ import {Toolbar} from '../components/Toolbar';
 import {selectResolution} from '../reportActions';
 
 interface StateToProps {
+  hasMeasurements: boolean;
   resolution: TemporalResolution;
   view: ToolbarView;
 }
@@ -27,9 +28,10 @@ export type Props = StateToProps & DispatchToProps & OwnProps;
 
 const mapStateToProps = ({
   report: {resolution},
+  measurement: {measurementResponse: {measurements}},
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
-  ({resolution, view});
+  ({resolution, view, hasMeasurements: measurements.length > 0});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView,

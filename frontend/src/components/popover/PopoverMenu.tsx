@@ -5,13 +5,20 @@ import * as React from 'react';
 import {popoverStyle} from '../../app/themes';
 import {Clickable, OnClick, RenderFunction} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
+import './PopoverMenu.scss';
 import origin = __MaterialUI.propTypes.origin;
+
+export interface IconProps {
+  disabled?: boolean;
+}
 
 interface Props {
   renderPopoverContent: RenderFunction<OnClick>;
   IconComponent: React.StatelessComponent<Clickable>;
+  iconProps?: IconProps;
   onRequestClose?: OnClick;
   className?: string;
+  popoverClassName?: string;
   anchorOrigin?: origin;
   targetOrigin?: origin;
 }
@@ -35,12 +42,21 @@ export class PopoverMenu extends React.Component<Props, State> {
 
   render() {
     const {isOpen, anchorElement} = this.state;
-    const {IconComponent, className, anchorOrigin, targetOrigin, renderPopoverContent} = this.props;
+    const {
+      IconComponent,
+      iconProps,
+      className,
+      popoverClassName,
+      anchorOrigin,
+      targetOrigin,
+      renderPopoverContent
+    } = this.props;
 
     return (
       <Row className={classNames('PopoverMenu', className)}>
-        <IconComponent onClick={this.onOpenMenu}/>
+        <IconComponent {...iconProps} onClick={this.onOpenMenu}/>
         <Popover
+          className={classNames('PopoverMenu-Component', popoverClassName)}
           open={isOpen}
           anchorEl={anchorElement}
           anchorOrigin={anchorOrigin}

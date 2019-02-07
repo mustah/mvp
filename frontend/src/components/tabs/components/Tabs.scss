@@ -53,11 +53,12 @@
     .TabList {
       justify-content: space-between;
       height: 44px;
+    }
 
-      .Tabs-DropdownMenus {
-        align-self: center;
-        margin-top: 1px;
-      }
+    .Tabs-DropdownMenus {
+      align-self: center;
+      padding-right: $space;
+      margin-top: 1px;
     }
   }
 

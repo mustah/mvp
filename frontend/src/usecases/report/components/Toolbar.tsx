@@ -9,13 +9,16 @@ import {colors} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {IconReport} from '../../../components/icons/IconReport';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
+import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {Selectable} from '../../../types/Types';
+import {Clickable, Selectable} from '../../../types/Types';
+import {LegendContainer} from '../containers/LegendContainer';
 import {Props} from '../containers/ToolbarContainer';
 import './Toolbar.scss';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import IconButtonProps = __MaterialUI.IconButtonProps;
+import origin = __MaterialUI.propTypes.origin;
 
 const roundedIconStyle: React.CSSProperties = {
   padding: 0,
@@ -45,9 +48,34 @@ const ToolbarActionButton = (props: FlatButtonProps) => (
   />
 );
 
-export const Toolbar = ({changeToolbarView, resolution, selectResolution, toggleLegend, view}: Props) => {
+const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
+  <ToolbarActionButton
+    disabled={disabled}
+    onClick={onClick}
+    icon={<ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>}
+    label={firstUpperTranslated('legend')}
+    labelStyle={{color: disabled ? colors.borderColor : colors.lightBlack}}
+  />
+);
+
+const anchorOrigin: origin = {horizontal: 'left', vertical: 'top'};
+const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
+
+const renderPopoverContent = () => (<LegendContainer/>);
+
+export const Toolbar = ({
+  changeToolbarView,
+  hasMeasurements,
+  resolution,
+  selectResolution,
+  toggleLegend,
+  view
+}: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
+
+  const legendIconProps: IconProps = {disabled: !hasMeasurements};
+
   return (
     <RowSpaceBetween className="Toolbar">
       <Row>
@@ -70,11 +98,6 @@ export const Toolbar = ({changeToolbarView, resolution, selectResolution, toggle
 
         <RowMiddle>
           <ToolbarActionButton
-            icon={<ContentFilterList color={colors.lightBlack}/>}
-            label={firstUpperTranslated('legend')}
-            onClick={toggleLegend}
-          />
-          <ToolbarActionButton
             disabled={true}
             icon={<ContentSave color={colors.borderColor}/>}
             label={firstUpperTranslated('save')}
@@ -85,6 +108,14 @@ export const Toolbar = ({changeToolbarView, resolution, selectResolution, toggle
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
         <ResolutionSelection resolution={resolution} selectResolution={selectResolution}/>
+        <PopoverMenu
+          popoverClassName="Popover-Legend"
+          IconComponent={LegendActionButton}
+          iconProps={legendIconProps}
+          anchorOrigin={anchorOrigin}
+          targetOrigin={targetOrigin}
+          renderPopoverContent={renderPopoverContent}
+        />
       </RowRight>
     </RowSpaceBetween>
   );
