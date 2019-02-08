@@ -4,9 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,12 +27,13 @@ import org.hibernate.envers.Audited;
 @NoArgsConstructor
 @AllArgsConstructor
 @Audited
-public class MeterDefinitionEntity extends IdentifiableType<Integer> {
+public class MeterDefinitionEntity extends IdentifiableType<Long> {
 
   private static final long serialVersionUID = -8819531921424251045L;
 
   @Id
-  public Integer id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  public Long id;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "organisation_id", nullable = false)
@@ -40,8 +42,7 @@ public class MeterDefinitionEntity extends IdentifiableType<Integer> {
 
   @OneToMany(
     mappedBy = "pk.meterDefinitionId",
-    fetch = FetchType.EAGER,
-    cascade = CascadeType.MERGE
+    fetch = FetchType.EAGER
   )
   public Set<DisplayQuantityEntity> quantities = new HashSet<>();
 
@@ -55,7 +56,7 @@ public class MeterDefinitionEntity extends IdentifiableType<Integer> {
   public boolean autoApply;
 
   @Override
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 }

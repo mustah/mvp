@@ -3,10 +3,8 @@ package com.elvaco.mvp.web.api;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -203,10 +201,5 @@ public class MeasurementController {
   ) {
     return Optional.ofNullable(resolution)
       .orElseGet(() -> TemporalResolution.defaultResolutionFor(Duration.between(start, stop)));
-  }
-
-  @SafeVarargs
-  private static <T> T coalesce(T... things) {
-    return Arrays.stream(things).filter(Objects::nonNull).findFirst().orElse(null);
   }
 }

@@ -15,6 +15,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
@@ -44,6 +45,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final SummaryJpaRepository summaryJpaRepository;
   private final LogicalMeterSortingEntityMapper sortingMapper;
   private final LogicalMeterEntityMapper logicalMeterEntityMapper;
+  private final MeterDefinitions meterDefinitions;
 
   @Override
   public Optional<LogicalMeter> findById(UUID id) {

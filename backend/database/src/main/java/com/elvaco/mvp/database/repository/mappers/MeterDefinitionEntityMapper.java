@@ -3,14 +3,8 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.util.Optional;
 import java.util.Set;
 
-import com.elvaco.mvp.core.access.MediumProvider;
-import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
-import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityEntity;
-import com.elvaco.mvp.database.entity.meter.DisplayQuantityPk;
-import com.elvaco.mvp.database.entity.meter.MediumEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -20,8 +14,8 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class MeterDefinitionEntityMapper {
 
-  private final QuantityEntityMapper quantityEntityMapper;
-  private final MediumProvider mediumProvider;
+  private final MediumEntityMapper mediumEntityMapper;
+  private final DisplayQuantityEntityMapper displayQuantityEntityMapper;
 
   public MeterDefinitionEntity toEntity(MeterDefinition domainModel) {
     return new MeterDefinitionEntity(
@@ -31,7 +25,7 @@ public class MeterDefinitionEntityMapper {
         .orElse(null),
       toDisplayQuantityEntities(domainModel),
       domainModel.name,
-      toMediumEntity(domainModel.medium),
+      mediumEntityMapper.toMediumEntity(domainModel.medium),
       domainModel.autoApply
     );
   }
@@ -43,24 +37,11 @@ public class MeterDefinitionEntityMapper {
         .map(OrganisationEntityMapper::toDomainModel)
         .orElse(null),
       entity.name,
-      toMedium(entity.medium),
+      mediumEntityMapper.toMedium(entity.medium),
       entity.autoApply,
       entity.quantities.stream()
-        .map(this::toDisplayQuantity)
+        .map(displayQuantityEntityMapper::toDisplayQuantity)
         .collect(toSet())
-    );
-  }
-
-  private DisplayQuantity toDisplayQuantity(
-    DisplayQuantityEntity displayQuantityEntity
-  ) {
-    DisplayQuantityPk displayQuantityPk = displayQuantityEntity.getId();
-    Quantity quantity = quantityEntityMapper.toDomainModel(displayQuantityPk.quantity);
-
-    return new DisplayQuantity(
-      quantity,
-      displayQuantityPk.displayMode,
-      displayQuantityEntity.displayUnit
     );
   }
 
@@ -68,32 +49,10 @@ public class MeterDefinitionEntityMapper {
     MeterDefinition domainModel
   ) {
     return domainModel.quantities.stream()
-      .map(displayQuantity -> toDisplayQuantityEntity(domainModel, displayQuantity))
+      .map(displayQuantity -> displayQuantityEntityMapper.toDisplayQuantityEntity(
+        domainModel.id,
+        displayQuantity
+      ))
       .collect(toSet());
-  }
-
-  private DisplayQuantityEntity toDisplayQuantityEntity(
-    MeterDefinition meterDefinition,
-    DisplayQuantity displayQuantity
-  ) {
-    DisplayQuantityPk pk = new DisplayQuantityPk(
-      quantityEntityMapper.toEntity(displayQuantity.quantity),
-      meterDefinition.id,
-      displayQuantity.displayMode
-    );
-    return new DisplayQuantityEntity(
-      pk,
-      displayQuantity.unit,
-      displayQuantity.decimals
-    );
-  }
-
-  private Medium toMedium(MediumEntity mediumEntity) {
-    return mediumProvider.getByNameOrThrow(mediumEntity.name);
-  }
-
-  private MediumEntity toMediumEntity(Medium medium) {
-    Medium existingMedium = mediumProvider.getByNameOrThrow(medium.name);
-    return new MediumEntity(existingMedium.id, existingMedium.name);
   }
 }

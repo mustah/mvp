@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class Medium {
     ELECTRICITY
   );
 
-  public final long id;
+  @Nullable
+  public final Long id;
   public final String name;
 }

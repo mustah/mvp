@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -36,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LogicalMeterEntityMapperTest {
 
   private static final Medium UNKNOWN_MEDIUM = new Medium(
-    0,
+    null,
     Medium.UNKNOWN_MEDIUM
   );
 
@@ -44,14 +45,18 @@ public class LogicalMeterEntityMapperTest {
     .filter(quantity -> quantity.name.equals(name))
     .findAny();
 
+  private static final SystemMeterDefinitionProvider METER_DEFINITION_PROVIDER =
+    medium -> Optional.of(MeterDefinition.UNKNOWN);
+
   private static final MediumProvider MEDIUM_PROVIDER = name -> Optional.of(UNKNOWN_MEDIUM);
 
   private static final LogicalMeterEntityMapper logicalMeterEntityMapper =
     new LogicalMeterEntityMapper(
       new MeterDefinitionEntityMapper(
-        new QuantityEntityMapper(QUANTITY_PROVIDER),
-        MEDIUM_PROVIDER
+        new MediumEntityMapper(MEDIUM_PROVIDER),
+        new DisplayQuantityEntityMapper(new QuantityEntityMapper(QUANTITY_PROVIDER))
       ),
+      METER_DEFINITION_PROVIDER,
       MEDIUM_PROVIDER
     );
 
@@ -111,7 +116,7 @@ public class LogicalMeterEntityMapperTest {
     assertThat(expectedLocation.getCoordinate()).isEqualTo(logicalMeter.location.getCoordinate());
 
     var meterDefinition = new MeterDefinition(
-      0,
+      0L,
       null,
       "speed-o-meter",
       UNKNOWN_MEDIUM,
@@ -149,7 +154,7 @@ public class LogicalMeterEntityMapperTest {
 
     MeterDefinition meterDefinition =
       new MeterDefinition(
-        0,
+        0L,
         null,
         "My energy meter",
         UNKNOWN_MEDIUM,
@@ -193,7 +198,7 @@ public class LogicalMeterEntityMapperTest {
 
     MeterDefinition meterDefinition =
       new MeterDefinition(
-        0,
+        0L,
         null,
         "Energy meter",
         UNKNOWN_MEDIUM,
@@ -231,11 +236,11 @@ public class LogicalMeterEntityMapperTest {
     String name
   ) {
     return new MeterDefinitionEntity(
-      0,
+      0L,
       null,
       singleton(new DisplayQuantityEntity(
         new DisplayQuantityPk(
-          new QuantityEntity(1, quantityName, quantityUnit), 0, DisplayMode.READOUT
+          new QuantityEntity(1, quantityName, quantityUnit), 0L, DisplayMode.READOUT
         ),
         quantityUnit,
         3

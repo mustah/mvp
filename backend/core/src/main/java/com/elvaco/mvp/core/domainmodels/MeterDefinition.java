@@ -1,7 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -19,27 +17,27 @@ import static java.util.Collections.emptySet;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-public class MeterDefinition implements Identifiable<Integer> {
-
-  private static Map<Medium, MeterDefinition> defaultMeterDefinitions = new HashMap<>();
+public class MeterDefinition implements Identifiable<Long> {
 
   public static final MeterDefinition UNKNOWN =
-    newSystemMeterDefinition(1, Medium.UNKNOWN_MEDIUM, emptySet());
+    newSystemMeterDefinition(Medium.UNKNOWN_MEDIUM, emptySet());
   public static final MeterDefinition DEFAULT_DISTRICT_HEATING =
-    newSystemMeterDefinition(2, Medium.DISTRICT_HEATING, DEFAULT_DISTRICT_DISPLAY_QUANTITIES);
+    newSystemMeterDefinition(Medium.DISTRICT_HEATING, DEFAULT_DISTRICT_DISPLAY_QUANTITIES);
   public static final MeterDefinition DEFAULT_DISTRICT_COOLING =
-    newSystemMeterDefinition(3, Medium.DISTRICT_COOLING, DEFAULT_DISTRICT_DISPLAY_QUANTITIES);
+    newSystemMeterDefinition(Medium.DISTRICT_COOLING, DEFAULT_DISTRICT_DISPLAY_QUANTITIES);
   public static final MeterDefinition DEFAULT_ROOM_SENSOR =
-    newSystemMeterDefinition(4, Medium.ROOM_SENSOR, DEFAULT_ROOM_SENSOR_DISPLAY_QUANTITIES);
+    newSystemMeterDefinition(Medium.ROOM_SENSOR, DEFAULT_ROOM_SENSOR_DISPLAY_QUANTITIES);
   public static final MeterDefinition DEFAULT_ELECTRICITY =
-    newSystemMeterDefinition(5, Medium.ELECTRICITY, DEFAULT_ELECTRICITY_DISPLAY_QUANTITIES);
+    newSystemMeterDefinition(Medium.ELECTRICITY, DEFAULT_ELECTRICITY_DISPLAY_QUANTITIES);
   public static final MeterDefinition DEFAULT_GAS =
-    newSystemMeterDefinition(6, Medium.GAS, DEFAULT_GAS_DISPLAY_QUANTITIES);
+    newSystemMeterDefinition(Medium.GAS, DEFAULT_GAS_DISPLAY_QUANTITIES);
   public static final MeterDefinition DEFAULT_HOT_WATER =
-    newSystemMeterDefinition(7, Medium.HOT_WATER, DEFAULT_WATER_DISPLAY_QUANTITIES);
+    newSystemMeterDefinition(Medium.HOT_WATER, DEFAULT_WATER_DISPLAY_QUANTITIES);
   public static final MeterDefinition DEFAULT_WATER =
-    newSystemMeterDefinition(8, Medium.WATER, DEFAULT_WATER_DISPLAY_QUANTITIES);
-  public final Integer id;
+    newSystemMeterDefinition(Medium.WATER, DEFAULT_WATER_DISPLAY_QUANTITIES);
+
+  @Nullable
+  public final Long id;
   @Nullable
   public final Organisation organisation;
   public final String name;
@@ -47,32 +45,30 @@ public class MeterDefinition implements Identifiable<Integer> {
   public final boolean autoApply;
   public final Set<DisplayQuantity> quantities;
 
-  public static MeterDefinition fromMedium(Medium medium) {
-    return defaultMeterDefinitions.getOrDefault(medium, UNKNOWN);
+  public boolean isDefault() {
+    return organisation == null;
   }
 
   @Override
-  public Integer getId() {
+  @Nullable
+  public Long getId() {
     return id;
   }
 
   private static MeterDefinition newSystemMeterDefinition(
-    int id,
     String mediumName,
     Set<DisplayQuantity> quantities
   ) {
-    // hoho
-    //FIXME: These system meter definitions should be provded by a MeterDefinitionProvider
-    Medium medium = new Medium(id, mediumName);
-    MeterDefinition meterDefinition = new MeterDefinition(
-      id,
+    Medium medium = new Medium(null, mediumName);
+    return new MeterDefinition(
       null,
-      "Default " + mediumName.toLowerCase(),
+      null,
+      mediumName.equals(Medium.UNKNOWN_MEDIUM)
+        ? "Unknown"
+        : "Default " + mediumName.toLowerCase(),
       medium,
       true,
       quantities
     );
-    defaultMeterDefinitions.put(medium, meterDefinition);
-    return meterDefinition;
   }
 }

@@ -96,12 +96,12 @@ public class DataProviderConfigTest extends IntegrationTest {
     all.stream()
       .forEach(saved -> {
         var unsavedMeterDefinition = productionDataProvider.meterDefinitions().stream()
-          .filter(unsaved -> unsaved.getId().equals(saved.getId()))
+          .filter(unsaved -> unsaved.medium.name.equals(saved.medium.name))
           .findAny()
           .orElseThrow();
 
         assertThat(unsavedMeterDefinition)
-          .isEqualToIgnoringGivenFields(saved, "quantities", "medium");
+          .isEqualToIgnoringGivenFields(saved, "quantities", "medium", "id");
 
         assertThat(unsavedMeterDefinition.medium)
           .isEqualToIgnoringGivenFields(saved.medium, "id");

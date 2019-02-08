@@ -15,7 +15,6 @@ import lombok.ToString;
 @Builder
 public class Quantity implements Identifiable<Integer> {
 
-  // Hoho use real ones from db
   public static final Quantity EXTERNAL_TEMPERATURE = new QuantityBuilder()
     .name("External temperature").storageUnit("°C").build();
 
@@ -73,7 +72,8 @@ public class Quantity implements Identifiable<Integer> {
   public final String storageUnit;
 
   public boolean isConsumptionByDefault() {
-    //TODO: This is a hack // hoho
+    //TODO: This is a hack to support measurement thresholds. We should decide how to get the
+    // display information to the threshold parser
     return Set.of(VOLUME.name, ENERGY.name, REACTIVE_ENERGY.name, ENERGY_RETURN.name)
       .contains(this.name);
   }

@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -56,6 +56,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
   private final StatusLogsDataLoader statusLogsDataLoader;
   private final Organisation rootOrganisation;
   private final MediumProvider mediumProvider;
+  private final SystemMeterDefinitionProvider meterDefinitionProvider;
 
   private int daySeed = 1;
 
@@ -94,7 +95,11 @@ class CsvDemoDataLoader implements CommandLineRunner {
             LogicalMeter logicalMeter = LogicalMeter.builder()
               .externalId(csvData.facilityId)
               .organisationId(rootOrganisation.id)
-              .meterDefinition(MeterDefinition.fromMedium(mediumProvider.getByNameOrThrow(csvData.medium)))
+              .meterDefinition(
+                meterDefinitionProvider.getByMediumOrThrow(
+                  mediumProvider.getByNameOrThrow(csvData.medium)
+                )
+              )
               .created(addDays())
               .location(locationMap.get(csvData.address.toLowerCase()))
               .utcOffset(csvData.utcOffset)

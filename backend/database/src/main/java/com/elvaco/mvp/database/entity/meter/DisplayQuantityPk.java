@@ -32,7 +32,7 @@ public class DisplayQuantityPk implements Serializable {
   public QuantityEntity quantity;
 
   @Column(name = "meter_definition_id", nullable = false)
-  public Integer meterDefinitionId;
+  public Long meterDefinitionId;
 
   @Enumerated(EnumType.ORDINAL)
   public DisplayMode displayMode;

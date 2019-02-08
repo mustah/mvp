@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -106,6 +107,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
     DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
   );
 
+  private Map<Medium, MeterDefinition> meterDefinitionMap = Map.of(
+    UNKNOWN.medium, UNKNOWN,
+    DEFAULT_HOT_WATER.medium, DEFAULT_HOT_WATER,
+    DEFAULT_WATER.medium, DEFAULT_WATER,
+    DEFAULT_DISTRICT_HEATING.medium, DEFAULT_DISTRICT_HEATING,
+    DEFAULT_ROOM_SENSOR.medium, DEFAULT_ROOM_SENSOR
+  );
+
+  private SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
+    meterDefinitionMap.get(medium));
   private MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
 
   @Before
@@ -155,7 +166,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       geocodeService,
       propertiesUseCases,
       jobService,
-      mediumProvider
+      mediumProvider,
+      meterDefinitionProvider
     );
   }
 

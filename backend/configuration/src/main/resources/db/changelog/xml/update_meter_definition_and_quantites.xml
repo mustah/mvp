@@ -6,7 +6,7 @@
   <changeSet id="Create table medium" author="Åsa Godin">
 
     <createTable tableName="medium">
-      <column autoIncrement="true" name="id" type="BIGSERIAL">
+      <column autoIncrement="true" name="id" type="bigserial">
         <constraints primaryKey="true" primaryKeyName="medium_pkey"/>
       </column>
       <column name="name" type="text">
@@ -36,7 +36,7 @@
   <changeSet id="Create table display_quantity" author="Åsa Godin">
 
     <createTable tableName="display_quantity">
-      <column name="meter_definition_id" type="integer">
+      <column name="meter_definition_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="quantity_id" type="integer">
@@ -54,7 +54,7 @@
     </createTable>
     <createTable schemaName="evoaudit" tableName="display_quantity_aud">
 
-      <column name="meter_definition_id" type="integer"/>
+      <column name="meter_definition_id" type="bigint"/>
       <column name="meter_definition_id_mod" type="boolean"/>
       <column name="quantity_id" type="integer"/>
       <column name="quantity_id_mod" type="boolean"/>
@@ -110,6 +110,7 @@
 
     <renameColumn tableName="meter_definition" oldColumnName="type" newColumnName="id"/>
     <renameColumn schemaName="evoaudit" tableName="meter_definition_aud" oldColumnName="type" newColumnName="id"/>
+    <modifyDataType schemaName="evoaudit" tableName="meter_definition_aud" columnName="id" newDataType="bigint"/>
 
     <addColumn tableName="meter_definition">
       <column name="organisation_id" type="uuid">
@@ -131,6 +132,12 @@
       <column name="auto_apply" type="boolean" defaultValue="true"/>
     </addColumn>
 
+    <addUniqueConstraint tableName="meter_definition" columnNames="organisation_id,name,medium_id"/>
+    <sql>
+      create unique index unique_system_meter_definitions_per_medium
+      on meter_definition (medium_id) where organisation_id is null;
+    </sql>
+
     <addColumn schemaName="evoaudit" tableName="meter_definition_aud">
       <column name="organisation_id" type="uuid"/>
       <column name="organisation_id_mod" type="boolean"/>
@@ -142,8 +149,8 @@
       <column name="auto_apply_mod" type="boolean"/>
     </addColumn>
 
-    <sql>UPDATE meter_definition set name = concat('Default ', medium)</sql>
-    <sql>UPDATE meter_definition set name = 'Default Unknown' where name like '%Unknown%'</sql>
+    <sql>UPDATE meter_definition set name = concat('Default ', lower(medium))</sql>
+    <sql>UPDATE meter_definition set name = 'Unknown' where name like '%Unknown%'</sql>
 
     <sql>
       UPDATE meter_definition set medium_id = (select id from medium where medium = medium.name)
@@ -151,6 +158,15 @@
     <addNotNullConstraint tableName="meter_definition" columnName="medium_id"/>
     <dropColumn tableName="meter_definition" columnName="medium"/>
     <dropColumn tableName="meter_definition" columnName="system_owned"/>
+  </changeSet>
+
+  <changeSet id="Make meter_definition id autoincrement" author="Anton Löfgren">
+    <modifyDataType tableName="meter_definition" columnName="id" newDataType="bigint"/>
+    <sql>
+      create sequence meter_definition_id_seq owned by meter_definition.id;
+      alter table meter_definition alter column id set default nextval('meter_definition_id_seq');
+      select setval('meter_definition_id_seq', (select max(id) from meter_definition));
+    </sql>
   </changeSet>
 
   <changeSet id="Update reference from meter definition type to meter_definition id" author="Åsa Godin">
@@ -163,7 +179,9 @@
 
     <!-- Add reference and index to logical_meter -->
     <renameColumn tableName="logical_meter" oldColumnName="meter_definition_type" newColumnName="meter_definition_id"/>
+    <modifyDataType tableName="logical_meter" columnName="meter_definition_id" newDataType="bigint"/>
     <renameColumn schemaName="evoaudit" tableName="logical_meter_aud" oldColumnName="meter_definition_type" newColumnName="meter_definition_id"/>
+    <modifyDataType schemaName="evoaudit" tableName="logical_meter_aud" columnName="meter_definition_id" newDataType="bigint"/>
     <addForeignKeyConstraint baseTableName="logical_meter"
                              baseColumnNames="meter_definition_id"
                              constraintName="logical_meter_meter_definition_id_fkey"

@@ -47,7 +47,7 @@ public class MeteringMessageMapperTest {
 
   @Test
   public void mapColdWaterMediumAsWater() {
-    Medium waterMedium = new Medium(0, Medium.WATER);
+    Medium waterMedium = new Medium(0L, Medium.WATER);
     MediumProvider mediumProvider = providerOf(Map.of(Medium.WATER, waterMedium));
 
     assertThat(mapToEvoMedium(mediumProvider, "Cold water")).isEqualTo(waterMedium);
@@ -55,15 +55,15 @@ public class MeteringMessageMapperTest {
 
   @Test
   public void mapUnknownMeteringMediumToUnknownMedium() {
-    Medium unknownMedium = new Medium(0, Medium.UNKNOWN_MEDIUM);
+    Medium unknownMedium = new Medium(0L, Medium.UNKNOWN_MEDIUM);
     MediumProvider mediumProvider = providerOf(Map.of(Medium.UNKNOWN_MEDIUM, unknownMedium));
     assertThat(mapToEvoMedium(mediumProvider, "Something")).isEqualTo(unknownMedium);
   }
 
   @Test
   public void mapKnownMediums() {
-    Medium hotWaterMedium = new Medium(0, Medium.HOT_WATER);
-    Medium districtCoolingMedium = new Medium(1, Medium.DISTRICT_COOLING);
+    Medium hotWaterMedium = new Medium(0L, Medium.HOT_WATER);
+    Medium districtCoolingMedium = new Medium(1L, Medium.DISTRICT_COOLING);
     MediumProvider mediumProvider = providerOf(Map.of(
       Medium.HOT_WATER, hotWaterMedium,
       Medium.DISTRICT_COOLING, districtCoolingMedium
@@ -75,7 +75,7 @@ public class MeteringMessageMapperTest {
 
   @Test
   public void mapKnownDistrictHeatingMediumAliases() {
-    Medium districtHeatingMedium = new Medium(0, Medium.DISTRICT_HEATING);
+    Medium districtHeatingMedium = new Medium(0L, Medium.DISTRICT_HEATING);
     MediumProvider mediumProvider = providerOf(Map.of(
       Medium.DISTRICT_HEATING,
       districtHeatingMedium

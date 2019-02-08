@@ -49,7 +49,6 @@ import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MapMarkerJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MediumJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -88,7 +87,6 @@ class DataProviderConfig {
   private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
-  private final MediumJpaRepository mediumJpaRepository;
   private final OrganisationJpaRepository organisationJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
@@ -128,12 +126,16 @@ class DataProviderConfig {
   }
 
   @Bean
-  LogicalMeters logicalMeters(LogicalMeterEntityMapper logicalMeterEntityMapper) {
+  LogicalMeters logicalMeters(
+    LogicalMeterEntityMapper logicalMeterEntityMapper,
+    MeterDefinitions meterDefinitions
+  ) {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       summaryJpaRepository,
       new LogicalMeterSortingEntityMapper(),
-      logicalMeterEntityMapper
+      logicalMeterEntityMapper,
+      meterDefinitions
     );
   }
 
@@ -223,15 +225,12 @@ class DataProviderConfig {
 
   @Bean
   MeterDefinitions meterDefinitions(
-    ProductionDataProvider productionDataProvider,
     MeterDefinitionEntityMapper meterDefinitionEntityMapper
   ) {
-    var meterDefinitionRepository = new MeterDefinitionRepository(
+    return new MeterDefinitionRepository(
       meterDefinitionJpaRepository,
       meterDefinitionEntityMapper
     );
-    productionDataProvider.meterDefinitions().forEach(meterDefinitionRepository::save);
-    return meterDefinitionRepository;
   }
 
   @Bean
