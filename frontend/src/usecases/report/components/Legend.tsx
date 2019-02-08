@@ -3,12 +3,12 @@ import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonLinkBlue} from '../../../components/buttons/ButtonLink';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconIndicator} from '../../../components/icons/IconIndicator';
-import {Row} from '../../../components/layouts/row/Row';
+import {Row, RowMiddle} from '../../../components/layouts/row/Row';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {isDefined} from '../../../helpers/commonUtils';
 import {orUnknown} from '../../../helpers/translations';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
@@ -46,28 +46,42 @@ const renderMedium = ({medium}: LegendItem) =>
     ))
     : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
 
-export const Legend = ({clearSelectedListItems, hiddenLines, legendItems, toggleLine, deleteItem}: LegendProps) => {
+export const Legend = ({
+  clearSelectedListItems,
+  hiddenLines,
+  legendItems: {entities: {lines}, result},
+  toggleLine,
+  deleteItem
+}: LegendProps) => {
 
-  const renderVisibilityButton = ({id}: LegendItem) => {
+  const removeAllButtonLink =
+    <ButtonLinkBlue onClick={clearSelectedListItems}>{translate('remove all')}</ButtonLinkBlue>;
+
+  const renderDeleteButton = ({id}: LegendItem) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
-    return <ButtonVisibility key={`checked-${id}-${checked}`} onClick={toggleLine} id={id} checked={checked}/>;
+    const onDeleteItem = () => deleteItem(id);
+    return (
+      <RowMiddle>
+        <Row style={{marginRight: 8}}>
+          <ButtonVisibility key={`checked-${id}-${checked}`} onClick={toggleLine} id={id} checked={checked}/>
+        </Row>
+        <Row>
+          <ButtonDelete onClick={onDeleteItem}/>
+        </Row>
+      </RowMiddle>
+    );
   };
-
-  const deleteButtonLink = <ButtonLinkBlue onClick={clearSelectedListItems}>{translate('remove all')}</ButtonLinkBlue>;
-
-  const renderDeleteButton = ({id}: LegendItem) => <ButtonDelete onClick={deleteItem} id={id}/>;
 
   return (
     <Row className="Legend">
-      <Table result={legendItems.result} entities={legendItems.entities.lines}>
+      <Table result={result} entities={lines}>
         <TableColumn
           header={<TableHead className="first">{translate('facility')}</TableHead>}
           cellClassName={'first first-uppercase'}
           renderCell={renderFacility}
         />
         <TableColumn
-          header={<TableHead>{translate('city')}</TableHead>}
-          cellClassName={'first-uppercase'}
+          header={<TableHead>{firstUpperTranslated('city')}</TableHead>}
           renderCell={renderCity}
         />
         <TableColumn
@@ -81,12 +95,7 @@ export const Legend = ({clearSelectedListItems, hiddenLines, legendItems, toggle
           renderCell={renderMedium}
         />
         <TableColumn
-          header={<TableHead className="icon"/>}
-          cellClassName="icon"
-          renderCell={renderVisibilityButton}
-        />
-        <TableColumn
-          header={<TableHead className="Link">{deleteButtonLink}</TableHead>}
+          header={<TableHead className="Link">{removeAllButtonLink}</TableHead>}
           cellClassName="icon"
           renderCell={renderDeleteButton}
         />
