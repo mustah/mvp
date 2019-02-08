@@ -25,7 +25,6 @@ type Props = DispatchToProps & StateToProps;
 
 const ListItems = ({
   confirmDelete,
-  isFetching,
   isMeterPage,
   fetchUserSelections,
   resetSelection,
@@ -85,12 +84,12 @@ const ListItems = ({
 
   const savedSelectionIds = savedSelections.result;
 
-  const items = savedSelectionIds.length
+  const items = savedSelectionIds.length && savedSelections.isSuccessfullyFetched
     ? [initialSelectionId, ...savedSelectionIds].map(renderListItem)
     : [
       (
         <LoadingTreeViewItems
-          isFetching={isFetching}
+          isFetching={savedSelections.isFetching}
           text={translate('no saved selections')}
           key="loading-list-item"
         />
