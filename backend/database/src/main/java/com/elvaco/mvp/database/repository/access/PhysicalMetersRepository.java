@@ -3,7 +3,6 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -16,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static com.elvaco.mvp.database.repository.mappers.PhysicalMeterEntityMapper.toDomainModel;
@@ -44,13 +44,21 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
-  @CacheEvict(
-    cacheNames = {
-      "physicalMeter.organisationIdExternalIdAddress",
-      "physicalMeter.organisationIdExternalIdAddress.withStatuses"
-    },
-    key = "#physicalMeter.organisationId + #physicalMeter.externalId + #physicalMeter.address"
-  )
+  @Caching(evict = {
+    @CacheEvict(
+      cacheNames = {
+        "physicalMeter.organisationIdExternalIdAddress",
+        "physicalMeter.organisationIdExternalIdAddress.withStatuses"
+      },
+      key = "#physicalMeter.organisationId + #physicalMeter.externalId + #physicalMeter.address"
+    ),
+    @CacheEvict(
+      cacheNames = {
+        "logicalMeter.organisationIdExternalId"
+      },
+      key = "#physicalMeter.organisationId + #physicalMeter.externalId"
+    )
+  })
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     try {
       return toDomainModel(physicalMeterJpaRepository.save(toEntity(physicalMeter)));
@@ -61,6 +69,21 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
+  @Caching(evict = {
+    @CacheEvict(
+      cacheNames = {
+        "physicalMeter.organisationIdExternalIdAddress",
+        "physicalMeter.organisationIdExternalIdAddress.withStatuses"
+      },
+      key = "#physicalMeter.organisationId + #physicalMeter.externalId + #physicalMeter.address"
+    ),
+    @CacheEvict(
+      cacheNames = {
+        "logicalMeter.organisationIdExternalId"
+      },
+      key = "#physicalMeter.organisationId + #physicalMeter.externalId"
+    )
+  })
   public PhysicalMeter saveAndFlush(PhysicalMeter physicalMeter) {
     try {
       PhysicalMeterEntity entity = physicalMeterJpaRepository.save(toEntity(physicalMeter));
