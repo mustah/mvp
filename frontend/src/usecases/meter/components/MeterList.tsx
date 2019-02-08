@@ -125,7 +125,7 @@ export const MeterList = ({
     <Grid
       data={gridData}
 
-      pageable={pageable}
+      pageable={total > size ? pageable : undefined}
       pageSize={size}
       take={size}
       skip={page * size}

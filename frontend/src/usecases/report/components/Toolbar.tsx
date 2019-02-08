@@ -15,7 +15,6 @@ import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable, Selectable} from '../../../types/Types';
 import {LegendContainer} from '../containers/LegendContainer';
 import {Props} from '../containers/ToolbarContainer';
-import {getLegendMaxHeight} from './Legend';
 import './Toolbar.scss';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import IconButtonProps = __MaterialUI.IconButtonProps;
