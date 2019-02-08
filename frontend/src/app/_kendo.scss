@@ -40,6 +40,10 @@ $pager-number-hovered-text: $primary-fg-active;
   &.k-grid {
     border-width: 0;
 
+    .k-grid-header-wrap {
+      border: none;
+    }
+
     .k-grid-pager {
       border-width: 0;
       justify-content: center;

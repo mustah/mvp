@@ -9,5 +9,6 @@ export const ButtonDelete = ({onClick}: Clickable) => (
     hoverColor="inherit"
     icon={<ActionDelete color={colors.blue}/>}
     onClick={onClick}
+    style={{minWidth: 24}}
   />
 );

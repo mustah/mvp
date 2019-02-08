@@ -3,12 +3,10 @@ import ActionVisibility from 'material-ui/svg-icons/action/visibility';
 import ActionVisibilityOff from 'material-ui/svg-icons/action/visibility-off';
 import * as React from 'react';
 import {colors} from '../../app/themes';
-import {OnClickWithId, uuid} from '../../types/Types';
+import {Clickable} from '../../types/Types';
 
-interface VisibilityProps {
-  onClick: OnClickWithId;
+interface VisibilityProps extends Clickable {
   checked?: boolean;
-  id: uuid;
 }
 
 const iconStyle: React.CSSProperties = {fill: colors.blue};
@@ -16,16 +14,13 @@ const iconStyle: React.CSSProperties = {fill: colors.blue};
 const HiddenIcon = <ActionVisibilityOff/>;
 const VisibleIcon = <ActionVisibility/>;
 
-export const ButtonVisibility = ({checked, id, onClick}: VisibilityProps) => {
-  const toggleClick = () => onClick(id);
-
-  return (
-    <Checkbox
-      checkedIcon={HiddenIcon}
-      uncheckedIcon={VisibleIcon}
-      onClick={toggleClick}
-      iconStyle={iconStyle}
-      checked={checked}
-    />
-  );
-};
+export const ButtonVisibility = ({checked, onClick}: VisibilityProps) => (
+  <Checkbox
+    checkedIcon={HiddenIcon}
+    uncheckedIcon={VisibleIcon}
+    onClick={onClick}
+    iconStyle={iconStyle}
+    checked={checked}
+    style={{width: 24}}
+  />
+);

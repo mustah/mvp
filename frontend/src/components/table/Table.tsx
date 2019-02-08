@@ -1,7 +1,7 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {Children, ClassNamed, uuid} from '../../types/Types';
+import {Children, ClassNamed, Styled, uuid} from '../../types/Types';
 import './Table.scss';
 import {TableHeadProps} from './TableHead';
 
@@ -13,7 +13,7 @@ export interface TableColumnProps {
   cellClassName?: string;
 }
 
-interface TableProps extends ClassNamed {
+interface TableProps extends ClassNamed, Styled {
   result: uuid[];
   entities: ObjectsById<any>;
   children: Array<React.ReactElement<TableColumnProps>> | React.ReactElement<TableColumnProps>;
@@ -21,7 +21,7 @@ interface TableProps extends ClassNamed {
 
 export const TableColumn = (_: TableColumnProps) => <td/>;
 
-export const Table = ({result, entities, children, className}: TableProps) => {
+export const Table = ({result, entities, children, className, style}: TableProps) => {
 
   const columns = Array.isArray(children) ? children : [children];
 
@@ -49,7 +49,7 @@ export const Table = ({result, entities, children, className}: TableProps) => {
   const rows = result.length ? result.map(renderRow) : null;
 
   return (
-    <table className={classNames('Table', className)} cellPadding={0} cellSpacing={0}>
+    <table className={classNames('Table', className)} style={style} cellPadding={0} cellSpacing={0}>
       <thead>
       <tr>
         {tableHeaders}

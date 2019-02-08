@@ -1,14 +1,15 @@
+import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
 import * as React from 'react';
+import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonLinkBlue} from '../../../components/buttons/ButtonLink';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconIndicator} from '../../../components/icons/IconIndicator';
+import {Column} from '../../../components/layouts/column/Column';
 import {Row, RowMiddle} from '../../../components/layouts/row/Row';
-import {Table, TableColumn} from '../../../components/table/Table';
-import {TableHead} from '../../../components/table/TableHead';
 import {isDefined} from '../../../helpers/commonUtils';
 import {orUnknown} from '../../../helpers/translations';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
@@ -23,19 +24,33 @@ export interface LegendProps {
   legendItems: Normalized<LegendItem>;
 }
 
+export const getLegendMaxHeight = () => 0.75 * window.innerHeight;
+
 const iconIndicatorStyle: React.CSSProperties = {
   display: 'table',
   width: 24,
   height: 24,
 };
 
-const renderFacility = ({facility}: LegendItem) => facility ? orUnknown(facility) : '-';
+const legendGridStyle: React.CSSProperties = {
+  ...gridStyle,
+  borderTopLeftRadius: borderRadius,
+  borderTopRightRadius: borderRadius,
+  marginBottom: 24,
+  width: 560,
+  maxHeight: getLegendMaxHeight()
+};
 
-const renderAddress = ({address}: LegendItem) => address ? orUnknown(address) : '-';
+const renderFacility = ({dataItem: {facility}}: GridCellProps) =>
+  facility ? <td className="left-most first-uppercase">{orUnknown(facility)}</td> : <td>-</td>;
 
-const renderCity = ({city}: LegendItem) => city ? orUnknown(city) : '-';
+const renderCity = ({dataItem: {city}}: GridCellProps) =>
+  city ? <td className="first-uppercase">{orUnknown(city)}</td> : <td>-</td>;
 
-const renderMedium = ({medium}: LegendItem) =>
+const renderAddress = ({dataItem: {address}}: GridCellProps) =>
+  address ? <td className="first-uppercase">{orUnknown(address)}</td> : <td>-</td>;
+
+const renderMediumCell = (medium: Medium) =>
   Array.isArray(medium)
     ? medium.map((singleMedium: Medium, index) => (
       <IconIndicator
@@ -46,6 +61,9 @@ const renderMedium = ({medium}: LegendItem) =>
     ))
     : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
 
+const renderMedium = ({dataItem: {medium}}: GridCellProps) =>
+  <td>{renderMediumCell(medium)}</td>;
+
 export const Legend = ({
   clearSelectedListItems,
   hiddenLines,
@@ -53,52 +71,67 @@ export const Legend = ({
   toggleLine,
   deleteItem
 }: LegendProps) => {
-  const removeAllButtonLink =
-    <ButtonLinkBlue onClick={clearSelectedListItems}>{translate('remove all')}</ButtonLinkBlue>;
+  const renderRemoveAllButtonLink = () => (
+    <ButtonLinkBlue onClick={clearSelectedListItems} className="k-link">
+      {translate('remove all')}
+    </ButtonLinkBlue>
+  );
 
-  const renderDeleteButton = ({id}: LegendItem) => {
+  const renderDeleteButton = ({dataItem: {id}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
     const onDeleteItem = () => deleteItem(id);
+    const onToggleItem = () => toggleLine(id);
     return (
-      <RowMiddle>
-        <Row style={{marginRight: 8}}>
-          <ButtonVisibility key={`checked-${id}-${checked}`} onClick={toggleLine} id={id} checked={checked}/>
-        </Row>
-        <Row>
-          <ButtonDelete onClick={onDeleteItem}/>
-        </Row>
-      </RowMiddle>
+      <td className="icon">
+        <RowMiddle>
+          <Row>
+            <ButtonVisibility key={`checked-${id}-${checked}`} onClick={onToggleItem} checked={checked}/>
+          </Row>
+          <Row>
+            <ButtonDelete onClick={onDeleteItem}/>
+          </Row>
+        </RowMiddle>
+      </td>
     );
   };
 
+  const data = result.map((id) => lines[id]);
+
   return (
-    <Row className="Legend">
-      <Table result={result} entities={lines}>
-        <TableColumn
-          header={<TableHead className="first">{translate('facility')}</TableHead>}
-          cellClassName={'first first-uppercase'}
-          renderCell={renderFacility}
+    <Column className="Legend">
+      <Grid data={data} style={legendGridStyle}>
+        <GridColumn
+          field="facility"
+          cell={renderFacility}
+          title={translate('facility')}
+          headerClassName="left-most"
+          width={140}
         />
-        <TableColumn
-          header={<TableHead>{firstUpperTranslated('city')}</TableHead>}
-          renderCell={renderCity}
+        <GridColumn
+          field="city"
+          cell={renderCity}
+          title={translate('city')}
+          width={110}
         />
-        <TableColumn
-          header={<TableHead>{translate('address')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderAddress}
+        <GridColumn
+          field="address"
+          cell={renderAddress}
+          title={translate('address')}
+          width={150}
         />
-        <TableColumn
-          header={<TableHead>{translate('medium')}</TableHead>}
-          cellClassName={'icon'}
-          renderCell={renderMedium}
+        <GridColumn
+          field="medium"
+          cell={renderMedium}
+          title={translate('medium')}
+          width={80}
         />
-        <TableColumn
-          header={<TableHead className="Link">{removeAllButtonLink}</TableHead>}
-          cellClassName="icon"
-          renderCell={renderDeleteButton}
+        <GridColumn
+          headerCell={renderRemoveAllButtonLink}
+          headerClassName="Link"
+          cell={renderDeleteButton}
+          width={80}
         />
-      </Table>
-    </Row>
+      </Grid>
+    </Column>
   );
 };

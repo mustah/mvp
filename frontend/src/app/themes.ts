@@ -183,3 +183,11 @@ export const dropdownListStyle: React.CSSProperties = {
   width: 200,
   ...popoverStyle
 };
+
+export const gridStyle: React.CSSProperties = {
+  borderTopWidth: 0,
+  borderBottomWidth: 0,
+  marginBottom: borderRadius,
+  borderBottomLeftRadius: borderRadius,
+  borderBottomRightRadius: borderRadius,
+};
