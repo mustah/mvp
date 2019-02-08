@@ -17,14 +17,11 @@ import static java.util.stream.Collectors.toList;
 public class MeterDefinitionRepository implements MeterDefinitions {
 
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
-  private final MediumJpaRepository mediumJpaRepository;
   private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
     MeterDefinitionEntity entity = meterDefinitionEntityMapper.toEntity(meterDefinition);
-    entity.medium = mediumJpaRepository.findById(entity.medium.id)
-      .orElseGet(() -> mediumJpaRepository.save(entity.medium)); //FIXME: maybe not do this? // hoho
     return meterDefinitionEntityMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
   }
 

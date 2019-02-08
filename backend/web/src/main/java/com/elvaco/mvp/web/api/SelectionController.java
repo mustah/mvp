@@ -21,8 +21,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.web.dto.SelectionsDto.MEDIA;
+import static com.elvaco.mvp.core.domainmodels.Medium.MEDIA;
 import static com.elvaco.mvp.web.dto.SelectionsDto.METER_ALARMS;
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @RestApi("/api/v1/selections")
@@ -40,7 +41,7 @@ public class SelectionController {
 
   @GetMapping("media")
   public org.springframework.data.domain.Page<IdNamedDto> media() {
-    return new PageImpl<>(MEDIA);
+    return new PageImpl<>(MEDIA.stream().map(IdNamedDto::new).collect(toList()));
   }
 
   @GetMapping("cities")

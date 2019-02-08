@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -76,23 +77,26 @@ public class MeteringMessageMapper {
     return Optional.ofNullable(quantity);
   }
 
-  static Medium mapToEvoMedium(@Nullable String medium) {
+  static Medium mapToEvoMedium(MediumProvider mediumProvider, @Nullable String medium) {
     if (medium == null) {
-      return Medium.UNKNOWN_MEDIUM;
+      return mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM);
     }
-    switch (medium) {
-      case "Cold water":
-        return Medium.WATER;
-      case "Roomsensor":
-        return Medium.ROOM_SENSOR;
-      case "Heat, Return temp":
-      case "Heat, Flow temp":
-      case "HeatCoolingLoadMeter":
-      case "HeatFlow Temp":
-      case "HeatReturn Temp":
-        return Medium.DISTRICT_HEATING;
-      default:
-        return Medium.from(medium);
-    }
+    Map<String, String> meteringMediumToEvoMedium = Map.of(
+      "Cold water", Medium.WATER,
+      "Roomsensor", Medium.ROOM_SENSOR,
+      "Heat, Return temp", Medium.DISTRICT_HEATING,
+      "Heat, Flow temp", Medium.DISTRICT_HEATING,
+      "HeatCoolingLoadMeter", Medium.DISTRICT_HEATING,
+      "HeatFlow Temp", Medium.DISTRICT_HEATING,
+      "HeatReturn Temp", Medium.DISTRICT_HEATING
+    );
+
+    String evoMedium = meteringMediumToEvoMedium.getOrDefault(
+      medium,
+      medium
+    );
+    return mediumProvider.getByName(evoMedium).orElseGet(
+      () -> mediumProvider.getByNameOrThrow(Medium.UNKNOWN_MEDIUM)
+    );
   }
 }

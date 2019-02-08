@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.util.Optional;
 import java.util.Set;
 
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -20,6 +21,7 @@ import static java.util.stream.Collectors.toSet;
 public class MeterDefinitionEntityMapper {
 
   private final QuantityEntityMapper quantityEntityMapper;
+  private final MediumProvider mediumProvider;
 
   public MeterDefinitionEntity toEntity(MeterDefinition domainModel) {
     return new MeterDefinitionEntity(
@@ -87,10 +89,11 @@ public class MeterDefinitionEntityMapper {
   }
 
   private Medium toMedium(MediumEntity mediumEntity) {
-    return Medium.from(mediumEntity.name);
+    return mediumProvider.getByNameOrThrow(mediumEntity.name);
   }
 
   private MediumEntity toMediumEntity(Medium medium) {
-    return new MediumEntity(medium.id, medium.name);
+    Medium existingMedium = mediumProvider.getByNameOrThrow(medium.name);
+    return new MediumEntity(existingMedium.id, existingMedium.name);
   }
 }

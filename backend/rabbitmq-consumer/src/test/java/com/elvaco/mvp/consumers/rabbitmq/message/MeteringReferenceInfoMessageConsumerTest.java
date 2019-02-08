@@ -2,8 +2,11 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -52,6 +55,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ROOM_SENSOR;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_WATER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.locationWithoutCoordinates;
 import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
@@ -90,6 +98,15 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private PropertiesUseCases propertiesUseCases;
   private MockMeterStatusLogs meterStatusLogs;
   private MockJobService<MeteringReferenceInfoMessageDto> jobService;
+  private Map<String, Medium> mediumMap = Map.of(
+    UNKNOWN.medium.name, UNKNOWN.medium,
+    DEFAULT_HOT_WATER.medium.name, DEFAULT_HOT_WATER.medium,
+    DEFAULT_WATER.medium.name, DEFAULT_WATER.medium,
+    DEFAULT_DISTRICT_HEATING.medium.name, DEFAULT_DISTRICT_HEATING.medium,
+    DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
+  );
+
+  private MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
 
   @Before
   public void setUp() {
@@ -117,6 +134,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     meterStatusLogs = new MockMeterStatusLogs();
     jobService = new MockJobService<>();
+
     messageHandler = new MeteringReferenceInfoMessageConsumer(
       new LogicalMeterUseCases(authenticatedUser, logicalMeters),
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters, meterStatusLogs),
@@ -136,7 +154,8 @@ public class MeteringReferenceInfoMessageConsumerTest {
       new GatewayUseCases(gateways, authenticatedUser),
       geocodeService,
       propertiesUseCases,
-      jobService
+      jobService,
+      mediumProvider
     );
   }
 
@@ -160,7 +179,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeter.id)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(logicalMeter.created)
       .location(locationWithoutCoordinates().build())
       .build();
@@ -298,7 +317,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(physicalMeter.organisationId).isEqualTo(organisation.id);
 
     LogicalMeter logicalMeter = logicalMeters.findById(physicalMeter.logicalMeterId).get();
-    assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.DEFAULT_HOT_WATER);
+    assertThat(logicalMeter.meterDefinition).isEqualTo(DEFAULT_HOT_WATER);
     assertThat(gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID)
       .isPresent()).isTrue();
   }
@@ -353,7 +372,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.medium)
+    assertThat(meter.meterDefinition.medium.name)
       .isEqualTo(Medium.DISTRICT_HEATING);
   }
 
@@ -398,7 +417,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void mapsMeterMediumToEvoDefinitionType() {
     messageHandler.accept(messageBuilder().medium("Cold water").build());
     var meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.DEFAULT_WATER.medium);
+    assertThat(meter.meterDefinition.medium).isEqualTo(DEFAULT_WATER.medium);
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
@@ -496,7 +515,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeterId)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(ZonedDateTime.now())
       .location(UNKNOWN_LOCATION)
       .build());
@@ -797,7 +816,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeterId)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.DEFAULT_HOT_WATER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(ZonedDateTime.now())
       .location(UNKNOWN_LOCATION)
       .build());

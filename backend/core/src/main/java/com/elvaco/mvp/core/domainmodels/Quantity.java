@@ -52,7 +52,6 @@ public class Quantity implements Identifiable<Integer> {
   public static final Quantity REACTIVE_ENERGY = new QuantityBuilder()
     .name("Reactive energy").storageUnit("kWh").build();
 
-  // Hoho - check usage!
   public static final List<Quantity> QUANTITIES = List.of(
     VOLUME,
     VOLUME_FLOW,

@@ -228,7 +228,6 @@ class DataProviderConfig {
   ) {
     var meterDefinitionRepository = new MeterDefinitionRepository(
       meterDefinitionJpaRepository,
-      mediumJpaRepository,
       meterDefinitionEntityMapper
     );
     productionDataProvider.meterDefinitions().forEach(meterDefinitionRepository::save);

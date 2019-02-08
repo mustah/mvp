@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.exception.NoSuchQuantityException;
+import com.elvaco.mvp.core.exception.NoSuchQuantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
@@ -163,6 +163,6 @@ public class DemoDataHelper {
 
   private QuantityEntity getQuantityEntity(Quantity quantity) {
     return quantityEntityMapper.toEntity(quantityProvider.getByName(quantity.name)
-      .orElseThrow(() -> new NoSuchQuantityException(quantity.name)));
+      .orElseThrow(() -> new NoSuchQuantity(quantity.name)));
   }
 }

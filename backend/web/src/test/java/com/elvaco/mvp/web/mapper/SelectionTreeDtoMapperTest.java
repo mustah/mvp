@@ -152,12 +152,12 @@ public class SelectionTreeDtoMapperTest {
       new CityDto(
         "sweden,gothenburg",
         "gothenburg",
-        singleton(Medium.UNKNOWN_MEDIUM.name)
+        singleton(Medium.UNKNOWN_MEDIUM)
       ),
       new CityDto(
         "sweden,kungsbacka",
         "kungsbacka",
-        singleton(Medium.UNKNOWN_MEDIUM.name)
+        singleton(Medium.UNKNOWN_MEDIUM)
       )
     );
   }

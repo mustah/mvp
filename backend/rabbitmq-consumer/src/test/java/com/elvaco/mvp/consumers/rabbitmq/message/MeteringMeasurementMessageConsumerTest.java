@@ -149,8 +149,7 @@ public class MeteringMeasurementMessageConsumerTest {
       new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_SLUG,
       "Test source system",
-      asList(
-        new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
+      List.of(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
     );
 
     messageConsumer.accept(message);
@@ -169,8 +168,7 @@ public class MeteringMeasurementMessageConsumerTest {
       new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_SLUG,
       "Test source system",
-      asList(
-        new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
+      List.of(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", QUANTITY))
     );
 
     messageConsumer.accept(message);
@@ -417,7 +415,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .organisationId(organisation.id)
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
-        .medium(Medium.UNKNOWN_MEDIUM.name)
+        .medium(Medium.UNKNOWN_MEDIUM)
         .logicalMeterId(logicalMeter.id)
         .readIntervalMinutes(60)
         .activePeriod(physicalMeter.activePeriod)
@@ -685,7 +683,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .manufacturer("ELV")
         .readIntervalMinutes(15)
         .organisationId(organisation.id)
-        .medium(Medium.ELECTRICITY.name)
+        .medium(Medium.ELECTRICITY)
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
         .build());
@@ -743,7 +741,7 @@ public class MeteringMeasurementMessageConsumerTest {
       .address(ADDRESS)
       .externalId(EXTERNAL_ID)
       .manufacturer("ELV")
-      .medium(Medium.UNKNOWN_MEDIUM.name)
+      .medium(Medium.UNKNOWN_MEDIUM)
       .readIntervalMinutes(15);
   }
 }

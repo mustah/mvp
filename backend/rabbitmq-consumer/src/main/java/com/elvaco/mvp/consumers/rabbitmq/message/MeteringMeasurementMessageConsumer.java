@@ -85,7 +85,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           .organisationId(organisation.id)
           .address(address)
           .externalId(facilityId)
-          .medium(Medium.UNKNOWN_MEDIUM.name)
+          .medium(Medium.UNKNOWN_MEDIUM)
           .logicalMeterId(logicalMeter.id)
           .readIntervalMinutes(DEFAULT_READ_INTERVAL_MINUTES)
           .activePeriod(PeriodRange.halfOpenFrom(zonedMeasurementTimestamp, null))

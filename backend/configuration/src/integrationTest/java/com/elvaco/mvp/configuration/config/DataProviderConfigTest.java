@@ -97,18 +97,21 @@ public class DataProviderConfigTest extends IntegrationTest {
       .forEach(saved -> {
         var unsavedMeterDefinition = productionDataProvider.meterDefinitions().stream()
           .filter(unsaved -> unsaved.getId().equals(saved.getId()))
-          .findAny();
+          .findAny()
+          .orElseThrow();
 
         assertThat(unsavedMeterDefinition)
-          .get()
-          .isEqualToIgnoringGivenFields(saved, "quantities");
+          .isEqualToIgnoringGivenFields(saved, "quantities", "medium");
+
+        assertThat(unsavedMeterDefinition.medium)
+          .isEqualToIgnoringGivenFields(saved.medium, "id");
 
         assertQuantitiesMatchFixtureIgnoringId(
           saved.quantities.stream()
             .map(displayQuantity -> displayQuantity.quantity)
             .collect(
               Collectors.toSet()),
-          unsavedMeterDefinition.get().quantities.stream()
+          unsavedMeterDefinition.quantities.stream()
             .map(displayQuantity -> displayQuantity.quantity)
             .collect(
               Collectors.toSet())

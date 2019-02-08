@@ -15,6 +15,7 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringReferenceInfoMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.ReferenceInfoMessageConsumer;
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -81,6 +82,7 @@ class RabbitMqConfig {
   private final PropertiesUseCases propertiesUseCases;
   private final MeterAlarmLogs meterAlarmLogs;
   private final UnitConverter unitConverter;
+  private final MediumProvider mediumProvider;
 
   @Bean
   MeasurementMessageConsumer measurementMessageConsumer() {
@@ -105,7 +107,8 @@ class RabbitMqConfig {
       gatewayUseCases,
       geocodeService,
       propertiesUseCases,
-      meterSyncJobService
+      meterSyncJobService,
+      mediumProvider
     );
   }
 

@@ -1,8 +1,10 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
@@ -33,15 +35,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterEntityMapperTest {
 
+  private static final Medium UNKNOWN_MEDIUM = new Medium(
+    0,
+    Medium.UNKNOWN_MEDIUM
+  );
+
   private static final QuantityProvider QUANTITY_PROVIDER = name -> QUANTITIES.stream()
     .filter(quantity -> quantity.name.equals(name))
     .findAny();
 
+  private static final MediumProvider MEDIUM_PROVIDER = name -> Optional.of(UNKNOWN_MEDIUM);
+
   private static final LogicalMeterEntityMapper logicalMeterEntityMapper =
     new LogicalMeterEntityMapper(
       new MeterDefinitionEntityMapper(
-        new QuantityEntityMapper(QUANTITY_PROVIDER)
-      )
+        new QuantityEntityMapper(QUANTITY_PROVIDER),
+        MEDIUM_PROVIDER
+      ),
+      MEDIUM_PROVIDER
     );
 
   @Test
@@ -49,7 +60,7 @@ public class LogicalMeterEntityMapperTest {
     LogicalMeter logicalMeter = LogicalMeter.builder()
       .externalId("an-external-id")
       .organisationId(ELVACO.id)
-      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
+      .meterDefinition(MeterDefinition.UNKNOWN)
       .physicalMeter(PhysicalMeter.builder()
         .organisationId(ELVACO.id)
         .address("1234")
@@ -103,7 +114,7 @@ public class LogicalMeterEntityMapperTest {
       0,
       null,
       "speed-o-meter",
-      Medium.UNKNOWN_MEDIUM,
+      UNKNOWN_MEDIUM,
       false,
       singleton(
         new DisplayQuantity(new Quantity(1, "Speed", "kmh"), DisplayMode.READOUT, "kmh")
@@ -141,7 +152,7 @@ public class LogicalMeterEntityMapperTest {
         0,
         null,
         "My energy meter",
-        Medium.UNKNOWN_MEDIUM,
+        UNKNOWN_MEDIUM,
         false,
         singleton(
           new DisplayQuantity(new Quantity(1, "Energy", "kWh"), DisplayMode.READOUT, "kWh")
@@ -185,7 +196,7 @@ public class LogicalMeterEntityMapperTest {
         0,
         null,
         "Energy meter",
-        Medium.UNKNOWN_MEDIUM,
+        UNKNOWN_MEDIUM,
         false,
         singleton(
           new DisplayQuantity(new Quantity(null, "Energy", "kWh"), DisplayMode.READOUT, "kWh")
@@ -230,7 +241,7 @@ public class LogicalMeterEntityMapperTest {
         3
       )),
       name,
-      new MediumEntity((long)Medium.UNKNOWN_MEDIUM.ordinal(), Medium.UNKNOWN_MEDIUM.name),
+      new MediumEntity(UNKNOWN_MEDIUM.id, UNKNOWN_MEDIUM.name),
       false
     );
   }

@@ -1,29 +1,35 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.stream.Stream;
+import java.util.List;
 
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @RequiredArgsConstructor
-public enum Medium {
-  // hoho
-  //FIXME: These should be loaded from the database instead
-  UNKNOWN_MEDIUM(1, "Unknown medium"),
-  HOT_WATER(2, "Hot water"),
-  DISTRICT_HEATING(3, "District heating"),
-  DISTRICT_COOLING(4, "District cooling"),
-  GAS(5, "Gas"),
-  WATER(6, "Water"),
-  ROOM_SENSOR(7, "Room sensor"),
-  ELECTRICITY(8, "Electricity");
+@EqualsAndHashCode
+@ToString
+public class Medium {
+  public static final String UNKNOWN_MEDIUM = "Unknown medium";
+  public static final String HOT_WATER = "Hot water";
+  public static final String DISTRICT_HEATING = "District heating";
+  public static final String DISTRICT_COOLING = "District cooling";
+  public static final String GAS = "Gas";
+  public static final String WATER = "Water";
+  public static final String ROOM_SENSOR = "Room sensor";
+  public static final String ELECTRICITY = "Electricity";
+
+  public static final List<String> MEDIA = List.of(
+    UNKNOWN_MEDIUM,
+    HOT_WATER,
+    DISTRICT_HEATING,
+    DISTRICT_COOLING,
+    GAS,
+    WATER,
+    ROOM_SENSOR,
+    ELECTRICITY
+  );
 
   public final long id;
   public final String name;
-
-  public static Medium from(String mediumName) {
-    return Stream.of(values())
-      .filter(medium -> medium.name.equalsIgnoreCase(mediumName))
-      .findAny()
-      .orElse(Medium.UNKNOWN_MEDIUM);
-  }
 }

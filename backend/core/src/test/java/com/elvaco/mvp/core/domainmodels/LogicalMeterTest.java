@@ -25,12 +25,12 @@ public class LogicalMeterTest {
     LogicalMeter heatingMeter = logicalMeterBuilder()
       .meterDefinition(DEFAULT_DISTRICT_HEATING)
       .build();
-    assertThat(heatingMeter.getMedium()).isEqualTo(Medium.DISTRICT_HEATING);
+    assertThat(heatingMeter.getMedium()).isEqualTo(DEFAULT_DISTRICT_HEATING.medium);
 
     LogicalMeter coolingMeter = heatingMeter.toBuilder()
       .meterDefinition(DEFAULT_DISTRICT_COOLING)
       .build();
-    assertThat(coolingMeter.getMedium()).isEqualTo(Medium.DISTRICT_COOLING);
+    assertThat(coolingMeter.getMedium()).isEqualTo(DEFAULT_DISTRICT_COOLING.medium);
   }
 
   @Test

@@ -111,7 +111,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .organisationId(context().organisationId())
       .address("address-123")
       .externalId(randomUUID().toString())
-      .medium(Medium.HOT_WATER.name)
+      .medium(Medium.HOT_WATER)
       .manufacturer("ELV1")
       .readIntervalMinutes(30);
   }

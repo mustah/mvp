@@ -18,7 +18,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityParameter;
-import com.elvaco.mvp.core.exception.NoSuchQuantityException;
+import com.elvaco.mvp.core.exception.NoSuchQuantity;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
@@ -104,7 +104,7 @@ public class MeasurementRepository implements Measurements {
     try {
       MeasurementUnit measurementUnit = new MeasurementUnit(measurement.unit, measurement.value);
       Quantity quantity = quantityProvider.getByName(measurement.quantity)
-        .orElseThrow(() -> new NoSuchQuantityException(measurement.quantity));
+        .orElseThrow(() -> new NoSuchQuantity(measurement.quantity));
 
       measurementJpaRepository.createOrUpdate(
         measurement.physicalMeter.id,
@@ -399,7 +399,7 @@ public class MeasurementRepository implements Measurements {
       .map(unitValue ->
         new MeasurementUnit(
           quantityProvider.getByName(quantity.name)
-            .orElseThrow(() -> new NoSuchQuantityException(quantity.name)).storageUnit,
+            .orElseThrow(() -> new NoSuchQuantity(quantity.name)).storageUnit,
           unitValue.doubleValue()
         ))
       .map(measurementUnit ->

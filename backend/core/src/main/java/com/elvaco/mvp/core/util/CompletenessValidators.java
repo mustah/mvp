@@ -19,7 +19,7 @@ public class CompletenessValidators {
 
   private static final CompletenessValidator<PhysicalMeter> PHYSICAL_METER_COMPLETENESS_VALIDATOR =
     new CompletenessValidator<>(
-      physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM.name),
+      physicalMeter -> !physicalMeter.medium.equals(Medium.UNKNOWN_MEDIUM),
       physicalMeter -> physicalMeter.manufacturer != null
         && !physicalMeter.manufacturer.equals("UNKNOWN"),
       physicalMeter -> physicalMeter.readIntervalMinutes != 0,

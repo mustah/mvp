@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.EntityPk;
@@ -26,13 +26,18 @@ import static java.util.stream.Collectors.toSet;
 public final class LogicalMeterEntityMapper {
 
   private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
+  private final MediumProvider mediumProvider;
 
   public LogicalMeter toDomainModelWithLocation(LogicalMeterWithLocation logicalMeter) {
     return LogicalMeter.builder()
       .id(logicalMeter.id)
       .externalId(logicalMeter.externalId)
       .organisationId(logicalMeter.organisationId)
-      .meterDefinition(MeterDefinition.fromMedium(Medium.from(logicalMeter.medium)))
+      .meterDefinition(
+        MeterDefinition.fromMedium(
+          mediumProvider.getByNameOrThrow(logicalMeter.medium)
+        )
+      )
       .location(LocationEntityMapper.toDomainModel(logicalMeter.location))
       .utcOffset(logicalMeter.utcOffset)
       .build();
