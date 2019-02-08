@@ -29,11 +29,11 @@ const iconIndicatorStyle: React.CSSProperties = {
   height: 24,
 };
 
-const renderFacility = ({facility}: LegendItem) => facility ? orUnknown(facility) : '';
+const renderFacility = ({facility}: LegendItem) => facility ? orUnknown(facility) : '-';
 
-const renderAddress = ({address}: LegendItem) => address ? orUnknown(address) : '';
+const renderAddress = ({address}: LegendItem) => address ? orUnknown(address) : '-';
 
-const renderCity = ({city}: LegendItem) => city ? orUnknown(city) : '';
+const renderCity = ({city}: LegendItem) => city ? orUnknown(city) : '-';
 
 const renderMedium = ({medium}: LegendItem) =>
   Array.isArray(medium)
@@ -53,7 +53,6 @@ export const Legend = ({
   toggleLine,
   deleteItem
 }: LegendProps) => {
-
   const removeAllButtonLink =
     <ButtonLinkBlue onClick={clearSelectedListItems}>{translate('remove all')}</ButtonLinkBlue>;
 

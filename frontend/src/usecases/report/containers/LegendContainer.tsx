@@ -1,7 +1,8 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {componentOrNothing} from '../../../components/hoc/hocs';
+import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {RootState} from '../../../reducers/rootReducer';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {OnClick, OnClickWithId} from '../../../types/Types';
 import {Legend, LegendProps} from '../components/Legend';
@@ -9,7 +10,7 @@ import {clearSelectedListItems, toggleLine, toggleSingleEntry} from '../reportAc
 import {LegendItem, ReportState} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
-interface StateToProps extends ReportState {
+interface StateToProps extends ReportState, WithEmptyContentProps {
   legendItems: Normalized<LegendItem>;
 }
 
@@ -19,9 +20,7 @@ interface DispatchToProps {
   clearSelectedListItems: OnClick;
 }
 
-const hasSelectedItems = ({selectedListItems}: ReportState): boolean => selectedListItems.length > 0;
-
-const LegendComponent = componentOrNothing<LegendProps & ReportState>(hasSelectedItems)(Legend);
+const LegendComponent = withEmptyContent<LegendProps & ReportState & WithEmptyContentProps>(Legend);
 
 const mapStateToProps = ({
   report: {hiddenLines, resolution, selectedListItems},
@@ -32,6 +31,8 @@ const mapStateToProps = ({
     hiddenLines,
     resolution,
     selectedListItems,
+    hasContent: selectedListItems.length > 0,
+    noContentText: firstUpperTranslated('select meters'),
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
