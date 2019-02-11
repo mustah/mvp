@@ -5,10 +5,16 @@ import {Props} from '../containers/MeasurementContentContainer';
 import {GraphContainer, MeasurementsContainer} from '../containers/MeasurementsContainer';
 import {ToolbarContainer} from '../containers/ToolbarContainer';
 
+const isVisible = (show: boolean): string => show ? 'flex' : 'none';
+
 export const MeasurementContent = ({view}: Props) => (
   <Column>
     <ToolbarContainer/>
-    {view === ToolbarView.graph && <GraphContainer/>}
-    {view === ToolbarView.table && <MeasurementsContainer/>}
+    <Column style={{display: isVisible(view === ToolbarView.graph)}}>
+      <GraphContainer/>
+    </Column>
+    <Column style={{display: isVisible(view === ToolbarView.table)}}>
+      <MeasurementsContainer/>
+    </Column>
   </Column>
 );

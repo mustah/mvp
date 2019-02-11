@@ -1,3 +1,4 @@
+import {isEqual} from 'lodash';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {toggle} from '../../helpers/collections';
 import {isDefined} from '../../helpers/commonUtils';
@@ -100,25 +101,25 @@ const dispatchIfWithinLimits = ({
 
 export const toggleSingleEntry = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {selectionTree, report: {selectedListItems}, ui: {indicator: {selectedQuantities}}} = getState();
+    const {selectionTree, report: {selectedListItems: previousIds}, ui: {indicator: {selectedQuantities}}} = getState();
     return dispatchIfWithinLimits({
       dispatch,
       selectionTree,
-      previousIds: selectedListItems,
-      ids: toggle(id, selectedListItems),
+      previousIds,
+      ids: toggle(id, previousIds),
       selectedQuantities,
     });
   };
 
 export const addToReport = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const {selectionTree, report: {selectedListItems}, ui: {indicator: {selectedQuantities}}} = getState();
-    if (!selectedListItems.includes(id) && hasKnownMedia(id, selectionTree.entities.meters)) {
+    const {selectionTree, report: {selectedListItems: previousIds}, ui: {indicator: {selectedQuantities}}} = getState();
+    if (!previousIds.includes(id) && hasKnownMedia(id, selectionTree.entities.meters)) {
       dispatchIfWithinLimits({
         dispatch,
-        ids: [...selectedListItems, id],
+        ids: [...previousIds, id],
         selectionTree,
-        previousIds: selectedListItems,
+        previousIds,
         selectedQuantities,
       });
     }
@@ -180,20 +181,21 @@ export const selectEntryAdd = (id: uuid) =>
 
 export const showMetersInGraph = (meterIds: uuid[]) =>
   (dispatch, getState: GetState) => {
-    const {report: {selectedListItems}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
+    const {report: {selectedListItems: previousIds}, selectionTree, ui: {indicator: {selectedQuantities}}} = getState();
+    if (!isEqual(meterIds, previousIds)) {
+      const ids = meterIds.map((id) => selectionTree.entities.meters[id])
+        .filter(isDefined)
+        .filter(({medium}) => isKnownMedium(medium))
+        .map(({id}) => id);
 
-    const ids = meterIds.map((id) => selectionTree.entities.meters[id])
-      .filter(isDefined)
-      .filter(({medium}) => isKnownMedium(medium))
-      .map(({id}) => id);
-
-    dispatchIfWithinLimits({
-      dispatch,
-      ids: Array.from(new Set<uuid>(ids)),
-      selectionTree,
-      previousIds: selectedListItems,
-      selectedQuantities,
-    });
+      dispatchIfWithinLimits({
+        dispatch,
+        ids: Array.from(new Set<uuid>(ids)),
+        selectionTree,
+        previousIds,
+        selectedQuantities,
+      });
+    }
   };
 
 const emptyReportState: SelectedReportEntriesPayload = {ids: [], indicatorsToSelect: [], quantitiesToSelect: []};

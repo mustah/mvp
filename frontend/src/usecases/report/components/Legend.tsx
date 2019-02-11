@@ -1,4 +1,5 @@
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
+import {toArray} from 'lodash';
 import * as React from 'react';
 import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
@@ -67,7 +68,7 @@ const renderMedium = ({dataItem: {medium}}: GridCellProps) =>
 export const Legend = ({
   clearSelectedListItems,
   hiddenLines,
-  legendItems: {entities: {lines}, result},
+  legendItems: {entities: {lines}},
   toggleLine,
   deleteItem
 }: LegendProps) => {
@@ -95,7 +96,7 @@ export const Legend = ({
     );
   };
 
-  const data = result.map((id) => lines[id]);
+  const data = React.useMemo<LegendItem[]>(() => toArray(lines), [lines]);
 
   return (
     <Column className="Legend">
