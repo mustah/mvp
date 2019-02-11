@@ -89,6 +89,44 @@ public class PeriodRangeParserTest {
   }
 
   @Test
+  public void parseTimestamps_fractions() {
+    assertThat(parseTimestamp("2019-01-08 15:01:50.97+01")).isEqualTo(ZonedDateTime.parse(
+      "2019-01-08T15:01:50.97+01"));
+
+    ZonedDateTime actual;
+
+    actual = parseTimestamp("2019-01-08 15:01:50+01");
+    assertThat(actual.getNano()).isEqualTo(0L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.9+01");
+    assertThat(actual.getNano()).isEqualTo(900000000L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.98+01");
+    assertThat(actual.getNano()).isEqualTo(980000000L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.987+01");
+    assertThat(actual.getNano()).isEqualTo(987000000L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.9876+01");
+    assertThat(actual.getNano()).isEqualTo(987600000L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.98765+01");
+    assertThat(actual.getNano()).isEqualTo(987650000L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.987654+01");
+    assertThat(actual.getNano()).isEqualTo(987654000L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.9876543+01");
+    assertThat(actual.getNano()).isEqualTo(987654300L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.98765432+01");
+    assertThat(actual.getNano()).isEqualTo(987654320L);
+
+    actual = parseTimestamp("2019-01-08 15:01:50.987654321+01");
+    assertThat(actual.getNano()).isEqualTo(987654321L);
+  }
+
+  @Test
   public void formatHalfBoundedRanges() {
     ZonedDateTime dateTime = ZonedDateTime.parse("2018-01-01T08:00:00+01");
 
@@ -139,5 +177,12 @@ public class PeriodRangeParserTest {
   private void assertMalformed(String rangeString) {
     assertThatThrownBy(() -> PeriodRangeParser.parse(rangeString))
       .isInstanceOf(MalformedPeriodRange.class);
+  }
+
+  private static ZonedDateTime parseTimestamp(String ts) {
+    return PeriodRangeParser.parse(String.format(
+      "[\"%s\",)",
+      ts
+    )).getStartDateTime().orElseThrow();
   }
 }
