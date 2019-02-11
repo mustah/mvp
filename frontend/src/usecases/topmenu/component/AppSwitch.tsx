@@ -5,7 +5,7 @@ import * as React from 'react';
 import {Route, Switch} from 'react-router';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {actionMenuItemIconStyle, colors, menuItemInnerDivStyle} from '../../../app/themes';
+import {colors, topMenuInnerDivStyle, topMenuItemDivStyle, topMenuItemIconStyle} from '../../../app/themes';
 import {IconMeter} from '../../../components/icons/IconMeter';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
@@ -39,15 +39,13 @@ interface Props {
   to: string;
 }
 
-const innerDivStyle: React.CSSProperties = {padding: '0 0 0 38px'};
-
 const LinkMenuItem = ({leftIcon, text, to}: Props) => (
   <Link to={to} className="link">
     <MenuItem
       leftIcon={leftIcon}
       className="first-uppercase"
-      innerDivStyle={innerDivStyle}
-      style={menuItemInnerDivStyle}
+      innerDivStyle={topMenuInnerDivStyle}
+      style={topMenuItemDivStyle}
     >
       {text}
     </MenuItem>
@@ -60,7 +58,7 @@ export const AppSwitch = () => {
         <LinkMenuItem
           to={routes.home}
           text={translate('metering')}
-          leftIcon={<IconMeter style={actionMenuItemIconStyle} color={colors.black}/>}
+          leftIcon={<IconMeter style={topMenuItemIconStyle}/>}
           key="metering-pages"
         />
       ),
@@ -68,7 +66,7 @@ export const AppSwitch = () => {
         <LinkMenuItem
           to={routes.admin}
           text={translate('admin')}
-          leftIcon={<ActionDashboard style={actionMenuItemIconStyle} color={colors.black}/>}
+          leftIcon={<ActionDashboard style={topMenuItemIconStyle}/>}
           key="admin-pages"
         />
       ),
