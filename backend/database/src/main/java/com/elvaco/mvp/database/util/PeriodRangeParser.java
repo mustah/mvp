@@ -3,7 +3,9 @@ package com.elvaco.mvp.database.util;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -145,7 +147,11 @@ public class PeriodRangeParser {
   static final class PostgresTimestampParser {
 
     private static final DateTimeFormatter POSTGRES_DATE_TIME_PARSE_FORMATTER =
-      DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss[.SSSSSS][.SSSSS][.SSSS][.SSS][xxx][xx][X]");
+      new DateTimeFormatterBuilder()
+        .appendPattern("uuuu-MM-dd HH:mm:ss")
+        .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+        .appendPattern("[xxx][xx][X]")
+        .toFormatter();
 
     private static final DateTimeFormatter POSTGRES_DATE_TIME_FMT_FORMATTER =
       DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSSxxx");
