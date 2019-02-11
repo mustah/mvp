@@ -4,10 +4,10 @@ import IconButton from 'material-ui/IconButton';
 import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
+import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import * as React from 'react';
 import {colors} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
-import {IconReport} from '../../../components/icons/IconReport';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -85,7 +85,7 @@ export const Toolbar = ({
             tooltip={firstUpperTranslated('graph')}
             isSelected={view === ToolbarView.graph}
           >
-            <IconReport color={colors.lightBlack}/>
+            <EditorShowChart color={colors.lightBlack}/>
           </ToolbarIconButton>
           <ToolbarIconButton
             onClick={selectTable}
