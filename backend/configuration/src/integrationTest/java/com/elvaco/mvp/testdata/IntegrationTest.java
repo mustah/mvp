@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -17,6 +18,7 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
+import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -29,6 +31,7 @@ import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.MeterAlarmLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
@@ -92,6 +95,9 @@ public abstract class IntegrationTest implements ContextDsl {
   protected PropertiesJpaRepository propertiesJpaRepository;
 
   @Autowired
+  protected MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+
+  @Autowired
   protected Users users;
 
   @Autowired
@@ -116,17 +122,19 @@ public abstract class IntegrationTest implements ContextDsl {
   protected MeterAlarmLogs meterAlarmLogs;
 
   @Autowired
+  protected MeterDefinitions meterDefinitions;
+
+  @Autowired
   protected Gateways gateways;
 
   @Autowired
   protected GatewayStatusLogs gatewayStatusLogs;
-
+  @Autowired
+  protected MediumProvider mediumProvider;
   @Autowired
   private TokenFactory tokenFactory;
-
   @Autowired
   private TokenService tokenService;
-
   private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
   @LocalServerPort
@@ -252,6 +260,14 @@ public abstract class IntegrationTest implements ContextDsl {
     physicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
+    removeNonSystemMeterDefinitions();
+  }
+
+  private void removeNonSystemMeterDefinitions() {
+    meterDefinitionJpaRepository.findAll()
+      .stream()
+      .filter(md -> md.organisation != null)
+      .forEach(md -> meterDefinitionJpaRepository.deleteById(md.id));
   }
 
   private void removeSubOrganisationsEntities() {
@@ -286,13 +302,15 @@ public abstract class IntegrationTest implements ContextDsl {
         organisationJpaRepository,
         organisations,
         users,
+        userSelections,
         logicalMeters,
         physicalMeters,
         meterStatusLogs,
         meterAlarmLogs,
         measurements,
         gateways,
-        gatewayStatusLogs
+        gatewayStatusLogs,
+        meterDefinitions
       );
     }
     return integrationTestFixtureContextFactory;

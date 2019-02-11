@@ -1,9 +1,12 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -17,6 +20,7 @@ import static java.util.Collections.emptySet;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
+@Builder
 public class MeterDefinition implements Identifiable<Long> {
 
   public static final MeterDefinition UNKNOWN =
@@ -43,7 +47,8 @@ public class MeterDefinition implements Identifiable<Long> {
   public final String name;
   public final Medium medium;
   public final boolean autoApply;
-  public final Set<DisplayQuantity> quantities;
+  @Builder.Default
+  public final Set<DisplayQuantity> quantities = emptySet();
 
   public boolean isDefault() {
     return organisation == null;
@@ -55,20 +60,22 @@ public class MeterDefinition implements Identifiable<Long> {
     return id;
   }
 
+  public boolean belongsTo(UUID organisationId) {
+    return Optional.ofNullable(organisation)
+      .map(org -> org.getId().equals(organisationId))
+      .orElse(false);
+  }
+
   private static MeterDefinition newSystemMeterDefinition(
     String mediumName,
     Set<DisplayQuantity> quantities
   ) {
-    Medium medium = new Medium(null, mediumName);
-    return new MeterDefinition(
-      null,
-      null,
-      mediumName.equals(Medium.UNKNOWN_MEDIUM)
+    return builder()
+      .medium(new Medium(null, mediumName))
+      .name(mediumName.equals(Medium.UNKNOWN_MEDIUM)
         ? "Unknown"
-        : "Default " + mediumName.toLowerCase(),
-      medium,
-      true,
-      quantities
-    );
+        : "Default " + mediumName.toLowerCase())
+      .autoApply(true)
+      .quantities(quantities).build();
   }
 }

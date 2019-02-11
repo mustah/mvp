@@ -3,6 +3,7 @@ package com.elvaco.mvp.testdata;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.Collection;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
@@ -12,13 +13,19 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition.MeterDefinitionBuilder;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Organisation.OrganisationBuilder;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+
+import static com.elvaco.mvp.core.util.Json.toJsonNode;
+import static java.util.UUID.randomUUID;
 
 public interface ContextDsl {
   IntegrationTestFixtureContext context();
@@ -40,6 +47,10 @@ public interface ContextDsl {
   ) {
     return context().given(logicalMeter, physicalMeterBuilders);
   }
+
+  //  default User given(UserBuilder userBuilder) {
+  //    return context().given(userBuilder);
+  //  }
 
   default OrganisationWithUsers given(
     OrganisationBuilder organisationBuilder,
@@ -90,12 +101,12 @@ public interface ContextDsl {
     context().given(measurements);
   }
 
-  default LogicalMeterBuilder logicalMeter() {
-    return context().logicalMeter();
+  default MeterDefinition given(MeterDefinitionBuilder meterDefinitionBuilder) {
+    return context().given(meterDefinitionBuilder);
   }
 
-  default OrganisationBuilder organisation() {
-    return context().organisation();
+  default LogicalMeterBuilder logicalMeter() {
+    return context().logicalMeter();
   }
 
   default UserBuilder user() {
@@ -122,8 +133,32 @@ public interface ContextDsl {
     return context().measurement(logicalMeter);
   }
 
+  default MeterDefinitionBuilder meterDefinition() {
+    return context().meterDefinition();
+  }
+
   default GatewayBuilder gateway() {
     return context().gateway();
+  }
+
+  default OrganisationBuilder organisation() {
+    return context().organisation();
+  }
+
+  default OrganisationBuilder subOrganisation() {
+    UUID orgId = randomUUID();
+    OrganisationBuilder organisationBuilder = context().organisation().id(orgId);
+
+    UserSelection userSelection = UserSelection.builder()
+      .id(randomUUID())
+      .ownerUserId(context().superAdmin.id)
+      .organisationId(context().organisationId())
+      .selectionParameters(toJsonNode("{}"))
+      .name("user-selection for sub-organisation " + orgId.toString())
+      .build();
+
+    return organisationBuilder.parent(context().defaultOrganisation())
+      .selection(userSelection);
   }
 
   default Collection<Measurement> series(

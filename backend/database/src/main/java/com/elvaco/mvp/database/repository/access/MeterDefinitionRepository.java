@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -32,8 +33,17 @@ public class MeterDefinitionRepository implements MeterDefinitions {
   }
 
   @Override
+  public List<MeterDefinition> findAll(UUID organisationId) {
+    return meterDefinitionJpaRepository.findByOrganisationIdOrOrganisationIsNull(organisationId)
+      .stream()
+      .map(meterDefinitionEntityMapper::toDomainModel)
+      .collect(toList());
+  }
+
+  @Override
   public List<MeterDefinition> findAll() {
-    return meterDefinitionJpaRepository.findAll().stream()
+    return meterDefinitionJpaRepository.findAll()
+      .stream()
       .map(meterDefinitionEntityMapper::toDomainModel)
       .collect(toList());
   }

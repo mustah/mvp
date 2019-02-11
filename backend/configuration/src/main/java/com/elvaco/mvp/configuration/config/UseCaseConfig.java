@@ -7,6 +7,7 @@ import com.elvaco.mvp.core.spi.repository.Locations;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
+import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -15,6 +16,7 @@ import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LocationUseCases;
@@ -22,6 +24,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MapUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.MeterAlarmUseCases;
+import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
@@ -50,6 +53,7 @@ class UseCaseConfig {
   private final Locations locations;
   private final Properties properties;
   private final MeterAlarmLogs meterAlarmLogs;
+  private final MeterDefinitions meterDefinitions;
 
   @Bean
   SettingUseCases settingUseCases() {
@@ -120,5 +124,13 @@ class UseCaseConfig {
   @Bean
   MeterAlarmUseCases meterAlarmUseCases() {
     return new MeterAlarmUseCases(measurements, meterAlarmLogs);
+  }
+
+  @Bean
+  MeterDefinitionUseCases meterDefinitionUseCases(
+    AuthenticatedUser currentUser,
+    UnitConverter unitConverter
+  ) {
+    return new MeterDefinitionUseCases(currentUser, meterDefinitions, unitConverter);
   }
 }

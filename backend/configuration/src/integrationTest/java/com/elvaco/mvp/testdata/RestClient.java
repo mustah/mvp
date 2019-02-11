@@ -63,7 +63,7 @@ public final class RestClient {
     Object requestBody,
     Class<T> listedClass
   ) {
-    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
+    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<>() {
       @Override
       public Type getType() {
         return new ParameterizedTypeReferenceImpl(
@@ -144,7 +144,7 @@ public final class RestClient {
     Class<T> listedClass,
     Object... urlVariables
   ) {
-    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
+    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<>() {
       @Override
       public Type getType() {
         return new ParameterizedTypeReferenceImpl(
@@ -191,7 +191,7 @@ public final class RestClient {
     Object... variables
   ) {
     ParameterizedTypeReference<RestResponsePage<T>> responseType =
-      new ParameterizedTypeReference<RestResponsePage<T>>() {
+      new ParameterizedTypeReference<>() {
         @Override
         public Type getType() {
           return new ParameterizedTypeReferenceImpl(
