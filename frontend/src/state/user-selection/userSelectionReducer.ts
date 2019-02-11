@@ -2,7 +2,6 @@ import {EmptyAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
 import {Action, IdNamed} from '../../types/Types';
-import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {
   domainModelsDeleteSuccess,
   domainModelsPostSuccess,
@@ -163,7 +162,6 @@ export const userSelection = (
   action: ActionTypes,
 ): UserSelectionState => {
   switch (action.type) {
-    case LOGOUT_USER:
     case RESET_SELECTION:
       return initialState;
     case ADD_PARAMETER_TO_SELECTION:

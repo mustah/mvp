@@ -25,8 +25,6 @@ export interface LegendProps {
   legendItems: Normalized<LegendItem>;
 }
 
-export const getLegendMaxHeight = () => 0.75 * window.innerHeight;
-
 const iconIndicatorStyle: React.CSSProperties = {
   display: 'table',
   width: 24,
@@ -39,7 +37,7 @@ const legendGridStyle: React.CSSProperties = {
   borderTopRightRadius: borderRadius,
   marginBottom: 24,
   width: 560,
-  maxHeight: getLegendMaxHeight()
+  maxHeight: 0.75 * window.innerHeight
 };
 
 const renderFacility = ({dataItem: {facility}}: GridCellProps) =>
