@@ -8,6 +8,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.helpers.CronHelper;
+import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -49,6 +51,8 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private final GeocodeService geocodeService;
   private final PropertiesUseCases propertiesUseCases;
   private final JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
+  private final MediumProvider mediumProvider;
+  private final SystemMeterDefinitionProvider meterDefinitionProvider;
 
   @Override
   public void accept(MeteringReferenceInfoMessageDto message) {
@@ -165,8 +169,11 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     Optional<MeterDto> meter = Optional.ofNullable(meterDto);
 
     MeterDefinition meterDefinition = meter
-      .map(dto -> MeterDefinition.fromMedium(mapToEvoMedium(dto.medium)))
-      .orElse(MeterDefinition.UNKNOWN_METER);
+      .map(dto -> meterDefinitionProvider.getByMediumOrThrow(mapToEvoMedium(
+        mediumProvider,
+        dto.medium
+      )))
+      .orElse(MeterDefinition.UNKNOWN);
 
     // TODO: if utcOffset change we do not recalculate historical measurement_stat.
     return logicalMeterUseCases.findBy(organisationId, facilityId)

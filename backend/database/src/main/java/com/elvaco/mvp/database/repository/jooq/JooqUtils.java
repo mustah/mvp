@@ -46,11 +46,11 @@ public class JooqUtils {
   }
 
   static Condition valueConditionFor(MeasurementThreshold threshold) {
-    Field<Double> max = threshold.quantity.isConsumption()
+    Field<Double> max = threshold.quantity.isConsumptionByDefault()
       ? asHourly(MEASUREMENT_STAT_DATA.MAX)
       : MEASUREMENT_STAT_DATA.MAX;
 
-    Field<Double> min = threshold.quantity.isConsumption()
+    Field<Double> min = threshold.quantity.isConsumptionByDefault()
       ? asHourly(MEASUREMENT_STAT_DATA.MIN)
       : MEASUREMENT_STAT_DATA.MIN;
 

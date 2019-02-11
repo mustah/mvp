@@ -130,14 +130,14 @@ public class MeterAlarmLogsTest extends IntegrationTest {
       .externalId("externalId")
       .organisationId(context().organisationId())
       .created(ZonedDateTime.now())
-      .meterDefinition(MeterDefinition.GAS_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_GAS)
       .build();
 
     PhysicalMeter physicalMeter = PhysicalMeter.builder()
       .organisationId(context().organisationId())
       .address("123123")
       .externalId(logicalMeter.externalId)
-      .medium(logicalMeter.getMedium())
+      .medium(logicalMeter.getMedium().name)
       .manufacturer("ELV")
       .logicalMeterId(logicalMeter.getId())
       .readIntervalMinutes(15)

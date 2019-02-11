@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -21,12 +22,13 @@ public class MeterDefinitionRepository implements MeterDefinitions {
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
     MeterDefinitionEntity entity = meterDefinitionEntityMapper.toEntity(meterDefinition);
-
-    if (meterDefinition.systemOwned) {
-      meterDefinitionJpaRepository.findByMedium(meterDefinition.medium)
-        .ifPresent(systemOwned -> entity.type = systemOwned.type);
-    }
     return meterDefinitionEntityMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
+  }
+
+  @Override
+  public Optional<MeterDefinition> findById(Long id) {
+    return meterDefinitionJpaRepository.findById(id)
+      .map(meterDefinitionEntityMapper::toDomainModel);
   }
 
   @Override

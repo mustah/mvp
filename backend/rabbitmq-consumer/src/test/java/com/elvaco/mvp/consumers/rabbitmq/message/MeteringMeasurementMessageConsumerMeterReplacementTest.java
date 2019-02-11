@@ -47,7 +47,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ELECTRICITY_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ELECTRICITY;
 import static java.time.ZonedDateTime.now;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -56,7 +56,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
-@SuppressWarnings("ConstantConditions")
 public class MeteringMeasurementMessageConsumerMeterReplacementTest {
 
   private static final String QUANTITY = "Energy";
@@ -442,17 +441,17 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(ELECTRICITY_METER)
+        .meterDefinition(DEFAULT_ELECTRICITY)
         .build());
     var physicalMeter = physicalMeters.save(
       PhysicalMeter.builder()
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
         .manufacturer("ELV")
-        .medium(Medium.UNKNOWN_MEDIUM.medium)
+        .medium(Medium.UNKNOWN_MEDIUM)
         .readIntervalMinutes(15)
         .organisationId(organisation.id)
-        .medium(ELECTRICITY_METER.medium)
+        .medium(DEFAULT_ELECTRICITY.medium.name)
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.empty())
         .build());
@@ -466,17 +465,17 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
       LogicalMeter.builder()
         .externalId(EXTERNAL_ID)
         .organisationId(organisation.id)
-        .meterDefinition(ELECTRICITY_METER)
+        .meterDefinition(DEFAULT_ELECTRICITY)
         .build());
     var physicalMeter = physicalMeters.save(
       PhysicalMeter.builder()
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
         .manufacturer("ELV")
-        .medium(Medium.UNKNOWN_MEDIUM.medium)
+        .medium(Medium.UNKNOWN_MEDIUM)
         .readIntervalMinutes(15)
         .organisationId(organisation.id)
-        .medium(ELECTRICITY_METER.medium)
+        .medium(DEFAULT_ELECTRICITY.medium.name)
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
         .build());

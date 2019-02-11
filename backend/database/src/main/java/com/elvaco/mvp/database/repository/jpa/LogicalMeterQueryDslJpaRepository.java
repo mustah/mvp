@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +20,6 @@ import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
 import com.querydsl.jpa.impl.JPADeleteClause;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -40,20 +38,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.core.filter.RequestParametersMapper.toFilters;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
 import static com.elvaco.mvp.database.entity.jooq.tables.Gateway.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.tables.Location.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog.METER_ALARM_LOG;
-import static com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
-import static org.jooq.impl.DSL.field;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
-@Slf4j
 @Repository
 class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
@@ -66,7 +62,7 @@ class LogicalMeterQueryDslJpaRepository
     "manufacturer", PHYSICAL_METER.MANUFACTURER,
     "gatewaySerial", GATEWAY.SERIAL,
     "secondaryAddress", PHYSICAL_METER.ADDRESS,
-    "medium", METER_DEFINITION.MEDIUM,
+    "medium", MEDIUM.NAME,
     "collectionPercentage", COLLECTION_PERCENTAGE
   );
 
@@ -149,7 +145,7 @@ class LogicalMeterQueryDslJpaRepository
       LOGICAL_METER.ORGANISATION_ID,
       LOGICAL_METER.EXTERNAL_ID,
       LOGICAL_METER.CREATED,
-      METER_DEFINITION.MEDIUM,
+      MEDIUM.NAME,
       GATEWAY.SERIAL,
       COLLECTION_PERCENTAGE,
       PHYSICAL_METER_STATUS_LOG.STATUS,
@@ -204,7 +200,7 @@ class LogicalMeterQueryDslJpaRepository
       LOCATION.CITY,
       LOCATION.STREET_ADDRESS,
       LOCATION.ZIP,
-      METER_DEFINITION.MEDIUM
+      MEDIUM.NAME
     ).from(LOGICAL_METER);
 
     logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
@@ -272,16 +268,5 @@ class LogicalMeterQueryDslJpaRepository
   private Optional<LogicalMeterEntity> fetchOne(Condition... conditions) {
     return nativeQuery(dsl.select().from(LOGICAL_METER).where(conditions).limit(1)).stream()
       .findAny();
-  }
-
-  private static SortField<?> getSortField(Sort sort) {
-    Iterator<Sort.Order> orderIterator = sort.iterator();
-    Sort.Order order = orderIterator.next(); //only consider first sort for now
-    if (orderIterator.hasNext()) {
-      log.warn("Sorting on more than one property requested in: '%'", sort);
-    }
-    Field<?> sortField = field(order.getProperty());
-
-    return order.getDirection().isAscending() ? sortField.asc() : sortField.desc();
   }
 }

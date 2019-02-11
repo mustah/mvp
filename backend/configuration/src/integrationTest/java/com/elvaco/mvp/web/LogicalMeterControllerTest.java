@@ -32,9 +32,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
@@ -76,14 +76,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void pagedMeter_Has_MeterDefinition() {
-    given(logicalMeter().meterDefinition(DISTRICT_HEATING_METER));
+    given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
 
     PagedLogicalMeterDto logicalMeterDto = asUser()
       .getPage("/meters", PagedLogicalMeterDto.class)
       .getContent()
       .get(0);
 
-    assertThat(logicalMeterDto.medium).isEqualTo(DISTRICT_HEATING_METER.medium);
+    assertThat(logicalMeterDto.medium).isEqualTo(DEFAULT_DISTRICT_HEATING.medium.name);
   }
 
   @Test
@@ -183,8 +183,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void pagedMeter_By_Medium() {
-    given(logicalMeter().meterDefinition(HOT_WATER_METER));
-    given(logicalMeter().meterDefinition(GAS_METER));
+    given(logicalMeter().meterDefinition(DEFAULT_HOT_WATER));
+    given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
     Page<PagedLogicalMeterDto> response = asUser()
       .getPage("/meters?medium=Hot+water", PagedLogicalMeterDto.class);
@@ -216,14 +216,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void pagedMeter_By_Medium_RequiresSameOrganisation() {
-    var myMeter = given(logicalMeter().meterDefinition(GAS_METER));
-    given(logicalMeter().meterDefinition(GAS_METER).organisationId(context().organisationId2()));
+    var myMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
+    given(logicalMeter().meterDefinition(DEFAULT_GAS).organisationId(context().organisationId2()));
 
     Page<PagedLogicalMeterDto> response = asUser()
       .getPage(
         Url.builder()
           .path("/meters")
-          .parameter(MEDIUM, GAS_METER.medium)
+          .parameter(MEDIUM, DEFAULT_GAS.medium.name)
           .build(),
         PagedLogicalMeterDto.class
       );
@@ -676,8 +676,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void wildcardSearchMatchesMediumStart_IgnoresCase() {
-    given(logicalMeter().meterDefinition(HOT_WATER_METER));
-    given(logicalMeter().meterDefinition(GAS_METER));
+    given(logicalMeter().meterDefinition(DEFAULT_HOT_WATER));
+    given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
     Page<PagedLogicalMeterDto> page = asUser().getPage(
       "/meters?w=hot",
@@ -686,7 +686,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(page.getContent())
       .extracting(m -> m.medium)
-      .containsExactly(HOT_WATER_METER.medium);
+      .containsExactly(DEFAULT_HOT_WATER.medium.name);
   }
 
   @Test
@@ -1025,7 +1025,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     given(statusLog(interestingMeter).status(OK).start(context().now().minusDays(3))
       .stop(context().now().minusDays(1)));
     given(statusLog(interestingMeter).status(ERROR).start(context().now().minusDays(1)));
-
 
     Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
       .getPage(

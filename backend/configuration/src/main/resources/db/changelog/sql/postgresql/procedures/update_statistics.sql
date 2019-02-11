@@ -22,18 +22,18 @@ begin
   -- the tz using an interval.
 
   select (-(utc_offset || right('00:00:00', 9 - length(utc_offset)))::interval)::text,
-         read_interval_minutes
+         read_interval_minutes,
+         display_quantity.display_mode = 2
          into measurement_tz,
-           read_interval
+           read_interval,
+           consumption
   from logical_meter l
-         left join physical_meter p
+         inner join meter_definition on meter_definition.id = l.meter_definition_id
+         inner join display_quantity on display_quantity.quantity_id = rec.quantity and
+                                       meter_definition.id = display_quantity.meter_definition_id
+         inner join physical_meter p
                    on l.id = p.logical_meter_id
   where p.id = rec.physical_meter_id;
-
-  select (q.series_display_mode = 2) into consumption
-  from quantity q
-  where q.id = rec.quantity;
-
 
   -- If there are no logical meter we can not get correct TZ an we will bail out
   if (measurement_tz is null)

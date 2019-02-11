@@ -2,14 +2,19 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodBound;
@@ -51,6 +56,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ROOM_SENSOR;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_WATER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.locationWithoutCoordinates;
 import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
@@ -89,6 +99,25 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private PropertiesUseCases propertiesUseCases;
   private MockMeterStatusLogs meterStatusLogs;
   private MockJobService<MeteringReferenceInfoMessageDto> jobService;
+  private Map<String, Medium> mediumMap = Map.of(
+    UNKNOWN.medium.name, UNKNOWN.medium,
+    DEFAULT_HOT_WATER.medium.name, DEFAULT_HOT_WATER.medium,
+    DEFAULT_WATER.medium.name, DEFAULT_WATER.medium,
+    DEFAULT_DISTRICT_HEATING.medium.name, DEFAULT_DISTRICT_HEATING.medium,
+    DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
+  );
+
+  private Map<Medium, MeterDefinition> meterDefinitionMap = Map.of(
+    UNKNOWN.medium, UNKNOWN,
+    DEFAULT_HOT_WATER.medium, DEFAULT_HOT_WATER,
+    DEFAULT_WATER.medium, DEFAULT_WATER,
+    DEFAULT_DISTRICT_HEATING.medium, DEFAULT_DISTRICT_HEATING,
+    DEFAULT_ROOM_SENSOR.medium, DEFAULT_ROOM_SENSOR
+  );
+
+  private SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
+    meterDefinitionMap.get(medium));
+  private MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
 
   @Before
   public void setUp() {
@@ -116,6 +145,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     meterStatusLogs = new MockMeterStatusLogs();
     jobService = new MockJobService<>();
+
     messageHandler = new MeteringReferenceInfoMessageConsumer(
       new LogicalMeterUseCases(authenticatedUser, logicalMeters),
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters, meterStatusLogs),
@@ -135,7 +165,9 @@ public class MeteringReferenceInfoMessageConsumerTest {
       new GatewayUseCases(gateways, authenticatedUser),
       geocodeService,
       propertiesUseCases,
-      jobService
+      jobService,
+      mediumProvider,
+      meterDefinitionProvider
     );
   }
 
@@ -159,7 +191,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeter.id)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(logicalMeter.created)
       .location(locationWithoutCoordinates().build())
       .build();
@@ -297,7 +329,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
     assertThat(physicalMeter.organisationId).isEqualTo(organisation.id);
 
     LogicalMeter logicalMeter = logicalMeters.findById(physicalMeter.logicalMeterId).get();
-    assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.HOT_WATER_METER);
+    assertThat(logicalMeter.meterDefinition).isEqualTo(DEFAULT_HOT_WATER);
     assertThat(gateways.findBy(organisation.id, PRODUCT_MODEL, GATEWAY_EXTERNAL_ID)
       .isPresent()).isTrue();
   }
@@ -339,7 +371,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
 
     List<LogicalMeter> meters = logicalMeters.findAllWithDetails(new MockRequestParameters());
     assertThat(meters).hasSize(1);
-    assertThat(meters.get(0).getMedium()).isEqualTo("Unknown medium");
+    assertThat(meters.get(0).getMedium().name).isEqualTo("Unknown medium");
   }
 
   @Test
@@ -347,12 +379,13 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.getMedium()).isEqualTo("Unknown medium");
+    assertThat(meter.getMedium().name).isEqualTo("Unknown medium");
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+    assertThat(meter.meterDefinition.medium.name)
+      .isEqualTo(Medium.DISTRICT_HEATING);
   }
 
   @Test
@@ -396,15 +429,16 @@ public class MeteringReferenceInfoMessageConsumerTest {
   public void mapsMeterMediumToEvoDefinitionType() {
     messageHandler.accept(messageBuilder().medium("Cold water").build());
     var meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.WATER_METER.type);
+    assertThat(meter.meterDefinition.medium).isEqualTo(DEFAULT_WATER.medium);
 
     messageHandler.accept(messageBuilder().medium("Heat, Return temp").build());
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER.type);
+    assertThat(meter.meterDefinition.medium)
+      .isEqualTo(MeterDefinition.DEFAULT_DISTRICT_HEATING.medium);
 
     messageHandler.accept(messageBuilder().medium("Roomsensor").build());
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.ROOM_SENSOR_METER.type);
+    assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.DEFAULT_ROOM_SENSOR.medium);
   }
 
   @Test
@@ -412,12 +446,12 @@ public class MeteringReferenceInfoMessageConsumerTest {
     messageHandler.accept(messageBuilder().medium("Unknown medium").build());
 
     LogicalMeter meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.getMedium()).isEqualTo("Unknown medium");
+    assertThat(meter.getMedium().name).isEqualTo("Unknown medium");
 
     messageHandler.accept(messageBuilder().medium("I don't even know what this is?").build());
 
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
-    assertThat(meter.meterDefinition.type).isEqualTo(MeterDefinition.UNKNOWN_METER.type);
+    assertThat(meter.meterDefinition.medium).isEqualTo(MeterDefinition.UNKNOWN.medium);
   }
 
   @Test
@@ -493,7 +527,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeterId)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(ZonedDateTime.now())
       .location(UNKNOWN_LOCATION)
       .build());
@@ -794,7 +828,7 @@ public class MeteringReferenceInfoMessageConsumerTest {
       .id(logicalMeterId)
       .externalId(EXTERNAL_ID)
       .organisationId(organisation.id)
-      .meterDefinition(MeterDefinition.HOT_WATER_METER)
+      .meterDefinition(DEFAULT_HOT_WATER)
       .created(ZonedDateTime.now())
       .location(UNKNOWN_LOCATION)
       .build());

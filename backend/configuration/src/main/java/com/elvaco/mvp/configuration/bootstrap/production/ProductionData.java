@@ -30,14 +30,14 @@ public class ProductionData implements ProductionDataProvider {
   @Override
   public List<MeterDefinition> meterDefinitions() {
     return List.of(
-      MeterDefinition.UNKNOWN_METER,
-      MeterDefinition.HOT_WATER_METER,
-      MeterDefinition.DISTRICT_HEATING_METER,
-      MeterDefinition.DISTRICT_COOLING_METER,
-      MeterDefinition.GAS_METER,
-      MeterDefinition.WATER_METER,
-      MeterDefinition.ROOM_SENSOR_METER,
-      MeterDefinition.ELECTRICITY_METER
+      MeterDefinition.UNKNOWN,
+      MeterDefinition.DEFAULT_HOT_WATER,
+      MeterDefinition.DEFAULT_DISTRICT_HEATING,
+      MeterDefinition.DEFAULT_DISTRICT_COOLING,
+      MeterDefinition.DEFAULT_GAS,
+      MeterDefinition.DEFAULT_WATER,
+      MeterDefinition.DEFAULT_ROOM_SENSOR,
+      MeterDefinition.DEFAULT_ELECTRICITY
     );
   }
 

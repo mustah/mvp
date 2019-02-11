@@ -152,12 +152,12 @@ public class SelectionTreeDtoMapperTest {
       new CityDto(
         "sweden,gothenburg",
         "gothenburg",
-        singleton(Medium.UNKNOWN_MEDIUM.medium)
+        singleton(Medium.UNKNOWN_MEDIUM)
       ),
       new CityDto(
         "sweden,kungsbacka",
         "kungsbacka",
-        singleton(Medium.UNKNOWN_MEDIUM.medium)
+        singleton(Medium.UNKNOWN_MEDIUM)
       )
     );
   }
@@ -190,8 +190,8 @@ public class SelectionTreeDtoMapperTest {
     SelectionTreeDto selectionTreeDto = SelectionTreeDtoMapper.toDto(selectionTree);
 
     assertThat(selectionTreeDto.cities.get(0).addresses.get(0).meters).containsOnly(
-      new MeterDto(logicalMeterId1, "1245", MeterDefinition.UNKNOWN_METER.medium),
-      new MeterDto(logicalMeterId2, "1234", MeterDefinition.UNKNOWN_METER.medium)
+      new MeterDto(logicalMeterId1, "1245", MeterDefinition.UNKNOWN.medium.name),
+      new MeterDto(logicalMeterId2, "1234", MeterDefinition.UNKNOWN.medium.name)
     );
   }
 

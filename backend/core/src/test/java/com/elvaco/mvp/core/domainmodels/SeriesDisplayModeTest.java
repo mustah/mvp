@@ -8,8 +8,8 @@ public class SeriesDisplayModeTest {
 
   @Test
   public void toStringOfName() {
-    assertThat(SeriesDisplayMode.UNKNOWN.toString()).isEqualTo("unknown");
-    assertThat(SeriesDisplayMode.CONSUMPTION.toString()).isEqualTo("consumption");
-    assertThat(SeriesDisplayMode.READOUT.toString()).isEqualTo("readout");
+    assertThat(DisplayMode.UNKNOWN.toString()).isEqualTo("unknown");
+    assertThat(DisplayMode.CONSUMPTION.toString()).isEqualTo("consumption");
+    assertThat(DisplayMode.READOUT.toString()).isEqualTo("readout");
   }
 }

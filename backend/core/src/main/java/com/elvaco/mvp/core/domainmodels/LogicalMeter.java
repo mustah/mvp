@@ -16,7 +16,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
 
-import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 
 @Builder(toBuilder = true)
@@ -44,7 +43,7 @@ public class LogicalMeter implements Identifiable<UUID> {
   @Builder.Default
   public UUID id = UUID.randomUUID();
   @Builder.Default
-  public MeterDefinition meterDefinition = MeterDefinition.UNKNOWN_METER;
+  public MeterDefinition meterDefinition = MeterDefinition.UNKNOWN;
   @Builder.Default
   public ZonedDateTime created = ZonedDateTime.now();
   @Builder.Default
@@ -77,12 +76,12 @@ public class LogicalMeter implements Identifiable<UUID> {
     return toBuilder().physicalMeters(newPhysicalMeters).build();
   }
 
-  public String getMedium() {
-    return meterDefinition.medium;
+  public MeterDefinition getMeterDefinition() {
+    return meterDefinition;
   }
 
-  public Set<Quantity> getQuantities() {
-    return meterDefinition != null ? meterDefinition.quantities : emptySet();
+  public Medium getMedium() {
+    return meterDefinition.medium;
   }
 
   public String getManufacturer() {
@@ -91,17 +90,22 @@ public class LogicalMeter implements Identifiable<UUID> {
       .orElse("UNKNOWN");
   }
 
-  public Optional<Quantity> getQuantity(String quantityName) {
-    return getQuantities().stream()
-      .filter(quantity -> quantity.name.equals(quantityName))
-      .findAny();
-  }
-
   public Optional<PhysicalMeter> activePhysicalMeter() {
     return activePhysicalMeter(ZonedDateTime.now());
   }
 
   public Optional<PhysicalMeter> activePhysicalMeter(ZonedDateTime when) {
     return physicalMeters.stream().filter(pm -> pm.activePeriod.contains(when)).findAny();
+  }
+
+  public Set<DisplayQuantity> getQuantities() {
+    return meterDefinition.quantities;
+  }
+
+  public Optional<Quantity> getQuantity(String name) {
+    return meterDefinition.quantities.stream()
+      .filter(displayQuantity -> displayQuantity.quantity.name.equals(name))
+      .map(displayQuantity -> displayQuantity.quantity)
+      .findAny();
   }
 }

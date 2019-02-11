@@ -237,7 +237,7 @@ public abstract class IntegrationTest implements ContextDsl {
         .created(when)
         .quantity(quantity.name)
         .value(value)
-        .unit(quantity.presentationUnit())
+        .unit(quantity.storageUnit)
         .physicalMeter(physicalMeter)
         .build()
       );

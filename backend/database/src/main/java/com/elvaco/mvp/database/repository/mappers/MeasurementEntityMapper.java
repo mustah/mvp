@@ -3,6 +3,8 @@ package com.elvaco.mvp.database.repository.mappers;
 import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.exception.NoSuchQuantity;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
@@ -22,29 +24,24 @@ public class MeasurementEntityMapper {
     return Measurement.builder()
       .created(entity.id.created)
       .quantity(entity.id.quantity.name)
-      .value(
-        unitConverter.convert(
-          new MeasurementUnit(
-            entity.id.quantity.storageUnit,
-            entity.value
-          ),
-          entity.id.quantity.displayUnit
-        ).getValue())
-      .unit(entity.id.quantity.displayUnit)
+      .value(entity.value)
+      .unit(entity.id.quantity.storageUnit)
       .physicalMeter(toDomainModelWithoutStatusLogs(entity.id.physicalMeter))
       .build();
   }
 
   public MeasurementEntity toEntity(Measurement domainModel) {
+    Quantity quantity = quantityProvider.getByName(domainModel.quantity)
+      .orElseThrow(() -> new NoSuchQuantity(domainModel.quantity));
     return new MeasurementEntity(
       new MeasurementPk(
         domainModel.created,
-        quantityEntityMapper.toEntity(quantityProvider.getByName(domainModel.quantity)),
+        quantityEntityMapper.toEntity(quantity),
         PhysicalMeterEntityMapper.toEntity(domainModel.physicalMeter)
       ),
       unitConverter.convert(
         new MeasurementUnit(domainModel.unit, domainModel.value),
-        quantityProvider.getByName(domainModel.quantity).storageUnit
+        quantity.storageUnit
       ).getValue()
     );
   }

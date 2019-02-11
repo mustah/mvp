@@ -13,9 +13,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_COOLING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_COOLING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.stockholm;
 import static java.util.stream.Collectors.toList;
@@ -217,21 +217,29 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
   @Test
   public void findAll_SortByMedium() {
     given(
-      logicalMeter().meterDefinition(DISTRICT_HEATING_METER),
-      logicalMeter().meterDefinition(DISTRICT_COOLING_METER),
-      logicalMeter().meterDefinition(HOT_WATER_METER)
+      logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING),
+      logicalMeter().meterDefinition(DEFAULT_DISTRICT_COOLING),
+      logicalMeter().meterDefinition(DEFAULT_HOT_WATER)
     );
 
     testSorting(
       "medium,asc",
       meter -> meter.medium,
-      List.of(DISTRICT_COOLING_METER.medium, DISTRICT_HEATING_METER.medium, HOT_WATER_METER.medium)
+      List.of(
+        DEFAULT_DISTRICT_COOLING.medium.name,
+        DEFAULT_DISTRICT_HEATING.medium.name,
+        DEFAULT_HOT_WATER.medium.name
+      )
     );
 
     testSorting(
       "medium,desc",
       meter -> meter.medium,
-      List.of(HOT_WATER_METER.medium, DISTRICT_HEATING_METER.medium, DISTRICT_COOLING_METER.medium)
+      List.of(
+        DEFAULT_HOT_WATER.medium.name,
+        DEFAULT_DISTRICT_HEATING.medium.name,
+        DEFAULT_DISTRICT_COOLING.medium.name
+      )
     );
   }
 

@@ -29,7 +29,7 @@ public class Measurement implements Identifiable<Measurement.Id> {
   }
 
   public Quantity getQuantity() {
-    return new Quantity(quantity, unit);
+    return new Quantity(null, quantity, unit);
   }
 
   @Override

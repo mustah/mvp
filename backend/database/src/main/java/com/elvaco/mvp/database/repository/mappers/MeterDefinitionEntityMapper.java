@@ -1,12 +1,11 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
-import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.database.entity.meter.DisplayQuantityEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
-import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,34 +14,45 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class MeterDefinitionEntityMapper {
 
-  private final QuantityEntityMapper quantityEntityMapper;
-  private final QuantityProvider quantityProvider;
+  private final MediumEntityMapper mediumEntityMapper;
+  private final DisplayQuantityEntityMapper displayQuantityEntityMapper;
 
   public MeterDefinitionEntity toEntity(MeterDefinition domainModel) {
     return new MeterDefinitionEntity(
-      domainModel.type,
-      toQuantityEntities(domainModel),
-      domainModel.medium,
-      domainModel.systemOwned
+      domainModel.id,
+      Optional.ofNullable(domainModel.organisation)
+        .map(OrganisationEntityMapper::toEntity)
+        .orElse(null),
+      toDisplayQuantityEntities(domainModel),
+      domainModel.name,
+      mediumEntityMapper.toMediumEntity(domainModel.medium),
+      domainModel.autoApply
     );
   }
 
   public MeterDefinition toDomainModel(MeterDefinitionEntity entity) {
     return new MeterDefinition(
-      entity.type,
-      entity.medium,
+      entity.id,
+      Optional.ofNullable(entity.organisation)
+        .map(OrganisationEntityMapper::toDomainModel)
+        .orElse(null),
+      entity.name,
+      mediumEntityMapper.toMedium(entity.medium),
+      entity.autoApply,
       entity.quantities.stream()
-        .map(quantityEntityMapper::toDomainModel)
-        .collect(toSet()),
-      entity.systemOwned
+        .map(displayQuantityEntityMapper::toDisplayQuantity)
+        .collect(toSet())
     );
   }
 
-  private Set<QuantityEntity> toQuantityEntities(MeterDefinition domainModel) {
+  private Set<DisplayQuantityEntity> toDisplayQuantityEntities(
+    MeterDefinition domainModel
+  ) {
     return domainModel.quantities.stream()
-      .map(quantity -> quantityProvider.getByName(quantity.name))
-      .filter(Objects::nonNull)
-      .map(quantityEntityMapper::toEntity)
+      .map(displayQuantity -> displayQuantityEntityMapper.toDisplayQuantityEntity(
+        domainModel.id,
+        displayQuantity
+      ))
       .collect(toSet());
   }
 }

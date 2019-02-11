@@ -132,10 +132,10 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       .build();
 
     LogicalMeter roomSensorMeter = given(logicalMeter().location(kiruna)
-      .meterDefinition(MeterDefinition.ROOM_SENSOR_METER));
+      .meterDefinition(MeterDefinition.DEFAULT_ROOM_SENSOR));
 
     LogicalMeter gasMeter = given(logicalMeter().location(kiruna)
-      .meterDefinition(MeterDefinition.GAS_METER));
+      .meterDefinition(MeterDefinition.DEFAULT_GAS));
 
     ZonedDateTime start = context().now();
 
@@ -159,7 +159,7 @@ public class MeasurementControllerCitiesTest extends IntegrationTest {
       new MeasurementSeriesDto(
         "average-External temperature",
         Quantity.EXTERNAL_TEMPERATURE.name,
-        Quantity.EXTERNAL_TEMPERATURE.presentationUnit(),
+        Quantity.EXTERNAL_TEMPERATURE.storageUnit,
         "average",
         "sverige,kiruna",
         null,

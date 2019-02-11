@@ -1,75 +1,74 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.Set;
+import javax.annotation.Nullable;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static com.elvaco.mvp.core.domainmodels.Medium.DISTRICT_COOLING;
-import static com.elvaco.mvp.core.domainmodels.Medium.DISTRICT_HEATING;
-import static com.elvaco.mvp.core.domainmodels.Medium.ELECTRICITY;
-import static com.elvaco.mvp.core.domainmodels.Medium.GAS;
-import static com.elvaco.mvp.core.domainmodels.Medium.HOT_WATER;
-import static com.elvaco.mvp.core.domainmodels.Medium.ROOM_SENSOR;
-import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
-import static com.elvaco.mvp.core.domainmodels.Medium.WATER;
-import static java.util.Collections.unmodifiableSet;
+import static com.elvaco.mvp.core.domainmodels.DisplayQuantity.DEFAULT_DISTRICT_DISPLAY_QUANTITIES;
+import static com.elvaco.mvp.core.domainmodels.DisplayQuantity.DEFAULT_ELECTRICITY_DISPLAY_QUANTITIES;
+import static com.elvaco.mvp.core.domainmodels.DisplayQuantity.DEFAULT_GAS_DISPLAY_QUANTITIES;
+import static com.elvaco.mvp.core.domainmodels.DisplayQuantity.DEFAULT_ROOM_SENSOR_DISPLAY_QUANTITIES;
+import static com.elvaco.mvp.core.domainmodels.DisplayQuantity.DEFAULT_WATER_DISPLAY_QUANTITIES;
+import static java.util.Collections.emptySet;
 
 @EqualsAndHashCode
 @ToString
-public class MeterDefinition implements Identifiable<MeterDefinitionType> {
+@AllArgsConstructor
+public class MeterDefinition implements Identifiable<Long> {
 
-  public static final MeterDefinition UNKNOWN_METER = fromMedium(UNKNOWN_MEDIUM);
+  public static final MeterDefinition UNKNOWN =
+    newSystemMeterDefinition(Medium.UNKNOWN_MEDIUM, emptySet());
+  public static final MeterDefinition DEFAULT_DISTRICT_HEATING =
+    newSystemMeterDefinition(Medium.DISTRICT_HEATING, DEFAULT_DISTRICT_DISPLAY_QUANTITIES);
+  public static final MeterDefinition DEFAULT_DISTRICT_COOLING =
+    newSystemMeterDefinition(Medium.DISTRICT_COOLING, DEFAULT_DISTRICT_DISPLAY_QUANTITIES);
+  public static final MeterDefinition DEFAULT_ROOM_SENSOR =
+    newSystemMeterDefinition(Medium.ROOM_SENSOR, DEFAULT_ROOM_SENSOR_DISPLAY_QUANTITIES);
+  public static final MeterDefinition DEFAULT_ELECTRICITY =
+    newSystemMeterDefinition(Medium.ELECTRICITY, DEFAULT_ELECTRICITY_DISPLAY_QUANTITIES);
+  public static final MeterDefinition DEFAULT_GAS =
+    newSystemMeterDefinition(Medium.GAS, DEFAULT_GAS_DISPLAY_QUANTITIES);
+  public static final MeterDefinition DEFAULT_HOT_WATER =
+    newSystemMeterDefinition(Medium.HOT_WATER, DEFAULT_WATER_DISPLAY_QUANTITIES);
+  public static final MeterDefinition DEFAULT_WATER =
+    newSystemMeterDefinition(Medium.WATER, DEFAULT_WATER_DISPLAY_QUANTITIES);
 
-  public static final MeterDefinition HOT_WATER_METER = fromMedium(HOT_WATER);
+  @Nullable
+  public final Long id;
+  @Nullable
+  public final Organisation organisation;
+  public final String name;
+  public final Medium medium;
+  public final boolean autoApply;
+  public final Set<DisplayQuantity> quantities;
 
-  public static final MeterDefinition DISTRICT_COOLING_METER = fromMedium(DISTRICT_COOLING);
-
-  public static final MeterDefinition DISTRICT_HEATING_METER = fromMedium(DISTRICT_HEATING);
-
-  public static final MeterDefinition GAS_METER = fromMedium(GAS);
-
-  public static final MeterDefinition WATER_METER = fromMedium(WATER);
-
-  public static final MeterDefinition ROOM_SENSOR_METER = fromMedium(ROOM_SENSOR);
-
-  public static final MeterDefinition ELECTRICITY_METER = fromMedium(ELECTRICITY);
-
-  public final MeterDefinitionType type;
-  public final String medium;
-  public final Set<Quantity> quantities;
-  public final boolean systemOwned;
-
-  public MeterDefinition(
-    MeterDefinitionType type,
-    String medium,
-    Set<Quantity> quantities,
-    boolean systemOwned
-  ) {
-    this.type = type;
-    this.medium = medium;
-    this.quantities = unmodifiableSet(quantities);
-    this.systemOwned = systemOwned;
-  }
-
-  public static MeterDefinition fromMedium(Medium medium) {
-    return MeterDefinition.systemOwned(
-      medium.meterDefinitionType,
-      medium.medium,
-      medium.quantities()
-    );
-  }
-
-  public static MeterDefinition systemOwned(
-    MeterDefinitionType type,
-    String medium,
-    Set<Quantity> quantities
-  ) {
-    return new MeterDefinition(type, medium, quantities, true);
+  public boolean isDefault() {
+    return organisation == null;
   }
 
   @Override
-  public MeterDefinitionType getId() {
-    return type;
+  @Nullable
+  public Long getId() {
+    return id;
+  }
+
+  private static MeterDefinition newSystemMeterDefinition(
+    String mediumName,
+    Set<DisplayQuantity> quantities
+  ) {
+    Medium medium = new Medium(null, mediumName);
+    return new MeterDefinition(
+      null,
+      null,
+      mediumName.equals(Medium.UNKNOWN_MEDIUM)
+        ? "Unknown"
+        : "Default " + mediumName.toLowerCase(),
+      medium,
+      true,
+      quantities
+    );
   }
 }

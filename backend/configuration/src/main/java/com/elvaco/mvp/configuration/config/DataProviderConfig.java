@@ -126,12 +126,16 @@ class DataProviderConfig {
   }
 
   @Bean
-  LogicalMeters logicalMeters(LogicalMeterEntityMapper logicalMeterEntityMapper) {
+  LogicalMeters logicalMeters(
+    LogicalMeterEntityMapper logicalMeterEntityMapper,
+    MeterDefinitions meterDefinitions
+  ) {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       summaryJpaRepository,
       new LogicalMeterSortingEntityMapper(),
-      logicalMeterEntityMapper
+      logicalMeterEntityMapper,
+      meterDefinitions
     );
   }
 
@@ -221,15 +225,12 @@ class DataProviderConfig {
 
   @Bean
   MeterDefinitions meterDefinitions(
-    ProductionDataProvider productionDataProvider,
     MeterDefinitionEntityMapper meterDefinitionEntityMapper
   ) {
-    var meterDefinitionRepository = new MeterDefinitionRepository(
+    return new MeterDefinitionRepository(
       meterDefinitionJpaRepository,
       meterDefinitionEntityMapper
     );
-    productionDataProvider.meterDefinitions().forEach(meterDefinitionRepository::save);
-    return meterDefinitionRepository;
   }
 
   @Bean

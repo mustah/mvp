@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Gateway.GatewayBuilder;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -211,19 +212,19 @@ public class IntegrationTestFixtureContext {
   }
 
   MeasurementBuilder measurement(LogicalMeter logicalMeter) {
-    Quantity quantity = logicalMeter.getQuantities().iterator().next();
+    DisplayQuantity quantity = logicalMeter.getQuantities().iterator().next();
     return Measurement.builder()
       .physicalMeter(logicalMeter.activePhysicalMeter(now()).orElseThrow())
-      .unit(quantity.presentationUnit())
+      .unit(quantity.quantity.storageUnit)
       .value(0.0)
-      .quantity(quantity.name)
+      .quantity(quantity.quantity.name)
       .created(now());
   }
 
   MeasurementBuilder measurement(PhysicalMeter physicalMeter, Quantity quantity) {
     return Measurement.builder()
       .physicalMeter(physicalMeter)
-      .unit(quantity.presentationUnit())
+      .unit(quantity.storageUnit)
       .value(0.0)
       .quantity(quantity.name)
       .created(now());
@@ -239,7 +240,7 @@ public class IntegrationTestFixtureContext {
       .utcOffset(
         String.format("%+03d", Duration.ofSeconds(now().getOffset().getTotalSeconds()).toHours())
       )
-      .meterDefinition(MeterDefinition.DISTRICT_HEATING_METER)
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .location(Location.UNKNOWN_LOCATION);
   }
 

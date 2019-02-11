@@ -1,0 +1,206 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="Create table medium" author="Åsa Godin">
+
+    <createTable tableName="medium">
+      <column autoIncrement="true" name="id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="medium_pkey"/>
+      </column>
+      <column name="name" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable schemaName="evoaudit" tableName="medium_aud">
+
+      <column name="id" type="bigint"/>
+      <column name="name" type="text"/>
+      <column name="name_mod" type="boolean"/>
+
+      <column name="rev" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="revtype" type="tinyint(3)"/>
+      <column name="revend" type="bigint"/>
+      <column name="revend_tstmp" type="timestamp"/>
+    </createTable>
+
+    <sql>
+      INSERT INTO medium(id, name) select type, medium from meter_definition;
+    </sql>
+  </changeSet>
+
+  <changeSet id="Create table display_quantity" author="Åsa Godin">
+
+    <createTable tableName="display_quantity">
+      <column name="meter_definition_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="quantity_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="display_mode" type="integer" defaultValue="1">
+        <constraints nullable="false"/>
+      </column>
+      <column name="display_unit" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="decimals" type="integer" defaultValue="3">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <createTable schemaName="evoaudit" tableName="display_quantity_aud">
+
+      <column name="meter_definition_id" type="bigint"/>
+      <column name="meter_definition_id_mod" type="boolean"/>
+      <column name="quantity_id" type="integer"/>
+      <column name="quantity_id_mod" type="boolean"/>
+      <column name="display_mode" type="integer"/>
+      <column name="display_mode_mod" type="boolean"/>
+      <column name="display_unit" type="text"/>
+      <column name="display_unit_mod" type="boolean"/>
+      <column name="decimals" type="integer"/>
+      <column name="decimals_mod" type="boolean"/>
+
+      <column name="rev" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="revtype" type="tinyint(3)"/>
+      <column name="revend" type="bigint"/>
+      <column name="revend_tstmp" type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="display_quantity"
+      baseColumnNames="quantity_id"
+      constraintName="display_quantity_quantity_id_fkey"
+      referencedColumnNames="id"
+      referencedTableName="quantity"
+      onDelete="CASCADE"
+    />
+
+    <addForeignKeyConstraint
+      baseTableName="display_quantity"
+      baseColumnNames="meter_definition_id"
+      constraintName="display_quantity_meter_definition_id_fkey"
+      referencedTableName="meter_definition"
+      referencedColumnNames="type"
+      onDelete="CASCADE"
+    />
+
+    <sql>
+      INSERT INTO display_quantity(meter_definition_id, quantity_id, display_mode, display_unit)
+      SELECT meter_definition.type , quantity.id, series_display_mode, display_unit
+      FROM meter_definition
+      join meter_definition_quantities on meter_definition.type =
+      meter_definition_quantities.meter_definition_type
+      join quantity on meter_definition_quantities.quantity_id = quantity.id
+    </sql>
+  </changeSet>
+
+  <changeSet id="Remove presentation info from quantity" author="Åsa Godin">
+    <dropColumn tableName="quantity" columnName="display_unit"/>
+    <dropColumn tableName="quantity" columnName="series_display_mode"/>
+  </changeSet>
+
+  <changeSet id="Update meter_definition with organisation" author="Åsa Godin">
+
+    <renameColumn tableName="meter_definition" oldColumnName="type" newColumnName="id"/>
+    <renameColumn schemaName="evoaudit" tableName="meter_definition_aud" oldColumnName="type" newColumnName="id"/>
+    <modifyDataType schemaName="evoaudit" tableName="meter_definition_aud" columnName="id" newDataType="bigint"/>
+
+    <addColumn tableName="meter_definition">
+      <column name="organisation_id" type="uuid">
+        <constraints
+          nullable="true"
+          foreignKeyName="meter_definition_organisation_id_fkey"
+          referencedColumnNames="id"
+          referencedTableName="organisation"
+        />
+      </column>
+      <column name="name" type="text"/>
+      <column name="medium_id" type="bigint">
+        <constraints
+          nullable="true"
+          foreignKeyName="meter_definition_medium_id_fkey"
+          referencedTableName="medium"
+          referencedColumnNames="id"/>
+      </column>
+      <column name="auto_apply" type="boolean" defaultValue="true"/>
+    </addColumn>
+
+    <addUniqueConstraint tableName="meter_definition" columnNames="organisation_id,name,medium_id"/>
+    <sql>
+      create unique index unique_system_meter_definitions_per_medium
+      on meter_definition (medium_id) where organisation_id is null;
+    </sql>
+
+    <addColumn schemaName="evoaudit" tableName="meter_definition_aud">
+      <column name="organisation_id" type="uuid"/>
+      <column name="organisation_id_mod" type="boolean"/>
+      <column name="name" type="text"/>
+      <column name="name_mod" type="boolean"/>
+      <column name="medium_id" type="bigint"/>
+      <column name="medium_id_mod" type="boolean"/>
+      <column name="auto_apply" type="boolean"/>
+      <column name="auto_apply_mod" type="boolean"/>
+    </addColumn>
+
+    <sql>UPDATE meter_definition set name = concat('Default ', lower(medium))</sql>
+    <sql>UPDATE meter_definition set name = 'Unknown' where name like '%Unknown%'</sql>
+
+    <sql>
+      UPDATE meter_definition set medium_id = (select id from medium where medium = medium.name)
+    </sql>
+    <addNotNullConstraint tableName="meter_definition" columnName="medium_id"/>
+    <dropColumn tableName="meter_definition" columnName="medium"/>
+    <dropColumn tableName="meter_definition" columnName="system_owned"/>
+  </changeSet>
+
+  <changeSet id="Make meter_definition id autoincrement" author="Anton Löfgren">
+    <modifyDataType tableName="meter_definition" columnName="id" newDataType="bigint"/>
+    <sql>
+      create sequence meter_definition_id_seq owned by meter_definition.id;
+      alter table meter_definition alter column id set default nextval('meter_definition_id_seq');
+      select setval('meter_definition_id_seq', (select max(id) from meter_definition));
+    </sql>
+  </changeSet>
+
+  <changeSet id="Update reference from meter definition type to meter_definition id" author="Åsa Godin">
+
+    <!-- Drop reference and index from logical meter -->
+    <dropForeignKeyConstraint baseTableName="logical_meter"
+                              constraintName="logical_meter_meter_definition_type_fkey"/>
+    <dropIndex tableName="logical_meter"
+               indexName="logical_meter_organisation_id_meter_definition_type_idx"/>
+
+    <!-- Add reference and index to logical_meter -->
+    <renameColumn tableName="logical_meter" oldColumnName="meter_definition_type" newColumnName="meter_definition_id"/>
+    <modifyDataType tableName="logical_meter" columnName="meter_definition_id" newDataType="bigint"/>
+    <renameColumn schemaName="evoaudit" tableName="logical_meter_aud" oldColumnName="meter_definition_type" newColumnName="meter_definition_id"/>
+    <modifyDataType schemaName="evoaudit" tableName="logical_meter_aud" columnName="meter_definition_id" newDataType="bigint"/>
+    <addForeignKeyConstraint baseTableName="logical_meter"
+                             baseColumnNames="meter_definition_id"
+                             constraintName="logical_meter_meter_definition_id_fkey"
+                             referencedTableName="meter_definition"
+                             referencedColumnNames="id"/>
+    <createIndex tableName="logical_meter"
+                 indexName="logical_meter_organisation_id_meter_definition_id_idx">
+      <column name="organisation_id"/>
+      <column name="meter_definition_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="Drop table meter_definition_quantities" author="Åsa Godin">
+    <dropTable tableName="meter_definition_quantities"/>
+  </changeSet>
+
+  <changeSet id="Add primary key to display_quantity" author="Åsa Godin">
+    <addPrimaryKey tableName="display_quantity"
+                   columnNames="meter_definition_id, quantity_id, display_mode"/>
+  </changeSet>
+
+</databaseChangeLog>

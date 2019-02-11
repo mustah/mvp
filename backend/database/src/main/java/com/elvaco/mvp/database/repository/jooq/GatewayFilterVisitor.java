@@ -14,6 +14,7 @@ import org.jooq.SelectJoinStep;
 import static com.elvaco.mvp.database.entity.jooq.Tables.GATEWAY;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOCATION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.LOGICAL_METER;
+import static com.elvaco.mvp.database.entity.jooq.Tables.MEDIUM;
 import static com.elvaco.mvp.database.entity.jooq.Tables.METER_DEFINITION;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.GatewayStatusLog.GATEWAY_STATUS_LOG;
@@ -77,7 +78,10 @@ class GatewayFilterVisitor extends CommonFilterVisitor {
         .and(PHYSICAL_METER.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)))
 
       .leftJoin(METER_DEFINITION)
-      .on(METER_DEFINITION.TYPE.equal(LOGICAL_METER.METER_DEFINITION_TYPE))
+      .on(METER_DEFINITION.ID.equal(LOGICAL_METER.METER_DEFINITION_ID))
+
+      .leftJoin(MEDIUM)
+      .on(MEDIUM.ID.eq(METER_DEFINITION.MEDIUM_ID))
 
       .leftJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(GATEWAY.ORGANISATION_ID)

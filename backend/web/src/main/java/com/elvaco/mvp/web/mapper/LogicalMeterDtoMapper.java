@@ -84,7 +84,7 @@ public class LogicalMeterDtoMapper {
     Optional<StatusLogEntry> statusLog = logicalMeter.activeStatusLog();
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.id = logicalMeter.id;
-    meterDto.medium = logicalMeter.getMedium();
+    meterDto.medium = logicalMeter.getMedium().name;
     meterDto.created = created;
     meterDto.isReported = statusLog.map(entry -> entry.status.isReported())
       .orElse(false);

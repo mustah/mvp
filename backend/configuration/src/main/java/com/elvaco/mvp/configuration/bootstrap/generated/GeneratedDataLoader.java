@@ -5,10 +5,12 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -42,6 +44,8 @@ class GeneratedDataLoader implements CommandLineRunner {
   private final Gateways gateways;
   private final Organisations organisations;
   private final MeasurementUseCases measurementUseCases;
+  private final MediumProvider mediumProvider;
+  private final SystemMeterDefinitionProvider meterDefinitionProvider;
 
   @Override
   public void run(String... args) {
@@ -57,7 +61,11 @@ class GeneratedDataLoader implements CommandLineRunner {
     long start = System.nanoTime();
     ZonedDateTime now = ZonedDateTime.now();
     MeterPopulationSpecification specification = new MeterPopulationSpecification(1L)
-      .withDefinitionsFrom(singleton(MeterDefinition.DISTRICT_HEATING_METER))
+      .withDefinitionsFrom(
+        singleton(meterDefinitionProvider.getByMediumOrThrow(
+          mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
+        )
+      )
       .withMeterCount(10)
       .withMeasurementLossFactor(0.0001)
       .withMeasurementsBetween(now.minusMonths(2), now)

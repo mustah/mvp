@@ -2,7 +2,6 @@ package com.elvaco.mvp.core.util;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,7 +114,7 @@ public class MeasurementThresholdParser {
 
   private Quantity parseQuantity(String quantityName) {
     String trim = quantityName.trim();
-    return Optional.ofNullable(quantityProvider.getByName(trim))
+    return quantityProvider.getByName(trim)
       .orElseThrow(
         () -> new IllegalArgumentException(String.format(
           "Invalid quantity '%s' for measurement threshold",

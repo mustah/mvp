@@ -1,13 +1,13 @@
 package com.elvaco.mvp.core.domainmodels;
 
-public enum SeriesDisplayMode {
+public enum DisplayMode {
   UNKNOWN("unknown"),
   READOUT("readout"),
   CONSUMPTION("consumption");
 
   private final String name;
 
-  SeriesDisplayMode(String name) {
+  DisplayMode(String name) {
     this.name = name;
   }
 

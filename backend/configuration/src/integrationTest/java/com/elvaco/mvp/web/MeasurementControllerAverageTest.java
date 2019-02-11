@@ -18,8 +18,8 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.GAS_METER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.ROOM_SENSOR_METER;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ROOM_SENSOR;
 import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.POWER;
@@ -64,7 +64,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       singletonList(new MeasurementSeriesDto(
         SERIES_ID_AVERAGE_POWER,
         POWER.name,
-        POWER.presentationUnit(),
+        POWER.storageUnit,
         AVERAGE,
         asList(
           new MeasurementValueDto(date.toInstant(), 1.0),
@@ -95,7 +95,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
       singletonList(new MeasurementSeriesDto(
         SERIES_ID_AVERAGE_POWER,
         POWER.name,
-        POWER.presentationUnit(),
+        POWER.storageUnit,
         AVERAGE,
         asList(
           new MeasurementValueDto(date.toInstant(), 1.0),
@@ -132,7 +132,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         new MeasurementSeriesDto(
           SERIES_ID_AVERAGE_POWER,
           POWER.name,
-          POWER.presentationUnit(),
+          POWER.storageUnit,
           AVERAGE,
           asList(
             new MeasurementValueDto(date.toInstant(), 2.0),
@@ -170,7 +170,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         new MeasurementSeriesDto(
           SERIES_ID_AVERAGE_ENERGY,
           Quantity.ENERGY.name,
-          Quantity.ENERGY.presentationUnit(),
+          "kWh",
           AVERAGE,
           asList(
             new MeasurementValueDto(date.toInstant(), 8.0),
@@ -203,7 +203,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
         new MeasurementSeriesDto(
           SERIES_ID_AVERAGE_POWER,
           POWER.name,
-          POWER.presentationUnit(),
+          POWER.storageUnit,
           AVERAGE,
           singletonList(new MeasurementValueDto(date.toInstant(), 2.0))
         )));
@@ -379,7 +379,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
 
   @Test
   public void monthResolution() {
-    var date = context().now().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
+    var date = context().now();
     var logicalMeter = given(logicalMeter());
 
     given(series(
@@ -589,7 +589,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   @Test
   public void findsAverageConsumptionForGasMeters_ByMeterIds() {
     var date = context().now();
-    var logicalMeter = given(logicalMeter().meterDefinition(GAS_METER));
+    var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
     given(series(logicalMeter, VOLUME, 1.0, 2.0, 5.0));
 
     var response = asUser()
@@ -619,11 +619,11 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
     var date = context().now();
 
     var kungsbacka = kungsbacka().build();
-    var kungsbackaLogical = given(logicalMeter().meterDefinition(ROOM_SENSOR_METER)
+    var kungsbackaLogical = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR)
       .location(kungsbacka));
     given(series(kungsbackaLogical, EXTERNAL_TEMPERATURE, 1.0));
 
-    var stockholmLogical = given(logicalMeter().meterDefinition(ROOM_SENSOR_METER)
+    var stockholmLogical = given(logicalMeter().meterDefinition(DEFAULT_ROOM_SENSOR)
       .location(stockholm().build()));
     given(series(stockholmLogical, EXTERNAL_TEMPERATURE, 2.0));
 
@@ -648,7 +648,7 @@ public class MeasurementControllerAverageTest extends IntegrationTest {
   @Test
   public void findsAverageConsumptionForGasMeters_ByMedium() {
     var date = context().now();
-    var logicalMeter = given(logicalMeter().meterDefinition(GAS_METER));
+    var logicalMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
 
     given(series(logicalMeter, VOLUME, 1.0, 2.0, 5.0));
 

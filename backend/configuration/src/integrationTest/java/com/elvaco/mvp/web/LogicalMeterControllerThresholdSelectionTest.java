@@ -255,7 +255,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   @Test
   public void forDuration_FindLeakingMeters() {
     ZonedDateTime now = context().now();
-    var leakingMeter = given(logicalMeter().meterDefinition(MeterDefinition.HOT_WATER_METER));
+    var leakingMeter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_HOT_WATER));
 
     //first, it leaks for a day
     given(series(
@@ -295,7 +295,8 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   @Test
   public void forDuration_FindZeroConsumptionMeter() {
     ZonedDateTime now = context().now();
-    var brokenMeter = given(logicalMeter().meterDefinition(MeterDefinition.DISTRICT_HEATING_METER));
+    var brokenMeter =
+      given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
 
     // first, it works for a day
     given(series(
@@ -335,7 +336,7 @@ public class LogicalMeterControllerThresholdSelectionTest extends IntegrationTes
   @Test
   public void forDuration_FindBelowPromisedTemperatureMeters() {
     ZonedDateTime now = context().now();
-    var brokenMeter = given(logicalMeter().meterDefinition(MeterDefinition.ROOM_SENSOR_METER));
+    var brokenMeter = given(logicalMeter().meterDefinition(MeterDefinition.DEFAULT_ROOM_SENSOR));
 
     // first, it's cold
     given(series(

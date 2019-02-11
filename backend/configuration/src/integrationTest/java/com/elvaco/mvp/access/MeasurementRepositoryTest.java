@@ -1,20 +1,21 @@
 package com.elvaco.mvp.access;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.core.domainmodels.DisplayMode;
+import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementKey;
 import com.elvaco.mvp.core.domainmodels.MeasurementParameter;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -22,13 +23,31 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.core.domainmodels.DisplayMode.READOUT;
+import static com.elvaco.mvp.core.domainmodels.Units.CUBIC_METRES;
+import static com.elvaco.mvp.core.domainmodels.Units.KILOWATT;
+import static com.elvaco.mvp.core.domainmodels.Units.WATT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeasurementRepositoryTest extends IntegrationTest {
 
-  private static final OffsetDateTime START_TIME = OffsetDateTime.parse(
-    "2018-01-01T00:00:00+00:00");
+  private static final DisplayQuantity VOLUME_DISPLAY = new DisplayQuantity(
+    Quantity.VOLUME,
+    DisplayMode.CONSUMPTION,
+    CUBIC_METRES
+  );
+
+  private static final DisplayQuantity POWER_DISPLAY = new DisplayQuantity(
+    Quantity.POWER,
+    READOUT,
+    WATT
+  );
+  private static final DisplayQuantity POWER_DISPLAY_KW = new DisplayQuantity(
+    Quantity.POWER,
+    READOUT,
+    KILOWATT
+  );
 
   @Test
   public void getSeriesForConsumption_PutConsumptionOnStartOfInterval() {
@@ -40,7 +59,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
           List.of(meter.id),
-          List.of(Quantity.VOLUME),
+          quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
           TemporalResolution.hour
@@ -63,7 +82,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
           List.of(meter.id),
-          List.of(Quantity.VOLUME),
+          quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(4),
           TemporalResolution.hour
@@ -93,7 +112,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
           List.of(meter.id),
-          List.of(Quantity.VOLUME),
+          quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
           TemporalResolution.hour
@@ -120,7 +139,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
           List.of(meter.id),
-          List.of(Quantity.VOLUME),
+          quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
           TemporalResolution.hour
@@ -148,7 +167,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
           List.of(meter.id),
-          List.of(Quantity.VOLUME),
+          quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
           TemporalResolution.hour
@@ -175,7 +194,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       measurements.findSeriesForPeriod(
         new MeasurementParameter(
           List.of(meter.id),
-          List.of(Quantity.VOLUME),
+          quantityParametersOf(VOLUME_DISPLAY),
           start,
           start.plusHours(2),
           TemporalResolution.hour
@@ -195,7 +214,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
-        List.of(Quantity.POWER),
+        quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(2),
         TemporalResolution.hour
@@ -220,7 +239,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
-        List.of(Quantity.POWER),
+        quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(1),
         TemporalResolution.hour
@@ -247,7 +266,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
         List.of(meterOne.id, meterTwo.id),
-        List.of(Quantity.POWER),
+        quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(2),
         TemporalResolution.hour
@@ -283,7 +302,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
         List.of(meterOne.id, meterTwo.id),
-        List.of(Quantity.VOLUME),
+        quantityParametersOf(VOLUME_DISPLAY),
         start,
         start.plusHours(1),
         TemporalResolution.hour
@@ -318,23 +337,23 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     var physicalMeterTwo = logicalMeter.physicalMeters.get(1);
     var interval = Duration.ofDays(1);
 
-    given(series(physicalMeterOne, Quantity.VOLUME_FLOW, start.minusDays(2), interval, 2.0, 4.0));
-    given(series(physicalMeterTwo, Quantity.VOLUME_FLOW, start, interval, 6.0, 12.0));
+    given(series(physicalMeterOne, Quantity.POWER, start.minusDays(2), interval, 2.0, 4.0));
+    given(series(physicalMeterTwo, Quantity.POWER, start, interval, 6.0, 12.0));
 
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
         List.of(logicalMeter.id),
-        List.of(Quantity.VOLUME_FLOW),
+        quantityParametersOf(POWER_DISPLAY),
         start.minusDays(2),
         start.plusDays(1),
         TemporalResolution.day
       ));
 
-    assertThat(result.get(getKey(logicalMeter, physicalMeterOne.address, Quantity.VOLUME_FLOW)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterOne.address, Quantity.POWER)))
       .extracting(l -> l.value)
       .containsExactly(2.0, 4.0);
 
-    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo.address, Quantity.VOLUME_FLOW)))
+    assertThat(result.get(getKey(logicalMeter, physicalMeterTwo.address, Quantity.POWER)))
       .extracting(l -> l.value)
       .containsExactly(6.0, 12.0);
   }
@@ -358,7 +377,7 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     Map<MeasurementKey, List<MeasurementValue>> result = measurements.findSeriesForPeriod(
       new MeasurementParameter(
         List.of(logicalMeter.id),
-        List.of(Quantity.VOLUME),
+        quantityParametersOf(VOLUME_DISPLAY),
         start.minusDays(2),
         start,
         TemporalResolution.day
@@ -414,13 +433,12 @@ public class MeasurementRepositoryTest extends IntegrationTest {
 
     given(series(meter.activePhysicalMeter().orElseThrow(), Quantity.POWER, start, 2000.0));
 
-    Quantity presentationQuantity = Quantity.of(Quantity.POWER.name).complementedBy(
-      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT), null);
+    DisplayQuantity displayQuantity = POWER_DISPLAY_KW;
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
-        List.of(presentationQuantity),
+        quantityParametersOf(displayQuantity),
         start,
         start.plusSeconds(1),
         TemporalResolution.hour
@@ -434,19 +452,30 @@ public class MeasurementRepositoryTest extends IntegrationTest {
     ZonedDateTime start = context().now();
     var meter = given(logicalMeter());
 
-    var physicalMeter = meter.activePhysicalMeter().orElseThrow();
-
-    var presentationInformation = Quantity.POWER.getPresentationInformation();
-    var quantity1 = Quantity.of(Quantity.POWER.name).complementedBy(presentationInformation, "W");
-    var quantity2 = Quantity.of(Quantity.POWER.name).complementedBy(presentationInformation, "kW");
-
-    given(series(physicalMeter, quantity1, start, 2.0));
-    given(series(physicalMeter, quantity2, start.plusHours(1), 0.002));
+    PhysicalMeter physicalMeter = meter.activePhysicalMeter().orElseThrow();
+    measurements.save(
+      Measurement.builder()
+        .created(start)
+        .value(2.0)
+        .quantity(Quantity.POWER.name)
+        .unit(WATT)
+        .physicalMeter(physicalMeter)
+        .build()
+    );
+    measurements.save(
+      Measurement.builder()
+        .created(start.plusHours(1))
+        .value(0.002)
+        .quantity(Quantity.POWER.name)
+        .unit(KILOWATT)
+        .physicalMeter(physicalMeter)
+        .build()
+    );
 
     Map<String, List<MeasurementValue>> results = measurements.findAverageForPeriod(
       new MeasurementParameter(
         List.of(meter.id),
-        List.of(Quantity.POWER),
+        quantityParametersOf(POWER_DISPLAY),
         start,
         start.plusHours(1),
         TemporalResolution.hour
@@ -471,6 +500,14 @@ public class MeasurementRepositoryTest extends IntegrationTest {
       .quantity("Volume")
       .build())
     ).isInstanceOf(UnitConversionError.class);
+  }
+
+  private List<QuantityParameter> quantityParametersOf(DisplayQuantity quantity) {
+    return List.of(new QuantityParameter(
+      quantity.quantity.name,
+      quantity.unit,
+      quantity.displayMode
+    ));
   }
 
   private MeasurementKey getKey(
