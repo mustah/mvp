@@ -1,6 +1,6 @@
 import MenuItem from 'material-ui/MenuItem';
 import ActionDashboard from 'material-ui/svg-icons/action/dashboard';
-import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
+import NavigationApps from 'material-ui/svg-icons/navigation/apps';
 import * as React from 'react';
 import {Route, Switch} from 'react-router';
 import {Link} from 'react-router-dom';
@@ -23,7 +23,7 @@ const renderMetering = () => translate('metering');
 
 const MenuIcon = ({onClick}: Clickable) => (
   <ColumnCenter onClick={onClick} style={appSwitchIconStyle}>
-    <NavigationMenu color={colors.white}/>
+    <NavigationApps color={colors.white}/>
     <Xsmall className="uppercase">
       <Switch>
         <Route path={routes.admin} render={renderAdmin}/>
