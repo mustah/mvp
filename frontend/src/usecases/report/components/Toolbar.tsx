@@ -53,7 +53,7 @@ const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
     disabled={disabled}
     onClick={onClick}
     icon={<ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>}
-    label={firstUpperTranslated('legend')}
+    label={firstUpperTranslated('filter')}
     labelStyle={{color: disabled ? colors.borderColor : colors.lightBlack}}
   />
 );

@@ -84,7 +84,7 @@ const ListItems = ({
 
   const savedSelectionIds = savedSelections.result;
 
-  const items = savedSelectionIds.length && savedSelections.isSuccessfullyFetched
+  const items = savedSelectionIds.length
     ? [initialSelectionId, ...savedSelectionIds].map(renderListItem)
     : [
       (

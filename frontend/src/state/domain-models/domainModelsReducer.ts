@@ -156,7 +156,7 @@ const reducerFor = <T extends Identifiable>(
         return setError(state, action as Action<ErrorResponse>);
       case domainModelsClearError(endPoint):
       case SEARCH:
-        return {...initialDomain<T>()};
+        return initialDomain<T>();
       default:
         return resetState(state, action, endPoint);
     }
@@ -168,7 +168,19 @@ const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
 ): NormalizedState<T> =>
-  resetReducer<NormalizedState<T>>(state, action, {...initialDomain<T>()});
+  resetReducer<NormalizedState<T>>(state, action, initialDomain<T>());
+
+const resetStateOnLogoutReducer = <S extends Identifiable>(
+  state: NormalizedState<S> = initialDomain<S>(),
+  {type}: ActionTypes<S>,
+): NormalizedState<S> => {
+  switch (type) {
+    case LOGOUT_USER:
+      return initialDomain<S>();
+    default:
+      return state;
+  }
+};
 
 export const resetReducer = <S>(
   state: S,
@@ -220,7 +232,11 @@ export const organisations = reducerFor<Organisation>(
   resetStateReducer,
 );
 
-export const userSelections = reducerFor<UserSelection>('userSelections', EndPoints.userSelections);
+export const userSelections = reducerFor<UserSelection>(
+  'userSelections',
+  EndPoints.userSelections,
+  resetStateOnLogoutReducer
+);
 
 export const domainModels = combineReducers<DomainModelsState>({
   gatewayMapMarkers,

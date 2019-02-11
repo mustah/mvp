@@ -128,8 +128,8 @@ msgstr "are you sure you want to delete this item"
 msgid "all"
 msgstr "all"
 
-msgid "legend"
-msgstr "legend"
+msgid "filter"
+msgstr "filter"
 
 msgid "select quantities"
 msgstr "select quantities"
