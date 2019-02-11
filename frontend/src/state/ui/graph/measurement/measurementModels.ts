@@ -30,8 +30,10 @@ export interface ExistingReadings {
   [key: number]: Reading;
 }
 
+export type PossibleReading = Overwrite<Reading, {measurements?: MeasurementsByQuantity}>;
+
 export interface Readings {
-  [key: number]: Overwrite<Reading, {measurements?: MeasurementsByQuantity}>;
+  [key: number]: PossibleReading;
 }
 
 type MeasurementValues = Array<{

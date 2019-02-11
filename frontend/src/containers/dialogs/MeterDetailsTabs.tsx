@@ -1,3 +1,5 @@
+import {Grid, GridColumn} from '@progress/kendo-react-grid';
+import {toArray} from 'lodash';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -6,9 +8,7 @@ import {WrappedDateTime} from '../../components/dates/WrappedDateTime';
 import {withEmptyContent, WithEmptyContentProps} from '../../components/hoc/withEmptyContent';
 import {Row} from '../../components/layouts/row/Row';
 import {ColoredEvent, Status} from '../../components/status/Status';
-import {Table, TableColumn} from '../../components/table/Table';
 import '../../components/table/Table.scss';
-import {TableHead} from '../../components/table/TableHead';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
@@ -18,13 +18,12 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {EventLog, EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
+import {GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
+import {EventLogType} from '../../state/domain-models-paginated/meter/meterModels';
 import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
-import {DomainModel} from '../../state/domain-models/domainModels';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
-import {Children, OnClickWithId} from '../../types/Types';
+import {OnClickWithId} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
@@ -37,7 +36,7 @@ export interface MeterDetailsState {
 }
 
 interface MeterGatewayProps {
-  gateways: DomainModel<GatewayMandatory>;
+  gateways: GatewayMandatory[];
 }
 
 interface MapProps {
@@ -56,26 +55,20 @@ interface DispatchToProps {
 
 type Props = OwnProps & DispatchToProps;
 
-const renderEvent = ({name, type}: EventLog): Children =>
-  type === EventLogType.newMeter
+const renderEvent = ({dataItem: {name, type}}) => {
+  const content = type === EventLogType.newMeter
     ? <ColoredEvent label={translate('new meter: {{name}}', {name})} type={type}/>
     : <Status label={name}/>;
+  return <td>{content}</td>;
+};
 
-const renderDate = ({start}: EventLog): Children =>
-  <WrappedDateTime date={start} hasContent={!!start}/>;
+const renderDate = ({dataItem: {start}}) =>
+  <td><WrappedDateTime date={start} hasContent={!!start}/></td>;
 
-const renderSerial = ({serial}: Gateway): string => serial;
+const renderStatus = ({dataItem: {status: {name}}}) => <td><Status label={name}/></td>;
 
-const renderProductModel = ({productModel}: Gateway): string => productModel;
-
-const renderIp = ({ip}: Gateway): string => ip;
-
-const renderPhoneNumber = ({phoneNumber}: Gateway): string => phoneNumber;
-
-const renderStatus = ({status: {name}}: Gateway) => <Status label={name}/>;
-
-const renderStatusChange = ({statusChanged}: Gateway) =>
-  <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>;
+const renderStatusChange = ({dataItem: {statusChanged}}) =>
+  <td><WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/></td>;
 
 const MapContent = ({meter, meterMapMarker}: MapProps) => (
   <MapComponent height={400} viewCenter={meter.location.position}>
@@ -84,41 +77,24 @@ const MapContent = ({meter, meterMapMarker}: MapProps) => (
 );
 
 const GatewayContent = ({gateways}: MeterGatewayProps) => (
-  <Row>
-    <Table result={gateways.result} entities={gateways.entities}>
-      <TableColumn
-        header={<TableHead>{translate('gateway serial')}</TableHead>}
-        renderCell={renderSerial}
-      />
-      <TableColumn
-        header={<TableHead>{translate('product model')}</TableHead>}
-        renderCell={renderProductModel}
-      />
-      <TableColumn
-        header={<TableHead>{translate('ip')}</TableHead>}
-        renderCell={renderIp}
-      />
-      <TableColumn
-        header={<TableHead>{translate('phone number')}</TableHead>}
-        renderCell={renderPhoneNumber}
-      />
-      <TableColumn
-        header={<TableHead>{translate('collection')}</TableHead>}
-        renderCell={renderStatus}
-      />
-      <TableColumn
-        header={<TableHead>{translate('status change')}</TableHead>}
-        renderCell={renderStatusChange}
-      />
-    </Table>
-  </Row>
+  <Grid
+    scrollable="none"
+    data={gateways}
+  >
+    <GridColumn field="serial" title={translate('gateway serial')} className="left-most" headerClassName="left-most"/>
+    <GridColumn field="productModel" title={translate('product model')}/>
+    <GridColumn field="ip" title={translate('ip')}/>
+    <GridColumn field="phoneNumber" title={translate('phone number')}/>
+    <GridColumn title={translate('collection')} cell={renderStatus}/>
+    <GridColumn title={translate('status change')} cell={renderStatusChange}/>
+  </Grid>
 );
 
 export const initialMeterDetailsState: MeterDetailsState = {
   selectedTab: TabName.values,
 };
 
-const ConnectedGatewaysWrapper = withEmptyContent<MeterGatewayProps & WithEmptyContentProps>(GatewayContent);
+const GatewayContentWrapper = withEmptyContent<MeterGatewayProps & WithEmptyContentProps>(GatewayContent);
 
 const MapContentWrapper = withEmptyContent<MapProps & WithEmptyContentProps>(MapContent);
 
@@ -133,19 +109,13 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
     const {selectedTab} = this.state;
     const {meter, meterMapMarker, selectEntryAdd, syncWithMetering} = this.props;
 
+    const gateways: GatewayMandatory[] = [];
     const {gateway} = meter;
-    const gateways: DomainModel<GatewayMandatory> =
-      gateway ?
-        {
-          entities: {[gateway.id]: gateway},
-          result: [gateway.id],
-        } :
-        {
-          entities: {},
-          result: [],
-        };
+    if (gateway) {
+      gateways.push(gateway);
+    }
 
-    const eventLog = eventsDataFormatter(meter);
+    const eventLog = toArray(eventsDataFormatter(meter).entities);
 
     const mapWrapperProps: MapProps & WithEmptyContentProps = {
       meter,
@@ -156,10 +126,10 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
         .isJust(),
     };
 
-    const connectedGatewaysWrapperProps: MeterGatewayProps & WithEmptyContentProps = {
+    const gatewaysWrapperProps: MeterGatewayProps & WithEmptyContentProps = {
       gateways,
       noContentText: firstUpperTranslated('no gateway connected'),
-      hasContent: gateways.result.length > 0
+      hasContent: gateways.length > 0
     };
 
     return (
@@ -184,23 +154,20 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <MeterMeasurementsContainer meter={meter}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Table {...eventLog}>
-              <TableColumn
-                header={<TableHead>{translate('date')}</TableHead>}
-                renderCell={renderDate}
-              />
-              <TableColumn
-                header={<TableHead>{translate('event')}</TableHead>}
-                renderCell={renderEvent}
-              />
-            </Table>
+            <Grid
+              data={eventLog}
+              scrollable="none"
+            >
+              <GridColumn title={translate('date')} cell={renderDate}/>
+              <GridColumn title={translate('event')} cell={renderEvent}/>
+            </Grid>
             <TimestampInfoMessage/>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             {selectedTab === TabName.map && <MapContentWrapper {...mapWrapperProps}/>}
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
-            <ConnectedGatewaysWrapper {...connectedGatewaysWrapperProps}/>
+            <GatewayContentWrapper {...gatewaysWrapperProps}/>
           </TabContent>
         </Tabs>
       </Row>
