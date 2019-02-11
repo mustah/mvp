@@ -33,7 +33,7 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
-  listItemHover: '#e6f8ff',
+  listItemHover: '#e1f5fe',
   selectedListItem: '#b3ebff',
 };
 
@@ -182,4 +182,12 @@ export const buttonStyle: React.CSSProperties = {
 export const dropdownListStyle: React.CSSProperties = {
   width: 200,
   ...popoverStyle
+};
+
+export const gridStyle: React.CSSProperties = {
+  borderTopWidth: 0,
+  borderBottomWidth: 0,
+  marginBottom: borderRadius,
+  borderBottomLeftRadius: borderRadius,
+  borderBottomRightRadius: borderRadius,
 };

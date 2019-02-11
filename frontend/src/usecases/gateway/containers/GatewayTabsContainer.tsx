@@ -20,7 +20,6 @@ const mapStateToProps =
       ui: {tabs},
       map,
       domainModels: {gatewayMapMarkers},
-      report: {resolution},
       userSelection: {userSelection},
     }: RootState = rootState;
     return ({
@@ -30,7 +29,6 @@ const mapStateToProps =
       selectedTab: getSelectedTab(tabs.collection),
       mapMarkers: getDomainModel(gatewayMapMarkers),
       parameters: getGatewayParameters({userSelection}),
-      resolution,
       selectedId: getSelectedMapMarker(map),
       isFetching: gatewayMapMarkers.isFetching,
       error: getError(gatewayMapMarkers),

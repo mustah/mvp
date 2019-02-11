@@ -6,7 +6,7 @@ import {BoldFirstUpper} from '../../texts/Texts';
 import {Column} from '../column/Column';
 import {Row, RowMiddle} from '../row/Row';
 import './Foldable.scss';
-import {useToggleVisibility} from './foldableHook';
+import {useToggleVisibility} from '../../../hooks/toogleVisibilityHook';
 
 export interface FoldableProps extends ClassNamed, WithChildren, Visible {
   title: string;

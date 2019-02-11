@@ -1,12 +1,15 @@
 @import "../../../app/variables";
 
 .MenuUnderline {
+  $height: 4px;
   position: fixed;
   top: 56px;
   visibility: hidden;
-  height: 4px;
+  height: $height;
   background-color: $blue-A400;
   width: 86px;
+  border-top-left-radius: $height * 2;
+  border-top-right-radius: $height * 2;
 }
 
 .TopMenu-Item {

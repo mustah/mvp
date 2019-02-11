@@ -21,7 +21,6 @@ const mapStateToProps =
       userSelection: {userSelection},
       map,
       domainModels: {meterMapMarkers},
-      report: {resolution},
       search: {validation: {query}}
     }: RootState = rootState;
     return ({
@@ -30,7 +29,6 @@ const mapStateToProps =
       selectedTab: getSelectedTab(ui.tabs.validation),
       mapMarkers: getDomainModel(meterMapMarkers),
       noContentText: firstUpperTranslated('no meters'),
-      resolution,
       selectedId: getSelectedMapMarker(map),
       parameters: getMeterParameters({userSelection, query}),
       error: getError(meterMapMarkers),

@@ -8,7 +8,7 @@ import {
   GridSortSettings
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
-import {borderRadius} from '../../../app/themes';
+import {gridStyle} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
@@ -27,14 +27,6 @@ import {paginationPageSize} from '../../../state/ui/pagination/paginationReducer
 const renderAlarm = ({dataItem: {alarm}}: GridCellProps) => <td><MeterAlarm alarm={alarm}/></td>;
 
 const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
-
-const gridStyle: React.CSSProperties = {
-  borderTopWidth: 0,
-  borderBottomWidth: 0,
-  marginBottom: borderRadius,
-  borderBottomLeftRadius: borderRadius,
-  borderBottomRightRadius: borderRadius,
-};
 
 const pageable: GridPagerSettings = {
   buttonCount: 5,
@@ -133,7 +125,7 @@ export const MeterList = ({
     <Grid
       data={gridData}
 
-      pageable={pageable}
+      pageable={total > size ? pageable : undefined}
       pageSize={size}
       take={size}
       skip={page * size}

@@ -1,7 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
-import {SELECT_RESOLUTION} from '../../../../usecases/report/reportActions';
+import {SELECT_RESOLUTION, SET_SELECTED_ENTRIES} from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
 import {
@@ -48,6 +48,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
       };
     case MEASUREMENT_CLEAR_ERROR:
     case SELECT_RESOLUTION:
+    case SET_SELECTED_ENTRIES:
     case SEARCH:
       return initialState;
     default:

@@ -17,7 +17,6 @@ import {SavedSelections} from '../components/SavedSelections';
 export interface StateToProps {
   selection: UserSelection;
   savedSelections: NormalizedState<UserSelection>;
-  isFetching: boolean;
   isMeterPage: boolean;
 }
 
@@ -32,7 +31,6 @@ const mapStateToProps =
   ({userSelection, domainModels: {userSelections}, routing}: RootState): StateToProps => ({
     selection: getUserSelection(userSelection),
     savedSelections: userSelections,
-    isFetching: userSelections.isFetching,
     isMeterPage: isMeterPage(routing),
   });
 

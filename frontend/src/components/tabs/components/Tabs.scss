@@ -1,16 +1,18 @@
 @import '../../../app/variables';
 
 .Tabs {
+  $underline-height: 5px;
+
   .TabList {
     align-items: flex-end;
-    border-bottom: solid 1px $dark-grey;
+    border-bottom: solid 1px $border-color;
 
     .Tab {
       cursor: pointer;
 
       .Tab-header {
         text-align: center;
-        padding: 4px $lg-space;
+        padding: $sm-space $lg-space;
         color: $lightest-black;
 
         &:hover {
@@ -25,23 +27,24 @@
 
         &:hover {
           .TabUnderline {
-            border-bottom: solid 4px $blue-A400;
+            border-bottom: solid $underline-height $blue-A400;
           }
         }
       }
 
       &:hover {
         .TabUnderline {
-          border-bottom: solid 4px $grey;
+          border-bottom: solid $underline-height $grey;
         }
       }
     }
 
     .TabUnderline {
-      height: 4px;
+      border-top-left-radius: $underline-height * 2;
+      border-top-right-radius: $underline-height * 2;
 
       &.isSelected {
-        border-bottom: solid 4px $blue-A400;
+        border-bottom: solid $underline-height $blue-A400;
       }
     }
   }
@@ -50,21 +53,12 @@
     .TabList {
       justify-content: space-between;
       height: 44px;
-
-      .Tabs-DropdownMenus {
-        align-self: center;
-        margin-top: 1px;
-      }
     }
-  }
 
-  &.MeterTabs {
     .Tabs-DropdownMenus {
-      display: none;
-
-      &.show {
-        display: flex;
-      }
+      align-self: center;
+      padding-right: $space;
+      margin-top: 1px;
     }
   }
 

@@ -163,7 +163,7 @@ export const userSelection = (
 ): UserSelectionState => {
   switch (action.type) {
     case RESET_SELECTION:
-      return {...initialState};
+      return initialState;
     case ADD_PARAMETER_TO_SELECTION:
       return addSelected(state, action as Action<SelectionParameter>);
     case DESELECT_SELECTION:

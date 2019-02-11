@@ -5,9 +5,7 @@ import {failureAction, requestAction, successAction} from '../api/apiActions';
 import {resetReducer} from '../domain-models/domainModelsReducer';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 
-export const initialState: SelectionTreeState = {
-  isFetching: false,
-  isSuccessfullyFetched: false,
+const emptyNormalizedState: NormalizedSelectionTree = {
   entities: {
     cities: {},
     addresses: {},
@@ -16,6 +14,12 @@ export const initialState: SelectionTreeState = {
   result: {
     cities: [],
   },
+};
+
+export const initialState: SelectionTreeState = {
+  isFetching: false,
+  isSuccessfullyFetched: false,
+  ...emptyNormalizedState,
 };
 
 type ActionTypes =
@@ -34,11 +38,12 @@ export const selectionTree = (
         isFetching: true,
       };
     case successAction(EndPoints.selectionTree):
+      const payload = (action as Action<NormalizedSelectionTree>).payload;
       return {
         ...state,
         isFetching: false,
         isSuccessfullyFetched: true,
-        ...(action as Action<NormalizedSelectionTree>).payload,
+        ...(payload.result.cities.length ? payload : {...emptyNormalizedState}),
       };
     case failureAction(EndPoints.selectionTree):
       return {

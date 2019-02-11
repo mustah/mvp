@@ -2,6 +2,7 @@ import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
+import {DispatchProp} from 'react-redux';
 import {branch, renderNothing} from 'recompose';
 import {routes} from '../../app/routes';
 import {actionMenuItemIconStyle, dividerStyle} from '../../app/themes';
@@ -29,14 +30,16 @@ interface Props extends DeleteMeter {
   syncWithMetering?: OnClickWithId;
 }
 
-type DeleteMeterMenuItemProps = ActionMenuItemProps & DeleteMeter;
+const MyDivider = ({deleteMeter, dispatch, ...otherProps}: DeleteMeterMenuItemProps) => <Divider {...otherProps}/>;
+
+type DeleteMeterMenuItemProps = ActionMenuItemProps & DeleteMeter & DispatchProp<any>;
 
 const withDeleteMeterActionButton = branch<DeleteMeterMenuItemProps>(
   ({deleteMeter}) => isDefined(deleteMeter), connectedSuperAdminOnly, renderNothing);
 
 const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
-const DeleteDivider = withDeleteMeterActionButton(Divider);
+const DeleteDivider = withDeleteMeterActionButton(MyDivider);
 
 export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, syncWithMetering}: Props) => {
 

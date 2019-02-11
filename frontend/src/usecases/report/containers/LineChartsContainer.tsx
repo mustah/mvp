@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Column} from '../../../components/layouts/column/Column';
+import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {DispatchToProps} from '../../../components/tabs/components/MainContentTabs';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {toggle} from '../../../helpers/collections';
@@ -30,7 +30,6 @@ import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
 import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/graph/Dot';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
-import './GraphContainer.scss';
 
 export interface GraphProps {
   outerHiddenKeys: uuid[];
@@ -108,9 +107,9 @@ const renderGraphContents = (
 
 const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
-const GraphContent =
+const LineChartComponent =
   ({content, data, key, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => (
-    <Column className="GraphContainer" key={key}>
+    <ColumnCenter className="align-items" key={key}>
       <ResponsiveContainer aspect={2.5} width="95%" height="99%">
         <LineChart
           width={10}
@@ -133,14 +132,14 @@ const GraphContent =
         </LineChart>
       </ResponsiveContainer>
       <TimestampInfoMessage/>
-    </Column>
+    </ColumnCenter>
   );
 
 type Props = GraphProps & StateToProps;
 
 type GraphContentWrapperProps = GraphContentProps & WithEmptyContentProps;
 
-const GraphContentWrapper = withEmptyContent<GraphContentWrapperProps>(GraphContent);
+const LineChartWrapper = withEmptyContent<GraphContentWrapperProps>(LineChartComponent);
 
 class GraphComponent extends React.Component<Props, GraphComponentState> {
 
@@ -190,10 +189,10 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       legendClick: this.legendClick,
       setTooltipPayload: this.setTooltipPayload,
       hasContent: data.length > 0,
-      noContentText: firstUpperTranslated('no meters'),
+      noContentText: firstUpperTranslated('no measurements'),
     };
 
-    return <GraphContentWrapper {...wrapperProps}/>;
+    return <LineChartWrapper {...wrapperProps}/>;
   }
 
   updateDimensions = () => this.setState(({resized}) => ({resized: !resized}));
@@ -246,5 +245,5 @@ const mapStateToProps = ({userSelection: {userSelection}, ui}: RootState): State
     isSideMenuOpen: isSideMenuOpen(ui),
   });
 
-export const GraphContainer =
+export const LineChartsContainer =
   connect<StateToProps, DispatchToProps, GraphProps>(mapStateToProps)(GraphComponent);

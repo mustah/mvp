@@ -7,6 +7,10 @@
 
 .Column-center {
   justify-content: center;
+
+  &.align-items {
+    align-items: center;
+  }
 }
 
 .Column-bottom {

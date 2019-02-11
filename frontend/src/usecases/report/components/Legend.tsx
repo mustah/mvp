@@ -1,11 +1,13 @@
+import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
+import {toArray} from 'lodash';
 import * as React from 'react';
+import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonLinkBlue} from '../../../components/buttons/ButtonLink';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconIndicator} from '../../../components/icons/IconIndicator';
-import {Row} from '../../../components/layouts/row/Row';
-import {Table, TableColumn} from '../../../components/table/Table';
-import {TableHead} from '../../../components/table/TableHead';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row, RowMiddle} from '../../../components/layouts/row/Row';
 import {isDefined} from '../../../helpers/commonUtils';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
@@ -29,13 +31,25 @@ const iconIndicatorStyle: React.CSSProperties = {
   height: 24,
 };
 
-const renderFacility = ({facility}: LegendItem) => facility ? orUnknown(facility) : '';
+const legendGridStyle: React.CSSProperties = {
+  ...gridStyle,
+  borderTopLeftRadius: borderRadius,
+  borderTopRightRadius: borderRadius,
+  marginBottom: 24,
+  width: 560,
+  maxHeight: 0.75 * window.innerHeight
+};
 
-const renderAddress = ({address}: LegendItem) => address ? orUnknown(address) : '';
+const renderFacility = ({dataItem: {facility}}: GridCellProps) =>
+  facility ? <td className="left-most first-uppercase">{orUnknown(facility)}</td> : <td>-</td>;
 
-const renderCity = ({city}: LegendItem) => city ? orUnknown(city) : '';
+const renderCity = ({dataItem: {city}}: GridCellProps) =>
+  city ? <td className="first-uppercase">{orUnknown(city)}</td> : <td>-</td>;
 
-const renderMedium = ({medium}: LegendItem) =>
+const renderAddress = ({dataItem: {address}}: GridCellProps) =>
+  address ? <td className="first-uppercase">{orUnknown(address)}</td> : <td>-</td>;
+
+const renderMediumCell = (medium: Medium) =>
   Array.isArray(medium)
     ? medium.map((singleMedium: Medium, index) => (
       <IconIndicator
@@ -46,51 +60,77 @@ const renderMedium = ({medium}: LegendItem) =>
     ))
     : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
 
-export const Legend = ({clearSelectedListItems, hiddenLines, legendItems, toggleLine, deleteItem}: LegendProps) => {
+const renderMedium = ({dataItem: {medium}}: GridCellProps) =>
+  <td>{renderMediumCell(medium)}</td>;
 
-  const renderVisibilityButton = ({id}: LegendItem) => {
+export const Legend = ({
+  clearSelectedListItems,
+  hiddenLines,
+  legendItems: {entities: {lines}},
+  toggleLine,
+  deleteItem
+}: LegendProps) => {
+  const renderRemoveAllButtonLink = () => (
+    <ButtonLinkBlue onClick={clearSelectedListItems} className="k-link">
+      {translate('remove all')}
+    </ButtonLinkBlue>
+  );
+
+  const renderDeleteButton = ({dataItem: {id}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
-    return <ButtonVisibility key={`checked-${id}-${checked}`} onClick={toggleLine} id={id} checked={checked}/>;
+    const onDeleteItem = () => deleteItem(id);
+    const onToggleItem = () => toggleLine(id);
+    return (
+      <td className="icon">
+        <RowMiddle>
+          <Row>
+            <ButtonVisibility key={`checked-${id}-${checked}`} onClick={onToggleItem} checked={checked}/>
+          </Row>
+          <Row>
+            <ButtonDelete onClick={onDeleteItem}/>
+          </Row>
+        </RowMiddle>
+      </td>
+    );
   };
 
-  const deleteButtonLink = <ButtonLinkBlue onClick={clearSelectedListItems}>{translate('remove all')}</ButtonLinkBlue>;
-
-  const renderDeleteButton = ({id}: LegendItem) => <ButtonDelete onClick={deleteItem} id={id}/>;
+  const data = React.useMemo<LegendItem[]>(() => toArray(lines), [lines]);
 
   return (
-    <Row className="Legend">
-      <Table result={legendItems.result} entities={legendItems.entities.lines}>
-        <TableColumn
-          header={<TableHead className="first">{translate('facility')}</TableHead>}
-          cellClassName={'first first-uppercase'}
-          renderCell={renderFacility}
+    <Column className="Legend">
+      <Grid data={data} style={legendGridStyle}>
+        <GridColumn
+          field="facility"
+          cell={renderFacility}
+          title={translate('facility')}
+          headerClassName="left-most"
+          width={140}
         />
-        <TableColumn
-          header={<TableHead>{translate('city')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderCity}
+        <GridColumn
+          field="city"
+          cell={renderCity}
+          title={translate('city')}
+          width={110}
         />
-        <TableColumn
-          header={<TableHead>{translate('address')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderAddress}
+        <GridColumn
+          field="address"
+          cell={renderAddress}
+          title={translate('address')}
+          width={150}
         />
-        <TableColumn
-          header={<TableHead>{translate('medium')}</TableHead>}
-          cellClassName={'icon'}
-          renderCell={renderMedium}
+        <GridColumn
+          field="medium"
+          cell={renderMedium}
+          title={translate('medium')}
+          width={80}
         />
-        <TableColumn
-          header={<TableHead className="icon"/>}
-          cellClassName="icon"
-          renderCell={renderVisibilityButton}
+        <GridColumn
+          headerCell={renderRemoveAllButtonLink}
+          headerClassName="Link"
+          cell={renderDeleteButton}
+          width={80}
         />
-        <TableColumn
-          header={<TableHead className="Link">{deleteButtonLink}</TableHead>}
-          cellClassName="icon"
-          renderCell={renderDeleteButton}
-        />
-      </Table>
-    </Row>
+      </Grid>
+    </Column>
   );
 };

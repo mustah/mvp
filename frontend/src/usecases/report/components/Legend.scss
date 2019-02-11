@@ -1,22 +1,19 @@
 @import "../../../app/variables";
 
 .Legend {
-  margin-top: $lg-space;
+  th {
+    &.Link {
+      font-weight: normal;
+      text-transform: lowercase;
+      vertical-align: middle !important;
 
-  .icon {
-    width: 24px;
-
+      &:first-letter {
+        text-transform: uppercase;
+      }
+    }
   }
 
   td {
-    &.icon {
-      padding: 0 24px;
-      text-align: center;
-
-      button {
-        min-width: 24px !important;
-        line-height: inherit !important;
-      }
-    }
+    padding: 2px;
   }
 }

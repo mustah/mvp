@@ -128,6 +128,9 @@ msgstr "är du säker på att du vill ta bort detta objekt"
 msgid "all"
 msgstr "alla"
 
+msgid "filter"
+msgstr "filter"
+
 msgid "select quantities"
 msgstr "välj storheter"
 
@@ -181,6 +184,9 @@ msgstr "inga mätvärden förväntades under den valda perioden"
 
 msgid "no meters"
 msgstr "inga mätare"
+
+msgid "no measurements"
+msgstr "inga mätvärden"
 
 msgid "yes"
 msgstr "ja"

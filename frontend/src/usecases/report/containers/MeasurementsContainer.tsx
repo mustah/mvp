@@ -9,9 +9,10 @@ import {
   MeasurementParameters
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {FetchMeasurements, MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
-import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
+import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {CallbackWithIds, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {Graph} from '../components/graph/Graph';
+import {Measurements} from '../components/Measurements';
 import {showMetersInGraph} from '../reportActions';
 import {getMeasurementParameters} from '../reportSelectors';
 
@@ -21,6 +22,7 @@ export interface StateToProps {
   requestParameters: MeasurementParameters;
   selectionTree: SelectionTreeState;
   measurement: MeasurementState;
+  userSelectionId: uuid;
 }
 
 export interface DispatchToProps {
@@ -38,6 +40,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     parameters: getMeterParameters({userSelection}),
     requestParameters: getMeasurementParameters(rootState),
     selectionTree,
+    userSelectionId: getUserSelectionId(rootState.userSelection),
   });
 };
 
@@ -48,4 +51,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   showMetersInGraph,
 }, dispatch);
 
-export const GraphTabContainer = connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Graph);
+export const GraphContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Graph);
+
+export const MeasurementsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Measurements);

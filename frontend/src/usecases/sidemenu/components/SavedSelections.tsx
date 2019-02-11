@@ -25,7 +25,6 @@ type Props = DispatchToProps & StateToProps;
 
 const ListItems = ({
   confirmDelete,
-  isFetching,
   isMeterPage,
   fetchUserSelections,
   resetSelection,
@@ -90,7 +89,7 @@ const ListItems = ({
     : [
       (
         <LoadingTreeViewItems
-          isFetching={isFetching}
+          isFetching={savedSelections.isFetching}
           text={translate('no saved selections')}
           key="loading-list-item"
         />
