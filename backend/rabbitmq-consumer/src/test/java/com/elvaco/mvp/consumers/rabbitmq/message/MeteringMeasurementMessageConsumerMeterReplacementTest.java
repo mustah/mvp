@@ -443,7 +443,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
         .organisationId(organisation.id)
         .meterDefinition(DEFAULT_ELECTRICITY)
         .build());
-    var physicalMeter = physicalMeters.save(
+    physicalMeters.save(
       PhysicalMeter.builder()
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
@@ -455,7 +455,6 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.empty())
         .build());
-    logicalMeters.save(logicalMeter.addPhysicalMeter(physicalMeter));
   }
 
   private LogicalMeter givenLogicalAndPhysicalAndMeasurement(ZonedDateTime activePeriodStart) {
@@ -467,7 +466,7 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
         .organisationId(organisation.id)
         .meterDefinition(DEFAULT_ELECTRICITY)
         .build());
-    var physicalMeter = physicalMeters.save(
+    physicalMeters.save(
       PhysicalMeter.builder()
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
@@ -479,7 +478,6 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
         .logicalMeterId(logicalMeter.id)
         .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
         .build());
-    logicalMeters.save(logicalMeter.addPhysicalMeter(physicalMeter));
     message(measurement().valuesAtTimestamps(activePeriodStart.toLocalDateTime()));
     return logicalMeter;
   }

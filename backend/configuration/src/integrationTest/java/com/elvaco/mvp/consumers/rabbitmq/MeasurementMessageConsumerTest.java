@@ -32,6 +32,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.tuple;
 
 public class MeasurementMessageConsumerTest extends IntegrationTest {
 
@@ -99,6 +100,36 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     assertThat(all).hasSize(1);
     assertThat(all.get(0).id.created).isEqualTo(CREATED);
     assertThat(all.get(0).value).isCloseTo(2.0, offset(0.1));
+  }
+
+  @Test
+  @Transactional
+  public void meterReplacement_savingLogicalMeterSavesPhysicalMetersWithCorrectActivePeriod() {
+    LocalDateTime when = CREATED.toLocalDateTime();
+
+    // Given first meter without gateway
+    measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
+      null,
+      new MeterIdDto("meterId-1"),
+      new FacilityIdDto("facilityId"),
+      "organisationId",
+      "sourceSystemId",
+      asList(newValueDto(when, 1.0))
+    ));
+
+    // Meter replacement including gateway will save logicalMeter and gateway
+    measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
+      new GatewayIdDto("gatewayId"),
+      new MeterIdDto("meterId-2"),
+      new FacilityIdDto("facilityId"),
+      "organisationId",
+      "sourceSystemId",
+      asList(newValueDto(when.plusDays(1), 2.0))
+    ));
+
+    assertThat(measurementJpaRepository.findAll())
+      .extracting(m -> m.getId().physicalMeter.address, m -> m.value)
+      .containsExactly(tuple("meterId-1", 1.0), tuple("meterId-2", 2.0));
   }
 
   @Transactional

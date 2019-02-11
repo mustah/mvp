@@ -15,8 +15,6 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.PeriodBound;
-import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -51,7 +49,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ELECTRICITY;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Arrays.asList;
@@ -665,30 +662,6 @@ public class MeteringMeasurementMessageConsumerTest {
     assertThat(response.isPresent()).isTrue();
     assertThat(response.get().gateway.id).isEqualTo(GATEWAY_EXTERNAL_ID);
     assertThat(response.get().facility.id).isEqualTo(EXTERNAL_ID);
-  }
-
-  private LogicalMeter givenLogicalAndPhysicalMeter(ZonedDateTime activePeriodStart) {
-    var organisation = saveDefaultOrganisation();
-    gateways.save(newGateway(organisation.id));
-    var logicalMeter = logicalMeters.save(
-      LogicalMeter.builder()
-        .externalId(EXTERNAL_ID)
-        .organisationId(organisation.id)
-        .meterDefinition(DEFAULT_ELECTRICITY)
-        .build());
-    var physicalMeter = physicalMeters.save(
-      PhysicalMeter.builder()
-        .address(ADDRESS)
-        .externalId(EXTERNAL_ID)
-        .manufacturer("ELV")
-        .readIntervalMinutes(15)
-        .organisationId(organisation.id)
-        .medium(Medium.ELECTRICITY)
-        .logicalMeterId(logicalMeter.id)
-        .activePeriod(PeriodRange.from(PeriodBound.inclusiveOf(activePeriodStart)))
-        .build());
-    logicalMeters.save(logicalMeter.addPhysicalMeter(physicalMeter));
-    return logicalMeter;
   }
 
   private Organisation saveDefaultOrganisation() {

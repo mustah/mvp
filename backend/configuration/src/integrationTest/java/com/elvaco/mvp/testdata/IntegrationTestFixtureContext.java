@@ -274,12 +274,12 @@ public class IntegrationTestFixtureContext {
   }
 
   LogicalMeter given(PhysicalMeterBuilder physicalMeterBuilder) {
-    LogicalMeter logicalMeter = logicalMeters.save(logicalMeter().build());
-    return logicalMeter.addPhysicalMeter(physicalMeters.save(
-      physicalMeterBuilder.logicalMeterId(logicalMeter.id)
-        .externalId(logicalMeter.externalId)
-        .build()
-    ));
+    var logicalMeter = logicalMeters.save(logicalMeter().build());
+    var physicalMeter = physicalMeters.save(physicalMeterBuilder
+      .logicalMeterId(logicalMeter.id)
+      .externalId(logicalMeter.externalId)
+      .build());
+    return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
   }
 
   LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder) {
@@ -292,7 +292,7 @@ public class IntegrationTestFixtureContext {
         .build()
     );
 
-    return logicalMeter.addPhysicalMeter(physicalMeter);
+    return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
   }
 
   Collection<LogicalMeter> given(LogicalMeterBuilder... logicalMeterBuilders) {
@@ -314,13 +314,7 @@ public class IntegrationTestFixtureContext {
       .map(physicalMeters::save)
       .collect(toList());
 
-    LogicalMeter withPhysicalMeters = logicalMeter;
-
-    for (PhysicalMeter meter : builtPhysicalMeters) {
-      withPhysicalMeters = withPhysicalMeters.addPhysicalMeter(meter);
-    }
-
-    return withPhysicalMeters;
+    return logicalMeter.toBuilder().physicalMeters(builtPhysicalMeters).build();
   }
 
   Gateway given(GatewayBuilder gateway) {

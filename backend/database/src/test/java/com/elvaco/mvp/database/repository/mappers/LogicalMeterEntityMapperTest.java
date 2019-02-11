@@ -61,7 +61,7 @@ public class LogicalMeterEntityMapperTest {
     );
 
   @Test
-  public void mapsPhysicalMeters() {
+  public void noMappingOfPhysicalMeters() {
     LogicalMeter logicalMeter = LogicalMeter.builder()
       .externalId("an-external-id")
       .organisationId(ELVACO.id)
@@ -79,8 +79,9 @@ public class LogicalMeterEntityMapperTest {
 
     LogicalMeterEntity logicalMeterEntity = logicalMeterEntityMapper.toEntity(logicalMeter);
 
-    assertThat(logicalMeterEntity.physicalMeters).hasSize(1);
-    assertThat(logicalMeterEntityMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
+    assertThat(logicalMeterEntity.physicalMeters).hasSize(0);
+    assertThat(logicalMeterEntityMapper.toDomainModel(logicalMeterEntity))
+      .isEqualTo(logicalMeter.toBuilder().clearPhysicalMeters().build());
   }
 
   @Test
