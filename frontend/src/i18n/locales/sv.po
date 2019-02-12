@@ -125,9 +125,6 @@ msgstr "är du säker på att du vill ta bort detta objekt"
 msgid "all"
 msgstr "alla"
 
-msgid "filter"
-msgstr "filter"
-
 msgid "select quantities"
 msgstr "välj storheter"
 
