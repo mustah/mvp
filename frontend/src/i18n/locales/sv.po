@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-01-28T10:57:21.105Z\n"
+"POT-Creation-Date: 2019-02-12T08:44:47.630Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,6 +10,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
+
+msgid "save report"
+msgstr "spara rapport"
+
+msgid "export to excel"
+msgstr "exportera till Excel"
 
 msgid "delete meter"
 msgstr "ta bort mätare"
@@ -38,38 +44,14 @@ msgstr "mätning"
 msgid "sync"
 msgstr "synka"
 
+msgid "delete meter"
+msgstr "ta bort mätare"
+
 msgid "add to report"
 msgstr "lägg till i rapport"
 
 msgid "sync all meters on this page"
 msgstr "synka alla mätare på denna sida"
-
-msgid "edit organisation"
-msgstr "redigera organisation"
-
-msgid "delete organisation"
-msgstr "ta bort organisation"
-
-msgid "add organisation"
-msgstr "lägg till organisation"
-
-msgid "show all in report"
-msgstr "visa alla i rapport"
-
-msgid "show average in report"
-msgstr "visa medelvärde i rapport"
-
-msgid "edit user"
-msgstr "redigera användare"
-
-msgid "edit user selection"
-msgstr "redigera urval"
-
-msgid "delete user"
-msgstr "ta bort användare"
-
-msgid "add user"
-msgstr "lägg till användare"
 
 msgid "login"
 msgstr "logga in"
@@ -149,6 +131,9 @@ msgstr "nytt lösenord"
 msgid "confirm new password"
 msgstr "bekräfta nytt lösenord"
 
+msgid "required field"
+msgstr "obligatoriskt fält"
+
 msgid "change password"
 msgstr "ändra lösenord"
 
@@ -173,23 +158,38 @@ msgstr "användarspråk"
 msgid "password"
 msgstr "lösenord"
 
+msgid "email not valid"
+msgstr "ogiltlig mejladress"
+
 msgid "no measurements expected for the selected period"
 msgstr "inga mätvärden förväntades under den valda perioden"
 
 msgid "no meters"
 msgstr "inga mätare"
 
-msgid "no measurements"
-msgstr "inga mätvärden"
+msgid "find meters"
+msgstr "hitta mätare"
 
 msgid "yes"
 msgstr "ja"
+
+msgid "city"
+msgstr "stad"
+
+msgid "address"
+msgstr "adress"
+
+msgid "meter"
+msgstr "mätare"
 
 msgid "list"
 msgstr "lista"
 
 msgid "map"
 msgstr "karta"
+
+msgid "measurements"
+msgstr "mätvärden"
 
 msgid "all timestamps are displayed in UTC+1"
 msgstr "alla tider visas i UTC+1"
@@ -206,12 +206,6 @@ msgstr "serienummer"
 msgid "product model"
 msgstr "modell"
 
-msgid "city"
-msgstr "stad"
-
-msgid "address"
-msgstr "adress"
-
 msgid "collection"
 msgstr "insamling"
 
@@ -223,12 +217,6 @@ msgstr "felrapporterad"
 
 msgid "no reliable position"
 msgstr "ingen tillförlitlig position"
-
-msgid "no gateway connected"
-msgstr "ingen gateway är ansluten"
-
-msgid "meter"
-msgstr "mätare"
 
 msgid "facility id"
 msgstr "anläggnings-ID"
@@ -275,8 +263,14 @@ msgstr "revision"
 msgid "new meter: {{name}}"
 msgstr "ny mätare: {{name}}"
 
-msgid "measurements"
-msgstr "mätvärden"
+msgid "ip"
+msgstr "ip"
+
+msgid "phone number"
+msgstr "telefonnummer"
+
+msgid "no gateway connected"
+msgstr "ingen gateway är ansluten"
 
 msgid "events"
 msgstr "händelser"
@@ -290,14 +284,11 @@ msgstr "datum"
 msgid "event"
 msgstr "händelse"
 
-msgid "ip"
-msgstr "ip"
-
-msgid "phone number"
-msgstr "telefonnummer"
-
 msgid "readout"
 msgstr "avläsning"
+
+msgid "facility"
+msgstr "anläggning"
 
 msgid "Volume short"
 msgstr "Volume"
@@ -368,6 +359,12 @@ msgid ""
 "looks like the server is taking to long to respond, please try again in soon"
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
 
+msgid "successfully deleted the meter {{facility}}"
+msgstr "lyckades ta bort mätare '{{facility}}'"
+
+msgid "failed to delete the meter: {{error}}"
+msgstr "lyckades inte ta bort mätaren: {{error}}"
+
 msgid "no parent organisation"
 msgstr "ingen huvudorganisation"
 
@@ -431,17 +428,35 @@ msgstr "kunde inte uppdatera urval: {{error}}"
 msgid "failed to delete selection: {{error}}"
 msgstr "kunde inte ta bort urval: {{error}}"
 
-msgid "organisations"
-msgstr "organisationer"
+msgid "add organisation"
+msgstr "lägg till organisation"
 
-msgid "users"
-msgstr "användare"
+msgid "add user"
+msgstr "lägg till användare"
+
+msgid "edit organisation"
+msgstr "redigera organisation"
+
+msgid "delete organisation"
+msgstr "ta bort organisation"
 
 msgid "slug"
 msgstr "kod"
 
+msgid "organisations"
+msgstr "organisationer"
+
+msgid "edit user"
+msgstr "redigera användare"
+
+msgid "delete user"
+msgstr "ta bort användare"
+
 msgid "roles"
 msgstr "roller"
+
+msgid "users"
+msgstr "användare"
 
 msgid "your email address"
 msgstr "din e-post"
@@ -464,6 +479,9 @@ msgstr "inga gateways"
 msgid "report"
 msgstr "rapport"
 
+msgid "your saved reports will appear here"
+msgstr "dina sparade rapporter kommer att synas här"
+
 msgid "{{count}} meter of your selection, are not displayed in the map"
 msgstr "{{count}} mätare av ditt ursprungliga urval, visas inte på kartan"
 
@@ -471,17 +489,14 @@ msgid "{{count}} meter are not displayed in the map due to low accuracy"
 msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
-msgid "{{count}} gateway of your selection, are not displayed in the map"
-msgstr "{{count}} gateway of your selection, are not displayed in the map"
-
 msgid "{{count}} gateway are not displayed in the map due to low accuracy"
 msgstr "{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
 
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
-msgid "facility"
-msgstr "anläggning"
+msgid "are you sure you want to delete the meter {{facility}}"
+msgstr "är du säkert på att du vill ta bort mätare '{{facility}}'"
 
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
@@ -489,8 +504,20 @@ msgstr "{{count}} mätare kommer snart att uppdateras"
 msgid "remove all"
 msgstr "Ta bort alla"
 
+msgid "object type"
+msgstr "typ"
+
+msgid "id"
+msgstr "id"
+
 msgid "value"
 msgstr "värde"
+
+msgid "no measurements"
+msgstr "inga mätvärden"
+
+msgid "filter"
+msgstr "filtrera"
 
 msgid "graph"
 msgstr "graf"
@@ -522,20 +549,20 @@ msgstr "gas"
 msgid "room sensor"
 msgstr "rumsgivare"
 
-msgid "save as"
-msgstr "spara som"
+msgid "search result"
+msgstr "sökresultat"
 
 msgid "reset selection"
 msgstr "rensa urval"
+
+msgid "save as"
+msgstr "spara som"
 
 msgid "discard changes"
 msgstr "ångra ändringar"
 
 msgid "give the selection a name"
 msgstr "namnge ditt urval"
-
-msgid "filter"
-msgstr "filtrera"
 
 msgid "secondary address"
 msgstr "sekundäradress"
@@ -552,8 +579,14 @@ msgstr "under en dag (eller mer)"
 msgid "clear threshold"
 msgstr "rensa gränsvärde"
 
-msgid "add all to report"
-msgstr "lägg till alla i rapport"
+msgid "create new selection"
+msgstr "skapa nytt urval"
+
+msgid "edit user selection"
+msgstr "redigera urval"
+
+msgid "show all in report"
+msgstr "visa alla i rapport"
 
 msgid "delete user selection"
 msgstr "ta bort urval"
@@ -561,23 +594,20 @@ msgstr "ta bort urval"
 msgid "no saved selections"
 msgstr "inga sparade urval"
 
-msgid "saved selections"
-msgstr "sparade urval"
+msgid "show average in report"
+msgstr "visa medelvärde i rapport"
+
+msgid "admin"
+msgstr "admin"
+
+msgid "metering"
+msgstr "mätning"
 
 msgid "profile"
 msgstr "profil"
 
 msgid "logout"
 msgstr "logga ut"
-
-msgid "search result"
-msgstr "sökresultat"
-
-msgid "find meters"
-msgstr "hitta mätare"
-
-msgid "create new selection"
-msgstr "skapa nytt urval"
 
 msgctxt "°plural"
 msgid "city°"
@@ -605,10 +635,6 @@ msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
-msgid "{{count}} gateway of your selection, are not displayed in the map°"
-msgstr "{{count}} gateways av ditt ursprungliga urval, visas inte på kartan"
-
-msgctxt "°plural"
 msgid "{{count}} gateway are not displayed in the map due to low accuracy°"
 msgstr ""
 "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
@@ -620,6 +646,19 @@ msgstr "{{count}} mätare kommer snart att uppdateras"
 msgctxt "°plural"
 msgid "during {{count}} days (or more)°"
 msgstr "under {{count}} dagar (eller mer)"
+
+#~ msgid "{{count}} gateway of your selection, are not displayed in the map"
+#~ msgstr "{{count}} gateway of your selection, are not displayed in the map"
+
+#~ msgid "add all to report"
+#~ msgstr "lägg till alla i rapport"
+
+#~ msgid "saved selections"
+#~ msgstr "sparade urval"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} gateway of your selection, are not displayed in the map°"
+#~ msgstr "{{count}} gateways av ditt ursprungliga urval, visas inte på kartan"
 
 #~ msgid "passwords are not equal"
 #~ msgstr "lösenorden är inte lika"

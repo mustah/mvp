@@ -5,6 +5,7 @@ import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
+import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
 import {colors} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
@@ -100,7 +101,13 @@ export const Toolbar = ({
           <ToolbarActionButton
             disabled={true}
             icon={<ContentSave color={colors.borderColor}/>}
-            label={firstUpperTranslated('save')}
+            label={firstUpperTranslated('save report')}
+            labelStyle={{color: colors.borderColor}}
+          />
+          <ToolbarActionButton
+            disabled={true}
+            icon={<CloudDownload color={colors.borderColor}/>}
+            label={firstUpperTranslated('export to excel')}
             labelStyle={{color: colors.borderColor}}
           />
         </RowMiddle>
