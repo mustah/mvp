@@ -27,14 +27,14 @@
 
         &:hover {
           .TabUnderline {
-            border-bottom: solid $underline-height $blue-A400;
+            border-top: solid $underline-height $blue-A400;
           }
         }
       }
 
       &:hover {
         .TabUnderline {
-          border-bottom: solid $underline-height $grey;
+          border-top: solid $underline-height $grey;
         }
       }
     }
@@ -44,7 +44,7 @@
       border-top-right-radius: $underline-height * 2;
 
       &.isSelected {
-        border-bottom: solid $underline-height $blue-A400;
+        border-top: solid $underline-height $blue-A400;
       }
     }
   }
