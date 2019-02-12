@@ -90,9 +90,16 @@ export const iconSizeLarge: React.CSSProperties = {
 
 export const actionMenuItemIconStyle: React.CSSProperties = {
   height: 18,
-  width: 17,
+  width: 18,
   padding: 0,
   margin: '7px 0 0 4px',
+};
+
+export const topMenuItemIconStyle: React.CSSProperties = {
+  ...actionMenuItemIconStyle,
+  margin: '4px 0 0 4px',
+  height: 22,
+  width: 22,
 };
 
 export const dividerStyle: React.CSSProperties = {
@@ -135,6 +142,15 @@ export const menuItemInnerDivStyle: React.CSSProperties = {
   ...menuItemStyle,
   lineHeight: '32px',
   minHeight: 32,
+};
+
+export const topMenuItemDivStyle: React.CSSProperties = {
+  ...menuItemInnerDivStyle,
+  fontSize: 16,
+};
+
+export const topMenuInnerDivStyle: React.CSSProperties = {
+  padding: '0 0 0 38px',
 };
 
 export const popoverStyle: React.CSSProperties = {

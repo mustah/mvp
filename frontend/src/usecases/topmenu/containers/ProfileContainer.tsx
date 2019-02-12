@@ -1,10 +1,12 @@
 import MenuItem from 'material-ui/MenuItem';
+import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle';
+import ActionExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
-import {menuItemInnerDivStyle} from '../../../app/themes';
+import {topMenuInnerDivStyle, topMenuItemDivStyle, topMenuItemIconStyle} from '../../../app/themes';
 import {IconAvatar} from '../../../components/icons/IconAvatar';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowCenter} from '../../../components/layouts/row/Row';
@@ -47,13 +49,21 @@ const Profile = ({user: {name}, logout}: Props) => {
     <>
       <Link to={routes.userProfile} className="link" key="goToProfile">
         <MenuItem
-          style={menuItemInnerDivStyle}
+          innerDivStyle={topMenuInnerDivStyle}
+          leftIcon={<ActionAccountCircle style={topMenuItemIconStyle}/>}
+          style={topMenuItemDivStyle}
           className="first-uppercase"
         >
           {translate('profile')}
         </MenuItem>
       </Link>
-      <MenuItem style={menuItemInnerDivStyle} className="first-uppercase" onClick={wrappedLogout} key="logout">
+      <MenuItem
+        innerDivStyle={topMenuInnerDivStyle}
+        leftIcon={<ActionExitToApp style={{...topMenuItemIconStyle, transform: 'rotate(180deg)'}}/>}
+        style={topMenuItemDivStyle}
+        className="first-uppercase"
+        onClick={wrappedLogout}
+      >
         {translate('logout')}
       </MenuItem>
     </>

@@ -1,11 +1,11 @@
 import MenuItem from 'material-ui/MenuItem';
 import ActionDashboard from 'material-ui/svg-icons/action/dashboard';
-import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
+import NavigationApps from 'material-ui/svg-icons/navigation/apps';
 import * as React from 'react';
 import {Route, Switch} from 'react-router';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {actionMenuItemIconStyle, colors, menuItemInnerDivStyle} from '../../../app/themes';
+import {colors, topMenuInnerDivStyle, topMenuItemDivStyle, topMenuItemIconStyle} from '../../../app/themes';
 import {IconMeter} from '../../../components/icons/IconMeter';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {anchorOrigin, PopoverMenu, targetOrigin} from '../../../components/popover/PopoverMenu';
@@ -23,7 +23,7 @@ const renderMetering = () => translate('metering');
 
 const MenuIcon = ({onClick}: Clickable) => (
   <ColumnCenter onClick={onClick} style={appSwitchIconStyle}>
-    <NavigationMenu color={colors.white}/>
+    <NavigationApps color={colors.white}/>
     <Xsmall className="uppercase">
       <Switch>
         <Route path={routes.admin} render={renderAdmin}/>
@@ -39,15 +39,13 @@ interface Props {
   to: string;
 }
 
-const innerDivStyle: React.CSSProperties = {padding: '0 0 0 38px'};
-
 const LinkMenuItem = ({leftIcon, text, to}: Props) => (
   <Link to={to} className="link">
     <MenuItem
       leftIcon={leftIcon}
       className="first-uppercase"
-      innerDivStyle={innerDivStyle}
-      style={menuItemInnerDivStyle}
+      innerDivStyle={topMenuInnerDivStyle}
+      style={topMenuItemDivStyle}
     >
       {text}
     </MenuItem>
@@ -60,7 +58,7 @@ export const AppSwitch = () => {
         <LinkMenuItem
           to={routes.home}
           text={translate('metering')}
-          leftIcon={<IconMeter style={actionMenuItemIconStyle} color={colors.black}/>}
+          leftIcon={<IconMeter style={topMenuItemIconStyle}/>}
           key="metering-pages"
         />
       ),
@@ -68,7 +66,7 @@ export const AppSwitch = () => {
         <LinkMenuItem
           to={routes.admin}
           text={translate('admin')}
-          leftIcon={<ActionDashboard style={actionMenuItemIconStyle} color={colors.black}/>}
+          leftIcon={<ActionDashboard style={topMenuItemIconStyle}/>}
           key="admin-pages"
         />
       ),
