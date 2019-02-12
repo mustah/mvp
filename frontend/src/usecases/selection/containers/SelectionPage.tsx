@@ -17,6 +17,7 @@ export const SelectionPage = () => (
         <PeriodContainer/>
       </Row>
     </RowSpaceBetween>
+
     <Paper style={mainContentPaperStyle}>
       <SelectionContentContainer/>
     </Paper>

@@ -19,7 +19,7 @@ export const MetersPage = () => (
       </Row>
     </RowSpaceBetween>
 
-    <Paper style={{...mainContentPaperStyle, paddingTop: 8}}>
+    <Paper style={mainContentPaperStyle}>
       <MeterTabsContainer/>
     </Paper>
   </PageLayout>

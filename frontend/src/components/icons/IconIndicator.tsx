@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {colors} from '../../app/themes';
 import {Medium} from '../../state/ui/graph/measurement/measurementModels';
-import {iconComponentFor} from '../../usecases/report/components/indicators/ReportIndicatorWidget';
+import {mediumIconComponent} from '../../usecases/report/reportModels';
 
 interface OwnProps {
   medium: Medium;
@@ -9,7 +9,7 @@ interface OwnProps {
 }
 
 export const IconIndicator = ({medium, style}: OwnProps) => {
-  const Icon = iconComponentFor(medium);
+  const Icon = mediumIconComponent(medium);
   return (
     <Icon style={style} className="Indicator-icon" color={colors.lightBlack}/>
   );

@@ -182,6 +182,7 @@ export const paperStyle: React.CSSProperties = {
 
 export const mainContentPaperStyle: React.CSSProperties = {
   ...paperStyle,
+  paddingTop: 8,
   paddingBottom: 0,
 };
 

@@ -15,7 +15,7 @@ export const SearchResultPage = () => (
       <SummaryContainer/>
     </RowSpaceBetween>
 
-    <Paper style={{...mainContentPaperStyle, paddingTop: 8}}>
+    <Paper style={mainContentPaperStyle}>
       <MeterTabsContainer/>
     </Paper>
   </PageLayout>
