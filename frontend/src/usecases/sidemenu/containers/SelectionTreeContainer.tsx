@@ -13,7 +13,7 @@ import {getOpenListItems} from '../../../state/ui/selection-tree/selectionTreeSe
 import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch, OnClickWithId, uuid} from '../../../types/Types';
 import {toggleSingleEntry} from '../../report/reportActions';
-import {LoadingTreeViewItems} from '../components/LoadingTreeViewItems';
+import {LoadingListItemsWithEmptyText} from '../components/LoadingListItems';
 import {TreeViewListItem} from '../components/TreeViewListItem';
 
 const loadingStyle: React.CSSProperties = {paddingTop: 12, paddingBottom: 12};
@@ -81,7 +81,7 @@ const TreeViewComponent = ({
       />
     )
     : (
-      <LoadingTreeViewItems
+      <LoadingListItemsWithEmptyText
         isFetching={isFetching}
         text={translate('no meters')}
         key="loading-list-item"

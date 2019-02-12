@@ -10,7 +10,10 @@ interface Props extends Styled {
   emptyContentTextStyle?: React.CSSProperties;
 }
 
-export const LoadingTreeViewItems = ({isFetching, text, emptyContentTextStyle, style}: Props) =>
+export const LoadingListItems = ({style}: Styled) =>
+  <RowCenter style={style}><LoadingSmall/></RowCenter>;
+
+export const LoadingListItemsWithEmptyText = ({isFetching, text, emptyContentTextStyle, style}: Props) =>
   isFetching
-    ? <RowCenter style={style}><LoadingSmall/></RowCenter>
+    ? <LoadingListItems style={style}/>
     : <InfoText className="first-uppercase" style={emptyContentTextStyle}>{text}</InfoText>;
