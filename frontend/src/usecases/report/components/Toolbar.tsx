@@ -41,13 +41,22 @@ const ToolbarIconButton = ({children, isSelected, onClick, tooltip}: IconButtonP
   </IconButton>
 );
 
-const ToolbarActionButton = (props: FlatButtonProps) => (
-  <FlatButton
-    labelPosition="after"
-    {...props}
-    labelStyle={{fontWeight: 'bold', color: colors.lightBlack, fontSize: 12, ...props.labelStyle}}
-  />
-);
+const ToolbarActionButton = (props: FlatButtonProps) => {
+  const labelStyle: React.CSSProperties = {
+    fontWeight: 'bold',
+    fontSize: 12,
+    ...props.labelStyle,
+  };
+
+  return (
+    <FlatButton
+      className={classNames('ToolbarActionButton', props.disabled ? 'disabled' : '')}
+      labelPosition="after"
+      {...props}
+      labelStyle={labelStyle}
+    />
+  );
+};
 
 const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
   <ToolbarActionButton
@@ -70,10 +79,14 @@ export const Toolbar = ({
   resolution,
   selectResolution,
   toggleLegend,
+  exportToExcel,
+  isFetching,
+  isExportingToExcel,
   view
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
+  const excelExport = () => exportToExcel();
 
   const legendIconProps: IconProps = {disabled: !hasMeasurements};
 
@@ -102,13 +115,12 @@ export const Toolbar = ({
             disabled={true}
             icon={<ContentSave color={colors.borderColor}/>}
             label={firstUpperTranslated('save report')}
-            labelStyle={{color: colors.borderColor}}
           />
           <ToolbarActionButton
-            disabled={true}
-            icon={<CloudDownload color={colors.borderColor}/>}
+            disabled={isFetching || isExportingToExcel || !hasMeasurements}
+            onClick={excelExport}
+            icon={<CloudDownload color={colors.lightBlack}/>}
             label={firstUpperTranslated('export to excel')}
-            labelStyle={{color: colors.borderColor}}
           />
         </RowMiddle>
       </Row>
