@@ -36,18 +36,18 @@ const legendGridStyle: React.CSSProperties = {
   borderTopLeftRadius: borderRadius,
   borderTopRightRadius: borderRadius,
   marginBottom: 24,
-  width: 560,
+  width: 336,
   maxHeight: 0.75 * window.innerHeight
 };
 
-const renderFacility = ({dataItem: {facility}}: GridCellProps) =>
-  facility ? <td className="left-most first-uppercase">{orUnknown(facility)}</td> : <td>-</td>;
-
-const renderCity = ({dataItem: {city}}: GridCellProps) =>
-  city ? <td className="first-uppercase">{orUnknown(city)}</td> : <td>-</td>;
-
-const renderAddress = ({dataItem: {address}}: GridCellProps) =>
-  address ? <td className="first-uppercase">{orUnknown(address)}</td> : <td>-</td>;
+const renderFacility = ({dataItem: {facility, city, address}}: GridCellProps) =>
+  facility
+    ? (
+      <td className="left-most first-uppercase" title={`${orUnknown(city)}, ${orUnknown(address)}`}>
+        {orUnknown(facility)}
+      </td>
+    )
+    : <td>-</td>;
 
 const renderMediumCell = (medium: Medium) =>
   Array.isArray(medium)
@@ -107,28 +107,16 @@ export const Legend = ({
           width={140}
         />
         <GridColumn
-          field="city"
-          cell={renderCity}
-          title={translate('city')}
-          width={110}
-        />
-        <GridColumn
-          field="address"
-          cell={renderAddress}
-          title={translate('address')}
-          width={150}
-        />
-        <GridColumn
           field="medium"
           cell={renderMedium}
           title={translate('medium')}
-          width={80}
+          width={90}
         />
         <GridColumn
           headerCell={renderRemoveAllButtonLink}
           headerClassName="Link"
           cell={renderDeleteButton}
-          width={80}
+          width={90}
         />
       </Grid>
     </Column>
