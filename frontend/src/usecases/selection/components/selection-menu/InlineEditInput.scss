@@ -2,15 +2,10 @@
 
 .InlineEditInput {
   .ButtonLink {
-    padding-bottom: 10px;
-
-    .Normal {
-      margin-right: $space;
-    }
+    padding-bottom: $sm-space;
   }
 
   hr {
     border-width: 1px !important;
   }
 }
-

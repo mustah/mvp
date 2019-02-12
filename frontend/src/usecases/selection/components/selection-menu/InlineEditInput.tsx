@@ -12,11 +12,10 @@ import {Clickable, IdNamed, OnClick, OnClickWithId, uuid} from '../../../../type
 import './InlineEditInput.scss';
 
 const textFieldStyle: React.CSSProperties = {
-  marginLeft: 4,
-  marginRight: 8,
+  margin: 0,
   fontSize: 24,
   fontWeight: 'bold',
-  width: 280,
+  width: 320,
 };
 
 const inputStyle: React.CSSProperties = {
@@ -92,7 +91,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     return (
       <RowLeft>
         {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
-        <ButtonLink onClick={this.onSaveAs}>{translate('save as')}</ButtonLink>
+        <ButtonLink onClick={this.onSaveAs} style={{marginLeft: 16}}>{translate('save as')}</ButtonLink>
       </RowLeft>
     );
   }

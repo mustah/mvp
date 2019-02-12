@@ -7,12 +7,12 @@ import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {Medium} from '../../../components/texts/Texts';
 import {history} from '../../../index';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, IdNamed, OnClickWithId, uuid} from '../../../types/Types';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
 import {CreateNewSelectionListItem} from './CreateNewSelectionListItem';
-import {LoadingTreeViewItems} from './LoadingTreeViewItems';
+import {LoadingListItems} from './LoadingListItems';
 import {SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
 import './SavedSelections.scss';
 import './UserSelectionActionDropdown.scss';
@@ -82,19 +82,9 @@ const ListItems = ({
     );
   };
 
-  const savedSelectionIds = savedSelections.result;
-
-  const items = savedSelectionIds.length
-    ? [initialSelectionId, ...savedSelectionIds].map(renderListItem)
-    : [
-      (
-        <LoadingTreeViewItems
-          isFetching={savedSelections.isFetching}
-          text={translate('no saved selections')}
-          key="loading-list-item"
-        />
-      )
-    ];
+  const items = savedSelections.isFetching
+    ? [<LoadingListItems key="loading-list-item"/>]
+    : [initialSelectionId, ...savedSelections.result].map(renderListItem);
   return (
     <>
       {items}
