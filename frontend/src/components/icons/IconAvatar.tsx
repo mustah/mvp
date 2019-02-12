@@ -5,8 +5,8 @@ import {colors} from '../../app/themes';
 
 const avatarStyle: React.CSSProperties = {
   padding: 0,
-  height: 36,
-  width: 36,
+  height: 24,
+  width: 24,
 };
 
 export const IconAvatar = () => (
