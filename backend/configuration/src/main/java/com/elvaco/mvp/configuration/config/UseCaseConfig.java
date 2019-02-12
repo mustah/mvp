@@ -131,6 +131,6 @@ class UseCaseConfig {
     AuthenticatedUser currentUser,
     UnitConverter unitConverter
   ) {
-    return new MeterDefinitionUseCases(currentUser, meterDefinitions, unitConverter);
+    return new MeterDefinitionUseCases(currentUser, meterDefinitions, unitConverter, organisations);
   }
 }

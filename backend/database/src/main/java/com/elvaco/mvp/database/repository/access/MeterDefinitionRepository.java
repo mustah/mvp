@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
+import com.elvaco.mvp.database.repository.jpa.DisplayQuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 
@@ -18,12 +19,21 @@ import static java.util.stream.Collectors.toList;
 public class MeterDefinitionRepository implements MeterDefinitions {
 
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+  private final DisplayQuantityJpaRepository displayQuantityJpaRepository;
   private final MeterDefinitionEntityMapper meterDefinitionEntityMapper;
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
-    MeterDefinitionEntity entity = meterDefinitionEntityMapper.toEntity(meterDefinition);
-    return meterDefinitionEntityMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
+    MeterDefinitionEntity savedDefinition = meterDefinitionJpaRepository.save(
+      meterDefinitionEntityMapper.toEntity(meterDefinition));
+
+    savedDefinition.quantities.stream()
+      .peek(
+        displayQuantityEntity -> displayQuantityEntity.pk.meterDefinitionId = savedDefinition.id
+      )
+      .forEach(displayQuantityJpaRepository::save);
+
+    return meterDefinitionEntityMapper.toDomainModel(savedDefinition);
   }
 
   @Override

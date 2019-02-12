@@ -78,6 +78,7 @@
   <include file="xml/drop_unit_extension.xml" relativeToChangelogFile="true"/>
   <include file="xml/create_measurement_created_index.xml" relativeToChangelogFile="true"/>
   <include file="xml/drop_missing_measurement_materialized_view.xml" relativeToChangelogFile="true"/>
+  <include file="xml/add_positive_constraint_on_display_quantity_decimals.xml" relativeToChangelogFile="true"/>
 
   <!-- NOTE: Leave grant_db_user_privileges.xml last. Insert newly created changesets above this line. -->
   <include file="xml/grant_db_user_privileges.xml" relativeToChangelogFile="true"/>

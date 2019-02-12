@@ -5,9 +5,11 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.exception.InvalidDisplayQuantity;
+import com.elvaco.mvp.core.exception.InvalidMeterDefinition;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ public class MeterDefinitionUseCases {
   private final AuthenticatedUser currentUser;
   private final MeterDefinitions meterDefinitions;
   private final UnitConverter unitConverter;
+  private final Organisations organisations;
 
   public MeterDefinition save(MeterDefinition meterDefinition) {
     if (!currentUser.isSuperAdmin()
@@ -24,8 +27,17 @@ public class MeterDefinitionUseCases {
       throw new Unauthorized("User is not authorized to save this entity");
     }
 
+    if (meterDefinition.organisation != null) {
+      organisations.findById(meterDefinition.organisation.id)
+        .filter(organisation -> organisation.parent != null)
+        .ifPresent(organisation -> {
+          throw new InvalidMeterDefinition("Meter definitions can not belong to sub-organisations");
+        });
+    }
+
     meterDefinition.quantities
       .forEach(this::validateDisplayQuantity);
+
     return meterDefinitions.save(meterDefinition);
   }
 

@@ -43,6 +43,7 @@ import com.elvaco.mvp.database.repository.access.RootOrganisationRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.access.UserSelectionRepository;
+import com.elvaco.mvp.database.repository.jpa.DisplayQuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
@@ -86,6 +87,7 @@ class DataProviderConfig {
   private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+  private final DisplayQuantityJpaRepository displayQuantityJpaRepository;
   private final OrganisationJpaRepository organisationJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
@@ -227,6 +229,7 @@ class DataProviderConfig {
   ) {
     return new MeterDefinitionRepository(
       meterDefinitionJpaRepository,
+      displayQuantityJpaRepository,
       meterDefinitionEntityMapper
     );
   }

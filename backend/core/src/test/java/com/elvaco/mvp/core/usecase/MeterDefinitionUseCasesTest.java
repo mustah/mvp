@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
+import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Test;
@@ -108,24 +109,21 @@ public class MeterDefinitionUseCasesTest {
 
   private MeterDefinitionUseCases newUseCases(
     User user,
+    MeterDefinitions meterDefinitions
+  ) {
+    return newUseCases(user, meterDefinitions, newUnitConverter(true));
+  }
+
+  private MeterDefinitionUseCases newUseCases(
+    User user,
     MeterDefinitions meterDefinitions,
     UnitConverter unitConverter
   ) {
     return new MeterDefinitionUseCases(
       new MockAuthenticatedUser(user, "123"),
       meterDefinitions,
-      unitConverter
-    );
-  }
-
-  private MeterDefinitionUseCases newUseCases(
-    User user,
-    MeterDefinitions meterDefinitions
-  ) {
-    return new MeterDefinitionUseCases(
-      new MockAuthenticatedUser(user, "123"),
-      meterDefinitions,
-      newUnitConverter(true)
+      unitConverter,
+      new MockOrganisations()
     );
   }
 

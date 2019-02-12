@@ -36,6 +36,7 @@ public class DisplayQuantityEntityMapper {
     return new DisplayQuantity(
       quantity,
       displayQuantityPk.displayMode,
+      displayQuantityEntity.decimals,
       displayQuantityEntity.displayUnit
     );
   }

@@ -54,8 +54,17 @@ public final class RestClient {
     return template.getForEntity(apiUrlOf(url), clazz, urlVariables);
   }
 
-  public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
-    return template.postForEntity(apiUrlOf(url), request, responseType);
+  public <T> ResponseEntity<T> post(UrlTemplate url, Object request, Class<T> responseType) {
+    return post(url.template(), request, responseType, url.variables());
+  }
+
+  public <T> ResponseEntity<T> post(
+    String url,
+    Object request,
+    Class<T> responseType,
+    Object... urlVariables
+  ) {
+    return template.postForEntity(apiUrlOf(url), request, responseType, urlVariables);
   }
 
   public <T> ResponseEntity<List<T>> postList(
