@@ -16,6 +16,7 @@ export interface MeasurementState {
   isSuccessfullyFetched: boolean;
   error: Maybe<ErrorResponse>;
   measurementResponse: MeasurementResponses;
+  isExportingToExcel: boolean;
 }
 
 export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;

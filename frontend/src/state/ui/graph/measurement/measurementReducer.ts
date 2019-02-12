@@ -5,6 +5,7 @@ import {SELECT_RESOLUTION, SET_SELECTED_ENTRIES} from '../../../../usecases/repo
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
 import {
+  EXPORT_TO_EXCEL, EXPORT_TO_EXCEL_SUCCESS,
   MEASUREMENT_CLEAR_ERROR,
   MEASUREMENT_FAILURE,
   MEASUREMENT_REQUEST,
@@ -23,6 +24,7 @@ export const initialState: MeasurementState = {
     average: [],
     cities: [],
   },
+  isExportingToExcel: false,
 };
 
 export const measurement = (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
@@ -44,7 +46,17 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
         ...state,
         error: (action as Action<Maybe<ErrorResponse>>).payload,
         isFetching: false,
-        isSuccessfullyFetched: false
+        isSuccessfullyFetched: false,
+      };
+    case EXPORT_TO_EXCEL:
+      return {
+        ...state,
+        isExportingToExcel: true,
+      };
+    case EXPORT_TO_EXCEL_SUCCESS:
+      return {
+        ...state,
+        isExportingToExcel: false,
       };
     case MEASUREMENT_CLEAR_ERROR:
     case SELECT_RESOLUTION:

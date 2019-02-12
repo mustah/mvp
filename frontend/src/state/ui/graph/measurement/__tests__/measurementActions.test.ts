@@ -19,6 +19,8 @@ import {Role, User} from '../../../../domain-models/user/userModels';
 import {SelectionTreeCity, SelectionTreeMeter} from '../../../../selection-tree/selectionTreeModels';
 import {RelationalOperator} from '../../../../user-selection/userSelectionModels';
 import {
+  EXPORT_TO_EXCEL,
+  exportToExcel,
   fetchMeasurements,
   MEASUREMENT_REQUEST,
   MEASUREMENT_SUCCESS,
@@ -32,6 +34,11 @@ import {initialState} from '../measurementReducer';
 
 describe('measurementActions', () => {
 
+  const configureMockStore = configureStore([thunk]);
+
+  const storeWith = (measurement: MeasurementState, auth?: AuthState) =>
+    configureMockStore({measurement, auth});
+
   describe('fetchMeasurements', () => {
 
     initTranslations({
@@ -43,11 +50,6 @@ describe('measurementActions', () => {
 
     const mockHost: string = 'https://blabla.com';
     let defaultParameters: MeasurementParameters;
-
-    const configureMockStore = configureStore([thunk]);
-
-    const storeWith = (measurement: MeasurementState, auth?: AuthState) =>
-      configureMockStore({measurement, auth});
 
     const mockMeter = (medium: Medium): SelectionTreeMeter => {
       const id = idGenerator.uuid().toString();
@@ -886,6 +888,32 @@ describe('measurementActions', () => {
 
       return requestedUrls;
     };
+
+  });
+
+  describe('exportToExcel', () => {
+
+    it('dispatches action if no export is ongoing', () => {
+      const store = storeWith(initialState);
+
+      store.dispatch(exportToExcel());
+
+      expect(store.getActions()).toEqual([
+        {type: EXPORT_TO_EXCEL}
+      ]);
+    });
+
+    it('does not dispatch action if export is ongoing', () => {
+      const store = storeWith({
+        ...initialState,
+        isExportingToExcel: true,
+      });
+
+      store.dispatch(exportToExcel());
+
+      expect(store.getActions()).toEqual([]);
+    });
+
   });
 
 });
