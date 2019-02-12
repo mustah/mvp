@@ -14,7 +14,8 @@ import {
   SelectionTreeState,
 } from './selectionTreeModels';
 
-export const getMedia = createSelector<SelectedTreeEntities, uuid[], SelectionTreeEntities, Set<Medium>>(
+// TODO[!must!] maybe remove later
+export const getEnabledMedia = createSelector<SelectedTreeEntities, uuid[], SelectionTreeEntities, Set<Medium>>(
   ({selectedListItems}) => selectedListItems,
   ({entities}) => entities,
   (ids: uuid[], {cities, meters}: SelectionTreeEntities) => {

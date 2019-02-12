@@ -1,9 +1,16 @@
+import * as React from 'react';
 import {LegendPayload} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
+import {IconCurrent} from '../../components/icons/IconCurrent';
+import {IconDistrictHeating} from '../../components/icons/IconDistrictHeating';
+import {IconGas} from '../../components/icons/IconGas';
+import {IconTemperature} from '../../components/icons/IconTemperature';
+import {IconUnknown} from '../../components/icons/IconUnknown';
+import {IconWater} from '../../components/icons/IconWater';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
-import {ReportIndicatorProps} from './components/indicators/ReportIndicatorWidget';
+import SvgIconProps = __MaterialUI.SvgIconProps;
 
 export interface ReportState {
   selectedListItems: uuid[];
@@ -69,6 +76,29 @@ export interface SelectedReportEntriesPayload {
   quantitiesToSelect: Quantity[];
 }
 
+type IndicatorComponentType = { [type in Medium]: React.ComponentType<SvgIconProps> };
+
+const mediumIcons: IndicatorComponentType = {
+  [Medium.electricity]: IconCurrent,
+  [Medium.water]: IconWater,
+  [Medium.hotWater]: IconWater,
+  [Medium.districtHeating]: IconDistrictHeating,
+  [Medium.gas]: IconGas,
+  [Medium.roomSensor]: IconTemperature,
+  [Medium.unknown]: IconUnknown,
+};
+
+export const mediumIconComponent =
+  (type: Medium): React.ComponentType<SvgIconProps> => mediumIcons[type] || IconUnknown;
+
+export interface ReportIndicatorProps {
+  enabled?: boolean;
+  type: Medium;
+  title: string;
+  isSelected?: boolean;
+}
+
+// TODO[!must!] remove later
 export const reportIndicators = (): ReportIndicatorProps[] => ([
   {
     type: Medium.electricity,

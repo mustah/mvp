@@ -13,10 +13,12 @@ import {IndicatorState} from './indicatorReducer';
 export const SET_REPORT_INDICATOR_WIDGETS = 'SET_REPORT_INDICATOR_WIDGETS';
 export const SET_SELECTED_QUANTITIES = 'SET_SELECTED_QUANTITIES';
 
+// TODO[!must!] these will be used later in the legend.
 export const setSelectedQuantities = payloadActionOf<Quantity[]>(SET_SELECTED_QUANTITIES);
 export const selectQuantities = (quantities: Quantity[]) => setSelectedQuantities(quantities);
 export const setReportIndicatorWidgets = payloadActionOf<Medium[]>(SET_REPORT_INDICATOR_WIDGETS);
 
+// TODO[!must!] these will be used later in the legend.
 export const toggleReportIndicatorWidget =
   (medium: Medium) =>
     (dispatch, getState: GetState) => {

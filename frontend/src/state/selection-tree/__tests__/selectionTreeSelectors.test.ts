@@ -4,7 +4,7 @@ import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {SelectionTreeItemType, SelectionTreeViewComposite} from '../../ui/selection-tree/selectionTreeModels';
 import {SelectedTreeEntities, SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
 import {initialState} from '../selectionTreeReducer';
-import {getMedia, getMeterIdsWithLimit, getSelectionTreeViewItems} from '../selectionTreeSelectors';
+import {getEnabledMedia, getMeterIdsWithLimit, getSelectionTreeViewItems} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -126,7 +126,7 @@ describe('selectionTreeSelectors', () => {
     },
   };
 
-  describe('getMedia', () => {
+  describe('getEnabledMedia', () => {
 
     it('gets media from cities', () => {
       const selectedListItems: uuid[] = ['sweden,kungsbacka', 'sweden,gothenburg'];
@@ -137,7 +137,7 @@ describe('selectionTreeSelectors', () => {
         entities: {...selectionTreeState.entities},
       };
 
-      expect(getMedia(state)).toEqual(expected);
+      expect(getEnabledMedia(state)).toEqual(expected);
     });
 
     it('gets media from meters and cities', () => {
@@ -149,7 +149,7 @@ describe('selectionTreeSelectors', () => {
         entities: {...selectionTreeState.entities},
       };
 
-      expect(getMedia(state)).toEqual(expected);
+      expect(getEnabledMedia(state)).toEqual(expected);
     });
 
   });
