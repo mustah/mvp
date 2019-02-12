@@ -58,6 +58,18 @@ export const measurementFailure = payloadActionOf<Maybe<ErrorResponse>>(MEASUREM
 export const MEASUREMENT_CLEAR_ERROR = 'MEASUREMENT_CLEAR_ERROR';
 export const measurementClearError = emptyActionOf(MEASUREMENT_CLEAR_ERROR);
 
+export const EXPORT_TO_EXCEL = 'EXPORT_TO_EXCEL';
+const exportToExcelAction = emptyActionOf(EXPORT_TO_EXCEL);
+export const exportToExcel =
+  () =>
+    (dispatch, getState: GetState) => {
+      if (!getState().measurement.isExportingToExcel) {
+        dispatch(exportToExcelAction());
+      }
+    };
+export const EXPORT_TO_EXCEL_SUCCESS = 'EXPORT_TO_EXCEL_SUCCESS';
+export const exportToExcelSuccess = emptyActionOf(EXPORT_TO_EXCEL_SUCCESS);
+
 const measurementMeterUri = (
   quantity: Quantity,
   resolution: TemporalResolution,

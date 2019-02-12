@@ -4,13 +4,14 @@ import {RootState} from '../../../reducers/rootReducer';
 import {fetchSelectionTree} from '../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTreeState} from '../../../state/selection-tree/selectionTreeModels';
 import {
+  exportToExcelSuccess,
   fetchMeasurements,
   measurementClearError,
   MeasurementParameters
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {FetchMeasurements, MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
-import {CallbackWithIds, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
+import {Callback, CallbackWithIds, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {Graph} from '../components/graph/Graph';
 import {Measurements} from '../components/Measurements';
 import {showMetersInGraph} from '../reportActions';
@@ -30,6 +31,7 @@ export interface DispatchToProps {
   fetchMeasurements: FetchMeasurements;
   fetchSelectionTree: Fetch;
   showMetersInGraph: CallbackWithIds;
+  exportToExcelSuccess: Callback;
 }
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
@@ -49,10 +51,12 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMeasurements,
   fetchSelectionTree,
   showMetersInGraph,
+  exportToExcelSuccess,
 }, dispatch);
 
 export const GraphContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Graph);
 
+// TODO inject "export" into redux-state
 export const MeasurementsContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Measurements);

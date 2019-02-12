@@ -3,17 +3,17 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/w
 import {Loader} from '../../../components/loading/Loader';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {useFetchMeasurements} from '../../../state/ui/graph/measurement/measurementHook';
-import {Measurements as MeasurementProps} from '../../../state/ui/graph/measurement/measurementModels';
 import {Props} from './graph/Graph';
-import {MeasurementList} from './MeasurementList';
+import {MeasurementList, MeasurementListProps} from './MeasurementList';
 
-const MeasurementWrapper = withEmptyContent<MeasurementProps & WithEmptyContentProps>(MeasurementList);
+const MeasurementWrapper = withEmptyContent<MeasurementListProps & WithEmptyContentProps>(MeasurementList);
 
 export const Measurements = (props: Props) => {
   const {
     clearError,
-    measurement: {error, isFetching, measurementResponse: {measurements}},
+    measurement: {error, isFetching, measurementResponse: {measurements}, isExportingToExcel},
     selectionTree,
+    exportToExcelSuccess,
   } = props;
   useFetchMeasurements(props);
 
@@ -23,6 +23,8 @@ export const Measurements = (props: Props) => {
         hasContent={measurements.length > 0}
         measurements={measurements}
         noContentText={firstUpperTranslated('no measurements')}
+        exportToExcelSuccess={exportToExcelSuccess}
+        isExportingToExcel={isExportingToExcel}
       />
     </Loader>
   );

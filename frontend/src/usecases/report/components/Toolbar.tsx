@@ -5,6 +5,7 @@ import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
+import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
 import {colors} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
@@ -40,13 +41,22 @@ const ToolbarIconButton = ({children, isSelected, onClick, tooltip}: IconButtonP
   </IconButton>
 );
 
-const ToolbarActionButton = (props: FlatButtonProps) => (
-  <FlatButton
-    labelPosition="after"
-    {...props}
-    labelStyle={{fontWeight: 'bold', color: colors.lightBlack, fontSize: 12, ...props.labelStyle}}
-  />
-);
+const ToolbarActionButton = (props: FlatButtonProps) => {
+  const labelStyle: React.CSSProperties = {
+    fontWeight: 'bold',
+    fontSize: 12,
+    ...props.labelStyle,
+  };
+
+  return (
+    <FlatButton
+      className={classNames('ToolbarActionButton', props.disabled ? 'disabled' : '')}
+      labelPosition="after"
+      {...props}
+      labelStyle={labelStyle}
+    />
+  );
+};
 
 const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
   <ToolbarActionButton
@@ -69,10 +79,14 @@ export const Toolbar = ({
   resolution,
   selectResolution,
   toggleLegend,
+  exportToExcel,
+  isFetching,
+  isExportingToExcel,
   view
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
+  const excelExport = () => exportToExcel();
 
   const legendIconProps: IconProps = {disabled: !hasMeasurements};
 
@@ -100,8 +114,13 @@ export const Toolbar = ({
           <ToolbarActionButton
             disabled={true}
             icon={<ContentSave color={colors.borderColor}/>}
-            label={firstUpperTranslated('save')}
-            labelStyle={{color: colors.borderColor}}
+            label={firstUpperTranslated('save report')}
+          />
+          <ToolbarActionButton
+            disabled={isFetching || isExportingToExcel || !hasMeasurements}
+            onClick={excelExport}
+            icon={<CloudDownload color={colors.lightBlack}/>}
+            label={firstUpperTranslated('export to excel')}
           />
         </RowMiddle>
       </Row>

@@ -1,92 +1,111 @@
-import {normalize, schema} from 'normalizr';
+import {ExcelExport} from '@progress/kendo-react-excel-export';
+import {Grid, GridColumn} from '@progress/kendo-react-grid';
+import {toArray} from 'lodash';
 import * as React from 'react';
 import {Column} from '../../../components/layouts/column/Column';
-import {Table, TableColumn} from '../../../components/table/Table';
-import {TableHead} from '../../../components/table/TableHead';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
-import {translate} from '../../../services/translationService';
-import {Normalized} from '../../../state/domain-models/domainModels';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {
   MeasurementApiResponse,
   MeasurementResponsePart,
   Measurements,
+  Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
-import {uuid} from '../../../types/Types';
-import {LegendItem} from '../reportModels';
+import {Callback} from '../../../types/Types';
 
-interface MeasurementListItem {
-  id: uuid;
-  label: string;
-  city: string;
-  address: string;
-  unit: string;
-  value: number | undefined;
-  created: number;
+export interface MeasurementListProps extends Measurements {
+  isExportingToExcel: boolean;
+  exportToExcelSuccess: Callback;
 }
 
-const renderName = (item: MeasurementListItem) => orUnknown(item.label);
-const renderCity = (item: MeasurementListItem) => orUnknown(item.city);
-const renderAddress = (item: MeasurementListItem) => orUnknown(item.address);
-const renderValue = ({value, unit}: MeasurementListItem): string =>
-  value !== undefined && unit ? `${roundMeasurement(value)} ${unit}` : '-';
-const renderCreated = (item: MeasurementListItem) => timestamp(item.created * 1000);
+interface MeasurementListItem {
+  when: string;
+  label: string;
+  values: { [key in Quantity]: string };
+}
 
-const lineSchema = [new schema.Entity('items', {}, {idAttribute: 'id'})];
+const renderLabel = ({dataItem: {label}}) => <td>{orUnknown(label)}</td>;
 
-const getMeasurementItems = (measurements: MeasurementApiResponse): MeasurementListItem[] => {
-  const items: Map<uuid, MeasurementListItem> = new Map<uuid, MeasurementListItem>();
+const getMeasurementItems = (measurements: MeasurementApiResponse) => {
+  const rows: {[key: string]: MeasurementListItem} = {};
+  const columns = {};
 
-  measurements.forEach(({id, label, city, address, unit, values}: MeasurementResponsePart) =>
+  measurements.forEach(({id, label, unit, values, quantity}: MeasurementResponsePart) => {
+    if (!columns[quantity]) {
+      const key = `${quantity}: ${unit}`;
+      columns[quantity] = (
+        <GridColumn
+          key={key}
+          title={key}
+          field={`values.${quantity}`}
+        />
+      );
+    }
+
     values.forEach(({when, value}) => {
-      const item: MeasurementListItem = {
-        id: id + ';' + when,
+      const row: MeasurementListItem = rows[when + id] || {
         label,
-        city,
-        address,
-        unit,
-        value,
-        created: when,
+        when: timestamp(when * 1000),
+        values: {},
       };
-      items.set(item.id, item);
-    }));
-  return Array.from(items.values());
+      row.values[quantity] = value !== undefined ? roundMeasurement(value) : '-';
+      rows[when + id] = row;
+    });
+  });
+
+  return [toArray(rows).reverse(), toArray(columns)];
 };
 
-export const MeasurementList = ({measurements}: Measurements) => {
-  const {result, entities: {items}}: Normalized<LegendItem> = normalize(getMeasurementItems(measurements), lineSchema);
+export const MeasurementList = ({measurements, exportToExcelSuccess, isExportingToExcel}: MeasurementListProps) => {
+  const [data, quantityColumns] = React.useMemo(() => getMeasurementItems(measurements), [measurements]);
+
+  const exporter = React.useRef();
+
+  React.useEffect(() => {
+    if (isExportingToExcel) {
+      // TODO our types for React's hooks are wrong. Should be solved when upgrading react + types
+      (exporter as any).current.save();
+      exportToExcelSuccess();
+    }
+  }, [isExportingToExcel]);
+
+  const columnsAsChildren = [
+    (
+      <GridColumn
+        headerClassName="left-most"
+        className="left-most"
+        field="when"
+        key="when"
+        title={firstUpperTranslated('readout')}
+      />
+    ),
+    (
+      <GridColumn
+        title={firstUpperTranslated('facility')}
+        field="label"
+        key="label"
+        cell={renderLabel}
+      />
+    ),
+    ...quantityColumns,
+  ];
 
   return (
     <Column>
-      <Table result={result} entities={items}>
-        <TableColumn
-          header={<TableHead className="first">{translate('facility')}</TableHead>}
-          cellClassName={'first first-uppercase'}
-          renderCell={renderName}
-        />
-        <TableColumn
-          header={<TableHead>{translate('city')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderCity}
-        />
-        <TableColumn
-          header={<TableHead>{translate('address')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderAddress}
-        />
-        <TableColumn
-          header={<TableHead>{translate('value')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderValue}
-        />
-        <TableColumn
-          header={<TableHead>{translate('readout')}</TableHead>}
-          cellClassName={'first-uppercase'}
-          renderCell={renderCreated}
-        />
-      </Table>
+      <ExcelExport
+        data={data}
+        ref={exporter}
+      >
+        <Grid
+          scrollable="none"
+          data={data}
+        >
+          {columnsAsChildren}
+        </Grid>
+      </ExcelExport>
       <TimestampInfoMessage/>
     </Column>
   );
