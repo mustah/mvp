@@ -502,7 +502,10 @@ msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
 msgid "remove all"
-msgstr "Ta bort alla"
+msgstr "ta bort alla"
+
+msgid "hide all"
+msgstr "göm alla"
 
 msgid "object type"
 msgstr "typ"

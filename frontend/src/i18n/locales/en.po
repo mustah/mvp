@@ -480,6 +480,9 @@ msgstr "{{count}} meter will soon be synchronized"
 msgid "remove all"
 msgstr "remove all"
 
+msgid "hide all"
+msgstr "hide all"
+
 msgid "object type"
 msgstr "type"
 

@@ -14,20 +14,20 @@ import {
   Quantity
 } from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
-import {Dispatcher, OnPayloadAction, payloadActionOf, uuid} from '../../types/Types';
-import {SelectedReportEntriesPayload} from './reportModels';
+import {Dispatcher, emptyActionOf, payloadActionOf, uuid} from '../../types/Types';
+import {SelectedReportEntries} from './reportModels';
 
 export const SELECT_RESOLUTION = 'SELECT_RESOLUTION';
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 export const TOGGLE_LINE = 'TOGGLE_LINE';
+export const HIDE_ALL_LINES = 'HIDE_ALL_LINES';
+export const REMOVE_SELECTED_LIST_ITEMS = 'REMOVE_SELECTED_LIST_ITEMS';
 
-export const setSelectedEntries: OnPayloadAction<SelectedReportEntriesPayload> =
-  payloadActionOf<SelectedReportEntriesPayload>(SET_SELECTED_ENTRIES);
-
-export const selectResolution: OnPayloadAction<TemporalResolution> =
-  payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
-
+export const setSelectedEntries = payloadActionOf<SelectedReportEntries>(SET_SELECTED_ENTRIES);
+export const selectResolution = payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
 export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
+export const hideAllLines = emptyActionOf(HIDE_ALL_LINES);
+export const removeSelectedListItems = emptyActionOf(REMOVE_SELECTED_LIST_ITEMS);
 
 const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionTreeState): Set<Medium> => {
   const cityMedia: Medium[] = ids.filter(isSelectedCity)
@@ -197,8 +197,3 @@ export const showMetersInGraph = (meterIds: uuid[]) =>
       });
     }
   };
-
-const emptyReportState: SelectedReportEntriesPayload = {ids: [], indicatorsToSelect: [], quantitiesToSelect: []};
-
-export const clearSelectedListItems = () =>
-  (dispatch) => dispatch(setSelectedEntries(emptyReportState));

@@ -1,11 +1,16 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
-import {SELECT_RESOLUTION, SET_SELECTED_ENTRIES} from '../../../../usecases/report/reportActions';
+import {
+  REMOVE_SELECTED_LIST_ITEMS,
+  SELECT_RESOLUTION,
+  SET_SELECTED_ENTRIES
+} from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
 import {
-  EXPORT_TO_EXCEL, EXPORT_TO_EXCEL_SUCCESS,
+  EXPORT_TO_EXCEL,
+  EXPORT_TO_EXCEL_SUCCESS,
   MEASUREMENT_CLEAR_ERROR,
   MEASUREMENT_FAILURE,
   MEASUREMENT_REQUEST,
@@ -61,6 +66,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
     case MEASUREMENT_CLEAR_ERROR:
     case SELECT_RESOLUTION:
     case SET_SELECTED_ENTRIES:
+    case REMOVE_SELECTED_LIST_ITEMS:
     case SEARCH:
       return initialState;
     default:

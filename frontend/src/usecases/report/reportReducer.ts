@@ -5,8 +5,14 @@ import {resetReducer} from '../../state/domain-models/domainModelsReducer';
 import {NormalizedSelectionTree} from '../../state/selection-tree/selectionTreeModels';
 import {SELECT_PERIOD, SET_CUSTOM_DATE_RANGE} from '../../state/user-selection/userSelectionActions';
 import {Action, uuid} from '../../types/Types';
-import {SELECT_RESOLUTION, SET_SELECTED_ENTRIES, TOGGLE_LINE} from './reportActions';
-import {ReportState, SelectedReportEntriesPayload} from './reportModels';
+import {
+  HIDE_ALL_LINES,
+  REMOVE_SELECTED_LIST_ITEMS,
+  SELECT_RESOLUTION,
+  SET_SELECTED_ENTRIES,
+  TOGGLE_LINE
+} from './reportActions';
+import {ReportState, SelectedReportEntries} from './reportModels';
 
 export const initialState: ReportState = {
   selectedListItems: [],
@@ -20,7 +26,7 @@ const toggleLine = (state: ReportState, {payload}: Action<uuid>): ReportState =>
 });
 
 type ActionTypes =
-  | Action<SelectedReportEntriesPayload | string[] | uuid | TemporalResolution | NormalizedSelectionTree>
+  | Action<SelectedReportEntries | string[] | uuid | TemporalResolution | NormalizedSelectionTree>
   | EmptyAction<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
@@ -28,7 +34,7 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
     case SET_SELECTED_ENTRIES:
       return {
         ...state,
-        selectedListItems: [...(action as Action<SelectedReportEntriesPayload>).payload.ids],
+        selectedListItems: [...(action as Action<SelectedReportEntries>).payload.ids],
       };
     case SELECT_RESOLUTION:
       return {
@@ -37,6 +43,10 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
       };
     case TOGGLE_LINE:
       return toggleLine(state, (action as Action<uuid>));
+    case HIDE_ALL_LINES:
+      return {...state, hiddenLines: [...state.selectedListItems]};
+    case REMOVE_SELECTED_LIST_ITEMS:
+      return {...state, selectedListItems: [], hiddenLines: []};
     case SELECT_PERIOD:
     case SET_CUSTOM_DATE_RANGE:
       return state;

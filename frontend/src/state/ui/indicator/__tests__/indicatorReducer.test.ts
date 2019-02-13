@@ -1,5 +1,5 @@
 import {logoutUser} from '../../../../usecases/auth/authActions';
-import {setSelectedEntries} from '../../../../usecases/report/reportActions';
+import {removeSelectedListItems, setSelectedEntries} from '../../../../usecases/report/reportActions';
 import {RESET_SELECTION, SELECT_SAVED_SELECTION, SET_THRESHOLD} from '../../../user-selection/userSelectionActions';
 import {RelationalOperator, ThresholdQuery, UserSelection} from '../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../user-selection/userSelectionReducer';
@@ -88,6 +88,14 @@ describe('indicatorReducer', () => {
         selectedQuantities: [Quantity.returnTemperature],
       };
       expect(newState).toEqual(expected);
+    });
+  });
+
+  describe('removeSelectedListItems', () => {
+
+    it('removes all selected indicators', () => {
+      const newState: IndicatorState = indicator(state, removeSelectedListItems());
+      expect(newState).toEqual(initialState);
     });
   });
 });

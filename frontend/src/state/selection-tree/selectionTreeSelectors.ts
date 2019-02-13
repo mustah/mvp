@@ -34,16 +34,16 @@ export const getEnabledMedia = createSelector<SelectedTreeEntities, uuid[], Sele
   },
 );
 
-export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Set<Medium>>(
+export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Medium[]>(
   (threshold: ThresholdQuery) => threshold && threshold.quantity,
   (quantity) => {
     if (quantity) {
-      return new Set<Medium>(Object.keys(allQuantities)
+      return Array.from(new Set<Medium>(Object.keys(allQuantities)
         .map((medium) => (medium as Medium))
         .filter((medium) => Array.from(allQuantities[medium]).includes(quantity))
-      );
+      ));
     } else {
-      return new Set<Medium>();
+      return [];
     }
   },
 );

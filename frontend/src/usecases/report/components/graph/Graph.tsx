@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Loader} from '../../../../components/loading/Loader';
 import {useFetchMeasurements} from '../../../../state/ui/graph/measurement/measurementHook';
-import {getGraphContents} from '../../../../state/ui/graph/measurement/measurementSelectors';
+import {useGraphContents} from '../../../../state/ui/graph/measurement/measurementSelectors';
 import {LineChartsContainer} from '../../containers/LineChartsContainer';
 import {DispatchToProps, StateToProps} from '../../containers/MeasurementsContainer';
 import {GraphContents} from '../../reportModels';
@@ -17,7 +17,7 @@ export const Graph = (props: Props) => {
   } = props;
   useFetchMeasurements(props);
 
-  const graphContents: GraphContents = getGraphContents(measurementResponse);
+  const graphContents: GraphContents = useGraphContents(measurementResponse);
 
   return (
     <Loader isFetching={isFetching || selectionTree.isFetching} error={error} clearError={clearError}>

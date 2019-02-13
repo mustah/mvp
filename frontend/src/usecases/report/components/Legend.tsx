@@ -3,40 +3,38 @@ import {toArray} from 'lodash';
 import * as React from 'react';
 import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
-import {ButtonLinkBlue} from '../../../components/buttons/ButtonLink';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
-import {IconIndicator} from '../../../components/icons/IconIndicator';
+import {componentOrNothing} from '../../../components/hoc/hocs';
 import {Column} from '../../../components/layouts/column/Column';
-import {Row, RowMiddle} from '../../../components/layouts/row/Row';
+import {RowRight} from '../../../components/layouts/row/Row';
 import {isDefined} from '../../../helpers/commonUtils';
 import {orUnknown} from '../../../helpers/translations';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {Medium, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
+import {Clickable, OnClick, OnClickWithId, Titled, uuid} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
 import './Legend.scss';
 
-export interface LegendProps {
-  hiddenLines: uuid[];
-  toggleLine: OnClick;
-  clearSelectedListItems: OnClick;
-  deleteItem: OnClickWithId;
-  legendItems: Normalized<LegendItem>;
+interface IsReportPage {
+  isReportPage: boolean;
 }
 
-const iconIndicatorStyle: React.CSSProperties = {
-  display: 'table',
-  width: 24,
-  height: 24,
-};
+export interface LegendProps extends IsReportPage {
+  removeSelectedListItems: OnClick;
+  deleteItem: OnClickWithId;
+  hideAllLines: OnClick;
+  hiddenLines: uuid[];
+  legendItems: Normalized<LegendItem>;
+  toggleLine: OnClick;
+}
 
 const legendGridStyle: React.CSSProperties = {
   ...gridStyle,
   borderTopLeftRadius: borderRadius,
   borderTopRightRadius: borderRadius,
   marginBottom: 24,
-  width: 336,
+  width: 366,
   maxHeight: 0.75 * window.innerHeight
 };
 
@@ -51,45 +49,56 @@ const renderFacility = ({dataItem: {facility, city, address}}: GridCellProps) =>
 
 const renderMediumCell = (medium: Medium) =>
   Array.isArray(medium)
-    ? medium.map((singleMedium: Medium, index) => (
-      <IconIndicator
-        key={`${singleMedium}-${index}`}
-        medium={singleMedium}
-        style={iconIndicatorStyle}
-      />
-    ))
-    : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
+    ? medium.map((singleMedium: Medium, index) =>
+      index > 1 && index < medium.length ? `${toMediumText(medium)}, ` : toMediumText(medium))
+    : toMediumText(medium);
 
 const renderMedium = ({dataItem: {medium}}: GridCellProps) =>
   <td>{renderMediumCell(medium)}</td>;
 
+type ButtonProps = Partial<IsReportPage> & Clickable & Titled;
+
+const DeleteButton = ({onClick, title}: ButtonProps) =>
+  <RowRight title={title}><ButtonDelete onClick={onClick}/></RowRight>;
+
+const isReportPagePredicate = ({isReportPage}: ButtonProps): boolean => isReportPage !== undefined && isReportPage;
+
+const ReportDeleteButton = componentOrNothing<ButtonProps>(isReportPagePredicate)(DeleteButton);
+
 export const Legend = ({
-  clearSelectedListItems,
+  removeSelectedListItems,
+  hideAllLines,
   hiddenLines,
+  isReportPage,
   legendItems: {entities: {lines}},
   toggleLine,
   deleteItem
 }: LegendProps) => {
-  const renderRemoveAllButtonLink = () => (
-    <ButtonLinkBlue onClick={clearSelectedListItems} className="k-link">
-      {translate('remove all')}
-    </ButtonLinkBlue>
+  const renderIconButtonsHeader = () => (
+    <RowRight>
+      <RowRight title={firstUpperTranslated('hide all')}>
+        <ButtonVisibility onClick={hideAllLines}/>
+      </RowRight>
+      <ReportDeleteButton
+        onClick={removeSelectedListItems}
+        title={firstUpperTranslated('remove all')}
+        isReportPage={isReportPage}
+      />
+    </RowRight>
   );
 
-  const renderDeleteButton = ({dataItem: {id}}: GridCellProps) => {
+  const renderIconButtons = ({dataItem: {id}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
     const onDeleteItem = () => deleteItem(id);
     const onToggleItem = () => toggleLine(id);
     return (
-      <td className="icon">
-        <RowMiddle>
-          <Row>
+      <td className="icons">
+        <RowRight>
+          <RowRight>
             <ButtonVisibility key={`checked-${id}-${checked}`} onClick={onToggleItem} checked={checked}/>
-          </Row>
-          <Row>
-            <ButtonDelete onClick={onDeleteItem}/>
-          </Row>
-        </RowMiddle>
+          </RowRight>
+          <ReportDeleteButton onClick={onDeleteItem} isReportPage={isReportPage}/>
+        </RowRight>
       </td>
     );
   };
@@ -100,22 +109,20 @@ export const Legend = ({
     <Column className="Legend">
       <Grid data={data} style={legendGridStyle}>
         <GridColumn
-          field="facility"
           cell={renderFacility}
           title={translate('facility')}
           headerClassName="left-most"
           width={140}
         />
         <GridColumn
-          field="medium"
           cell={renderMedium}
           title={translate('medium')}
-          width={90}
+          width={136}
         />
         <GridColumn
-          headerCell={renderRemoveAllButtonLink}
+          headerCell={renderIconButtonsHeader}
           headerClassName="Link"
-          cell={renderDeleteButton}
+          cell={renderIconButtons}
           width={90}
         />
       </Grid>

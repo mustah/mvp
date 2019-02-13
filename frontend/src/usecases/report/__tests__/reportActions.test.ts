@@ -10,6 +10,7 @@ import {UiState} from '../../../state/ui/uiReducer';
 import {uuid} from '../../../types/Types';
 import {
   addToReport,
+  hideAllLines,
   limit,
   selectEntryAdd,
   SET_SELECTED_ENTRIES,
@@ -562,6 +563,17 @@ describe('reportActions', () => {
       ]);
     });
 
+  });
+
+  describe('hideAllLines', () => {
+
+    it('dispatches hide all lines action creator', () => {
+      const store = configureMockStore(initialState);
+
+      store.dispatch(hideAllLines());
+
+      expect(store.getActions()).toEqual([hideAllLines()]);
+    });
   });
 
   const selectedUiQuantitiesFrom = (selectedQuantities: Quantity[]): Pick<UiState, 'indicator'> => ({

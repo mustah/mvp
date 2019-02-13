@@ -1,8 +1,8 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
-import {SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
-import {SelectedReportEntriesPayload} from '../../../usecases/report/reportModels';
+import {REMOVE_SELECTED_LIST_ITEMS, SET_SELECTED_ENTRIES} from '../../../usecases/report/reportActions';
+import {SelectedReportEntries} from '../../../usecases/report/reportModels';
 import {getThresholdMedia} from '../../selection-tree/selectionTreeSelectors';
 import {RESET_SELECTION, SELECT_SAVED_SELECTION, SET_THRESHOLD} from '../../user-selection/userSelectionActions';
 import {ThresholdQuery, UserSelection} from '../../user-selection/userSelectionModels';
@@ -22,11 +22,7 @@ export const initialState: IndicatorState = {
 };
 
 type ActionTypes =
-  | Action<Medium[]>
-  | Action<Quantity[]>
-  | Action<SelectedReportEntriesPayload>
-  | Action<UserSelection>
-  | Action<ThresholdQuery>
+  | Action<Medium[] | Quantity[] | SelectedReportEntries | UserSelection | ThresholdQuery>
   | EmptyAction<string>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
@@ -35,34 +31,36 @@ export const indicator = (state: IndicatorState = initialState, action: ActionTy
       return {
         ...state,
         selectedIndicators: {
-          report: [...((action as Action<Medium[]>).payload as Medium[])],
+          report: [...((action as Action<Medium[]>).payload)],
         },
       };
     case SET_SELECTED_ENTRIES:
-      const payload: SelectedReportEntriesPayload = (action as Action<SelectedReportEntriesPayload>).payload;
-      if (!payload.ids.length) {
-        return initialState;
-      }
+      const {
+        indicatorsToSelect,
+        quantitiesToSelect
+      }: SelectedReportEntries = (action as Action<SelectedReportEntries>).payload;
       return {
         ...state,
         selectedIndicators: {
-          report: [...payload.indicatorsToSelect],
+          report: [...indicatorsToSelect],
         },
-        selectedQuantities: [...payload.quantitiesToSelect],
+        selectedQuantities: quantitiesToSelect,
       };
     case SET_SELECTED_QUANTITIES:
       return {
         ...state,
-        selectedQuantities: (action as Action<Quantity[]>).payload as Quantity[],
+        selectedQuantities: (action as Action<Quantity[]>).payload,
       };
     case SET_THRESHOLD:
+      const thresholdQuery: ThresholdQuery = (action as Action<ThresholdQuery>).payload;
       return {
         ...state,
         selectedIndicators: {
-          report: Array.from(getThresholdMedia((action as Action<ThresholdQuery>).payload)),
+          report: getThresholdMedia(thresholdQuery),
         },
-        selectedQuantities: [(action as Action<ThresholdQuery>).payload.quantity],
+        selectedQuantities: [thresholdQuery.quantity],
       };
+    case REMOVE_SELECTED_LIST_ITEMS:
     case SELECT_SAVED_SELECTION:
     case RESET_SELECTION:
     case LOGOUT_USER:
