@@ -21,11 +21,9 @@ export interface MeasurementTableData {
 const orderedQuantities = (medium: Medium): Quantity[] =>
   medium in allQuantities ? allQuantities[medium] : [];
 
-// TODO[!must!] convert this to use 'createSelector<>()'
 export const groupMeasurementsByDate =
   (measurementPage: NormalizedPaginated<Measurement>, medium: Medium): MeasurementTableData => {
     const readings: ExistingReadings = {};
-
     const quantities: Quantity[] = orderedQuantities(medium);
     const quantitiesFoundInResponse: Set<Quantity> = new Set<Quantity>();
 
@@ -47,5 +45,5 @@ export const groupMeasurementsByDate =
     };
   };
 
-export const getGraphContents = (responses: MeasurementResponses): GraphContents =>
+export const useGraphContents = (responses: MeasurementResponses): GraphContents =>
   React.useMemo<GraphContents>(() => toGraphContents(responses), [responses]);
