@@ -116,13 +116,14 @@ interface GroupedRequests {
   meters: GraphDataRequests;
 }
 
-const requestsPerQuantity = (
-  quantities: Quantity[],
-  resolution: TemporalResolution,
-  selectionTreeEntities: SelectionTreeEntities,
-  selectedListItems: uuid[],
-  selectionParameters: SelectedParameters
-): GroupedRequests => {
+const requestsPerQuantity = ({
+  quantities,
+  resolution,
+  selectedListItems,
+  selectionParameters,
+  selectionTreeEntities,
+  shouldMakeAverageRequest,
+}: MeasurementParameters): GroupedRequests => {
   const meterByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
   quantities.forEach((quantity: Quantity) => {
     meterByQuantity[quantity] = new Set();
@@ -183,13 +184,15 @@ const requestsPerQuantity = (
         measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
       )));
 
-  requests.average = Object.keys(meterByQuantity)
-    .filter((quantity) => meterByQuantity[quantity]!.size > 1)
-    .map((quantity: Quantity) =>
-      restClient.getParallel(makeUrl(
-        EndPoints.measurements.concat('/average'),
-        measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
-      )));
+  if (shouldMakeAverageRequest) {
+    requests.average = Object.keys(meterByQuantity)
+      .filter((quantity) => meterByQuantity[quantity]!.size > 1)
+      .map((quantity: Quantity) =>
+        restClient.getParallel(makeUrl(
+          EndPoints.measurements.concat('/average'),
+          measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
+        )));
+  }
 
   return requests;
 };
@@ -206,28 +209,13 @@ export interface MeasurementParameters {
   selectedIndicators: Medium[];
   selectedListItems: uuid[];
   selectionParameters: SelectedParameters;
+  shouldMakeAverageRequest?: boolean;
 }
 
-const fetchMeasurementsAsync = async (
-  {
-    resolution,
-    selectionTreeEntities,
-    selectedIndicators,
-    quantities,
-    selectedListItems,
-    selectionParameters,
-  }: MeasurementParameters,
-  dispatch: Dispatcher,
-): Promise<void> => {
-  const {average, cities, meters}: GroupedRequests = requestsPerQuantity(
-    quantities,
-    resolution,
-    selectionTreeEntities,
-    selectedListItems,
-    selectionParameters
-  );
+const fetchMeasurementsAsync = async (parameters: MeasurementParameters, dispatch: Dispatcher): Promise<void> => {
+  const {average, cities, meters}: GroupedRequests = requestsPerQuantity(parameters);
 
-  if (selectedIndicators.length && quantities.length && (cities.length + meters.length)) {
+  if (parameters.quantities.length && (cities.length + meters.length)) {
     dispatch(measurementRequest());
     try {
       const [meterResponses, averageResponses, citiesResponses]: GraphDataResponse[][] =

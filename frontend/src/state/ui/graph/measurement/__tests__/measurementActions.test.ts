@@ -89,6 +89,7 @@ describe('measurementActions', () => {
             period: Period.currentMonth,
           }
         },
+        shouldMakeAverageRequest: true,
       };
     });
 
