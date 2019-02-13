@@ -5,7 +5,7 @@ import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementM
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
-import {selectResolution, setSelectedEntries, toggleLine} from '../reportActions';
+import {hideAllLines, selectResolution, setSelectedEntries, toggleLine} from '../reportActions';
 import {ReportState, SelectedReportEntriesPayload} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 
@@ -136,6 +136,38 @@ describe('reportReducer', () => {
 
       expected = {...initialState, resolution: TemporalResolution.month};
       expect(state).toEqual(expected);
+    });
+  });
+
+  describe('hideAllLines', () => {
+
+    it('hides empty list of lines', () => {
+      const state: ReportState = report(initialState, hideAllLines());
+      expect(state).toEqual(initialState);
+    });
+
+    it('hides single line', () => {
+      const startState: ReportState = {
+        ...initialState,
+        selectedListItems: [13],
+        hiddenLines: []
+      };
+
+      const state: ReportState = report(startState, hideAllLines());
+
+      expect(state).toEqual({...startState, hiddenLines: [13]});
+    });
+
+    it('hides all lines', () => {
+      const startState: ReportState = {
+        ...initialState,
+        selectedListItems: [1, 3, 5],
+        hiddenLines: []
+      };
+
+      const state: ReportState = report(startState, hideAllLines());
+
+      expect(state).toEqual({...startState, hiddenLines: [1, 3, 5]});
     });
   });
 

@@ -21,6 +21,6 @@ export const ButtonVisibility = ({checked, onClick}: VisibilityProps) => (
     onClick={onClick}
     iconStyle={iconStyle}
     checked={checked}
-    style={{width: 24}}
+    style={{width: 24, paddingTop: 4}}
   />
 );

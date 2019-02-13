@@ -3,26 +3,31 @@ import {toArray} from 'lodash';
 import * as React from 'react';
 import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
-import {ButtonLinkBlue} from '../../../components/buttons/ButtonLink';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
+import {componentOrNothing} from '../../../components/hoc/hocs';
 import {IconIndicator} from '../../../components/icons/IconIndicator';
 import {Column} from '../../../components/layouts/column/Column';
-import {Row, RowMiddle} from '../../../components/layouts/row/Row';
+import {RowRight} from '../../../components/layouts/row/Row';
 import {isDefined} from '../../../helpers/commonUtils';
 import {orUnknown} from '../../../helpers/translations';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {Clickable, OnClick, OnClickWithId, Titled, uuid} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
 import './Legend.scss';
 
-export interface LegendProps {
-  hiddenLines: uuid[];
-  toggleLine: OnClick;
+interface IsReportPage {
+  isReportPage: boolean;
+}
+
+export interface LegendProps extends IsReportPage {
   clearSelectedListItems: OnClick;
   deleteItem: OnClickWithId;
+  hideAllLines: OnClick;
+  hiddenLines: uuid[];
   legendItems: Normalized<LegendItem>;
+  toggleLine: OnClick;
 }
 
 const iconIndicatorStyle: React.CSSProperties = {
@@ -63,33 +68,49 @@ const renderMediumCell = (medium: Medium) =>
 const renderMedium = ({dataItem: {medium}}: GridCellProps) =>
   <td>{renderMediumCell(medium)}</td>;
 
+type ButtonProps = Partial<IsReportPage> & Clickable & Titled;
+
+const DeleteButton = ({onClick, title}: ButtonProps) =>
+  <RowRight title={title}><ButtonDelete onClick={onClick}/></RowRight>;
+
+const isReportPagePredicate = ({isReportPage}: ButtonProps): boolean => isReportPage !== undefined && isReportPage;
+
+const ReportDeleteButton = componentOrNothing<ButtonProps>(isReportPagePredicate)(DeleteButton);
+
 export const Legend = ({
   clearSelectedListItems,
+  hideAllLines,
   hiddenLines,
+  isReportPage,
   legendItems: {entities: {lines}},
   toggleLine,
   deleteItem
 }: LegendProps) => {
-  const renderRemoveAllButtonLink = () => (
-    <ButtonLinkBlue onClick={clearSelectedListItems} className="k-link">
-      {translate('remove all')}
-    </ButtonLinkBlue>
+  const renderIconButtonsHeader = () => (
+    <RowRight>
+      <RowRight title={firstUpperTranslated('hide all')}>
+        <ButtonVisibility onClick={hideAllLines}/>
+      </RowRight>
+      <ReportDeleteButton
+        onClick={clearSelectedListItems}
+        title={firstUpperTranslated('remove all')}
+        isReportPage={isReportPage}
+      />
+    </RowRight>
   );
 
-  const renderDeleteButton = ({dataItem: {id}}: GridCellProps) => {
+  const renderIconButtons = ({dataItem: {id}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
     const onDeleteItem = () => deleteItem(id);
     const onToggleItem = () => toggleLine(id);
     return (
-      <td className="icon">
-        <RowMiddle>
-          <Row>
+      <td className="icons">
+        <RowRight>
+          <RowRight>
             <ButtonVisibility key={`checked-${id}-${checked}`} onClick={onToggleItem} checked={checked}/>
-          </Row>
-          <Row>
-            <ButtonDelete onClick={onDeleteItem}/>
-          </Row>
-        </RowMiddle>
+          </RowRight>
+          <ReportDeleteButton onClick={onDeleteItem} isReportPage={isReportPage}/>
+        </RowRight>
       </td>
     );
   };
@@ -113,9 +134,9 @@ export const Legend = ({
           width={90}
         />
         <GridColumn
-          headerCell={renderRemoveAllButtonLink}
+          headerCell={renderIconButtonsHeader}
           headerClassName="Link"
-          cell={renderDeleteButton}
+          cell={renderIconButtons}
           width={90}
         />
       </Grid>

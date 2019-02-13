@@ -14,12 +14,13 @@ import {
   Quantity
 } from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
-import {Dispatcher, OnPayloadAction, payloadActionOf, uuid} from '../../types/Types';
+import {Dispatcher, emptyActionOf, OnPayloadAction, payloadActionOf, uuid} from '../../types/Types';
 import {SelectedReportEntriesPayload} from './reportModels';
 
 export const SELECT_RESOLUTION = 'SELECT_RESOLUTION';
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 export const TOGGLE_LINE = 'TOGGLE_LINE';
+export const HIDE_ALL_LINES = 'HIDE_ALL_LINES';
 
 export const setSelectedEntries: OnPayloadAction<SelectedReportEntriesPayload> =
   payloadActionOf<SelectedReportEntriesPayload>(SET_SELECTED_ENTRIES);
@@ -28,6 +29,7 @@ export const selectResolution: OnPayloadAction<TemporalResolution> =
   payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
 
 export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
+export const hideAllLines = emptyActionOf(HIDE_ALL_LINES);
 
 const mediaForSelection = (ids: uuid[], {entities: {meters, cities}}: SelectionTreeState): Set<Medium> => {
   const cityMedia: Medium[] = ids.filter(isSelectedCity)
