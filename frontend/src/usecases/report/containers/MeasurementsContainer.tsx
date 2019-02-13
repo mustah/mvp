@@ -57,6 +57,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 export const GraphContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Graph);
 
-// TODO inject "export" into redux-state
 export const MeasurementsContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Measurements);
