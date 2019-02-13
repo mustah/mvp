@@ -59,17 +59,11 @@ export const getMeasurementParameters =
       report: {resolution, selectedListItems},
       userSelection: {userSelection: {selectionParameters}},
       selectionTree: {entities: selectionTreeEntities},
-      ui: {
-        indicator: {
-          selectedIndicators: {report: selectedIndicators},
-          selectedQuantities: quantities,
-        },
-      },
+      ui: {indicator: {selectedQuantities: quantities}},
     }) => ({
       quantities,
       resolution,
       selectedListItems,
-      selectedIndicators,
       selectionTreeEntities,
       selectionParameters,
     })

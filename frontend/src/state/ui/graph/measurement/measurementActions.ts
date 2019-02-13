@@ -206,7 +206,6 @@ export interface MeasurementParameters {
   quantities: Quantity[];
   resolution: TemporalResolution;
   selectionTreeEntities: SelectionTreeEntities;
-  selectedIndicators: Medium[];
   selectedListItems: uuid[];
   selectionParameters: SelectedParameters;
   shouldMakeAverageRequest?: boolean;

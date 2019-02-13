@@ -80,7 +80,6 @@ describe('measurementActions', () => {
           cities: {},
           meters: {},
         },
-        selectedIndicators: [],
         quantities: [],
         selectedListItems: [],
         resolution: TemporalResolution.day,
@@ -113,7 +112,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: ['sweden,höganäs,hasselgatan 4'],
         }));
@@ -127,7 +125,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [],
         }));
@@ -178,7 +175,6 @@ describe('measurementActions', () => {
               [unknownMeter.id]: unknownMeter,
             },
           },
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.energy],
           selectedListItems: [unknownMeter.id],
         }));
@@ -249,7 +245,6 @@ describe('measurementActions', () => {
               [gasMeter.id]: gasMeter,
             },
           },
-          selectedIndicators: [Medium.roomSensor, Medium.gas],
           quantities: [Quantity.externalTemperature, Quantity.volume],
           selectedListItems: [roomSensorMeter.id, gasMeter.id],
         }));
@@ -300,7 +295,6 @@ describe('measurementActions', () => {
               [gasCity.id]: gasCity,
             },
           },
-          selectedIndicators: [Medium.roomSensor, Medium.gas],
           quantities: [Quantity.externalTemperature, Quantity.volume],
           selectedListItems: [roomSensorCity.id, gasCity.id],
         }));
@@ -348,7 +342,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
           selectionTreeEntities: {
@@ -395,7 +388,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [mockedMeter.id, mockedCity.id],
           selectionTreeEntities: {
@@ -445,7 +437,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [mockedCity.id],
           selectionTreeEntities: {
@@ -494,7 +485,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.roomSensor],
           quantities: [Quantity.externalTemperature],
           selectedListItems: [firstRoomSensor.id, secondRoomSensor.id],
           selectionTreeEntities: {
@@ -530,7 +520,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
           selectionTreeEntities: {
@@ -555,7 +544,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [firstDistrictHeating.id, secondDistrictHeating.id],
           selectionTreeEntities: {
@@ -635,7 +623,6 @@ describe('measurementActions', () => {
               [second.id]: second,
             },
           },
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [first.id, second.id],
         }));
@@ -701,7 +688,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [first.id, second.id],
         }));
@@ -718,7 +704,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: ['sto,bkk'],
         }));
@@ -799,7 +784,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          selectedIndicators: [Medium.districtHeating],
           quantities: [Quantity.power],
           selectedListItems: [meter.id],
           selectionTreeEntities: {
