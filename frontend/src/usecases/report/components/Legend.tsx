@@ -5,14 +5,13 @@ import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {componentOrNothing} from '../../../components/hoc/hocs';
-import {IconIndicator} from '../../../components/icons/IconIndicator';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
 import {isDefined} from '../../../helpers/commonUtils';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
+import {Medium, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {Clickable, OnClick, OnClickWithId, Titled, uuid} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
 import './Legend.scss';
@@ -30,18 +29,12 @@ export interface LegendProps extends IsReportPage {
   toggleLine: OnClick;
 }
 
-const iconIndicatorStyle: React.CSSProperties = {
-  display: 'table',
-  width: 24,
-  height: 24,
-};
-
 const legendGridStyle: React.CSSProperties = {
   ...gridStyle,
   borderTopLeftRadius: borderRadius,
   borderTopRightRadius: borderRadius,
   marginBottom: 24,
-  width: 336,
+  width: 366,
   maxHeight: 0.75 * window.innerHeight
 };
 
@@ -56,14 +49,9 @@ const renderFacility = ({dataItem: {facility, city, address}}: GridCellProps) =>
 
 const renderMediumCell = (medium: Medium) =>
   Array.isArray(medium)
-    ? medium.map((singleMedium: Medium, index) => (
-      <IconIndicator
-        key={`${singleMedium}-${index}`}
-        medium={singleMedium}
-        style={iconIndicatorStyle}
-      />
-    ))
-    : <IconIndicator medium={medium} style={iconIndicatorStyle}/>;
+    ? medium.map((singleMedium: Medium, index) =>
+      index > 1 && index < medium.length ? `${toMediumText(medium)}, ` : toMediumText(medium))
+    : toMediumText(medium);
 
 const renderMedium = ({dataItem: {medium}}: GridCellProps) =>
   <td>{renderMediumCell(medium)}</td>;
@@ -121,17 +109,15 @@ export const Legend = ({
     <Column className="Legend">
       <Grid data={data} style={legendGridStyle}>
         <GridColumn
-          field="facility"
           cell={renderFacility}
           title={translate('facility')}
           headerClassName="left-most"
           width={140}
         />
         <GridColumn
-          field="medium"
           cell={renderMedium}
           title={translate('medium')}
-          width={90}
+          width={136}
         />
         <GridColumn
           headerCell={renderIconButtonsHeader}

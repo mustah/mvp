@@ -151,6 +151,18 @@ const mediumTypes: {[key: string]: Medium} = {
 
 export const getMediumType = (key: string): Medium => mediumTypes[key] || Medium.unknown;
 
+const mediumTexts: { [medium in Medium]: string } = {
+  [Medium.districtHeating]: 'District heating',
+  [Medium.gas]: 'Gas',
+  [Medium.water]: 'Water',
+  [Medium.hotWater]: 'Hot water',
+  [Medium.electricity]: 'Electricity',
+  [Medium.roomSensor]: 'Room sensor',
+  [Medium.unknown]: 'Unknown',
+};
+
+export const toMediumText = (medium: Medium): string => mediumTexts[medium] || mediumTexts[Medium.unknown];
+
 export const allQuantities: { [m in Medium]: Quantity[] } = {
   [Medium.districtHeating]: [
     Quantity.energy,
