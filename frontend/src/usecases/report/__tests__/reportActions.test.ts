@@ -128,7 +128,6 @@ describe('reportActions', () => {
       },
       ui: {
         indicator: {
-          selectedIndicators: {report: []},
           selectedQuantities: []
         },
       }

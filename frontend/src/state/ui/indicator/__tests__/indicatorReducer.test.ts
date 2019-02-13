@@ -10,9 +10,6 @@ describe('indicatorReducer', () => {
 
   const state: IndicatorState = {
     ...initialState,
-    selectedIndicators: {
-      report: [Medium.districtHeating],
-    },
     selectedQuantities: [Quantity.volume],
   };
 
@@ -38,9 +35,6 @@ describe('indicatorReducer', () => {
 
     const expected: IndicatorState = {
       ...initialState,
-      selectedIndicators: {
-        report: [Medium.roomSensor],
-      },
       selectedQuantities: [Quantity.externalTemperature],
     };
 
@@ -82,9 +76,6 @@ describe('indicatorReducer', () => {
       const newState: IndicatorState = indicator(state, {type: SET_THRESHOLD, payload});
       const expected: IndicatorState = {
         ...initialState,
-        selectedIndicators: {
-          report: [Medium.districtHeating],
-        },
         selectedQuantities: [Quantity.returnTemperature],
       };
       expect(newState).toEqual(expected);
