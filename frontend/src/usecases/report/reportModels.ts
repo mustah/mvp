@@ -70,7 +70,7 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-export interface SelectedReportEntriesPayload {
+export interface SelectedReportEntries {
   ids: uuid[];
   indicatorsToSelect: Medium[];
   quantitiesToSelect: Quantity[];

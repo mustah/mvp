@@ -5,15 +5,8 @@ import {
   SelectionTreeMeter,
 } from '../../../state/selection-tree/selectionTreeModels';
 import {getThresholdMedia} from '../../../state/selection-tree/selectionTreeSelectors';
-import {
-  Medium,
-  Quantity,
-  quantityAttributes
-} from '../../../state/ui/graph/measurement/measurementModels';
-import {
-  RelationalOperator,
-  ThresholdQuery
-} from '../../../state/user-selection/userSelectionModels';
+import {Medium, Quantity, quantityAttributes} from '../../../state/ui/graph/measurement/measurementModels';
+import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
@@ -183,7 +176,7 @@ describe('reportSelectors', () => {
         value: '0',
       };
 
-      const expected: Set<Medium> = new Set<Medium>().add(Medium.districtHeating);
+      const expected: Medium[] = [Medium.districtHeating];
 
       expect(getThresholdMedia(state)).toEqual(expected);
     });

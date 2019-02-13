@@ -22,7 +22,7 @@ interface IsReportPage {
 }
 
 export interface LegendProps extends IsReportPage {
-  clearSelectedListItems: OnClick;
+  removeSelectedListItems: OnClick;
   deleteItem: OnClickWithId;
   hideAllLines: OnClick;
   hiddenLines: uuid[];
@@ -78,7 +78,7 @@ const isReportPagePredicate = ({isReportPage}: ButtonProps): boolean => isReport
 const ReportDeleteButton = componentOrNothing<ButtonProps>(isReportPagePredicate)(DeleteButton);
 
 export const Legend = ({
-  clearSelectedListItems,
+  removeSelectedListItems,
   hideAllLines,
   hiddenLines,
   isReportPage,
@@ -92,7 +92,7 @@ export const Legend = ({
         <ButtonVisibility onClick={hideAllLines}/>
       </RowRight>
       <ReportDeleteButton
-        onClick={clearSelectedListItems}
+        onClick={removeSelectedListItems}
         title={firstUpperTranslated('remove all')}
         isReportPage={isReportPage}
       />

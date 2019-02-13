@@ -7,7 +7,7 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {OnClick, OnClickWithId} from '../../../types/Types';
 import {Legend, LegendProps} from '../components/Legend';
-import {clearSelectedListItems, hideAllLines, toggleLine, toggleSingleEntry} from '../reportActions';
+import {hideAllLines, removeSelectedListItems, toggleLine, toggleSingleEntry} from '../reportActions';
 import {LegendItem, ReportState} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
@@ -19,7 +19,7 @@ interface StateToProps extends ReportState, WithEmptyContentProps {
 interface DispatchToProps {
   deleteItem: OnClickWithId;
   toggleLine: OnClickWithId;
-  clearSelectedListItems: OnClick;
+  removeSelectedListItems: OnClick;
 }
 
 const LegendComponent = withEmptyContent<LegendProps & ReportState & WithEmptyContentProps>(Legend);
@@ -41,7 +41,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem: toggleSingleEntry,
-  clearSelectedListItems,
+  removeSelectedListItems,
   hideAllLines,
   toggleLine,
 }, dispatch);
