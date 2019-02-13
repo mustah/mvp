@@ -71,7 +71,7 @@ const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'top'};
 const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
 
-const renderPopoverContent = () => (<LegendContainer/>);
+const renderPopoverContent = () => <LegendContainer/>;
 
 export const Toolbar = ({
   changeToolbarView,

@@ -18,6 +18,7 @@ interface StateToProps extends ReportState, WithEmptyContentProps {
 
 interface DispatchToProps {
   deleteItem: OnClickWithId;
+  hideAllLines: OnClick;
   toggleLine: OnClickWithId;
   removeSelectedListItems: OnClick;
 }
