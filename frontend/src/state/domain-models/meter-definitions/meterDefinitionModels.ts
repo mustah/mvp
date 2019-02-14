@@ -17,7 +17,7 @@ export interface Medium extends Identifiable {
 }
 
 export interface Quantity extends Identifiable {
-  name: string;
+  quanitityName: string;
   consumption?: boolean;
   displayUnit: string;
   precision: number;

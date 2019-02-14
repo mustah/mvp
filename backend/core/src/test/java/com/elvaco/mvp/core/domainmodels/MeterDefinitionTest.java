@@ -18,6 +18,11 @@ public class MeterDefinitionTest {
     assertThat(newMeterDefinition(ELVACO).belongsTo(ELVACO.getId())).isTrue();
   }
 
+  @Test
+  public void isDefault() {
+    assertThat(newMeterDefinition(null).isDefault()).isTrue();
+  }
+
   private MeterDefinition newMeterDefinition(Organisation organisation) {
     return new MeterDefinition(
       null,

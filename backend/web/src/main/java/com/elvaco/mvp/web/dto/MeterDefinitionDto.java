@@ -25,7 +25,7 @@ public class MeterDefinitionDto {
 
   @NotNull
   @Valid
-  public Set<QuantityDto> quantities = Collections.emptySet();
+  public Set<DisplayQuantityDto> quantities = Collections.emptySet();
 
   @Nullable
   public OrganisationDto organisation;

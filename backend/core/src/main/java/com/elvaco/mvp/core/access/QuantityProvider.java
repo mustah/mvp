@@ -1,9 +1,12 @@
 package com.elvaco.mvp.core.access;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.NoSuchQuantity;
+
+import static java.util.Collections.emptyList;
 
 @FunctionalInterface
 public interface QuantityProvider {
@@ -24,5 +27,9 @@ public interface QuantityProvider {
       ));
     }
     return preloadedQty.id;
+  }
+
+  default List<Quantity> all() {
+    return emptyList();
   }
 }

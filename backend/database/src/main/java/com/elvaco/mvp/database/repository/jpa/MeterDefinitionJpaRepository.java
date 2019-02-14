@@ -9,8 +9,7 @@ import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MeterDefinitionJpaRepository
-  extends JpaRepository<MeterDefinitionEntity, Long> {
+public interface MeterDefinitionJpaRepository extends JpaRepository<MeterDefinitionEntity, Long> {
 
   Optional<MeterDefinitionEntity> findByMediumAndOrganisationIsNull(MediumEntity mediumEntity);
 

@@ -7,6 +7,8 @@ import java.util.function.BooleanSupplier;
 
 import com.elvaco.mvp.configuration.config.properties.MvpProperties;
 import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.Identifiable;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -26,6 +28,7 @@ import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -129,12 +132,22 @@ public abstract class IntegrationTest implements ContextDsl {
 
   @Autowired
   protected GatewayStatusLogs gatewayStatusLogs;
+
   @Autowired
   protected MediumProvider mediumProvider;
+
+  @Autowired
+  protected QuantityProvider quantityProvider;
+
+  @Autowired
+  protected SystemMeterDefinitionProvider systemMeterDefinitionProvider;
+
   @Autowired
   private TokenFactory tokenFactory;
+
   @Autowired
   private TokenService tokenService;
+
   private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
   @LocalServerPort

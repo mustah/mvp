@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public class MockMeterDefinitions extends MockRepository<Long, MeterDefinition>
   implements MeterDefinitions {
@@ -33,12 +34,19 @@ public class MockMeterDefinitions extends MockRepository<Long, MeterDefinition>
 
   @Override
   public List<MeterDefinition> findAll(UUID organisationId) {
-    return null;
+    return allMocks().stream()
+      .filter(md -> (md.organisation != null && md.organisation.id.equals(organisationId)))
+      .collect(toList());
   }
 
   @Override
   public List<MeterDefinition> findAll() {
     return null;
+  }
+
+  @Override
+  public void deleteById(Long id) {
+    deleteMockById(id);
   }
 
   @Override

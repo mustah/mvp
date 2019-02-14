@@ -1,5 +1,8 @@
 package com.elvaco.mvp.configuration.config;
 
+import com.elvaco.mvp.core.access.MediumProvider;
+import com.elvaco.mvp.core.access.QuantityProvider;
+import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -54,6 +57,9 @@ class UseCaseConfig {
   private final Properties properties;
   private final MeterAlarmLogs meterAlarmLogs;
   private final MeterDefinitions meterDefinitions;
+  private final MediumProvider mediumProvider;
+  private final QuantityProvider quantityProvider;
+  private final SystemMeterDefinitionProvider systemMeterDefinitionProvider;
 
   @Bean
   SettingUseCases settingUseCases() {
@@ -131,6 +137,15 @@ class UseCaseConfig {
     AuthenticatedUser currentUser,
     UnitConverter unitConverter
   ) {
-    return new MeterDefinitionUseCases(currentUser, meterDefinitions, unitConverter, organisations);
+    return new MeterDefinitionUseCases(
+      currentUser,
+      meterDefinitions,
+      unitConverter,
+      organisations,
+      quantityProvider,
+      mediumProvider,
+      systemMeterDefinitionProvider,
+      logicalMeters
+    );
   }
 }

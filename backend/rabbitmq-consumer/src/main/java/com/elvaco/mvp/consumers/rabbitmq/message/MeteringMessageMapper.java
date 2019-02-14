@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 
 import lombok.experimental.UtilityClass;
@@ -47,11 +46,11 @@ public class MeteringMessageMapper {
   );
 
   private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = Map.ofEntries(
-    entry("Return temp.", Quantity.RETURN_TEMPERATURE),
-    entry("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE),
-    entry("Flow temp.", Quantity.FORWARD_TEMPERATURE),
-    entry("Volume flow", Quantity.VOLUME_FLOW),
-    entry("Power", Quantity.POWER),
+    entry("Return temp.", Quantity.RETURN_TEMPERATURE), //*
+    entry("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE), //*
+    entry("Flow temp.", Quantity.FORWARD_TEMPERATURE), //*
+    entry("Volume flow", Quantity.VOLUME_FLOW), //*
+    entry("Power", Quantity.POWER), //*
     entry("Volume", Quantity.VOLUME),
     entry("Energy", Quantity.ENERGY),
     entry("External temp", Quantity.EXTERNAL_TEMPERATURE),
@@ -60,16 +59,15 @@ public class MeteringMessageMapper {
     entry("Reactive energy", Quantity.REACTIVE_ENERGY)
   );
 
-  static MeterDefinition resolveMeterDefinition(List<ValueDto> values) {
+  static String resolveMedium(List<ValueDto> values) {
     Set<String> quantities = values.stream()
       .map(valueDto -> valueDto.quantity)
       .collect(toSet());
 
     if (quantities.equals(DISTRICT_HEATING_METER_QUANTITIES)) {
-      return MeterDefinition.DEFAULT_DISTRICT_HEATING;
+      return Medium.DISTRICT_HEATING;
     }
-
-    return MeterDefinition.UNKNOWN;
+    return Medium.UNKNOWN_MEDIUM;
   }
 
   static Optional<Quantity> mappedQuantity(String quantityName) {

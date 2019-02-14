@@ -20,7 +20,7 @@ import static java.util.Collections.emptySet;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class MeterDefinition implements Identifiable<Long> {
 
   public static final MeterDefinition UNKNOWN =

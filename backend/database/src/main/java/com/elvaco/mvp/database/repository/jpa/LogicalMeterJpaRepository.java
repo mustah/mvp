@@ -43,4 +43,10 @@ public interface LogicalMeterJpaRepository {
   void delete(UUID id, UUID organisationId);
 
   void deleteAll();
+
+  void changeMeterDefinition(
+    UUID organisationId,
+    Long fromMeterDefinitionId,
+    Long toMeterDefinitionId
+  );
 }

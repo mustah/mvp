@@ -10,38 +10,17 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodBound;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.security.OrganisationPermissions;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.core.unitconverter.UnitConverter;
-import com.elvaco.mvp.core.usecase.GatewayUseCases;
-import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.usecase.OrganisationUseCases;
-import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
-import com.elvaco.mvp.testing.fixture.UserBuilder;
-import com.elvaco.mvp.testing.repository.MockGateways;
-import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
-import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
-import com.elvaco.mvp.testing.repository.MockOrganisations;
-import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
-import com.elvaco.mvp.testing.repository.MockUsers;
-import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,14 +28,13 @@ import org.junit.Test;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ELECTRICITY;
 import static java.time.ZonedDateTime.now;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
-public class MeteringMeasurementMessageConsumerMeterReplacementTest {
+public class MeteringMeasurementMessageConsumerMeterReplacementTest extends MessageConsumerTest {
 
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
@@ -80,60 +58,22 @@ public class MeteringMeasurementMessageConsumerMeterReplacementTest {
     METERING_TIMEZONE
   );
 
-  private PhysicalMeters physicalMeters;
-  private Organisations organisations;
-  private LogicalMeters logicalMeters;
-  private Gateways gateways;
   private MeasurementMessageConsumer messageConsumer;
 
   @Before
   public void setUp() {
-    User superAdmin = new UserBuilder()
-      .name("super-admin")
-      .email("super@admin.io")
-      .password("password")
-      .organisationElvaco()
-      .asSuperAdmin()
-      .build();
-    AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
-      new UserBuilder()
-        .name("mock user")
-        .email("mock@somemail.nu")
-        .password("P@$$w0rD")
-        .organisation(ORGANISATION)
-        .asSuperAdmin()
-        .build(),
-      randomUUID().toString()
-    );
-    physicalMeters = new MockPhysicalMeters();
-    organisations = new MockOrganisations();
+    super.setUp();
     MockMeasurements measurements = new MockMeasurements();
-    logicalMeters = new MockLogicalMeters();
-    gateways = new MockGateways();
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
-      new LogicalMeterUseCases(authenticatedUser, logicalMeters),
-      new PhysicalMeterUseCases(authenticatedUser, physicalMeters, new MockMeterStatusLogs()),
-      new OrganisationUseCases(
-        authenticatedUser,
-        organisations,
-        new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
-      ),
+      logicalMeterUseCases,
+      physicalMeterUseCases,
+      organisationUseCases,
       new MeasurementUseCases(authenticatedUser, measurements),
-      new GatewayUseCases(gateways, authenticatedUser),
-      new UnitConverter() {
-        @Override
-        public MeasurementUnit convert(
-          MeasurementUnit measurementUnit, String targetUnit
-        ) {
-          return null;
-        }
-
-        @Override
-        public boolean isSameDimension(String firstUnit, String secondUnit) {
-          return true;
-        }
-      }
+      gatewayUseCases,
+      meterDefinitionUseCases,
+      unitConverter,
+      mediumProvider
     );
   }
 

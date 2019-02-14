@@ -12,38 +12,19 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
-import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.security.OrganisationPermissions;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.core.unitconverter.UnitConverter;
-import com.elvaco.mvp.core.usecase.GatewayUseCases;
-import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.usecase.OrganisationUseCases;
-import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
-import com.elvaco.mvp.testing.fixture.UserBuilder;
-import com.elvaco.mvp.testing.repository.MockGateways;
-import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
-import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
-import com.elvaco.mvp.testing.repository.MockOrganisations;
-import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
-import com.elvaco.mvp.testing.repository.MockUsers;
-import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,12 +33,11 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.ME
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ConstantConditions")
-public class MeteringMeasurementMessageConsumerTest {
+public class MeteringMeasurementMessageConsumerTest extends MessageConsumerTest {
 
   private static final String QUANTITY = "Energy";
   private static final String GATEWAY_EXTERNAL_ID = "123";
@@ -80,61 +60,23 @@ public class MeteringMeasurementMessageConsumerTest {
     METERING_TIMEZONE
   );
 
-  private PhysicalMeters physicalMeters;
-  private Organisations organisations;
-  private LogicalMeters logicalMeters;
-  private Gateways gateways;
-  private MockMeasurements measurements;
   private MeasurementMessageConsumer messageConsumer;
+  private MockMeasurements measurements;
 
   @Before
   public void setUp() {
-    User superAdmin = new UserBuilder()
-      .name("super-admin")
-      .email("super@admin.io")
-      .password("password")
-      .organisationElvaco()
-      .asSuperAdmin()
-      .build();
-    AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
-      new UserBuilder()
-        .name("mock user")
-        .email("mock@somemail.nu")
-        .password("P@$$w0rD")
-        .organisation(ORGANISATION)
-        .asSuperAdmin()
-        .build(),
-      randomUUID().toString()
-    );
-    physicalMeters = new MockPhysicalMeters();
-    organisations = new MockOrganisations();
+    super.setUp();
     measurements = new MockMeasurements();
-    logicalMeters = new MockLogicalMeters();
-    gateways = new MockGateways();
 
     messageConsumer = new MeteringMeasurementMessageConsumer(
-      new LogicalMeterUseCases(authenticatedUser, logicalMeters),
-      new PhysicalMeterUseCases(authenticatedUser, physicalMeters, new MockMeterStatusLogs()),
-      new OrganisationUseCases(
-        authenticatedUser,
-        organisations,
-        new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
-      ),
+      logicalMeterUseCases,
+      physicalMeterUseCases,
+      organisationUseCases,
       new MeasurementUseCases(authenticatedUser, measurements),
-      new GatewayUseCases(gateways, authenticatedUser),
-      new UnitConverter() {
-        @Override
-        public MeasurementUnit convert(
-          MeasurementUnit measurementUnit, String targetUnit
-        ) {
-          return null;
-        }
-
-        @Override
-        public boolean isSameDimension(String firstUnit, String secondUnit) {
-          return true;
-        }
-      }
+      gatewayUseCases,
+      meterDefinitionUseCases,
+      unitConverter,
+      mediumProvider
     );
   }
 
@@ -418,6 +360,24 @@ public class MeteringMeasurementMessageConsumerTest {
         .activePeriod(physicalMeter.activePeriod)
         .build()
       ).build());
+  }
+
+  @Test
+  public void setOrganisationDefaultMeterDefinitionForDistrictHeating() {
+    Organisation organisation = saveDefaultOrganisation();
+
+    meterDefinitions.save(MeterDefinition.builder()
+      .organisation(organisation)
+      .medium(new Medium(0L, Medium.DISTRICT_HEATING))
+      .name("OrganisationDefault")
+      .autoApply(true)
+      .build());
+
+    messageConsumer.accept(newMeasurementMessage(getDistrictHeatingValues()));
+
+    assertThat(logicalMeters.findAllByOrganisationId(organisation.id))
+      .flatExtracting(lm -> lm.meterDefinition.name, lm -> lm.meterDefinition.isDefault())
+      .containsOnly("OrganisationDefault", false);
   }
 
   @Test
@@ -707,6 +667,38 @@ public class MeteringMeasurementMessageConsumerTest {
       .serial(GATEWAY_EXTERNAL_ID)
       .productModel("CMi2110")
       .build();
+  }
+
+  private ValueDto[] getDistrictHeatingValues() {
+    return List.of(
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        1.0,
+        Quantity.RETURN_TEMPERATURE.storageUnit,
+        "Return temp."
+      ),
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        2.0,
+        Quantity.DIFFERENCE_TEMPERATURE.storageUnit,
+        "Difference temp."
+      ),
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        3.0,
+        Quantity.FORWARD_TEMPERATURE.storageUnit,
+        "Flow temp."
+      ),
+      new ValueDto(
+        MEASUREMENT_TIMESTAMP,
+        4.0,
+        Quantity.VOLUME_FLOW.storageUnit,
+        "Volume flow"
+      ),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 5.0, Quantity.POWER.storageUnit, "Power"),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 6.0, Quantity.VOLUME.storageUnit, "Volume"),
+      new ValueDto(MEASUREMENT_TIMESTAMP, 7.0, Quantity.ENERGY.storageUnit, "Energy")
+    ).toArray(new ValueDto[6]);
   }
 
   private static PhysicalMeterBuilder physicalMeter() {

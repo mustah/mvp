@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.helpers.CronHelper;
 import com.elvaco.mvp.core.access.MediumProvider;
-import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -25,6 +24,7 @@ import com.elvaco.mvp.core.spi.amqp.JobService;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
@@ -52,7 +52,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private final PropertiesUseCases propertiesUseCases;
   private final JobService<MeteringReferenceInfoMessageDto> meterSyncJobService;
   private final MediumProvider mediumProvider;
-  private final SystemMeterDefinitionProvider meterDefinitionProvider;
+  private final MeterDefinitionUseCases meterDefinitionUseCases;
 
   @Override
   public void accept(MeteringReferenceInfoMessageDto message) {
@@ -89,7 +89,7 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
       meterDto,
       location,
-      organisation.id,
+      organisation,
       facility.id
     );
 
@@ -163,27 +163,27 @@ public class MeteringReferenceInfoMessageConsumer implements ReferenceInfoMessag
   private LogicalMeter findOrCreateLogicalMeter(
     @Nullable MeterDto meterDto,
     Location location,
-    UUID organisationId,
+    Organisation organisation,
     String facilityId
   ) {
     Optional<MeterDto> meter = Optional.ofNullable(meterDto);
 
-    MeterDefinition meterDefinition = meter
-      .map(dto -> meterDefinitionProvider.getByMediumOrThrow(mapToEvoMedium(
-        mediumProvider,
-        dto.medium
-      )))
-      .orElse(MeterDefinition.UNKNOWN);
+    MeterDefinition meterDefinition = meter.map(
+      dto -> meterDefinitionUseCases.getAutoApplied(
+        organisation,
+        mapToEvoMedium(mediumProvider, dto.medium)
+      )
+    ).orElse(MeterDefinition.UNKNOWN);
 
     // TODO: if utcOffset change we do not recalculate historical measurement_stat.
-    return logicalMeterUseCases.findBy(organisationId, facilityId)
+    return logicalMeterUseCases.findBy(organisation.id, facilityId)
       .map(logicalMeter -> logicalMeter.toBuilder()
         .location(location)
         .meterDefinition(meterDefinition)
         .build())
       .orElseGet(() -> meter.map(dto -> LogicalMeter.builder()
         .externalId(facilityId)
-        .organisationId(organisationId)
+        .organisationId(organisation.id)
         .meterDefinition(meterDefinition)
         .location(location)
         .build())

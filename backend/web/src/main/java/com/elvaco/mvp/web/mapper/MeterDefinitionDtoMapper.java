@@ -7,9 +7,9 @@ import com.elvaco.mvp.core.domainmodels.DisplayMode;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.web.dto.DisplayQuantityDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.MeterDefinitionDto;
-import com.elvaco.mvp.web.dto.QuantityDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -49,17 +49,17 @@ public class MeterDefinitionDtoMapper {
     );
   }
 
-  private DisplayQuantity toQuantityDomainModel(QuantityDto quantityDto) {
+  private DisplayQuantity toQuantityDomainModel(DisplayQuantityDto displayQuantityDto) {
     return new DisplayQuantity(
-      quantityProvider.getByNameOrThrow(quantityDto.name),
-      quantityDto.consumption ? DisplayMode.CONSUMPTION : DisplayMode.READOUT,
-      quantityDto.precision,
-      quantityDto.displayUnit
+      quantityProvider.getByNameOrThrow(displayQuantityDto.quanitityName),
+      displayQuantityDto.consumption ? DisplayMode.CONSUMPTION : DisplayMode.READOUT,
+      displayQuantityDto.precision,
+      displayQuantityDto.displayUnit
     );
   }
 
-  private static QuantityDto toQuantityDto(DisplayQuantity displayQuantity) {
-    return new QuantityDto(
+  private static DisplayQuantityDto toQuantityDto(DisplayQuantity displayQuantity) {
+    return new DisplayQuantityDto(
       displayQuantity.quantity.name,
       displayQuantity.displayMode.equals(DisplayMode.CONSUMPTION),
       displayQuantity.unit,

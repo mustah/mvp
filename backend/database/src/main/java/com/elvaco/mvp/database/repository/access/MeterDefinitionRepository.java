@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
-import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.repository.jpa.DisplayQuantityJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
@@ -24,16 +23,8 @@ public class MeterDefinitionRepository implements MeterDefinitions {
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
-    MeterDefinitionEntity savedDefinition = meterDefinitionJpaRepository.save(
-      meterDefinitionEntityMapper.toEntity(meterDefinition));
-
-    savedDefinition.quantities.stream()
-      .peek(
-        displayQuantityEntity -> displayQuantityEntity.pk.meterDefinitionId = savedDefinition.id
-      )
-      .forEach(displayQuantityJpaRepository::save);
-
-    return meterDefinitionEntityMapper.toDomainModel(savedDefinition);
+    return meterDefinitionEntityMapper.toDomainModel(
+      meterDefinitionJpaRepository.save(meterDefinitionEntityMapper.toEntity(meterDefinition)));
   }
 
   @Override
@@ -56,5 +47,10 @@ public class MeterDefinitionRepository implements MeterDefinitions {
       .stream()
       .map(meterDefinitionEntityMapper::toDomainModel)
       .collect(toList());
+  }
+
+  @Override
+  public void deleteById(Long id) {
+    meterDefinitionJpaRepository.deleteById(id);
   }
 }

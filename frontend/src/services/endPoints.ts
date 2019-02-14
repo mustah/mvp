@@ -25,5 +25,6 @@ export const enum EndPoints {
   users = '/users',
   changePassword = '/users/change-password',
   meterDefinitions = '/meter-definitions',
-  mediums = 'mediums',
+  mediums = '/meter-definitions/medium',
+  quanities = '/meter-definitions/quantity',
 }

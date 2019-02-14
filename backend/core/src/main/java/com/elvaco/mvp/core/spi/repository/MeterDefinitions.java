@@ -14,4 +14,6 @@ public interface MeterDefinitions {
   List<MeterDefinition> findAll(UUID organisationId);
 
   List<MeterDefinition> findAll();
+
+  void deleteById(Long id);
 }
