@@ -108,10 +108,9 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           responseBuilder.setFacilityId(facilityId);
         }
         return logicalMeter.toBuilder()
-          .gateway(gateway).build()
-          .addPhysicalMeter(physicalMeter);
+          .gateway(gateway).build();
       })
-      .orElseGet(() -> logicalMeter.addPhysicalMeter(physicalMeter));
+      .orElse(logicalMeter);
 
     existing.shouldSaveLogicalMeter(() -> logicalMeterUseCases.save(connectedLogicalMeter));
     existing.shouldSavePhysicalMeter(() -> {

@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +14,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.ToString;
-
-import static java.util.stream.Collectors.toList;
 
 @Builder(toBuilder = true)
 @ToString
@@ -65,15 +62,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       .flatMap(physicalMeter -> physicalMeter.statuses.stream())
       .filter(StatusLogEntry::isActive)
       .max(Comparator.comparing(o -> o.start));
-  }
-
-  public LogicalMeter addPhysicalMeter(PhysicalMeter physicalMeter) {
-    List<PhysicalMeter> newPhysicalMeters = new ArrayList<>(physicalMeters).stream()
-      .filter(meter -> meter.id.equals(physicalMeter.id))
-      .collect(toList());
-    newPhysicalMeters.add(physicalMeter);
-
-    return toBuilder().physicalMeters(newPhysicalMeters).build();
   }
 
   public MeterDefinition getMeterDefinition() {

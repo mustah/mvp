@@ -120,10 +120,6 @@ public final class LogicalMeterEntityMapper {
 
     logicalMeterEntity.location = LocationEntityMapper.toEntity(pk, logicalMeter.location);
 
-    logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
-      .map(PhysicalMeterEntityMapper::toEntity)
-      .collect(toSet());
-
     logicalMeterEntity.gateways = logicalMeter.gateways.stream()
       .map(GatewayEntityMapper::toEntity)
       .collect(toSet());

@@ -25,14 +25,13 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.MERGE;
 
 @NoArgsConstructor
 @ToString(exclude = "gateways")
@@ -50,11 +49,10 @@ public class LogicalMeterEntity extends IdentifiableType<EntityPk> {
   public EntityPk pk;
 
   @OneToMany(mappedBy = "logicalMeterPk", fetch = FetchType.EAGER)
-  @Cascade(CascadeType.MERGE)
   public Set<PhysicalMeterEntity> physicalMeters = new HashSet<>();
 
   @NotAudited
-  @ManyToMany(fetch = FetchType.EAGER, cascade = ALL)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = MERGE)
   @JoinTable(
     name = "gateways_meters",
     joinColumns = {
