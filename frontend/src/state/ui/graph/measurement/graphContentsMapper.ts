@@ -1,6 +1,6 @@
 import {Dictionary} from '../../../../types/Types';
 import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
-import {AverageResponsePart, MeasurementResponsePart, MeasurementResponse, Quantity} from './measurementModels';
+import {AverageResponsePart, MeasurementResponse, MeasurementResponsePart, Quantity} from './measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -18,13 +18,13 @@ const colorizeAverage = colorize({
 });
 
 const colorizeMeters = colorize({
-  [Quantity.volume as string]: '#0000ff',
-  [Quantity.flow as string]: '#ff00ff',
-  [Quantity.energy as string]: '#00ff00',
-  [Quantity.power as string]: '#00ffff',
-  [Quantity.forwardTemperature as string]: '#ff0000',
-  [Quantity.returnTemperature as string]: '#ff49bd',
-  [Quantity.differenceTemperature as string]: '#0084e6',
+  [Quantity.volume as string]: '#651FFF',
+  [Quantity.flow as string]: '#F50057',
+  [Quantity.energy as string]: '#00E676',
+  [Quantity.power as string]: '#00B0FF',
+  [Quantity.forwardTemperature as string]: '#FF1744',
+  [Quantity.returnTemperature as string]: '#D500F9',
+  [Quantity.differenceTemperature as string]: '#2979FF',
 });
 
 const thickStroke: number = 4;
