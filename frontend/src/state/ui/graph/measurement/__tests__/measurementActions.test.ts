@@ -64,7 +64,6 @@ describe('measurementActions', () => {
     beforeEach(() => {
       defaultParameters = {
         items: [],
-        quantities: [],
         resolution: TemporalResolution.day,
         selectionParameters: {
           dateRange: {
@@ -93,23 +92,9 @@ describe('measurementActions', () => {
           mockMeter(Medium.districtHeating),
         );
 
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          quantities: [Quantity.power],
-        }));
+        await store.dispatch(fetchMeasurements(defaultParameters));
 
         expect(requestedUrls).toHaveLength(0);
-        expect(store.getActions()).toEqual([]);
-      });
-
-      it('returns empty data if no meter ids are provided', async () => {
-        const store = storeWith(initialState);
-
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          quantities: [Quantity.power],
-        }));
-
         expect(store.getActions()).toEqual([]);
       });
 
@@ -148,11 +133,7 @@ describe('measurementActions', () => {
 
         const requestedUrls = onFetchAsync(unknownMeter, meter);
 
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          items: [],
-          quantities: [Quantity.energy],
-        }));
+        await store.dispatch(fetchMeasurements({...defaultParameters, items: []}));
 
         expect(requestedUrls).toHaveLength(0);
         expect(store.getActions()).toEqual([]);
@@ -212,7 +193,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.externalTemperature, Quantity.volume],
           items: [toLegendItem(roomSensorMeter), toLegendItem(gasMeter)]
         }));
 
@@ -222,14 +202,14 @@ describe('measurementActions', () => {
         );
 
         expect(externalTemperature.pathname).toEqual('/measurements');
-        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
-        expect(externalTemperature.searchParams.get('logicalMeterId')).toEqual(roomSensorMeter.id);
+        expect(externalTemperature.searchParams.get('quantity')).toEqual(Quantity.volume);
+        expect(externalTemperature.searchParams.get('logicalMeterId')).toEqual(gasMeter.id);
         expect(externalTemperature.searchParams.get('before')).toBeTruthy();
         expect(externalTemperature.searchParams.get('after')).toBeTruthy();
 
         expect(volume.pathname).toEqual('/measurements');
-        expect(volume.searchParams.get('quantity')).toEqual(Quantity.volume);
-        expect(volume.searchParams.get('logicalMeterId')).toEqual(gasMeter.id);
+        expect(volume.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
+        expect(volume.searchParams.get('logicalMeterId')).toEqual(roomSensorMeter.id);
         expect(volume.searchParams.get('before')).toBeTruthy();
         expect(volume.searchParams.get('after')).toBeTruthy();
 
@@ -251,7 +231,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.externalTemperature],
           items: [toLegendItem(firstRoomSensor), toLegendItem(secondRoomSensor)],
         }));
 
@@ -279,7 +258,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.power],
           items: [toLegendItem(firstDistrictHeating), toLegendItem(secondDistrictHeating)],
         }));
 
@@ -296,7 +274,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.power],
           items: [toLegendItem(firstDistrictHeating), toLegendItem(secondDistrictHeating)],
         }));
 
@@ -360,7 +337,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.power],
           items: [toLegendItem(first), toLegendItem(second)],
         }));
 
@@ -424,7 +400,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.power],
           items: [],
         }));
 
@@ -505,7 +480,6 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          quantities: [Quantity.power],
           items: [toLegendItem(meter)],
         }));
       };

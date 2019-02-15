@@ -58,10 +58,8 @@ export const getMeasurementParameters =
     ({
       report,
       userSelection: {userSelection: {selectionParameters}},
-      ui: {indicator: {selectedQuantities: quantities}},
     }) => ({
       items: getLegendItems(report),
-      quantities,
       resolution: report.resolution,
       selectionParameters,
     })

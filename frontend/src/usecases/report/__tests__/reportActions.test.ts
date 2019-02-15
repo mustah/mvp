@@ -3,18 +3,17 @@ import thunk from 'redux-thunk';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {UiState} from '../../../state/ui/uiReducer';
 import {addToReport, deleteItem, hideAllLines, setSelectedItems, showMetersInGraph} from '../reportActions';
 import {LegendItem, ReportState} from '../reportModels';
 
 describe('reportActions', () => {
-  type PartialRootState = Pick<RootState, 'report'> & {ui: Pick<UiState, 'indicator'>} ;
+  type PartialRootState = Pick<RootState, 'report'> ;
 
   const configureMockStore: (state: PartialRootState) => any = configureStore([thunk]);
 
   let initialState: PartialRootState;
 
-  const reportState: ReportState = {
+  const report: ReportState = {
     hiddenLines: [],
     resolution: TemporalResolution.day,
     savedReports: {}
@@ -30,14 +29,7 @@ describe('reportActions', () => {
   ];
 
   beforeEach(() => {
-    initialState = {
-      report: reportState,
-      ui: {
-        indicator: {
-          selectedQuantities: []
-        },
-      },
-    };
+    initialState = {report};
   });
 
   describe('addToReport', () => {
@@ -60,7 +52,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...reportState,
+          ...report,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
@@ -184,7 +176,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...reportState,
+          ...report,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
@@ -204,7 +196,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...reportState,
+          ...report,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
@@ -242,13 +234,5 @@ describe('reportActions', () => {
         }),
       ]);
     });
-  });
-
-  const selectedUiQuantitiesFrom = (selectedQuantities: Quantity[]): Pick<UiState, 'indicator'> => ({
-    ...initialState.ui,
-    indicator: {
-      ...initialState.ui.indicator,
-      selectedQuantities
-    }
   });
 });

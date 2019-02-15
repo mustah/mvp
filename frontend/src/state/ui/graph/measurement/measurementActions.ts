@@ -90,16 +90,13 @@ interface GroupedRequests {
 
 const requestsPerQuantity = ({
   items,
-  quantities: selectedQuantities,
   resolution,
   selectionParameters,
   shouldMakeAverageRequest,
 }: MeasurementParameters): GroupedRequests => {
   const meterByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
 
-  const quantities = selectedQuantities.length
-    ? selectedQuantities
-    : getSelectedReportPayload(items).quantities;
+  const {quantities} = getSelectedReportPayload(items);
 
   quantities.forEach((quantity: Quantity) => {
     meterByQuantity[quantity] = new Set();
@@ -145,7 +142,6 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
 
 export interface MeasurementParameters {
   items: LegendItem[];
-  quantities: Quantity[];
   resolution: TemporalResolution;
   selectionParameters: SelectedParameters;
   shouldMakeAverageRequest?: boolean;
