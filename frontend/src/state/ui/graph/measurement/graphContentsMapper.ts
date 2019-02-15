@@ -1,8 +1,6 @@
-import * as chroma from 'chroma-js';
-import {firstUpper} from '../../../../services/translationService';
 import {Dictionary} from '../../../../types/Types';
 import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
-import {AverageResponsePart, MeasurementResponsePart, MeasurementResponses, Quantity} from './measurementModels';
+import {AverageResponsePart, MeasurementResponsePart, MeasurementResponse, Quantity} from './measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -29,8 +27,6 @@ const colorizeMeters = colorize({
   [Quantity.differenceTemperature as string]: '#0084e6',
 });
 
-const cityColors: chroma.Scale = chroma.scale(['#fdae61', '#3288bd']).mode('lch');
-
 const thickStroke: number = 4;
 
 const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
@@ -44,7 +40,7 @@ const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined =
 };
 
 export const toGraphContents =
-  ({measurements, average, cities}: MeasurementResponses): GraphContents => {
+  ({measurements, average}: MeasurementResponse): GraphContents => {
     const graphContents: GraphContents = {
       axes: {
         left: undefined,
@@ -89,25 +85,7 @@ export const toGraphContents =
           },
         }), {});
 
-    const cityColorScale = cityColors.colors(cities.length);
-    let cityIndex = 0;
-
-    const legendsCities: Dictionary<ProprietaryLegendProps> = cities.reduce((
-      prev,
-      {quantity, label},
-    ) => (
-      prev[`${quantity}-${label}`]
-        ? prev
-        : {
-          ...prev,
-          [`city-${quantity}-${label}`]: {
-            type: 'line',
-            color: cityColorScale[cityIndex++],
-            value: `${firstUpper(label)} ${quantity}`,
-          },
-        }), {});
-
-    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage, ...legendsCities};
+    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
 
     const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
 
@@ -188,47 +166,6 @@ export const toGraphContents =
         byDate[created][dataKey] = value!;
       });
     });
-
-    cities.forEach(
-      (
-        {id, quantity, values, unit, label}: AverageResponsePart,
-        index: number,
-      ) => {
-        if (!graphContents.axes.left) {
-          graphContents.axes.left = unit;
-        } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
-          graphContents.axes.right = unit;
-        }
-
-        const yAxisId = yAxisIdLookup(graphContents.axes, unit);
-        if (!yAxisId) {
-          return;
-        }
-        const dataKey: string = `${firstUpper(label)} ${quantity}`;
-        graphContents.lines.push({
-          id,
-          dataKey,
-          key: `city-${quantity}-${label}`,
-          name: dataKey,
-          city: label,
-          stroke: cityColorScale[index],
-          strokeWidth: thickStroke,
-          yAxisId,
-          origin: 'city',
-        });
-
-        values.forEach(({when, value}) => {
-          const created: number = when * 1000;
-          if (created < firstTimestamp) {
-            return;
-          }
-          if (!byDate[created]) {
-            byDate[created] = {};
-          }
-          // we should already have filtered out missing values
-          byDate[created][dataKey] = value!;
-        });
-      });
 
     graphContents.data = Object.keys(byDate).map((created) => ({
       ...byDate[created],

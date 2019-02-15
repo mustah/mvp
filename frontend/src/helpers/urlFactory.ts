@@ -8,7 +8,7 @@ import {
 } from '../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, IdNamed, Omit, uuid} from '../types/Types';
 import {getId} from './collections';
-import {isDefined} from './commonUtils';
+import {isDefined} from './commonHelpers';
 import {queryParametersOfDateRange, toPeriodApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
 

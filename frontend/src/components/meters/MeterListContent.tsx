@@ -21,11 +21,13 @@ import {
   FetchPaginated,
   HasContent,
   OnClick,
+  OnClickWith,
   OnClickWithId,
   uuid,
   WithChildren
 } from '../../types/Types';
 import {MeterList} from '../../usecases/meter/components/MeterList';
+import {LegendItem} from '../../usecases/report/reportModels';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
@@ -46,7 +48,7 @@ export interface MeterListStateToProps {
 
 export interface MeterListDispatchToProps {
   deleteMeter: OnDeleteMeter;
-  selectEntryAdd: OnClickWithId;
+  addToReport: OnClickWith<LegendItem>;
   syncWithMetering: OnClickWithId;
   syncMeters: CallbackWithIds;
   fetchMeters: FetchPaginated;

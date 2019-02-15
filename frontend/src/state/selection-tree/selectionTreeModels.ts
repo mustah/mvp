@@ -1,5 +1,4 @@
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
-import {ReportState} from '../../usecases/report/reportModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {Medium} from '../ui/graph/measurement/measurementModels';
 
@@ -41,5 +40,3 @@ export interface SelectionTreeAddress extends IdNamed {
   city: string;
   meters: uuid[];
 }
-
-export type SelectedTreeEntities = Pick<ReportState, 'selectedListItems'> & Pick<SelectionTreeState, 'entities'>;

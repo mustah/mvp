@@ -1,3 +1,4 @@
+import Badge from 'material-ui/Badge';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../../app/routes';
@@ -8,10 +9,17 @@ import {Column} from '../../../../components/layouts/column/Column';
 import {FoldableMainMenuItem} from '../../../../components/layouts/foldable/FoldableMainMenuItem';
 import {translate} from '../../../../services/translationService';
 import {SavedSelectionsContainer} from '../../../sidemenu/containers/SavedSelectionsContainer';
-import {StateToProps} from '../../containers/MvpMainMenuItemsContainer';
+import {ReportPageProps, StateToProps} from '../../containers/MvpMainMenuItemsContainer';
 import {mainMenuIconProps, MainMenuItem} from './MainMenuItem';
 
-export const MainMenuItems = ({isMeterPage, isReportPage, pathName}: StateToProps) => (
+const BadgeComponent = ({isReportPage, numSelectedItems}: ReportPageProps) => {
+  const badgeStyle: React.CSSProperties = {padding: 12, left: isReportPage ? 124 : 127};
+  return numSelectedItems > 0
+    ? <Badge badgeContent={numSelectedItems} secondary={true} style={badgeStyle}/>
+    : null;
+};
+
+export const MainMenuItems = ({isMeterPage, isReportPage, numSelectedItems, pathName}: StateToProps) => (
   <Column>
     <Link to={routes.dashboard} className="link">
       <MainMenuItem
@@ -32,9 +40,11 @@ export const MainMenuItems = ({isMeterPage, isReportPage, pathName}: StateToProp
     <Link to={routes.report} className="link">
       <MainMenuItem
         icon={<IconReport {...mainMenuIconProps}/>}
-        isSelected={isReportPage && !pathName.includes('selection')}
+        isSelected={isReportPage}
         name={translate('report')}
-      />
+      >
+        <BadgeComponent isReportPage={isReportPage} numSelectedItems={numSelectedItems}/>
+      </MainMenuItem>
     </Link>
   </Column>
 );

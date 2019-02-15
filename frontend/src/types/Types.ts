@@ -11,6 +11,7 @@ export type UnixTimestamp = number;
 export type EncodedUriParameters = string;
 
 export type OnClick = (...args) => void;
+export type OnClickWith<T> = (arg: T) => void;
 export type OnChange = OnClick;
 export type OnKeyPress = OnClick;
 export type Callback = () => void;

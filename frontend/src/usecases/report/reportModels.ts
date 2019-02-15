@@ -1,21 +1,24 @@
-import * as React from 'react';
 import {LegendPayload} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
-import {IconCurrent} from '../../components/icons/IconCurrent';
-import {IconDistrictHeating} from '../../components/icons/IconDistrictHeating';
-import {IconGas} from '../../components/icons/IconGas';
-import {IconTemperature} from '../../components/icons/IconTemperature';
-import {IconUnknown} from '../../components/icons/IconUnknown';
-import {IconWater} from '../../components/icons/IconWater';
 import {firstUpperTranslated} from '../../services/translationService';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
-import {uuid} from '../../types/Types';
-import SvgIconProps = __MaterialUI.SvgIconProps;
+import {Identifiable, uuid} from '../../types/Types';
+
+export interface LegendItem {
+  id: uuid;
+  label: string;
+  medium: Medium;
+}
+
+export interface Report extends Identifiable {
+  meters: LegendItem[];
+}
 
 export interface ReportState {
-  selectedListItems: uuid[];
   hiddenLines: uuid[];
   resolution: TemporalResolution;
+  savedReports: ObjectsById<Report>;
 }
 
 export interface Axes {
@@ -23,7 +26,7 @@ export interface Axes {
   right?: string;
 }
 
-type MeasurementOrigin = 'meter' | 'average' | 'city';
+type MeasurementOrigin = 'meter' | 'average';
 
 export interface LineProps {
   id: string;
@@ -37,14 +40,6 @@ export interface LineProps {
   strokeWidth?: number;
   yAxisId: string;
   origin: MeasurementOrigin;
-}
-
-export interface LegendItem {
-  facility?: string;
-  address?: string;
-  city: string;
-  medium: Medium | Medium[];
-  id: uuid;
 }
 
 export interface ProprietaryLegendProps extends LegendPayload {
@@ -70,28 +65,13 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-export interface SelectedReportEntries {
-  ids: uuid[];
-  indicatorsToSelect: Medium[];
-  quantitiesToSelect: Quantity[];
+export interface SelectedReportPayload {
+  items: LegendItem[];
+  media: Medium[];
+  quantities: Quantity[];
 }
 
-type IndicatorComponentType = { [type in Medium]: React.ComponentType<SvgIconProps> };
-
-const mediumIcons: IndicatorComponentType = {
-  [Medium.electricity]: IconCurrent,
-  [Medium.water]: IconWater,
-  [Medium.hotWater]: IconWater,
-  [Medium.districtHeating]: IconDistrictHeating,
-  [Medium.gas]: IconGas,
-  [Medium.roomSensor]: IconTemperature,
-  [Medium.unknown]: IconUnknown,
-};
-
-export const mediumIconComponent =
-  (type: Medium): React.ComponentType<SvgIconProps> => mediumIcons[type] || IconUnknown;
-
-export interface ReportIndicatorProps {
+interface ReportIndicatorProps {
   enabled?: boolean;
   type: Medium;
   title: string;

@@ -1,4 +1,4 @@
-import {Meter, EventLog} from '../state/domain-models-paginated/meter/meterModels';
+import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Identifiable, uuid} from '../types/Types';
 
@@ -33,11 +33,11 @@ export const testData = {
   gateways,
 };
 
-export const makeMeter = (id: number, city: string, address: string): Meter => (
+export const makeMeter = (id: number, city: string, address: string, medium: string = 'Gas'): Meter => (
   {
     id,
     facility: '1',
-    medium: 'asdf',
+    medium,
     manufacturer: 'asdf',
     gatewaySerial: '123',
     location: {

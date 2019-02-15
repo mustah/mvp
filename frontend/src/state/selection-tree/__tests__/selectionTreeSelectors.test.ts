@@ -1,10 +1,10 @@
-import {uuid} from '../../../types/Types';
+import {LegendItem} from '../../../usecases/report/reportModels';
 import {ObjectsById} from '../../domain-models/domainModels';
 import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {SelectionTreeItemType, SelectionTreeViewComposite} from '../../ui/selection-tree/selectionTreeModels';
-import {SelectedTreeEntities, SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
+import {SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
 import {initialState} from '../selectionTreeReducer';
-import {getEnabledMedia, getMeterIdsWithLimit, getSelectionTreeViewItems} from '../selectionTreeSelectors';
+import {getLegendItemsWithLimit, getSelectionTreeViewItems} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -126,59 +126,38 @@ describe('selectionTreeSelectors', () => {
     },
   };
 
-  describe('getEnabledMedia', () => {
-
-    it('gets media from cities', () => {
-      const selectedListItems: uuid[] = ['sweden,kungsbacka', 'sweden,gothenburg'];
-      const expected: Set<Medium> = new Set([Medium.gas, Medium.water]);
-
-      const state: SelectedTreeEntities = {
-        selectedListItems,
-        entities: {...selectionTreeState.entities},
-      };
-
-      expect(getEnabledMedia(state)).toEqual(expected);
-    });
-
-    it('gets media from meters and cities', () => {
-      const selectedListItems: uuid[] = ['sweden,kungsbacka', '4'];
-      const expected: Set<Medium> = new Set([Medium.gas, Medium.water]);
-
-      const state: SelectedTreeEntities = {
-        selectedListItems,
-        entities: {...selectionTreeState.entities},
-      };
-
-      expect(getEnabledMedia(state)).toEqual(expected);
-    });
-
-  });
-
-  describe('getMeterIdsWithLimit', () => {
+  describe('getLegendItemsWithLimit', () => {
 
     it('handles no selection tree meters', () => {
-      expect(getMeterIdsWithLimit()).toEqual([]);
+      expect(getLegendItemsWithLimit()).toEqual([]);
     });
 
     it('handles empty selection tree meters', () => {
       const meters: ObjectsById<SelectionTreeMeter> = {};
 
-      expect(getMeterIdsWithLimit(meters)).toEqual([]);
+      expect(getLegendItemsWithLimit(meters)).toEqual([]);
     });
 
     it('should only have one meter id', () => {
       const meters: ObjectsById<SelectionTreeMeter> = {
         1: {id: 1, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
       };
-      expect(getMeterIdsWithLimit(meters)).toEqual(['1']);
+
+      const expected: LegendItem[] = [{id: 1, label: 'a', medium: Medium.gas}];
+      expect(getLegendItemsWithLimit(meters)).toEqual(expected);
     });
 
     it('should only have more than one meter id', () => {
       const meters: ObjectsById<SelectionTreeMeter> = {
         1: {id: 1, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
-        2: {id: 2, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
+        2: {id: 2, name: 'b', address: 'c', city: 'd', medium: Medium.water},
       };
-      expect(getMeterIdsWithLimit(meters)).toEqual(['1', '2']);
+
+      const expected: LegendItem[] = [
+        {id: 1, label: 'a', medium: Medium.gas},
+        {id: 2, label: 'b', medium: Medium.water}
+      ];
+      expect(getLegendItemsWithLimit(meters)).toEqual(expected);
     });
   });
 

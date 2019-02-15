@@ -26,6 +26,7 @@ export const colors = {
   blue: '#00b0ff',
   orange: '#ff9800',
   red: '#e84d6f',
+  secondaryBg: '#e10050',
   white: '#ffffff',
   lightGrey: '#f9f9f9',
   black: '#000000',
@@ -50,6 +51,10 @@ export const mvpTheme = getMuiTheme({
     height: 60,
     padding: 16,
     color: colors.darkBlue,
+  },
+  badge: {
+    secondaryColor: colors.secondaryBg,
+    secondaryTextColor: colors.white,
   },
   fontFamily: 'TTNorms, Arial, sans-serif',
   palette: {

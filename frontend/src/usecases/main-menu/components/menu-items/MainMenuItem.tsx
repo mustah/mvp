@@ -3,7 +3,7 @@ import * as React from 'react';
 import {colors, iconStyle} from '../../../../app/themes';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {Normal} from '../../../../components/texts/Texts';
-import {Selectable} from '../../../../types/Types';
+import {Selectable, WithChildren} from '../../../../types/Types';
 import './MainMenuItem.scss';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
@@ -13,15 +13,16 @@ export const mainMenuIconProps: SvgIconProps = {
   className: 'MainMenuItem-icon',
 };
 
-export interface MenuItemProps extends Selectable {
+export interface MenuItemProps extends Selectable, WithChildren {
   name: string;
   icon: React.ReactElement<any>;
   fontClassName?: string;
 }
 
-export const MainMenuItem = ({name, fontClassName = 'Large', icon, isSelected}: MenuItemProps) => (
+export const MainMenuItem = ({children, name, fontClassName = 'Large', icon, isSelected}: MenuItemProps) => (
   <RowMiddle className={classNames('MainMenuItem', {isSelected})}>
     {icon}
     <Normal className={classNames('first-uppercase', fontClassName)}>{name}</Normal>
+    {children}
   </RowMiddle>
 );

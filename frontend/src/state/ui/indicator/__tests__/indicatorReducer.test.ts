@@ -1,5 +1,5 @@
 import {logoutUser} from '../../../../usecases/auth/authActions';
-import {removeSelectedListItems, setSelectedEntries} from '../../../../usecases/report/reportActions';
+import {removeSelectedListItems, setSelectedItems} from '../../../../usecases/report/reportActions';
 import {RESET_SELECTION, SELECT_SAVED_SELECTION, SET_THRESHOLD} from '../../../user-selection/userSelectionActions';
 import {RelationalOperator, ThresholdQuery, UserSelection} from '../../../user-selection/userSelectionModels';
 import {initialState as initialUserSelectionState} from '../../../user-selection/userSelectionReducer';
@@ -14,10 +14,10 @@ describe('indicatorReducer', () => {
   };
 
   it('deselects selected indicators and quantities when the last report item is deselected', () => {
-    const newState: IndicatorState = indicator(state, setSelectedEntries({
-      ids: [],
-      indicatorsToSelect: [],
-      quantitiesToSelect: [],
+    const newState: IndicatorState = indicator(state, setSelectedItems({
+      items: [],
+      media: [],
+      quantities: [],
     }));
 
     expect(newState).toEqual(initialState);
@@ -26,10 +26,10 @@ describe('indicatorReducer', () => {
   it('selects indicator and quantity on demand', () => {
     const newState: IndicatorState = indicator(
       initialState,
-      setSelectedEntries({
-        ids: ['123'],
-        indicatorsToSelect: [Medium.roomSensor],
-        quantitiesToSelect: [Quantity.externalTemperature],
+      setSelectedItems({
+        items: [],
+        media: [Medium.roomSensor],
+        quantities: [Quantity.externalTemperature],
       }),
     );
 

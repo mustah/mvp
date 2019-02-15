@@ -12,13 +12,12 @@ export const Measurements = (props: Props) => {
   const {
     clearError,
     measurement: {error, isFetching, measurementResponse: {measurements}, isExportingToExcel},
-    selectionTree,
     exportToExcelSuccess,
   } = props;
   useFetchMeasurements(props);
 
   return (
-    <Loader isFetching={isFetching || selectionTree.isFetching} error={error} clearError={clearError}>
+    <Loader isFetching={isFetching} error={error} clearError={clearError}>
       <MeasurementWrapper
         hasContent={measurements.length > 0}
         measurements={measurements}

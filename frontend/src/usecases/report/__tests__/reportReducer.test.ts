@@ -3,63 +3,63 @@ import {DateRange, Period, TemporalResolution} from '../../../components/dates/d
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
-import {uuid} from '../../../types/Types';
 import {logoutUser} from '../../auth/authActions';
-import {
-  hideAllLines,
-  removeSelectedListItems,
-  selectResolution,
-  setSelectedEntries,
-  toggleLine
-} from '../reportActions';
-import {ReportState, SelectedReportEntries} from '../reportModels';
+import {hideAllLines, removeSelectedListItems, selectResolution, setSelectedItems, toggleLine} from '../reportActions';
+import {ReportState, SelectedReportPayload} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 
 describe('reportReducer', () => {
+  const items = [{id: 1, label: 'a', medium: Medium.gas}, {id: 2, label: 'b', medium: Medium.water}];
 
-  it('makes sure the selectedListItems is set to payload', () => {
-    const state: ReportState = {...initialState, selectedListItems: [4, 5]};
-    const ids: uuid[] = [1];
-    const payload: SelectedReportEntries = {
-      ids,
-      quantitiesToSelect: [Quantity.energy],
-      indicatorsToSelect: [Medium.districtHeating],
+  it('makes sure the legend items is set to payload', () => {
+    const payload: SelectedReportPayload = {
+      items,
+      quantities: [Quantity.energy],
+      media: [Medium.districtHeating],
     };
-    const action = setSelectedEntries(payload);
-    const {selectedListItems} = report(state, action);
 
-    expect(selectedListItems).toContain(1);
-    expect(selectedListItems).not.toContain(4);
+    const nextState: ReportState = report(initialState, setSelectedItems(payload));
+
+    const expected: ReportState = {
+      ...initialState,
+      savedReports: {meterPage: {id: 'meterPage', meters: items}}
+    };
+    expect(nextState).toEqual(expected);
   });
 
-  it('deselects all selected list items when the main selection is changed', () => {
-    const state: ReportState = {...initialState, selectedListItems: [1, 2, 3]};
-    const selectionRelatedAction = {...mockSelectionAction};
+  it('same state when the main selection is changed', () => {
+    const state: ReportState = {...initialState, savedReports: {meterPage: {id: 'meterPage', meters: items}}};
 
-    const {selectedListItems} = report(state, selectionRelatedAction);
-    expect(selectedListItems).toHaveLength(0);
+    const nextState = report(state, mockSelectionAction);
+
+    expect(nextState).toEqual(state);
   });
 
   describe('logout user', () => {
 
-    it('resets state to initial state', () => {
-      const state: ReportState = report({...initialState, selectedListItems: [1, 2, 3]}, logoutUser(undefined));
+    it('keeps the state', () => {
+      const state: ReportState = {...initialState, savedReports: {meterPage: {id: 'meterPage', meters: items}}};
 
-      expect(state).toEqual({...initialState});
+      const nextState: ReportState = report(state, logoutUser(undefined));
+
+      expect(nextState).toEqual(state);
     });
   });
 
   describe('change period', () => {
 
     it('should not clear selected list items', () => {
-      const payload: SelectedReportEntries = {
-        ids: [1, 2, 3],
-        quantitiesToSelect: [],
-        indicatorsToSelect: [],
+      const payload: SelectedReportPayload = {
+        items,
+        quantities: [],
+        media: [],
       };
-      const state: ReportState = report(initialState, setSelectedEntries(payload));
+      const state: ReportState = report(initialState, setSelectedItems(payload));
 
-      const expected: ReportState = {...initialState, selectedListItems: payload.ids};
+      const expected: ReportState = {
+        ...initialState,
+        savedReports: {meterPage: {id: 'meterPage', meters: items}},
+      };
       expect(state).toEqual(expected);
 
       const newState: ReportState = report(state, selectPeriod(Period.currentMonth));
@@ -75,18 +75,19 @@ describe('reportReducer', () => {
       const end: Date = momentFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
-      const payload: SelectedReportEntries = {
-        ids: [1, 2, 3],
-        quantitiesToSelect: [],
-        indicatorsToSelect: [],
+      const items = [{id: 1, label: 'a', medium: Medium.gas}, {id: 2, label: 'b', medium: Medium.water}];
+      const payload: SelectedReportPayload = {
+        items,
+        quantities: [],
+        media: [],
       };
-      const state: ReportState = report(initialState, setSelectedEntries(payload));
+      const state: ReportState = report(initialState, setSelectedItems(payload));
 
       const expected: ReportState = {
-        selectedListItems: payload.ids,
-        hiddenLines: [],
-        resolution: TemporalResolution.hour
+        ...initialState,
+        savedReports: {meterPage: {id: 'meterPage', meters: items}},
       };
+
       expect(state).toEqual(expected);
 
       const newState: ReportState = report(state, setCustomDateRange(dateRange));
@@ -155,25 +156,25 @@ describe('reportReducer', () => {
     it('hides single line', () => {
       const startState: ReportState = {
         ...initialState,
-        selectedListItems: [13],
-        hiddenLines: []
+        savedReports: {meterPage: {id: 'meterPage', meters: [items[1]]}}
       };
 
       const state: ReportState = report(startState, hideAllLines());
 
-      expect(state).toEqual({...startState, hiddenLines: [13]});
+      const expected: ReportState = {...startState, hiddenLines: [2]};
+      expect(state).toEqual(expected);
     });
 
     it('hides all lines', () => {
       const startState: ReportState = {
         ...initialState,
-        selectedListItems: [1, 3, 5],
-        hiddenLines: []
+        savedReports: {meterPage: {id: 'meterPage', meters: items}}
       };
 
       const state: ReportState = report(startState, hideAllLines());
 
-      expect(state).toEqual({...startState, hiddenLines: [1, 3, 5]});
+      const expected: ReportState = {...startState, hiddenLines: [1, 2]};
+      expect(state).toEqual(expected);
     });
   });
 
@@ -187,38 +188,35 @@ describe('reportReducer', () => {
     it('removes single selected list item', () => {
       const state: ReportState = {
         ...initialState,
-        selectedListItems: [13],
+        savedReports: {meterPage: {id: 'meterPage', meters: [items[1]]}}
       };
 
       const nextState: ReportState = report(state, removeSelectedListItems());
 
-      const expected: ReportState = {...state, selectedListItems: []};
-      expect(nextState).toEqual(expected);
+      expect(nextState).toEqual(initialState);
     });
 
     it('removes all selected list items', () => {
       const state: ReportState = {
         ...initialState,
-        selectedListItems: [1, 3, 5],
+        savedReports: {meterPage: {id: 'meterPage', meters: items}}
       };
 
       const nextState: ReportState = report(state, removeSelectedListItems());
 
-      const expected: ReportState = {...state, selectedListItems: []};
-      expect(nextState).toEqual(expected);
+      expect(nextState).toEqual(initialState);
     });
 
     it('removes all selected and hidden list items', () => {
       const state: ReportState = {
         ...initialState,
-        selectedListItems: [1, 3, 5],
         hiddenLines: [5],
+        savedReports: {meterPage: {id: 'meterPage', meters: items}},
       };
 
       const nextState: ReportState = report(state, removeSelectedListItems());
 
-      const expected: ReportState = {...state, selectedListItems: [], hiddenLines: []};
-      expect(nextState).toEqual(expected);
+      expect(nextState).toEqual(initialState);
     });
   });
 

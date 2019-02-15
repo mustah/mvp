@@ -23,12 +23,13 @@ import {EventLogType} from '../../state/domain-models-paginated/meter/meterModel
 import {eventsDataFormatter} from '../../state/domain-models-paginated/meter/meterSchema';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
-import {OnClickWithId} from '../../types/Types';
+import {OnClickWith, OnClickWithId} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {Map as MapComponent} from '../../usecases/map/components/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {LegendItem} from '../../usecases/report/reportModels';
 import {MeterMeasurementsContainer} from './MeterMeasurements';
 
 export interface MeterDetailsState {
@@ -45,7 +46,7 @@ interface MapProps {
 }
 
 interface OwnProps extends MapProps {
-  selectEntryAdd: OnClickWithId;
+  addToReport: OnClickWith<LegendItem>;
   syncWithMetering: OnClickWithId;
 }
 
@@ -107,7 +108,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
 
   render() {
     const {selectedTab} = this.state;
-    const {meter, meterMapMarker, selectEntryAdd, syncWithMetering} = this.props;
+    const {meter, meterMapMarker, addToReport, syncWithMetering} = this.props;
 
     const gateways: GatewayMandatory[] = [];
     const {gateway} = meter;
@@ -144,8 +145,8 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             </TabHeaders>
             <TabSettings>
               <ListActionsDropdown
-                item={{id: meter.id, name: meter.manufacturer}}
-                selectEntryAdd={selectEntryAdd}
+                item={meter}
+                addToReport={addToReport}
                 syncWithMetering={syncWithMetering}
               />
             </TabSettings>

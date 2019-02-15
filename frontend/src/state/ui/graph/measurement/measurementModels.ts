@@ -15,7 +15,7 @@ export interface MeasurementState {
   isFetching: boolean;
   isSuccessfullyFetched: boolean;
   error: Maybe<ErrorResponse>;
-  measurementResponse: MeasurementResponses;
+  measurementResponse: MeasurementResponse;
   isExportingToExcel: boolean;
 }
 
@@ -69,9 +69,8 @@ export interface Measurements {
 
 type AverageApiResponse = AverageResponsePart[];
 
-export interface MeasurementResponses extends Measurements {
+export interface MeasurementResponse extends Measurements {
   average: AverageApiResponse;
-  cities: AverageApiResponse;
 }
 
 export interface QuantityAttributes {

@@ -13,14 +13,13 @@ export const Graph = (props: Props) => {
     clearError,
     hiddenLines,
     measurement: {error, isFetching, measurementResponse},
-    selectionTree,
   } = props;
   useFetchMeasurements(props);
 
   const graphContents: GraphContents = useGraphContents(measurementResponse);
 
   return (
-    <Loader isFetching={isFetching || selectionTree.isFetching} error={error} clearError={clearError}>
+    <Loader isFetching={isFetching} error={error} clearError={clearError}>
       <LineChartsContainer graphContents={graphContents} outerHiddenKeys={hiddenLines}/>
     </Loader>
   );

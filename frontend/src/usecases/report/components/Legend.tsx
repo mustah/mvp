@@ -1,32 +1,21 @@
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
-import {toArray} from 'lodash';
 import * as React from 'react';
 import {borderRadius, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {componentOrNothing} from '../../../components/hoc/hocs';
 import {Column} from '../../../components/layouts/column/Column';
-import {RowRight} from '../../../components/layouts/row/Row';
-import {isDefined} from '../../../helpers/commonUtils';
+import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
+import {isDefined} from '../../../helpers/commonHelpers';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {Normalized} from '../../../state/domain-models/domainModels';
 import {Medium, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
-import {Clickable, OnClick, OnClickWithId, Titled, uuid} from '../../../types/Types';
-import {LegendItem} from '../reportModels';
+import {Clickable, Titled} from '../../../types/Types';
+import {DispatchToProps, StateToProps} from '../containers/LegendContainer';
 import './Legend.scss';
 
 interface IsReportPage {
   isReportPage: boolean;
-}
-
-export interface LegendProps extends IsReportPage {
-  removeSelectedListItems: OnClick;
-  deleteItem: OnClickWithId;
-  hideAllLines: OnClick;
-  hiddenLines: uuid[];
-  legendItems: Normalized<LegendItem>;
-  toggleLine: OnClick;
 }
 
 const legendGridStyle: React.CSSProperties = {
@@ -34,15 +23,15 @@ const legendGridStyle: React.CSSProperties = {
   borderTopLeftRadius: borderRadius,
   borderTopRightRadius: borderRadius,
   marginBottom: 24,
-  width: 366,
+  width: 370,
   maxHeight: 0.75 * window.innerHeight
 };
 
-const renderFacility = ({dataItem: {facility, city, address}}: GridCellProps) =>
-  facility
+const renderLabel = ({dataItem: {label, city, address}}: GridCellProps) =>
+  label
     ? (
       <td className="left-most first-uppercase" title={`${orUnknown(city)}, ${orUnknown(address)}`}>
-        {orUnknown(facility)}
+        {orUnknown(label)}
       </td>
     )
     : <td>-</td>;
@@ -66,16 +55,16 @@ const isReportPagePredicate = ({isReportPage}: ButtonProps): boolean => isReport
 const ReportDeleteButton = componentOrNothing<ButtonProps>(isReportPagePredicate)(DeleteButton);
 
 export const Legend = ({
-  removeSelectedListItems,
+  deleteItem,
   hideAllLines,
   hiddenLines,
   isReportPage,
-  legendItems: {entities: {lines}},
-  toggleLine,
-  deleteItem
-}: LegendProps) => {
+  legendItems,
+  removeSelectedListItems,
+  toggleLine
+}: DispatchToProps & StateToProps) => {
   const renderIconButtonsHeader = () => (
-    <RowRight>
+    <RowLeft>
       <RowRight title={firstUpperTranslated('hide all')}>
         <ButtonVisibility onClick={hideAllLines}/>
       </RowRight>
@@ -84,7 +73,7 @@ export const Legend = ({
         title={firstUpperTranslated('remove all')}
         isReportPage={isReportPage}
       />
-    </RowRight>
+    </RowLeft>
   );
 
   const renderIconButtons = ({dataItem: {id}}: GridCellProps) => {
@@ -93,37 +82,35 @@ export const Legend = ({
     const onToggleItem = () => toggleLine(id);
     return (
       <td className="icons">
-        <RowRight>
+        <RowLeft>
           <RowRight>
             <ButtonVisibility key={`checked-${id}-${checked}`} onClick={onToggleItem} checked={checked}/>
           </RowRight>
           <ReportDeleteButton onClick={onDeleteItem} isReportPage={isReportPage}/>
-        </RowRight>
+        </RowLeft>
       </td>
     );
   };
 
-  const data = React.useMemo<LegendItem[]>(() => toArray(lines), [lines]);
-
   return (
     <Column className="Legend">
-      <Grid data={data} style={legendGridStyle}>
+      <Grid data={legendItems} style={legendGridStyle}>
         <GridColumn
-          cell={renderFacility}
+          cell={renderLabel}
           title={translate('facility')}
           headerClassName="left-most"
-          width={140}
+          width={144}
         />
         <GridColumn
           cell={renderMedium}
           title={translate('medium')}
-          width={136}
+          width={144}
         />
         <GridColumn
           headerCell={renderIconButtonsHeader}
           headerClassName="Link"
           cell={renderIconButtons}
-          width={90}
+          width={76}
         />
       </Grid>
     </Column>
