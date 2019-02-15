@@ -204,6 +204,8 @@ export const buttonStyle: React.CSSProperties = {
 
 export const dropdownListStyle: React.CSSProperties = {
   width: 200,
+  paddingTop: 8,
+  paddingBottom: 8,
   ...popoverStyle
 };
 

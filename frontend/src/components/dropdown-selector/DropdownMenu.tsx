@@ -58,6 +58,7 @@ export interface DropdownMenuProps extends WithChildren, Styled {
 
 export interface MenuItemProps {
   checked?: boolean;
+  hasDivider?: boolean;
   label: string;
   onClick: OnClick;
   primaryText: string;
@@ -75,9 +76,9 @@ export const DropdownMenu = ({
   style
 }: DropdownMenuProps) => {
 
-  const renderedMenuItems = menuItems.map(({primaryText, label, value, onClick}: MenuItemProps) => (
+  const renderedMenuItems = menuItems.map(({hasDivider, primaryText, label, value, onClick}: MenuItemProps) => (
     <MenuItem
-      className="DropdownMenu-MenuItem"
+      className={classNames('DropdownMenu-MenuItem', {hasDivider})}
       key={primaryText}
       label={label}
       primaryText={primaryText}
