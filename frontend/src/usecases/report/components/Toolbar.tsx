@@ -126,7 +126,7 @@ export const Toolbar = ({
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
-        <ResolutionSelection resolution={resolution} selectResolution={selectResolution}/>
+        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PopoverMenu
           popoverClassName="Popover-Legend"
           IconComponent={LegendActionButton}

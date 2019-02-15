@@ -7,6 +7,7 @@ import {IconTemporalResolution} from '../icons/IconTemporalResolution';
 import {TemporalResolution} from './dateModels';
 
 export interface ResolutionProps {
+  disabled?: boolean;
   resolution: TemporalResolution;
   selectResolution: OnSelectResolution;
 }
@@ -16,7 +17,7 @@ const style: React.CSSProperties = {marginRight: 16, marginBottom: 0, marginLeft
 const labelStyle: React.CSSProperties = {width};
 const listStyle: React.CSSProperties = {width, ...popoverStyle};
 
-export const ResolutionSelection = ({resolution, selectResolution}: ResolutionProps) => {
+export const ResolutionSelection = ({disabled, resolution, selectResolution}: ResolutionProps) => {
 
   const resolutions: MenuItemProps[] = [
     {
@@ -41,6 +42,7 @@ export const ResolutionSelection = ({resolution, selectResolution}: ResolutionPr
 
   return (
     <DropdownMenu
+      disabled={disabled}
       IconButton={IconTemporalResolution}
       labelStyle={labelStyle}
       listStyle={listStyle}
