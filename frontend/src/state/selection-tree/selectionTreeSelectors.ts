@@ -5,24 +5,8 @@ import {Identifiable, uuid} from '../../types/Types';
 import {limit} from '../../usecases/report/reportActions';
 import {LegendItem} from '../../usecases/report/reportModels';
 import {ObjectsById} from '../domain-models/domainModels';
-import {allQuantities, Medium, Quantity} from '../ui/graph/measurement/measurementModels';
 import {SelectionTreeItemType, SelectionTreeViewComposite} from '../ui/selection-tree/selectionTreeModels';
-import {ThresholdQuery} from '../user-selection/userSelectionModels';
 import {SelectionTreeEntities, SelectionTreeMeter, SelectionTreeState} from './selectionTreeModels';
-
-export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Medium[]>(
-  (threshold: ThresholdQuery) => threshold && threshold.quantity,
-  (quantity) => {
-    if (quantity) {
-      return Array.from(new Set<Medium>(Object.keys(allQuantities)
-        .map((medium) => (medium as Medium))
-        .filter((medium) => Array.from(allQuantities[medium]).includes(quantity))
-      ));
-    } else {
-      return [];
-    }
-  },
-);
 
 export const getLegendItemsWithLimit = (meters?: ObjectsById<SelectionTreeMeter>): LegendItem[] =>
   meters

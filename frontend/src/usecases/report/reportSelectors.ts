@@ -10,6 +10,7 @@ import {
   Medium,
   Quantity
 } from '../../state/ui/graph/measurement/measurementModels';
+import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
 import {LegendItem, Report, ReportState, SelectedReportPayload} from './reportModels';
 
 const orderedMedia: Medium[] = Object.keys(allQuantities) as Medium[];
@@ -65,3 +66,16 @@ export const getMeasurementParameters =
       selectionParameters,
     })
   );
+export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Medium[]>(
+  (threshold: ThresholdQuery) => threshold && threshold.quantity,
+  (quantity) => {
+    if (quantity) {
+      return Array.from(new Set<Medium>(Object.keys(allQuantities)
+        .map((medium) => (medium as Medium))
+        .filter((medium) => Array.from(allQuantities[medium]).includes(quantity))
+      ));
+    } else {
+      return [];
+    }
+  },
+);

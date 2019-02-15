@@ -1,9 +1,8 @@
-import {getThresholdMedia} from '../../../state/selection-tree/selectionTreeSelectors';
 import {Medium, Quantity, quantityAttributes} from '../../../state/ui/graph/measurement/measurementModels';
 import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem, ReportState} from '../reportModels';
 import {initialState} from '../reportReducer';
-import {getLegendItems} from '../reportSelectors';
+import {getLegendItems, getThresholdMedia} from '../reportSelectors';
 
 describe('reportSelectors', () => {
 
