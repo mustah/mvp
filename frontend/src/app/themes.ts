@@ -21,6 +21,11 @@ export const popoverBoxShadow =
   '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)';
 
 export const colors = {
+  blue200: '#81d4fa',
+  blue100: '#b3e5fc',
+  blue50: '#e1f5fe',
+  blueA400: '#00b0ff',
+
   darkBlue: '#006da3',
   darkGreen: '#4caf50',
   blue: '#00b0ff',
@@ -34,17 +39,13 @@ export const colors = {
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
-  listItemHover: '#e1f5fe',
-  selectedListItem: '#b3ebff',
 };
 
-export const secondaryBg = '#f9f9f9';
+export const bgHoverColor = colors.blue50;
+
 export const secondaryBgActive = '#b6e2cc';
 export const secondaryBgHover = '#edf8f2';
-
-export const secondaryFg = '#3c3c3c';
 export const secondaryFgActive = '#245c40';
-export const secondaryFgHover = '#0f2228';
 
 export const mvpTheme = getMuiTheme({
   appBar: {
@@ -72,7 +73,7 @@ export const mvpTheme = getMuiTheme({
     nestedLevelDepth: 14,
   },
   menuItem: {
-    hoverColor: colors.listItemHover,
+    hoverColor: colors.blue50,
     selectedTextColor: colors.blue,
   },
   raisedButton: {
@@ -114,7 +115,7 @@ export const dividerStyle: React.CSSProperties = {
 export const selectedStyle: React.CSSProperties = {
   color: colors.black,
   fontWeight: 'bold',
-  backgroundColor: colors.selectedListItem
+  backgroundColor: colors.blue100
 };
 
 export const menuItemStyle: React.CSSProperties = {
