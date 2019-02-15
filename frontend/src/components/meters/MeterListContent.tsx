@@ -27,6 +27,7 @@ import {
   WithChildren
 } from '../../types/Types';
 import {MeterList} from '../../usecases/meter/components/MeterList';
+import {toLegendItem} from '../../usecases/report/legendHelper';
 import {LegendItem} from '../../usecases/report/reportModels';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
@@ -48,6 +49,7 @@ export interface MeterListStateToProps {
 
 export interface MeterListDispatchToProps {
   deleteMeter: OnDeleteMeter;
+  addAllToReport: OnClickWith<LegendItem[]>;
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: OnClickWithId;
   syncMeters: CallbackWithIds;
@@ -61,6 +63,7 @@ export type MeterListProps = MeterListStateToProps & MeterListDispatchToProps & 
 
 export interface MeterListActionDropdownProps {
   syncMeters: OnClick;
+  addAllToReport: OnClick;
 }
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
@@ -70,7 +73,9 @@ const MeterListActionsDropdownEnhanced =
 
 export const MeterListContent = (props: MeterListProps & WithChildren) => {
   const {
+    addAllToReport,
     clearError,
+    entities,
     error,
     fetchMeters,
     isFetching,
@@ -90,6 +95,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     hasContent,
   };
 
+  const onAddAllToReport = () => addAllToReport(result.map((id) => entities[id]).map(toLegendItem));
   const onClearError = () => clearError({page});
   const onSyncMeters = () => syncMeters(result);
 
@@ -97,6 +103,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     <Loader isFetching={isFetching} error={error} clearError={onClearError}>
       <Column className="MeterListContent">
         <MeterListActionsDropdownEnhanced
+          addAllToReport={onAddAllToReport}
           syncMeters={onSyncMeters}
           hasContent={hasContent}
         />

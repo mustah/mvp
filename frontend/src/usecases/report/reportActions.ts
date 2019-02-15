@@ -55,7 +55,8 @@ export const deleteItem = (id: uuid) =>
     }
   };
 
-export const showMetersInGraph = (items: LegendItem[]) =>
-  (dispatch) => {
-    selectItemsIfWithinLimits({dispatch, items});
+export const addAllToReport = (items: LegendItem[]) =>
+  (dispatch, getState: GetState) => {
+    const legendItems: LegendItem[] = getLegendItems(getState().report);
+    selectItemsIfWithinLimits({dispatch, items: [...legendItems, ...items]});
   };

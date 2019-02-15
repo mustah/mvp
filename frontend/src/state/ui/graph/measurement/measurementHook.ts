@@ -6,9 +6,8 @@ export const useFetchMeasurements = ({
   measurement,
   parameters,
   requestParameters,
-  showMetersInGraph
 }: Props) => {
   React.useEffect(() => {
     fetchMeasurements(requestParameters);
-  }, [requestParameters]);
+  }, [requestParameters, parameters]);
 };

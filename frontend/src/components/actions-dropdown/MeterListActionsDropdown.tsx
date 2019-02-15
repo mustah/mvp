@@ -4,6 +4,7 @@ import {actionMenuItemIconStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnClick, RenderFunction} from '../../types/Types';
 import {connectedSuperAdminOnly} from '../hoc/withRoles';
+import {IconReport} from '../icons/IconReport';
 import {MeterListActionDropdownProps} from '../meters/MeterListContent';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
@@ -11,7 +12,7 @@ import {ActionsDropdown} from './ActionsDropdown';
 const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(ActionMenuItem);
 
 export const MeterListActionsDropdown =
-  ({syncMeters}: MeterListActionDropdownProps) => {
+  ({addAllToReport, syncMeters}: MeterListActionDropdownProps) => {
 
     const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
       const syncMetersProps: ActionMenuItemProps = {
@@ -22,12 +23,25 @@ export const MeterListActionsDropdown =
         },
       };
 
+      const onAddAllToReport = () => {
+        onClick();
+        addAllToReport();
+      };
+
       return ([
         (
           <SyncWithMeteringMenuItem
             {...syncMetersProps}
             leftIcon={<NotificationSync style={actionMenuItemIconStyle}/>}
             key="sync-meters-menu-item"
+          />
+        ),
+        (
+          <ActionMenuItem
+            leftIcon={<IconReport style={actionMenuItemIconStyle}/>}
+            name={translate('add all to report')}
+            onClick={onAddAllToReport}
+            key="add-all-to-report"
           />
         ),
       ]);

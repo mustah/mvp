@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {addToReport, deleteItem, hideAllLines, setSelectedItems, showMetersInGraph} from '../reportActions';
+import {addAllToReport, addToReport, deleteItem, hideAllLines, setSelectedItems} from '../reportActions';
 import {LegendItem, ReportState} from '../reportModels';
 
 describe('reportActions', () => {
@@ -121,12 +121,12 @@ describe('reportActions', () => {
     });
   });
 
-  describe('showMetersInGraph', () => {
+  describe('addAllToReport', () => {
 
     it('shows all meters in graph', () => {
-      const store = configureMockStore({...initialState});
+      const store = configureMockStore(initialState);
 
-      store.dispatch(showMetersInGraph(items));
+      store.dispatch(addAllToReport(items));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
@@ -138,11 +138,11 @@ describe('reportActions', () => {
     });
 
     it('excludes meters with unknown medium', () => {
-      const store = configureMockStore({...initialState});
+      const store = configureMockStore(initialState);
 
       const payloadItems: LegendItem[] = [...items, {id: 3, label: 'u', medium: Medium.unknown}];
 
-      store.dispatch(showMetersInGraph(payloadItems));
+      store.dispatch(addAllToReport(payloadItems));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
@@ -154,14 +154,34 @@ describe('reportActions', () => {
     });
 
     it('duplicate meter ids are removed', () => {
-      const store = configureMockStore({...initialState});
+      const store = configureMockStore(initialState);
       const payloadItems: LegendItem[] = [...items, {...items[0]}];
 
-      store.dispatch(showMetersInGraph(payloadItems));
+      store.dispatch(addAllToReport(payloadItems));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
           items,
+          media: [Medium.gas, Medium.water],
+          quantities: [Quantity.volume]
+        })
+      ]);
+    });
+
+    it('appends items to report', () => {
+      const store = configureMockStore({
+        ...initialState,
+        report: {
+          ...report,
+          savedReports: {meterPage: {id: 'meterPage', meters: items}},
+        }
+      });
+
+      store.dispatch(addAllToReport([legendItem]));
+
+      expect(store.getActions()).toEqual([
+        setSelectedItems({
+          items: [...items, legendItem],
           media: [Medium.gas, Medium.water],
           quantities: [Quantity.volume]
         })
@@ -224,7 +244,7 @@ describe('reportActions', () => {
       const store = configureMockStore({...initialState});
       const items: LegendItem[] = [{id: 1, label: 'a', medium: Medium.electricity}];
 
-      store.dispatch(showMetersInGraph(items));
+      store.dispatch(addAllToReport(items));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({

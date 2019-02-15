@@ -26,6 +26,9 @@ msgstr "delete meter"
 msgid "add to report"
 msgstr "add to report"
 
+msgid "add all to report"
+msgstr "add all to report"
+
 msgid "sync all meters on this page"
 msgstr "sync all meters on this page"
 
@@ -627,8 +630,6 @@ msgstr "during {{count}} days (or more)"
 #~ msgid "{{count}} gateway of your selection, are not displayed in the map"
 #~ msgstr "{{count}} gateway of your selection, are not displayed in the map"
 
-#~ msgid "add all to report"
-#~ msgstr "add all to report"
 
 #~ msgid "saved selections"
 #~ msgstr "saved selections"

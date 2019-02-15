@@ -12,7 +12,7 @@ import {getMeterParameters, getUserSelectionId} from '../../../state/user-select
 import {Callback, CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
 import {Graph} from '../components/graph/Graph';
 import {Measurements} from '../components/Measurements';
-import {showMetersInGraph} from '../reportActions';
+import {addAllToReport} from '../reportActions';
 import {LegendItem} from '../reportModels';
 import {getMeasurementParameters} from '../reportSelectors';
 
@@ -27,7 +27,7 @@ export interface StateToProps {
 export interface DispatchToProps {
   clearError: OnClick;
   fetchMeasurements: FetchMeasurements;
-  showMetersInGraph: CallbackWith<LegendItem[]>;
+  addAllToReport: CallbackWith<LegendItem[]>;
   exportToExcelSuccess: Callback;
 }
 
@@ -45,7 +45,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError,
   fetchMeasurements,
-  showMetersInGraph,
+  addAllToReport,
   exportToExcelSuccess,
 }, dispatch);
 
