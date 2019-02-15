@@ -6,10 +6,10 @@ import * as React from 'react';
 import {actionMenuItemIconStyle} from '../../../app/themes';
 import {ButtonLink} from '../../../components/buttons/ButtonLink';
 import {Row} from '../../../components/layouts/row/Row';
-import {OnClickWithId, uuid} from '../../../types/Types';
+import {OnClickWithId} from '../../../types/Types';
 
 interface Props {
-  id: uuid;
+  dataItem: any;
   confirmDelete: OnClickWithId;
   editAction: OnClickWithId;
   inEdit: boolean;
@@ -17,32 +17,32 @@ interface Props {
   cancelAction: OnClickWithId;
 }
 
-export const QuantityActions = ({id, confirmDelete, editAction, saveAction, cancelAction, inEdit}: Props) => {
+export const QuantityActions = ({dataItem, confirmDelete, editAction, saveAction, cancelAction, inEdit}: Props) => {
 
   const onClickSave = () => {
-    saveAction(id);
+    saveAction(dataItem);
   };
   const onClickCancel = () => {
-    cancelAction(id);
+    cancelAction(dataItem);
   };
   const onClickEdit = () => {
-    editAction(id);
+    editAction(dataItem);
   };
   const onClickDelete = () => {
-    confirmDelete(id);
+    confirmDelete(dataItem);
   };
   return inEdit ?
     (
       <Row>
         <ButtonLink
           onClick={onClickSave}
-          key={`save-${id}`}
+          key={`save-${dataItem.dataIndex}`}
         >
           <NavigationCheck/>
         </ButtonLink>
         <ButtonLink
           onClick={onClickCancel}
-          key={`cancel-${id}`}
+          key={`cancel-${dataItem.dataIndex}`}
         >
           <NavigationClose/>
         </ButtonLink>
@@ -53,13 +53,13 @@ export const QuantityActions = ({id, confirmDelete, editAction, saveAction, canc
       <Row>
         <ButtonLink
           onClick={onClickEdit}
-          key={`edit-${id}`}
+          key={`edit-${dataItem.dataIndex}`}
         >
           <ImageEdit style={actionMenuItemIconStyle}/>
         </ButtonLink>
         <ButtonLink
           onClick={onClickDelete}
-          key={`delete-${id}`}
+          key={`delete-${dataItem.dataIndex}`}
         >
           <ActionDelete style={actionMenuItemIconStyle}/>
         </ButtonLink>

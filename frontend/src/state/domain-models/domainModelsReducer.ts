@@ -27,7 +27,7 @@ import {
   domainModelsPutSuccess,
   domainModelsRequest,
 } from './domainModelsActions';
-import {Medium, MeterDefinition} from './meter-definitions/meterDefinitionModels';
+import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefinitionModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {User} from './user/userModels';
@@ -236,6 +236,12 @@ export const meterDefinitions = reducerFor<MeterDefinition>(
   resetStateReducer,
 );
 
+export const quantities = reducerFor<Quantity>(
+  'quantities',
+  EndPoints.quantities,
+  resetStateReducer,
+);
+
 export const mediums = reducerFor<Medium>(
   'mediums',
   EndPoints.mediums,
@@ -254,6 +260,7 @@ export const domainModels = combineReducers<DomainModelsState>({
   meterMapMarkers,
   organisations,
   meterDefinitions,
+  quantities,
   userSelections,
   users,
   mediums,

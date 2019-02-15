@@ -1,68 +1,60 @@
 import {Grid, GridColumn, GridToolbar} from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {ButtonLink} from '../../../components/buttons/ButtonLink';
+import {InputSelectableCell} from '../../../components/inputs/InputSelectableCell';
 import {translate} from '../../../services/translationService';
-import {QuantityMaybeId} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
+import {Quantity, DisplayQuantityMaybeId} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {QuantityActions} from './QuantityActions';
 import './QuantityList.scss';
 
 interface OwnProps {
   changedQuantities: any;
-  quantities: QuantityMaybeId[];
+  definitionQuantities: DisplayQuantityMaybeId[];
+  allQuantities: Quantity[];
 }
 
 type Props = OwnProps;
 
-type state = QuantityMaybeId[];
+type state = DisplayQuantityMaybeId[];
 
-export const QuantityList = ({quantities, changedQuantities}: Props) => {
-  const [localQuantities, setQuantities] = React.useState<state>(quantities);
+export const QuantityList = ({definitionQuantities, allQuantities, changedQuantities}: Props) => {
+  let x = 0;
+  definitionQuantities.forEach((q) => q.gridIndex = x++);
 
-  const getQuantityByName = (quanitityName: string): QuantityMaybeId =>
-    localQuantities[localQuantities.findIndex((q) => q.quanitityName === quanitityName)];
+  const [localQuantities, setQuantities] = React.useState<state>(definitionQuantities);
 
   const enterInsert = () => {
-    const quantity = {inEdit: true};
-    update(localQuantities, quantity, 'edit');
+    const item = {inEdit: true, gridIndex: definitionQuantities.length};
+    update(localQuantities, item , 'edit');
   };
 
-  const saveAction = (quanitityName) => {
-    update(localQuantities, getQuantityByName(quanitityName), 'save');
-  };
+  const saveAction = (rowItem) => update(localQuantities, rowItem.dataItem, 'save');
 
-  const cancelAction = (quanitityName) => {
-    update(localQuantities, getQuantityByName(quanitityName), 'cancel');
-  };
+  const cancelAction = (rowItem) => update(localQuantities, rowItem.dataItem, 'cancel');
 
-  const deleteAction = (quanitityName) => {
-    update(localQuantities, getQuantityByName(quanitityName), 'delete');
-  };
+  const deleteAction = (rowItem) => update(localQuantities, rowItem.dataItem, 'delete');
 
-  const editQuantity = (quanitityName) => {
-    update(localQuantities, getQuantityByName(quanitityName), 'edit');
-  };
+  const editQuantity = (rowItem) => update(localQuantities, rowItem.dataItem, 'edit');
 
   const itemChange = (event) => {
     const value = event.value;
-    const quanitityName = event.field;
-    if (!quanitityName) {
+    const quantityName = event.field;
+    if (!quantityName) {
       return;
     }
 
-    event.dataItem[quanitityName] = value;
+    event.dataItem[quantityName] = value;
     update(localQuantities, event.dataItem, 'change');
   };
 
   const update = (data, item, mode) => {
     item.inEdit = (mode === 'edit' || mode === 'change');
 
-    const updated = {...item};
-    let index = data.findIndex((p) => p === item || item.quanitityName && p.quanitityName === item.quanitityName);
-    if (index >= 0) {
-      data[index] = updated;
+    const index = item.gridIndex;
+    if (index < data.length) {
+      data[index] = item;
     } else {
-      data.unshift(updated);
-      index = 0;
+      data.push(item);
     }
 
     if (mode === 'delete') {
@@ -73,7 +65,7 @@ export const QuantityList = ({quantities, changedQuantities}: Props) => {
     changedQuantities(data.slice());
   };
 
-  const actions = ({dataItem: {quanitityName, inEdit}}) =>
+  const actions = (rowItem) =>
     (
       <td>
         <QuantityActions
@@ -81,11 +73,38 @@ export const QuantityList = ({quantities, changedQuantities}: Props) => {
           editAction={editQuantity}
           cancelAction={cancelAction}
           saveAction={saveAction}
-          inEdit={inEdit}
-          id={quanitityName}
+          inEdit={rowItem.dataItem.inEdit}
+          dataItem={rowItem}
         />
       </td>
     );
+
+  const quantitySelectChange = (event) => {
+    const value = event.value;
+    const field = event.field;
+    if (!field) {
+      return;
+    }
+    const quantity = allQuantities.find((q) => q.id === value);
+    const item = localQuantities[event.dataItem.dataIndex - 1];
+    item[field] = quantity ? quantity.name : '';
+
+    update(localQuantities, item, 'change');
+  };
+
+  const quantityCell = ({dataItem: {inEdit, quantityName, id}, ...dataItem}) => {
+    const value = allQuantities.find((x) => x.name === quantityName);
+    return (
+      <InputSelectableCell
+        id={'quantity-' + id}
+        options={allQuantities}
+        onChange={quantitySelectChange}
+        dataItem={dataItem}
+        value={value}
+        inEdit={inEdit}
+      />
+    );
+  };
 
   return (
     <Grid
@@ -106,9 +125,10 @@ export const QuantityList = ({quantities, changedQuantities}: Props) => {
       <GridColumn
         headerClassName="col"
         className="col"
-        field="quanitityName"
+        field="quantityName"
 
         title={translate('quantity')}
+        cell={quantityCell}
       />
       <GridColumn
         headerClassName="col"

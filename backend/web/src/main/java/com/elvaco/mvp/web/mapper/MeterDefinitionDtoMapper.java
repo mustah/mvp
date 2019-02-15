@@ -51,7 +51,7 @@ public class MeterDefinitionDtoMapper {
 
   private DisplayQuantity toQuantityDomainModel(DisplayQuantityDto displayQuantityDto) {
     return new DisplayQuantity(
-      quantityProvider.getByNameOrThrow(displayQuantityDto.quanitityName),
+      quantityProvider.getByNameOrThrow(displayQuantityDto.quantityName),
       displayQuantityDto.consumption ? DisplayMode.CONSUMPTION : DisplayMode.READOUT,
       displayQuantityDto.precision,
       displayQuantityDto.displayUnit

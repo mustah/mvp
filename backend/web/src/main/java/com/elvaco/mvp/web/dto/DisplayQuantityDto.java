@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class DisplayQuantityDto {
   @NotBlank
-  public String quanitityName;
+  public String quantityName;
   public boolean consumption;
   @NotBlank
   public String displayUnit;

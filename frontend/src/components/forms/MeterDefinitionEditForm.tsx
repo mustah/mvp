@@ -4,7 +4,7 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {
   Medium,
   MeterDefinition,
-  MeterDefinitionMaybeId,
+  MeterDefinitionMaybeId, Quantity,
 } from '../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {CallbackWithData, uuid} from '../../types/Types';
@@ -29,6 +29,7 @@ interface Props {
   meterDef?: MeterDefinition;
   organisations: Organisation[];
   mediums: Medium[];
+  allQuantities: Quantity[];
 }
 
 export const initialMediumDefinition: MeterDefinitionMaybeId = {
@@ -42,7 +43,7 @@ export const initialMediumDefinition: MeterDefinitionMaybeId = {
 type state = MeterDefinitionMaybeId;
 
 export const MeterDefinitionEditForm = (
-  {mediums, organisations, meterDef, updateMeterDefinition, addMeterDefinition}: Props
+  {mediums, organisations, meterDef, updateMeterDefinition, addMeterDefinition, allQuantities}: Props
 ) => {
   const [meterDefinition, setMeterDefinition] = React.useState<state>(
     meterDef ? meterDef : initialMediumDefinition
@@ -115,7 +116,11 @@ export const MeterDefinitionEditForm = (
           />
         </Column>
 
-        <QuantityList changedQuantities={setQuantities} quantities={quantities}/>
+        <QuantityList
+          changedQuantities={setQuantities}
+          definitionQuantities={quantities}
+          allQuantities={allQuantities}
+        />
 
         <ButtonSave
           className="SaveButton"

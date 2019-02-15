@@ -17,7 +17,7 @@ import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearMediumsErrors, fetchMediums} from '../../../state/domain-models/medium/mediumModels';
-import {Medium, MeterDefinition} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
+import {Medium, MeterDefinition, Quantity} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {
   addMeterDefinition,
   fetchMeterDefinitions,
@@ -29,6 +29,7 @@ import {
   fetchOrganisations,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
+import {clearQuantityErrors, fetchQuantities} from '../../../state/domain-models/quantities/quantitesApiActions';
 import {CallbackWithData, ClearError, ErrorResponse, Fetch, uuid} from '../../../types/Types';
 
 interface StateToProps {
@@ -40,7 +41,9 @@ interface StateToProps {
   isFetchingMediums: boolean;
   organisationsError: Maybe<ErrorResponse>;
   mediumsError: Maybe<ErrorResponse>;
-
+  quantities: ObjectsById<Quantity>;
+  isFetchingQuantities: boolean;
+  quantitiesErrors: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
@@ -51,21 +54,24 @@ interface DispatchToProps {
   fetchMediums: Fetch;
   clearOrganisationErrors: ClearError;
   clearMediumsErrors: ClearError;
+  fetchQuantities: Fetch;
+  clearQuantityErrors: ClearError;
 }
 
 type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{meterDefinitionId: uuid}>;
 type Props = OwnProps & StateToProps & DispatchToProps;
 
-class OrganisationEdit extends React.Component<Props, {}> {
+class MeterDefinitionEdit extends React.Component<Props, {}> {
 
   componentDidMount() {
     this.props.fetchOrganisations();
     this.props.fetchMediums();
   }
 
-  componentWillReceiveProps({fetchOrganisations, fetchMediums}: Props) {
+  componentWillReceiveProps({fetchOrganisations, fetchMediums, fetchQuantities}: Props) {
     fetchOrganisations();
     fetchMediums();
+    fetchQuantities();
   }
 
   render() {
@@ -81,7 +87,11 @@ class OrganisationEdit extends React.Component<Props, {}> {
       clearMediumsErrors,
       match: {params: {meterDefinitionId}},
       updateMeterDefinition,
-      mediums
+      mediums,
+      isFetchingQuantities,
+      quantitiesErrors,
+      clearQuantityErrors,
+      quantities
     } = this.props;
 
     const title: string =
@@ -105,13 +115,20 @@ class OrganisationEdit extends React.Component<Props, {}> {
                 error={mediumsError}
                 clearError={clearMediumsErrors}
               >
+                <Loader
+                  isFetching={isFetchingQuantities}
+                  error={quantitiesErrors}
+                  clearError={clearQuantityErrors}
+                >
                 <MeterDefinitionEditForm
                   addMeterDefinition={addMeterDefinition}
                   organisations={organisations}
                   meterDef={meterDefinitions[meterDefinitionId]}
                   updateMeterDefinition={updateMeterDefinition}
                   mediums={values(mediums)}
+                  allQuantities={values(quantities)}
                 />
+                </Loader>
               </Loader>
             </Loader>
           </RowIndented>
@@ -122,7 +139,7 @@ class OrganisationEdit extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (
-  {auth, domainModels: {organisations, mediums, meterDefinitions}}: RootState
+  {auth, domainModels: {organisations, mediums, meterDefinitions, quantities}}: RootState
 ): StateToProps => ({
   meterDefinitions: getEntitiesDomainModels(meterDefinitions), // TODO why do this differ from organisation?
   organisations: getOrganisations(organisations),
@@ -132,6 +149,9 @@ const mapStateToProps = (
   isFetchingMediums: mediums.isFetching,
   organisationsError: getError(organisations),
   mediumsError: getError(mediums),
+  quantities: getEntitiesDomainModels(quantities),
+  isFetchingQuantities: quantities.isFetching,
+  quantitiesErrors: getError(quantities),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
@@ -142,7 +162,9 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMediums,
   clearOrganisationErrors,
   clearMediumsErrors,
+  fetchQuantities,
+  clearQuantityErrors,
 }, dispatch);
 
 export const MeterDefinitionEditContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(OrganisationEdit);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterDefinitionEdit);

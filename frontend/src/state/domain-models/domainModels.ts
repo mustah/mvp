@@ -1,7 +1,7 @@
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
-import {MeterDefinition, Medium} from './meter-definitions/meterDefinitionModels';
+import {MeterDefinition, Medium, Quantity} from './meter-definitions/meterDefinitionModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
@@ -38,6 +38,7 @@ export interface DomainModelsState {
   users: UserState;
   meterDefinitions: NormalizedState<MeterDefinition>;
   mediums: NormalizedState<Medium>;
+  quantities: NormalizedState<Quantity>;
 }
 
 export const enum RequestType {

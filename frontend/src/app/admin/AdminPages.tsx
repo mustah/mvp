@@ -10,7 +10,6 @@ import {UserAddContainer} from '../../usecases/administration/containers/UserAdd
 import {UserEditContainer} from '../../usecases/administration/containers/UserEditContainer';
 import {routes} from '../routes';
 
-// TODO why is this not done with users?
 const MeterDefinitionsPage = adminIsAuthenticated(MeterDefinitions);
 const MeterDefinitionEditPage = adminIsAuthenticated(MeterDefinitionEditContainer);
 const OrganisationsPage = adminIsAuthenticated(Organisations);
