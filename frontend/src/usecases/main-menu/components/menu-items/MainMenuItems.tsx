@@ -15,7 +15,14 @@ import {mainMenuIconProps, MainMenuItem} from './MainMenuItem';
 const BadgeComponent = ({isReportPage, numSelectedItems}: ReportPageProps) => {
   const badgeStyle: React.CSSProperties = {padding: 12, left: isReportPage ? 124 : 127};
   return numSelectedItems > 0
-    ? <Badge badgeContent={numSelectedItems} secondary={true} style={badgeStyle}/>
+    ? (
+      <Badge
+        badgeContent={numSelectedItems}
+        secondary={true}
+        style={badgeStyle}
+        className="Animate-zoom-in"
+        key={`badge-${numSelectedItems}`}
+      />)
     : null;
 };
 
