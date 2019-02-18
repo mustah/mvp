@@ -1,10 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Period} from '../../components/dates/dateModels';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Column} from '../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
 import {Maybe} from '../../helpers/Maybe';
+import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
 import {fetchGateway} from '../../state/domain-models-paginated/gateway/gatewayApiActions';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -18,7 +20,7 @@ import {fetchGatewayMeterDetails} from '../../state/domain-models/meter-details/
 import {isSuperAdmin} from '../../state/domain-models/user/userSelectors';
 import {CallbackWithId, uuid} from '../../types/Types';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
-import {OnFetchGatewayMeterDetails, useFetchGatewayAndItsMeters} from './fetchDialogDataHook';
+import {OnFetchGatewayMeterDetails} from './fetchDialogDataHook';
 import './GatewayDetailsContainer.scss';
 import {GatewayDetailsInfoContainer} from './GatewayDetailsInfoContainer';
 import {GatewayDetailsTabs} from './GatewayDetailsTabs';
@@ -56,7 +58,12 @@ const GatewayDetailsContentLoader = withLargeLoader<Props>(GatewayDetailsContent
 
 const GatewayDetails = (props: Props) => {
   const {fetchGateway, fetchGatewayMeterDetails, gateway, selectedId} = props;
-  useFetchGatewayAndItsMeters({fetchGateway, fetchGatewayMeterDetails, gateway, selectedId});
+  React.useEffect(() => {
+    selectedId.do((id: uuid) => fetchGateway(id));
+    gateway.filter(({meterIds}: Gateway) => meterIds.length > 0)
+      .map(({id, meterIds}: Gateway) =>
+        fetchGatewayMeterDetails(meterIds, makeApiParametersOf({period: Period.latest}), id));
+  });
 
   return <GatewayDetailsContentLoader {...props}/>;
 };

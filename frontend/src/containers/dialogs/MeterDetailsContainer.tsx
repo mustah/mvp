@@ -3,18 +3,17 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withLargeLoader} from '../../components/hoc/withLoaders';
 import {Maybe} from '../../helpers/Maybe';
+import {makeApiParametersOf} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
 import {getDomainModelById} from '../../state/domain-models/domainModelsSelectors';
 import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {CallbackWithId, CallbackWithIds, OnClickWith, uuid} from '../../types/Types';
-import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
 import {addToReport} from '../../usecases/report/reportActions';
 import {LegendItem} from '../../usecases/report/reportModels';
-import {useFetchMeterAndMapMarker} from './fetchDialogDataHook';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';
 import {MeterDetailsTabsContainer} from './MeterDetailsTabs';
@@ -28,7 +27,6 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchMeterDetails: CallbackWithIds;
-  fetchMeterMapMarker: CallbackWithId;
   addToReport: OnClickWith<LegendItem>;
   syncWithMetering: CallbackWithId;
 }
@@ -51,8 +49,12 @@ const MeterDetailsContent = (props: Props) => {
 const LoadingMeterDetails = withLargeLoader<StateToProps>(MeterDetailsContent);
 
 const MeterDetailsComponent = (props: Props) => {
-  const {periodDateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId} = props;
-  useFetchMeterAndMapMarker({periodDateRange, fetchMeterDetails, fetchMeterMapMarker, selectedId});
+  const {periodDateRange, fetchMeterDetails, selectedId} = props;
+  React.useEffect(() => {
+    selectedId.do((id: uuid) => {
+      fetchMeterDetails([id], makeApiParametersOf(periodDateRange));
+    });
+  });
 
   return <LoadingMeterDetails {...props}/>;
 };
@@ -64,7 +66,7 @@ const mapStateToProps = (
   }: RootState,
   {selectedId}: SelectedId,
 ): StateToProps => ({
-  isFetching: [meterMapMarkers, meters].some((models) => models.isFetching),
+  isFetching: meters.isFetching,
   periodDateRange,
   meter: selectedId
     .flatMap((id: uuid) => getDomainModelById<MeterDetails>(id)(meters)),
@@ -75,7 +77,6 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addToReport,
   fetchMeterDetails,
-  fetchMeterMapMarker,
   syncWithMetering,
 }, dispatch);
 
