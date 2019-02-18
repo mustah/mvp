@@ -21,6 +21,30 @@ public class SortUtilTest {
   private static final Field<?> SOMETHING = field("something");
 
   @Test
+  public void resolveSortFields_emptySort_withDefault() {
+    assertThat(resolveSortFields(sortParametersOf(""), emptyMap(), SOMETHING.asc()))
+      .containsExactly(SOMETHING.asc());
+  }
+
+  @Test
+  public void resolveSortFields_noMatchingSort_withDefault() {
+    assertThat(
+      resolveSortFields(sortParametersOf("something,asc"), emptyMap(), SOMETHING.asc())
+    ).containsExactly(SOMETHING.asc());
+  }
+
+  @Test
+  public void resolveSortFields_matchingSort_withDefault() {
+    assertThat(
+      resolveSortFields(
+        sortParametersOf("something,asc"),
+        Map.of("something", SOMETHING),
+        SOMETHING_ELSE.asc()
+      )
+    ).containsExactly(SOMETHING.asc());
+  }
+
+  @Test
   public void resolveSortFields_emptySort() {
     assertThat(resolveSortFields(sortParametersOf(""), emptyMap())).isEmpty();
   }

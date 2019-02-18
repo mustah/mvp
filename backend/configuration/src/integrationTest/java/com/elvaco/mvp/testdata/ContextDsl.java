@@ -12,6 +12,8 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Organisation.OrganisationBuilder;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -36,6 +38,10 @@ public interface ContextDsl {
     PhysicalMeterBuilder... physicalMeterBuilders
   ) {
     return context().given(logicalMeter, physicalMeterBuilders);
+  }
+
+  default Collection<Organisation> given(OrganisationBuilder... organisationBuilders) {
+    return context().given(organisationBuilders);
   }
 
   default LogicalMeter given(PhysicalMeterBuilder physicalMeterBuilder) {
@@ -74,6 +80,10 @@ public interface ContextDsl {
 
   default LogicalMeterBuilder logicalMeter() {
     return context().logicalMeter();
+  }
+
+  default OrganisationBuilder organisation() {
+    return context().newOrganisation();
   }
 
   default PhysicalMeterBuilder physicalMeter() {

@@ -1,11 +1,13 @@
 package com.elvaco.mvp.testing.fixture;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -93,9 +95,13 @@ public class MockRequestParameters implements RequestParameters {
 
   @Nullable
   @Override
-  public String getFirst(RequestParameter param) {
-    List<String> values = map.get(param);
-    return values == null || values.isEmpty() ? null : values.get(0);
+  public String getFirst(RequestParameter... param) {
+    return Arrays.stream(param)
+      .map(map::get)
+      .filter(Objects::nonNull)
+      .map(strings -> strings.isEmpty() ? null : strings.get(0))
+      .findFirst()
+      .orElse(null);
   }
 
   @Override

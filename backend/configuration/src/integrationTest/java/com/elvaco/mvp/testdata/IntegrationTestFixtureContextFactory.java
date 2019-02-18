@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
@@ -27,6 +28,7 @@ import static java.util.UUID.randomUUID;
 class IntegrationTestFixtureContextFactory {
 
   private final OrganisationJpaRepository organisationJpaRepository;
+  private final Organisations organisations;
   private final Users users;
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
@@ -127,7 +129,8 @@ class IntegrationTestFixtureContextFactory {
       meterStatusLogs,
       gatewayStatusLogs,
       meterAlarmLogs,
-      measurements
+      measurements,
+      organisations
     );
   }
 

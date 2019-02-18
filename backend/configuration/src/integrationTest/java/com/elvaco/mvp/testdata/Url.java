@@ -18,6 +18,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.LOGICAL_METER_ID;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.RESOLUTION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SORT;
@@ -128,6 +129,10 @@ public class Url implements UrlTemplate {
 
     public UrlBuilder logicalMeterId(UUID id) {
       return parameter(LOGICAL_METER_ID, id);
+    }
+
+    public UrlBuilder filter(String filter) {
+      return parameter(Q, filter);
     }
   }
 }

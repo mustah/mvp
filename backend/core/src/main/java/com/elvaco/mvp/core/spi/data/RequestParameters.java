@@ -37,7 +37,7 @@ public interface RequestParameters {
   Set<Entry<RequestParameter, List<String>>> entrySet();
 
   @Nullable
-  String getFirst(RequestParameter param);
+  String getFirst(RequestParameter... param);
 
   boolean hasParam(RequestParameter param);
 

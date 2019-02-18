@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
@@ -38,7 +37,9 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.util.Slugify;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
 
@@ -65,6 +66,7 @@ public class IntegrationTestFixtureContext {
   private final GatewayStatusLogs gatewayStatusLogs;
   private final MeterAlarmLogs meterAlarmLogs;
   private final Measurements measurements;
+  private final Organisations organisations;
 
   private final Random random = new Random();
 
@@ -98,6 +100,15 @@ public class IntegrationTestFixtureContext {
 
   public ZonedDateTime yesterday() {
     return now().minusDays(1);
+  }
+
+  Organisation.OrganisationBuilder newOrganisation() {
+    UUID organisationId = randomUUID();
+    return Organisation.builder()
+      .id(organisationId)
+      .slug(Slugify.slugify(organisationId.toString()))
+      .externalId(organisationId.toString())
+      .name(organisationId.toString());
   }
 
   GatewayBuilder gateway() {
@@ -275,28 +286,38 @@ public class IntegrationTestFixtureContext {
 
   LogicalMeter given(PhysicalMeterBuilder physicalMeterBuilder) {
     var logicalMeter = logicalMeters.save(logicalMeter().build());
-    var physicalMeter = physicalMeters.save(physicalMeterBuilder
-      .logicalMeterId(logicalMeter.id)
-      .externalId(logicalMeter.externalId)
-      .build());
+    var physicalMeter = physicalMeters.save(connect(logicalMeter, physicalMeterBuilder.build()));
     return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
   }
 
   LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder) {
-    LogicalMeter logicalMeter = logicalMeters.save(logicalMeterBuilder.build());
-    PhysicalMeter physicalMeter = physicalMeters.save(
-      physicalMeter()
-        .organisationId(logicalMeter.organisationId)
-        .logicalMeterId(logicalMeter.id)
-        .externalId(logicalMeter.externalId)
-        .build()
-    );
+    LogicalMeter builtMeter = logicalMeterBuilder.build();
+    LogicalMeter logicalMeter = logicalMeters.save(builtMeter);
+    if (builtMeter.physicalMeters.isEmpty()) {
+      PhysicalMeter physicalMeter = physicalMeters.save(connect(
+        logicalMeter,
+        physicalMeter().build()
+      ));
+      return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
+    } else {
+      return logicalMeter.toBuilder()
+        .physicalMeters(builtMeter.physicalMeters.stream()
+          .map(physicalMeter -> connect(logicalMeter, physicalMeter))
+          .map(physicalMeters::save)
+          .collect(toList()))
+        .build();
+    }
+  }
 
-    return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
+  Collection<Organisation> given(Organisation.OrganisationBuilder... organisationBuilders) {
+    return Arrays.stream(organisationBuilders)
+      .map(Organisation.OrganisationBuilder::build)
+      .map(organisations::save)
+      .collect(toList());
   }
 
   Collection<LogicalMeter> given(LogicalMeterBuilder... logicalMeterBuilders) {
-    return Arrays.stream(logicalMeterBuilders).map(this::given).collect(Collectors.toList());
+    return Arrays.stream(logicalMeterBuilders).map(this::given).collect(toList());
   }
 
   LogicalMeter given(
@@ -306,11 +327,7 @@ public class IntegrationTestFixtureContext {
     final LogicalMeter logicalMeter = logicalMeters.save(logicalMeterBuilder.build());
 
     var builtPhysicalMeters = Arrays.stream(physicalMeterBuilders)
-      .map(pm -> pm
-        .logicalMeterId(logicalMeter.id)
-        .externalId(logicalMeter.externalId)
-        .build()
-      )
+      .map(pm -> connect(logicalMeter, pm.build()))
       .map(physicalMeters::save)
       .collect(toList());
 
@@ -366,5 +383,13 @@ public class IntegrationTestFixtureContext {
 
   void given(Collection<Measurement> series) {
     series.forEach(measurements::save);
+  }
+
+  private static PhysicalMeter connect(LogicalMeter logicalMeter, PhysicalMeter physicalMeter) {
+    return physicalMeter.toBuilder()
+      .externalId(logicalMeter.externalId)
+      .organisationId(logicalMeter.organisationId)
+      .logicalMeterId(logicalMeter.id)
+      .build();
   }
 }
