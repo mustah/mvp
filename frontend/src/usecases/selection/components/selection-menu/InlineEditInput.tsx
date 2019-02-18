@@ -45,6 +45,10 @@ const iconStyle: React.CSSProperties = {
   color: colors.lightBlack,
 };
 
+const buttonLinkStyle: React.CSSProperties = {
+  marginLeft: 16,
+};
+
 const ResetIconButton = ({onClick}: Clickable) => (
   <IconButton
     onClick={onClick}
@@ -91,7 +95,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     return (
       <RowLeft>
         {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
-        <ButtonLink onClick={this.onSaveAs} style={{marginLeft: 16}}>{translate('save as')}</ButtonLink>
+        <ButtonLink onClick={this.onSaveAs} style={buttonLinkStyle}>{translate('save as')}</ButtonLink>
       </RowLeft>
     );
   }
@@ -99,7 +103,7 @@ export class InlineEditInput extends React.Component<Props, State> {
   renderSelectionResetButton = (): React.ReactNode => {
     const {selection: {id}, selectSavedSelection} = this.props;
     const reset = () => selectSavedSelection(id);
-    return <ButtonLink onClick={reset}>{translate('discard changes')}</ButtonLink>;
+    return <ButtonLink onClick={reset} style={buttonLinkStyle}>{translate('discard changes')}</ButtonLink>;
   }
 
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});

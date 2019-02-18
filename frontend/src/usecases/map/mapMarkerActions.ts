@@ -1,9 +1,5 @@
 import {EndPoints} from '../../services/endPoints';
-import {
-  clearError,
-  fetchEntityIfNeeded,
-  fetchIfNeeded,
-} from '../../state/domain-models/domainModelsActions';
+import {clearError, fetchIfNeeded} from '../../state/domain-models/domainModelsActions';
 import {gatewayMapMarkersDataFormatter, meterMapMarkersDataFormatter} from './mapMarkerSchema';
 import {MapMarker} from './mapModels';
 
@@ -21,9 +17,4 @@ export const fetchMeterMapMarkers = fetchIfNeeded<MapMarker>(
   EndPoints.meterMapMarkers,
   'meterMapMarkers',
   meterMapMarkersDataFormatter,
-);
-
-export const fetchMeterMapMarker = fetchEntityIfNeeded<MapMarker>(
-  EndPoints.meterMapMarkers,
-  'meterMapMarkers',
 );

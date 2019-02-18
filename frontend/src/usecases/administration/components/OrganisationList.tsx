@@ -35,11 +35,7 @@ export const OrganisationList = ({
         <Row>
           <AddOrganisationButton/>
         </Row>
-        <Grid
-          style={{borderTopWidth: 1}}
-          data={toArray(entities)}
-          scrollable="none"
-        >
+        <Grid style={{borderTopWidth: 1}} data={toArray(entities)} scrollable="none">
           <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
           <GridColumn cell={parent} title={translate('parent organisation')}/>
           <GridColumn field="slug" title={translate('slug')}/>

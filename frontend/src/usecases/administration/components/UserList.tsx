@@ -35,11 +35,7 @@ export const UserList = ({
         <Row>
           <AddUserButton/>
         </Row>
-        <Grid
-          style={{borderTopWidth: 1}}
-          data={toArray(entities)}
-          scrollable="none"
-        >
+        <Grid style={{borderTopWidth: 1}} data={toArray(entities)} scrollable="none">
           <GridColumn field="name" title={translate('name')} headerClassName="left-most" className="left-most"/>
           <GridColumn field="email" title={translate('email')}/>
           <GridColumn field="organisation.name" title={translate('organisation')}/>

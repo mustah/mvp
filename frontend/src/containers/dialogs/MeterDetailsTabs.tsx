@@ -78,10 +78,7 @@ const MapContent = ({meter, meterMapMarker}: MapProps) => (
 );
 
 const GatewayContent = ({gateways}: MeterGatewayProps) => (
-  <Grid
-    scrollable="none"
-    data={gateways}
-  >
+  <Grid scrollable="none" data={gateways}>
     <GridColumn field="serial" title={translate('gateway serial')} className="left-most" headerClassName="left-most"/>
     <GridColumn field="productModel" title={translate('product model')}/>
     <GridColumn field="ip" title={translate('ip')}/>
@@ -155,10 +152,7 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
             <MeterMeasurementsContainer meter={meter}/>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Grid
-              data={eventLog}
-              scrollable="none"
-            >
+            <Grid data={eventLog} scrollable="none">
               <GridColumn title={translate('date')} cell={renderDate}/>
               <GridColumn title={translate('event')} cell={renderEvent}/>
             </Grid>

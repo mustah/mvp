@@ -95,14 +95,8 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
 
   return (
     <Column>
-      <ExcelExport
-        data={data}
-        ref={exporter}
-      >
-        <Grid
-          scrollable="none"
-          data={data}
-        >
+      <ExcelExport data={data} ref={exporter}>
+        <Grid scrollable="none" data={data}>
           {columnsAsChildren}
         </Grid>
       </ExcelExport>

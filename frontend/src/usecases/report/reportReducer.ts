@@ -3,6 +3,7 @@ import {TemporalResolution} from '../../components/dates/dateModels';
 import {toggle} from '../../helpers/collections';
 import {Maybe} from '../../helpers/Maybe';
 import {Action, uuid} from '../../types/Types';
+import {LOGOUT_USER} from '../auth/authActions';
 import {
   HIDE_ALL_LINES,
   REMOVE_SELECTED_LIST_ITEMS,
@@ -55,6 +56,8 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
       return {...state, hiddenLines: [...meterIds]};
     case REMOVE_SELECTED_LIST_ITEMS:
       return {...state, hiddenLines: [], savedReports: {}};
+    case LOGOUT_USER:
+      return initialState;
     default:
       return state;
   }
