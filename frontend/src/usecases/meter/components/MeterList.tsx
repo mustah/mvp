@@ -58,13 +58,16 @@ export const MeterList = ({
   sortTable,
 }: MeterListProps) => {
 
-  const renderMeterId = ({dataItem: {address, isReported}}: GridCellProps) => (
+  const renderMeterId = ({dataItem: {address}}: GridCellProps) => (
     <td>
       <Column>
         <Normal>{address}</Normal>
-        <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
       </Column>
     </td>
+  );
+
+  const renderIsReported = ({dataItem: {isReported}}: GridCellProps) => (
+    <td><ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel></td>
   );
 
   const renderCityName = ({dataItem: {location: {city}}}: GridCellProps) =>
@@ -155,6 +158,8 @@ export const MeterList = ({
       <GridColumn field="manufacturer" cell={renderManufacturer} title={translate('manufacturer')} width={112}/>
 
       <GridColumn field="medium" title={translate('medium')} width={112}/>
+
+      <GridColumn field="reported" cell={renderIsReported} title={translate('reported')} width={112}/>
 
       <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')} width={112}/>
 
