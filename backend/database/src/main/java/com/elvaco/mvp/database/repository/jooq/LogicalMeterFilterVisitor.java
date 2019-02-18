@@ -76,6 +76,9 @@ class LogicalMeterFilterVisitor extends CommonFilterVisitor {
       .innerJoin(MEDIUM)
       .on(MEDIUM.ID.equal(METER_DEFINITION.MEDIUM_ID))
 
+      /*This inner join is fine - a meter always has a location entry, although it might be NULL.
+      * While a left join would be more "semantically" correct, this allows us to perform quick
+      * sorting on location columns */
       .innerJoin(LOCATION)
       .on(LOCATION.ORGANISATION_ID.equal(LOGICAL_METER.ORGANISATION_ID)
         .and(LOCATION.LOGICAL_METER_ID.equal(LOGICAL_METER.ID)));

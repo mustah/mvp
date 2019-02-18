@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -295,6 +296,60 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
     );
   }
 
+  @Test
+  public void findAll_SortByReported() {
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter().externalId("ok"),
+      logicalMeter().externalId("warning"),
+      logicalMeter().externalId("error"),
+      logicalMeter().externalId("unknown")
+    ));
+
+    given(statusLog(meters.get(0)).status(StatusType.OK));
+    given(statusLog(meters.get(1)).status(StatusType.WARNING));
+    given(statusLog(meters.get(2)).status(StatusType.ERROR));
+    given(statusLog(meters.get(3)).status(StatusType.UNKNOWN));
+
+    testSorting(
+      "reported,asc",
+      meter -> meter.facility,
+      List.of("error", "ok", "unknown", "warning")
+    );
+
+    testSorting(
+      "reported,desc",
+      meter -> meter.facility,
+      List.of("warning", "unknown", "ok", "error")
+    );
+  }
+
+  @Test
+  public void findAll_SortByAlarm() {
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter().externalId("0"),
+      logicalMeter().externalId("1"),
+      logicalMeter().externalId("2"),
+      logicalMeter().externalId("4")
+    ));
+
+    given(alarm(meters.get(0)).mask(0));
+    given(alarm(meters.get(1)).mask(1));
+    given(alarm(meters.get(2)).mask(1 << 1));
+    given(alarm(meters.get(3)).mask(1 << 2));
+
+    testSorting(
+      "alarm,asc",
+      meter -> meter.facility,
+      List.of("0", "1", "2", "4")
+    );
+
+    testSorting(
+      "alarm,desc",
+      meter -> meter.facility,
+      List.of("4", "2", "1", "0")
+    );
+  }
+
   private void testSorting(
     String sort,
     Function<PagedLogicalMeterDto, String> actual,
@@ -302,6 +357,7 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
   ) {
     Url url = Url.builder()
       .path("/meters")
+      .period(context().now(), context().now().plusDays(1))
       .size(expectedProperties.size())
       .page(0)
       .sortBy(sort)
