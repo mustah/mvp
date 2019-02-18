@@ -323,6 +323,33 @@ public class LogicalMeterControllerSortingTest extends IntegrationTest {
     );
   }
 
+  @Test
+  public void findAll_SortByAlarm() {
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter().externalId("0"),
+      logicalMeter().externalId("1"),
+      logicalMeter().externalId("2"),
+      logicalMeter().externalId("4")
+    ));
+
+    given(alarm(meters.get(0)).mask(0));
+    given(alarm(meters.get(1)).mask(1));
+    given(alarm(meters.get(2)).mask(1 << 1));
+    given(alarm(meters.get(3)).mask(1 << 2));
+
+    testSorting(
+      "alarm,asc",
+      meter -> meter.facility,
+      List.of("0", "1", "2", "4")
+    );
+
+    testSorting(
+      "alarm,desc",
+      meter -> meter.facility,
+      List.of("4", "2", "1", "0")
+    );
+  }
+
   private void testSorting(
     String sort,
     Function<PagedLogicalMeterDto, String> actual,

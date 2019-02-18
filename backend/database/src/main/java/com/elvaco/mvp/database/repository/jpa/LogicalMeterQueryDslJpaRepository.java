@@ -64,7 +64,8 @@ class LogicalMeterQueryDslJpaRepository
     "secondaryAddress", PHYSICAL_METER.ADDRESS,
     "medium", MEDIUM.NAME,
     "collectionPercentage", COLLECTION_PERCENTAGE,
-    "reported", PHYSICAL_METER_STATUS_LOG.STATUS
+    "reported", PHYSICAL_METER_STATUS_LOG.STATUS,
+    "alarm", METER_ALARM_LOG.MASK
   );
 
   private final DSLContext dsl;

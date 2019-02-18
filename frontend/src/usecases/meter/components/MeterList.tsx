@@ -161,7 +161,7 @@ export const MeterList = ({
 
       <GridColumn field="reported" cell={renderIsReported} title={translate('reported')} width={112}/>
 
-      <GridColumn field="alarm" sortable={false} cell={renderAlarm} title={translate('alarm')} width={112}/>
+      <GridColumn field="alarm" cell={renderAlarm} title={translate('alarm')} width={112}/>
 
       <GridColumn field="gatewaySerial" title={translate('gateway')} width={112}/>
 
