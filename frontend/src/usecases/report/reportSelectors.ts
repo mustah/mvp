@@ -4,12 +4,7 @@ import {identity, isDefined} from '../../helpers/commonHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {MeasurementParameters} from '../../state/ui/graph/measurement/measurementActions';
-import {
-  allQuantities,
-  defaultQuantityForMedium,
-  Medium,
-  Quantity
-} from '../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
 import {LegendItem, Report, ReportState, SelectedReportPayload} from './reportModels';
 
@@ -19,25 +14,25 @@ const selectedReportPayloadCombiner = (legendItems: LegendItem[]): SelectedRepor
   const itemsWithKnownMedium = legendItems.filter(({medium}) => medium !== Medium.unknown);
   const items: LegendItem[] = uniqBy(itemsWithKnownMedium, 'id');
 
-  const currentlyActiveMedia: Set<Medium> = new Set(
-    items.map(({medium}: LegendItem) => medium).filter(isDefined)
-  );
+  const legendMedia: Set<Medium> = new Set(items.map(({medium}: LegendItem) => medium).filter(isDefined));
 
-  const activeMedia: Medium[] = orderedMedia.filter((medium) => currentlyActiveMedia.has(medium));
+  const activeMedia: Medium[] = orderedMedia.filter((medium) => legendMedia.has(medium));
 
   orderedMedia
-    .filter((medium) => currentlyActiveMedia.has(medium))
-    .forEach((activeMedium) => {
+    .filter((medium) => legendMedia.has(medium))
+    .forEach((medium) => {
       if (activeMedia.length < 2) {
-        activeMedia.push(activeMedium);
+        activeMedia.push(medium);
       }
     });
 
   const media: Medium[] = orderedMedia.filter((medium) => activeMedia.includes(medium));
 
-  const quantities: Quantity[] = Array.from(new Set(media.map(defaultQuantityForMedium)));
+  const quantities: Set<Quantity> = new Set();
 
-  return {items, media, quantities};
+  media.forEach((m) => allQuantities[m].forEach((q) => quantities.add(q)));
+
+  return {items, media, quantities: Array.from(quantities)};
 };
 
 export const getSelectedReportPayload =

@@ -15,7 +15,6 @@ import {AuthState, Unauthorized} from '../../../../../usecases/auth/authModels';
 import {LegendItem} from '../../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {Role, User} from '../../../../domain-models/user/userModels';
-import {SelectionTreeMeter} from '../../../../selection-tree/selectionTreeModels';
 import {
   exportToExcel,
   exportToExcelAction,
@@ -27,7 +26,16 @@ import {
   measurementRequest,
   measurementSuccess
 } from '../measurementActions';
-import {MeasurementApiResponse, MeasurementResponse, MeasurementState, Medium, Quantity} from '../measurementModels';
+import {
+  allQuantities,
+  AverageResponsePart,
+  MeasurementApiResponse,
+  MeasurementState,
+  MeasurementValues,
+  Medium,
+  Quantity,
+  toMediumText
+} from '../measurementModels';
 import {initialState} from '../measurementReducer';
 
 describe('measurementActions', () => {
@@ -48,18 +56,46 @@ describe('measurementActions', () => {
     const mockHost: string = 'https://blabla.com';
     let defaultParameters: MeasurementParameters;
 
-    const mockMeter = (medium: Medium): SelectionTreeMeter => {
+    const legendItemOf = (medium: Medium, label: string = 'facility-1'): LegendItem => {
       const id = idGenerator.uuid().toString();
       return ({
-        address: 'kingstreet 1',
-        city: 'kungsbacka',
         id,
         medium,
-        name: id,
+        label,
       });
     };
 
-    const toLegendItem = ({id, name: label, medium}: SelectionTreeMeter): LegendItem => ({id, label, medium});
+    const makeMeasurementResponse = ({id, label}: LegendItem) => ({
+      id: id.toString(),
+      label,
+      city: 'Varberg',
+      address: '',
+      quantity: Quantity.power,
+      medium: toMediumText(Medium.electricity),
+      values: [{when: 1516521585107, value: 0.4353763591158477}],
+      unit: 'mW',
+    });
+
+    const justValues: MeasurementValues = [
+      {when: 1516521585107, value: 0.0},
+      {when: 1516521585109, value: 0.55},
+    ];
+
+    const values: MeasurementValues = [
+      {when: 1516521585107, value: 0.0},
+      {when: 1516521583309},
+      {when: 1516521585109, value: 0.55},
+    ];
+
+    const makeMeasurementAverageResponse = (): AverageResponsePart =>
+      ({
+          quantity: Quantity.power,
+          id: 'Varberg',
+          label: 'average',
+          values,
+          unit: ' mW',
+        }
+      );
 
     beforeEach(() => {
       defaultParameters = {
@@ -88,8 +124,8 @@ describe('measurementActions', () => {
         const store = storeWith(initialState);
 
         const requestedUrls: string[] = onFetchAsync(
-          mockMeter(Medium.districtHeating),
-          mockMeter(Medium.districtHeating),
+          legendItemOf(Medium.districtHeating),
+          legendItemOf(Medium.districtHeating),
         );
 
         await store.dispatch(fetchMeasurements(defaultParameters));
@@ -126,8 +162,8 @@ describe('measurementActions', () => {
     describe('only fetch quantities for meters that have them', () => {
 
       it('does not send requests for meters with unknown media', async () => {
-        const unknownMeter = mockMeter(Medium.unknown);
-        const meter = mockMeter(Medium.unknown);
+        const unknownMeter = legendItemOf(Medium.unknown);
+        const meter = legendItemOf(Medium.unknown);
 
         const store = storeWith(initialState);
 
@@ -139,64 +175,20 @@ describe('measurementActions', () => {
         expect(store.getActions()).toEqual([]);
       });
 
-      const makePayload = (meter1, meter2): MeasurementResponse => ({
-        measurements: [
-          {
-            id: meter1.id as string,
-            city: 'kungsbacka',
-            address: 'kingstreet 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [{when: 1516521585107, value: 0.4353763591158477}],
-            label: '1',
-            unit: 'mW'
-          },
-          {
-            id: meter2.id as string,
-            city: 'kungsbacka',
-            address: 'kingstreet 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [{when: 1516521585107, value: 0.4353763591158477}],
-            label: '2',
-            unit: 'mW'
-          },
-          {
-            id: meter1.id as string,
-            city: 'kungsbacka',
-            address: 'kingstreet 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [{when: 1516521585107, value: 0.4353763591158477}],
-            label: '1',
-            unit: 'mW'
-          },
-          {
-            id: meter2.id as string,
-            city: 'kungsbacka',
-            address: 'kingstreet 1',
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [{when: 1516521585107, value: 0.4353763591158477}],
-            label: '2',
-            unit: 'mW'
-          }
-        ],
-        average: [],
-      });
-
       it('sends separate requests for meters with different quantities', async () => {
-        const roomSensorMeter = mockMeter(Medium.roomSensor);
-        const gasMeter = mockMeter(Medium.gas);
-        const requestedUrls: string[] = onFetchAsync(roomSensorMeter, gasMeter);
+        const roomSensorMeter = legendItemOf(Medium.roomSensor);
+        const gasMeter = legendItemOf(Medium.gas, 'facility-gas');
         const store = storeWith(initialState);
+
+        const requestedUrls: string[] = onFetchAsync(roomSensorMeter, gasMeter);
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [toLegendItem(roomSensorMeter), toLegendItem(gasMeter)]
+          items: [roomSensorMeter, gasMeter]
         }));
 
-        expect(requestedUrls).toHaveLength(2);
+        expect(requestedUrls).toHaveLength(3);
+
         const [externalTemperature, volume] = requestedUrls.map(
           (url: string) => new URL(`${mockHost}${url}`),
         );
@@ -215,7 +207,17 @@ describe('measurementActions', () => {
 
         expect(store.getActions()).toEqual([
           measurementRequest(),
-          measurementSuccess(makePayload(roomSensorMeter, gasMeter))
+          measurementSuccess({
+            measurements: [
+              makeMeasurementResponse(roomSensorMeter),
+              makeMeasurementResponse(roomSensorMeter),
+              makeMeasurementResponse(roomSensorMeter),
+              makeMeasurementResponse(gasMeter),
+              makeMeasurementResponse(gasMeter),
+              makeMeasurementResponse(gasMeter),
+            ],
+            average: [],
+          })
         ]);
       });
 
@@ -225,16 +227,16 @@ describe('measurementActions', () => {
 
       it('includes average when asking for measurements for multiple meters with the same quantity', async () => {
         const store = storeWith(initialState);
-        const firstRoomSensor = mockMeter(Medium.roomSensor);
-        const secondRoomSensor = mockMeter(Medium.roomSensor);
+        const firstRoomSensor = legendItemOf(Medium.roomSensor);
+        const secondRoomSensor = legendItemOf(Medium.roomSensor);
         const requestedUrls: string[] = onFetchAsync(firstRoomSensor, secondRoomSensor);
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [toLegendItem(firstRoomSensor), toLegendItem(secondRoomSensor)],
+          items: [firstRoomSensor, secondRoomSensor],
         }));
 
-        expect(requestedUrls).toHaveLength(2);
+        expect(requestedUrls).toHaveLength(4);
 
         const [averageUrl] = requestedUrls
           .filter((url: string) => url.match('average'))
@@ -252,149 +254,77 @@ describe('measurementActions', () => {
 
       it('makes one measurements and one average requests', async () => {
         const store = storeWith(initialState);
-        const firstDistrictHeating = mockMeter(Medium.districtHeating);
-        const secondDistrictHeating = mockMeter(Medium.districtHeating);
+        const firstDistrictHeating = legendItemOf(Medium.districtHeating);
+        const secondDistrictHeating = legendItemOf(Medium.districtHeating);
         const requestedUrls: string[] = onFetchAsync(firstDistrictHeating, secondDistrictHeating);
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [toLegendItem(firstDistrictHeating), toLegendItem(secondDistrictHeating)],
+          items: [firstDistrictHeating, secondDistrictHeating],
         }));
 
-        expect(requestedUrls).toHaveLength(2);
+        expect(requestedUrls).toHaveLength(14);
         expect(store.getActions().map((action) => (action.type))).toEqual([MEASUREMENT_REQUEST, MEASUREMENT_SUCCESS]);
       });
 
       it('filters out average readouts without values', async () => {
         const store = storeWith(initialState);
-        const firstDistrictHeating = mockMeter(Medium.districtHeating);
-        const secondDistrictHeating = mockMeter(Medium.districtHeating);
-
-        onFetchAsync(firstDistrictHeating, secondDistrictHeating);
-
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          items: [toLegendItem(firstDistrictHeating), toLegendItem(secondDistrictHeating)],
-        }));
-
-        expect(store.getActions()).toEqual([
-          measurementRequest(),
-          {
-            type: MEASUREMENT_SUCCESS,
-            payload:
-              {
-                measurements:
-                  [
-                    {
-                      id: firstDistrictHeating.id as string,
-                      city: 'kungsbacka',
-                      address: 'kingstreet 1',
-                      quantity: 'Power',
-                      medium: 'Electricity',
-                      values: [{when: 1516521585107, value: 0.4353763591158477}],
-                      label: '1',
-                      unit: 'mW'
-                    },
-                    {
-                      id: secondDistrictHeating.id as string,
-                      city: 'kungsbacka',
-                      address: 'kingstreet 1',
-                      quantity: 'Power',
-                      medium: 'Electricity',
-                      values: [{when: 1516521585107, value: 0.4353763591158477}],
-                      label: '2',
-                      unit: 'mW'
-                    }
-                  ],
-                average:
-                  [
-                    {
-                      id: 'Varberg',
-                      city: 'Varberg',
-                      address: '',
-                      quantity: 'Power',
-                      unit: 'mW',
-                      label: 'average',
-                      medium: 'Electricity',
-                      values:
-                        [
-                          {when: 1516521585107, value: 0},
-                          {when: 1516521585109, value: 0.55}
-                        ]
-                    }
-                  ],
-              }
-          }
-        ]);
-      });
-
-      it('keeps average readouts with a value of 0', async () => {
-        const store = storeWith(initialState);
-        const first = mockMeter(Medium.districtHeating);
-        const second = mockMeter(Medium.districtHeating);
+        const first = legendItemOf(Medium.districtHeating);
+        const second = legendItemOf(Medium.districtHeating, 'facility-2');
 
         onFetchAsync(first, second);
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [toLegendItem(first), toLegendItem(second)],
+          items: [first, second],
         }));
 
         expect(store.getActions()).toEqual([
           measurementRequest(),
-          {
-            type: MEASUREMENT_SUCCESS,
-            payload:
-              {
-                measurements:
-                  [
-                    {
-                      id: first.id as string,
-                      city: 'kungsbacka',
-                      address: 'kingstreet 1',
-                      quantity: 'Power',
-                      medium: 'Electricity',
-                      values: [{when: 1516521585107, value: 0.4353763591158477}],
-                      label: '1',
-                      unit: 'mW'
-                    },
-                    {
-                      id: second.id as string,
-                      city: 'kungsbacka',
-                      address: 'kingstreet 1',
-                      quantity: 'Power',
-                      medium: 'Electricity',
-                      values: [{when: 1516521585107, value: 0.4353763591158477}],
-                      label: '2',
-                      unit: 'mW'
-                    }
-                  ],
-                average:
-                  [
-                    {
-                      id: 'Varberg',
-                      city: 'Varberg',
-                      address: '',
-                      quantity: 'Power',
-                      unit: 'mW',
-                      label: 'average',
-                      medium: 'Electricity',
-                      values:
-                        [
-                          {when: 1516521585107, value: 0},
-                          {when: 1516521585109, value: 0.55}
-                        ]
-                    }
-                  ],
-              }
-          }
+          measurementSuccess({
+            measurements: [
+              ...allQuantities[first.medium].map((_) => makeMeasurementResponse(first)),
+              ...allQuantities[second.medium].map((_) => makeMeasurementResponse(second)),
+            ],
+            average: allQuantities[first.medium].map((_) => ({
+              ...makeMeasurementAverageResponse(),
+              values: justValues
+            })),
+          }),
+        ]);
+      });
+
+      it('keeps average readouts with a value of 0', async () => {
+        const store = storeWith(initialState);
+        const first = legendItemOf(Medium.districtHeating);
+        const second = legendItemOf(Medium.districtHeating, 'facility-2');
+
+        onFetchAsync(first, second);
+
+        await store.dispatch(fetchMeasurements({
+          ...defaultParameters,
+          items: [first, second],
+        }));
+
+        expect(store.getActions()).toEqual([
+          measurementRequest(),
+          measurementSuccess({
+            measurements: [
+              ...allQuantities[first.medium].map((_) => makeMeasurementResponse(first)),
+              ...allQuantities[second.medium].map((_) => makeMeasurementResponse(second))
+            ],
+            average: allQuantities[first.medium].map((_) => ({
+              ...makeMeasurementAverageResponse(),
+              values: justValues
+            })),
+          }),
         ]);
       });
 
       it('does not fetch measurements when there are not items to fetch', async () => {
         const store = storeWith(initialState);
-        const first = mockMeter(Medium.districtHeating);
-        const second = mockMeter(Medium.districtHeating);
+        const first = legendItemOf(Medium.districtHeating);
+        const second = legendItemOf(Medium.districtHeating);
 
         onFetchAsync(first, second);
 
@@ -476,17 +406,17 @@ describe('measurementActions', () => {
       });
 
       const onFetchMeasurements = async () => {
-        const meter = mockMeter(Medium.districtHeating);
+        const meter = legendItemOf(Medium.districtHeating);
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [toLegendItem(meter)],
+          items: [meter],
         }));
       };
 
     });
 
-    const onFetchAsync = (meter1: SelectionTreeMeter, meter2: SelectionTreeMeter): string[] => {
+    const onFetchAsync = (meter1: LegendItem, meter2: LegendItem): string[] => {
       const requestedUrls: string[] = [];
       const mockRestClient = new MockAdapter(axios);
 
@@ -496,62 +426,11 @@ describe('measurementActions', () => {
         requestedUrls.push(config.url!);
 
         const measurement: MeasurementApiResponse = [
-          {
-            id: meter1.id.toString(),
-            city: meter1.city,
-            address: meter1.address,
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: '1',
-            unit: 'mW',
-          },
-          {
-            id: meter2.id.toString(),
-            city: meter2.city,
-            address: meter2.address,
-            quantity: Quantity.power,
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.4353763591158477,
-              },
-            ],
-            label: '2',
-            unit: 'mW',
-          },
+          makeMeasurementResponse(meter1),
+          makeMeasurementResponse(meter2),
         ];
 
-        const average: MeasurementApiResponse = [
-          {
-            id: 'Varberg',
-            city: 'Varberg',
-            address: '',
-            quantity: Quantity.power,
-            unit: 'mW',
-            label: 'average',
-            medium: 'Electricity',
-            values: [
-              {
-                when: 1516521585107,
-                value: 0.0,
-              },
-              {
-                when: 1516521583309,
-              },
-              {
-                when: 1516521585109,
-                value: 0.55,
-              },
-            ],
-          },
-        ];
+        const average = [makeMeasurementAverageResponse()];
 
         if (config.url!.match(/^\/measurements\/average/)) {
           return [200, average];

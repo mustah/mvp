@@ -1,4 +1,4 @@
-import {flatMap, map} from 'lodash';
+import {flatMap, map, sortBy} from 'lodash';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {Maybe} from '../../../../helpers/Maybe';
@@ -164,7 +164,7 @@ export const fetchMeasurements = (measurementParameters: MeasurementParameters) 
             await Promise.all([Promise.all(meters), Promise.all(average)]);
 
           const response: MeasurementResponse = {
-            measurements: flatMap(meterResponses, 'data'),
+            measurements: sortBy(flatMap(meterResponses, 'data'), 'label'),
             average: map(
               flatMap(averageResponses, 'data'),
               removeUndefinedValues,

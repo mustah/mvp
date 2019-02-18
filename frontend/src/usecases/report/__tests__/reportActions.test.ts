@@ -2,7 +2,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
-import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {addAllToReport, addToReport, deleteItem, hideAllLines, setSelectedItems} from '../reportActions';
 import {LegendItem, ReportState} from '../reportModels';
 
@@ -95,7 +95,7 @@ describe('reportActions', () => {
         setSelectedItems({
           items: [districtHeatingLegendItem],
           media: [Medium.districtHeating],
-          quantities: [Quantity.energy]
+          quantities: allQuantities[Medium.districtHeating]
         })
       ]);
     });
@@ -114,8 +114,8 @@ describe('reportActions', () => {
         }),
         setSelectedItems({
           items: [districtHeatingLegendItem],
-          quantities: [Quantity.energy],
-          media: [Medium.districtHeating]
+          media: [Medium.districtHeating],
+          quantities: allQuantities[Medium.districtHeating]
         })
       ]);
     });
@@ -250,7 +250,7 @@ describe('reportActions', () => {
         setSelectedItems({
           items,
           media: [Medium.electricity],
-          quantities: [Quantity.energy],
+          quantities: allQuantities[Medium.electricity],
         }),
       ]);
     });

@@ -37,21 +37,10 @@ export interface Readings {
   [key: number]: PossibleReading;
 }
 
-type MeasurementValues = Array<{
+export type MeasurementValues = Array<{
   when: number;
   value?: number;
 }>;
-
-export interface MeasurementResponsePart {
-  id: string;
-  quantity: Quantity;
-  unit: string;
-  label: string;
-  city: string;
-  address: string;
-  medium: string;
-  values: MeasurementValues;
-}
 
 export interface AverageResponsePart {
   id: string;
@@ -59,6 +48,12 @@ export interface AverageResponsePart {
   unit: string;
   label: string;
   values: MeasurementValues;
+}
+
+export interface MeasurementResponsePart extends AverageResponsePart {
+  address: string;
+  city: string;
+  medium: string;
 }
 
 export type MeasurementApiResponse = MeasurementResponsePart[];
@@ -130,7 +125,7 @@ export const getDisplayModeText = (quantity: Quantity | string | undefined): str
 };
 
 export const enum Medium {
-  electricity = 'current',
+  electricity = 'electricity',
   districtHeating = 'districtHeating',
   gas = 'gas',
   hotWater = 'warmWater',
