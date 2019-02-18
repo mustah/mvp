@@ -37,12 +37,12 @@ describe('reportReducer', () => {
 
   describe('logout user', () => {
 
-    it('keeps the state', () => {
+    it('resets selection', () => {
       const state: ReportState = {...initialState, savedReports: {meterPage: {id: 'meterPage', meters: items}}};
 
       const nextState: ReportState = report(state, logoutUser(undefined));
 
-      expect(nextState).toEqual(state);
+      expect(nextState).toEqual(initialState);
     });
   });
 
