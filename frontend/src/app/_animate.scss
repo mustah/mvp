@@ -1,0 +1,12 @@
+.Animate-zoom-in {
+  animation: animate-zoom-in 0.6s
+}
+
+@keyframes animate-zoom-in {
+  from {
+    transform: scale(0)
+  }
+  to {
+    transform: scale(1)
+  }
+}

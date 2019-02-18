@@ -1,14 +1,10 @@
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {toGraphContents} from '../graphContentsMapper';
-import {MeasurementApiResponse, MeasurementResponses, Quantity} from '../measurementModels';
+import {MeasurementApiResponse, MeasurementResponse, Quantity} from '../measurementModels';
 
 describe('measurementSelectors', () => {
 
-  const emptyResponses = (): MeasurementResponses => ({
-    measurements: [],
-    average: [],
-    cities: [],
-  });
+  const emptyResponses: MeasurementResponse = {measurements: [], average: []};
 
   describe('toGraphContents', () => {
     describe('formats data for Rechart\'s LineGraph', () => {
@@ -23,7 +19,7 @@ describe('measurementSelectors', () => {
       });
 
       it('handles 0 entities gracefully', () => {
-        const graphDataFromZeroEntities: GraphContents = toGraphContents(emptyResponses());
+        const graphDataFromZeroEntities: GraphContents = toGraphContents(emptyResponses);
         expect(graphDataFromZeroEntities).toEqual(emptyGraphContents());
       });
     });
@@ -63,7 +59,7 @@ describe('measurementSelectors', () => {
           },
         ];
 
-        const graphContents: GraphContents = toGraphContents({...emptyResponses(), measurements: sameUnit});
+        const graphContents: GraphContents = toGraphContents({...emptyResponses, measurements: sameUnit});
 
         expect(graphContents.axes.left).toEqual('mW');
       });
@@ -103,7 +99,7 @@ describe('measurementSelectors', () => {
         ];
 
         const graphContents: GraphContents = toGraphContents({
-          ...emptyResponses(),
+          ...emptyResponses,
           measurements: twoDifferentUnits,
         });
 
@@ -161,7 +157,7 @@ describe('measurementSelectors', () => {
         ];
 
         const graphContents: GraphContents = toGraphContents({
-          ...emptyResponses(),
+          ...emptyResponses,
           measurements: threeDifferentUnits,
         });
 
@@ -225,7 +221,7 @@ describe('measurementSelectors', () => {
           ];
 
           const graphContents: GraphContents = toGraphContents({
-            ...emptyResponses(),
+            ...emptyResponses,
             measurements: slightlyLaterThanFirstAverage,
             average,
           });

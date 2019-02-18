@@ -3,7 +3,7 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {isDefined} from '../../../helpers/commonUtils';
+import {isDefined} from '../../../helpers/commonHelpers';
 import {Dictionary} from '../../../types/Types';
 import {
   isAlarmIconUrl,

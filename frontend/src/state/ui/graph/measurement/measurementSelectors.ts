@@ -7,7 +7,7 @@ import {
   allQuantities,
   ExistingReadings,
   Measurement,
-  MeasurementResponses,
+  MeasurementResponse,
   Medium,
   Quantity,
   Reading
@@ -45,5 +45,5 @@ export const groupMeasurementsByDate =
     };
   };
 
-export const useGraphContents = (responses: MeasurementResponses): GraphContents =>
+export const useGraphContents = (responses: MeasurementResponse): GraphContents =>
   React.useMemo<GraphContents>(() => toGraphContents(responses), [responses]);

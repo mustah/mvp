@@ -8,11 +8,12 @@ import {getDomainModelById} from '../../state/domain-models/domainModelsSelector
 import {fetchMeterDetails} from '../../state/domain-models/meter-details/meterDetailsApiActions';
 import {MeterDetails} from '../../state/domain-models/meter-details/meterDetailsModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {CallbackWithId, CallbackWithIds, uuid} from '../../types/Types';
+import {CallbackWithId, CallbackWithIds, OnClickWith, uuid} from '../../types/Types';
 import {fetchMeterMapMarker} from '../../usecases/map/mapMarkerActions';
 import {MapMarker, SelectedId} from '../../usecases/map/mapModels';
 import {syncWithMetering} from '../../usecases/meter/meterActions';
-import {selectEntryAdd} from '../../usecases/report/reportActions';
+import {addToReport} from '../../usecases/report/reportActions';
+import {LegendItem} from '../../usecases/report/reportModels';
 import {useFetchMeterAndMapMarker} from './fetchDialogDataHook';
 import './MeterDetailsContainer.scss';
 import {MeterDetailsInfoContainer} from './MeterDetailsInfoContainer';
@@ -28,7 +29,7 @@ interface StateToProps {
 interface DispatchToProps {
   fetchMeterDetails: CallbackWithIds;
   fetchMeterMapMarker: CallbackWithId;
-  selectEntryAdd: CallbackWithId;
+  addToReport: OnClickWith<LegendItem>;
   syncWithMetering: CallbackWithId;
 }
 
@@ -72,9 +73,9 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  addToReport,
   fetchMeterDetails,
   fetchMeterMapMarker,
-  selectEntryAdd,
   syncWithMetering,
 }, dispatch);
 

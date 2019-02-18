@@ -50,6 +50,9 @@ msgstr "ta bort mätare"
 msgid "add to report"
 msgstr "lägg till i rapport"
 
+msgid "add all to report"
+msgstr "lägg till alla i rapport"
+
 msgid "sync all meters on this page"
 msgstr "synka alla mätare på denna sida"
 
@@ -652,9 +655,6 @@ msgstr "under {{count}} dagar (eller mer)"
 
 #~ msgid "{{count}} gateway of your selection, are not displayed in the map"
 #~ msgstr "{{count}} gateway of your selection, are not displayed in the map"
-
-#~ msgid "add all to report"
-#~ msgstr "lägg till alla i rapport"
 
 #~ msgid "saved selections"
 #~ msgstr "sparade urval"

@@ -14,7 +14,6 @@ export const GatewayList = ({
   componentId,
   result,
   entities,
-  selectEntryAdd,
   pagination,
   entityType,
 }: GatewayListProps) => {

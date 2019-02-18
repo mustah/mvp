@@ -1,15 +1,15 @@
 @import "../../app/variables";
 
 .DropdownMenu {
-  &:hover {
-    .IconButton {
-      fill: $blue-A400 !important;
-    }
-  }
-
-  .DropdownMenu-dropdown {
+  &.isActive {
     &:hover {
-      border: 1px solid $blue-A400 !important;
+      .DropdownMenu-dropdown {
+        border: 1px solid $blue-A400 !important;
+      }
+
+      .IconButton {
+        fill: $blue-A400 !important;
+      }
     }
   }
 }
@@ -17,5 +17,9 @@
 .DropdownMenu-MenuItem {
   &:first-letter {
     text-transform: uppercase;
+  }
+
+  &.hasDivider {
+    border-top: 1px solid $border-color !important;
   }
 }

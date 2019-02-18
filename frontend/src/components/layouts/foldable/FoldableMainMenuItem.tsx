@@ -1,5 +1,6 @@
 import {default as classNames} from 'classnames';
 import * as React from 'react';
+import {useToggleVisibility} from '../../../hooks/toogleVisibilityHook';
 import {Selectable} from '../../../types/Types';
 import {MainMenuItem} from '../../../usecases/main-menu/components/menu-items/MainMenuItem';
 import {IconRightArrow} from '../../icons/IconRightArrow';
@@ -7,7 +8,6 @@ import {Column} from '../column/Column';
 import {Row, RowMiddle} from '../row/Row';
 import {FoldableProps} from './Foldable';
 import './Foldable.scss';
-import {useToggleVisibility} from '../../../hooks/toogleVisibilityHook';
 import './FoldableMainMenuItem.scss';
 
 interface Props extends FoldableProps, Required<Selectable> {

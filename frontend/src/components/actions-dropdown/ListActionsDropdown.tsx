@@ -4,12 +4,13 @@ import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import * as React from 'react';
 import {DispatchProp} from 'react-redux';
 import {branch, renderNothing} from 'recompose';
-import {routes} from '../../app/routes';
 import {actionMenuItemIconStyle, dividerStyle} from '../../app/themes';
-import {isDefined} from '../../helpers/commonUtils';
-import {history} from '../../index';
+import {isDefined} from '../../helpers/commonHelpers';
 import {translate} from '../../services/translationService';
-import {IdNamed, OnClick, OnClickWithId, RenderFunction} from '../../types/Types';
+import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
+import {OnClick, OnClickWith, OnClickWithId, RenderFunction} from '../../types/Types';
+import {toLegendItem} from '../../usecases/report/legendHelper';
+import {LegendItem} from '../../usecases/report/reportModels';
 import {connectedSuperAdminOnly} from '../hoc/withRoles';
 import {IconReport} from '../icons/IconReport';
 import {ActionMenuItem, ActionMenuItemProps} from './ActionMenuItem';
@@ -25,8 +26,8 @@ interface DeleteMeter {
 }
 
 interface Props extends DeleteMeter {
-  item: IdNamed;
-  selectEntryAdd: OnClickWithId;
+  item: Meter;
+  addToReport: OnClickWith<LegendItem>;
   syncWithMetering?: OnClickWithId;
 }
 
@@ -41,13 +42,13 @@ const SyncWithMeteringMenuItem = connectedSuperAdminOnly<ActionMenuItemProps>(Ac
 const DeleteMeterActionMenuItem = withDeleteMeterActionButton(ActionMenuItem);
 const DeleteDivider = withDeleteMeterActionButton(MyDivider);
 
-export const ListActionsDropdown = ({item: {id}, deleteMeter, selectEntryAdd, syncWithMetering}: Props) => {
+export const ListActionsDropdown = ({item, deleteMeter, addToReport, syncWithMetering}: Props) => {
+  const {id} = item;
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onAddToReport = () => {
       onClick();
-      history.push(`${routes.report}/${id}`);
-      selectEntryAdd(id);
+      addToReport(toLegendItem(item));
     };
 
     const syncMenuItemProps: ActionMenuItemProps = {

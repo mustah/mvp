@@ -1,11 +1,11 @@
-import {EXPORT_TO_EXCEL, EXPORT_TO_EXCEL_SUCCESS} from '../measurementActions';
+import {exportToExcelAction, exportToExcelSuccess} from '../measurementActions';
 import {MeasurementState} from '../measurementModels';
 import {initialState, measurement} from '../measurementReducer';
 
 describe('measurementReducer', () => {
 
   it('listens to EXPORT_TO_EXCEL', () => {
-    const actual: MeasurementState = measurement(initialState, {type: EXPORT_TO_EXCEL});
+    const actual: MeasurementState = measurement(initialState, exportToExcelAction());
     const expected: MeasurementState = {
       ...initialState,
       isExportingToExcel: true,
@@ -16,7 +16,7 @@ describe('measurementReducer', () => {
   describe('listens to EXPORT_TO_EXCEL_SUCCESS', () => {
     const actual: MeasurementState = measurement(
       {...initialState, isExportingToExcel: true},
-      {type: EXPORT_TO_EXCEL_SUCCESS}
+      exportToExcelSuccess()
     );
     const expected: MeasurementState = {
       ...initialState,

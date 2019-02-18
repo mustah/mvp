@@ -1,3 +1,4 @@
+import {default as classNames} from 'classnames';
 import {DropDownMenu, MenuItem} from 'material-ui';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
@@ -57,6 +58,7 @@ export interface DropdownMenuProps extends WithChildren, Styled {
 
 export interface MenuItemProps {
   checked?: boolean;
+  hasDivider?: boolean;
   label: string;
   onClick: OnClick;
   primaryText: string;
@@ -65,6 +67,7 @@ export interface MenuItemProps {
 
 export const DropdownMenu = ({
   children,
+  disabled,
   IconButton = IconCalendar,
   labelStyle,
   listStyle,
@@ -73,9 +76,9 @@ export const DropdownMenu = ({
   style
 }: DropdownMenuProps) => {
 
-  const renderedMenuItems = menuItems.map(({primaryText, label, value, onClick}: MenuItemProps) => (
+  const renderedMenuItems = menuItems.map(({hasDivider, primaryText, label, value, onClick}: MenuItemProps) => (
     <MenuItem
-      className="DropdownMenu-MenuItem"
+      className={classNames('DropdownMenu-MenuItem', {hasDivider})}
       key={primaryText}
       label={label}
       primaryText={primaryText}
@@ -89,9 +92,10 @@ export const DropdownMenu = ({
   const menuLabelStyle = {...menu.labelStyle, ...labelStyle};
 
   return (
-    <Row className="DropdownMenu">
+    <Row className={classNames('DropdownMenu', {isActive: !disabled})}>
       <DropDownMenu
         className="DropdownMenu-dropdown"
+        disabled={disabled}
         iconButton={<IconButton className="IconButton"/>}
         iconStyle={menu.iconStyle}
         maxHeight={300}

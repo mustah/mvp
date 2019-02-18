@@ -7,6 +7,7 @@ import {
   GridSortChangeEvent,
   GridSortSettings
 } from '@progress/kendo-react-grid';
+import {toArray} from 'lodash';
 import * as React from 'react';
 import {gridStyle} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
@@ -48,7 +49,7 @@ export const MeterList = ({
   result,
   entities,
   entityType,
-  selectEntryAdd,
+  addToReport,
   syncWithMetering,
   isFetching,
   isSuperAdmin,
@@ -75,10 +76,10 @@ export const MeterList = ({
   const renderManufacturer = ({dataItem: {manufacturer}}: GridCellProps) =>
     <td>{firstUpper(orUnknown(manufacturer))}</td>;
 
-  const renderActions = ({dataItem: {id, manufacturer, facility}}: GridCellProps) => {
+  const renderActions = ({dataItem}: GridCellProps) => {
     // TODO[!must!] this will be replaced by the common hook for confirm dialogs, created in another branch
     const [isOpen, setOpen] = React.useState<boolean>(false);
-    const item = {id, name: manufacturer};
+    const {id, facility} = dataItem;
     const openDialog = () => setOpen(true);
     const closeDialog = () => setOpen(false);
     const confirm = () => {
@@ -89,9 +90,9 @@ export const MeterList = ({
       <td>
         <RowRight className="ActionsDropdown-list">
           <ListActionsDropdown
-            item={item}
+            item={dataItem}
             deleteMeter={openDialog}
-            selectEntryAdd={selectEntryAdd}
+            addToReport={addToReport}
             syncWithMetering={syncWithMetering}
           />
           <ConfirmDialog
@@ -117,7 +118,7 @@ export const MeterList = ({
 
   const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 
-  const data = result.map((key) => entities[key]);
+  const data = toArray(entities);
 
   const gridData = {data, total};
 

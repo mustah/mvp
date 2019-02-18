@@ -22,7 +22,7 @@ import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {ComponentId} from '../../types/Types';
 import {syncMeters, syncWithMetering} from '../../usecases/meter/meterActions';
-import {selectEntryAdd} from '../../usecases/report/reportActions';
+import {addAllToReport, addToReport} from '../../usecases/report/reportActions';
 
 const mapStateToProps = (
   {
@@ -55,7 +55,8 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCreators({
   deleteMeter,
-  selectEntryAdd,
+  addAllToReport,
+  addToReport,
   syncWithMetering,
   syncMeters,
   fetchMeters,

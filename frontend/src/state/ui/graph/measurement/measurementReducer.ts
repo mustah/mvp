@@ -4,7 +4,7 @@ import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   REMOVE_SELECTED_LIST_ITEMS,
   SELECT_RESOLUTION,
-  SET_SELECTED_ENTRIES
+  SET_SELECTED_ITEMS
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
@@ -16,9 +16,9 @@ import {
   MEASUREMENT_REQUEST,
   MEASUREMENT_SUCCESS
 } from './measurementActions';
-import {MeasurementResponses, MeasurementState} from './measurementModels';
+import {MeasurementResponse, MeasurementState} from './measurementModels';
 
-export type ActionTypes = | EmptyAction<string> | Action<MeasurementResponses | Maybe<ErrorResponse>>;
+export type ActionTypes = | EmptyAction<string> | Action<MeasurementResponse | Maybe<ErrorResponse>>;
 
 export const initialState: MeasurementState = {
   isFetching: false,
@@ -27,7 +27,6 @@ export const initialState: MeasurementState = {
   measurementResponse: {
     measurements: [],
     average: [],
-    cities: [],
   },
   isExportingToExcel: false,
 };
@@ -42,7 +41,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
     case MEASUREMENT_SUCCESS:
       return {
         ...state,
-        measurementResponse: (action as Action<MeasurementResponses>).payload,
+        measurementResponse: (action as Action<MeasurementResponse>).payload,
         isFetching: false,
         isSuccessfullyFetched: true,
       };
@@ -65,7 +64,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
       };
     case MEASUREMENT_CLEAR_ERROR:
     case SELECT_RESOLUTION:
-    case SET_SELECTED_ENTRIES:
+    case SET_SELECTED_ITEMS:
     case REMOVE_SELECTED_LIST_ITEMS:
     case SEARCH:
       return initialState;

@@ -65,6 +65,7 @@ export class PeriodSelection extends React.Component<Props, State> {
         onClick: (event) => this.onSelectPeriod(event, Period.previousMonth),
       },
       {
+        hasDivider: true,
         value: Period.custom,
         label: prettyRange({period: Period.custom, customDateRange}),
         primaryText: translate('custom period'),

@@ -4,44 +4,42 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/w
 import {RootState} from '../../../reducers/rootReducer';
 import {isReportPage} from '../../../selectors/routerSelectors';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {Normalized} from '../../../state/domain-models/domainModels';
 import {OnClick, OnClickWithId} from '../../../types/Types';
-import {Legend, LegendProps} from '../components/Legend';
-import {hideAllLines, removeSelectedListItems, toggleLine, toggleSingleEntry} from '../reportActions';
+import {Legend} from '../components/Legend';
+import {deleteItem, hideAllLines, removeSelectedListItems, toggleLine} from '../reportActions';
 import {LegendItem, ReportState} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
-interface StateToProps extends ReportState, WithEmptyContentProps {
-  legendItems: Normalized<LegendItem>;
+export interface StateToProps extends ReportState, WithEmptyContentProps {
+  legendItems: LegendItem[];
   isReportPage: boolean;
 }
 
-interface DispatchToProps {
+export interface DispatchToProps {
   deleteItem: OnClickWithId;
   hideAllLines: OnClick;
   toggleLine: OnClickWithId;
   removeSelectedListItems: OnClick;
 }
 
-const LegendComponent = withEmptyContent<LegendProps & ReportState & WithEmptyContentProps>(Legend);
+const LegendComponent = withEmptyContent<DispatchToProps & StateToProps>(Legend);
 
-const mapStateToProps = ({
-  report: {hiddenLines, resolution, selectedListItems},
-  routing,
-  selectionTree: {entities},
-}: RootState): StateToProps =>
-  ({
-    legendItems: getLegendItems({selectedListItems, entities}),
+const mapStateToProps = ({report, routing}: RootState): StateToProps => {
+  const {hiddenLines, resolution, savedReports} = report;
+  const legendItems = getLegendItems(report);
+  return ({
+    legendItems,
     hiddenLines,
     isReportPage: isReportPage(routing),
-    resolution,
-    selectedListItems,
-    hasContent: selectedListItems.length > 0,
+    hasContent: legendItems.length > 0,
     noContentText: firstUpperTranslated('select meters'),
+    resolution,
+    savedReports,
   });
+};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  deleteItem: toggleSingleEntry,
+  deleteItem,
   removeSelectedListItems,
   hideAllLines,
   toggleLine,

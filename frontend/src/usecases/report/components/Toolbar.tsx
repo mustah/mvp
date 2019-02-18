@@ -7,7 +7,7 @@ import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-b
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {colors} from '../../../app/themes';
+import {bgHoverColor, colors} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
@@ -53,6 +53,7 @@ const ToolbarActionButton = (props: FlatButtonProps) => {
       className={classNames('ToolbarActionButton', props.disabled ? 'disabled' : '')}
       labelPosition="after"
       {...props}
+      hoverColor={bgHoverColor}
       labelStyle={labelStyle}
     />
   );
@@ -64,7 +65,6 @@ const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
     onClick={onClick}
     icon={<ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>}
     label={firstUpperTranslated('filter')}
-    labelStyle={{color: disabled ? colors.borderColor : colors.lightBlack}}
   />
 );
 
@@ -126,7 +126,7 @@ export const Toolbar = ({
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
-        <ResolutionSelection resolution={resolution} selectResolution={selectResolution}/>
+        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PopoverMenu
           popoverClassName="Popover-Legend"
           IconComponent={LegendActionButton}

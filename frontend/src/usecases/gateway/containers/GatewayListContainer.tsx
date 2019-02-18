@@ -19,15 +19,7 @@ import {changePage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
-import {
-  ClearErrorPaginated,
-  ComponentId,
-  ErrorResponse,
-  FetchPaginated,
-  OnClickWithId,
-  uuid
-} from '../../../types/Types';
-import {selectEntryAdd} from '../../report/reportActions';
+import {ClearErrorPaginated, ComponentId, ErrorResponse, FetchPaginated, uuid} from '../../../types/Types';
 import {GatewayList} from '../components/GatewayList';
 
 interface ListProps {
@@ -44,7 +36,6 @@ interface StateToProps extends ListProps {
 }
 
 interface DispatchToProps {
-  selectEntryAdd: OnClickWithId;
   fetchGateways: FetchPaginated;
   changePage: OnChangePage;
   clearError: ClearErrorPaginated;
@@ -115,7 +106,6 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  selectEntryAdd,
   fetchGateways,
   changePage,
   clearError: clearErrorGateways,

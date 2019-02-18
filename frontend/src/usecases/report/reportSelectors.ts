@@ -1,70 +1,79 @@
-import {normalize, schema} from 'normalizr';
+import {uniqBy} from 'lodash';
 import {createSelector} from 'reselect';
-import {isDefined} from '../../helpers/commonUtils';
-import {cityWithoutCountry} from '../../helpers/formatters';
+import {identity, isDefined} from '../../helpers/commonHelpers';
+import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
-import {Normalized, ObjectsById} from '../../state/domain-models/domainModels';
+import {MeasurementParameters} from '../../state/ui/graph/measurement/measurementActions';
 import {
-  SelectedTreeEntities,
-  SelectionTreeCity,
-  SelectionTreeEntities,
-  SelectionTreeMeter,
-} from '../../state/selection-tree/selectionTreeModels';
-import {
-  isSelectedCity,
-  isSelectedMeter,
-  MeasurementParameters
-} from '../../state/ui/graph/measurement/measurementActions';
-import {uuid} from '../../types/Types';
-import {LegendItem} from './reportModels';
+  allQuantities,
+  defaultQuantityForMedium,
+  Medium,
+  Quantity
+} from '../../state/ui/graph/measurement/measurementModels';
+import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
+import {LegendItem, Report, ReportState, SelectedReportPayload} from './reportModels';
 
-const lineSchema = [new schema.Entity('lines')];
+const orderedMedia: Medium[] = Object.keys(allQuantities) as Medium[];
 
-const selectedCityLines = (selectedIds: uuid[], cities: ObjectsById<SelectionTreeCity>): LegendItem[] =>
-  selectedIds
-    .filter(isSelectedCity)
-    .map((id: uuid) => cities[id])
-    .filter(isDefined)
-    .map(({id, name: city, medium}: SelectionTreeCity): LegendItem => ({id, city, medium}));
+const selectedReportPayloadCombiner = (legendItems: LegendItem[]): SelectedReportPayload => {
+  const itemsWithKnownMedium = legendItems.filter(({medium}) => medium !== Medium.unknown);
+  const items: LegendItem[] = uniqBy(itemsWithKnownMedium, 'id');
 
-const selectedMeterLines = (selectedIds: uuid[], meters: ObjectsById<SelectionTreeMeter>): LegendItem[] =>
-  selectedIds
-    .filter(isSelectedMeter)
-    .map((id: uuid) => meters[id])
-    .filter(isDefined)
-    .map(({id, name: facility, medium, address, city}: SelectionTreeMeter) => ({
-      id,
-      facility,
-      address,
-      city: cityWithoutCountry(city),
-      medium,
-    }));
+  const currentlyActiveMedia: Set<Medium> = new Set(
+    items.map(({medium}: LegendItem) => medium).filter(isDefined)
+  );
+
+  const activeMedia: Medium[] = orderedMedia.filter((medium) => currentlyActiveMedia.has(medium));
+
+  orderedMedia
+    .filter((medium) => currentlyActiveMedia.has(medium))
+    .forEach((activeMedium) => {
+      if (activeMedia.length < 2) {
+        activeMedia.push(activeMedium);
+      }
+    });
+
+  const media: Medium[] = orderedMedia.filter((medium) => activeMedia.includes(medium));
+
+  const quantities: Quantity[] = Array.from(new Set(media.map(defaultQuantityForMedium)));
+
+  return {items, media, quantities};
+};
+
+export const getSelectedReportPayload =
+  createSelector<LegendItem[], LegendItem[], SelectedReportPayload>(
+    identity,
+    selectedReportPayloadCombiner
+  );
 
 export const getLegendItems =
-  createSelector<SelectedTreeEntities, uuid[], SelectionTreeEntities, Normalized<LegendItem>>(
-    ({selectedListItems}) => selectedListItems,
-    ({entities}) => entities,
-    (selectedIds: uuid[], {cities, meters}: SelectionTreeEntities) => {
-      const cityLines: LegendItem[] = selectedCityLines(selectedIds, cities);
-      const meterLines: LegendItem[] = selectedMeterLines(selectedIds, meters);
-
-      return normalize([...cityLines, ...meterLines], lineSchema);
-    },
+  createSelector<ReportState, Maybe<Report>, LegendItem[]>(
+    ({savedReports}: ReportState) => Maybe.maybe(savedReports.meterPage),
+    (meterPage: Maybe<Report>) => meterPage.map(({meters}: Report) => meters).orElse([]),
   );
 
 export const getMeasurementParameters =
   createSelector<RootState, RootState, MeasurementParameters>(
-    (state) => state,
+    identity,
     ({
-      report: {resolution, selectedListItems},
+      report,
       userSelection: {userSelection: {selectionParameters}},
-      selectionTree: {entities: selectionTreeEntities},
-      ui: {indicator: {selectedQuantities: quantities}},
     }) => ({
-      quantities,
-      resolution,
-      selectedListItems,
-      selectionTreeEntities,
+      items: getLegendItems(report),
+      resolution: report.resolution,
       selectionParameters,
     })
   );
+export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Medium[]>(
+  (threshold: ThresholdQuery) => threshold && threshold.quantity,
+  (quantity) => {
+    if (quantity) {
+      return Array.from(new Set<Medium>(Object.keys(allQuantities)
+        .map((medium) => (medium as Medium))
+        .filter((medium) => Array.from(allQuantities[medium]).includes(quantity))
+      ));
+    } else {
+      return [];
+    }
+  },
+);

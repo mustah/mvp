@@ -1,13 +1,11 @@
 import * as React from 'react';
-import {routes} from '../../../app/routes';
 import {menuItemStyle} from '../../../app/themes';
 import {OpenDialogInfoButton} from '../../../components/dialog/OpenDialogInfoButton';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
-import {history} from '../../../index';
 import {firstUpperTranslated} from '../../../services/translationService';
+import {SelectionTreeViewComposite} from '../../../state/ui/selection-tree/selectionTreeModels';
 import {uuid} from '../../../types/Types';
-import {TreeViewMeterListItemProps} from '../containers/TreeViewListItemMeterContainer';
 
 const labelStyle: React.CSSProperties = {
   marginLeft: 4,
@@ -32,20 +30,14 @@ const treeViewMeterStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
-export const TreeViewListItemMeter = ({text, id, addToReport}: TreeViewMeterListItemProps) => {
-  const addMeterToReport = () => {
-    addToReport(id);
-    history.push(`${routes.report}/${id}`);
-  };
-  const selectedId: Maybe<uuid> = Maybe.maybe(id);
-
+export const TreeViewListItemMeter = ({text, id}: SelectionTreeViewComposite) => {
+  const selectedId = Maybe.maybe<uuid>(id);
   return (
     <OpenDialogInfoButton
       label={text}
       autoScrollBodyContent={true}
       iconStyle={iconStyle}
       labelStyle={labelStyle}
-      onLabelClick={addMeterToReport}
       style={treeViewMeterStyle}
       title={firstUpperTranslated('add to report')}
     >

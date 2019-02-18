@@ -1,5 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {isDefined} from '../../../helpers/commonUtils';
+import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';
 import {SEARCH} from '../../../usecases/search/searchActions';
