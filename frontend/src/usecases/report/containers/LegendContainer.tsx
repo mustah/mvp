@@ -30,6 +30,7 @@ const mapStateToProps = ({report, routing}: RootState): StateToProps => {
   return ({
     legendItems,
     hiddenLines,
+    isAllLinesHidden: report.isAllLinesHidden,
     isReportPage: isReportPage(routing),
     hasContent: legendItems.length > 0,
     noContentText: firstUpperTranslated('select meters'),

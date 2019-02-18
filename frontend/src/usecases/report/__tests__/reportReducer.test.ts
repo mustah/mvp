@@ -150,7 +150,9 @@ describe('reportReducer', () => {
 
     it('hides empty list of lines', () => {
       const state: ReportState = report(initialState, hideAllLines());
-      expect(state).toEqual(initialState);
+
+      const expected: ReportState = {...initialState, isAllLinesHidden: true};
+      expect(state).toEqual(expected);
     });
 
     it('hides single line', () => {
@@ -161,7 +163,7 @@ describe('reportReducer', () => {
 
       const state: ReportState = report(startState, hideAllLines());
 
-      const expected: ReportState = {...startState, hiddenLines: [2]};
+      const expected: ReportState = {...startState, hiddenLines: [2], isAllLinesHidden: true};
       expect(state).toEqual(expected);
     });
 
@@ -173,8 +175,25 @@ describe('reportReducer', () => {
 
       const state: ReportState = report(startState, hideAllLines());
 
-      const expected: ReportState = {...startState, hiddenLines: [1, 2]};
+      const expected: ReportState = {...startState, hiddenLines: [1, 2], isAllLinesHidden: true};
       expect(state).toEqual(expected);
+    });
+
+    it('can show all lines again all lines', () => {
+      const state: ReportState = {
+        ...initialState,
+        savedReports: {meterPage: {id: 'meterPage', meters: items}}
+      };
+
+      let nextState: ReportState = report(state, hideAllLines());
+
+      let expected: ReportState = {...state, hiddenLines: [1, 2], isAllLinesHidden: true};
+      expect(nextState).toEqual(expected);
+
+      nextState = report(nextState, hideAllLines());
+
+      expected = {...state, hiddenLines: [], isAllLinesHidden: false};
+      expect(nextState).toEqual(expected);
     });
   });
 
@@ -210,7 +229,8 @@ describe('reportReducer', () => {
     it('removes all selected and hidden list items', () => {
       const state: ReportState = {
         ...initialState,
-        hiddenLines: [5],
+        hiddenLines: items.map((it) => it.id),
+        isAllLinesHidden: true,
         savedReports: {meterPage: {id: 'meterPage', meters: items}},
       };
 

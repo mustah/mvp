@@ -16,6 +16,7 @@ export interface Report extends Identifiable {
 }
 
 export interface ReportState {
+  isAllLinesHidden: boolean;
   hiddenLines: uuid[];
   resolution: TemporalResolution;
   savedReports: ObjectsById<Report>;

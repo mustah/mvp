@@ -58,6 +58,7 @@ export const Legend = ({
   deleteItem,
   hideAllLines,
   hiddenLines,
+  isAllLinesHidden,
   isReportPage,
   legendItems,
   removeSelectedListItems,
@@ -66,7 +67,7 @@ export const Legend = ({
   const renderIconButtonsHeader = () => (
     <RowLeft>
       <RowRight title={firstUpperTranslated('hide all')}>
-        <ButtonVisibility onClick={hideAllLines}/>
+        <ButtonVisibility key={`check-all-${isAllLinesHidden}`} onClick={hideAllLines} checked={isAllLinesHidden}/>
       </RowRight>
       <ReportDeleteButton
         onClick={removeSelectedListItems}

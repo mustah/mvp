@@ -1,10 +1,10 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {TemporalResolution} from '../../../components/dates/dateModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {addAllToReport, addToReport, deleteItem, hideAllLines, setSelectedItems} from '../reportActions';
-import {LegendItem, ReportState} from '../reportModels';
+import {LegendItem} from '../reportModels';
+import {initialState as initialReportState} from '../reportReducer';
 
 describe('reportActions', () => {
   type PartialRootState = Pick<RootState, 'report'> ;
@@ -12,12 +12,6 @@ describe('reportActions', () => {
   const configureMockStore: (state: PartialRootState) => any = configureStore([thunk]);
 
   let initialState: PartialRootState;
-
-  const report: ReportState = {
-    hiddenLines: [],
-    resolution: TemporalResolution.day,
-    savedReports: {}
-  };
 
   const legendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas};
   const districtHeatingLegendItem: LegendItem = {id: 5, label: '5', medium: Medium.districtHeating};
@@ -29,7 +23,7 @@ describe('reportActions', () => {
   ];
 
   beforeEach(() => {
-    initialState = {report};
+    initialState = {report: initialReportState};
   });
 
   describe('addToReport', () => {
@@ -52,7 +46,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...report,
+          ...initialReportState,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
@@ -172,7 +166,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...report,
+          ...initialReportState,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
@@ -196,7 +190,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...report,
+          ...initialReportState,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
@@ -216,7 +210,7 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...report,
+          ...initialReportState,
           savedReports: {meterPage: {id: 'meterPage', meters: items}},
         }
       });
