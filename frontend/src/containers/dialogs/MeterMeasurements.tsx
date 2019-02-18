@@ -68,8 +68,30 @@ const measurementCell =
     ({dataItem}) =>
       <td key={dataItem.id}>{renderValue(dataItem.measurements && dataItem.measurements[quantity])}</td>;
 
-const gridColumnOfQuantity = (q: Quantity) =>
-  <GridColumn key={`measurements.${q}`} cell={measurementCell(q)} title={translate(`${q} short`)}/>;
+const smallWidth = 110;
+
+const quantityWidth: { [q in Quantity]: number } = {
+  [Quantity.temperature]: smallWidth,
+  [Quantity.externalTemperature]: smallWidth,
+  [Quantity.differenceTemperature]: smallWidth,
+  [Quantity.forwardTemperature]: smallWidth,
+  [Quantity.returnTemperature]: smallWidth,
+  [Quantity.volume]: smallWidth,
+  [Quantity.flow]: smallWidth,
+  [Quantity.energyReactive]: smallWidth,
+  [Quantity.power]: smallWidth + 30,
+  [Quantity.relativeHumidity]: smallWidth + 30,
+  [Quantity.energyReturn]: smallWidth + 30,
+  [Quantity.energy]: smallWidth + 60,
+};
+
+const gridColumnOfQuantity = (q: Quantity) => (
+  <GridColumn
+    key={`measurements.${q}`}
+    cell={measurementCell(q)}
+    title={translate(`${q} short`)}
+    width={quantityWidth[q]}
+  />);
 
 const renderCreated = (created: UnixTimestamp, hasValues: boolean) => {
   const textual = hasValues
@@ -79,29 +101,26 @@ const renderCreated = (created: UnixTimestamp, hasValues: boolean) => {
 };
 
 const MeasurementsTable = ({readings, quantities, facility}: ReadingsProps) => {
-  const renderTimestamp =
-    (quantities) =>
-      ({dataItem}) => {
-        const hasValues = quantities.length
-                          && dataItem.measurements
-                          && Object.keys(dataItem.measurements).length === quantities.length;
-        return renderCreated(dataItem.id, hasValues);
-      };
+  const renderTimestamp = (quantities: Quantity[]) =>
+    ({dataItem}) => {
+      const hasValues = quantities.length
+                        && dataItem.measurements
+                        && Object.keys(dataItem.measurements).length === quantities.length;
+      return renderCreated(dataItem.id, hasValues);
+    };
 
   const renderFacility = () => <td>{facility}</td>;
 
   return (
-    <Grid
-      scrollable="none"
-      data={readings}
-    >
+    <Grid scrollable="none" data={readings}>
       <GridColumn
         cell={renderTimestamp(quantities)}
         title={translate('readout')}
         className="left-most"
         headerClassName="left-most"
+        width={136}
       />
-      <GridColumn cell={renderFacility} title={translate('facility')}/>
+      <GridColumn cell={renderFacility} title={translate('facility')} width={150}/>
       {quantities.map(gridColumnOfQuantity)}
     </Grid>
   );
