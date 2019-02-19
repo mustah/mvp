@@ -23,7 +23,7 @@ export const MainMenuToggleIcon = ({onClick, isSideMenuOpen}: Props) => {
     style,
     onClick,
     color: colors.darkBlue,
-    hoverColor: colors.blue,
+    hoverColor: colors.blueA700,
   };
 
   const renderArrow = isSideMenuOpen

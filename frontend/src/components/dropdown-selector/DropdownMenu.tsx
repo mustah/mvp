@@ -43,7 +43,7 @@ const menu: {[name: string]: React.CSSProperties} = {
     borderWidth: 1,
     borderRadius,
   },
-  selectedMenuItemStyle: {color: colors.blue},
+  selectedMenuItemStyle: {color: colors.blueA700},
   underlineStyle: {border: 'none'},
 };
 

@@ -8,7 +8,7 @@
     margin-top: 6px;
 
     $day-width-height: 39px;
-    $range-bg-color: rgba($blue-A400, 0.7);
+    $range-bg-color: rgba($blue-A700, 0.7);
 
     .CalendarDay__default {
       width: $day-width-height !important;
@@ -89,10 +89,10 @@
     border-radius: 20px;
 
     &:hover {
-      border: 1px solid $blue-A400;
+      border: 1px solid $blue-A700;
 
       .DayPickerNavigation_svg__horizontal {
-        fill: $blue-A400;
+        fill: $blue-A700;
       }
     }
 

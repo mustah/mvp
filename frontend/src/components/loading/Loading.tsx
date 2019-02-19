@@ -12,7 +12,7 @@ export const LoadingLarge = () => (
     size={60}
     thickness={4}
     style={loadingStyle}
-    color={colors.blue}
+    color={colors.blueA700}
   />
 );
 
@@ -25,6 +25,6 @@ export const LoadingSmall = () => (
     size={24}
     thickness={2}
     style={smallLoadingStyle}
-    color={colors.blue}
+    color={colors.blueA700}
   />
 );

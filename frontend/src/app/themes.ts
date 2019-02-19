@@ -25,10 +25,10 @@ export const colors = {
   blue100: '#b3e5fc',
   blue50: '#e1f5fe',
   blueA400: '#00b0ff',
-
+  blueA700: '#0091ea',
   darkBlue: '#006da3',
+
   darkGreen: '#4caf50',
-  blue: '#00b0ff',
   orange: '#ff9800',
   red: '#e84d6f',
   secondaryBg: '#e10050',
@@ -67,17 +67,17 @@ export const mvpTheme = getMuiTheme({
     bodyColor: darkBlack,
   },
   flatButton: {
-    primaryTextColor: colors.blue,
+    primaryTextColor: colors.blueA700,
   },
   listItem: {
     nestedLevelDepth: 14,
   },
   menuItem: {
     hoverColor: colors.blue50,
-    selectedTextColor: colors.blue,
+    selectedTextColor: colors.blueA700,
   },
   raisedButton: {
-    primaryColor: colors.blue,
+    primaryColor: colors.blueA700,
   }
 });
 
@@ -89,9 +89,9 @@ export const iconStyle: React.CSSProperties = {
   height: 30,
 };
 
-export const iconSizeLarge: React.CSSProperties = {
-  width: 28,
-  height: 28,
+export const iconSizeMedium: React.CSSProperties = {
+  width: 26,
+  height: 26,
 };
 
 export const actionMenuItemIconStyle: React.CSSProperties = {
@@ -171,12 +171,12 @@ export const dropdownStyle: Styles = {
 };
 
 export const underlineFocusStyle = {
-  borderColor: colors.blue,
+  borderColor: colors.blueA700,
   borderWidth: 2,
 };
 
 export const floatingLabelFocusStyle = {
-  color: colors.blue,
+  color: colors.blueA700,
 };
 
 export const paperStyle: React.CSSProperties = {
@@ -198,7 +198,7 @@ export const cardStyle: React.CSSProperties = {
 };
 
 export const buttonStyle: React.CSSProperties = {
-  backgroundColor: colors.blue,
+  backgroundColor: colors.blueA700,
   color: colors.white,
 };
 

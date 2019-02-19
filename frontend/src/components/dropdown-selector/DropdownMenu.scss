@@ -4,11 +4,11 @@
   &.isActive {
     &:hover {
       .DropdownMenu-dropdown {
-        border: 1px solid $blue-A400 !important;
+        border: 1px solid $blue-A700 !important;
       }
 
       .IconButton {
-        fill: $blue-A400 !important;
+        fill: $blue-A700 !important;
       }
     }
   }

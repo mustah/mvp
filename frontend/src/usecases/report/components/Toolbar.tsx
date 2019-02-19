@@ -7,7 +7,7 @@ import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-b
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
-import {bgHoverColor, colors} from '../../../app/themes';
+import {bgHoverColor, colors, iconSizeMedium} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
@@ -29,43 +29,52 @@ const roundedIconStyle: React.CSSProperties = {
   borderRadius: 44 / 2,
 };
 
-const ToolbarIconButton = ({children, isSelected, onClick, tooltip}: IconButtonProps & Selectable) => (
+const labelStyle: React.CSSProperties = {
+  fontWeight: 'bold',
+  fontSize: 12
+};
+
+const ToolbarIconButton = ({
+  children,
+  disabled,
+  iconStyle,
+  isSelected,
+  onClick,
+  style,
+  tooltip,
+}: IconButtonProps & Selectable) => (
   <IconButton
+    iconStyle={iconStyle}
     onClick={onClick}
-    className={classNames('ToolbarIconButton', {isSelected})}
+    className={classNames('ToolbarIconButton', disabled ? 'disabled' : '', {isSelected})}
     tooltip={tooltip}
     tooltipPosition="bottom-center"
-    style={roundedIconStyle}
+    style={{...roundedIconStyle, ...style}}
   >
     {children}
   </IconButton>
 );
 
-const ToolbarActionButton = (props: FlatButtonProps) => {
-  const labelStyle: React.CSSProperties = {
-    fontWeight: 'bold',
-    fontSize: 12,
-    ...props.labelStyle,
-  };
-
-  return (
-    <FlatButton
-      className={classNames('ToolbarActionButton', props.disabled ? 'disabled' : '')}
-      labelPosition="after"
-      {...props}
-      hoverColor={bgHoverColor}
-      labelStyle={labelStyle}
-    />
-  );
-};
+const ToolbarActionButton = (props: FlatButtonProps) => (
+  <FlatButton
+    className={classNames('ToolbarActionButton', props.disabled ? 'disabled' : '')}
+    labelPosition="after"
+    {...props}
+    hoverColor={bgHoverColor}
+    labelStyle={labelStyle}
+  />
+);
 
 const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
-  <ToolbarActionButton
+  <ToolbarIconButton
     disabled={disabled}
+    iconStyle={iconSizeMedium}
     onClick={onClick}
-    icon={<ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>}
-    label={firstUpperTranslated('filter')}
-  />
+    style={{marginRight: 16}}
+    tooltip={firstUpperTranslated('filter')}
+  >
+    <ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>
+  </ToolbarIconButton>
 );
 
 const anchorOrigin: origin = {horizontal: 'left', vertical: 'top'};
@@ -95,38 +104,42 @@ export const Toolbar = ({
       <Row>
         <RowMiddle className="Toolbar-ViewSettings">
           <ToolbarIconButton
+            iconStyle={iconSizeMedium}
+            isSelected={view === ToolbarView.graph}
             onClick={selectGraph}
             tooltip={firstUpperTranslated('graph')}
-            isSelected={view === ToolbarView.graph}
           >
-            <EditorShowChart color={colors.lightBlack}/>
+            <EditorShowChart color={colors.lightBlack} style={iconSizeMedium}/>
           </ToolbarIconButton>
           <ToolbarIconButton
+            iconStyle={iconSizeMedium}
+            isSelected={view === ToolbarView.table}
             onClick={selectTable}
             tooltip={firstUpperTranslated('table')}
-            isSelected={view === ToolbarView.table}
           >
-            <EditorFormatListBulleted color={colors.lightBlack} hoverColor={colors.iconHover}/>
+            <EditorFormatListBulleted color={colors.lightBlack}/>
           </ToolbarIconButton>
         </RowMiddle>
 
         <RowMiddle>
           <ToolbarActionButton
             disabled={true}
+            style={{minWidth: 44}}
             icon={<ContentSave color={colors.borderColor}/>}
-            label={firstUpperTranslated('save report')}
           />
-          <ToolbarActionButton
+          <ToolbarIconButton
+            iconStyle={iconSizeMedium}
             disabled={isFetching || isExportingToExcel || !hasMeasurements}
             onClick={excelExport}
-            icon={<CloudDownload color={colors.lightBlack}/>}
-            label={firstUpperTranslated('export to excel')}
-          />
+            style={{marginLeft: 16}}
+            tooltip={firstUpperTranslated('export to excel')}
+          >
+            <CloudDownload color={colors.lightBlack} hoverColor={colors.iconHover}/>
+          </ToolbarIconButton>
         </RowMiddle>
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
-        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PopoverMenu
           popoverClassName="Popover-Legend"
           IconComponent={LegendActionButton}
@@ -135,6 +148,7 @@ export const Toolbar = ({
           targetOrigin={targetOrigin}
           renderPopoverContent={renderPopoverContent}
         />
+        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
       </RowRight>
     </RowSpaceBetween>
   );

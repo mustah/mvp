@@ -9,7 +9,7 @@ interface VisibilityProps extends Clickable {
   checked?: boolean;
 }
 
-const iconStyle: React.CSSProperties = {fill: colors.blue};
+const iconStyle: React.CSSProperties = {fill: colors.blueA700};
 
 const HiddenIcon = <ActionVisibilityOff/>;
 const VisibleIcon = <ActionVisibility/>;
