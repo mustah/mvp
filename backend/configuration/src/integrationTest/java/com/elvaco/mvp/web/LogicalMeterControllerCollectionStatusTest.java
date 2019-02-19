@@ -15,6 +15,7 @@ import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 
 import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
@@ -27,6 +28,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
+@Ignore("Should work on another endpoint")
 public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest {
 
   @After

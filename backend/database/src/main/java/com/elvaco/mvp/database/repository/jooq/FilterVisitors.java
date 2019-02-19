@@ -1,6 +1,8 @@
 package com.elvaco.mvp.database.repository.jooq;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 
@@ -26,6 +28,12 @@ public class FilterVisitors {
     return new LogicalMeterFilterVisitor(filterDecorators(dsl, parser));
   }
 
+  public static FilterAcceptor logicalMeterWithCollectionPercentage(DSLContext dsl,
+    MeasurementThresholdParser parser) {
+    return new LogicalMeterFilterVisitor(Stream.concat(filterDecorators(dsl, parser).stream(),
+      Stream.of(new  CollectionPercentageFilterVisitor(dsl))).collect(Collectors.toList()));
+  }
+
   public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {
     return new GatewayFilterVisitor(dsl, filterDecorators(dsl, parser));
   }
@@ -37,8 +45,7 @@ public class FilterVisitors {
     return List.of(
       new MeasurementStatsFilterVisitor(parser),
       new MeterAlarmLogFilterVisitor(dsl),
-      new PhysicalMeterStatusLogFilterVisitor(dsl),
-      new CollectionPercentageFilterVisitor(dsl)
+      new PhysicalMeterStatusLogFilterVisitor(dsl)
     );
   }
 }

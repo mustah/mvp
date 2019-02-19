@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
@@ -63,23 +64,25 @@ class LogicalMeterQueryDslJpaRepository
     "gatewaySerial", GATEWAY.SERIAL,
     "secondaryAddress", PHYSICAL_METER.ADDRESS,
     "medium", MEDIUM.NAME,
-    "collectionPercentage", COLLECTION_PERCENTAGE,
     "reported", PHYSICAL_METER_STATUS_LOG.STATUS,
     "alarm", METER_ALARM_LOG.MASK
   );
 
   private final DSLContext dsl;
   private final FilterAcceptor logicalMeterFilters;
+  private final MeasurementThresholdParser measurementThresholdParser;
 
   @Autowired
   LogicalMeterQueryDslJpaRepository(
     EntityManager entityManager,
     DSLContext dsl,
-    FilterAcceptor logicalMeterFilters
+    FilterAcceptor logicalMeterFilters,
+    MeasurementThresholdParser measurementThresholdParser
   ) {
     super(entityManager, LogicalMeterEntity.class);
     this.dsl = dsl;
     this.logicalMeterFilters = logicalMeterFilters;
+    this.measurementThresholdParser = measurementThresholdParser;
   }
 
   @Override
@@ -149,7 +152,7 @@ class LogicalMeterQueryDslJpaRepository
       LOGICAL_METER.CREATED,
       MEDIUM.NAME,
       GATEWAY.SERIAL,
-      COLLECTION_PERCENTAGE,
+      DSL.field("null",Double.class).as(COLLECTION_PERCENTAGE.getName()),
       PHYSICAL_METER_STATUS_LOG.STATUS,
       PHYSICAL_METER.MANUFACTURER,
       PHYSICAL_METER.ADDRESS,
@@ -219,8 +222,8 @@ class LogicalMeterQueryDslJpaRepository
       DSL.coalesce(COLLECTION_PERCENTAGE, 0)
     ).distinctOn(LOGICAL_METER.ID)
       .from(LOGICAL_METER);
-
-    logicalMeterFilters.accept(toFilters(parameters)).andJoinsOn(query);
+    FilterVisitors.logicalMeterWithCollectionPercentage(dsl,measurementThresholdParser)
+      .accept(toFilters(parameters)).andJoinsOn(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
   }
