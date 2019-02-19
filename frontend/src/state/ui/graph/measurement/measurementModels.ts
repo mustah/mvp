@@ -189,8 +189,6 @@ export const allQuantities: { [m in Medium]: Quantity[] } = {
   [Medium.unknown]: [],
 };
 
-export const defaultQuantityForMedium = (medium: Medium): Quantity => allQuantities[medium][0];
-
 export interface MeterMeasurementsState {
   isFetching: boolean;
   page: number;

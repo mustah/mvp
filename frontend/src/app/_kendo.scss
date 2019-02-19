@@ -91,6 +91,39 @@ $pager-number-hovered-text: $primary-fg-active;
   }
 }
 
+.Grouping-grid {
+  .GroupHeader {
+    height: 44px;
+    background-color: $light-grey;
+
+    td {
+      padding: $xl-space 0 $sm-space $space;
+      border-top: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
+    }
+  }
+
+  .k-grid {
+    .k-grouping-header {
+      display: none;
+    }
+  }
+
+  th {
+    border-bottom-width: 0;
+
+    &.left-most {
+      padding-left: $xs-space;
+    }
+  }
+
+  td {
+    &.left-most {
+      padding-left: $xs-space;
+    }
+  }
+}
+
 /* tree view */
 $treeview-item-padding-x: 0;
 $treeview-item-padding-y: 0;

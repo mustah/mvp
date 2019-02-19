@@ -18,6 +18,7 @@
     ],
     "no-submodule-imports": [
       true,
+      "@progress",
       "assets",
       "redux-auth-wrapper",
       "history",
