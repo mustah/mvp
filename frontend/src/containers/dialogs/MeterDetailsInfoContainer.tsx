@@ -9,7 +9,7 @@ import {ErrorLabel} from '../../components/texts/ErrorLabel';
 import {CityInfo} from '../../components/texts/Labels';
 import {BoldFirstUpper} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
-import {formatCollectionPercentage} from '../../helpers/formatters';
+import {formatCollectionPercentage, formatReadInterval} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
@@ -24,16 +24,6 @@ import {CallbackWithId} from '../../types/Types';
 import {getUser} from '../../usecases/auth/authSelectors';
 import {useFetchOrganisation} from './fetchDialogDataHook';
 import {Info, SuperAdminInfo} from './Info';
-
-const renderReadInterval = (minutes: number | undefined): string => {
-  if (!minutes) {
-    return translate('unknown');
-  } else if (minutes >= 60) {
-    return (minutes / 60) + translate('hour in short');
-  } else {
-    return minutes + translate('minute in short');
-  }
-};
 
 interface OwnProps {
   meter: MeterDetails;
@@ -118,7 +108,7 @@ const MeterDetailsInfo = ({
           <Subtitle>{translate('collection')}</Subtitle>
         </Column>
         <Info className="First-column" label={translate('resolution')}>
-          <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
+          <BoldFirstUpper>{formatReadInterval(readIntervalMinutes)}</BoldFirstUpper>
         </Info>
         <Info label={translate('collection percentage')}>
           <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>

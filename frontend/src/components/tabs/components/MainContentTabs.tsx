@@ -14,6 +14,7 @@ import {
 } from '../../../types/Types';
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
+import {CollectionStatContentContainer} from '../../../usecases/collection/containers/CollectionStatContentContainer';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
@@ -82,6 +83,7 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
           <Tab tab={TabName.list} title={translate('list')}/>
           <Tab tab={TabName.map} title={translate('map')}/>
+          <Tab tab={TabName.collection} title={translate('collection')}/>
         </TabHeaders>
       </TabTopBar>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
@@ -94,6 +96,9 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
             <DetailsDialog {...dialogProps}/>
           </>
         </RetryLoader>
+      </TabContent>
+      <TabContent tab={TabName.collection} selectedTab={selectedTab}>
+        {selectedTab === TabName.collection && <CollectionStatContentContainer/>}
       </TabContent>
     </Tabs>
   );

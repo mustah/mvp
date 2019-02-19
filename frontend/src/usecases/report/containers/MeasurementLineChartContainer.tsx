@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {
+  AxisDomain,
   CartesianGrid,
   ContentRenderer,
   LabelProps,
@@ -70,6 +71,8 @@ interface GraphContentProps {
   setTooltipPayload: OnClick;
 }
 
+const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
+
 const renderGraphContents = (
   {lines, axes: {left, right}}: GraphContents,
   outerHiddenKeys,
@@ -124,7 +127,7 @@ const LineChartComponent =
         >
           <XAxis
             dataKey="name"
-            domain={['dataMin', 'dataMax']}
+            domain={domains}
             scale="time"
             tickFormatter={shortTimestamp}
             type="number"

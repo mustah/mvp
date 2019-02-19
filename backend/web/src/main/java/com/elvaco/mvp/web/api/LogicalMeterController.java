@@ -80,7 +80,8 @@ public class LogicalMeterController {
 
   @GetMapping("/stats/date")
   public List<CollectionStatsPerDateDto> collectionStatsPerDate(
-    @RequestParam MultiValueMap<String, String> requestParams) {
+    @RequestParam MultiValueMap<String, String> requestParams
+  ) {
     return logicalMeterUseCases.findAllCollectionStatsPerDate(
       RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)
     );

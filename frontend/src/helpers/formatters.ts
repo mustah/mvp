@@ -1,5 +1,5 @@
 import {default as numeral} from 'numeral';
-import {firstUpper} from '../services/translationService';
+import {firstUpper, translate} from '../services/translationService';
 import {momentAtUtcPlusOneFrom} from './dateHelpers';
 
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
@@ -34,4 +34,14 @@ export const round = (num: number | string, format: string): string =>
 export const cityWithoutCountry = (city: string): string => {
   const cityMatchParts = city.match(/[^,]+,(.+)/);
   return firstUpper(cityMatchParts === null ? city : cityMatchParts[1]);
+};
+
+export const formatReadInterval = (minutes: number | undefined): string => {
+  if (!minutes) {
+    return translate('unknown');
+  } else if (minutes >= 60) {
+    return (minutes / 60) + translate('hour in short');
+  } else {
+    return minutes + translate('minute in short');
+  }
 };

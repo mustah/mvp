@@ -21,6 +21,8 @@ import {UserSelectionState} from '../state/user-selection/userSelectionModels';
 import {userSelection} from '../state/user-selection/userSelectionReducer';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
+import {CollectionState} from '../usecases/collection/collectionModels';
+import {collection} from '../usecases/collection/collectionReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/reportModels';
@@ -44,6 +46,7 @@ export interface RootState {
   map: MapState;
   search: SearchState;
   previousSession: PreviousSessionState;
+  collection: CollectionState;
 }
 
 export type AppState = RootState | undefined;
@@ -79,4 +82,5 @@ export const rootReducer: Reducer<undefined | ((AppState | undefined) & Persiste
     map,
     search,
     previousSession,
+    collection,
   });

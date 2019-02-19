@@ -4,6 +4,7 @@ import {EmptyAction} from 'typesafe-actions/dist/types';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
+import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {QueryParameter} from '../../usecases/search/searchModels';
@@ -15,6 +16,7 @@ import {
   setThresholdAction,
 } from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
+import {CollectionStat} from './collection-stat/collectionStatModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
 import {
   domainModelsClearError,
@@ -164,6 +166,31 @@ const reducerFor = <T extends Identifiable>(
 
 const identity = (state, action, endPoint) => state;
 
+const collectionStateReducer = <T extends Identifiable>(
+  state: NormalizedState<T> = initialDomain<T>(),
+  action: ActionTypes<T>,
+): NormalizedState<T> =>
+  collectionResetReducer<NormalizedState<T>>(state, action, initialDomain<T>());
+
+export const collectionResetReducer = <S>(
+  state: S,
+  {type}: EmptyAction<string>,
+  initialState: S,
+): S => {
+  switch (type) {
+    case getType(setThresholdAction):
+    case SELECT_SAVED_SELECTION:
+    case ADD_PARAMETER_TO_SELECTION:
+    case DESELECT_SELECTION:
+    case RESET_SELECTION:
+    case getType(logoutUser):
+    case getType(setCollectionTimePeriod):
+      return initialState;
+    default:
+      return state;
+  }
+};
+
 const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
@@ -254,6 +281,12 @@ export const userSelections = reducerFor<UserSelection>(
   resetStateOnLogoutReducer
 );
 
+export const collectionStats = reducerFor<CollectionStat>(
+  'collectionStats',
+  EndPoints.collectionStatDate,
+  collectionStateReducer
+);
+
 export const domainModels = combineReducers<DomainModelsState>({
   gatewayMapMarkers,
   meters,
@@ -263,5 +296,6 @@ export const domainModels = combineReducers<DomainModelsState>({
   quantities,
   userSelections,
   users,
+  collectionStats,
   mediums,
 });

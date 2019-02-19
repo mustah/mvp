@@ -1,56 +1,33 @@
 import {default as classNames} from 'classnames';
-import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
-import ContentSave from 'material-ui/svg-icons/content/save';
 import EditorFormatListBulleted from 'material-ui/svg-icons/editor/format-list-bulleted';
 import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
 import {colors, iconSizeMedium} from '../../../app/themes';
-import {ToolbarActionButton} from '../../../components/buttons/ToolbarActionButton';
 import {ToolbarIconButton} from '../../../components/buttons/ToolbarIconButton';
 import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
-import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
-import {IconProps} from '../../../components/popover/PopoverMenu';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {Clickable} from '../../../types/Types';
-import {Props} from '../containers/ToolbarContainer';
-import './Toolbar.scss';
+import './CollectionToolbar.scss';
+import {Props} from '../containers/CollectionToolbarContainer';
 
-const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
-  <ToolbarIconButton
-    disabled={disabled}
-    iconStyle={iconSizeMedium}
-    onClick={onClick}
-    style={{marginRight: 16}}
-    tooltip={firstUpperTranslated('filter')}
-  >
-    <ContentFilterList color={disabled ? colors.borderColor : colors.lightBlack}/>
-  </ToolbarIconButton>
-);
-
-export const Toolbar = ({
+export const CollectionToolbar = ({
   changeToolbarView,
-  hasLegendItems,
-  hasMeasurements,
-  resolution,
-  selectResolution,
-  showHideLegend,
+  hasCollectionStats,
   exportToExcel,
   isFetching,
-  isExportingToExcel,
   view,
-  setReportTimePeriod,
+  setCollectionTimePeriod,
   timePeriod,
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
   const excelExport = () => exportToExcel();
-  const selectPeriod = (period: Period) => setReportTimePeriod({period});
-  const setCustomDateRange = (customDateRange: DateRange) => setReportTimePeriod({
+  const selectPeriod = (period: Period) => setCollectionTimePeriod({period});
+  const setCustomDateRange = (customDateRange: DateRange) => setCollectionTimePeriod({
     period: Period.custom,
     customDateRange
   });
@@ -80,14 +57,9 @@ export const Toolbar = ({
         </RowMiddle>
 
         <RowMiddle>
-          <ToolbarActionButton
-            disabled={true}
-            style={{minWidth: 44}}
-            icon={<ContentSave color={colors.borderColor}/>}
-          />
           <ToolbarIconButton
             iconStyle={iconSizeMedium}
-            disabled={isFetching || isExportingToExcel || !hasMeasurements}
+            disabled={isFetching || !hasCollectionStats}
             onClick={excelExport}
             style={{marginLeft: 16}}
             tooltip={firstUpperTranslated('export to excel')}
@@ -98,16 +70,14 @@ export const Toolbar = ({
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
-        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
-          disabled={!hasLegendItems}
+          disabled={!hasCollectionStats}
           customDateRange={customDateRange}
           period={timePeriod.period}
           selectPeriod={selectPeriod}
           setCustomDateRange={setCustomDateRange}
           style={{marginBottom: 0, marginLeft: 0}}
         />
-        <LegendActionButton onClick={showHideLegend} disabled={!hasLegendItems}/>
       </RowRight>
     </RowSpaceBetween>
   );

@@ -8329,6 +8329,13 @@ react-portal@^4.1.5:
   dependencies:
     prop-types "^15.5.8"
 
+react-redux-typescript@^3.0.0-rc.3:
+  version "3.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/react-redux-typescript/-/react-redux-typescript-3.0.0-rc.3.tgz#8f562c15fcd13afde476f28b6484e4f0359f8b79"
+  integrity sha512-p6OjEYWin8nwyoODuYqVXKLEQ1b4jMStDu0sBKPwLr9TFIGL6mulU+fI3KZTbqLczkJSLh0QTR9vS6kw8l8XmA==
+  dependencies:
+    typesafe-actions "1.0.0"
+
 react-redux@^5.0.7:
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.7.tgz#0dc1076d9afb4670f993ffaef44b8f8c1155a4c8"
@@ -10068,15 +10075,27 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typesafe-actions@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-2.2.0.tgz#2d2d8e403745446852f9f88ebf45ec07fa58c0fe"
-  integrity sha512-qjrFDl6S2yejKEz0M2c3c5D5z8sGJTjma94O9kRHStiqauXP9dKUM0Nbdmn90HCZBZl3jzFNT21bOtxRfCkc0w==
+typesafe-actions@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-1.0.0.tgz#9bd4b9e250399e818fd3dbf0235fa21972cda509"
+  integrity sha512-L7wXh1nm07KjmE3nej0NJNHx5/Bc6Q7fIazfnqHkP97WLieEDBxXDCeMT98KSrtwbCneO14xQXokEPuW9sNG5w==
+
+typesafe-actions@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-3.1.0.tgz#02210286145939b3b1ead2d71829a8b588592706"
+  integrity sha512-ChLrqMj6DVf8cVKxeIjp6EyA9AyJWJfg00MTuQjDf3MVW4si09P3BQW8JuWQA9Ag3vcRVHzUCPCvaXLa4RKsSQ==
+  optionalDependencies:
+    typescript "3.3.3"
 
 typescript@2.8.3:
   version "2.8.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.8.3.tgz#5d817f9b6f31bb871835f4edf0089f21abe6c170"
   integrity sha512-K7g15Bb6Ra4lKf7Iq2l/I5/En+hLIHmxWZGq3D4DIRNFxMNV6j2SHSvDOqs2tGd4UvD/fJvrwopzQXjLrT7Itw==
+
+typescript@3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.3.tgz#f1657fc7daa27e1a8930758ace9ae8da31403221"
+  integrity sha512-Y21Xqe54TBVp+VDSNbuDYdGw0BpoR/Q6wo/+35M8PAU0vipahnyduJWirxxdxjsAkS7hue53x2zp8gz7F05u0A==
 
 ua-parser-js@^0.7.18, ua-parser-js@^0.7.9:
   version "0.7.19"

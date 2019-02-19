@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CollectionStatsDto {
   @Nullable
-  public UUID logicalMeterId;
+  public UUID id;
   @Nullable
   public String facility;
   @Nullable

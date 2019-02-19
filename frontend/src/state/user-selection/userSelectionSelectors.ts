@@ -5,7 +5,7 @@ import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {getTranslationOrName} from '../../helpers/translations';
 import {
-  encodedUriParametersFrom,
+  encodedUriParametersFrom, entityApiParametersCollectionStatFactory,
   EntityApiParametersFactory,
   entityApiParametersGatewaysFactory,
   entityApiParametersMetersFactory,
@@ -146,6 +146,8 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     },
   );
 
+export const getPaginatedCollectionStatParameters = getPaginatedParameters(entityApiParametersCollectionStatFactory);
+
 export const getPaginatedMeterParameters = getPaginatedParameters(entityApiParametersMetersFactory);
 
 export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiParametersGatewaysFactory);
@@ -158,6 +160,8 @@ export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiPar
 }));
 
 export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
+
+export const getCollectionStatParameters = getParameters(entityApiParametersCollectionStatFactory);
 
 export const getSelectedPeriod =
   createSelector<UserSelection, SelectionInterval, {period: Period, customDateRange: Maybe<DateRange>}>(

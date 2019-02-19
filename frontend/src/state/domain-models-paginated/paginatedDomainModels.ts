@@ -1,5 +1,6 @@
 import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
+import {CollectionStatFacilityState} from '../domain-models/collection-stat/collectionStatModels';
 import {ApiRequestSortingOptions, ApiResultSortingOptions} from '../ui/pagination/paginationModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
@@ -7,6 +8,7 @@ import {MetersState} from './meter/meterModels';
 export interface PaginatedDomainModelsState {
   meters: MetersState;
   gateways: GatewaysState;
+  collectionStatFacilities: CollectionStatFacilityState;
 }
 
 export interface NormalizedPaginatedResult {

@@ -6,9 +6,13 @@ import {
   MeterListStateToProps
 } from '../../components/meters/MeterListContent';
 import {RootState} from '../../reducers/rootReducer';
-import {clearErrorMeters, deleteMeter, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {
+  clearErrorMeters,
+  deleteMeter,
+  fetchMeters,
+  sortTableMeters
+} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {sortTable} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
   getPageError,
   getPageIsFetching,
@@ -62,7 +66,7 @@ const mapDispatchToProps = (dispatch): MeterListDispatchToProps => bindActionCre
   fetchMeters,
   changePage,
   clearError: clearErrorMeters,
-  sortTable,
+  sortTable: sortTableMeters,
 }, dispatch);
 
 export const MeterListContainer =
