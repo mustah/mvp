@@ -8,7 +8,6 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageLayout} from '../../../containers/PageLayout';
-import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
@@ -22,7 +21,6 @@ export const ReportPage = () => (
       <MainTitle>{translate('report')}</MainTitle>
       <Row>
         <SummaryContainer/>
-        <PeriodContainer/>
       </Row>
     </RowSpaceBetween>
 

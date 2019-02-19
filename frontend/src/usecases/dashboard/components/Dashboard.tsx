@@ -3,7 +3,6 @@ import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels'
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageLayout} from '../../../containers/PageLayout';
-import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {DashboardProps} from '../containers/DashboardContainer';
@@ -18,7 +17,6 @@ export const Dashboard = ({dashboard, isFetching, meterMapMarkers}: DashboardPro
         <MainTitle>{translate('dashboard')}</MainTitle>
         <Row>
           <SummaryContainer/>
-          <PeriodContainer/>
         </Row>
       </Row>
 

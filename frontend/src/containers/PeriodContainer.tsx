@@ -19,6 +19,11 @@ interface DispatchToProps {
   setCustomDateRange: OnSelectCustomDateRange;
 }
 
+const style: React.CSSProperties = {
+  marginTop: 0,
+  marginBottom: 0,
+};
+
 const PeriodComponent =
   ({selectPeriod, period, setCustomDateRange, customDateRange}: StateToProps & DispatchToProps) => (
     <PeriodSelection
@@ -26,6 +31,7 @@ const PeriodComponent =
       period={period}
       setCustomDateRange={setCustomDateRange}
       customDateRange={customDateRange}
+      style={style}
     />);
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

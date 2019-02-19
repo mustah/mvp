@@ -11,6 +11,7 @@ import {bgHoverColor, colors, iconSizeMedium} from '../../../app/themes';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
+import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable, Selectable} from '../../../types/Types';
@@ -150,6 +151,7 @@ export const Toolbar = ({
           renderPopoverContent={renderPopoverContent}
         />
         <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
+        <PeriodContainer/>
       </RowRight>
     </RowSpaceBetween>
   );
