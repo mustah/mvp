@@ -27,7 +27,7 @@
 
         &:hover {
           .TabUnderline {
-            border-top: solid $underline-height $blue-A400;
+            border-top: solid $underline-height $blue-A700;
           }
         }
       }
@@ -44,7 +44,7 @@
       border-top-right-radius: $underline-height * 2;
 
       &.isSelected {
-        border-top: solid $underline-height $blue-A400;
+        border-top: solid $underline-height $blue-A700;
       }
     }
   }
@@ -57,7 +57,7 @@
 
     .Tabs-DropdownMenus {
       align-self: center;
-      padding-right: $space;
+      padding-right: $sm-space;
       margin-top: 1px;
     }
   }
