@@ -85,6 +85,11 @@ const toSortParameters = (sort: ApiRequestSortingOptions[] | undefined): Encoded
     )
     : [];
 
+const defaultPeriod: CurrentPeriod = {
+  customDateRange: Maybe.nothing(),
+  period: Period.latest,
+};
+
 const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) =>
   createSelector<UriLookupStatePaginated,
     string,
@@ -99,9 +104,10 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
     getSelectionParameters,
     getCurrentPeriod,
     (query, pagination, sort, {dateRange, threshold, ...rest}, currentPeriod) => {
+      const thresholdParameter = toThresholdParameter(threshold);
       const parametersToEncode = [
         ...toSortParameters(sort),
-        ...toPeriodApiParameters(currentPeriod),
+        ...toPeriodApiParameters(thresholdParameter.length ? currentPeriod : defaultPeriod),
         ...toPaginationApiParameters(pagination),
       ];
       return query
@@ -110,7 +116,7 @@ const getPaginatedParameters = (toEntityParameters: EntityApiParametersFactory) 
           ...toWildcardApiParameter(query)
         ])
         : encodedUriParametersFrom([
-          ...toThresholdParameter(threshold),
+          ...thresholdParameter,
           ...toEntityParameters(rest),
           ...parametersToEncode,
         ]);
@@ -122,17 +128,22 @@ const getParameters = (toEntityParameters: EntityApiParametersFactory) =>
     ({query}) => query!,
     getSelectionParameters,
     getCurrentPeriod,
-    (query, {dateRange, threshold, ...rest}, currentPeriod) =>
-      query
+    (query, {dateRange, threshold, ...rest}, currentPeriod) => {
+      const thresholdParameter = toThresholdParameter(threshold);
+      const parametersToEncode = [
+        ...toPeriodApiParameters(thresholdParameter.length ? currentPeriod : defaultPeriod),
+      ];
+      return query
         ? encodedUriParametersFrom([
-          ...toPeriodApiParameters(currentPeriod),
           ...toWildcardApiParameter(query),
+          ...parametersToEncode,
         ])
         : encodedUriParametersFrom([
-          ...toThresholdParameter(threshold),
+          ...thresholdParameter,
           ...toEntityParameters(rest),
-          ...toPeriodApiParameters(currentPeriod),
-        ]),
+          ...parametersToEncode,
+        ]);
+    },
   );
 
 export const getPaginatedMeterParameters = getPaginatedParameters(entityApiParametersMetersFactory);
