@@ -12,7 +12,6 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
-import com.elvaco.mvp.database.repository.queryfilters.OrganisationQueryFilters;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -51,13 +50,13 @@ public class OrganisationRepository implements Organisations {
   ) {
     return new PageAdapter<>(
       organisationJpaRepository.findAllMainOrganisations(
-        new OrganisationQueryFilters().toExpression(parameters),
+        parameters,
         PageRequest.of(
           pageable.getPageNumber(),
           pageable.getPageSize(),
           getSortOrUnsorted(parameters)
         )
-      ).map(OrganisationEntityMapper::toDomainModel)
+      )
     );
   }
 

@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,7 +31,7 @@ public interface OrganisationJpaRepository {
 
   List<OrganisationEntity> findAllSubOrganisations(UUID organisationId);
 
-  Page<OrganisationEntity> findAllMainOrganisations(Predicate predicate, Pageable pageable);
+  Page<Organisation> findAllMainOrganisations(RequestParameters parameters, Pageable pageable);
 
   List<OrganisationEntity> findAll();
 }

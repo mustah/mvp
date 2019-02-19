@@ -6,7 +6,6 @@ import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.CityDto;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
@@ -135,7 +134,6 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
   }
 
   @Test
-  @Ignore("Not implemented yet")
   public void organisations_FilteredAndOrderedByEditDistanceByDefault() {
     given(
       organisation().name("aaaa"),
@@ -151,7 +149,7 @@ public class SelectionControllerEditDistanceSortingTest extends IntegrationTest 
       .page(0)
       .build();
 
-    Page<IdNamedDto> response = asUser()
+    Page<IdNamedDto> response = asSuperAdmin() //For super admin eyes only
       .getPage(url, IdNamedDto.class);
 
     assertThat(response.getContent()
