@@ -19,7 +19,6 @@ import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {MeterAlarm} from '../../../components/status/MeterAlarm';
 import {ErrorLabel} from '../../../components/texts/ErrorLabel';
 import {Normal} from '../../../components/texts/Texts';
-import {formatCollectionPercentage} from '../../../helpers/formatters';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpper, firstUpperTranslated, translate} from '../../../services/translationService';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
@@ -109,9 +108,6 @@ export const MeterList = ({
     );
   };
 
-  const renderCollectionStatus = ({dataItem: {collectionPercentage, readIntervalMinutes}}: GridCellProps) =>
-    <td>{formatCollectionPercentage(collectionPercentage, readIntervalMinutes, isSuperAdmin)}</td>;
-
   const handlePageChange = ({page: {skip}}: GridPageChangeEvent) =>
     changePage({
       entityType,
@@ -164,13 +160,6 @@ export const MeterList = ({
       <GridColumn field="alarm" cell={renderAlarm} title={translate('alarm')} width={112}/>
 
       <GridColumn field="gatewaySerial" title={translate('gateway')} width={112}/>
-
-      <GridColumn
-        sortable={false}
-        cell={renderCollectionStatus}
-        title={translate('collection percentage')}
-        width={112}
-      />
 
       <GridColumn sortable={false} cell={renderActions} width={30}/>
     </Grid>
