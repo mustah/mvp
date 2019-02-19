@@ -142,7 +142,7 @@ public class UserControllerTest extends IntegrationTest {
         .email("t@b.com")
         .password("ttt123")
         .language(Language.en)
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asUser()
         .build()
     );
@@ -163,7 +163,7 @@ public class UserControllerTest extends IntegrationTest {
       userBuilder()
         .email("noo@b.com")
         .password("test123")
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .build()
     );
 
@@ -193,7 +193,7 @@ public class UserControllerTest extends IntegrationTest {
         .name("Someu Ser")
         .email("thisguy@users.net")
         .password("hunter2")
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asUser()
         .build()
     );
@@ -222,7 +222,7 @@ public class UserControllerTest extends IntegrationTest {
         .email("t@b.com")
         .password(password)
         .language(Language.en)
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asUser()
         .build()
     ).withPassword(password);
@@ -250,7 +250,7 @@ public class UserControllerTest extends IntegrationTest {
       .collect(toList());
 
     assertThat(organisationCodes).isNotEmpty();
-    assertThat(organisationCodes).containsOnly(context().organisation().slug);
+    assertThat(organisationCodes).containsOnly(context().defaultOrganisation().slug);
   }
 
   @Test
@@ -322,7 +322,7 @@ public class UserControllerTest extends IntegrationTest {
     Organisation organisation = Organisation.builder()
       .externalId("Superman")
       .name("Sub organisation3")
-      .parent(context().organisation())
+      .parent(context().defaultOrganisation())
       .selection(selection)
       .slug("s")
       .build();
@@ -355,7 +355,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotCreateUserOfDifferentOrganisation() {
-    UserDto user = createUserDto("50@blessings.hm", context().organisation2());
+    UserDto user = createUserDto("50@blessings.hm", given(organisation()));
 
     ResponseEntity<UserDto> response = asAdmin().post("/users", user, UserDto.class);
 
@@ -365,7 +365,7 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void adminCannotSeeUsersOfDifferentOrganisation() {
     UserDto batman = asSuperAdmin()
-      .post("/users", createUserDto("b@tm.an", context().organisation2()), UserDto.class)
+      .post("/users", createUserDto("b@tm.an", given(organisation())), UserDto.class)
       .getBody();
 
     UserDto colleague = asSuperAdmin()
@@ -388,7 +388,7 @@ public class UserControllerTest extends IntegrationTest {
         .email("t@b.com")
         .password(password)
         .language(Language.en)
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asAdmin()
         .build()
     ).withPassword(password);
@@ -422,7 +422,7 @@ public class UserControllerTest extends IntegrationTest {
         .email(oldEmail)
         .password("asdf")
         .language(Language.en)
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asSuperAdmin()
         .build()
     );
@@ -445,7 +445,7 @@ public class UserControllerTest extends IntegrationTest {
         .email(oldEmail)
         .password("asdf")
         .language(Language.en)
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asSuperAdmin()
         .build()
     );
@@ -463,7 +463,7 @@ public class UserControllerTest extends IntegrationTest {
   public void invalidateUserWhenSuperAdminUpdatedThatUsersCredentials() {
     UserWithPasswordDto userWithPassword = createUserDto(
       "batman@batty.com",
-      context().organisation2()
+      given(organisation())
     );
 
     ResponseEntity<UserDto> postResponse = asSuperAdmin()
@@ -563,7 +563,7 @@ public class UserControllerTest extends IntegrationTest {
       "someuser@elvaco.se",
       oldPassword,
       Language.en,
-      context().organisation(),
+      context().defaultOrganisation(),
       List.of(SUPER_ADMIN)
     ));
 
@@ -594,7 +594,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "secret stuff";
     user.language = Language.en;
-    user.organisation = OrganisationDtoMapper.toDto(context().organisation());
+    user.organisation = OrganisationDtoMapper.toDto(context().defaultOrganisation());
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
@@ -605,7 +605,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = password;
     user.language = Language.en;
-    user.organisation = OrganisationDtoMapper.toDto(context().organisation());
+    user.organisation = OrganisationDtoMapper.toDto(context().defaultOrganisation());
     user.roles = asList(USER.role, ADMIN.role);
     return user;
   }

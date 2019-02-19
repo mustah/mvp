@@ -204,7 +204,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void pagedMeter_By_Organisation_RequiresSameOrganisation() {
-    UUID otherOrganisation = context().organisationId2();
+    UUID otherOrganisation = given(organisation()).getId();
 
     given(logicalMeter().organisationId(otherOrganisation));
 
@@ -217,7 +217,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void pagedMeter_By_Medium_RequiresSameOrganisation() {
     var myMeter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
-    given(logicalMeter().meterDefinition(DEFAULT_GAS).organisationId(context().organisationId2()));
+    UUID organisationId = given(organisation()).getId();
+    given(logicalMeter().meterDefinition(DEFAULT_GAS)
+      .organisationId(organisationId));
 
     Page<PagedLogicalMeterDto> response = asUser()
       .getPage(
@@ -405,7 +407,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findAllMetersPaged_WithOrganisationAsUser() {
     given(logicalMeter());
 
-    UUID otherOrganisation = context().organisationId2();
+    UUID otherOrganisation = given(organisation()).getId();
     given(logicalMeter().organisationId(otherOrganisation));
 
     var allMeters = asUser().getPage("/meters", PagedLogicalMeterDto.class);
@@ -431,7 +433,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findAllMetersPaged_WithOrganisationAsSuperAdmin() {
     given(logicalMeter());
 
-    UUID otherOrganisation = context().organisationId2();
+    UUID otherOrganisation = given(organisation()).getId();
     given(logicalMeter().organisationId(otherOrganisation));
 
     var allMeters = asSuperAdmin().getPage("/meters", PagedLogicalMeterDto.class);

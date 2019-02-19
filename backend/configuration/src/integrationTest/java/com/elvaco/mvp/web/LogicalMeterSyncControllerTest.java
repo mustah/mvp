@@ -311,7 +311,7 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
 
     assertSoftly(softly -> {
       softly.assertThat(enqueuedMessage.organisationId)
-        .isEqualTo(context().organisation().externalId);
+        .isEqualTo(context().defaultOrganisation().externalId);
 
       softly.assertThat(enqueuedMessage.gateway).isNull();
 
@@ -331,7 +331,9 @@ public class LogicalMeterSyncControllerTest extends RabbitIntegrationTest {
   public void superAdmin_UsersCanSyncMetersByOrganisation() {
     assumeTrue(isRabbitConnected());
 
-    logicalMeters.save(newLogicalMeter(context().organisationId2()));
+    UUID organisationId = given(organisation()).getId();
+
+    logicalMeters.save(newLogicalMeter(organisationId));
 
     List<UUID> meterIds = Stream.of(
       given(logicalMeter()),

@@ -180,10 +180,6 @@ public abstract class IntegrationTest implements ContextDsl {
     return restClient;
   }
 
-  protected RestClient asOtherUser() {
-    return restAsUser(context().user2);
-  }
-
   protected RestClient asUser() {
     return restAsUser(context().user);
   }
