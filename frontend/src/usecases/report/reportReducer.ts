@@ -14,6 +14,7 @@ import {
 import {LegendItem, Report, ReportState, SelectedReportPayload} from './reportModels';
 
 export const initialState: ReportState = {
+  isAllLinesHidden: false,
   hiddenLines: [],
   resolution: TemporalResolution.hour,
   savedReports: {},
@@ -49,13 +50,14 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
     case TOGGLE_LINE:
       return toggleLine(state, (action as Action<uuid>));
     case HIDE_ALL_LINES:
+      const isAllLinesHidden = !state.isAllLinesHidden;
       const meterIds: uuid[] = Maybe.maybe(state.savedReports.meterPage)
         .map(({meters}: Report) => meters)
         .orElse([])
         .map(({id}: LegendItem) => id);
-      return {...state, hiddenLines: [...meterIds]};
+      return {...state, hiddenLines: isAllLinesHidden ? [...meterIds] : [], isAllLinesHidden};
     case REMOVE_SELECTED_LIST_ITEMS:
-      return {...state, hiddenLines: [], savedReports: {}};
+      return {...state, hiddenLines: [], savedReports: {}, isAllLinesHidden: false};
     case LOGOUT_USER:
       return initialState;
     default:
