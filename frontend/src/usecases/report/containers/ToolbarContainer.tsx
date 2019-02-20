@@ -9,8 +9,10 @@ import {OnSelectResolution} from '../../../state/user-selection/userSelectionMod
 import {Callback, OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
 import {selectResolution} from '../reportActions';
+import {getLegendItems} from '../reportSelectors';
 
 interface StateToProps {
+  hasLegendItems: boolean;
   hasMeasurements: boolean;
   resolution: TemporalResolution;
   view: ToolbarView;
@@ -31,11 +33,18 @@ interface OwnProps {
 export type Props = StateToProps & DispatchToProps & OwnProps;
 
 const mapStateToProps = ({
-  report: {resolution},
+  report,
   measurement: {measurementResponse: {measurements}, isFetching, isExportingToExcel},
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
-  ({resolution, view, hasMeasurements: measurements.length > 0, isFetching, isExportingToExcel});
+  ({
+    hasLegendItems: getLegendItems(report).length > 0,
+    hasMeasurements: measurements.length > 0,
+    isFetching,
+    isExportingToExcel,
+    resolution: report.resolution,
+    view
+  });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView,

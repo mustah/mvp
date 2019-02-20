@@ -84,6 +84,7 @@ const renderPopoverContent = () => <LegendContainer/>;
 
 export const Toolbar = ({
   changeToolbarView,
+  hasLegendItems,
   hasMeasurements,
   resolution,
   selectResolution,
@@ -148,7 +149,7 @@ export const Toolbar = ({
           targetOrigin={targetOrigin}
           renderPopoverContent={renderPopoverContent}
         />
-        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
+        <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
       </RowRight>
     </RowSpaceBetween>
   );
