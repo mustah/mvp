@@ -170,7 +170,7 @@ public class AlarmMessageConsumerTest extends IntegrationTest {
     return new MeteringAlarmMessageDto(
       new MeterIdDto("meter-123"),
       new FacilityIdDto("external-123"),
-      context().organisation().externalId,
+      context().defaultOrganisation().externalId,
       "Test source system",
       asList(alarms)
     );

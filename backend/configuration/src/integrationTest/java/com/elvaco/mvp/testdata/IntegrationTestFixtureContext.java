@@ -11,13 +11,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry;
 import com.elvaco.mvp.core.domainmodels.AlarmLogEntry.AlarmLogEntryBuilder;
 import com.elvaco.mvp.core.domainmodels.DisplayQuantity;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Gateway.GatewayBuilder;
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
@@ -25,6 +25,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Organisation.OrganisationBuilder;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
@@ -38,9 +39,13 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.util.Slugify;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,10 +59,6 @@ public class IntegrationTestFixtureContext {
   public final User user;
   public final User admin;
   public final User superAdmin;
-  public final OrganisationEntity organisationEntity2;
-  public final User user2;
-  public final User admin2;
-  public final User superAdmin2;
   private final LogicalMeters logicalMeters;
   private final Gateways gateways;
   private final PhysicalMeters physicalMeters;
@@ -65,23 +66,17 @@ public class IntegrationTestFixtureContext {
   private final GatewayStatusLogs gatewayStatusLogs;
   private final MeterAlarmLogs meterAlarmLogs;
   private final Measurements measurements;
+  private final Organisations organisations;
+  private final Users users;
 
   private final Random random = new Random();
 
-  public Organisation organisation() {
+  public Organisation defaultOrganisation() {
     return OrganisationEntityMapper.toDomainModel(organisationEntity);
   }
 
-  public Organisation organisation2() {
-    return OrganisationEntityMapper.toDomainModel(organisationEntity2);
-  }
-
   public UUID organisationId() {
-    return organisation().id;
-  }
-
-  public UUID organisationId2() {
-    return organisation2().id;
+    return defaultOrganisation().id;
   }
 
   public ZonedDateTime now() {
@@ -98,6 +93,27 @@ public class IntegrationTestFixtureContext {
 
   public ZonedDateTime yesterday() {
     return now().minusDays(1);
+  }
+
+  OrganisationBuilder organisation() {
+    UUID organisationId = randomUUID();
+    return Organisation.builder()
+      .id(organisationId)
+      .slug(Slugify.slugify(organisationId.toString()))
+      .externalId(organisationId.toString())
+      .name(organisationId.toString());
+  }
+
+  UserBuilder newUser() {
+    UUID userId = randomUUID();
+    return new UserBuilder()
+      .id(userId)
+      .asUser()
+      .language(Language.en)
+      .name(userId.toString())
+      .password(userId.toString())
+      .email(userId.toString() + "@test.test")
+      .organisation(defaultOrganisation());
   }
 
   GatewayBuilder gateway() {
@@ -273,30 +289,54 @@ public class IntegrationTestFixtureContext {
       .mask(0);
   }
 
+  Organisation given(OrganisationBuilder organisationBuilder) {
+    return organisations.save(organisationBuilder.build());
+  }
+
+  OrganisationWithUsers given(OrganisationBuilder organisationBuilder, UserBuilder... newUsers) {
+    Organisation organisation = given(organisationBuilder);
+    List<User> orgUsers = new ArrayList<>(newUsers.length);
+    for (UserBuilder newUser : newUsers) {
+      User builtUser = newUser.organisation(organisation).build();
+      orgUsers.add(
+        users.save(builtUser)
+          .withPassword(builtUser.password)
+      );
+    }
+    return new OrganisationWithUsers(organisation, orgUsers);
+  }
+
+  Collection<Organisation> given(OrganisationBuilder... organisationBuilders) {
+    return Arrays.stream(organisationBuilders).map(this::given).collect(toList());
+  }
+
   LogicalMeter given(PhysicalMeterBuilder physicalMeterBuilder) {
     var logicalMeter = logicalMeters.save(logicalMeter().build());
-    var physicalMeter = physicalMeters.save(physicalMeterBuilder
-      .logicalMeterId(logicalMeter.id)
-      .externalId(logicalMeter.externalId)
-      .build());
+    var physicalMeter = physicalMeters.save(connect(logicalMeter, physicalMeterBuilder.build()));
     return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
   }
 
   LogicalMeter given(LogicalMeterBuilder logicalMeterBuilder) {
-    LogicalMeter logicalMeter = logicalMeters.save(logicalMeterBuilder.build());
-    PhysicalMeter physicalMeter = physicalMeters.save(
-      physicalMeter()
-        .organisationId(logicalMeter.organisationId)
-        .logicalMeterId(logicalMeter.id)
-        .externalId(logicalMeter.externalId)
-        .build()
-    );
-
-    return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
+    LogicalMeter builtMeter = logicalMeterBuilder.build();
+    LogicalMeter logicalMeter = logicalMeters.save(builtMeter);
+    if (builtMeter.physicalMeters.isEmpty()) {
+      PhysicalMeter physicalMeter = physicalMeters.save(connect(
+        logicalMeter,
+        physicalMeter().build()
+      ));
+      return logicalMeter.toBuilder().physicalMeter(physicalMeter).build();
+    } else {
+      return logicalMeter.toBuilder()
+        .physicalMeters(builtMeter.physicalMeters.stream()
+          .map(physicalMeter -> connect(logicalMeter, physicalMeter))
+          .map(physicalMeters::save)
+          .collect(toList()))
+        .build();
+    }
   }
 
   Collection<LogicalMeter> given(LogicalMeterBuilder... logicalMeterBuilders) {
-    return Arrays.stream(logicalMeterBuilders).map(this::given).collect(Collectors.toList());
+    return Arrays.stream(logicalMeterBuilders).map(this::given).collect(toList());
   }
 
   LogicalMeter given(
@@ -306,11 +346,7 @@ public class IntegrationTestFixtureContext {
     final LogicalMeter logicalMeter = logicalMeters.save(logicalMeterBuilder.build());
 
     var builtPhysicalMeters = Arrays.stream(physicalMeterBuilders)
-      .map(pm -> pm
-        .logicalMeterId(logicalMeter.id)
-        .externalId(logicalMeter.externalId)
-        .build()
-      )
+      .map(pm -> connect(logicalMeter, pm.build()))
       .map(physicalMeters::save)
       .collect(toList());
 
@@ -366,5 +402,13 @@ public class IntegrationTestFixtureContext {
 
   void given(Collection<Measurement> series) {
     series.forEach(measurements::save);
+  }
+
+  private static PhysicalMeter connect(LogicalMeter logicalMeter, PhysicalMeter physicalMeter) {
+    return physicalMeter.toBuilder()
+      .externalId(logicalMeter.externalId)
+      .organisationId(logicalMeter.organisationId)
+      .logicalMeterId(logicalMeter.id)
+      .build();
   }
 }

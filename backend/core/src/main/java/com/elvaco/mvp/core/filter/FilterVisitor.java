@@ -33,4 +33,6 @@ public interface FilterVisitor {
   void visit(LogicalMeterIdFilter filter);
 
   void visit(MeasurementThresholdFilter filter);
+
+  void visit(OrganisationParentFilter organisationParentFilter);
 }

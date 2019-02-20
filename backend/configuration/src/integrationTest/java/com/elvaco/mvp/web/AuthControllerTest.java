@@ -32,7 +32,7 @@ public class AuthControllerTest extends IntegrationTest {
       "superadmin@elvaco.se",
       "admin123",
       Language.en,
-      context().organisation(),
+      context().defaultOrganisation(),
       singletonList(SUPER_ADMIN)
     ));
 
@@ -84,7 +84,7 @@ public class AuthControllerTest extends IntegrationTest {
       "random@user.tld",
       "yes-random",
       Language.en,
-      context().organisation(),
+      context().defaultOrganisation(),
       singletonList(ADMIN)
     ));
 
@@ -140,7 +140,7 @@ public class AuthControllerTest extends IntegrationTest {
         .email("basic@auth.se")
         .password(password)
         .language(Language.en)
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
         .asUser()
         .build()
     );

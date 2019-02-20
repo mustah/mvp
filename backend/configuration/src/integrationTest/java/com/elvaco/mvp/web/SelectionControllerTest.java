@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.OrganisationWithUsers;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.OrganisationDto;
@@ -139,6 +140,7 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void userCanNotAccessOtherOrganisationsCities() {
+    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
     given(
       logicalMeter()
         .location(kungsbacka().country("sweden").address("kabelgatan 1").build())
@@ -151,11 +153,14 @@ public class SelectionControllerTest extends IntegrationTest {
         .externalId("extId3"),
       logicalMeter()
         .location(stockholm().country("sweden").address("kungsgatan 3").build())
-        .organisationId(context().organisationId2())
+        .organisationId(organisationWithUsers.getId())
         .externalId("extId4")
     );
 
-    Page<CityDto> response = asOtherUser().getPage("/selections/cities", CityDto.class);
+    Page<CityDto> response = as(organisationWithUsers.getUser()).getPage(
+      "/selections/cities",
+      CityDto.class
+    );
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -221,6 +226,7 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsFacilities() {
     prepareMeters();
+    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
     given(
       logicalMeter().location(kungsbacka().country("sweden").address("kabelgatan 2").build())
         .externalId("extId5"),
@@ -230,7 +236,7 @@ public class SelectionControllerTest extends IntegrationTest {
         .address("snabelgatan 3")
         .build())
         .externalId("extId6")
-        .organisationId(context().organisationId2())
+        .organisationId(organisationWithUsers.getId())
 
     );
 
@@ -245,7 +251,7 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response.getTotalPages()).isEqualTo(0);
     assertThat(response.getContent()).isEmpty();
 
-    response = asOtherUser().getPage(url, IdNamedDto.class);
+    response = as(organisationWithUsers.getUser()).getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -285,12 +291,13 @@ public class SelectionControllerTest extends IntegrationTest {
   public void userCanNotAccessOtherOrganisationsSecondaryAddresses() {
     prepareMeters();
 
+    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
     given(
       logicalMeter()
-        .organisationId(context().organisationId2())
+        .organisationId(organisationWithUsers.getId())
         .location(kungsbacka().country("finland").city("helsinki").address("joksigatan 2").build())
         .externalId("extId777"),
-      physicalMeter().address("777").organisationId(context().organisationId2())
+      physicalMeter().address("777").organisationId(organisationWithUsers.getId())
     );
 
     String url = "/selections/secondary-addresses?q=777";
@@ -301,7 +308,7 @@ public class SelectionControllerTest extends IntegrationTest {
     assertThat(response.getTotalPages()).isEqualTo(0);
     assertThat(response.getContent()).isEmpty();
 
-    response = asOtherUser().getPage(url, IdNamedDto.class);
+    response = as(organisationWithUsers.getUser()).getPage(url, IdNamedDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -342,11 +349,15 @@ public class SelectionControllerTest extends IntegrationTest {
   @Test
   public void userCanNotAccessOtherOrganisationsGatewaySerials() {
     prepareGateways();
-    given(gateway().organisationId(context().organisationId2())
+    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
+    given(gateway().organisationId(organisationWithUsers.getId())
       .serial("6666")
       .productModel("3100"));
 
-    var response = asOtherUser().getPage(gatewaySerialsUrl().build(), IdNamedDto.class);
+    var response = as(organisationWithUsers.getUser()).getPage(
+      gatewaySerialsUrl().build(),
+      IdNamedDto.class
+    );
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getTotalPages()).isEqualTo(1);
@@ -452,13 +463,16 @@ public class SelectionControllerTest extends IntegrationTest {
 
   @Test
   public void wildcard_organisation() {
-    context().organisation2();
+    given(
+      organisation().name("abcdef"),
+      organisation().name("defghi")
+    );
 
     assertThat(asSuperAdmin()
       .getPage(
         Url.builder()
           .path("/selections/organisations")
-          .parameter(WILDCARD, "com.elvaco")
+          .parameter(WILDCARD, "abc")
           .build(),
         OrganisationDto.class
       )
@@ -466,15 +480,14 @@ public class SelectionControllerTest extends IntegrationTest {
       .as("Case insensitive substring in the start of term")
       .extracting(o -> o.name)
       .containsExactly(
-        "com.elvaco.mvp.web.SelectionControllerTest-organisation",
-        "com.elvaco.mvp.web.SelectionControllerTest-organisation"
+        "abcdef"
       );
 
     assertThat(asSuperAdmin()
       .getPage(
         Url.builder()
           .path("/selections/organisations")
-          .parameter(WILDCARD, "SelectionControllerTest")
+          .parameter(WILDCARD, "de")
           .build(),
         OrganisationDto.class
       )
@@ -482,8 +495,8 @@ public class SelectionControllerTest extends IntegrationTest {
       .as("Substring in the middle of term")
       .extracting(o -> o.name)
       .containsExactly(
-        "com.elvaco.mvp.web.SelectionControllerTest-organisation",
-        "com.elvaco.mvp.web.SelectionControllerTest-organisation"
+        "abcdef",
+        "defghi"
       );
 
     assertThat(asSuperAdmin()
@@ -494,8 +507,7 @@ public class SelectionControllerTest extends IntegrationTest {
           .build(),
         OrganisationDto.class
       )
-    )
-      .as("Wild card does not mean 'select everything'")
+    ).as("Wild card does not mean 'select everything'")
       .hasSize(0);
   }
 
@@ -620,7 +632,7 @@ public class SelectionControllerTest extends IntegrationTest {
       .name("sub-org")
       .slug("sub-org")
       .externalId("sub-org")
-      .parent(context().organisation())
+      .parent(context().defaultOrganisation())
       .selection(userSelection)
       .build()
     );

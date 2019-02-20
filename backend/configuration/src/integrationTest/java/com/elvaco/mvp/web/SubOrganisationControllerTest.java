@@ -66,7 +66,8 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void createWithOtherUsersSelectionFails() {
-    UserSelectionDto userSelection = createUserSelection(context().superAdmin2);
+    User otherSuperAdmin = given(organisation(), user().asSuperAdmin()).getUser();
+    UserSelectionDto userSelection = createUserSelection(otherSuperAdmin);
     SubOrganisationRequestDto subOrganisation = createSubOrganisationRequest(userSelection.id);
     ResponseEntity<ErrorMessageDto> request = createNew(
       asSuperAdmin(), randomUUID(), subOrganisation, ErrorMessageDto.class
@@ -115,8 +116,8 @@ public class SubOrganisationControllerTest extends IntegrationTest {
 
     OrganisationDto expectedParent = new OrganisationDto(
       context().organisationId(),
-      context().organisation().name,
-      context().organisation().slug
+      context().defaultOrganisation().name,
+      context().defaultOrganisation().slug
     );
     assertThat(dto).isEqualToIgnoringGivenFields(
       new OrganisationDto(null, "sub", "sub-slug", expectedParent, userSelection.id),

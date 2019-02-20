@@ -72,9 +72,9 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).isEqualTo(new OrganisationDto(
-      context().organisation().id,
-      context().organisation().name,
-      context().organisation().slug
+      context().defaultOrganisation().id,
+      context().defaultOrganisation().name,
+      context().defaultOrganisation().slug
     ));
   }
 
@@ -85,9 +85,9 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).isEqualTo(new OrganisationDto(
-      context().organisation().id,
-      context().organisation().name,
-      context().organisation().slug
+      context().defaultOrganisation().id,
+      context().defaultOrganisation().name,
+      context().defaultOrganisation().slug
     ));
   }
 

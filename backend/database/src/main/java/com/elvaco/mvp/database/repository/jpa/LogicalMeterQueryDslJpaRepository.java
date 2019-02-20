@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import javax.persistence.Query;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
+import com.elvaco.mvp.core.spi.data.RequestParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.util.MeasurementThresholdParser;
 import com.elvaco.mvp.database.entity.jooq.tables.records.PhysicalMeterRecord;
@@ -26,9 +26,9 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.SelectForUpdateStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.SortField;
 import org.jooq.TableField;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
@@ -48,7 +48,9 @@ import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
 import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
+import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -179,12 +181,8 @@ class LogicalMeterQueryDslJpaRepository
       .andJoinsOn(selectQuery)
       .andJoinsOn(countQuery);
 
-    Collection<SortField<?>> sortFields = resolveSortFields(parameters, SORT_FIELDS_MAP);
-    if (sortFields.isEmpty()) {
-      sortFields.add(LOGICAL_METER.EXTERNAL_ID.asc());
-    }
     SelectForUpdateStep<Record> select = selectQuery
-      .orderBy(sortFields)
+      .orderBy(resolveSortFields(parameters, SORT_FIELDS_MAP, LOGICAL_METER.EXTERNAL_ID.asc()))
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue());
 
@@ -241,28 +239,41 @@ class LogicalMeterQueryDslJpaRepository
     Pageable pageable,
     TableField<PhysicalMeterRecord, String> field
   ) {
-    var selectQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
+    Field<Integer> editDistance = levenshtein(
+      field,
+      parameters.getFirst(
+        RequestParameter.Q_FACILITY,
+        RequestParameter.Q_SECONDARY_ADDRESS
+      )
+    );
+
+    var selectQuery = dsl.selectDistinct(field, editDistance).from(LOGICAL_METER);
     var countQuery = dsl.selectDistinct(field).from(LOGICAL_METER);
 
     FilterVisitors.selection().accept(toFilters(parameters))
       .andJoinsOn(selectQuery)
       .andJoinsOn(countQuery);
 
-    var all = selectQuery
-      .orderBy(directionFor(field, pageable.getSort()))
+    SelectForUpdateStep<Record2<String, Integer>> select = selectQuery
+      .orderBy(orderFrom(field, pageable.getSort(), editDistance.asc()))
       .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue())
-      .fetchInto(String.class);
+      .offset(Long.valueOf(pageable.getOffset()).intValue());
+
+    var all = select
+      .fetch()
+      .stream().map(Record2::value1)
+      .collect(toList());
 
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
   }
 
-  private OrderField<String> directionFor(
+  private OrderField<?> orderFrom(
     TableField<PhysicalMeterRecord, String> field,
-    Sort sort
+    Sort sort,
+    OrderField<?> defaultOrder
   ) {
     if (sort.isUnsorted()) {
-      return field;
+      return defaultOrder;
     } else if (sort.iterator().next().getDirection().isAscending()) {
       return field.asc();
     } else {

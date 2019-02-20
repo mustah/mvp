@@ -51,7 +51,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    dailyPlanet = context().organisation2();
+    dailyPlanet = given(organisation());
   }
 
   @After

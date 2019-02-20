@@ -5,7 +5,6 @@ import com.elvaco.mvp.core.filter.FilterVisitor;
 import com.elvaco.mvp.core.filter.ManufacturerFilter;
 import com.elvaco.mvp.core.filter.MeterStatusFilter;
 import com.elvaco.mvp.core.filter.SecondaryAddressFilter;
-import com.elvaco.mvp.database.repository.queryfilters.FilterUtils;
 
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.Tables.PHYSICAL_METER_STATUS_LOG;
@@ -16,7 +15,7 @@ interface PhysicalMeterFilterVisitor extends FilterVisitor, ConditionAdding {
   @Override
   default void visit(AlarmFilter filter) {
     addCondition(filter.values().stream()
-      .anyMatch(FilterUtils::isYes)
+      .anyMatch("yes"::equalsIgnoreCase)
       ? METER_ALARM_LOG.MASK.isNotNull()
       : METER_ALARM_LOG.MASK.isNull());
   }

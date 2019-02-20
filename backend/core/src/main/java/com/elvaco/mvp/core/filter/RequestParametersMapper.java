@@ -30,6 +30,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.QUANTITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_CITY;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_FACILITY;
+import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_ORGANISATION;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SECONDARY_ADDRESS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.Q_SERIAL;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.REPORTED;
@@ -100,6 +101,7 @@ public final class RequestParametersMapper {
     PARAMETER_TO_FILTER.put(ALARM, AlarmFilter::new);
     PARAMETER_TO_FILTER.put(Q_CITY, (values) -> new CityFilter(values, MatchType.WILDCARD));
     PARAMETER_TO_FILTER.put(Q_ADDRESS, (values) -> new AddressFilter(values, MatchType.WILDCARD));
+    PARAMETER_TO_FILTER.put(Q_ORGANISATION, WildcardFilter::new);
   }
 
   public static Filters toFilters(RequestParameters requestParameters) {

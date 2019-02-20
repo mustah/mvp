@@ -180,10 +180,6 @@ public abstract class IntegrationTest implements ContextDsl {
     return restClient;
   }
 
-  protected RestClient asOtherUser() {
-    return restAsUser(context().user2);
-  }
-
   protected RestClient asUser() {
     return restAsUser(context().user);
   }
@@ -288,6 +284,7 @@ public abstract class IntegrationTest implements ContextDsl {
     if (integrationTestFixtureContextFactory == null) {
       integrationTestFixtureContextFactory = new IntegrationTestFixtureContextFactory(
         organisationJpaRepository,
+        organisations,
         users,
         logicalMeters,
         physicalMeters,

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.OrganisationWithUsers;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 
@@ -58,8 +59,9 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
   @Test
   public void unableToAccessOtherOrganisation() {
     var created = context().now();
+    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
     var meter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING)
-      .organisationId(context().organisationId2()));
+      .organisationId(organisationWithUsers.getId()));
 
     given(series(meter, Quantity.DIFFERENCE_TEMPERATURE, created, 285.59));
 
@@ -68,7 +70,10 @@ public class MeasurementControllerPagedTest extends IntegrationTest {
 
     assertThat(wrongUserResponse).hasSize(0);
 
-    Page<MeasurementDto> correctUserResponse = asOtherUser().getPage(url, MeasurementDto.class);
+    Page<MeasurementDto> correctUserResponse = as(organisationWithUsers.getUser()).getPage(
+      url,
+      MeasurementDto.class
+    );
 
     assertThat(correctUserResponse).hasSize(1);
   }

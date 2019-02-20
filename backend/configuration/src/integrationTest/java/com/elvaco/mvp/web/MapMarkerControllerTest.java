@@ -107,8 +107,9 @@ public class MapMarkerControllerTest extends IntegrationTest {
   @Test
   public void findMeterMapMarker_ChecksOrganisation() {
     UUID logicalMeterId = saveLogicalMeter().id;
+    User user = given(organisation(), user()).getUser();
 
-    ResponseEntity<ErrorMessageDto> missing = restAsUser(context().user2)
+    ResponseEntity<ErrorMessageDto> missing = restAsUser(user)
       .get("/map-markers/meters/" + logicalMeterId, ErrorMessageDto.class);
 
     assertThat(missing.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -129,6 +130,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     saveLogicalAndPhysicalMeters(kungsbacka().build(), context().user, status);
     saveLogicalAndPhysicalMeters(kungsbacka().build(), context().user, status);
 
+    User user = given(organisation(), user()).getUser();
+
     ZonedDateTime before = NOW.plusDays(2);
     ZonedDateTime after = NOW.minusDays(2);
 
@@ -138,7 +141,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
         .parameter(AFTER, after)
         .build();
 
-    ResponseEntity<MapMarkersDto> differentOrganisation = restAsUser(context().user2)
+    ResponseEntity<MapMarkersDto> differentOrganisation = restAsUser(user)
       .get(urlDefinition, MapMarkersDto.class);
 
     assertThat(differentOrganisation.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -379,6 +382,8 @@ public class MapMarkerControllerTest extends IntegrationTest {
     saveLogicalMeterWith(kungsbacka().build(), gateway2);
     saveLogicalMeterWith(kungsbacka().build(), gateway3);
 
+    User user = given(organisation(), user()).getUser();
+
     Url url = Url.builder()
       .path("/map-markers/gateways")
       .parameter(RequestParameter.BEFORE, NOW.plusHours(1))
@@ -397,7 +402,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
         new MapMarkerDto(gateway3.id, 12.345, 11.123)
       );
 
-    ResponseEntity<MapMarkersDto> notFoundByIncorrectUser = restAsUser(context().user2)
+    ResponseEntity<MapMarkersDto> notFoundByIncorrectUser = restAsUser(user)
       .get(url, MapMarkersDto.class);
 
     assertThat(notFoundByIncorrectUser.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -428,7 +433,7 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void mapDataDoesNotIncludeGatewaysWithoutLocation() {
-    saveGatewayWith(context().organisationId2(), StatusType.OK);
+    saveGatewayWith(given(organisation()).getId(), StatusType.OK);
 
     ResponseEntity<MapMarkersDto> response = asSuperAdmin()
       .get("/map-markers/gateways", MapMarkersDto.class);
@@ -439,11 +444,12 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void mapMarkersIncludesGatewaysWithCityAndAddressLocation() {
-    Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.UNKNOWN);
+    UUID organisationId = given(organisation()).getId();
+    Gateway gateway = saveGatewayWith(organisationId, StatusType.UNKNOWN);
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-1234")
-      .organisationId(context().organisationId2())
+      .organisationId(organisationId)
       .created(NOW)
       .gateway(gateway)
       .location(kungsbacka().address("super 1").build())
@@ -470,11 +476,12 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void cannotFindGatewayMapMarkers_WithUnknownCity() {
-    Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.OK);
+    UUID organisationId = given(organisation()).getId();
+    Gateway gateway = saveGatewayWith(organisationId, StatusType.OK);
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-1234")
-      .organisationId(context().organisationId2())
+      .organisationId(organisationId)
       .created(NOW)
       .gateway(gateway)
       .build());
@@ -488,11 +495,12 @@ public class MapMarkerControllerTest extends IntegrationTest {
 
   @Test
   public void doIncludeGatewayMapMarkerWithLowConfidence() {
-    Gateway gateway = saveGatewayWith(context().organisationId2(), StatusType.OK);
+    UUID organisationId = given(organisation()).getId();
+    Gateway gateway = saveGatewayWith(organisationId, StatusType.OK);
 
     logicalMeters.save(LogicalMeter.builder()
       .externalId("external-1234")
-      .organisationId(context().organisationId2())
+      .organisationId(organisationId)
       .created(NOW)
       .gateway(gateway)
       .location(kungsbacka()

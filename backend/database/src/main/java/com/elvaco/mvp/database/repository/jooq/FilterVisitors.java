@@ -24,14 +24,22 @@ public class FilterVisitors {
     return new SelectionFilterVisitor();
   }
 
+  public static FilterAcceptor organisation() {
+    return new OrganisationFilterVisitor();
+  }
+
   public static FilterAcceptor logicalMeter(DSLContext dsl, MeasurementThresholdParser parser) {
     return new LogicalMeterFilterVisitor(filterDecorators(dsl, parser));
   }
 
-  public static FilterAcceptor logicalMeterWithCollectionPercentage(DSLContext dsl,
-    MeasurementThresholdParser parser) {
-    return new LogicalMeterFilterVisitor(Stream.concat(filterDecorators(dsl, parser).stream(),
-      Stream.of(new  CollectionPercentageFilterVisitor(dsl))).collect(Collectors.toList()));
+  public static FilterAcceptor logicalMeterWithCollectionPercentage(
+    DSLContext dsl,
+    MeasurementThresholdParser parser
+  ) {
+    return new LogicalMeterFilterVisitor(Stream.concat(
+      filterDecorators(dsl, parser).stream(),
+      Stream.of(new CollectionPercentageFilterVisitor(dsl))
+    ).collect(Collectors.toList()));
   }
 
   public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {

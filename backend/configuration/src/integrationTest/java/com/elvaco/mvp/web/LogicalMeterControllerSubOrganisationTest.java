@@ -78,7 +78,7 @@ public class LogicalMeterControllerSubOrganisationTest extends IntegrationTest {
       .name("sub-org")
       .slug("sub-org")
       .externalId("sub-org")
-      .parent(context().organisation())
+      .parent(context().defaultOrganisation())
       .selection(userSelection)
       .build()
     );

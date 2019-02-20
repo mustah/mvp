@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.OrganisationWithUsers;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
 
@@ -130,11 +131,12 @@ public class SummaryControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyGetSummaryForMetersWithinTheOrganisation() {
+    OrganisationWithUsers organisationWithUsers = given(organisation(), user());
     given(logicalMeter().location(stockholm().address("kungsgatan 1").build()));
     given(logicalMeter().location(kungsbacka().address("drottninggatan 1").build()));
     given(logicalMeter().location(kungsbacka().address("drottninggatan 2").build()));
 
-    ResponseEntity<MeterSummaryDto> response = asOtherUser()
+    ResponseEntity<MeterSummaryDto> response = as(organisationWithUsers.getUser())
       .get("/summary/meters", MeterSummaryDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

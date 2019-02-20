@@ -12,10 +12,13 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Organisation.OrganisationBuilder;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 
 public interface ContextDsl {
   IntegrationTestFixtureContext context();
@@ -36,6 +39,21 @@ public interface ContextDsl {
     PhysicalMeterBuilder... physicalMeterBuilders
   ) {
     return context().given(logicalMeter, physicalMeterBuilders);
+  }
+
+  default OrganisationWithUsers given(
+    OrganisationBuilder organisationBuilder,
+    UserBuilder... userBuilder
+  ) {
+    return context().given(organisationBuilder, userBuilder);
+  }
+
+  default Organisation given(OrganisationBuilder organisationBuilder) {
+    return context().given(organisationBuilder);
+  }
+
+  default Collection<Organisation> given(OrganisationBuilder... organisationBuilders) {
+    return context().given(organisationBuilders);
   }
 
   default LogicalMeter given(PhysicalMeterBuilder physicalMeterBuilder) {
@@ -74,6 +92,14 @@ public interface ContextDsl {
 
   default LogicalMeterBuilder logicalMeter() {
     return context().logicalMeter();
+  }
+
+  default OrganisationBuilder organisation() {
+    return context().organisation();
+  }
+
+  default UserBuilder user() {
+    return context().newUser();
   }
 
   default PhysicalMeterBuilder physicalMeter() {

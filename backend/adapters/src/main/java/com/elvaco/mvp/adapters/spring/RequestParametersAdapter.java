@@ -1,9 +1,11 @@
 package com.elvaco.mvp.adapters.spring;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -127,8 +129,12 @@ public class RequestParametersAdapter implements RequestParameters {
 
   @Nullable
   @Override
-  public String getFirst(RequestParameter param) {
-    return delegate.getFirst(param);
+  public String getFirst(RequestParameter... param) {
+    return Arrays.stream(param)
+      .map(delegate::getFirst)
+      .filter(Objects::nonNull)
+      .findFirst()
+      .orElse(null);
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.elvaco.mvp.web;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -101,7 +102,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void canNotSeeMeasurementsFromMeterBelongingToOtherOrganisation() {
     ZonedDateTime date = context().now();
-    var meter = given(logicalMeter().organisationId(context().organisationId2()));
+    UUID organisationId = given(organisation()).getId();
+    var meter = given(logicalMeter().organisationId(organisationId));
     given(series(meter, DIFFERENCE_TEMPERATURE, date, DIFF_TEMP_VALUE_CELSIUS));
 
     List<MeasurementDto> measurements = asUser()
@@ -120,8 +122,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void superAdminCanSeeAllMeasurements() {
     ZonedDateTime date = context().now();
 
+    UUID organisationId = given(organisation()).getId();
     var firstOrganisationsMeter =
-      given(logicalMeter().organisationId(context().organisationId2()));
+      given(logicalMeter().organisationId(organisationId));
     given(series(firstOrganisationsMeter, DIFFERENCE_TEMPERATURE, date, DIFF_TEMP_VALUE_CELSIUS));
 
     var secondOrganisationsMeter = given(logicalMeter());
