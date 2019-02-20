@@ -14,7 +14,6 @@ import {
 } from '../../../types/Types';
 import {MapClusters} from '../../../usecases/map/components/MapClusters';
 import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
-import {MeasurementContentContainer} from '../../../usecases/report/containers/MeasurementContentContainer';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
@@ -83,7 +82,6 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
           <Tab tab={TabName.list} title={translate('list')}/>
           <Tab tab={TabName.map} title={translate('map')}/>
-          <Tab tab={TabName.values} title={translate('measurements')}/>
         </TabHeaders>
       </TabTopBar>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
@@ -96,9 +94,6 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
             <DetailsDialog {...dialogProps}/>
           </>
         </Loader>
-      </TabContent>
-      <TabContent tab={TabName.values} selectedTab={selectedTab}>
-        {selectedTab === TabName.values && <MeasurementContentContainer/>}
       </TabContent>
     </Tabs>
   );
