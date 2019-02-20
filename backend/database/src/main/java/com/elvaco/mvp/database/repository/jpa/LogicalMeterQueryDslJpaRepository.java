@@ -255,7 +255,7 @@ class LogicalMeterQueryDslJpaRepository
       .andJoinsOn(countQuery);
 
     SelectForUpdateStep<Record2<String, Integer>> select = selectQuery
-      .orderBy(orderFrom(field, pageable.getSort(), editDistance.asc()))
+      .orderBy(orderOf(field, pageable.getSort(), editDistance.asc()))
       .limit(pageable.getPageSize())
       .offset(Long.valueOf(pageable.getOffset()).intValue());
 
@@ -267,7 +267,7 @@ class LogicalMeterQueryDslJpaRepository
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
   }
 
-  private OrderField<?> orderFrom(
+  private OrderField<?> orderOf(
     TableField<PhysicalMeterRecord, String> field,
     Sort sort,
     OrderField<?> defaultOrder
