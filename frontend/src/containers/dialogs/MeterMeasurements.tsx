@@ -25,7 +25,7 @@ import {
 } from '../../state/ui/graph/measurement/measurementModels';
 import {groupMeasurementsByDate, MeasurementTableData} from '../../state/ui/graph/measurement/measurementSelectors';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {Fetching, UnixTimestamp, uuid} from '../../types/Types';
+import {Fetching, UnixTimestamp} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {OnLogout} from '../../usecases/auth/authModels';
 import {fillMissingMeasurements} from './dialogHelper';
@@ -51,7 +51,6 @@ const style: React.CSSProperties = {
 
 interface ReadingsProps {
   readings: PossibleReading[];
-  facility: uuid;
   quantities: Quantity[];
 }
 
@@ -76,9 +75,9 @@ const quantityWidth: { [q in Quantity]: number } = {
   [Quantity.differenceTemperature]: smallWidth,
   [Quantity.forwardTemperature]: smallWidth,
   [Quantity.returnTemperature]: smallWidth,
-  [Quantity.volume]: smallWidth,
-  [Quantity.flow]: smallWidth,
   [Quantity.energyReactive]: smallWidth,
+  [Quantity.volume]: smallWidth + 30,
+  [Quantity.flow]: smallWidth + 30,
   [Quantity.power]: smallWidth + 30,
   [Quantity.relativeHumidity]: smallWidth + 30,
   [Quantity.energyReturn]: smallWidth + 30,
@@ -100,7 +99,7 @@ const renderCreated = (created: UnixTimestamp, hasValues: boolean) => {
   return <td className="no-wrap" key="created">{textual}</td>;
 };
 
-const MeasurementsTable = ({readings, quantities, facility}: ReadingsProps) => {
+const MeasurementsTable = ({readings, quantities}: ReadingsProps) => {
   const renderTimestamp = (quantities: Quantity[]) =>
     ({dataItem}) => {
       const hasValues = quantities.length
@@ -108,8 +107,6 @@ const MeasurementsTable = ({readings, quantities, facility}: ReadingsProps) => {
                         && Object.keys(dataItem.measurements).length === quantities.length;
       return renderCreated(dataItem.id, hasValues);
     };
-
-  const renderFacility = () => <td>{facility}</td>;
 
   return (
     <Grid scrollable="none" data={readings}>
@@ -120,7 +117,6 @@ const MeasurementsTable = ({readings, quantities, facility}: ReadingsProps) => {
         headerClassName="left-most"
         width={136}
       />
-      <GridColumn cell={renderFacility} title={translate('facility')} width={150}/>
       {quantities.map(gridColumnOfQuantity)}
     </Grid>
   );
@@ -175,7 +171,7 @@ class MeterMeasurements extends React.Component<Props, State> {
 
   render() {
     const {customDateRange, isFetching, measurementPages, period} = this.state;
-    const {meter: {medium, readIntervalMinutes, facility}} = this.props;
+    const {meter: {medium, readIntervalMinutes}} = this.props;
 
     const {readings: existingReadings, quantities}: MeasurementTableData = groupMeasurementsByDate(
       measurementPages,
@@ -192,7 +188,7 @@ class MeterMeasurements extends React.Component<Props, State> {
       dateRange,
     }));
 
-    const wrapperProps: WrapperProps = {isFetching, readings, quantities, facility};
+    const wrapperProps: WrapperProps = {isFetching, readings, quantities};
 
     return (
       <Column className="MeterMeasurements">

@@ -40,6 +40,18 @@ $pager-number-hovered-text: $primary-fg-active;
   &.k-grid {
     border-width: 0;
 
+    .k-grid-header {
+      tr {
+        th {
+          background-color: $white;
+          position: sticky;
+          top: $main-menu-height;
+          border-bottom: 1px solid $border-color;
+          z-index: 2;
+        }
+      }
+    }
+
     .k-grid-header-wrap {
       border: none;
     }
@@ -87,6 +99,39 @@ $pager-number-hovered-text: $primary-fg-active;
       &.left-most {
         padding-left: 16px;
       }
+    }
+  }
+}
+
+.Grouping-grid {
+  .GroupHeader {
+    height: 44px;
+    background-color: $light-grey;
+
+    td {
+      padding: $xl-space 0 $sm-space $space;
+      border-top: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
+    }
+  }
+
+  .k-grid {
+    .k-grouping-header {
+      display: none;
+    }
+  }
+
+  th {
+    border-bottom-width: 0;
+
+    &.left-most {
+      padding-left: $xs-space;
+    }
+  }
+
+  td {
+    &.left-most {
+      padding-left: $xs-space;
     }
   }
 }
