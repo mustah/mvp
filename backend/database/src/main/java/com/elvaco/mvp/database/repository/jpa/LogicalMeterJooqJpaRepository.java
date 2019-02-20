@@ -20,7 +20,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterWithLocation;
 import com.elvaco.mvp.database.repository.jooq.FilterAcceptor;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
-import com.querydsl.jpa.impl.JPADeleteClause;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -46,7 +45,6 @@ import static com.elvaco.mvp.database.entity.jooq.tables.LogicalMeter.LOGICAL_ME
 import static com.elvaco.mvp.database.entity.jooq.tables.MeterAlarmLog.METER_ALARM_LOG;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_METER;
 import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeterStatusLog.PHYSICAL_METER_STATUS_LOG;
-import static com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity.logicalMeterEntity;
 import static com.elvaco.mvp.database.repository.jooq.JooqUtils.COLLECTION_PERCENTAGE;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSortFields;
@@ -54,8 +52,8 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
-class LogicalMeterQueryDslJpaRepository
-  extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
+class LogicalMeterJooqJpaRepository
+  extends BaseJooqRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
   private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(
@@ -75,7 +73,7 @@ class LogicalMeterQueryDslJpaRepository
   private final MeasurementThresholdParser measurementThresholdParser;
 
   @Autowired
-  LogicalMeterQueryDslJpaRepository(
+  LogicalMeterJooqJpaRepository(
     EntityManager entityManager,
     DSLContext dsl,
     FilterAcceptor logicalMeterFilters,
@@ -154,7 +152,7 @@ class LogicalMeterQueryDslJpaRepository
       LOGICAL_METER.CREATED,
       MEDIUM.NAME,
       GATEWAY.SERIAL,
-      DSL.field("null",Double.class).as(COLLECTION_PERCENTAGE.getName()),
+      DSL.field("null", Double.class).as(COLLECTION_PERCENTAGE.getName()),
       PHYSICAL_METER_STATUS_LOG.STATUS,
       PHYSICAL_METER.MANUFACTURER,
       PHYSICAL_METER.ADDRESS,
@@ -220,7 +218,7 @@ class LogicalMeterQueryDslJpaRepository
       DSL.coalesce(COLLECTION_PERCENTAGE, 0)
     ).distinctOn(LOGICAL_METER.ID)
       .from(LOGICAL_METER);
-    FilterVisitors.logicalMeterWithCollectionPercentage(dsl,measurementThresholdParser)
+    FilterVisitors.logicalMeterWithCollectionPercentage(dsl, measurementThresholdParser)
       .accept(toFilters(parameters)).andJoinsOn(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
@@ -228,9 +226,9 @@ class LogicalMeterQueryDslJpaRepository
 
   @Override
   public void delete(UUID id, UUID organisationId) {
-    new JPADeleteClause(entityManager, logicalMeterEntity)
-      .where(logicalMeterEntity.pk.id.eq(id)
-        .and(logicalMeterEntity.pk.organisationId.eq(organisationId)))
+    dsl.deleteFrom(LOGICAL_METER)
+      .where(LOGICAL_METER.ID.eq(id))
+      .and(LOGICAL_METER.ORGANISATION_ID.eq(organisationId))
       .execute();
   }
 

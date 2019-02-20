@@ -39,7 +39,7 @@ import static org.springframework.data.repository.support.PageableExecutionUtils
 
 @Repository
 class GatewayJooqJpaRepository
-  extends BaseQueryDslRepository<GatewayEntity, UUID>
+  extends BaseJooqRepository<GatewayEntity, UUID>
   implements GatewayJpaRepository {
 
   private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(

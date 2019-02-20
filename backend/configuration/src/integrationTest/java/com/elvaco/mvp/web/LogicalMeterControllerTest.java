@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
@@ -46,6 +45,7 @@ import static com.elvaco.mvp.core.spi.data.RequestParameter.MEDIUM;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.SECONDARY_ADDRESS;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.kungsbacka;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -1077,11 +1077,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .as("Physical meter should not be removed")
       .isEqualTo(1);
 
-    List<MeasurementEntity> measurements = measurementJpaRepository.findAll(
-      QMeasurementEntity.measurementEntity.id.physicalMeter.id.eq(
-        meter.activePhysicalMeter().get().id
-      )
-    );
+    List<MeasurementEntity> measurements = measurementJpaRepository.findAll()
+      .stream()
+      .filter(measurementEntity ->
+        measurementEntity.id.physicalMeter.id.equals(meter.activePhysicalMeter().get().id))
+      .collect(toList());
 
     assertThat(measurements.size())
       .as("Measurements should not be removed")

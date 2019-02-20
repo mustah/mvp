@@ -6,10 +6,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 
-import com.querydsl.core.types.Predicate;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 public interface PhysicalMeterJpaRepository {
 
   <S extends PhysicalMeterEntity> S save(S entity);
@@ -30,8 +26,6 @@ public interface PhysicalMeterJpaRepository {
   );
 
   List<PhysicalMeterEntity> findAll();
-
-  Page<PhysicalMeterEntity> findAll(Predicate predicate, Pageable pageable);
 
   void deleteAll();
 

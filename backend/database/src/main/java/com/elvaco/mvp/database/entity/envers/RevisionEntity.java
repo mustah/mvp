@@ -11,14 +11,12 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.database.envers.RevisionEntityListener;
 
-import com.querydsl.core.annotations.QueryExclude;
 import lombok.EqualsAndHashCode;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 
 @Entity
 @org.hibernate.envers.RevisionEntity(value = RevisionEntityListener.class)
-@QueryExclude
 @Access(AccessType.FIELD)
 @EqualsAndHashCode
 @Table(schema = "evoaudit")

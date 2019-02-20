@@ -19,7 +19,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.resolveSo
 
 @Repository
 public class MeasurementJpaRepositoryImpl
-  extends BaseQueryDslRepository<MeasurementEntity, Long>
+  extends BaseJooqRepository<MeasurementEntity, Long>
   implements MeasurementJpaRepositoryCustom {
 
   private static final Map<String, Field<?>> SORT_FIELDS_MAP = Map.of(

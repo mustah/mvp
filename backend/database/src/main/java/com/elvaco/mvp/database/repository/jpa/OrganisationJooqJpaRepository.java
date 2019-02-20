@@ -14,11 +14,13 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jooq.FilterVisitors;
 
-import com.querydsl.core.types.Predicate;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record5;
 import org.jooq.SelectForUpdateStep;
+import org.jooq.SelectOnConditionStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,20 +28,19 @@ import org.springframework.stereotype.Repository;
 
 import static com.elvaco.mvp.database.entity.jooq.tables.Organisation.ORGANISATION;
 import static com.elvaco.mvp.database.entity.jooq.tables.OrganisationUserSelection.ORGANISATION_USER_SELECTION;
-import static com.elvaco.mvp.database.entity.user.QOrganisationEntity.organisationEntity;
 import static com.elvaco.mvp.database.repository.queryfilters.SortUtil.levenshtein;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
-class OrganisationQueryDslJpaRepository
-  extends BaseQueryDslRepository<OrganisationEntity, UUID>
+class OrganisationJooqJpaRepository
+  extends BaseJooqRepository<OrganisationEntity, UUID>
   implements OrganisationJpaRepository {
 
   private final DSLContext dsl;
 
   @Autowired
-  OrganisationQueryDslJpaRepository(
+  OrganisationJooqJpaRepository(
     EntityManager entityManager,
     DSLContext dsl
   ) {
@@ -50,27 +51,25 @@ class OrganisationQueryDslJpaRepository
 
   @Override
   public Optional<OrganisationEntity> findBySlug(String slug) {
-    return Optional.ofNullable(fetchOne(organisationEntity.slug.eq(slug)));
+    return fetchOne(ORGANISATION.SLUG.eq(slug));
   }
 
   @Override
   public Optional<OrganisationEntity> findByExternalId(String externalId) {
-    return Optional.ofNullable(fetchOne(organisationEntity.externalId.eq(externalId)));
+    return fetchOne(ORGANISATION.EXTERNAL_ID.eq(externalId));
   }
 
   @Override
   public List<OrganisationEntity> findAllByOrderByNameAsc() {
-    return createQuery().select(path).fetch();
+    return nativeQuery(selectNativeOrganisation()
+      .orderBy(ORGANISATION.NAME.asc()));
   }
 
   @Override
   public List<OrganisationEntity> findAllSubOrganisations(UUID organisationId) {
-    return nativeQuery(dsl.select().from(ORGANISATION)
-      .leftJoin(ORGANISATION_USER_SELECTION)
-      .on(ORGANISATION_USER_SELECTION.ORGANISATION_ID.equal(ORGANISATION.ID))
-      .where(
-        ORGANISATION.ID.equal(organisationId).or(ORGANISATION.PARENT_ID.equal(organisationId))
-      ));
+    return nativeQuery(selectNativeOrganisation().where(
+      ORGANISATION.ID.equal(organisationId).or(ORGANISATION.PARENT_ID.equal(organisationId))
+    ));
   }
 
   @Override
@@ -121,7 +120,17 @@ class OrganisationQueryDslJpaRepository
     return getPage(all, pageable, () -> dsl.fetchCount(countQuery));
   }
 
-  private OrganisationEntity fetchOne(Predicate predicate) {
-    return createQuery(predicate).select(path).fetchOne();
+  private Optional<OrganisationEntity> fetchOne(Condition condition) {
+    return nativeQuery(selectNativeOrganisation()
+      .where(condition)
+      .limit(1)).stream()
+      .findAny();
+  }
+
+  private SelectOnConditionStep<Record> selectNativeOrganisation() {
+    return dsl.select()
+      .from(ORGANISATION)
+      .leftJoin(ORGANISATION_USER_SELECTION)
+      .on(ORGANISATION.ID.eq(ORGANISATION_USER_SELECTION.ORGANISATION_ID));
   }
 }
