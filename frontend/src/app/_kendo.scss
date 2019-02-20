@@ -40,6 +40,18 @@ $pager-number-hovered-text: $primary-fg-active;
   &.k-grid {
     border-width: 0;
 
+    .k-grid-header {
+      tr {
+        th {
+          background-color: $white;
+          position: sticky;
+          top: $main-menu-height;
+          border-bottom: 1px solid $border-color;
+          z-index: 2;
+        }
+      }
+    }
+
     .k-grid-header-wrap {
       border: none;
     }
