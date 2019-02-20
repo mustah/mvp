@@ -4,16 +4,16 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
+import com.elvaco.mvp.testing.fixture.DefaultTestFixture;
 
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.ERROR;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
-import static com.elvaco.mvp.testing.fixture.OrganisationTestData.OTHER_ORGANISATION;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PhysicalMeterTest {
+public class PhysicalMeterTest extends DefaultTestFixture {
 
   @Test
   public void firstStatus() {
@@ -33,7 +33,7 @@ public class PhysicalMeterTest {
   public void replacesDifferentStatus() {
     var now = ZonedDateTime.now();
     var meterId = randomUUID();
-    var primaryKey = new Pk(meterId, OTHER_ORGANISATION.id);
+    var primaryKey = new Pk(meterId, organisationId());
     var previousStatusEntry = StatusLogEntry.builder()
       .primaryKey(primaryKey)
       .start(now)
@@ -61,7 +61,7 @@ public class PhysicalMeterTest {
     var meterId = randomUUID();
     var now = ZonedDateTime.now();
     var previousStatusEntry = StatusLogEntry.builder()
-      .primaryKey(new Pk(meterId, OTHER_ORGANISATION.id))
+      .primaryKey(new Pk(meterId, organisationId()))
       .start(now)
       .status(OK)
       .build();
@@ -80,7 +80,7 @@ public class PhysicalMeterTest {
     var meterId = randomUUID();
     var now = ZonedDateTime.now();
     var previousStatusEntry = StatusLogEntry.builder()
-      .primaryKey(new Pk(meterId, OTHER_ORGANISATION.id))
+      .primaryKey(new Pk(meterId, organisationId()))
       .status(OK)
       .start(now.minusHours(1))
       .build();
@@ -107,15 +107,5 @@ public class PhysicalMeterTest {
         .start(now)
         .build()
     );
-  }
-
-  private static PhysicalMeter.PhysicalMeterBuilder physicalMeter() {
-    return PhysicalMeter.builder()
-      .organisationId(OTHER_ORGANISATION.id)
-      .address("12341234")
-      .externalId("an-external-id")
-      .medium("Hot water")
-      .manufacturer("ELV")
-      .logicalMeterId(randomUUID());
   }
 }

@@ -8,16 +8,16 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
+import com.elvaco.mvp.testing.fixture.DefaultTestFixture;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterAlarmLogs;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeterAlarmUseCasesTest {
+public class MeterAlarmUseCasesTest extends DefaultTestFixture {
 
   private Measurements measurements;
   private MeterAlarmLogs meterAlarmLogs;
@@ -28,7 +28,7 @@ public class MeterAlarmUseCasesTest {
   public void before() {
     measurements = new MockMeasurements();
     meterAlarmLogs = new MockMeterAlarmLogs();
-    meter = PhysicalMeter.builder().id(randomUUID()).organisationId(randomUUID()).build();
+    meter = physicalMeter().build();
     meterAlarmUseCases = new MeterAlarmUseCases(measurements, meterAlarmLogs);
   }
 
