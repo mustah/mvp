@@ -13,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityEntity;
 import com.elvaco.mvp.database.entity.meter.DisplayQuantityPk;
@@ -23,10 +22,10 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MediumEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+import com.elvaco.mvp.testing.fixture.DefaultTestFixture;
 
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.Quantity.QUANTITIES;
 import static com.elvaco.mvp.testing.fixture.OrganisationTestData.ELVACO;
 import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
@@ -34,7 +33,7 @@ import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LogicalMeterEntityMapperTest {
+public class LogicalMeterEntityMapperTest extends DefaultTestFixture {
 
   private static final Medium UNKNOWN_MEDIUM = new Medium(
     null,
@@ -62,19 +61,9 @@ public class LogicalMeterEntityMapperTest {
 
   @Test
   public void noMappingOfPhysicalMeters() {
-    LogicalMeter logicalMeter = LogicalMeter.builder()
-      .externalId("an-external-id")
-      .organisationId(ELVACO.id)
+    LogicalMeter logicalMeter = logicalMeter()
       .meterDefinition(MeterDefinition.UNKNOWN)
-      .physicalMeter(PhysicalMeter.builder()
-        .organisationId(ELVACO.id)
-        .address("1234")
-        .externalId("an-external-ID")
-        .medium("My medium")
-        .manufacturer("ELV")
-        .readIntervalMinutes(15)
-        .build())
-      .location(UNKNOWN_LOCATION)
+      .physicalMeter(physicalMeter().build())
       .build();
 
     LogicalMeterEntity logicalMeterEntity = logicalMeterEntityMapper.toEntity(logicalMeter);
