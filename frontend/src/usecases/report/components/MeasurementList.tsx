@@ -11,7 +11,7 @@ import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
-import {firstUpperTranslated} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {
   getMediumType,
   MeasurementApiResponse,
@@ -41,7 +41,7 @@ const makeMeasurementListItems = (measurements: MeasurementApiResponse): [Measur
 
   measurements.forEach(({id, label, medium, unit, values, quantity}: MeasurementResponsePart) => {
     if (columns[quantity] === undefined) {
-      const key = `${quantity}: ${unit}`;
+      const key = `${translate(`${quantity} short`)} (${unit})`;
       columns[quantity] = (
         <GridColumn
           key={key}
@@ -100,7 +100,7 @@ const rowRender = (tr, {dataItem, rowType}: GridRowProps) => {
     const mediumText = toMediumText(dataItem.items.length && dataItem.items[0].medium);
     return (
       <tr className="GroupHeader">
-        <td colSpan={10}>
+        <td colSpan={14}>
           <RowMiddle>
             <MediumText className="Bold">{dataItem.value}</MediumText>
             <InfoText style={{marginLeft: 16}}>{firstUpperTranslated(mediumText.toLowerCase())}</InfoText>
