@@ -77,37 +77,48 @@ const fetchItems = async <T, R>(
 const loadStaticItems = (items: SelectionListItem[]): Promise<PagedResponse> =>
   new Promise<PagedResponse>((resolve) => resolve({items, totalElements: items.length}));
 
-const queryParameter = (query?: string): string => query ? `&q=${query}` : ``;
+const makeRequestParameters = (...parameters: string[]): string => parameters
+  .filter((param) => param.length > 0).join('&');
 
-const requestParameters = (sort: string, page: number, query?: string): string =>
-  `sort=${sort},asc&page=${page}${queryParameter(query)}`;
+const queryParameter = (query?: string): string => query ? `q=${query}` : ``;
+
+const sortParameter = (sort?: string): string => sort ? `sort=${sort},asc` : ``;
+
+const pageParameter = (page: number): string => `page=${page}`;
+
+const requestParameters = (page: number, sort: string, query?: string): string =>
+  makeRequestParameters(
+    sortParameter(query ? undefined : sort),
+    pageParameter(page),
+    queryParameter(query)
+  );
 
 export const fetchCities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<CityResponse, City>(
     EndPoints.cities,
     toCity,
-    requestParameters('city', page, query),
+    requestParameters(page, 'city', query),
   );
 
 export const fetchAddresses = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<AddressResponse, Address>(
     EndPoints.addresses,
     toAddress,
-    requestParameters('streetAddress', page, query),
+    requestParameters(page, 'streetAddress', query),
   );
 
 export const fetchFacilities = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.facilities,
     identity,
-    requestParameters('externalId', page, query),
+    requestParameters(page, 'externalId', query),
   );
 
 export const fetchOrganisationsToSelect = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.organisationsToSelect,
     identity,
-    requestParameters('name', page, query),
+    requestParameters(page, 'name', query),
   );
 
 export const fetchSecondaryAddresses =
@@ -115,14 +126,14 @@ export const fetchSecondaryAddresses =
     fetchItems<IdNamed, IdNamed>(
       EndPoints.secondaryAddresses,
       identity,
-      requestParameters('secondaryAddress', page, query),
+      requestParameters(page, 'secondaryAddress', query),
     );
 
 export const fetchGatewaySerials = async (page: number, query?: string): Promise<PagedResponse> =>
   fetchItems<IdNamed, IdNamed>(
     EndPoints.gatewaySerials,
     identity,
-    requestParameters('serial', page, query),
+    requestParameters(page, 'serial', query),
   );
 
 const yesNoReported: IdNamed[] = [{id: Status.error, name: 'yes'}, {id: Status.ok, name: 'no'}];
