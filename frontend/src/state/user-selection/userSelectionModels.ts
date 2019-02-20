@@ -39,6 +39,10 @@ export interface ThresholdQuery {
   duration?: string | null;
 }
 
+export interface ThresholdQueryWithin extends ThresholdQuery {
+  dateRange: SelectionInterval;
+}
+
 export const isValidThreshold = (threshold: undefined | ThresholdQuery) =>
   threshold !== undefined &&
   ['value', 'relationalOperator', 'quantity', 'unit']

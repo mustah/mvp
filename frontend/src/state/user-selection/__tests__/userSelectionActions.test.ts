@@ -13,14 +13,12 @@ import {
   ADD_PARAMETER_TO_SELECTION,
   closeSelectionPage,
   DESELECT_SELECTION,
-  SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   selectPeriod,
   selectSavedSelection,
-  SET_CUSTOM_DATE_RANGE,
-  SET_THRESHOLD,
   setCustomDateRange,
   setThreshold,
+  setThresholdAction,
   shouldMigrateSelectionParameters,
   toggleParameter,
 } from '../userSelectionActions';
@@ -30,7 +28,7 @@ import {
   RelationalOperator,
   SelectedParameters,
   SelectionParameter,
-  ThresholdQuery,
+  ThresholdQueryWithin,
   UserSelection,
   UserSelectionState,
 } from '../userSelectionModels';
@@ -110,7 +108,7 @@ describe('userSelectionActions', () => {
       const dateRange: DateRange = {start, end};
       store.dispatch(setCustomDateRange(dateRange));
 
-      expect(store.getActions()).toEqual([{type: SET_CUSTOM_DATE_RANGE, payload: {start, end}}]);
+      expect(store.getActions()).toEqual([setCustomDateRange({start, end})]);
     });
   });
 
@@ -332,19 +330,17 @@ describe('userSelectionActions', () => {
 
       store.dispatch(selectPeriod(period));
 
-      expect(store.getActions()).toEqual([
-        {type: SELECT_PERIOD, payload: period},
-      ]);
+      expect(store.getActions()).toEqual([selectPeriod(period)]);
     });
   });
 
   describe('setThreshold', () => {
 
     type IncompleteThresholdQuery =
-      Partial<{ [key in keyof ThresholdQuery]: string | undefined | ThresholdQuery[key] }>;
-    type UsersInput = ThresholdQuery | undefined | IncompleteThresholdQuery;
+      Partial<{ [key in keyof ThresholdQueryWithin]: string | undefined | ThresholdQueryWithin[key] }>;
+    type UsersInput = ThresholdQueryWithin | undefined | IncompleteThresholdQuery;
 
-    const userSelectionStateFromThreshold = (threshold: ThresholdQuery): UserSelectionState => ({
+    const userSelectionStateFromThreshold = (threshold: ThresholdQueryWithin): UserSelectionState => ({
       ...rootStateNoSaved.userSelection,
       userSelection: {
         ...rootStateNoSaved.userSelection.userSelection,
@@ -356,13 +352,16 @@ describe('userSelectionActions', () => {
     });
 
     const empty = undefined;
-    const ok: ThresholdQuery = {
+    const ok: ThresholdQueryWithin = {
       value: '2',
       unit: 'kW',
       quantity: Quantity.power,
       relationalOperator: '>=' as RelationalOperator,
+      dateRange: {
+        period: Period.latest,
+      },
     };
-    const anotherOk: ThresholdQuery = {...ok, value: '3', duration: '2'};
+    const anotherOk: ThresholdQueryWithin = {...ok, value: '3', duration: '2'};
     const incomplete: IncompleteThresholdQuery = {
       value: '',
       unit: undefined,
@@ -374,24 +373,24 @@ describe('userSelectionActions', () => {
     const triggersChange: boolean = true;
     const skipsAction: boolean = false;
 
-    const testCases: Array<[UsersInput, UsersInput, boolean]> = [
-      [empty, ok, triggersChange],
-      [empty, incomplete, skipsAction],
-      [empty, empty, skipsAction],
+    const testCases: Array<[number, UsersInput, UsersInput, boolean]> = [
+      [1, empty, ok, triggersChange],
+      [2, empty, incomplete, skipsAction],
+      [3, empty, empty, skipsAction],
 
-      [ok, anotherOk, triggersChange],
-      [ok, incomplete, triggersChange],
-      [ok, empty, triggersChange],
-      [ok, ok, skipsAction],
+      [4, ok, anotherOk, triggersChange],
+      [5, ok, incomplete, triggersChange],
+      [6, ok, empty, triggersChange],
+      [7, ok, ok, skipsAction],
 
-      [incomplete, ok, triggersChange],
-      [incomplete, anotherIncomplete, skipsAction],
-      [incomplete, empty, skipsAction],
+      [8, incomplete, ok, triggersChange],
+      [9, incomplete, anotherIncomplete, skipsAction],
+      [10, incomplete, empty, skipsAction],
     ];
 
     test.each(testCases)(
-      'old state of %p and action of (%p) triggers? %p',
-      (currentThresholdQuery, newThreshold, shouldTriggerAction) => {
+      'test #%i: old state of %p and action of (%p) triggers? %p',
+      (testId, currentThresholdQuery, newThreshold, shouldTriggerAction) => {
         const currentState: UserSelectionState = userSelectionStateFromThreshold(currentThresholdQuery);
         store = configureMockStore({...rootStateNoSaved, userSelection: currentState});
 
@@ -399,7 +398,7 @@ describe('userSelectionActions', () => {
 
         expect(store.getActions()).toEqual(
           shouldTriggerAction
-            ? [{type: SET_THRESHOLD, payload: newThreshold}]
+            ? [setThresholdAction(newThreshold)]
             : []
         );
       }

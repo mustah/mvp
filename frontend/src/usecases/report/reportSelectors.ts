@@ -56,7 +56,10 @@ export const getMeasurementParameters =
     }) => ({
       items: getLegendItems(report),
       resolution: report.resolution,
-      selectionParameters,
+      selectionParameters: {
+        ...selectionParameters,
+        dateRange: report.timePeriod,
+      },
     })
   );
 export const getThresholdMedia = createSelector<ThresholdQuery | undefined, Quantity, Medium[]>(

@@ -55,7 +55,11 @@ describe('userSelectionSelectors', () => {
   });
 
   it('encode the initial, empty, selection', () => {
-    expect(initialEncodedParameters).toEqual(`${latestUrlParameters}&size=${paginationPageSize}&page=0`);
+    const parameters = urlFromParameters(initialEncodedParameters);
+    expect(parameters.searchParams.get('size')).toEqual(paginationPageSize.toString());
+    expect(parameters.searchParams.get('page')).toEqual('0');
+    expect(parameters.searchParams.get('after')).toBeTruthy();
+    expect(parameters.searchParams.get('before')).toBeTruthy();
   });
 
   describe('getPaginatedMeterParameters', () => {
@@ -77,7 +81,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=${paginationPageSize}&page=0`);
+      expect(urlFromParameters(uriParameters).searchParams.get('city')).toEqual('sweden,stockholm');
     });
 
     it('has only wildcard and period parameters when query parameter is set', () => {
@@ -99,7 +103,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`${latestUrlParameters}&size=${paginationPageSize}&page=0&w=${query}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('w')).toEqual(query);
     });
 
     it('has two selected cities', () => {
@@ -130,10 +134,8 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(
-        `city=sweden%2Cg%C3%B6teborg&city=sweden%2Cstockholm` +
-        `&${latestUrlParameters}&size=${paginationPageSize}&page=0`,
-      );
+      expect(urlFromParameters(uriParameters).searchParams.getAll('city'))
+        .toEqual(['sweden,göteborg', 'sweden,stockholm']);
     });
 
     it('has wildcard search parameters when there is search query', () => {
@@ -153,7 +155,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
+      expect(urlFromParameters(uriParameters).searchParams.get('city')).toEqual('sweden,stockholm');
     });
 
     it('includes organisations', () => {
@@ -218,7 +220,7 @@ describe('userSelectionSelectors', () => {
       expect(url.searchParams.get('threshold')).toEqual('Power >= 3 kW');
     });
 
-    it('excludes threshold query when global meter query paramter is set', () => {
+    it('excludes threshold query when global meter query parameter is set', () => {
       const threshold: ThresholdQuery = {
         relationalOperator: '>=' as RelationalOperator,
         quantity: Quantity.power,
@@ -347,7 +349,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
+      expect(urlFromParameters(uriParameters).searchParams.get('w')).toEqual(null);
     });
 
     it('has wildcard search parameter for gateways', () => {
@@ -367,7 +369,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=20&page=0`);
+      expect(urlFromParameters(uriParameters).searchParams.get('city')).toEqual('sweden,stockholm');
     });
 
     it('has gateway search parameters', () => {
@@ -390,7 +392,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`gatewaySerial=123abc&${latestUrlParameters}&size=20&page=0`);
+      expect(urlFromParameters(uriParameters).searchParams.get('gatewaySerial')).toEqual('123abc');
     });
 
   });
@@ -409,7 +411,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('w')).toEqual(null);
     });
 
     it('has wildcard and period search parameter for meters and no other parameters', () => {
@@ -425,7 +427,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`${latestUrlParameters}&w=sto`);
+      expect(urlFromParameters(uriParameters).searchParams.get('w')).toEqual('sto');
     });
 
     it('has meter search parameters', () => {
@@ -443,7 +445,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`facility=112&${latestUrlParameters}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('facility')).toEqual('112');
     });
 
     it('search meters with alarms', () => {
@@ -461,7 +463,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`alarm=yes&${latestUrlParameters}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('alarm')).toEqual('yes');
     });
 
     it('search meters with no alarms', () => {
@@ -479,7 +481,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`alarm=no&${latestUrlParameters}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('alarm')).toEqual('no');
     });
 
     it('includes a threshold query', () => {
@@ -527,7 +529,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('w')).toEqual(null);
     });
 
     it('has wildcard and period search parameter for gateways', () => {
@@ -543,7 +545,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`${latestUrlParameters}&w=sto`);
+      expect(urlFromParameters(uriParameters).searchParams.get('w')).toEqual('sto');
     });
 
     it('has gateways search parameters', () => {
@@ -561,7 +563,7 @@ describe('userSelectionSelectors', () => {
         start,
       });
 
-      expect(uriParameters).toEqual(`gatewaySerial=666&${latestUrlParameters}`);
+      expect(urlFromParameters(uriParameters).searchParams.get('gatewaySerial')).toEqual('666');
     });
 
   });

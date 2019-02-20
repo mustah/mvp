@@ -1,5 +1,6 @@
 import {Location} from 'history';
 import {LOCATION_CHANGE} from 'react-router-redux';
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {routes} from '../../app/routes';
 import {
@@ -7,7 +8,7 @@ import {
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
-  SET_THRESHOLD,
+  setThresholdAction,
 } from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
@@ -36,7 +37,7 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
       return {...state, ...(action as Action<QueryParameter>).payload};
     case LOCATION_CHANGE:
       return resetValidationQuery(state, (action as Action<Location>).payload);
-    case SET_THRESHOLD:
+    case getType(setThresholdAction):
     case SELECT_SAVED_SELECTION:
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
