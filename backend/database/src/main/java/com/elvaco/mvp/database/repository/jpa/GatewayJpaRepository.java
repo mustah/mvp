@@ -8,7 +8,6 @@ import com.elvaco.mvp.core.dto.GatewaySummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,8 +16,6 @@ public interface GatewayJpaRepository {
   <S extends GatewayEntity> S save(S entity);
 
   void deleteAll();
-
-  List<GatewayEntity> findAll(Predicate predicate);
 
   List<GatewayEntity> findAll();
 

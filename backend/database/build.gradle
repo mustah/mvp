@@ -35,9 +35,6 @@ dependencies {
   compile "org.postgresql:postgresql:${postgresqlVersion}"
   compile 'tec.units:unit-ri:1.0.3'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.8.9'
-  compile 'com.querydsl:querydsl-root:4.2.1'
-  compile 'com.querydsl:querydsl-apt:4.2.1:jpa'
-  compile 'com.querydsl:querydsl-jpa:4.2.1'
   compile "org.jooq:jooq:${jooqVersion}"
   compile "org.jooq:jooq-codegen:${jooqVersion}"
 
@@ -170,8 +167,6 @@ if (!project.hasProperty('isCI')) {
 generateProdJooqSchemaSource.dependsOn(update)
 
 compileJava {
-  options.compilerArgs << "-s"
-  options.compilerArgs << "${generatedSourcesDir}/querydsl"
   doFirst {
     file(generatedSourcesDir).mkdirs()
   }

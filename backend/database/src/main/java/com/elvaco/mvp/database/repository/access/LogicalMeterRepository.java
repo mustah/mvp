@@ -22,7 +22,6 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SummaryJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.SortMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,6 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final SummaryJpaRepository summaryJpaRepository;
-  private final LogicalMeterSortingEntityMapper sortingMapper;
   private final LogicalMeterEntityMapper logicalMeterEntityMapper;
   private final MeterDefinitions meterDefinitions;
 
@@ -86,7 +84,7 @@ public class LogicalMeterRepository implements LogicalMeters {
         PageRequest.of(
           pageable.getPageNumber(),
           pageable.getPageSize(),
-          sortingMapper.getAsQSort(pageable.getSort())
+          SortMapper.getAsSpringSort(pageable.getSort())
         )
       ));
   }
@@ -99,7 +97,7 @@ public class LogicalMeterRepository implements LogicalMeters {
         PageRequest.of(
           pageable.getPageNumber(),
           pageable.getPageSize(),
-          sortingMapper.getAsQSort(pageable.getSort())
+          SortMapper.getAsSpringSort(pageable.getSort())
         )
       ));
   }

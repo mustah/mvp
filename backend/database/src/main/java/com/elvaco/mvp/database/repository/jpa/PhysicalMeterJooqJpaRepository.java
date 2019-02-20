@@ -16,7 +16,7 @@ import static com.elvaco.mvp.database.entity.jooq.tables.PhysicalMeter.PHYSICAL_
 
 @Repository
 class PhysicalMeterJooqJpaRepository
-  extends BaseQueryDslRepository<PhysicalMeterEntity, UUID>
+  extends BaseJooqRepository<PhysicalMeterEntity, UUID>
   implements PhysicalMeterJpaRepository {
 
   private final DSLContext dsl;
