@@ -1,10 +1,40 @@
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {toGraphContents} from '../graphContentsMapper';
-import {MeasurementApiResponse, MeasurementResponse, Quantity} from '../measurementModels';
+import {
+  MeasurementApiResponse,
+  MeasurementResponse,
+  MeasurementResponsePart,
+  MeasurementValues,
+  Quantity
+} from '../measurementModels';
+import {hasMeasurements} from '../measurementSelectors';
 
 describe('measurementSelectors', () => {
 
   const emptyResponses: MeasurementResponse = {measurements: [], average: []};
+
+  const values: MeasurementValues = [
+    {
+      when: 1516521585107,
+      value: 0.4353763591158477,
+    },
+  ];
+
+  const responsePart: MeasurementResponsePart = {
+    id: 'meter a',
+    city: 'Varberg',
+    address: 'Drottningatan 1',
+    quantity: Quantity.power,
+    medium: 'Electricity',
+    values,
+    label: '1',
+    unit: 'mW',
+  };
+
+  const measurementResponse: MeasurementResponse = {
+    measurements: [responsePart],
+    average: [],
+  };
 
   describe('toGraphContents', () => {
     describe('formats data for Rechart\'s LineGraph', () => {
@@ -24,6 +54,31 @@ describe('measurementSelectors', () => {
       });
     });
 
+    describe('hasMeasurements', () => {
+      it('returns false when no measurements in response', () => {
+        expect(hasMeasurements(emptyResponses)).toBe(false);
+      });
+
+      it('returns false when measurements has no values', () => {
+        const response: MeasurementResponse = {
+          ...measurementResponse,
+          measurements: [{...responsePart, values: []}],
+        };
+        expect(hasMeasurements(response)).toBe(false);
+      });
+
+      it('returns true when measurements has points with values', () => {
+        expect(hasMeasurements(measurementResponse)).toBe(true);
+      });
+
+      it('returns false when measurements has points, but no values', () => {
+        const response: MeasurementResponse = {
+          ...measurementResponse,
+          measurements: [{...responsePart, values: [{when: 1516521585107}]}],
+        };
+        expect(hasMeasurements(response)).toBe(false);
+      });
+    });
     describe('axes', () => {
       it('extracts a single axis if all measurements are of the same unit', () => {
         const sameUnit: MeasurementApiResponse = [
@@ -240,4 +295,5 @@ describe('measurementSelectors', () => {
 
   });
 
-});
+})
+;

@@ -11,17 +11,19 @@ const MeasurementWrapper = withEmptyContent<MeasurementListProps & WithEmptyCont
 export const Measurements = (props: Props) => {
   const {
     clearError,
-    measurement: {error, isFetching, measurementResponse: {measurements}, isExportingToExcel},
+    measurement: {error, isFetching, measurementResponse, isExportingToExcel},
     exportToExcelSuccess,
+    hasMeters,
+    hasContent
   } = props;
   useFetchMeasurements(props);
 
   return (
     <Loader isFetching={isFetching} error={error} clearError={clearError}>
       <MeasurementWrapper
-        hasContent={measurements.length > 0}
-        measurements={measurements}
-        noContentText={firstUpperTranslated('no measurements')}
+        hasContent={hasContent}
+        measurements={measurementResponse.measurements}
+        noContentText={firstUpperTranslated(hasMeters ? 'no measurements' : 'no meters')}
         exportToExcelSuccess={exportToExcelSuccess}
         isExportingToExcel={isExportingToExcel}
       />

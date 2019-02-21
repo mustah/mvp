@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {createSelector} from 'reselect';
+import {isDefined} from '../../../../helpers/commonHelpers';
 import {uuid} from '../../../../types/Types';
 import {GraphContents} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
@@ -8,6 +10,7 @@ import {
   ExistingReadings,
   Measurement,
   MeasurementResponse,
+  MeasurementResponsePart,
   Medium,
   Quantity,
   Reading
@@ -47,3 +50,11 @@ export const groupMeasurementsByDate =
 
 export const useGraphContents = (responses: MeasurementResponse): GraphContents =>
   React.useMemo<GraphContents>(() => toGraphContents(responses), [responses]);
+
+export const hasMeasurements = createSelector<MeasurementResponse, MeasurementResponsePart[], boolean>(
+  (measurements: MeasurementResponse) => measurements.measurements,
+  (measurements) => measurements
+                      .filter((measurement) =>
+                        measurement.values.find((value) => value.value !== undefined)
+                      ).filter(isDefined).length > 0
+);
