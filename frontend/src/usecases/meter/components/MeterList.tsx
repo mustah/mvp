@@ -7,7 +7,6 @@ import {
   GridSortChangeEvent,
   GridSortSettings
 } from '@progress/kendo-react-grid';
-import {toArray} from 'lodash';
 import * as React from 'react';
 import {gridStyle} from '../../../app/themes';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
@@ -117,7 +116,7 @@ export const MeterList = ({
 
   const handleSortChange = ({sort}: GridSortChangeEvent) => sortTable(sort as ApiRequestSortingOptions[]);
 
-  const data = toArray(entities);
+  const data = result.map((key) => entities[key]);
 
   const gridData = {data, total};
 
