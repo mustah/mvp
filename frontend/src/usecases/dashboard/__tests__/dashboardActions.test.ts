@@ -8,7 +8,7 @@ import {authenticate} from '../../../services/restClient';
 import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Status, uuid} from '../../../types/Types';
-import {CENTER_MAP} from '../../map/mapActions';
+import {centerMap} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {centerMapOnMeter, fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
@@ -116,9 +116,7 @@ describe('dashboardActions', () => {
 
       store.dispatch(centerMapOnMeter('123'));
 
-      expect(store.getActions()).toEqual([
-        {payload: {id: '123', latitude: 2, longitude: 2, status: Status.ok}, type: CENTER_MAP},
-      ]);
+      expect(store.getActions()).toEqual([centerMap({latitude: 2, longitude: 2})]);
     });
 
     it('does not dispatch an action if a meter does not have a geoposition', () => {

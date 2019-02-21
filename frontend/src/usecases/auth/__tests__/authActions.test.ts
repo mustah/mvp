@@ -12,7 +12,7 @@ import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {CHANGE_LANGUAGE} from '../../../state/language/languageActions';
 import {LanguageState} from '../../../state/language/languageModels';
-import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser,} from '../authActions';
+import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser} from '../authActions';
 import {Unauthorized} from '../authModels';
 
 const configureMockStore = configureStore([thunk]);
