@@ -13,6 +13,7 @@ export const Measurements = (props: Props) => {
     clearError,
     measurement: {error, isFetching, measurementResponse: {measurements}, isExportingToExcel},
     exportToExcelSuccess,
+    hasMeters,
   } = props;
   useFetchMeasurements(props);
 
@@ -21,7 +22,7 @@ export const Measurements = (props: Props) => {
       <MeasurementWrapper
         hasContent={measurements.length > 0}
         measurements={measurements}
-        noContentText={firstUpperTranslated('no measurements')}
+        noContentText={firstUpperTranslated(hasMeters ? 'no measurements' : 'no meters')}
         exportToExcelSuccess={exportToExcelSuccess}
         isExportingToExcel={isExportingToExcel}
       />

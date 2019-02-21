@@ -30,6 +30,7 @@ import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
 import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/graph/Dot';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
+import {getLegendItems} from '../reportSelectors';
 
 export interface GraphProps {
   outerHiddenKeys: uuid[];
@@ -40,6 +41,7 @@ interface StateToProps {
   customDateRange: Maybe<DateRange>;
   isSideMenuOpen: boolean;
   period: Period;
+  hasMeters: boolean;
 }
 
 interface GraphComponentState {
@@ -167,6 +169,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       graphContents,
       isSideMenuOpen,
       outerHiddenKeys,
+      hasMeters
     } = this.props;
 
     const {hiddenKeys, resized} = this.state;
@@ -189,7 +192,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       legendClick: this.legendClick,
       setTooltipPayload: this.setTooltipPayload,
       hasContent: data.length > 0,
-      noContentText: firstUpperTranslated('no measurements'),
+      noContentText: firstUpperTranslated(hasMeters ? 'no measurements' : 'no meters'),
     };
 
     return <LineChartWrapper {...wrapperProps}/>;
@@ -239,10 +242,11 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
 
 }
 
-const mapStateToProps = ({userSelection: {userSelection}, ui}: RootState): StateToProps =>
+const mapStateToProps = ({report, userSelection: {userSelection}, ui}: RootState): StateToProps =>
   ({
     ...getSelectedPeriod(userSelection),
     isSideMenuOpen: isSideMenuOpen(ui),
+    hasMeters: getLegendItems(report).length > 0,
   });
 
 export const LineChartsContainer =
