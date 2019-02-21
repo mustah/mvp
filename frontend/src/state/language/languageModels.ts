@@ -1,4 +1,4 @@
-import {Overwrite} from 'react-redux-typescript';
+import {Overwrite} from 'utility-types';
 import {firstUpperTranslated} from '../../services/translationService';
 
 export interface LanguageState {

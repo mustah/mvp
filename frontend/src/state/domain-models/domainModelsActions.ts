@@ -1,6 +1,6 @@
 import {AxiosPromise} from 'axios';
 import {Dispatch} from 'react-redux';
-import {EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/types';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';

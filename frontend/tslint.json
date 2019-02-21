@@ -29,7 +29,8 @@
       "lodash",
       "react-dates",
       "redux-persist",
-      "moment"
+      "moment",
+      "typesafe-actions"
     ],
     "no-shadowed-variable": false,
     "no-implicit-dependencies": [

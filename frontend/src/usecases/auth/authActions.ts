@@ -1,4 +1,3 @@
-import {createEmptyAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {routes} from '../../app/routes';
 import {translatedErrorMessage} from '../../helpers/translations';
@@ -8,7 +7,7 @@ import {EndPoints} from '../../services/endPoints';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {User} from '../../state/domain-models/user/userModels';
 import {changeLanguage} from '../../state/language/languageActions';
-import {payloadActionOf, uuid} from '../../types/Types';
+import {emptyActionOf, payloadActionOf, uuid} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 import {getOrganisationSlug} from './authSelectors';
 
@@ -20,7 +19,7 @@ export const LOGOUT_USER = 'LOGOUT_USER';
 
 export const AUTH_SET_USER_INFO = ' AUTH_SET_USER_INFO';
 
-export const loginRequest = createEmptyAction(LOGIN_REQUEST);
+export const loginRequest = emptyActionOf(LOGIN_REQUEST);
 export const loginSuccess = payloadActionOf<Authorized>(LOGIN_SUCCESS);
 export const loginFailure = payloadActionOf<Unauthorized>(LOGIN_FAILURE);
 

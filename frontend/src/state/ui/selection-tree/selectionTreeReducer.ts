@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Action, uuid} from '../../../types/Types';
 import {SELECTION_TREE_TOGGLE_ENTRY} from './selectionTreeActions';
 import {SelectionTreeUiState} from './selectionTreeModels';

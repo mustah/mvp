@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Action} from '../../types/Types';
 import {CHANGE_LANGUAGE} from './languageActions';
 import {LanguageCode, LanguageState, languages} from './languageModels';

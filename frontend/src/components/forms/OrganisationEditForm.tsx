@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Overwrite} from 'react-redux-typescript';
+import {Overwrite} from 'utility-types';
 import {firstUpperTranslated} from '../../services/translationService';
 import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {UserSelection} from '../../state/user-selection/userSelectionModels';

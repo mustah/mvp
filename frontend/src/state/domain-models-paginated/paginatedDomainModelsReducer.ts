@@ -1,8 +1,8 @@
 import {Location} from 'history';
 import {isEqual} from 'lodash';
-import {EmptyAction} from 'react-redux-typescript';
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {routes} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {EndPoints} from '../../services/endPoints';

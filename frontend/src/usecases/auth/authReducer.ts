@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {User} from '../../state/domain-models/user/userModels';
 import {Action} from '../../types/Types';
 import {AUTH_SET_USER_INFO, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_USER} from './authActions';

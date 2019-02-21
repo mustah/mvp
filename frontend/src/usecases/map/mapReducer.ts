@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {GeoPosition} from '../../state/domain-models/location/locationModels';
 import {Action, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../auth/authActions';
