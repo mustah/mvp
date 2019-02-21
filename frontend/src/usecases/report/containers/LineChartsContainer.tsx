@@ -23,6 +23,7 @@ import {shortTimestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
+import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
@@ -42,6 +43,7 @@ interface StateToProps {
   isSideMenuOpen: boolean;
   period: Period;
   hasMeters: boolean;
+  hasContent: boolean;
 }
 
 interface GraphComponentState {
@@ -169,7 +171,8 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       graphContents,
       isSideMenuOpen,
       outerHiddenKeys,
-      hasMeters
+      hasMeters,
+      hasContent
     } = this.props;
 
     const {hiddenKeys, resized} = this.state;
@@ -191,7 +194,7 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
       key: `graph-update-${isSideMenuOpen}-${resized}`,
       legendClick: this.legendClick,
       setTooltipPayload: this.setTooltipPayload,
-      hasContent: data.length > 0,
+      hasContent,
       noContentText: firstUpperTranslated(hasMeters ? 'no measurements' : 'no meters'),
     };
 
@@ -242,11 +245,12 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
 
 }
 
-const mapStateToProps = ({report, userSelection: {userSelection}, ui}: RootState): StateToProps =>
+const mapStateToProps = ({report, measurement, userSelection: {userSelection}, ui}: RootState): StateToProps =>
   ({
     ...getSelectedPeriod(userSelection),
     isSideMenuOpen: isSideMenuOpen(ui),
     hasMeters: getLegendItems(report).length > 0,
+    hasContent: hasMeasurements(measurement.measurementResponse)
   });
 
 export const LineChartsContainer =

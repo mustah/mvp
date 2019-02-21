@@ -8,6 +8,7 @@ import {
   MeasurementParameters
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {FetchMeasurements, MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
+import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
 import {Graph} from '../components/graph/Graph';
@@ -23,6 +24,7 @@ export interface StateToProps {
   measurement: MeasurementState;
   userSelectionId: uuid;
   hasMeters: boolean;
+  hasContent: boolean;
 }
 
 export interface DispatchToProps {
@@ -41,6 +43,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
     requestParameters: getMeasurementParameters(rootState),
     userSelectionId: getUserSelectionId(rootState.userSelection),
     hasMeters: getLegendItems(report).length > 0,
+    hasContent: hasMeasurements(measurement.measurementResponse)
   });
 };
 
