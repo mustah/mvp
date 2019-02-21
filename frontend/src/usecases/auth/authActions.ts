@@ -1,4 +1,5 @@
 import {routerActions} from 'react-router-redux';
+import {createAction, createStandardAction} from 'typesafe-actions';
 import {routes} from '../../app/routes';
 import {translatedErrorMessage} from '../../helpers/translations';
 import {GetState} from '../../reducers/rootReducer';
@@ -7,25 +8,19 @@ import {EndPoints} from '../../services/endPoints';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {User} from '../../state/domain-models/user/userModels';
 import {changeLanguage} from '../../state/language/languageActions';
-import {emptyActionOf, payloadActionOf, uuid} from '../../types/Types';
+import {uuid} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 import {getOrganisationSlug} from './authSelectors';
 
-export const LOGIN_REQUEST = 'LOGIN_REQUEST';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
-
 export const LOGOUT_USER = 'LOGOUT_USER';
 
-export const AUTH_SET_USER_INFO = ' AUTH_SET_USER_INFO';
+export const loginRequest = createAction('LOGIN_REQUEST');
+export const loginSuccess = createStandardAction('LOGIN_SUCCESS')<Authorized>();
+export const loginFailure = createStandardAction('LOGIN_FAILURE')<Unauthorized>();
 
-export const loginRequest = emptyActionOf(LOGIN_REQUEST);
-export const loginSuccess = payloadActionOf<Authorized>(LOGIN_SUCCESS);
-export const loginFailure = payloadActionOf<Unauthorized>(LOGIN_FAILURE);
+export const logoutUser = createStandardAction(LOGOUT_USER)<Unauthorized | undefined>();
 
-export const logoutUser = payloadActionOf<Unauthorized | undefined>(LOGOUT_USER);
-
-export const authSetUser = payloadActionOf<User>(AUTH_SET_USER_INFO);
+export const authSetUser = createStandardAction('AUTH_SET_USER_INFO')<User>();
 
 const translatedError = (error?: Unauthorized): Unauthorized | undefined =>
   error ? ({...error, message: translatedErrorMessage(error.message)}) : undefined;
