@@ -9,7 +9,7 @@ import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse} from '../../../../types/Types';
 import {noInternetConnection, requestTimeout} from '../../../api/apiActions';
-import {SHOW_FAIL_MESSAGE, SHOW_SUCCESS_MESSAGE} from '../../../ui/message/messageActions';
+import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {updatePageMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PageNumbered} from '../../paginatedDomainModels';
 import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
@@ -284,10 +284,7 @@ describe('meterApiActions', () => {
           type: domainModelsPaginatedDeleteFailure(EndPoints.meters),
           payload
         },
-        {
-          type: SHOW_FAIL_MESSAGE,
-          payload: 'Failed to delete the meter: my bad'
-        }
+        showFailMessage('Failed to delete the meter: my bad')
       ]);
     });
 
@@ -308,10 +305,7 @@ describe('meterApiActions', () => {
           type: domainModelsPaginatedDeleteSuccess(EndPoints.meters),
           payload,
         },
-        {
-          type: SHOW_SUCCESS_MESSAGE,
-          payload: 'Successfully deleted the meter demo-1'
-        }
+        showSuccessMessage('Successfully deleted the meter demo-1')
       ]);
     });
   });
