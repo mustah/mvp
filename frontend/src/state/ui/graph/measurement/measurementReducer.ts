@@ -1,4 +1,5 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {getType} from 'typesafe-actions';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import {
@@ -9,12 +10,12 @@ import {
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
 import {
-  EXPORT_TO_EXCEL,
   EXPORT_TO_EXCEL_SUCCESS,
+  exportToExcelAction,
   MEASUREMENT_CLEAR_ERROR,
   MEASUREMENT_FAILURE,
-  MEASUREMENT_REQUEST,
-  MEASUREMENT_SUCCESS
+  MEASUREMENT_SUCCESS,
+  measurementRequest
 } from './measurementActions';
 import {MeasurementResponse, MeasurementState} from './measurementModels';
 
@@ -33,7 +34,7 @@ export const initialState: MeasurementState = {
 
 export const measurement = (state: MeasurementState = initialState, action: ActionTypes): MeasurementState => {
   switch (action.type) {
-    case MEASUREMENT_REQUEST:
+    case getType(measurementRequest):
       return {
         ...state,
         isFetching: true,
@@ -52,7 +53,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
         isFetching: false,
         isSuccessfullyFetched: false,
       };
-    case EXPORT_TO_EXCEL:
+    case getType(exportToExcelAction):
       return {
         ...state,
         isExportingToExcel: true,

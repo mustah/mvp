@@ -1,4 +1,5 @@
 import {flatMap, map, sortBy} from 'lodash';
+import {createAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {Maybe} from '../../../../helpers/Maybe';
@@ -40,7 +41,7 @@ import {
 import {measurementDataFormatter} from './measurementSchema';
 
 export const MEASUREMENT_REQUEST = 'MEASUREMENT_REQUEST';
-export const measurementRequest = emptyActionOf(MEASUREMENT_REQUEST);
+export const measurementRequest = createAction(MEASUREMENT_REQUEST);
 
 export const MEASUREMENT_SUCCESS = 'MEASUREMENT_SUCCESS';
 export const measurementSuccess = payloadActionOf<MeasurementResponse>(MEASUREMENT_SUCCESS);
@@ -51,8 +52,7 @@ export const measurementFailure = payloadActionOf<Maybe<ErrorResponse>>(MEASUREM
 export const MEASUREMENT_CLEAR_ERROR = 'MEASUREMENT_CLEAR_ERROR';
 export const measurementClearError = emptyActionOf(MEASUREMENT_CLEAR_ERROR);
 
-export const EXPORT_TO_EXCEL = 'EXPORT_TO_EXCEL';
-export const exportToExcelAction = emptyActionOf(EXPORT_TO_EXCEL);
+export const exportToExcelAction = createAction('EXPORT_TO_EXCEL');
 
 export const EXPORT_TO_EXCEL_SUCCESS = 'EXPORT_TO_EXCEL_SUCCESS';
 export const exportToExcelSuccess = emptyActionOf(EXPORT_TO_EXCEL_SUCCESS);

@@ -8329,13 +8329,6 @@ react-portal@^4.1.5:
   dependencies:
     prop-types "^15.5.8"
 
-react-redux-typescript@3.0.0-rc.3:
-  version "3.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/react-redux-typescript/-/react-redux-typescript-3.0.0-rc.3.tgz#8f562c15fcd13afde476f28b6484e4f0359f8b79"
-  integrity sha512-p6OjEYWin8nwyoODuYqVXKLEQ1b4jMStDu0sBKPwLr9TFIGL6mulU+fI3KZTbqLczkJSLh0QTR9vS6kw8l8XmA==
-  dependencies:
-    typesafe-actions "1.0.0"
-
 react-redux@^5.0.7:
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.7.tgz#0dc1076d9afb4670f993ffaef44b8f8c1155a4c8"
@@ -10075,10 +10068,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typesafe-actions@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-1.0.0.tgz#9bd4b9e250399e818fd3dbf0235fa21972cda509"
-  integrity sha512-L7wXh1nm07KjmE3nej0NJNHx5/Bc6Q7fIazfnqHkP97WLieEDBxXDCeMT98KSrtwbCneO14xQXokEPuW9sNG5w==
+typesafe-actions@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-2.2.0.tgz#2d2d8e403745446852f9f88ebf45ec07fa58c0fe"
+  integrity sha512-qjrFDl6S2yejKEz0M2c3c5D5z8sGJTjma94O9kRHStiqauXP9dKUM0Nbdmn90HCZBZl3jzFNT21bOtxRfCkc0w==
 
 typescript@2.8.3:
   version "2.8.3"
@@ -10248,6 +10241,11 @@ util@^0.10.3:
   integrity sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==
   dependencies:
     inherits "2.0.3"
+
+utility-types@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/utility-types/-/utility-types-2.1.0.tgz#0c78fc9f7eb424d14302222b4ddd13fdb17f44ab"
+  integrity sha512-/nP2gqavggo6l38rtQI/CdeV+2fmBGXVvHgj9kV2MAnms3TIi77Mz9BtapPFI0+GZQCqqom0vACQ+VlTTaCovw==
 
 utils-extend@^1.0.4, utils-extend@^1.0.6, utils-extend@^1.0.7:
   version "1.0.8"

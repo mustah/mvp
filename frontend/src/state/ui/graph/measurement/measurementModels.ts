@@ -1,4 +1,4 @@
-import {Overwrite} from 'react-redux-typescript';
+import {Overwrite} from 'utility-types';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';

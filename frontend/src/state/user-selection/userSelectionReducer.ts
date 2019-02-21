@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
 import {Action, IdNamed} from '../../types/Types';

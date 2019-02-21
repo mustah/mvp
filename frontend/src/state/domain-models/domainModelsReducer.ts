@@ -1,5 +1,5 @@
-import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';

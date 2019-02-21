@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {TOGGLE_SHOW_HIDE_SIDE_MENU} from './sideMenuActions';
 
 export interface SideMenuState {

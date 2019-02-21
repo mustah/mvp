@@ -12,16 +12,7 @@ import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {CHANGE_LANGUAGE} from '../../../state/language/languageActions';
 import {LanguageState} from '../../../state/language/languageModels';
-import {
-  AUTH_SET_USER_INFO,
-  authSetUser,
-  login,
-  loginFailure,
-  loginRequest,
-  loginSuccess,
-  logout,
-  logoutUser,
-} from '../authActions';
+import {authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutUser} from '../authActions';
 import {Unauthorized} from '../authModels';
 
 const configureMockStore = configureStore([thunk]);
@@ -204,9 +195,7 @@ describe('authActions', () => {
     it('sets the user info to the provided user', async () => {
       await store.dispatch(authSetUser(modifiedUser));
 
-      expect(store.getActions()).toEqual([
-        {type: AUTH_SET_USER_INFO, payload: modifiedUser},
-      ]);
+      expect(store.getActions()).toEqual([authSetUser(modifiedUser)]);
     });
   });
 });

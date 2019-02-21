@@ -3,6 +3,7 @@ import {EndPoints} from '../../services/endPoints';
 import {fetchIfNeeded, FetchIfNeeded} from '../../state/api/apiActions';
 import {uuid} from '../../types/Types';
 import {centerMap} from '../map/mapActions';
+import {MapMarker} from '../map/mapModels';
 import {DashboardModel} from './dashboardModels';
 import {DashboardState} from './dashboardReducer';
 
@@ -18,8 +19,9 @@ export const fetchDashboard = fetchIfNeeded<DashboardModel>(
 
 export const centerMapOnMeter = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const geoPosition = getState().domainModels.meterMapMarkers.entities[id];
+    const geoPosition: MapMarker = getState().domainModels.meterMapMarkers.entities[id];
     if (geoPosition) {
-      dispatch(centerMap(geoPosition));
+      const {latitude, longitude} = geoPosition;
+      dispatch(centerMap({latitude, longitude}));
     }
   };

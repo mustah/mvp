@@ -1,6 +1,6 @@
 import {Location} from 'history';
-import {EmptyAction} from 'react-redux-typescript';
 import {LOCATION_CHANGE} from 'react-router-redux';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {routes} from '../../app/routes';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';

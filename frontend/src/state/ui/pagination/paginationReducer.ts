@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';

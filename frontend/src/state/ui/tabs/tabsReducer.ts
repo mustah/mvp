@@ -1,4 +1,4 @@
-import {EmptyAction} from 'react-redux-typescript';
+import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Action} from '../../../types/Types';
 import {CHANGE_TAB} from './tabsActions';
 import {TabName, TabSelection, TabsState} from './tabsModels';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ValidatorForm} from 'react-material-ui-form-validator';
-import {Overwrite} from 'react-redux-typescript';
+import {Overwrite} from 'utility-types';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {Role, User} from '../../state/domain-models/user/userModels';

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Dispatch} from 'react-redux';
-import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {action} from 'typesafe-actions';
+import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/types';
 import {Maybe} from '../helpers/Maybe';
 import {PageNumbered} from '../state/domain-models-paginated/paginatedDomainModels';
 import {ApiRequestSortingOptions} from '../state/ui/pagination/paginationModels';
@@ -46,8 +47,10 @@ export type OnPayloadAction<P> = (payload: P) => Action<P>;
 export type OnEmptyAction = () => EmptyAction<string>;
 export type Dispatcher = Dispatch<any>;
 
-export const payloadActionOf = <P>(type: string): OnPayloadAction<P> => createPayloadAction<string, P>(type);
-export const emptyActionOf = (type: string): OnEmptyAction => createEmptyAction<string>(type);
+export const payloadActionOf =
+  <P>(type: string): OnPayloadAction<P> => (payload: P) => action<string, P>(type, payload);
+
+export const emptyActionOf = (type: string): OnEmptyAction => () => action<string>(type);
 
 export interface Dictionary<T> {
   [key: string]: T;
