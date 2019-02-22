@@ -11,9 +11,9 @@ import {isDefined} from '../../../helpers/commonHelpers';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/LegendContainer';
-import './Legend.scss';
 import {quantityWidth, renderColumns, rowRenderer} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
+import './Legend.scss';
 
 const legendGridStyle: React.CSSProperties = {
   ...gridStyle,
@@ -58,8 +58,8 @@ export const Legend = ({
   removeSelectedListItems,
   toggleLine
 }: DispatchToProps & StateToProps) => {
-  const [gridState, setGridState] = React.useState<LegendState>({result: process(legendItems, state)});
   const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
+  const [gridState, setGridState] = React.useState<LegendState>({result: process(legendItems, state)});
 
   const renderIconButtonsHeaderCell = () => (
     <RowLeft>
@@ -76,9 +76,15 @@ export const Legend = ({
     </RowLeft>
   );
 
-  const renderIconButtonsCell = ({dataItem: {id}}: GridCellProps) => {
+  const renderIconButtonsCell = ({dataItem: {id, medium}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
-    const onDeleteItem = () => deleteItem(id);
+    const onDeleteItem = () => {
+      const data = gridState.result.data;
+      const index = findIndex(data, {value: medium});
+      data[index].items = data[index].items.filter((it) => it.id !== id);
+      setGridState({result: gridState.result});
+      deleteItem(id);
+    };
     const onToggleItem = () => toggleLine(id);
     return (
       <td className="icons">
