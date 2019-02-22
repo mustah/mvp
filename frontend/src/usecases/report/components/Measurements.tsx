@@ -3,7 +3,7 @@ import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/w
 import {Loader} from '../../../components/loading/Loader';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {useFetchMeasurements} from '../../../state/ui/graph/measurement/measurementHook';
-import {Props} from './graph/Graph';
+import {Props} from './MeasurementLineChart';
 import {MeasurementList, MeasurementListProps} from './MeasurementList';
 
 const MeasurementWrapper = withEmptyContent<MeasurementListProps & WithEmptyContentProps>(MeasurementList);

@@ -11,7 +11,7 @@ import {FetchMeasurements, MeasurementState} from '../../../state/ui/graph/measu
 import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
-import {Graph} from '../components/graph/Graph';
+import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 import {addAllToReport} from '../reportActions';
 import {LegendItem} from '../reportModels';
@@ -55,7 +55,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const GraphContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Graph);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeasurementLineChart);
 
 export const MeasurementsContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(Measurements);

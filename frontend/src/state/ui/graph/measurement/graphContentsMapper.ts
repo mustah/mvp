@@ -17,7 +17,7 @@ const colorizeAverage = colorize({
   [Quantity.differenceTemperature as string]: '#004d78',
 });
 
-const colorizeMeters = colorize({
+export const colorizeMeters = colorize({
   [Quantity.volume as string]: '#651FFF',
   [Quantity.flow as string]: '#F50057',
   [Quantity.energy as string]: '#00E676',
@@ -26,8 +26,6 @@ const colorizeMeters = colorize({
   [Quantity.returnTemperature as string]: '#D500F9',
   [Quantity.differenceTemperature as string]: '#2979FF',
 });
-
-const thickStroke: number = 4;
 
 const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
   if (axes.left === unit) {
@@ -87,8 +85,6 @@ export const toGraphContents =
 
     const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
 
-    const meterStrokeWidth: number = average.length > 0 ? 1 : thickStroke;
-
     measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
@@ -124,7 +120,7 @@ export const toGraphContents =
           address,
           medium,
           stroke: colorizeMeters(quantity as Quantity),
-          strokeWidth: meterStrokeWidth,
+          strokeWidth: 3,
           yAxisId,
           origin: 'meter',
         });
@@ -149,7 +145,7 @@ export const toGraphContents =
         key: `average-${quantity}`,
         name: dataKey,
         stroke: colorizeAverage(quantity as Quantity),
-        strokeWidth: thickStroke,
+        strokeWidth: 4,
         yAxisId,
         origin: 'average',
       });

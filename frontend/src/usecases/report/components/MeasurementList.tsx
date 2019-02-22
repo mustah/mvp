@@ -17,7 +17,7 @@ import {
   Quantity,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Callback, Dictionary} from '../../../types/Types';
-import {cellRender, headerCellRender, rowRender} from './measurementGridHelper';
+import {cellRender, headerCellRender, rowRender} from '../helpers/measurementGridHelper';
 
 export interface MeasurementListProps extends Measurements {
   isExportingToExcel: boolean;

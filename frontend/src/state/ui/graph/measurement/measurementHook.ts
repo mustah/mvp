@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Props} from '../../../../usecases/report/components/graph/Graph';
+import {Props} from '../../../../usecases/report/components/MeasurementLineChart';
 
 export const useFetchMeasurements = ({
   fetchMeasurements,

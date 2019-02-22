@@ -12,8 +12,8 @@ import {orUnknown} from '../../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/LegendContainer';
 import './Legend.scss';
-import {quantityWidth, renderColumns, rowRenderer} from './legendGridHelper';
-import {cellRender, headerCellRender} from './measurementGridHelper';
+import {quantityWidth, renderColumns, rowRenderer} from '../helpers/legendGridHelper';
+import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
 
 const legendGridStyle: React.CSSProperties = {
   ...gridStyle,
