@@ -21,6 +21,7 @@ import com.elvaco.mvp.core.domainmodels.QuantityParameter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
+import com.elvaco.mvp.database.repository.jooq.JooqUtils;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeasurementEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
@@ -308,22 +309,12 @@ public class MeasurementRepository implements Measurements {
   }
 
   private Table<Record> dateSerieFor(MeasurementParameter parameter) {
-    String expr;
-    if (parameter.getQuantities().get(0).isConsumption()) {
-      expr = "generate_series({0} at time zone 'UTC',"
-        + "{1} at time zone 'UTC' + cast({2} as interval),"
-        + "{2}::interval) as " + VALUE_DATE_FIELD_NAME;
-    } else {
-      expr = "generate_series({0} at time zone 'UTC',"
-        + "{1} at time zone 'UTC',"
-        + "{2}::interval) as " + VALUE_DATE_FIELD_NAME;
-    }
-    return DSL.table(
-      expr,
+    return JooqUtils.dateSerieFor(
       parameter.getResolution().getStart(parameter.getFrom()),
       parameter.getResolution().getStart(parameter.getTo()),
-      parameter.getResolution().asInterval()
-    );
+      parameter.getResolution().asInterval(),
+      parameter.getQuantities().get(0).isConsumption(),
+      VALUE_DATE_FIELD_NAME);
   }
 
   private MeasurementParameter getReadoutParameter(MeasurementParameter parameter) {

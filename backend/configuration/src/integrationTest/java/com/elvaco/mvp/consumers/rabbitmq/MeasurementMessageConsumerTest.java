@@ -111,7 +111,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       null,
       new MeterIdDto("meterId-1"),
-      new FacilityIdDto("facilityId"),
+      new FacilityIdDto("facility"),
       "organisationId",
       "sourceSystemId",
       asList(newValueDto(when, 1.0))
@@ -121,7 +121,7 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     measurementMessageConsumer.accept(new MeteringMeasurementMessageDto(
       new GatewayIdDto("gatewayId"),
       new MeterIdDto("meterId-2"),
-      new FacilityIdDto("facilityId"),
+      new FacilityIdDto("facility"),
       "organisationId",
       "sourceSystemId",
       asList(newValueDto(when.plusDays(1), 2.0))

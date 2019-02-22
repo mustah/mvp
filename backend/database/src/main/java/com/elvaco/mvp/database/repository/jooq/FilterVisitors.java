@@ -42,6 +42,27 @@ public class FilterVisitors {
     ).collect(Collectors.toList()));
   }
 
+  public static FilterAcceptor logicalMeterWithCollectionPercentageAndLastData(
+    DSLContext dsl,
+    MeasurementThresholdParser parser
+  ) {
+    return new LogicalMeterFilterVisitor(Stream.concat(
+      filterDecorators(dsl, parser).stream(),
+      Stream.of(new CollectionPercentageFilterVisitor(dsl),
+        new MeasurementLastDataFilterVisitor(dsl))
+    ).collect(Collectors.toList()));
+  }
+
+  public static FilterAcceptor collectionPercentagePerDate(
+    DSLContext dsl,
+    MeasurementThresholdParser parser
+  ) {
+    return new LogicalMeterFilterVisitor(Stream.concat(
+      filterDecorators(dsl, parser).stream(),
+      Stream.of(new CollectionPercentagePerDateFilterVisitor(dsl))
+    ).collect(Collectors.toList()));
+  }
+
   public static FilterAcceptor gateway(DSLContext dsl, MeasurementThresholdParser parser) {
     return new GatewayFilterVisitor(dsl, filterDecorators(dsl, parser));
   }

@@ -12,6 +12,7 @@ import com.elvaco.mvp.database.entity.jooq.tables.records.MeasurementStatDataRec
 import lombok.experimental.UtilityClass;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
 
@@ -31,6 +32,10 @@ public class JooqUtils {
   public static final Field<Double> COLLECTION_PERCENTAGE = field(
     "collection_percentage",
     Double.class
+  );
+  public static final Field<OffsetDateTime> LAST_DATA = field(
+    "last_data",
+    OffsetDateTime.class
   );
 
   public static Condition periodContains(Field<PeriodRange> field, OffsetDateTime time) {
@@ -73,6 +78,29 @@ public class JooqUtils {
         .and(MEASUREMENT_STAT_DATA.STAT_DATE.lessThan(Date.valueOf(stopDate)))
         .and(MEASUREMENT_STAT_DATA.PHYSICAL_METER_ID.equal(PHYSICAL_METER.ID));
     }
+  }
+
+  public static Table<Record> dateSerieFor(OffsetDateTime from,
+                                           OffsetDateTime to,
+                                           String resolution,
+                                           boolean isConsumption,
+                                           String valueFieldName) {
+    String expr;
+    if (isConsumption) {
+      expr = "generate_series({0} at time zone 'UTC',"
+        + "{1} at time zone 'UTC' + cast({2} as interval),"
+        + "{2}::interval) as " + valueFieldName;
+    } else {
+      expr = "generate_series({0} at time zone 'UTC',"
+        + "{1} at time zone 'UTC',"
+        + "{2}::interval) as " + valueFieldName;
+    }
+    return table(
+      expr,
+      from,
+      to,
+      resolution
+    );
   }
 
   private static Condition getCondition(

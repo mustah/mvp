@@ -2,20 +2,25 @@ package com.elvaco.mvp.web;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.DoubleStream;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.dto.CollectionStatsDto;
+import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.testdata.UrlTemplate;
-import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
 
+import org.assertj.core.api.Assertions;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
@@ -25,10 +30,10 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-@Ignore("Should work on another endpoint")
 public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest {
 
   @After
@@ -42,10 +47,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     given(series(districtHeatingMeter, Quantity.ENERGY, 1.0));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusHours(1)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusHours(1)),
+        CollectionStatsDto.class
       );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
@@ -60,8 +65,8 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     var meters = asUser()
       .getPage(
-        metersUrl(context().yesterday(), context().yesterday().plusHours(1)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(1)),
+        CollectionStatsDto.class
       )
       .getContent();
 
@@ -76,10 +81,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, 1.0));
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<CollectionStatsDto> response = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusHours(2)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusHours(2)),
+        CollectionStatsDto.class
       );
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -97,10 +102,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       Duration.ofMinutes(5), DoubleStream.iterate(1, d -> d).limit(24 * 12 - 1).toArray()
     ));
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<CollectionStatsDto> response = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusDays(1)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusDays(1)),
+        CollectionStatsDto.class
       );
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -116,10 +121,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     given(series(districtHeatingMeter, Quantity.ENERGY, 1.0));
 
-    Page<PagedLogicalMeterDto> response = asUser()
+    Page<CollectionStatsDto> response = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusHours(2)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusHours(2)),
+        CollectionStatsDto.class
       );
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -150,8 +155,8 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     var response = asUser()
       .getPage(
-        metersUrl(context().yesterday(), context().yesterday().plusHours(5)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(5)),
+        CollectionStatsDto.class
       );
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -179,8 +184,8 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     var content = asUser()
       .getPage(
-        metersUrl(context().yesterday(), context().yesterday().plusHours(4)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(4)),
+        CollectionStatsDto.class
       )
       .getContent();
 
@@ -193,10 +198,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
 
     given(series(districtHeatingMeter, Quantity.RETURN_TEMPERATURE, context().yesterday(), 1.0));
 
-    PagedLogicalMeterDto logicalMeterDto = asUser()
+    CollectionStatsDto logicalMeterDto = asUser()
       .getPage(
-        metersUrl(context().yesterday(), context().yesterday().plusHours(3)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().yesterday(), context().yesterday().plusHours(3)),
+        CollectionStatsDto.class
       )
       .getContent()
       .get(0);
@@ -231,13 +236,13 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       DoubleStream.iterate(2, d -> d + 1.0).limit(23).toArray()
     ));
 
-    List<PagedLogicalMeterDto> pagedMeters = asUser()
+    List<CollectionStatsDto> pagedMeters = asUser()
       .getPage(
-        metersUrl(
+        statsFacilityUrl(
           secondMeterActivePeriod.getStartDateTime().get(),
           secondMeterActivePeriod.getStartDateTime().get().plusDays(1)
         ),
-        PagedLogicalMeterDto.class
+        CollectionStatsDto.class
       )
       .getContent();
 
@@ -259,10 +264,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       DoubleStream.iterate(1, d -> d + 1.0).limit(24).toArray()
     ));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusDays(1)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusDays(1)),
+        CollectionStatsDto.class
       );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
@@ -270,6 +275,15 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     assertThat(paginatedLogicalMeters.getContent())
       .extracting(m -> m.collectionPercentage)
       .contains(100.0);
+
+    var listedPercentage = asUser()
+      .getList(
+        statsDateUrl(context().now(), context().now().plusDays(2)),
+        CollectionStatsPerDateDto.class
+      );
+    assertThat(listedPercentage.getBody()).hasSize(2);
+    assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(100.0);
+    assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(0.0);
   }
 
   @Test
@@ -283,10 +297,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()
     ));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusDays(2)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusDays(2)),
+        CollectionStatsDto.class
       );
 
     assertThat(paginatedLogicalMeters.getTotalElements()).isEqualTo(1);
@@ -294,6 +308,15 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
     assertThat(paginatedLogicalMeters.getContent())
       .extracting(m -> m.collectionPercentage)
       .contains(100.0);
+
+    var listedPercentage = asUser().getList(
+      statsDateUrl(context().now(),
+        context().now().plusDays(2)),
+      CollectionStatsPerDateDto.class
+    );
+    assertThat(listedPercentage.getBody()).hasSize(2);
+    assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(100.0);
+    assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(100.0);
   }
 
   @Test
@@ -321,10 +344,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       DoubleStream.iterate(1, d -> d + 1.0).limit(48).toArray()
     ));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusDays(2)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusDays(2)),
+        CollectionStatsDto.class
       );
 
     assertThat(paginatedLogicalMeters.getContent())
@@ -357,10 +380,10 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       DoubleStream.iterate(1, d -> d + 1.0).limit(36).toArray()
     ));
 
-    Page<PagedLogicalMeterDto> paginatedLogicalMeters = asUser()
+    Page<CollectionStatsDto> paginatedLogicalMeters = asUser()
       .getPage(
-        metersUrl(context().now(), context().now().plusDays(2)),
-        PagedLogicalMeterDto.class
+        statsFacilityUrl(context().now(), context().now().plusDays(2)),
+        CollectionStatsDto.class
       );
 
     assertThat(paginatedLogicalMeters.getContent())
@@ -368,11 +391,149 @@ public class LogicalMeterControllerCollectionStatusTest extends IntegrationTest 
       .contains(75.0);
   }
 
-  private static UrlTemplate metersUrl(ZonedDateTime after, ZonedDateTime before) {
+  @Test
+  public void sortsByCollectionPercentage() {
+    PhysicalMeter phys = physicalMeter().readIntervalMinutes(0).build();
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter().externalId("0002"),
+      logicalMeter().externalId("0001"),
+      logicalMeter().externalId("0003"),
+      logicalMeter().externalId("0004"),
+      logicalMeter().externalId("0005").physicalMeters((List<PhysicalMeter>)Arrays.asList(phys))
+    ));
+    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      1.0,1,1,1,1,1));
+    given(series(meters.get(2), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      1.0,1,1,1,1));
+    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday().plusHours(6),
+      1.0,1,1,1));
+    testSorting(
+      "collectionPercentage,asc",
+      meter -> meter.facility,
+      List.of("0004", "0001", "0003", "0002","0005")
+    );
+
+    testSorting(
+      "collectionPercentage,desc",
+      meter -> meter.facility,
+      List.of("0005","0002", "0003", "0001", "0004")
+    );
+  }
+
+  @Test
+  public void sortsByLastData() {
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter().externalId("0002"),
+      logicalMeter().externalId("0001"),
+      logicalMeter().externalId("0003"),
+      logicalMeter().externalId("0004")
+    ));
+    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      1.0,1,1,1,1,1));
+    given(series(meters.get(2), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      1.0,1,1,1,1));
+    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday().plusHours(6),
+      1.0,1,1,1));
+
+    testSorting(
+      "lastData,asc",
+      meter -> meter.facility,
+      List.of("0003", "0002", "0001","0004")
+    );
+
+    testSorting(
+      "lastData,desc",
+      meter -> meter.facility,
+      List.of("0004","0001", "0002", "0003")
+    );
+  }
+
+  @Test
+  public void findAll_SortsByFacility() {
+    given(
+      logicalMeter().externalId("0005"),
+      logicalMeter().externalId("0001"),
+      logicalMeter().externalId("0003"),
+      logicalMeter().externalId("0004"),
+      logicalMeter().externalId("0002")
+    );
+
+    testSorting(
+      "facility,asc",
+      meter -> meter.facility,
+      List.of("0001", "0002", "0003", "0004", "0005")
+    );
+
+    testSorting(
+      "facility,desc",
+      meter -> meter.facility,
+      List.of("0005", "0004", "0003", "0002", "0001")
+    );
+  }
+
+  private void testSorting(
+    String sort,
+    Function<CollectionStatsDto, String> actual,
+    List<String> expectedProperties
+  ) {
+    Url url = Url.builder()
+      .path("/meters/stats/facility")
+      .period(context().yesterday(), context().yesterday().plusDays(1))
+      .size(expectedProperties.size())
+      .page(0)
+      .sortBy(sort)
+      .build();
+
+    Page<CollectionStatsDto> response = asUser()
+      .getPage(url, CollectionStatsDto.class);
+
+    assertThat(response)
+      .extracting(actual)
+      .containsExactlyElementsOf(
+        expectedProperties.stream().map(Assertions::tuple).collect(toList())
+      );
+  }
+
+  @Test
+  public void collectionPercentageDifferentReadIntervall() {
+    PhysicalMeter phys0 = physicalMeter().readIntervalMinutes(0).build();
+    PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter(),
+      logicalMeter().physicalMeters((List<PhysicalMeter>) Arrays.asList(phys0)),
+      logicalMeter().physicalMeters((List<PhysicalMeter>) Arrays.asList(phys24))
+    ));
+    given(series(meters.get(0), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      DoubleStream.iterate(0, d -> d + 1.0).limit(24).toArray()
+    ));
+    given(series(meters.get(1), Quantity.RETURN_TEMPERATURE, context().yesterday(),
+      1.0, 1, 1, 1, 1
+    ));
+
+    var listedPercentage = asUser()
+      .getList(
+        statsDateUrl(context().yesterday(), context().yesterday().plusDays(2)),
+        CollectionStatsPerDateDto.class
+      );
+    assertThat(listedPercentage.getBody()).hasSize(2);
+    assertThat(listedPercentage.getBody().get(0).collectionPercentage).isEqualTo(50.0);
+    assertThat(listedPercentage.getBody().get(1).collectionPercentage).isEqualTo(0.0);
+  }
+
+  private static UrlTemplate statsFacilityUrl(ZonedDateTime after, ZonedDateTime before) {
     return Url.builder()
-      .path("/meters")
+      .path("/meters/stats/facility")
       .parameter(AFTER, after)
       .parameter(BEFORE, before)
       .build();
   }
+
+  private static UrlTemplate statsDateUrl(ZonedDateTime after, ZonedDateTime before) {
+    return Url.builder()
+      .path("/meters/stats/date")
+      .parameter(AFTER, after)
+      .parameter(BEFORE, before)
+      .build();
+  }
+
 }

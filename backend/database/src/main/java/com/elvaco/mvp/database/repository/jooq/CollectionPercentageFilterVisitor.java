@@ -26,6 +26,7 @@ import static org.jooq.impl.DSL.min;
 import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.trueCondition;
+import static org.jooq.impl.DSL.when;
 
 @RequiredArgsConstructor
 class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
@@ -56,11 +57,15 @@ class CollectionPercentageFilterVisitor extends EmptyFilterVisitor {
         .and(JooqUtils.periodOverlaps(PHYSICAL_METER.ACTIVE_PERIOD, period.toPeriodRange()))
         .and(PHYSICAL_METER.LOGICAL_METER_ID.eq(LOGICAL_METER.ID));
 
-      collectionPercentageField = sum(coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0))
+      collectionPercentageField = when(min(PHYSICAL_METER.READ_INTERVAL_MINUTES).ne(0L),
+        coalesce(
+          sum(coalesce(MEASUREMENT_STAT_DATA.RECEIVED_COUNT, 0))
         .divide(inline(60, Double.class)
           .times(ChronoUnit.HOURS.between(period.start, period.stop))
           .divide(min(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)))
-        ).times(100.0).cast(Double.class);
+        ).times(100.0).cast(Double.class),
+          0.0)
+      ).otherwise(inline((Double) null));
     }
 
     return query.leftJoin(
