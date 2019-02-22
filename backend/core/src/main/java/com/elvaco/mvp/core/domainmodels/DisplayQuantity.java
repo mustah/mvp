@@ -37,7 +37,7 @@ public class DisplayQuantity {
     new DisplayQuantity(
       Quantity.VOLUME,
       DisplayMode.CONSUMPTION,
-      CUBIC_METRES_PER_HOUR
+      CUBIC_METRES
     ),
     new DisplayQuantity(
       Quantity.POWER,

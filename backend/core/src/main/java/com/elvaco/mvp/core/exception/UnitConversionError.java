@@ -18,12 +18,4 @@ public class UnitConversionError extends RuntimeException {
       unknownUnit
     ));
   }
-
-  public static UnitConversionError needsUnit(String quantity) {
-    return new UnitConversionError(String.format(
-      "%s needs to be complemented with a unit",
-      quantity
-    ));
-  }
-
 }
