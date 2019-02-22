@@ -61,7 +61,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     MeterDefinition meterDefinition
       = given(meterDefinition().medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
       .name("test")
-      .organisation(context().organisation()));
+      .organisation(context().defaultOrganisation()));
 
     List<MeterDefinitionDto> definitionDtos = asUser().getList(
       meterDefinitionsUrl(),
@@ -79,11 +79,11 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
         .name("test")
-        .organisation(context().organisation()
-        )
+        .organisation(context().defaultOrganisation())
     );
 
-    List<MeterDefinitionDto> definitionDtos = asOtherUser().getList(
+    User otherUser = given(organisation(), user()).getUser();
+    List<MeterDefinitionDto> definitionDtos = as(otherUser).getList(
       meterDefinitionsUrl(),
       MeterDefinitionDto.class
     ).getBody();
@@ -95,15 +95,13 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_definitionsVisibleToSubOrganisation() {
-    Organisation subOrg = given(subOrganisation());
-
-    User subOrgUser = given(user().organisation(subOrg));
+    User subOrgUser = given(subOrganisation(), user()).getUser();
 
     MeterDefinition meterDefinition = given(
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
         .name("test")
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
     );
 
     List<MeterDefinitionDto> definitionDtos = as(subOrgUser).getList(
@@ -160,7 +158,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       null,
       "test",
       Collections.emptySet(),
-      OrganisationDtoMapper.toDto(context().organisation()),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       false
     );
@@ -181,14 +179,14 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void create_autoApplyOnExistingMeters() {
     var logicalMeter = given(logicalMeter()
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
-      .organisationId(context().organisation().id));
+      .organisationId(context().organisationId()));
 
     Medium medium = mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
-      OrganisationDtoMapper.toDto(context().organisation()),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       true
     );
@@ -210,7 +208,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       null,
       "test",
       Collections.emptySet(),
-      OrganisationDtoMapper.toDto(context().organisation()),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       true
     );
@@ -226,12 +224,14 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void create_cannotCreateDefinitionForOtherOrganisation() {
+    Organisation otherOrganisation = given(organisation());
+
     Medium medium = mediumProvider.getByNameOrThrow(Medium.WATER);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
-      OrganisationDtoMapper.toDto(context().organisation2()),
+      OrganisationDtoMapper.toDto(otherOrganisation),
       new IdNamedDto(medium.id.toString(), medium.name),
       true
     );
@@ -252,7 +252,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       null,
       "test",
       Set.of(new DisplayQuantityDto(Quantity.POWER.name, false, Units.WATT, 9)),
-      OrganisationDtoMapper.toDto(context().organisation()),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       false
     );
@@ -276,7 +276,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       null,
       "test",
       Set.of(new DisplayQuantityDto("Not a valid quantity name", false, Units.WATT, 3)),
-      OrganisationDtoMapper.toDto(context().organisation()),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       true
     );
@@ -297,7 +297,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       null,
       "test",
       Set.of(new DisplayQuantityDto(Quantity.POWER.name, false, Units.WATT, -1)),
-      OrganisationDtoMapper.toDto(context().organisation()),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       true
     );
@@ -316,7 +316,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     var meterDefinition = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
       .name("test")
-      .organisation(context().organisation())
+      .organisation(context().defaultOrganisation())
       .quantities(Set.of(new DisplayQuantity(
         Quantity.POWER,
         DisplayMode.READOUT,
@@ -343,8 +343,10 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     MeterDefinition saved = meterDefinitions.findById(meterDefinition.id).get();
     assertThat(saved.name).isEqualTo(newMeterDefinitionDto.name);
     assertThat(saved.organisation.id).isEqualTo(newMeterDefinitionDto.organisation.id);
-    assertThat(saved.quantities).extracting(q -> q.quantity.name).containsExactly(Quantity.ENERGY.name);
+    assertThat(saved.quantities).extracting(q -> q.quantity.name)
+      .containsExactly(Quantity.ENERGY.name);
   }
+
 
   @Test
   public void delete_systemMeterDefintitionCanNotBeDeleted() {
@@ -391,7 +393,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
         .name("test")
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
     );
 
     ResponseEntity<MeterDefinitionDto> response = asAdmin().delete(
@@ -426,7 +428,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
         .name("test")
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
     );
 
     ResponseEntity<MeterDefinitionDto> response = asUser().delete(
@@ -444,7 +446,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       meterDefinition()
         .medium(medium)
         .name("test")
-        .organisation(context().organisation())
+        .organisation(context().defaultOrganisation())
     );
 
     var logicalMeter = given(logicalMeter().meterDefinition(meterDefinition));

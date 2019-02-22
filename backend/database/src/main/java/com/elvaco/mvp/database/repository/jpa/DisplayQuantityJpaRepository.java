@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DisplayQuantityJpaRepository
   extends JpaRepository<DisplayQuantityEntity, DisplayQuantityPk> {
+  void deleteAllByPkMeterDefinitionId(Long id);
 }

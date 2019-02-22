@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 
@@ -30,6 +31,11 @@ public class MockMeterDefinitions extends MockRepository<Long, MeterDefinition>
   public Optional<MeterDefinition> findById(Long id) {
     return allMocks().stream().filter(meterDefinition -> id.equals(meterDefinition.getId()))
       .findAny();
+  }
+
+  @Override
+  public Optional<MeterDefinition> findSystemMeterDefinition(Medium medium) {
+    return Optional.empty();
   }
 
   @Override

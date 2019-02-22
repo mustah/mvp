@@ -64,6 +64,7 @@ import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterEntityMapper;
+import com.elvaco.mvp.database.repository.mappers.MediumEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionEntityMapper;
 import com.elvaco.mvp.database.repository.mappers.QuantityEntityMapper;
 
@@ -225,12 +226,14 @@ class DataProviderConfig {
 
   @Bean
   MeterDefinitions meterDefinitions(
-    MeterDefinitionEntityMapper meterDefinitionEntityMapper
+    MeterDefinitionEntityMapper meterDefinitionEntityMapper,
+    MediumEntityMapper mediumEntityMapper
   ) {
     return new MeterDefinitionRepository(
       meterDefinitionJpaRepository,
       displayQuantityJpaRepository,
-      meterDefinitionEntityMapper
+      meterDefinitionEntityMapper,
+      mediumEntityMapper
     );
   }
 

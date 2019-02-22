@@ -12,12 +12,11 @@ public class DisplayQuantityEntityMapper {
   private final QuantityEntityMapper quantityEntityMapper;
 
   public DisplayQuantityEntity toDisplayQuantityEntity(
-    Long meterDefinitionId,
     DisplayQuantity displayQuantity
   ) {
     DisplayQuantityPk pk = new DisplayQuantityPk(
       quantityEntityMapper.toEntity(displayQuantity.quantity),
-      meterDefinitionId,
+      null,
       displayQuantity.displayMode
     );
     return new DisplayQuantityEntity(

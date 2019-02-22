@@ -19,8 +19,6 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.envers.Audited;
 
 @Entity
@@ -46,7 +44,6 @@ public class MeterDefinitionEntity extends IdentifiableType<Long> {
     mappedBy = "pk.meterDefinitionId",
     fetch = FetchType.EAGER
   )
-  @Cascade(CascadeType.MERGE)
   public Set<DisplayQuantityEntity> quantities = new HashSet<>();
 
   public String name;
