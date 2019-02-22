@@ -94,7 +94,7 @@ export const Legend = ({
     );
   };
 
-  const facilityWidth = 144;
+  const facilityWidth = 138;
   const iconsWidth = 76;
   const width = facilityWidth + iconsWidth + (columnQuantities.length * quantityWidth) + 28;
 

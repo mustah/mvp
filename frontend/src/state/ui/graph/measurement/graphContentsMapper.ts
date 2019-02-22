@@ -1,11 +1,11 @@
+import {colors} from '../../../../app/themes';
 import {Dictionary} from '../../../../types/Types';
 import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {AverageResponsePart, MeasurementResponse, MeasurementResponsePart, Quantity} from './measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
-    (quantity: Quantity) =>
-      colorSchema[quantity as string];
+    (quantity: Quantity) => colorSchema[quantity as string] || colors.blueA700;
 
 const colorizeAverage = colorize({
   [Quantity.volume as string]: '#5555ff',
@@ -25,6 +25,8 @@ export const colorizeMeters = colorize({
   [Quantity.forwardTemperature as string]: '#FF1744',
   [Quantity.returnTemperature as string]: '#D500F9',
   [Quantity.differenceTemperature as string]: '#2979FF',
+  [Quantity.externalTemperature as string]: colors.red,
+  [Quantity.relativeHumidity as string]: colors.orange,
 });
 
 const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {

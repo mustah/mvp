@@ -7,6 +7,7 @@ import {IconRightArrow} from '../../../components/icons/IconRightArrow';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {colorizeMeters} from '../../../state/ui/graph/measurement/graphContentsMapper';
 import {allQuantities, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary, OnClick} from '../../../types/Types';
 import {LegendItem} from '../reportModels';
@@ -19,7 +20,7 @@ const renderQuantityCell = (quantity: Quantity) =>
       const checked = columnIndex && columnIndex === 2 || columnIndex === 3 || mediumQuantities.length < 3;
       return (
         <td>
-          <Checkbox checked={checked} onCheck={noop}/>
+          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
         </td>);
     } else {
       return <td/>;
@@ -31,9 +32,10 @@ const renderGroupHeaderTds = (medium: Medium, columnQuantities: Quantity[]) => {
     const key = `group-header-td-${medium}-${quantity}`;
     const mediumQuantities = allQuantities[medium];
     if (mediumQuantities.some((q) => q === quantity)) {
+      const checked = index < 2 || mediumQuantities.length < 3;
       return (
         <td key={key} className="check-box-td">
-          <Checkbox checked={index < 2 || mediumQuantities.length < 3} onCheck={noop}/>
+          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
         </td>
       );
     } else {
@@ -80,7 +82,7 @@ export const rowRenderer = (onExpandRow: OnClick, columnQuantities: Quantity[]) 
     }
   };
 
-export const quantityWidth = 90;
+export const quantityWidth = 84;
 
 export const renderColumns =
   (legendItems: LegendItem[]): [React.ReactNode[], Quantity[]] => {
