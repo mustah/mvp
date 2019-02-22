@@ -26,7 +26,7 @@ const renderQuantityCell = (quantity: Quantity) =>
     }
   };
 
-const groupHeaderTds = (medium: Medium, columnQuantities: Quantity[]) => {
+const renderGroupHeaderTds = (medium: Medium, columnQuantities: Quantity[]) => {
   const tds = columnQuantities.map((quantity, index) => {
     const key = `group-header-td-${medium}-${quantity}`;
     const mediumQuantities = allQuantities[medium];
@@ -57,7 +57,7 @@ const renderGroupHeader = (onExpandRow: OnClick, dataItem: any, columnQuantities
           <MediumText className="Bold">{firstUpperTranslated(mediumText)}</MediumText>
         </RowMiddle>
       </td>
-      {groupHeaderTds(medium, columnQuantities)}
+      {renderGroupHeaderTds(medium, columnQuantities)}
     </tr>
   );
 };
