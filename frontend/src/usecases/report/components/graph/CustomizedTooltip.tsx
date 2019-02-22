@@ -1,17 +1,25 @@
+import Paper from 'material-ui/Paper';
 import * as React from 'react';
+import {paperStyle} from '../../../../app/themes';
+import {Column} from '../../../../components/layouts/column/Column';
+import {Row} from '../../../../components/layouts/row/Row';
+import {Bold, Normal} from '../../../../components/texts/Texts';
 import {timestamp} from '../../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../../helpers/formatters';
 import {ActiveDataPoint} from '../../reportModels';
 
 const style: React.CSSProperties = {
-  backgroundColor: 'white',
-  border: '1px solid black',
-  padding: 10,
+  padding: 8,
 };
 
 export const CustomizedTooltip = ({payload: {name}, dataKey, value, stroke}: ActiveDataPoint) => (
-  <div style={style}>
-    <div>{timestamp(name)}</div>
-    <div><span style={{color: stroke}}>{`${dataKey}: `}</span> <span>{roundMeasurement(value)}</span></div>
-  </div>
+  <Paper style={{...paperStyle, ...style}}>
+    <Column>
+      <Bold style={{color: stroke, marginBottom: 8}}>{dataKey}</Bold>
+      <Row>
+        <Normal style={{marginRight: 4}}>{timestamp(name)}:</Normal>
+        <Bold>{roundMeasurement(value)}</Bold>
+      </Row>
+    </Column>
+  </Paper>
 );
