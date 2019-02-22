@@ -84,6 +84,7 @@ const renderGraphContents = (
       const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
       return (
         <Line
+          animationDuration={600}
           key={index}
           type="monotone"
           connectNulls={true}
