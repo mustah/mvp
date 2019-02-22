@@ -109,9 +109,12 @@ $pager-number-hovered-text: $primary-fg-active;
     background-color: $light-grey;
 
     td {
-      padding: $xl-space 0 $sm-space $space;
-      border-top: 1px solid $border-color;
+      padding: $space 0 $sm-space $sm-space;
       border-bottom: 1px solid $border-color;
+
+      &.check-box-td {
+        padding-left: $grid-cell-padding-x;
+      }
     }
   }
 
@@ -126,6 +129,12 @@ $pager-number-hovered-text: $primary-fg-active;
 
     &.left-most {
       padding-left: $xs-space;
+    }
+  }
+
+  tr.last {
+    td {
+      border-bottom: 1px solid $border-color;
     }
   }
 

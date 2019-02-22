@@ -1,13 +1,9 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
 import {ExcelExport} from '@progress/kendo-react-excel-export';
-import {Grid, GridCellProps, GridColumn, GridHeaderCellProps, GridRowProps} from '@progress/kendo-react-grid';
-import {GridRowType} from '@progress/kendo-react-grid/dist/es/interfaces/GridRowType';
+import {Grid, GridColumn} from '@progress/kendo-react-grid';
 import {toArray} from 'lodash';
 import * as React from 'react';
-import {borderStyle, colors} from '../../../app/themes';
 import {Column} from '../../../components/layouts/column/Column';
-import {RowMiddle} from '../../../components/layouts/row/Row';
-import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {timestamp} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
@@ -19,9 +15,9 @@ import {
   Measurements,
   Medium,
   Quantity,
-  toMediumText,
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Callback, Dictionary} from '../../../types/Types';
+import {cellRender, headerCellRender, rowRender} from './measurementGridHelper';
 
 export interface MeasurementListProps extends Measurements {
   isExportingToExcel: boolean;
@@ -35,7 +31,7 @@ interface MeasurementListItem {
   medium: Medium;
 }
 
-const makeMeasurementListItems = (measurements: MeasurementApiResponse): [MeasurementListItem[], React.ReactNode[]] => {
+const renderColumns = (measurements: MeasurementApiResponse): [MeasurementListItem[], React.ReactNode[]] => {
   const rows: Dictionary<MeasurementListItem> = {};
   const columns: Dictionary<React.ReactNode> = {};
 
@@ -67,54 +63,8 @@ const makeMeasurementListItems = (measurements: MeasurementApiResponse): [Measur
   return [toArray(rows).reverse(), toArray(columns)];
 };
 
-const isGroupHeader = (rowType?: GridRowType): boolean => rowType === 'groupHeader';
-
-const headerCellRender = (th, {field}: GridHeaderCellProps) => {
-  if (field === 'value') {
-    const style: React.CSSProperties = {background: colors.white, height: 34};
-    return React.cloneElement(th, {style});
-  } else {
-    return th;
-  }
-};
-
-const cellRender = (td, {columnIndex, dataItem, rowType}: GridCellProps) => {
-  if (columnIndex === 0) {
-    const cellStyle: React.CSSProperties = isGroupHeader(rowType)
-      ? {
-        background: colors.lightGrey,
-        borderBottom: borderStyle,
-        borderTop: borderStyle,
-        paddingTop: 24
-      }
-      : {background: colors.white, width: 0, paddingLeft: 0};
-    const style: React.CSSProperties = {height: 28, ...cellStyle};
-    return React.cloneElement(td, {style}, td.props.children);
-  } else {
-    return td;
-  }
-};
-
-const rowRender = (tr, {dataItem, rowType}: GridRowProps) => {
-  if (isGroupHeader(rowType)) {
-    const mediumText = toMediumText(dataItem.items.length && dataItem.items[0].medium);
-    return (
-      <tr className="GroupHeader">
-        <td colSpan={14}>
-          <RowMiddle>
-            <MediumText className="Bold">{dataItem.value}</MediumText>
-            <InfoText style={{marginLeft: 16}}>{firstUpperTranslated(mediumText.toLowerCase())}</InfoText>
-          </RowMiddle>
-        </td>
-      </tr>
-    );
-  } else {
-    return tr;
-  }
-};
-
 export const MeasurementList = ({measurements, exportToExcelSuccess, isExportingToExcel}: MeasurementListProps) => {
-  const [listItems, quantityColumns] = React.useMemo(() => makeMeasurementListItems(measurements), [measurements]);
+  const [listItems, quantityColumns] = React.useMemo(() => renderColumns(measurements), [measurements]);
 
   const exporter = React.useRef();
 
@@ -126,7 +76,7 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
     }
   }, [isExportingToExcel]);
 
-  const columns = [
+  const gridContent: React.ReactNode[] = [
     (
       <GridColumn
         headerClassName="left-most"
@@ -154,7 +104,7 @@ export const MeasurementList = ({measurements, exportToExcelSuccess, isExporting
           rowRender={rowRender}
           {...state}
         >
-          {columns}
+          {gridContent}
         </Grid>
       </ExcelExport>
       <TimestampInfoMessage/>

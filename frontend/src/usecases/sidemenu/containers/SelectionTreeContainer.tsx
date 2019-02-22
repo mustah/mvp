@@ -2,6 +2,7 @@ import {TreeView, TreeViewExpandChangeEvent, TreeViewItemClickEvent} from '@prog
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {useForceUpdate} from '../../../hooks/forceUpdateHook';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchSelectionTree} from '../../../state/selection-tree/selectionTreeApiActions';
@@ -34,8 +35,6 @@ interface DispatchToProps {
   fetchSelectionTree: Fetch;
   toggleExpanded: OnClickWithId;
 }
-
-const useForceUpdate = () => React.useState(null)[1];
 
 type Props = StateToProps & DispatchToProps;
 

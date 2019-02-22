@@ -57,11 +57,11 @@ export const mvpTheme = getMuiTheme({
     secondaryColor: colors.secondaryBg,
     secondaryTextColor: colors.white,
   },
-  fontFamily: 'TTNorms, Arial, sans-serif',
-  palette: {
-    primary1Color: fullBlack,
-    textColor: darkBlack,
+  checkbox: {
+    checkedColor: colors.blueA700,
+    boxColor: colors.iconHover,
   },
+  fontFamily: 'TTNorms, Arial, sans-serif',
   dialog: {
     bodyFontSize: fontSize.normal,
     bodyColor: darkBlack,
@@ -75,6 +75,10 @@ export const mvpTheme = getMuiTheme({
   menuItem: {
     hoverColor: colors.blue50,
     selectedTextColor: colors.blueA700,
+  },
+  palette: {
+    primary1Color: fullBlack,
+    textColor: darkBlack,
   },
   raisedButton: {
     primaryColor: colors.blueA700,

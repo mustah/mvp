@@ -3,12 +3,12 @@
 .Foldable {
   .Foldable-title {
     padding: 0 0 $sm-space $sm-space;
+  }
 
-    .Foldable-arrow {
-      &.isVisible {
-        transform: rotate(90deg);
-        transition: transform 400ms linear;
-      }
+  .Foldable-arrow {
+    &.isVisible {
+      transform: rotate(90deg);
+      transition: transform 400ms linear;
     }
   }
 
