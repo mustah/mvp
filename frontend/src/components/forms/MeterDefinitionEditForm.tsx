@@ -37,7 +37,7 @@ export const initialMediumDefinition: MeterDefinitionMaybeId = {
   quantities: [],
   organisation: {id: '', slug: '', name: ''},
   medium: {id: '', name: ''},
-  autoApply: false,
+  autoApply: true,
 };
 
 type state = MeterDefinitionMaybeId;
@@ -111,6 +111,8 @@ export const MeterDefinitionEditForm = (
           <Checkbox
             label={firstUpperTranslated('default')}
             id="autoApply"
+            disabled={true}
+            defaultChecked={autoApply}
             onClick={setAutoApply}
             value={autoApply + ''}
           />
