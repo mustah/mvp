@@ -13,20 +13,32 @@ interface DispatchToProps {
   hideMessage: (reason: string) => void;
 }
 
-const messageStyles: {[key in MessageType]: React.CSSProperties} = {
+const messageStyles: { [key in MessageType]: React.CSSProperties } = {
   fail: {backgroundColor: colors.red},
   success: {backgroundColor: colors.darkGreen},
 };
 
-const MessageComponent = ({message = '', isOpen, hideMessage, messageType}: StateToProps & DispatchToProps) => (
-  <Snackbar
-    autoHideDuration={4000}
-    message={message}
-    onRequestClose={hideMessage}
-    open={isOpen}
-    bodyStyle={messageType ? messageStyles[messageType] : {}}
-  />
-);
+const MessageComponent = ({message = '', isOpen, hideMessage, messageType}: StateToProps & DispatchToProps) => {
+  const bodyStyle: React.CSSProperties = {
+    ...messageStyles[messageType || 'success'],
+    alignItems: 'center',
+    height: 68,
+    lineHeight: '24px',
+    display: 'flex',
+    maxWidth: 600,
+  };
+
+  return (
+    <Snackbar
+      autoHideDuration={4000}
+      message={message}
+      onRequestClose={hideMessage}
+      open={isOpen}
+      bodyStyle={bodyStyle}
+      contentStyle={{display: 'flex'}}
+    />
+  );
+};
 
 const mapStateToProps = ({ui: {message: {message, isOpen, messageType}}}: RootState): StateToProps => ({
   message,
