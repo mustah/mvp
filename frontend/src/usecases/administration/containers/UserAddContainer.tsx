@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {RowIndented} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
@@ -59,7 +59,7 @@ class UserAdd extends React.Component<Props> {
         <MainTitle>{translate('add user')}</MainTitle>
 
         <Paper style={paperStyle}>
-          <Loader isFetching={isFetching} error={error} clearError={clearError}>
+          <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
             <RowIndented>
               <UserEditForm
                 organisations={organisations}
@@ -69,7 +69,7 @@ class UserAdd extends React.Component<Props> {
                 languages={languages}
               />
             </RowIndented>
-          </Loader>
+          </RetryLoader>
         </Paper>
       </AdminPageLayout>
     );

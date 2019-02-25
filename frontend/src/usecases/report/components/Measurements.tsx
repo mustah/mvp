@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {useFetchMeasurements} from '../../../state/ui/graph/measurement/measurementHook';
 import {Props} from './MeasurementLineChart';
@@ -19,7 +19,7 @@ export const Measurements = (props: Props) => {
   useFetchMeasurements(props);
 
   return (
-    <Loader isFetching={isFetching} error={error} clearError={clearError}>
+    <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
       <MeasurementWrapper
         hasContent={hasContent}
         measurements={measurementResponse.measurements}
@@ -27,6 +27,6 @@ export const Measurements = (props: Props) => {
         exportToExcelSuccess={exportToExcelSuccess}
         isExportingToExcel={isExportingToExcel}
       />
-    </Loader>
+    </RetryLoader>
   );
 };

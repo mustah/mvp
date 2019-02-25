@@ -33,7 +33,7 @@ import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDrop
 import {withContent} from '../hoc/withContent';
 import {withEmptyContent, WithEmptyContentProps} from '../hoc/withEmptyContent';
 import {Column} from '../layouts/column/Column';
-import {Loader} from '../loading/Loader';
+import {RetryLoader} from '../loading/Loader';
 
 export interface MeterListStateToProps {
   result: uuid[];
@@ -100,7 +100,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
   const onSyncMeters = () => syncMeters(result);
 
   return (
-    <Loader isFetching={isFetching} error={error} clearError={onClearError}>
+    <RetryLoader isFetching={isFetching} error={error} clearError={onClearError}>
       <Column className="MeterListContent">
         <MeterListActionsDropdownEnhanced
           addAllToReport={onAddAllToReport}
@@ -109,6 +109,6 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
         />
         <MeterListWrapper {...wrapperProps}/>
       </Column>
-    </Loader>
+    </RetryLoader>
   );
 };

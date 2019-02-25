@@ -17,21 +17,18 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {clearMediumsErrors, fetchMediums} from '../../../state/domain-models/medium/mediumModels';
+import {fetchMediums} from '../../../state/domain-models/medium/mediumModels';
 import {Medium, MeterDefinition, Quantity} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {
-  addMeterDefinition, clearMeterDefinitionErrors,
+  addMeterDefinition,
   fetchMeterDefinitions,
   updateMeterDefinition
 } from '../../../state/domain-models/meter-definitions/meterDefinitionsApiActions';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
-import {
-  clearOrganisationErrors,
-  fetchOrganisations,
-} from '../../../state/domain-models/organisation/organisationsApiActions';
+import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
-import {clearQuantityErrors, fetchQuantities} from '../../../state/domain-models/quantities/quantitesApiActions';
-import {CallbackWithData, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
+import {fetchQuantities} from '../../../state/domain-models/quantities/quantitesApiActions';
+import {CallbackWithData, ErrorResponse, Fetch} from '../../../types/Types';
 
 interface StateToProps {
   meterDefinitions: ObjectsById<MeterDefinition>;
@@ -48,7 +45,6 @@ interface DispatchToProps {
   fetchMeterDefinitions: Fetch;
   fetchOrganisations: Fetch;
   fetchMediums: Fetch;
-  clearErrors: ClearError;
   fetchQuantities: Fetch;
 }
 
@@ -60,8 +56,6 @@ const MeterDefinitionEdit = (props: Props) => {
     meterDefinitions,
     addMeterDefinition,
     organisations,
-    clearErrors,
-    error,
     fetchMediums,
     fetchMeterDefinitions,
     fetchOrganisations,
@@ -92,8 +86,6 @@ const MeterDefinitionEdit = (props: Props) => {
         <RowIndented>
           <Loader
             isFetching={isFetching}
-            error={error}
-            clearError={clearErrors}
           >
             <MeterDefinitionEditForm
               key={`meter-definition-${meterDefinitionId}`}
@@ -116,7 +108,7 @@ const mapStateToProps = (
 ): StateToProps => {
   const errors = [organisations.error, mediums.error, quantities.error, meterDefinitions.error];
   return ({
-    meterDefinitions: getEntitiesDomainModels(meterDefinitions), // TODO why do this differ from organisation?
+    meterDefinitions: getEntitiesDomainModels(meterDefinitions),
     organisations: getOrganisations(organisations),
     mediums: getEntitiesDomainModels(mediums),
     isFetching: organisations.isFetching || meterDefinitions.isFetching || mediums.isFetching || quantities.isFetching,
@@ -125,16 +117,8 @@ const mapStateToProps = (
   });
 };
 
-const clearErrors = () => {
-  clearQuantityErrors();
-  clearMediumsErrors();
-  clearMeterDefinitionErrors();
-  clearOrganisationErrors();
-};
-
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   addMeterDefinition,
-  clearErrors,
   updateMeterDefinition,
   fetchMeterDefinitions,
   fetchOrganisations,

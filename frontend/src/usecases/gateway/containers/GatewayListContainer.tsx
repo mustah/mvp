@@ -2,7 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -76,9 +76,9 @@ class GatewayListComponent extends React.Component<Props> {
     };
 
     return (
-      <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
+      <RetryLoader isFetching={isFetching} error={error} clearError={this.clearError}>
         <GatewayListWrapper {...wrapperProps}/>
-      </Loader>
+      </RetryLoader>
     );
   }
 

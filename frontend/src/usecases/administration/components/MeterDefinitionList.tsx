@@ -9,7 +9,7 @@ import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/MeterDefinitionsContainer';
 import {MeterDefinitionActions} from './MeterDefinitionActions';
@@ -33,7 +33,7 @@ export const MeterDefinitionList = ({
   const actions = ({dataItem: {id}}) => <td><MeterDefinitionActions confirmDelete={openConfirm} id={id}/></td>;
 
   return (
-    <Loader isFetching={isFetching} error={error} clearError={clearError}>
+    <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
       <Column>
         <Row>
           <Link to={routes.adminMeterDefinitionsAdd} className="link" key={'add meter definition'}>
@@ -58,6 +58,6 @@ export const MeterDefinitionList = ({
         </Grid>
         <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
       </Column>
-    </Loader>
+    </RetryLoader>
   );
 };

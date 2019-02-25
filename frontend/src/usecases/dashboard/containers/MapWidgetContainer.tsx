@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {MeterDetailsDialog} from '../../../components/dialog/DetailsDialog';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {Row} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -98,9 +98,9 @@ const MapWidget =
     return (
       <Row>
         <WidgetWithTitle title={title} className="MapWidget">
-          <Loader isFetching={isFetching} error={error} clearError={clearError}>
+          <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
             <MapContentWrapper {...wrapperProps}/>
-          </Loader>
+          </RetryLoader>
           {dialog}
         </WidgetWithTitle>
       </Row>
