@@ -50,7 +50,7 @@ class MeterDefinitionController {
 
   @PutMapping
   public MeterDefinitionDto updateMeterDefinition(
-    @RequestBody MeterDefinitionDto meterDefinitionDto
+    @Valid @RequestBody MeterDefinitionDto meterDefinitionDto
   ) {
     return toDto(meterDefinitionUseCases.update(
       meterDefinitionDtoMapper.toDomainModel(meterDefinitionDto)));
