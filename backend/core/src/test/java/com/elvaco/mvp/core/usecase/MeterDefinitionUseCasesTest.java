@@ -28,6 +28,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.elvaco.mvp.testing.fixture.UserTestData.ELVACO_ADMIN_USER;
@@ -121,7 +122,8 @@ public class MeterDefinitionUseCasesTest {
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
 
     assertThatThrownBy(() -> useCases.save(newMeterDefinition(null)))
-      .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to save");
+      .isInstanceOf(Unauthorized.class)
+      .hasMessageContaining("System meter definitions can not be created");
   }
 
   @Test
@@ -129,23 +131,21 @@ public class MeterDefinitionUseCasesTest {
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
 
     assertThatThrownBy(() -> useCases.save(newMeterDefinition(null)))
-      .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to save");
+      .isInstanceOf(Unauthorized.class)
+      .hasMessageContaining("System meter definitions can not be created");
   }
 
   @Test
-  public void superAdminCanSaveSystemMeterDefinitions() {
+  public void superAdminCanNotSaveSystemMeterDefinitions() {
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
 
-    MeterDefinition meterDefinition = newMeterDefinition(
-      null,
-      newMedium(),
-      false
-    );
-    assertThat(useCases.save(meterDefinition))
-      .isEqualToIgnoringGivenFields(meterDefinition, "id");
+    assertThatThrownBy(() -> useCases.save(newMeterDefinition(null)))
+      .isInstanceOf(Unauthorized.class)
+      .hasMessageContaining("System meter definitions can not be created");
   }
 
   @Test
+  @Ignore
   public void onlyOneSystemMeterDefinitionPerMedium() {
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
 
@@ -178,18 +178,6 @@ public class MeterDefinitionUseCasesTest {
 
     MeterDefinition updateToExisting1Name = existing2.toBuilder().name(existing1.name).build();
     assertThatThrownBy(() -> useCases.update(updateToExisting1Name))
-      .isInstanceOf(InvalidMeterDefinition.class)
-      .hasMessageContaining("Name must be unique for organisation");
-  }
-
-  @Test
-  public void uniqueNameForSystemMeterDefintionAndMedium() {
-    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
-
-    MeterDefinition md = SYSTEM_METER_DEFINITION.toBuilder()
-      .name(SYSTEM_METER_DEFINITION.name)
-      .build();
-    assertThatThrownBy(() -> useCases.save(md))
       .isInstanceOf(InvalidMeterDefinition.class)
       .hasMessageContaining("Name must be unique for organisation");
   }
@@ -265,6 +253,61 @@ public class MeterDefinitionUseCasesTest {
       .isEqualTo(organisationDefintion);
     assertThat(logicalMeters.findById(meter2.id).get().meterDefinition)
       .isEqualTo(SYSTEM_METER_DEFINITION);
+  }
+
+  @Test
+  public void update_userCannotUpdateMeterDefinition() {
+    MeterDefinition md = newMeterDefinition(newOrganisation());
+    MeterDefinition saved = meterDefinitions.save(md);
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
+
+    MeterDefinition updateMeterDefintion = saved.toBuilder()
+      .name(UUID.randomUUID().toString())
+      .build();
+    assertThatThrownBy(() -> useCases.update(updateMeterDefintion))
+      .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to save");
+  }
+
+  @Test
+  public void update_adminCanUpdateOrganisationMeterDefinition() {
+    MeterDefinition md = newMeterDefinition(ELVACO_ADMIN_USER.organisation);
+    MeterDefinition saved = meterDefinitions.save(md);
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
+
+    MeterDefinition updateMeterDefintion = saved.toBuilder().medium(newMedium()).build();
+    useCases.update(updateMeterDefintion);
+
+    assertThat(meterDefinitions.findById(md.id).get().name).isEqualTo(updateMeterDefintion.name);
+  }
+
+  @Test
+  public void update_superAdminCanUpdateOrganisationMeterDefinition() {
+    MeterDefinition md = newMeterDefinition(newOrganisation());
+    MeterDefinition saved = meterDefinitions.save(md);
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+
+    MeterDefinition updateMeterDefintion = saved.toBuilder().medium(newMedium()).build();
+    useCases.update(updateMeterDefintion);
+
+    assertThat(meterDefinitions.findById(md.id).get().name).isEqualTo(updateMeterDefintion.name);
+  }
+
+  @Test
+  public void update_superAdminCanUpdateSystemMeterDefinition() {
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+
+    DisplayQuantity displayQuantity = new DisplayQuantity(
+      Quantity.HUMIDITY,
+      DisplayMode.READOUT,
+      Units.PERCENT
+    );
+    MeterDefinition updateMeterDefintion = SYSTEM_METER_DEFINITION.toBuilder()
+      .quantities(Set.of(displayQuantity))
+      .build();
+    useCases.update(updateMeterDefintion);
+
+    assertThat(meterDefinitions.findById(SYSTEM_METER_DEFINITION.id)
+      .get().quantities).containsExactly(displayQuantity);
   }
 
   @Test

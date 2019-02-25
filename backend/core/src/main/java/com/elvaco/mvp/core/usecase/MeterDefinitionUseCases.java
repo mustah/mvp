@@ -34,6 +34,9 @@ public class MeterDefinitionUseCases {
   private final LogicalMeters logicalMeters;
 
   public MeterDefinition save(MeterDefinition meterDefinition) {
+    if (meterDefinition.isDefault()) {
+      throw new Unauthorized("System meter definitions can not be created");
+    }
     return persist(meterDefinition, true);
   }
 
@@ -111,7 +114,9 @@ public class MeterDefinitionUseCases {
     }
 
     if (meterDefinition.isDefault()
-      && systemMeterDefinitionProvider.getByMedium(meterDefinition.medium).isPresent()) {
+      && systemMeterDefinitionProvider.getByMedium(meterDefinition.medium)
+      .filter(md -> !md.id.equals(meterDefinition.id))
+      .isPresent()) {
       throw new InvalidMeterDefinition("Only one system meter definition per medium is allowed");
     }
 
@@ -131,11 +136,13 @@ public class MeterDefinitionUseCases {
   private boolean nameAlreadyExistingForOrganisation(MeterDefinition meterDefinition) {
     if (meterDefinition.organisation == null) {
       return systemMeterDefinitionProvider.getByMedium(meterDefinition.medium)
+        .filter(md -> !md.id.equals(meterDefinition.id))
         .filter(md -> md.name.equals(meterDefinition.name))
         .isPresent();
     } else {
       return meterDefinitions.findAll(meterDefinition.organisation.id)
         .stream()
+        .filter(md -> !md.id.equals(meterDefinition.id))
         .anyMatch(md -> md.name.equals(meterDefinition.name));
     }
   }
