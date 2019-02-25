@@ -98,7 +98,7 @@ export const Toolbar = ({
   const selectTable = () => changeToolbarView(ToolbarView.table);
   const excelExport = () => exportToExcel();
 
-  const legendIconProps: IconProps = {disabled: !hasMeasurements};
+  const legendIconProps: IconProps = {disabled: !hasLegendItems};
 
   return (
     <RowSpaceBetween className="Toolbar">

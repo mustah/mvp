@@ -1,6 +1,5 @@
 import {LegendPayload} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
-import {firstUpperTranslated} from '../../services/translationService';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {Identifiable, uuid} from '../../types/Types';
@@ -71,38 +70,3 @@ export interface SelectedReportPayload {
   media: Medium[];
   quantities: Quantity[];
 }
-
-interface ReportIndicatorProps {
-  enabled?: boolean;
-  type: Medium;
-  title: string;
-  isSelected?: boolean;
-}
-
-// TODO[!must!] remove later
-export const reportIndicators = (): ReportIndicatorProps[] => ([
-  {
-    type: Medium.electricity,
-    title: firstUpperTranslated('electricity'),
-  },
-  {
-    type: Medium.hotWater,
-    title: firstUpperTranslated('hot water'),
-  },
-  {
-    type: Medium.water,
-    title: firstUpperTranslated('water'),
-  },
-  {
-    type: Medium.districtHeating,
-    title: firstUpperTranslated('district heating'),
-  },
-  {
-    type: Medium.gas,
-    title: firstUpperTranslated('gas'),
-  },
-  {
-    type: Medium.roomSensor,
-    title: firstUpperTranslated('room sensor'),
-  },
-]);

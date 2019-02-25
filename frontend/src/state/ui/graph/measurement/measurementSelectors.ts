@@ -21,13 +21,9 @@ export interface MeasurementTableData {
   quantities: Quantity[];
 }
 
-const orderedQuantities = (medium: Medium): Quantity[] =>
-  medium in allQuantities ? allQuantities[medium] : [];
-
 export const groupMeasurementsByDate =
   (measurementPage: NormalizedPaginated<Measurement>, medium: Medium): MeasurementTableData => {
     const readings: ExistingReadings = {};
-    const quantities: Quantity[] = orderedQuantities(medium);
     const quantitiesFoundInResponse: Set<Quantity> = new Set<Quantity>();
 
     if (measurementPage) {
@@ -44,7 +40,7 @@ export const groupMeasurementsByDate =
 
     return {
       readings,
-      quantities: quantities.filter((q) => quantitiesFoundInResponse.has(q)),
+      quantities: allQuantities[medium].filter((q) => quantitiesFoundInResponse.has(q)),
     };
   };
 

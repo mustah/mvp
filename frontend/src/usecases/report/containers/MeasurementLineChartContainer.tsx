@@ -27,9 +27,9 @@ import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSe
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
-import {ActiveDot, ActiveDotReChartProps} from '../components/graph/ActiveDot';
-import {CustomizedTooltip} from '../components/graph/CustomizedTooltip';
-import {Dot, DotReChartProps} from '../components/graph/Dot';
+import {ActiveDot, ActiveDotReChartProps} from '../components/line-chart/ActiveDot';
+import {CustomizedTooltip} from '../components/line-chart/CustomizedTooltip';
+import {Dot, DotReChartProps} from '../components/line-chart/Dot';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
 import {getLegendItems} from '../reportSelectors';
 
@@ -84,6 +84,7 @@ const renderGraphContents = (
       const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
       return (
         <Line
+          animationDuration={600}
           key={index}
           type="monotone"
           connectNulls={true}
@@ -253,5 +254,5 @@ const mapStateToProps = ({report, measurement, userSelection: {userSelection}, u
     hasContent: hasMeasurements(measurement.measurementResponse)
   });
 
-export const LineChartsContainer =
+export const MeasurementLineChartContainer =
   connect<StateToProps, DispatchToProps, GraphProps>(mapStateToProps)(GraphComponent);

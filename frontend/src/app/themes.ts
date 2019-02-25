@@ -26,6 +26,7 @@ export const colors = {
   blue50: '#e1f5fe',
   blueA400: '#00b0ff',
   blueA700: '#0091ea',
+
   darkBlue: '#006da3',
 
   darkGreen: '#4caf50',
@@ -57,11 +58,11 @@ export const mvpTheme = getMuiTheme({
     secondaryColor: colors.secondaryBg,
     secondaryTextColor: colors.white,
   },
-  fontFamily: 'TTNorms, Arial, sans-serif',
-  palette: {
-    primary1Color: fullBlack,
-    textColor: darkBlack,
+  checkbox: {
+    checkedColor: colors.blueA700,
+    boxColor: colors.iconHover,
   },
+  fontFamily: 'TTNorms, Arial, sans-serif',
   dialog: {
     bodyFontSize: fontSize.normal,
     bodyColor: darkBlack,
@@ -75,6 +76,10 @@ export const mvpTheme = getMuiTheme({
   menuItem: {
     hoverColor: colors.blue50,
     selectedTextColor: colors.blueA700,
+  },
+  palette: {
+    primary1Color: fullBlack,
+    textColor: darkBlack,
   },
   raisedButton: {
     primaryColor: colors.blueA700,

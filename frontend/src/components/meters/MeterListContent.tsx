@@ -27,7 +27,7 @@ import {
   WithChildren
 } from '../../types/Types';
 import {MeterList} from '../../usecases/meter/components/MeterList';
-import {toLegendItem} from '../../usecases/report/legendHelper';
+import {toLegendItem} from '../../usecases/report/helpers/legendHelper';
 import {LegendItem} from '../../usecases/report/reportModels';
 import {MeterListActionsDropdown} from '../actions-dropdown/MeterListActionsDropdown';
 import {withContent} from '../hoc/withContent';
