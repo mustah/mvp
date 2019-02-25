@@ -89,76 +89,74 @@ const MeterDetailsInfo = ({
     : '-';
 
   return (
-    <Row>
-      <Column className="Overview">
-        <Row>
-          <Column>
-            <Row>
-              <div className="display-none">{id}</div>
-              <MainTitle>{translate('meter')}</MainTitle>
-            </Row>
-          </Column>
-          <Info label={translate('product model')}>
-            <BoldFirstUpper>{orUnknown(manufacturer)}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('medium')}>
-            <BoldFirstUpper>{medium}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('city')}>
-            <CityInfo name={orUnknown(location.city)} subTitle={orUnknown(location.country)}/>
-          </Info>
-          <Info label={translate('address')}>
-            <BoldFirstUpper>{orUnknown(location.address)}</BoldFirstUpper>
-          </Info>
-          <SuperAdminInfo label={translate('organisation')}>
-            <BoldFirstUpper>{organisationName}</BoldFirstUpper>
-          </SuperAdminInfo>
-        </Row>
-        <Row>
-          <Column>
-            <Subtitle>{translate('collection')}</Subtitle>
-          </Column>
-          <Info className="First-column" label={translate('resolution')}>
-            <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('collection percentage')}>
-            <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
-          </Info>
-        </Row>
-        <Row>
-          <Column>
-            <Subtitle>{translate('validation')}</Subtitle>
-          </Column>
-          <Info className="First-column" label={translate('alarm')}>
-            <MeterAlarm alarms={alarms}/>
-          </Info>
-          <Info label={translate('alarm code')}>
-            <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('status change')}>
-            <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
-          </Info>
-        </Row>
-        <Row>
-          <Column>
-            <Subtitle>{translate('labels')}</Subtitle>
-          </Column>
-          <Info label={translate('facility id')}>
-            <BoldFirstUpper>{facility}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('meter id')}>
-            <BoldFirstUpper>{address}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('m-bus device type')}>
-            <BoldFirstUpper>{mbusDeviceType || '-'}</BoldFirstUpper>
-          </Info>
-          <Info label={translate('revision')}>
-            <BoldFirstUpper>{revision || '-'}</BoldFirstUpper>
-          </Info>
-          <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
-        </Row>
-      </Column>
-    </Row>
+    <Column className="Overview">
+      <Row>
+        <Column>
+          <Row>
+            <div className="display-none">{id}</div>
+            <MainTitle>{translate('meter')}</MainTitle>
+          </Row>
+        </Column>
+        <Info label={translate('product model')}>
+          <BoldFirstUpper>{orUnknown(manufacturer)}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('medium')}>
+          <BoldFirstUpper>{medium}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('city')}>
+          <CityInfo name={orUnknown(location.city)} subTitle={orUnknown(location.country)}/>
+        </Info>
+        <Info label={translate('address')}>
+          <BoldFirstUpper>{orUnknown(location.address)}</BoldFirstUpper>
+        </Info>
+        <SuperAdminInfo label={translate('organisation')}>
+          <BoldFirstUpper>{organisationName}</BoldFirstUpper>
+        </SuperAdminInfo>
+      </Row>
+      <Row>
+        <Column>
+          <Subtitle>{translate('collection')}</Subtitle>
+        </Column>
+        <Info className="First-column" label={translate('resolution')}>
+          <BoldFirstUpper>{renderReadInterval(readIntervalMinutes)}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('collection percentage')}>
+          <BoldFirstUpper>{formattedCollectionPercentage}</BoldFirstUpper>
+        </Info>
+      </Row>
+      <Row>
+        <Column>
+          <Subtitle>{translate('validation')}</Subtitle>
+        </Column>
+        <Info className="First-column" label={translate('alarm')}>
+          <MeterAlarm alarms={alarms}/>
+        </Info>
+        <Info label={translate('alarm code')}>
+          <BoldFirstUpper>{alarmCode}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('status change')}>
+          <WrappedDateTime date={statusChanged} hasContent={!!statusChanged}/>
+        </Info>
+      </Row>
+      <Row>
+        <Column>
+          <Subtitle>{translate('labels')}</Subtitle>
+        </Column>
+        <Info label={translate('facility id')}>
+          <BoldFirstUpper>{facility}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('meter id')}>
+          <BoldFirstUpper>{address}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('m-bus device type')}>
+          <BoldFirstUpper>{mbusDeviceType || '-'}</BoldFirstUpper>
+        </Info>
+        <Info label={translate('revision')}>
+          <BoldFirstUpper>{revision || '-'}</BoldFirstUpper>
+        </Info>
+        <ErrorLabel hasError={isReported}>{translate('reported')}</ErrorLabel>
+      </Row>
+    </Column>
   );
 };
 

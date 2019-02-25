@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Children, OnClick, Styled, Titled} from '../../types/Types';
-import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
+import {ButtonInfo} from '../buttons/ButtonInfo';
 import {ButtonClose} from '../buttons/DialogButtons';
 import {InfoButtonProps} from '../buttons/InfoButton';
 import {Row} from '../layouts/row/Row';
@@ -25,19 +25,16 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
   state: State = {isOpen: false};
 
   render() {
-    const {color, iconStyle, label, labelStyle, onLabelClick, style, title} = this.props;
+    const {color, iconStyle, label, labelStyle, style, title} = this.props;
     return (
       <Row style={style}>
-        <ButtonInfoLink
+        <ButtonInfo
           label={label}
           color={color}
           iconStyle={iconStyle}
           labelStyle={labelStyle || infoLabelStyle}
-          onClick={this.open}
-          onLabelClick={onLabelClick}
           title={title}
         />
-        {this.renderDialog()}
       </Row>
     );
   }
