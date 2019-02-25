@@ -41,39 +41,6 @@ public class MeterDefinitionUseCases {
     return persist(meterDefinition, false);
   }
 
-  public MeterDefinition persist(MeterDefinition meterDefinition, boolean apply) {
-    if (!hasAdminAccess(meterDefinition)) {
-      throw new Unauthorized("User is not authorized to save this entity");
-    }
-
-    if (meterDefinition.organisation != null) {
-      organisations.findById(meterDefinition.organisation.id)
-        .filter(organisation -> organisation.parent != null)
-        .ifPresent(organisation -> {
-          throw new InvalidMeterDefinition("Meter definitions can not belong to sub-organisations");
-        });
-    }
-
-    meterDefinition.quantities.forEach(this::validateDisplayQuantity);
-
-    if (meterDefinition.isDefault()
-      && systemMeterDefinitionProvider.getByMedium(meterDefinition.medium).isPresent()) {
-      throw new InvalidMeterDefinition("Only one system meter definition per medium is allowed");
-    }
-
-    if (meterDefinition.autoApply
-      && !getAutoApplied(meterDefinition.organisation, meterDefinition.medium).isDefault()) {
-      throw new InvalidMeterDefinition(
-        "Only one auto applied meter definition per organisation and medium is allowed");
-    }
-
-    MeterDefinition newMeterDefinition = meterDefinitions.save(meterDefinition);
-    if (apply) {
-      autoApplyOnExistingMeters(newMeterDefinition);
-    }
-    return newMeterDefinition;
-  }
-
   public List<MeterDefinition> findAll() {
     return meterDefinitions.findAll(
       currentUser.subOrganisationParameters().getEffectiveOrganisationId()
@@ -94,6 +61,14 @@ public class MeterDefinitionUseCases {
         "User is not authorized to delete meter definition with id " + id));
   }
 
+  public List<Quantity> findAllQuantities() {
+    return quantityProvider.all();
+  }
+
+  public List<Medium> findAllMedium() {
+    return mediumProvider.all();
+  }
+
   public MeterDefinition getAutoApplied(
     Organisation organisation,
     Medium medium
@@ -111,17 +86,58 @@ public class MeterDefinitionUseCases {
       .filter(md -> md.medium.name.equals(medium.name))
       .filter(md -> md.autoApply)
       .filter(md -> !md.isDefault())
-      .filter(md -> excluded == null || md.id != excluded.id)
+      .filter(md -> excluded == null || !excluded.id.equals(md.id))
       .findFirst()
       .orElseGet(() -> systemMeterDefinitionProvider.getByMediumOrThrow(medium));
   }
 
-  public List<Quantity> findAllQuantities() {
-    return quantityProvider.all();
+  private MeterDefinition persist(MeterDefinition meterDefinition, boolean apply) {
+    if (!hasAdminAccess(meterDefinition)) {
+      throw new Unauthorized("User is not authorized to save this entity");
+    }
+
+    if (meterDefinition.organisation != null) {
+      organisations.findById(meterDefinition.organisation.id)
+        .filter(organisation -> organisation.parent != null)
+        .ifPresent(organisation -> {
+          throw new InvalidMeterDefinition("Meter definitions can not belong to sub-organisations");
+        });
+    }
+
+    meterDefinition.quantities.forEach(this::validateDisplayQuantity);
+
+    if (nameAlreadyExistingForOrganisation(meterDefinition)) {
+      throw new InvalidMeterDefinition("Name must be unique for organisation");
+    }
+
+    if (meterDefinition.isDefault()
+      && systemMeterDefinitionProvider.getByMedium(meterDefinition.medium).isPresent()) {
+      throw new InvalidMeterDefinition("Only one system meter definition per medium is allowed");
+    }
+
+    if (meterDefinition.autoApply
+      && !getAutoApplied(meterDefinition.organisation, meterDefinition.medium).isDefault()) {
+      throw new InvalidMeterDefinition(
+        "Only one auto applied meter definition per organisation and medium is allowed");
+    }
+
+    MeterDefinition newMeterDefinition = meterDefinitions.save(meterDefinition);
+    if (apply) {
+      autoApplyOnExistingMeters(newMeterDefinition);
+    }
+    return newMeterDefinition;
   }
 
-  public List<Medium> findAllMedium() {
-    return mediumProvider.all();
+  private boolean nameAlreadyExistingForOrganisation(MeterDefinition meterDefinition) {
+    if (meterDefinition.organisation == null) {
+      return systemMeterDefinitionProvider.getByMedium(meterDefinition.medium)
+        .filter(md -> md.name.equals(meterDefinition.name))
+        .isPresent();
+    } else {
+      return meterDefinitions.findAll(meterDefinition.organisation.id)
+        .stream()
+        .anyMatch(md -> md.name.equals(meterDefinition.name));
+    }
   }
 
   private boolean hasAdminAccess(MeterDefinition meterDefinition) {

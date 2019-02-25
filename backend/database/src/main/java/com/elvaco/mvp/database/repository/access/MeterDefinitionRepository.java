@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
 
 import com.elvaco.mvp.core.domainmodels.Medium;

@@ -93,7 +93,9 @@ public interface TestFixtures {
   }
 
   default MeterDefinitionBuilder meterDefinition() {
-    return MeterDefinition.builder();
+    return MeterDefinition.builder()
+      .name(randomUUID().toString())
+      .organisation(defaultOrganisation());
   }
 
   default Collection<Measurement> series(

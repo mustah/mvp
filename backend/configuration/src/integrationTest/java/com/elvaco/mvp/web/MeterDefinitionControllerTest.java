@@ -59,9 +59,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   @Test
   public void findAll_definitionsVisibleToOwningOrganisation() {
     MeterDefinition meterDefinition
-      = given(meterDefinition().medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-      .name("test")
-      .organisation(context().defaultOrganisation()));
+      = given(meterDefinition().medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)));
 
     List<MeterDefinitionDto> definitionDtos = asUser().getList(
       meterDefinitionsUrl(),
@@ -77,13 +75,11 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void findAll_definitionsNotVisibleToOtherOrganisation() {
     MeterDefinition meterDefinition = given(
       meterDefinition()
-        .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-        .name("test")
-        .organisation(context().defaultOrganisation())
-    );
+        .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)));
 
-    User otherUser = given(organisation(), user()).getUser();
-    List<MeterDefinitionDto> definitionDtos = as(otherUser).getList(
+    var userOnOtherOrganisation = given(organisation(), user()).getUser();
+
+    List<MeterDefinitionDto> definitionDtos = as(userOnOtherOrganisation).getList(
       meterDefinitionsUrl(),
       MeterDefinitionDto.class
     ).getBody();
@@ -97,12 +93,8 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void findAll_definitionsVisibleToSubOrganisation() {
     User subOrgUser = given(subOrganisation(), user()).getUser();
 
-    MeterDefinition meterDefinition = given(
-      meterDefinition()
-        .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-        .name("test")
-        .organisation(context().defaultOrganisation())
-    );
+    MeterDefinition meterDefinition = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)));
 
     List<MeterDefinitionDto> definitionDtos = as(subOrgUser).getList(
       meterDefinitionsUrl(),
@@ -248,10 +240,16 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   @Test
   public void create_withDisplayQuantities() {
     Medium medium = mediumProvider.getByNameOrThrow(Medium.ELECTRICITY);
+    DisplayQuantityDto displayQuantityDto = new DisplayQuantityDto(
+      Quantity.POWER.name,
+      false,
+      Units.WATT,
+      9
+    );
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
-      Set.of(new DisplayQuantityDto(Quantity.POWER.name, false, Units.WATT, 9)),
+      Set.of(displayQuantityDto),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
       new IdNamedDto(medium.id.toString(), medium.name),
       false
@@ -267,6 +265,13 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     var dto = response.getBody();
     assertThat(dto.id).isNotNull();
     assertThat(dto).isEqualToIgnoringGivenFields(meterDefinition, "id");
+    assertThat(dto.quantities).containsOnly(displayQuantityDto);
+
+    MeterDefinition saved = meterDefinitions.findById(dto.id).get();
+    assertThat(saved.name).isEqualTo(meterDefinition.name);
+    assertThat(saved.organisation.id).isEqualTo(meterDefinition.organisation.id);
+    assertThat(saved.quantities).extracting(q -> q.quantity.name)
+      .containsExactly(Quantity.POWER.name);
   }
 
   @Test
@@ -315,8 +320,6 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void update_updateMeterDefinition() {
     var meterDefinition = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-      .name("test")
-      .organisation(context().defaultOrganisation())
       .quantities(Set.of(new DisplayQuantity(
         Quantity.POWER,
         DisplayMode.READOUT,
@@ -347,7 +350,6 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       .containsExactly(Quantity.ENERGY.name);
   }
 
-
   @Test
   public void delete_systemMeterDefintitionCanNotBeDeleted() {
     var meterDefinition = systemMeterDefinitionProvider.getByMediumOrThrow(
@@ -366,7 +368,6 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     var meterDefinition = given(
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-        .name("test")
         .organisation(organisation)
     );
 
@@ -389,11 +390,8 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void delete_adminCanDeleteOrganisationMeterDefintition() {
-    var meterDefinition = given(
-      meterDefinition()
-        .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-        .name("test")
-        .organisation(context().defaultOrganisation())
+    var meterDefinition = given(meterDefinition()
+      .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
     );
 
     ResponseEntity<MeterDefinitionDto> response = asAdmin().delete(
@@ -410,7 +408,6 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     var meterDefinition = given(
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-        .name("test")
         .organisation(organisation)
     );
 
@@ -427,8 +424,6 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     var meterDefinition = given(
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
-        .name("test")
-        .organisation(context().defaultOrganisation())
     );
 
     ResponseEntity<MeterDefinitionDto> response = asUser().delete(
@@ -442,16 +437,11 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   @Test
   public void delete_meterDefinitionIsSetToDefaultWhenOrganisationMeterDefinitionIsDeleted() {
     var medium = mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING);
-    var meterDefinition = given(
-      meterDefinition()
-        .medium(medium)
-        .name("test")
-        .organisation(context().defaultOrganisation())
-    );
+    var meterDefinition = given(meterDefinition().medium(medium));
 
     var logicalMeter = given(logicalMeter().meterDefinition(meterDefinition));
 
-    ResponseEntity<MeterDefinitionDto> response = asSuperAdmin().delete(
+    asSuperAdmin().delete(
       meterDefinitionsUrl("/" + meterDefinition.id).template(),
       MeterDefinitionDto.class
     );

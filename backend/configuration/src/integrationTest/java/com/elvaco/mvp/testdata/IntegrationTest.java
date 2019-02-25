@@ -28,7 +28,6 @@ import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
-import com.elvaco.mvp.database.entity.jooq.tables.MeterDefinition;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;

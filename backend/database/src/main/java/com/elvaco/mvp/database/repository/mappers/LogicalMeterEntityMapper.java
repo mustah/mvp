@@ -96,11 +96,6 @@ public final class LogicalMeterEntityMapper {
   public LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
     var pk = new EntityPk(logicalMeter.id, logicalMeter.organisationId);
 
-    //    if (!logicalMeter.getMeterDefinition().isDefault()) {
-    //      throw new RuntimeException("Non-default meter definitions not implemented yet");
-    //    }
-    // hoho
-
     if (logicalMeter.getMeterDefinition().getId() == null) {
       logicalMeter = logicalMeter.toBuilder().meterDefinition(
         meterDefinitionProvider.getByMediumOrThrow(

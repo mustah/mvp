@@ -1,7 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
@@ -31,7 +33,6 @@ import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
-import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockMeterDefinitions;
 import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
@@ -50,9 +51,11 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN;
 import static com.elvaco.mvp.core.domainmodels.Quantity.DIFFERENCE_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.ENERGY_RETURN;
+import static com.elvaco.mvp.core.domainmodels.Quantity.EXTERNAL_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.FORWARD_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.HUMIDITY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.POWER;
+import static com.elvaco.mvp.core.domainmodels.Quantity.REACTIVE_ENERGY;
 import static com.elvaco.mvp.core.domainmodels.Quantity.RETURN_TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.TEMPERATURE;
 import static com.elvaco.mvp.core.domainmodels.Quantity.VOLUME;
@@ -80,8 +83,6 @@ public class MessageConsumerTest {
   MockGeocodeService geocodeService;
   MockMeterStatusLogs meterStatusLogs;
   MockJobService<MeteringReferenceInfoMessageDto> jobService;
-
-
 
   UnitConverter unitConverter = new UnitConverter() {
     @Override
@@ -114,20 +115,22 @@ public class MessageConsumerTest {
   );
   SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
     meterDefinitionMap.get(medium));
-  private Map<String, Quantity> quantityMap = Map.of(
-    VOLUME.name, VOLUME,
-    VOLUME_FLOW.name, VOLUME_FLOW,
-    TEMPERATURE.name, TEMPERATURE,
-    HUMIDITY.name, HUMIDITY,
-    ENERGY.name, ENERGY,
-    POWER.name, POWER,
-    FORWARD_TEMPERATURE.name, FORWARD_TEMPERATURE,
-    RETURN_TEMPERATURE.name, RETURN_TEMPERATURE,
-    DIFFERENCE_TEMPERATURE.name, DIFFERENCE_TEMPERATURE,
-    ENERGY_RETURN.name, ENERGY_RETURN
-    //REACTIVE_ENERGY.name, REACTIVE_ENERGY
-    //EXTERNAL_TEMPERATURE.name, EXTERNAL_TEMPERATURE
-  );
+
+  private Map<String, Quantity> quantityMap = List.of(
+    VOLUME,
+    VOLUME_FLOW,
+    TEMPERATURE,
+    HUMIDITY,
+    ENERGY,
+    POWER,
+    FORWARD_TEMPERATURE,
+    RETURN_TEMPERATURE,
+    DIFFERENCE_TEMPERATURE,
+    ENERGY_RETURN,
+    REACTIVE_ENERGY,
+    EXTERNAL_TEMPERATURE
+  ).stream().collect(Collectors.toMap(q -> q.name, q -> q));
+
   QuantityProvider quantityProvider = name -> Optional.ofNullable(quantityMap.get(name));
 
   @Before

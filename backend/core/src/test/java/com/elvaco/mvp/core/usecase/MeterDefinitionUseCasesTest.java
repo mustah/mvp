@@ -41,6 +41,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeterDefinitionUseCasesTest {
 
+  private static Random random = new Random();
+
   private static final MeterDefinition SYSTEM_METER_DEFINITION = newMeterDefinition(
     null,
     newMedium(),
@@ -150,6 +152,46 @@ public class MeterDefinitionUseCasesTest {
     assertThatThrownBy(() -> useCases.save(newMeterDefinition(null)))
       .isInstanceOf(InvalidMeterDefinition.class)
       .hasMessageContaining("Only one system meter definition per medium");
+  }
+
+  @Test
+  public void uniqueNamePerOrganisationAtSave() {
+    MeterDefinition md = newMeterDefinition(newOrganisation());
+    meterDefinitions.save(md);
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+
+    Long newId = random.nextLong();
+    MeterDefinition mdWithSameName = md.toBuilder().id(newId).build();
+    assertThatThrownBy(() -> useCases.save(mdWithSameName))
+      .isInstanceOf(InvalidMeterDefinition.class)
+      .hasMessageContaining("Name must be unique for organisation");
+  }
+
+  @Test
+  public void uniqueNamePerOrganisationAtUpdate() {
+    Organisation organisation = newOrganisation();
+    MeterDefinition existing1 = newMeterDefinition(organisation);
+    meterDefinitions.save(existing1);
+    MeterDefinition existing2 = newMeterDefinition(organisation);
+    meterDefinitions.save(existing2);
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+
+    MeterDefinition updateToExisting1Name = existing2.toBuilder().name(existing1.name).build();
+    assertThatThrownBy(() -> useCases.update(updateToExisting1Name))
+      .isInstanceOf(InvalidMeterDefinition.class)
+      .hasMessageContaining("Name must be unique for organisation");
+  }
+
+  @Test
+  public void uniqueNameForSystemMeterDefintionAndMedium() {
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+
+    MeterDefinition md = SYSTEM_METER_DEFINITION.toBuilder()
+      .name(SYSTEM_METER_DEFINITION.name)
+      .build();
+    assertThatThrownBy(() -> useCases.save(md))
+      .isInstanceOf(InvalidMeterDefinition.class)
+      .hasMessageContaining("Name must be unique for organisation");
   }
 
   @Test
@@ -383,17 +425,6 @@ public class MeterDefinitionUseCasesTest {
   }
 
   private static MeterDefinition newMeterDefinition(
-    Organisation organisation, boolean autoApply
-  ) {
-    return newMeterDefinition(
-      organisation,
-      emptySet(),
-      SYSTEM_METER_DEFINITION.medium,
-      autoApply
-    );
-  }
-
-  private static MeterDefinition newMeterDefinition(
     Organisation organisation, Medium medium, boolean autoApply
   ) {
     return newMeterDefinition(
@@ -410,10 +441,11 @@ public class MeterDefinitionUseCasesTest {
     Medium medium,
     boolean autoApply
   ) {
+    Long id = random.nextLong();
     return new MeterDefinition(
-      new Random().nextLong(),
+      id,
       organisation,
-      "test",
+      "test-" + id,
       medium,
       autoApply,
       displayQuantities
@@ -421,7 +453,7 @@ public class MeterDefinitionUseCasesTest {
   }
 
   private static Medium newMedium() {
-    long id = new Random().nextLong();
+    long id = random.nextLong();
     return new Medium(id, "Test medium - " + id);
   }
 }

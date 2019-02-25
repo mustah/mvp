@@ -48,10 +48,6 @@ public interface ContextDsl {
     return context().given(logicalMeter, physicalMeterBuilders);
   }
 
-  //  default User given(UserBuilder userBuilder) {
-  //    return context().given(userBuilder);
-  //  }
-
   default OrganisationWithUsers given(
     OrganisationBuilder organisationBuilder,
     UserBuilder... userBuilder
