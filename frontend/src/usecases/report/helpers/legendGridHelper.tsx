@@ -82,7 +82,7 @@ export const rowRenderer = (onExpandRow: OnClick, columnQuantities: Quantity[]) 
     }
   };
 
-export const quantityWidth = 84;
+export const quantityColumnWidth = 76;
 
 export const renderColumns =
   (legendItems: LegendItem[]): [React.ReactNode[], Quantity[]] => {
@@ -97,7 +97,7 @@ export const renderColumns =
               key={`legend-${id}-${label}-${medium}-${quantity}`}
               title={`${translate(`${quantity} short`)}`}
               cell={renderQuantityCell(quantity)}
-              width={quantityWidth}
+              width={quantityColumnWidth}
             />);
           columnQuantities.push(quantity);
         }

@@ -1,8 +1,9 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
 import {findIndex} from 'lodash';
+import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
-import {borderRadius, gridStyle} from '../../../app/themes';
+import {borderRadius, drawerContainerStyle, gridStyle} from '../../../app/themes';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {Column} from '../../../components/layouts/column/Column';
@@ -10,8 +11,8 @@ import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {DispatchToProps, StateToProps} from '../containers/LegendContainer';
-import {quantityWidth, renderColumns, rowRenderer} from '../helpers/legendGridHelper';
+import {DispatchToProps, OwnProps, StateToProps} from '../containers/LegendContainer';
+import {quantityColumnWidth, renderColumns, rowRenderer} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
 import './Legend.scss';
 
@@ -54,10 +55,12 @@ export const Legend = ({
   hiddenLines,
   isAllLinesHidden,
   isReportPage,
+  isVisible,
   legendItems,
   removeSelectedListItems,
-  toggleLine
-}: DispatchToProps & StateToProps) => {
+  toggleLine,
+  showHideLegend,
+}: DispatchToProps & StateToProps & OwnProps) => {
   const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
   const [gridState, setGridState] = React.useState<LegendState>({result: process(legendItems, state)});
 
@@ -100,9 +103,8 @@ export const Legend = ({
     );
   };
 
-  const facilityWidth = 138;
-  const iconsWidth = 76;
-  const width = facilityWidth + iconsWidth + (columnQuantities.length * quantityWidth) + 28;
+  const facilityColumnWidth = 138;
+  const width = facilityColumnWidth + quantityColumnWidth + (columnQuantities.length * quantityColumnWidth) + 34;
 
   const gridContent: React.ReactNode[] = [
     (
@@ -111,7 +113,7 @@ export const Legend = ({
         cell={renderLabelCell}
         title={translate('facility')}
         headerClassName="left-most"
-        width={facilityWidth}
+        width={facilityColumnWidth}
       />
     ),
     ...quantityGridColumns,
@@ -121,7 +123,7 @@ export const Legend = ({
         headerCell={renderIconButtonsHeaderCell}
         headerClassName="Link"
         cell={renderIconButtonsCell}
-        width={iconsWidth}
+        width={quantityColumnWidth}
       />
     ),
   ];
@@ -129,18 +131,28 @@ export const Legend = ({
   const onExpandRow = (dataItem: any) => setGridState({result: updateDataResult(gridState, dataItem)});
 
   return (
-    <Column className="Legend Grouping-grid">
-      <Grid
-        data={gridState.result}
-        groupable={true}
-        cellRender={cellRender}
-        headerCellRender={headerCellRender}
-        rowRender={rowRenderer(onExpandRow, columnQuantities)}
-        style={{...legendGridStyle, width}}
-        {...state}
-      >
-        {gridContent}
-      </Grid>
-    </Column>
+    <Drawer
+      containerStyle={drawerContainerStyle}
+      docked={false}
+      openSecondary={true}
+      open={isVisible}
+      onRequestChange={showHideLegend}
+      width={width}
+      overlayStyle={{backgroundColor: 'transparent'}}
+    >
+      <Column className="Legend Grouping-grid">
+        <Grid
+          data={gridState.result}
+          groupable={true}
+          cellRender={cellRender}
+          headerCellRender={headerCellRender}
+          rowRender={rowRenderer(onExpandRow, columnQuantities)}
+          style={{...legendGridStyle, width}}
+          {...state}
+        >
+          {gridContent}
+        </Grid>
+      </Column>
+    </Drawer>
   );
 };

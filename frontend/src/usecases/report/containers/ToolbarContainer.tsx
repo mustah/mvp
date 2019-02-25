@@ -29,7 +29,7 @@ interface DispatchToProps {
 }
 
 interface OwnProps {
-  toggleLegend?: OnClick;
+  showHideLegend: OnClick;
 }
 
 export type Props = StateToProps & DispatchToProps & OwnProps;
