@@ -1,4 +1,5 @@
 import {combineReducers} from 'redux';
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
@@ -10,10 +11,8 @@ import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
-  SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_CUSTOM_DATE_RANGE,
-  SET_THRESHOLD,
+  setThresholdAction,
 } from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
@@ -188,13 +187,11 @@ export const resetReducer = <S>(
   initialState: S,
 ): S => {
   switch (type) {
-    case SET_THRESHOLD:
+    case getType(setThresholdAction):
     case SELECT_SAVED_SELECTION:
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
     case RESET_SELECTION:
-    case SELECT_PERIOD:
-    case SET_CUSTOM_DATE_RANGE:
     case LOGOUT_USER:
       return initialState;
     default:

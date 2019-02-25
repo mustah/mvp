@@ -1,8 +1,10 @@
 import {find} from 'lodash';
+import {createStandardAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
 import {showFailMessage} from '../../state/ui/message/messageActions';
+import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Dispatcher, emptyActionOf, payloadActionOf, uuid} from '../../types/Types';
 import {LegendItem, SelectedReportPayload} from './reportModels';
 import {getLegendItems, getSelectedReportPayload} from './reportSelectors';
@@ -18,6 +20,7 @@ export const selectResolution = payloadActionOf<TemporalResolution>(SELECT_RESOL
 export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
 export const hideAllLines = emptyActionOf(HIDE_ALL_LINES);
 export const removeSelectedListItems = emptyActionOf(REMOVE_SELECTED_LIST_ITEMS);
+export const setReportTimePeriod = createStandardAction('SET_REPORT_TIME_PERIOD')<SelectionInterval>();
 
 export const limit: number = 100;
 

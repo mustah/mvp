@@ -1,11 +1,8 @@
 import {default as classNames} from 'classnames';
 import {DropDownMenu, MenuItem} from 'material-ui';
-import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {borderRadius, colors, fontSize, menuItemStyle} from '../../app/themes';
-import {firstUpperTranslated} from '../../services/translationService';
-import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
-import {Children, OnClick, Styled, WithChildren} from '../../types/Types';
+import {OnClick, Styled, WithChildren} from '../../types/Types';
 import {Period} from '../dates/dateModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
@@ -112,46 +109,3 @@ export const DropdownMenu = ({
     </Row>
   );
 };
-
-const multiSelectLabelStyle: React.CSSProperties = {
-  ...menu.labelStyle,
-  height: 38,
-  width: 168,
-};
-
-const multiSelectStyle: React.CSSProperties = {
-  ...menu.style,
-  marginLeft: 0,
-  marginBottom: 0,
-  borderColor: colors.borderColor,
-};
-
-const hintStyle: React.CSSProperties = {bottom: 5, left: 8, color: colors.lightBlack};
-
-export interface MultiSelectDropdownMenuProps {
-  selectedQuantities: Quantity[];
-  changeQuantities: (event, index, values) => void;
-  children?: Children;
-}
-
-export const MultiSelectDropdownMenu =
-  ({children, changeQuantities, selectedQuantities}: MultiSelectDropdownMenuProps) => (
-    <Row className="DropdownMenu">
-      <SelectField
-        autoWidth={true}
-        className="DropdownMenu-dropdown"
-        hintStyle={hintStyle}
-        hintText={firstUpperTranslated('select quantities')}
-        iconStyle={menu.iconStyle}
-        labelStyle={multiSelectLabelStyle}
-        multiple={true}
-        onChange={changeQuantities}
-        selectedMenuItemStyle={menu.selectedMenuItemStyle}
-        style={multiSelectStyle}
-        value={selectedQuantities}
-        underlineStyle={menu.underlineStyle}
-      >
-        {children}
-      </SelectField>
-    </Row>
-  );

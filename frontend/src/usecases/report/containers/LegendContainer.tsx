@@ -1,5 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Period} from '../../../components/dates/dateModels';
 import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
 import {RootState} from '../../../reducers/rootReducer';
 import {isReportPage} from '../../../selectors/routerSelectors';
@@ -36,6 +37,7 @@ const mapStateToProps = ({report, routing}: RootState): StateToProps => {
     noContentText: firstUpperTranslated('select meters'),
     resolution,
     savedReports,
+    timePeriod: {period: Period.latest}, // TODO timePeriod is unused but I could not exclude it from ReportState
   });
 };
 

@@ -5,6 +5,7 @@ import {ButtonLinkBlue} from '../../../../components/buttons/ButtonLink';
 import {TextFieldInput} from '../../../../components/inputs/TextFieldInput';
 import {Row, RowMiddle} from '../../../../components/layouts/row/Row';
 import {Medium} from '../../../../components/texts/Texts';
+import {PeriodContainer} from '../../../../containers/PeriodContainer';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {
   getDisplayModeText,
@@ -149,7 +150,7 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
           autoComplete="off"
           hintText={firstUpperTranslated(getDisplayModeText(quantity))}
         />
-        <Medium className="Unit">{decoratedUnit}</Medium>
+        <Medium className="label">{decoratedUnit}</Medium>
       </RowMiddle>
 
       <RowMiddle>
@@ -161,6 +162,11 @@ export const Thresholds = ({query = emptyQuery, onChange, className}: Props) => 
         >
           {duringDaysMenuItems}
         </DropDownMenu>
+      </RowMiddle>
+
+      <RowMiddle>
+        <Medium className="label">{translate('within')}</Medium>
+        <PeriodContainer/>
       </RowMiddle>
 
       {clearThresholdButton}

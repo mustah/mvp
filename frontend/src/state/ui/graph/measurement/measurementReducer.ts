@@ -5,7 +5,8 @@ import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   REMOVE_SELECTED_LIST_ITEMS,
   SELECT_RESOLUTION,
-  SET_SELECTED_ITEMS
+  SET_SELECTED_ITEMS,
+  setReportTimePeriod
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
@@ -65,6 +66,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
       };
     case MEASUREMENT_CLEAR_ERROR:
     case SELECT_RESOLUTION:
+    case getType(setReportTimePeriod):
     case SET_SELECTED_ITEMS:
     case REMOVE_SELECTED_LIST_ITEMS:
     case SEARCH:

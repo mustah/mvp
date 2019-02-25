@@ -1,6 +1,7 @@
 import {routerActions} from 'react-router-redux';
 import {shallowEqual} from 'recompose';
 import {Dispatch} from 'redux';
+import {createStandardAction} from 'typesafe-actions';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {getId} from '../../helpers/collections';
 import {Maybe} from '../../helpers/Maybe';
@@ -19,15 +20,13 @@ import {
   SelectionItem,
   SelectionParameter,
   ThresholdQuery,
+  ThresholdQueryWithin,
   UserSelection
 } from './userSelectionModels';
 import {userSelectionsDataFormatter} from './userSelectionSchema';
 import {getThreshold, getUserSelection} from './userSelectionSelectors';
 
-export const SELECT_PERIOD = 'SELECT_PERIOD';
-export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
-
-export const selectPeriod = payloadActionOf<Period>(SELECT_PERIOD);
+export const selectPeriod = createStandardAction('SELECT_PERIOD')<Period>();
 
 export const ADD_PARAMETER_TO_SELECTION = 'ADD_PARAMETER_TO_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
@@ -40,21 +39,30 @@ const deselectParameterInSelection = payloadActionOf<SelectionParameter>(DESELEC
 export const resetSelection = emptyActionOf(RESET_SELECTION);
 const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
 
-export const SET_THRESHOLD = 'SET_THRESHOLD';
-const setThresholdAction = payloadActionOf<ThresholdQuery>(SET_THRESHOLD);
+export const setThresholdAction = createStandardAction('SET_THRESHOLD')<ThresholdQueryWithin>();
 
 export const setThreshold =
   (threshold: ThresholdQuery | undefined) =>
     (dispatch, getState: GetState) => {
-      const oldThreshold = getThreshold(getState().userSelection);
-      const isOldThresholdValid = isValidThreshold(oldThreshold);
+      const state: RootState = getState();
+      const oldThreshold = getThreshold(state.userSelection);
+
+      const isOldValid = isValidThreshold(oldThreshold);
+      const isNewValid = isValidThreshold(threshold);
 
       if (
-        (!isOldThresholdValid && isValidThreshold(threshold)) ||
-        (isOldThresholdValid && threshold === undefined) ||
-        (isOldThresholdValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
+        (!isOldValid && isNewValid) ||
+        (isOldValid && threshold === undefined) ||
+        (isOldValid && threshold !== undefined && !shallowEqual(threshold, oldThreshold!))
       ) {
-        dispatch(setThresholdAction(threshold as ThresholdQuery));
+        const payload = isNewValid
+          ? {
+
+            dateRange: state.userSelection.userSelection.selectionParameters.dateRange,
+            ...threshold,
+          }
+          : threshold;
+        dispatch(setThresholdAction(payload as ThresholdQueryWithin));
       }
     };
 
@@ -68,7 +76,7 @@ export const fetchUserSelections = fetchIfNeeded<UserSelection>(
   userSelectionsDataFormatter,
 );
 
-export const setCustomDateRange = payloadActionOf<DateRange>(SET_CUSTOM_DATE_RANGE);
+export const setCustomDateRange = createStandardAction('SET_CUSTOM_DATE_RANGE')<DateRange>();
 
 const oldParameterKeys: Array<keyof OldSelectionParameters> =
   [...oldParameterNames, 'addresses', 'cities'];

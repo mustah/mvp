@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.6\n"
 
+msgid "within"
+msgstr "under"
+
 msgid "save report"
 msgstr "spara rapport"
 
@@ -29,23 +32,14 @@ msgstr "lyckades ta bort mätare '{{facility}}'"
 msgid "failed to delete the meter: {{error}}"
 msgstr "lyckades inte ta bort mätaren: {{error}}"
 
-msgid "email not valid"
-msgstr "ogiltlig mejladress"
-
 msgid "required field"
 msgstr "obligatoriskt fält"
-
-msgid "admin"
-msgstr "admin"
 
 msgid "metering"
 msgstr "mätning"
 
 msgid "sync"
 msgstr "synka"
-
-msgid "delete meter"
-msgstr "ta bort mätare"
 
 msgid "add to report"
 msgstr "lägg till i rapport"
@@ -133,9 +127,6 @@ msgstr "nytt lösenord"
 
 msgid "confirm new password"
 msgstr "bekräfta nytt lösenord"
-
-msgid "required field"
-msgstr "obligatoriskt fält"
 
 msgid "change password"
 msgstr "ändra lösenord"
@@ -362,12 +353,6 @@ msgid ""
 "looks like the server is taking to long to respond, please try again in soon"
 msgstr "det tog för lång tid för servern att svara, vänligen försök igen snart"
 
-msgid "successfully deleted the meter {{facility}}"
-msgstr "lyckades ta bort mätare '{{facility}}'"
-
-msgid "failed to delete the meter: {{error}}"
-msgstr "lyckades inte ta bort mätaren: {{error}}"
-
 msgid "no parent organisation"
 msgstr "ingen huvudorganisation"
 
@@ -498,9 +483,6 @@ msgstr "{{count}} gateway av ditt ursprungliga urval, visas inte på kartan"
 msgid "meter will soon be synchronized"
 msgstr "mätaren uppdateras snart"
 
-msgid "are you sure you want to delete the meter {{facility}}"
-msgstr "är du säkert på att du vill ta bort mätare '{{facility}}'"
-
 msgid "{{count}} meter will soon be synchronized"
 msgstr "{{count}} mätare kommer snart att uppdateras"
 
@@ -605,9 +587,6 @@ msgstr "visa medelvärde i rapport"
 
 msgid "admin"
 msgstr "admin"
-
-msgid "metering"
-msgstr "mätning"
 
 msgid "profile"
 msgstr "profil"

@@ -1,3 +1,4 @@
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
@@ -11,17 +12,17 @@ import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
-  SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_CUSTOM_DATE_RANGE,
-  SET_THRESHOLD,
+  selectPeriod,
+  setCustomDateRange,
+  setThresholdAction,
 } from './userSelectionActions';
 import {
   initialSelectionId,
   ParameterName,
   SelectionItem,
   SelectionParameter,
-  ThresholdQuery,
+  ThresholdQueryWithin,
   UserSelection,
   UserSelectionState
 } from './userSelectionModels';
@@ -136,7 +137,7 @@ const updateCustomDateRange = (
 
 const applyThreshold = (
   state: UserSelectionState,
-  threshold: ThresholdQuery,
+  {dateRange, ...threshold}: ThresholdQueryWithin,
 ): UserSelectionState => ({
   ...state,
   userSelection: {
@@ -145,6 +146,7 @@ const applyThreshold = (
     selectionParameters: {
       ...state.userSelection.selectionParameters,
       threshold,
+      dateRange,
     }
   }
 });
@@ -155,7 +157,7 @@ type ActionTypes =
   | Action<UserSelection>
   | Action<Period>
   | Action<DateRange>
-  | Action<ThresholdQuery>;
+  | Action<ThresholdQueryWithin>;
 
 export const userSelection = (
   state: UserSelectionState = initialState,
@@ -168,19 +170,20 @@ export const userSelection = (
       return addSelected(state, action as Action<SelectionParameter>);
     case DESELECT_SELECTION:
       return removeSelected(state, action as Action<SelectionParameter>);
-    case SELECT_PERIOD:
+    case getType(selectPeriod):
       return updatePeriod(state, action as Action<Period>);
-    case SET_CUSTOM_DATE_RANGE:
+    case getType(setCustomDateRange):
       return updateCustomDateRange(state, action as Action<DateRange>);
-    case SET_THRESHOLD:
-      return applyThreshold(state, (action as Action<ThresholdQuery>).payload);
+    case getType(setThresholdAction):
+      return applyThreshold(state, (action as Action<ThresholdQueryWithin>).payload);
     case SELECT_SAVED_SELECTION:
     case domainModelsPostSuccess(EndPoints.userSelections):
     case domainModelsPutSuccess(EndPoints.userSelections):
       return selectSaved(state, action as Action<UserSelection>);
     case domainModelsDeleteSuccess(EndPoints.userSelections):
-      const payload: UserSelection = (action as Action<UserSelection>).payload;
-      return payload.id === state.userSelection.id ? initialState : state;
+      return (action as Action<UserSelection>).payload.id === state.userSelection.id
+        ? initialState
+        : state;
     default:
       return state;
   }

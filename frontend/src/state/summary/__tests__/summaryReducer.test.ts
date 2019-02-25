@@ -11,7 +11,6 @@ import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
-  SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
 } from '../../user-selection/userSelectionActions';
 import {SelectionSummary, SummaryState} from '../summaryModels';
@@ -108,7 +107,6 @@ describe('summaryReducer', () => {
         ADD_PARAMETER_TO_SELECTION,
         DESELECT_SELECTION,
         RESET_SELECTION,
-        SELECT_PERIOD,
       ].forEach((actionThatResets: string) => {
         expect(summary(state, {type: actionThatResets})).toEqual(initialState);
       });

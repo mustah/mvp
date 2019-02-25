@@ -1,13 +1,12 @@
-import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {EndPoints} from '../../../services/endPoints';
 import {uuid} from '../../../types/Types';
 import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
+import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
-  SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
 } from '../../user-selection/userSelectionActions';
 import {NormalizedSelectionTree, SelectionTreeState} from '../selectionTreeModels';
@@ -214,7 +213,6 @@ describe('selectionTreeReducer', () => {
       expect(selectionTree(state, {type: ADD_PARAMETER_TO_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: DESELECT_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: RESET_SELECTION})).toEqual(initialState);
-      expect(selectionTree(state, {type: SELECT_PERIOD})).toEqual(initialState);
     });
   });
 

@@ -3,7 +3,6 @@ import * as React from 'react';
 import {mainContentPaperStyle} from '../../../app/themes';
 import {Row, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {PageLayout} from '../../../containers/PageLayout';
-import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {SelectionContentContainer} from './SelectionContentContainer';
 import {SelectionMenuContainer} from './SelectionMenuContainer';
@@ -14,7 +13,6 @@ export const SelectionPage = () => (
       <SelectionMenuContainer/>
       <Row>
         <SummaryContainer/>
-        <PeriodContainer/>
       </Row>
     </RowSpaceBetween>
 

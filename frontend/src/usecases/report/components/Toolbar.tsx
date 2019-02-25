@@ -8,9 +8,12 @@ import EditorShowChart from 'material-ui/svg-icons/editor/show-chart';
 import CloudDownload from 'material-ui/svg-icons/file/cloud-download';
 import * as React from 'react';
 import {bgHoverColor, colors, iconSizeMedium} from '../../../app/themes';
+import {DateRange, Period} from '../../../components/dates/dateModels';
+import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
+import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable, Selectable} from '../../../types/Types';
@@ -92,11 +95,20 @@ export const Toolbar = ({
   exportToExcel,
   isFetching,
   isExportingToExcel,
-  view
+  view,
+  setReportTimePeriod,
+  timePeriod,
 }: Props) => {
   const selectGraph = () => changeToolbarView(ToolbarView.graph);
   const selectTable = () => changeToolbarView(ToolbarView.table);
   const excelExport = () => exportToExcel();
+  const selectPeriod = (period: Period) => setReportTimePeriod({period});
+  const setCustomDateRange = (customDateRange: DateRange) => setReportTimePeriod({
+    period: Period.custom,
+    customDateRange
+  });
+
+  const customDateRange = Maybe.maybe(timePeriod.customDateRange);
 
   const legendIconProps: IconProps = {disabled: !hasLegendItems};
 
@@ -149,7 +161,14 @@ export const Toolbar = ({
           targetOrigin={targetOrigin}
           renderPopoverContent={renderPopoverContent}
         />
-        <ResolutionSelection disabled={!hasLegendItems} resolution={resolution} selectResolution={selectResolution}/>
+        <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
+        <PeriodSelection
+          customDateRange={customDateRange}
+          period={timePeriod.period}
+          selectPeriod={selectPeriod}
+          setCustomDateRange={setCustomDateRange}
+          style={{marginBottom: 0, marginLeft: 0}}
+        />
       </RowRight>
     </RowSpaceBetween>
   );

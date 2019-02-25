@@ -5,10 +5,10 @@ import {RootState} from '../../../reducers/rootReducer';
 import {exportToExcel} from '../../../state/ui/graph/measurement/measurementActions';
 import {changeToolbarView} from '../../../state/ui/toolbar/toolbarActions';
 import {OnChangeToolbarView, ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
-import {OnSelectResolution} from '../../../state/user-selection/userSelectionModels';
-import {Callback, OnClick} from '../../../types/Types';
+import {OnSelectResolution, SelectionInterval} from '../../../state/user-selection/userSelectionModels';
+import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
-import {selectResolution} from '../reportActions';
+import {selectResolution, setReportTimePeriod} from '../reportActions';
 import {getLegendItems} from '../reportSelectors';
 
 interface StateToProps {
@@ -18,12 +18,14 @@ interface StateToProps {
   view: ToolbarView;
   isFetching: boolean;
   isExportingToExcel: boolean;
+  timePeriod: SelectionInterval;
 }
 
 interface DispatchToProps {
   changeToolbarView: OnChangeToolbarView;
   selectResolution: OnSelectResolution;
   exportToExcel: Callback;
+  setReportTimePeriod: CallbackWith<SelectionInterval>;
 }
 
 interface OwnProps {
@@ -43,13 +45,15 @@ const mapStateToProps = ({
     isFetching,
     isExportingToExcel,
     resolution: report.resolution,
-    view
+    view,
+    timePeriod: report.timePeriod,
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeToolbarView,
   selectResolution,
   exportToExcel,
+  setReportTimePeriod,
 }, dispatch);
 
 export const ToolbarContainer =

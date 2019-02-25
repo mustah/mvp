@@ -4,7 +4,14 @@ import {momentFrom} from '../../../helpers/dateHelpers';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {logoutUser} from '../../auth/authActions';
-import {hideAllLines, removeSelectedListItems, selectResolution, setSelectedItems, toggleLine} from '../reportActions';
+import {
+  hideAllLines,
+  removeSelectedListItems,
+  selectResolution,
+  setReportTimePeriod,
+  setSelectedItems,
+  toggleLine
+} from '../reportActions';
 import {ReportState, SelectedReportPayload} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 
@@ -48,7 +55,7 @@ describe('reportReducer', () => {
 
   describe('change period', () => {
 
-    it('should not clear selected list items', () => {
+    it('should not clear selected list items when changing global period', () => {
       const payload: SelectedReportPayload = {
         items,
         quantities: [],
@@ -64,6 +71,16 @@ describe('reportReducer', () => {
 
       const newState: ReportState = report(state, selectPeriod(Period.currentMonth));
       expect(newState).toBe(state);
+    });
+
+    it('should have a default time period', () => {
+      expect(initialState.timePeriod).toBeTruthy();
+    });
+
+    it('can change its time period', () => {
+      const afterChange: ReportState = report(initialState, setReportTimePeriod({period: Period.currentMonth}));
+      expect(afterChange.timePeriod).not.toEqual(initialState.timePeriod);
+      expect(afterChange.timePeriod).toEqual({period: Period.currentMonth});
     });
 
   });
