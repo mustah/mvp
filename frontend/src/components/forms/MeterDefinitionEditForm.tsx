@@ -4,7 +4,8 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {
   Medium,
   MeterDefinition,
-  MeterDefinitionMaybeId, Quantity,
+  MeterDefinitionMaybeId,
+  Quantity,
 } from '../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {noOrganisation, Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {CallbackWithData, uuid} from '../../types/Types';
@@ -32,7 +33,7 @@ interface Props {
   allQuantities: Quantity[];
 }
 
-const initialMediumDefinition: MeterDefinitionMaybeId = {
+const initialMeterDefinition: MeterDefinitionMaybeId = {
   name: '',
   quantities: [],
   organisation: {id: '', slug: '', name: ''},
@@ -44,7 +45,7 @@ export const MeterDefinitionEditForm = (
   {mediums, organisations, meterDef, updateMeterDefinition, addMeterDefinition, allQuantities}: Props
 ) => {
   const [meterDefinition, setMeterDefinition] = React.useState<MeterDefinitionMaybeId>(
-    meterDef || initialMediumDefinition
+    meterDef || initialMeterDefinition
   );
 
   const {name, medium, organisation, autoApply, quantities} = meterDefinition;
