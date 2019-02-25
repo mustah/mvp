@@ -30,7 +30,7 @@ import {
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {clearQuantityErrors, fetchQuantities} from '../../../state/domain-models/quantities/quantitesApiActions';
-import {CallbackWithData, ClearError, ErrorResponse, Fetch, uuid} from '../../../types/Types';
+import {CallbackWithData, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
 
 interface StateToProps {
   meterDefinitions: ObjectsById<MeterDefinition>;
@@ -58,7 +58,7 @@ interface DispatchToProps {
   clearQuantityErrors: ClearError;
 }
 
-type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{meterDefinitionId: uuid}>;
+type OwnProps = InjectedAuthRouterProps & RouteComponentProps<{meterDefinitionId: number}>;
 type Props = OwnProps & StateToProps & DispatchToProps;
 
 class MeterDefinitionEdit extends React.Component<Props, {}> {

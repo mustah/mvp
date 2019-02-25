@@ -3,19 +3,22 @@ import * as React from 'react';
 import {ButtonLink} from '../../../components/buttons/ButtonLink';
 import {InputSelectableCell} from '../../../components/inputs/InputSelectableCell';
 import {translate} from '../../../services/translationService';
-import {Quantity, DisplayQuantityMaybeId} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
+import {
+  DisplayQuantity,
+  Quantity
+} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {QuantityActions} from './QuantityActions';
 import './QuantityList.scss';
 
 interface OwnProps {
   changedQuantities: any;
-  definitionQuantities: DisplayQuantityMaybeId[];
+  definitionQuantities: DisplayQuantity[];
   allQuantities: Quantity[];
 }
 
 type Props = OwnProps;
 
-type state = DisplayQuantityMaybeId[];
+type state = DisplayQuantity[];
 
 export const QuantityList = ({definitionQuantities, allQuantities, changedQuantities}: Props) => {
   let x = 0;
@@ -25,7 +28,7 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
 
   const enterInsert = () => {
     const item = {inEdit: true, gridIndex: definitionQuantities.length};
-    update(localQuantities, item , 'edit');
+    update(localQuantities, item, 'edit');
   };
 
   const saveAction = (rowItem) => update(localQuantities, rowItem.dataItem, 'save');

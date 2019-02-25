@@ -15,7 +15,7 @@ import {TextFieldInput} from '../inputs/TextFieldInput';
 import {Column} from '../layouts/column/Column';
 import './OrganisationEditForm.scss';
 
-const mediumById = (mediumId: uuid, mediums: Medium[]): Medium =>
+const mediumById = (mediumId: number, mediums: Medium[]): Medium =>
   mediums.find(({id}) => id === mediumId)!;
 
 const organisationById = (organisationId: uuid, organisations: Organisation[]): Organisation =>
@@ -32,7 +32,7 @@ interface Props {
   allQuantities: Quantity[];
 }
 
-export const initialMediumDefinition: MeterDefinitionMaybeId = {
+const initialMediumDefinition: MeterDefinitionMaybeId = {
   name: '',
   quantities: [],
   organisation: {id: '', slug: '', name: ''},
@@ -40,13 +40,11 @@ export const initialMediumDefinition: MeterDefinitionMaybeId = {
   autoApply: true,
 };
 
-type state = MeterDefinitionMaybeId;
-
 export const MeterDefinitionEditForm = (
   {mediums, organisations, meterDef, updateMeterDefinition, addMeterDefinition, allQuantities}: Props
 ) => {
-  const [meterDefinition, setMeterDefinition] = React.useState<state>(
-    meterDef ? meterDef : initialMediumDefinition
+  const [meterDefinition, setMeterDefinition] = React.useState<MeterDefinitionMaybeId>(
+    meterDef || initialMediumDefinition
   );
 
   const {name, medium, organisation, autoApply, quantities} = meterDefinition;
@@ -97,7 +95,7 @@ export const MeterDefinitionEditForm = (
             id="medium"
             multiple={false}
             onChange={setMedium}
-            value={medium.id}
+            value={Number(medium.id)}
           />
           <SelectFieldInput
             options={organisations}

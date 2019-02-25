@@ -1,20 +1,17 @@
-import {Overwrite} from 'react-redux-typescript';
-import {Identifiable, IdNamed, uuid} from '../../../types/Types';
+import {Overwrite} from 'utility-types';
+import {IdNamed, uuid} from '../../../types/Types';
 import {Organisation} from '../organisation/organisationModels';
 
-export interface MeterDefinition extends Identifiable {
-  name: string;
+export interface MeterDefinition extends IdNamed {
   quantities: DisplayQuantity[];
   organisation?: Organisation;
   medium: Medium;
   autoApply: boolean;
 }
 
-export type MeterDefinitionMaybeId = Overwrite<MeterDefinition, {id?: uuid, quantities: DisplayQuantity[]}>;
+export type MeterDefinitionMaybeId = Overwrite<MeterDefinition, {id?: uuid}>;
 
-export interface Medium extends Identifiable {
-  name: string;
-}
+export type Medium = IdNamed;
 
 export interface DisplayQuantity extends IdNamed, Grid {
   quantityName: string;
@@ -23,13 +20,9 @@ export interface DisplayQuantity extends IdNamed, Grid {
   precision: number;
 }
 
-export interface Quantity extends Identifiable {
-  name: string;
-}
+export type Quantity = IdNamed;
 
-export interface Grid {
+interface Grid {
   inEdit: boolean;
   gridIndex: number;
 }
-
-export type DisplayQuantityMaybeId = Overwrite<DisplayQuantity, {id?: uuid}>;
