@@ -8,6 +8,7 @@ import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
+import {removeAtIndex} from '../../../helpers/collections';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {orUnknown} from '../../../helpers/translations';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
@@ -82,10 +83,16 @@ export const Legend = ({
   const renderIconButtonsCell = ({dataItem: {id, medium}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
     const onDeleteItem = () => {
-      const data = gridState.result.data;
+      const {result} = gridState;
+      const data = result.data;
       const index = findIndex(data, {value: medium});
-      data[index].items = data[index].items.filter((it) => it.id !== id);
-      setGridState({result: gridState.result});
+      const items = data[index].items.filter((it) => it.id !== id);
+      if (items.length) {
+        data[index].items = items;
+      } else {
+        removeAtIndex(data, index);
+      }
+      setGridState({result});
       deleteItem(id);
     };
     const onToggleItem = () => toggleLine(id);

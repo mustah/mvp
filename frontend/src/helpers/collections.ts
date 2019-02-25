@@ -9,6 +9,8 @@ export const toggle = <T>(item: T, list: T[]): T[] => {
   return Array.from(asSet);
 };
 
+export const removeAtIndex = <T>(items: T[], index: number): T[] => items.splice(index, 1);
+
 export const getId = (item: IdNamed | Identifiable): uuid => item.id;
 
 export const groupById = <T extends Identifiable>(items: T[]): ObjectsById<T> =>
