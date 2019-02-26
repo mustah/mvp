@@ -1,4 +1,6 @@
 import {Dispatch} from 'react-redux';
+import {routerActions} from 'react-router-redux';
+import {routes} from '../../../app/routes';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -52,6 +54,7 @@ const createOrganisationCallbacks = {
         {...organisation},
       ),
     ));
+    dispatch(routerActions.push(`${routes.adminOrganisations}`));
   },
   afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(

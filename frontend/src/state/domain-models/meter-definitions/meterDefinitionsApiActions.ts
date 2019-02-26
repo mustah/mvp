@@ -1,4 +1,6 @@
 import {Dispatch} from 'react-redux';
+import {routerActions} from 'react-router-redux';
+import {routes} from '../../../app/routes';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -51,6 +53,7 @@ const createMeterDefinitionCallbacks = {
         {...meterDefinition},
       ),
     ));
+    dispatch(routerActions.push(`${routes.adminMeterDefinitions}`));
   },
   afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(

@@ -1,6 +1,8 @@
 import axios from 'axios';
+import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {routes} from '../../../../app/routes';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
@@ -91,6 +93,7 @@ describe('userApiActions', () => {
         createUser.request(),
         createUser.success(returnedUser as User),
         showSuccessMessage(`Successfully created the user ${returnedUser.name} (${returnedUser.email})`),
+        routerActions.push(`${routes.adminUsers}`)
       ]);
     });
 
@@ -100,7 +103,7 @@ describe('userApiActions', () => {
       expect(store.getActions()).toEqual([
         createUser.request(),
         createUser.failure({...errorResponse}),
-        showFailMessage(`Failed to create user: ${errorResponse.message}`),
+        showFailMessage(`Failed to create user: ${errorResponse.message}`)
       ]);
     });
   });

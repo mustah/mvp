@@ -1,4 +1,6 @@
 import {Dispatch} from 'react-redux';
+import {routerActions} from 'react-router-redux';
+import {routes} from '../../../app/routes';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {restClientWith} from '../../../services/restClient';
@@ -34,6 +36,7 @@ export const addUser = postRequest<User>(EndPoints.users, {
       'successfully created the user {{name}} ({{email}})',
       {...user},
     )));
+    dispatch(routerActions.push(`${routes.adminUsers}`));
   },
   afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
