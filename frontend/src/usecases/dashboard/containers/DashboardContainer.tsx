@@ -4,7 +4,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel} from '../../../state/domain-models/domainModelsSelectors';
-import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
+import {allCurrentMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch} from '../../../types/Types';
 import {fetchMeterMapMarkers} from '../../map/mapMarkerActions';
 import {MapMarker} from '../../map/mapModels';
@@ -31,12 +31,11 @@ const mapStateToProps =
   ({
     dashboard: {record: dashboard, isFetching},
     domainModels: {meterMapMarkers},
-    userSelection: {userSelection},
   }: RootState): StateToProps =>
     ({
       dashboard,
       isFetching,
-      parameters: getMeterParameters({userSelection}),
+      parameters: allCurrentMeterParameters,
       meterMapMarkers: getDomainModel(meterMapMarkers),
     });
 

@@ -3,7 +3,7 @@ import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels'
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageLayout} from '../../../containers/PageLayout';
-import {SummaryContainer} from '../../../containers/SummaryContainer';
+import {IgnoreSelectionSummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {DashboardProps} from '../containers/DashboardContainer';
 import {MapWidgetContainer} from '../containers/MapWidgetContainer';
@@ -16,7 +16,7 @@ export const Dashboard = ({dashboard, isFetching, meterMapMarkers}: DashboardPro
       <Row className="space-between">
         <MainTitle>{translate('dashboard')}</MainTitle>
         <Row>
-          <SummaryContainer/>
+          <IgnoreSelectionSummaryContainer/>
         </Row>
       </Row>
 

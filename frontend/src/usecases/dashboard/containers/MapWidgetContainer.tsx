@@ -11,7 +11,6 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
-import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {ClearError, ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {Map} from '../../map/components/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -108,14 +107,14 @@ const MapWidget =
   };
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {map, domainModels: {meterMapMarkers}, userSelection: {userSelection: {id, name}}}: RootState = rootState;
+  const {map, domainModels: {meterMapMarkers}}: RootState = rootState;
   return ({
     bounds: getBounds(meterMapMarkers),
     error: getError(meterMapMarkers),
     isFetching: meterMapMarkers.isFetching,
     lowConfidenceText: getMeterLowConfidenceTextInfo(rootState),
     map,
-    title: id !== initialSelectionId ? name : firstUpperTranslated('all meters'),
+    title: firstUpperTranslated('all meters'),
     viewCenter: map.viewCenter,
   });
 };

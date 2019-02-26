@@ -152,6 +152,11 @@ export const getPaginatedGatewayParameters = getPaginatedParameters(entityApiPar
 
 export const getMeterParameters = getParameters(entityApiParametersMetersFactory);
 
+export const allCurrentMeterParameters = encodedUriParametersFrom(toPeriodApiParameters({
+  period: Period.latest,
+  customDateRange: Maybe.nothing()
+}));
+
 export const getGatewayParameters = getParameters(entityApiParametersGatewaysFactory);
 
 export const getSelectedPeriod =
