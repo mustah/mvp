@@ -9,14 +9,21 @@ export interface LegendItem {
   id: uuid;
   label: string;
   medium: Medium;
+  isRowExpanded?: boolean;
 }
+
+export interface ViewOption {
+  isAllLinesHidden?: boolean;
+}
+
+export type MediumViewOptions = { [medium in Medium]: ViewOption };
 
 export interface Report extends Identifiable {
   meters: LegendItem[];
+  mediumViewOptions: MediumViewOptions;
 }
 
 export interface ReportState {
-  isAllLinesHidden: boolean;
   hiddenLines: uuid[];
   resolution: TemporalResolution;
   savedReports: ObjectsById<Report>;

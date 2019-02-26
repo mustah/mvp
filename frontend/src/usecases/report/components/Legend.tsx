@@ -1,6 +1,5 @@
 import {DataResult, process, State} from '@progress/kendo-data-query';
 import {Grid, GridCellProps, GridColumn} from '@progress/kendo-react-grid';
-import {findIndex} from 'lodash';
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {borderRadius, drawerContainerStyle, gridStyle} from '../../../app/themes';
@@ -8,12 +7,12 @@ import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
-import {removeAtIndex} from '../../../helpers/collections';
 import {isDefined} from '../../../helpers/commonHelpers';
 import {orUnknown} from '../../../helpers/translations';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {translate} from '../../../services/translationService';
+import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {DispatchToProps, OwnProps, StateToProps} from '../containers/LegendContainer';
-import {quantityColumnWidth, renderColumns, rowRenderer} from '../helpers/legendGridHelper';
+import {quantityColumnWidth, renderColumns, RowProps, rowRenderer} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
 import './Legend.scss';
 
@@ -22,7 +21,6 @@ const legendGridStyle: React.CSSProperties = {
   borderTopLeftRadius: borderRadius,
   borderTopRightRadius: borderRadius,
   marginBottom: 24,
-  maxHeight: 0.75 * window.innerHeight
 };
 
 const renderLabelCell = ({dataItem: {label, city, address}}: GridCellProps) =>
@@ -34,67 +32,27 @@ const renderLabelCell = ({dataItem: {label, city, address}}: GridCellProps) =>
     )
     : <td>-</td>;
 
-const updateDataResult = (gridState: LegendState, dataItem: any): DataResult => {
-  const result: DataResult = gridState.result;
-  const index = findIndex(result.data, {value: dataItem.value});
-  const expanded = !dataItem.expanded;
-  const lastIndex = dataItem.items.length - 1;
-  const items = dataItem.items.map((it, index) => ({...it, expanded, last: index === lastIndex}));
-  result.data[index] = {...dataItem, expanded, items};
-  return result;
-};
-
 const state: State = {group: [{field: 'medium'}]};
-
-interface LegendState {
-  result: DataResult;
-}
 
 export const Legend = ({
   deleteItem,
-  hideAllLines,
+  hideAllByMedium,
   hiddenLines,
-  isAllLinesHidden,
   isReportPage,
   isVisible,
   legendItems,
-  removeSelectedListItems,
+  mediumViewOptions,
+  removeAllByMedium,
   toggleLine,
   showHideLegend,
+  showHideMediumRows,
 }: DispatchToProps & StateToProps & OwnProps) => {
   const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
-  const [gridState, setGridState] = React.useState<LegendState>({result: process(legendItems, state)});
+  const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
 
-  const renderIconButtonsHeaderCell = () => (
-    <RowLeft>
-      <RowRight title={firstUpperTranslated('hide all')}>
-        <ButtonVisibility
-          key={`check-all-${isAllLinesHidden}`}
-          onClick={hideAllLines}
-          checked={isAllLinesHidden}
-        />
-      </RowRight>
-      <RowRight title={firstUpperTranslated('remove all')}>
-        <ButtonDelete onClick={removeSelectedListItems}/>
-      </RowRight>
-    </RowLeft>
-  );
-
-  const renderIconButtonsCell = ({dataItem: {id, medium}}: GridCellProps) => {
+  const renderIconButtonsCell = ({dataItem: {id}}: GridCellProps) => {
     const checked = isDefined(hiddenLines.find((it) => it === id));
-    const onDeleteItem = () => {
-      const {result} = gridState;
-      const data = result.data;
-      const index = findIndex(data, {value: medium});
-      const items = data[index].items.filter((it) => it.id !== id);
-      if (items.length) {
-        data[index].items = items;
-      } else {
-        removeAtIndex(data, index);
-      }
-      setGridState({result});
-      deleteItem(id);
-    };
+    const onDeleteItem = () => deleteItem(id);
     const onToggleItem = () => toggleLine(id);
     return (
       <td className="icons">
@@ -127,7 +85,6 @@ export const Legend = ({
     (
       <GridColumn
         key="buttons"
-        headerCell={renderIconButtonsHeaderCell}
         headerClassName="Link"
         cell={renderIconButtonsCell}
         width={quantityColumnWidth}
@@ -135,7 +92,13 @@ export const Legend = ({
     ),
   ];
 
-  const onExpandRow = (dataItem: any) => setGridState({result: updateDataResult(gridState, dataItem)});
+  const rowRenderProps: RowProps = {
+    onExpandRow: (dataItem: any) => showHideMediumRows(dataItem.value as Medium),
+    columnQuantities,
+    hideAllByMedium,
+    mediumViewOptions,
+    removeAllByMedium
+  };
 
   return (
     <Drawer
@@ -149,11 +112,11 @@ export const Legend = ({
     >
       <Column className="Legend Grouping-grid">
         <Grid
-          data={gridState.result}
+          data={dataResult}
           groupable={true}
           cellRender={cellRender}
           headerCellRender={headerCellRender}
-          rowRender={rowRenderer(onExpandRow, columnQuantities)}
+          rowRender={rowRenderer(rowRenderProps)}
           style={{...legendGridStyle, width}}
           {...state}
         >

@@ -1,22 +1,33 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {logoutUser} from '../../auth/authActions';
 import {
-  hideAllLines,
-  removeSelectedListItems,
+  hideAllByMedium,
+  removeAllByMedium,
   selectResolution,
   setReportTimePeriod,
   setSelectedItems,
+  showHideMediumRows,
   toggleLine
 } from '../reportActions';
-import {ReportState, SelectedReportPayload} from '../reportModels';
-import {initialState, report} from '../reportReducer';
+
+import {LegendItem, ViewOption, Report, ReportState, SelectedReportPayload} from '../reportModels';
+import {initialState, mediumViewOptions, report} from '../reportReducer';
 
 describe('reportReducer', () => {
+
+  const savedReportsOf = (meters: LegendItem[]): ObjectsById<Report> =>
+    ({meterPage: {id: 'meterPage', meters, mediumViewOptions}});
+
   const items = [{id: 1, label: 'a', medium: Medium.gas}, {id: 2, label: 'b', medium: Medium.water}];
+  const gasMeter: LegendItem = items[0];
+  const waterMeter: LegendItem = items[1];
+
+  const savedReports: ObjectsById<Report> = savedReportsOf(items);
 
   it('makes sure the legend items is set to payload', () => {
     const payload: SelectedReportPayload = {
@@ -29,13 +40,13 @@ describe('reportReducer', () => {
 
     const expected: ReportState = {
       ...initialState,
-      savedReports: {meterPage: {id: 'meterPage', meters: items}}
+      savedReports
     };
     expect(nextState).toEqual(expected);
   });
 
   it('same state when the main selection is changed', () => {
-    const state: ReportState = {...initialState, savedReports: {meterPage: {id: 'meterPage', meters: items}}};
+    const state: ReportState = {...initialState, savedReports};
 
     const nextState = report(state, mockSelectionAction);
 
@@ -45,7 +56,7 @@ describe('reportReducer', () => {
   describe('logout user', () => {
 
     it('resets selection', () => {
-      const state: ReportState = {...initialState, savedReports: {meterPage: {id: 'meterPage', meters: items}}};
+      const state: ReportState = {...initialState, savedReports};
 
       const nextState: ReportState = report(state, logoutUser(undefined));
 
@@ -63,10 +74,7 @@ describe('reportReducer', () => {
       };
       const state: ReportState = report(initialState, setSelectedItems(payload));
 
-      const expected: ReportState = {
-        ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: items}},
-      };
+      const expected: ReportState = {...initialState, savedReports};
       expect(state).toEqual(expected);
 
       const newState: ReportState = report(state, selectPeriod(Period.currentMonth));
@@ -100,10 +108,7 @@ describe('reportReducer', () => {
       };
       const state: ReportState = report(initialState, setSelectedItems(payload));
 
-      const expected: ReportState = {
-        ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: items}},
-      };
+      const expected: ReportState = {...initialState, savedReports};
 
       expect(state).toEqual(expected);
 
@@ -163,98 +168,139 @@ describe('reportReducer', () => {
     });
   });
 
-  describe('hideAllLines', () => {
+  describe('hideAllByMedium', () => {
 
-    it('hides empty list of lines', () => {
-      const state: ReportState = report(initialState, hideAllLines());
+    it('does nothing with empty saved meter reports', () => {
+      const state: ReportState = report(initialState, hideAllByMedium(Medium.electricity));
 
-      const expected: ReportState = {...initialState, isAllLinesHidden: true};
-      expect(state).toEqual(expected);
+      expect(state).toEqual(initialState);
     });
 
-    it('hides single line', () => {
-      const startState: ReportState = {
-        ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: [items[1]]}}
-      };
-
-      const state: ReportState = report(startState, hideAllLines());
-
-      const expected: ReportState = {...startState, hiddenLines: [2], isAllLinesHidden: true};
-      expect(state).toEqual(expected);
-    });
-
-    it('hides all lines', () => {
-      const startState: ReportState = {
-        ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: items}}
-      };
-
-      const state: ReportState = report(startState, hideAllLines());
-
-      const expected: ReportState = {...startState, hiddenLines: [1, 2], isAllLinesHidden: true};
-      expect(state).toEqual(expected);
-    });
-
-    it('can show all lines again all lines', () => {
+    it('hides single item for given medium', () => {
       const state: ReportState = {
         ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: items}}
+        savedReports: savedReportsOf([gasMeter])
       };
 
-      let nextState: ReportState = report(state, hideAllLines());
+      const nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
 
-      let expected: ReportState = {...state, hiddenLines: [1, 2], isAllLinesHidden: true};
-      expect(nextState).toEqual(expected);
+      expect(nextState.hiddenLines).toEqual([gasMeter.id]);
+    });
 
-      nextState = report(nextState, hideAllLines());
+    it('hides all lines for given medium', () => {
+      const state: ReportState = {...initialState, savedReports};
 
-      expected = {...state, hiddenLines: [], isAllLinesHidden: false};
-      expect(nextState).toEqual(expected);
+      const nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
+
+      expect(nextState.hiddenLines).toEqual([gasMeter.id]);
+    });
+
+    it('can show all lines again', () => {
+      const state: ReportState = {
+        ...initialState,
+        savedReports: savedReportsOf([...items, {...gasMeter, id: 5}])
+      };
+
+      let nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
+
+      let expected: ViewOption = {isAllLinesHidden: true};
+      expect(nextState.hiddenLines).toEqual([1, 5]);
+      expect(nextState.savedReports.meterPage.mediumViewOptions[Medium.gas]).toEqual(expected);
+
+      nextState = report(nextState, hideAllByMedium(Medium.gas));
+
+      expected = {isAllLinesHidden: false};
+      expect(nextState.hiddenLines).toEqual([]);
+      expect(nextState.savedReports.meterPage.mediumViewOptions[Medium.gas]).toEqual(expected);
     });
   });
 
-  describe('removeSelectedListItems', () => {
+  describe('removeAllByMedium', () => {
 
     it('can handle empty selected list items', () => {
-      const nextState: ReportState = report(initialState, removeSelectedListItems());
+      const nextState: ReportState = report(initialState, removeAllByMedium(Medium.gas));
       expect(nextState).toEqual(initialState);
     });
 
     it('removes single selected list item', () => {
       const state: ReportState = {
         ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: [items[1]]}}
+        savedReports: savedReportsOf([items[1]])
       };
 
-      const nextState: ReportState = report(state, removeSelectedListItems());
+      const nextState: ReportState = report(state, removeAllByMedium(Medium.water));
 
       expect(nextState).toEqual(initialState);
     });
 
     it('removes all selected list items', () => {
-      const state: ReportState = {
-        ...initialState,
-        savedReports: {meterPage: {id: 'meterPage', meters: items}}
-      };
+      const state: ReportState = {...initialState, savedReports};
 
-      const nextState: ReportState = report(state, removeSelectedListItems());
+      const nextState: ReportState = report(state, removeAllByMedium(Medium.gas));
 
-      expect(nextState).toEqual(initialState);
+      expect(nextState).toEqual({...initialState, savedReports: savedReportsOf([items[1]])});
     });
 
     it('removes all selected and hidden list items', () => {
       const state: ReportState = {
         ...initialState,
         hiddenLines: items.map((it) => it.id),
-        isAllLinesHidden: true,
-        savedReports: {meterPage: {id: 'meterPage', meters: items}},
+        savedReports,
       };
 
-      const nextState: ReportState = report(state, removeSelectedListItems());
+      const nextState: ReportState = report(state, removeAllByMedium(Medium.water));
+
+      expect(nextState).toEqual({...initialState, savedReports: savedReportsOf([items[0]])});
+    });
+
+    it('removes all one for each medium', () => {
+      const state: ReportState = {
+        ...initialState,
+        hiddenLines: items.map((it) => it.id),
+        savedReports,
+      };
+
+      let nextState: ReportState = report(state, removeAllByMedium(Medium.gas));
+      nextState = report(nextState, removeAllByMedium(Medium.water));
 
       expect(nextState).toEqual(initialState);
     });
+  });
+
+  describe('showHideMediumRows', () => {
+
+    it('does nothing with items that are not in the report', () => {
+      const nextState: ReportState = report(initialState, showHideMediumRows(Medium.gas));
+      expect(nextState).toEqual(initialState);
+    });
+
+    it('toggles single legend item with same medium', () => {
+      const state: ReportState = {
+        ...initialState,
+        savedReports: savedReportsOf([items[1]])
+      };
+
+      const nextState: ReportState = report(state, showHideMediumRows(Medium.water));
+
+      const legendItem: LegendItem = {...waterMeter, isRowExpanded: true};
+      expect(nextState).toEqual({...initialState, savedReports: savedReportsOf([legendItem])});
+    });
+
+    it('toggles all legend items with same medium', () => {
+      const medium = Medium.gas;
+      const gasMeter2 = {...items[0], id: 3, medium};
+      const state: ReportState = {
+        ...initialState,
+        savedReports: savedReportsOf([...items, gasMeter2])
+      };
+
+      const nextState: ReportState = report(state, showHideMediumRows(medium));
+
+      const item1: LegendItem = {...gasMeter, isRowExpanded: true};
+      const item2: LegendItem = {...gasMeter2, isRowExpanded: true};
+      expect(nextState).toEqual({...initialState, savedReports: savedReportsOf([item1, waterMeter, item2])});
+    });
+
   });
 
 });

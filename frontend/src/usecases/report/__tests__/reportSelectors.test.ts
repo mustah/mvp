@@ -1,7 +1,7 @@
 import {Medium, Quantity, quantityAttributes} from '../../../state/ui/graph/measurement/measurementModels';
 import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem, ReportState} from '../reportModels';
-import {initialState} from '../reportReducer';
+import {initialState, mediumViewOptions} from '../reportReducer';
 import {getLegendItems, getThresholdMedia} from '../reportSelectors';
 
 describe('reportSelectors', () => {
@@ -31,7 +31,8 @@ describe('reportSelectors', () => {
         savedReports: {
           meterPage: {
             id: 'meterPage',
-            meters: [meter]
+            mediumViewOptions,
+            meters: [meter],
           }
         },
       };
@@ -46,27 +47,13 @@ describe('reportSelectors', () => {
         savedReports: {
           meterPage: {
             id: 'meterPage',
-            meters: [meter, meter2]
+            mediumViewOptions,
+            meters: [meter, meter2],
           }
         },
       };
 
       const expected: LegendItem[] = [meter, meter2];
-      expect(getLegendItems(state)).toEqual(expected);
-    });
-
-    it('has meterPage id', () => {
-      const state: ReportState = {
-        ...initialState,
-        savedReports: {
-          someId: {
-            id: 'someId',
-            meters: [meter, meter2]
-          }
-        },
-      };
-
-      const expected: LegendItem[] = [];
       expect(getLegendItems(state)).toEqual(expected);
     });
   });

@@ -1,25 +1,28 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {withContent} from '../../../components/hoc/withContent';
 import {Period} from '../../../components/dates/dateModels';
+import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
 import {isReportPage} from '../../../selectors/routerSelectors';
-import {HasContent, OnClick, OnClickWithId, Visible} from '../../../types/Types';
+import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
+import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
-import {deleteItem, hideAllLines, removeSelectedListItems, toggleLine} from '../reportActions';
-import {LegendItem, ReportState} from '../reportModels';
-import {getLegendItems} from '../reportSelectors';
+import {deleteItem, hideAllByMedium, removeAllByMedium, showHideMediumRows, toggleLine} from '../reportActions';
+import {LegendItem, MediumViewOptions, ReportState} from '../reportModels';
+import {getLegendItems, getMediumViewOptions} from '../reportSelectors';
 
 export interface StateToProps extends ReportState, HasContent {
   legendItems: LegendItem[];
   isReportPage: boolean;
+  mediumViewOptions: MediumViewOptions;
 }
 
 export interface DispatchToProps {
   deleteItem: OnClickWithId;
-  hideAllLines: OnClick;
+  hideAllByMedium: OnClickWith<Medium>;
+  removeAllByMedium: OnClickWith<Medium>;
+  showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
-  removeSelectedListItems: OnClick;
 }
 
 export interface OwnProps extends Visible {
@@ -34,9 +37,9 @@ const mapStateToProps = ({report, routing}: RootState): StateToProps => {
   return ({
     legendItems,
     hiddenLines,
-    isAllLinesHidden: report.isAllLinesHidden,
     isReportPage: isReportPage(routing),
     hasContent: legendItems.length > 0,
+    mediumViewOptions: getMediumViewOptions(report),
     resolution,
     savedReports,
     timePeriod: {period: Period.latest}, // TODO timePeriod is unused but I could not exclude it from ReportState
@@ -45,8 +48,9 @@ const mapStateToProps = ({report, routing}: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,
-  removeSelectedListItems,
-  hideAllLines,
+  hideAllByMedium,
+  removeAllByMedium,
+  showHideMediumRows,
   toggleLine,
 }, dispatch);
 

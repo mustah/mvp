@@ -1,12 +1,11 @@
 import {uniqBy} from 'lodash';
 import {createSelector} from 'reselect';
 import {identity, isDefined} from '../../helpers/commonHelpers';
-import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {MeasurementParameters} from '../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
-import {LegendItem, Report, ReportState, SelectedReportPayload} from './reportModels';
+import {LegendItem, MediumViewOptions, Report, ReportState, SelectedReportPayload} from './reportModels';
 
 const orderedMedia: Medium[] = Object.keys(allQuantities) as Medium[];
 
@@ -35,16 +34,14 @@ const selectedReportPayloadCombiner = (legendItems: LegendItem[]): SelectedRepor
   return {items, media, quantities: Array.from(quantities)};
 };
 
+export const getMeterPage = (state: ReportState): Report => state.savedReports.meterPage;
+export const getMediumViewOptions = (state: ReportState): MediumViewOptions => getMeterPage(state).mediumViewOptions;
+export const getLegendItems = (state: ReportState): LegendItem[] => getMeterPage(state).meters;
+
 export const getSelectedReportPayload =
   createSelector<LegendItem[], LegendItem[], SelectedReportPayload>(
     identity,
     selectedReportPayloadCombiner
-  );
-
-export const getLegendItems =
-  createSelector<ReportState, Maybe<Report>, LegendItem[]>(
-    ({savedReports}: ReportState) => Maybe.maybe(savedReports.meterPage),
-    (meterPage: Maybe<Report>) => meterPage.map(({meters}: Report) => meters).orElse([]),
   );
 
 export const getMeasurementParameters =

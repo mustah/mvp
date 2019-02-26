@@ -3,36 +3,52 @@ import {default as classNames} from 'classnames';
 import {noop, toArray} from 'lodash';
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
+import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
+import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconRightArrow} from '../../../components/icons/IconRightArrow';
-import {RowMiddle} from '../../../components/layouts/row/Row';
+import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
 import {Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {colorizeMeters} from '../../../state/ui/graph/measurement/graphContentsMapper';
 import {allQuantities, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
-import {Dictionary, OnClick} from '../../../types/Types';
-import {LegendItem} from '../reportModels';
+import {Dictionary, OnClick, OnClickWith} from '../../../types/Types';
+import {LegendItem, MediumViewOptions} from '../reportModels';
 import {isGroupHeader} from './measurementGridHelper';
 
-const renderQuantityCell = (quantity: Quantity) =>
-  ({dataItem: {id, label, medium}, columnIndex}: GridCellProps) => {
-    const mediumQuantities = allQuantities[medium];
-    if (mediumQuantities.some((q) => q === quantity)) {
-      const checked = columnIndex && columnIndex === 2 || columnIndex === 3 || mediumQuantities.length < 3;
-      return (
-        <td>
-          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
-        </td>);
-    } else {
-      return <td/>;
-    }
-  };
+export interface RowProps {
+  onExpandRow: OnClick;
+  columnQuantities: Quantity[];
+  hideAllByMedium: OnClickWith<Medium>;
+  mediumViewOptions: MediumViewOptions;
+  removeAllByMedium: OnClickWith<Medium>;
+}
 
-const renderGroupHeaderTds = (medium: Medium, columnQuantities: Quantity[]) => {
+interface MediumTdProps {
+  removeAll: OnClick;
+  hideAll: OnClick;
+  isAllHidden: boolean;
+}
+
+const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
+  <td className="check-box-td">
+    <RowLeft>
+      <RowRight title={firstUpperTranslated('hide all')}>
+        <ButtonVisibility onClick={hideAll} checked={isAllHidden}/>
+      </RowRight>
+      <RowRight title={firstUpperTranslated('remove all')}>
+        <ButtonDelete onClick={removeAll}/>
+      </RowRight>
+    </RowLeft>
+  </td>
+);
+
+const renderGroupHeaderTds = (props: RowProps, medium: Medium) => {
+  const {columnQuantities, hideAllByMedium, mediumViewOptions, removeAllByMedium} = props;
   const tds = columnQuantities.map((quantity, index) => {
     const key = `group-header-td-${medium}-${quantity}`;
     const mediumQuantities = allQuantities[medium];
     if (mediumQuantities.some((q) => q === quantity)) {
-      const checked = index < 2 || mediumQuantities.length < 3;
+      const checked = index < 2 || mediumQuantities.length === 1;
       return (
         <td key={key} className="check-box-td">
           <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
@@ -42,24 +58,33 @@ const renderGroupHeaderTds = (medium: Medium, columnQuantities: Quantity[]) => {
       return <td key={key}/>;
     }
   });
-  tds.push(<td key={`group-header-last-td-${medium}`}/>);
+  const removeAll = () => removeAllByMedium(medium);
+  const hideAll = () => hideAllByMedium(medium);
+  tds.push(
+    <MediumTd
+      key={`group-header-last-td-${medium}`}
+      hideAll={hideAll}
+      isAllHidden={!(!mediumViewOptions[medium].isAllLinesHidden)}
+      removeAll={removeAll}
+    />
+  );
   return tds;
 };
 
-const renderGroupHeader = (onExpandRow: OnClick, dataItem: any, columnQuantities: Quantity[]) => {
+const renderGroupHeader = (props: RowProps, dataItem: any) => {
   const medium: Medium = dataItem.value;
   const mediumText = toMediumText(medium).toLowerCase();
-  const onClick = () => onExpandRow(dataItem);
-  const isVisible = !!dataItem.expanded;
+  const isVisible = dataItem.items[0].isRowExpanded;
+  const onClick = () => props.onExpandRow(dataItem);
   return (
-    <tr className="GroupHeader Foldable">
+    <tr className="GroupHeader Foldable" key={`group-header-${medium}`}>
       <td colSpan={2}>
         <RowMiddle onClick={onClick} className="clickable">
           <IconRightArrow className={classNames('Foldable-arrow', {isVisible})}/>
           <MediumText className="Bold">{firstUpperTranslated(mediumText)}</MediumText>
         </RowMiddle>
       </td>
-      {renderGroupHeaderTds(medium, columnQuantities)}
+      {renderGroupHeaderTds(props, medium)}
     </tr>
   );
 };
@@ -67,18 +92,32 @@ const renderGroupHeader = (onExpandRow: OnClick, dataItem: any, columnQuantities
 type TableRow = React.ReactElement<HTMLTableRowElement>;
 
 const renderDataRow = (tr: TableRow, dataItem: any) => {
-  const {expanded, last} = dataItem;
-  return expanded
+  const {isRowExpanded, last} = dataItem;
+  return isRowExpanded
     ? last ? React.cloneElement(tr, {className: 'last'}, tr.props.children) : tr
     : null;
 };
 
-export const rowRenderer = (onExpandRow: OnClick, columnQuantities: Quantity[]) =>
+export const rowRenderer = (props: RowProps) =>
   (tr: TableRow, {dataItem, rowType}: GridRowProps) => {
     if (isGroupHeader(rowType)) {
-      return renderGroupHeader(onExpandRow, dataItem, columnQuantities);
+      return renderGroupHeader(props, dataItem);
     } else {
       return renderDataRow(tr, dataItem);
+    }
+  };
+
+const renderQuantityCell = (quantity: Quantity) =>
+  ({dataItem: {id, label, medium}, columnIndex}: GridCellProps) => {
+    const mediumQuantities = allQuantities[medium];
+    if (mediumQuantities.some((q) => q === quantity)) {
+      const checked = columnIndex && columnIndex === 2 || mediumQuantities.length < 2;
+      return (
+        <td>
+          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
+        </td>);
+    } else {
+      return <td/>;
     }
   };
 

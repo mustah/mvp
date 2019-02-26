@@ -2,9 +2,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {RootState} from '../../../reducers/rootReducer';
 import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {addAllToReport, addToReport, deleteItem, hideAllLines, setSelectedItems} from '../reportActions';
+import {addAllToReport, addToReport, deleteItem, setSelectedItems} from '../reportActions';
 import {LegendItem} from '../reportModels';
-import {initialState as initialReportState} from '../reportReducer';
+import {initialState as report, mediumViewOptions} from '../reportReducer';
 
 describe('reportActions', () => {
   type PartialRootState = Pick<RootState, 'report'> ;
@@ -13,7 +13,7 @@ describe('reportActions', () => {
 
   let initialState: PartialRootState;
 
-  const legendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas};
+  const gasLegendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas};
   const districtHeatingLegendItem: LegendItem = {id: 5, label: '5', medium: Medium.districtHeating};
   const unknownLegendItem: LegendItem = {id: 9, label: '9', medium: Medium.unknown};
 
@@ -23,7 +23,7 @@ describe('reportActions', () => {
   ];
 
   beforeEach(() => {
-    initialState = {report: initialReportState};
+    initialState = {report};
   });
 
   describe('addToReport', () => {
@@ -31,11 +31,11 @@ describe('reportActions', () => {
     it('adds a meter that is not already selected', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(addToReport(legendItem));
+      store.dispatch(addToReport(gasLegendItem));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
-          items: [legendItem],
+          items: [gasLegendItem],
           media: [Medium.gas],
           quantities: [Quantity.volume]
         })
@@ -46,8 +46,8 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...initialReportState,
-          savedReports: {meterPage: {id: 'meterPage', meters: items}},
+          ...report,
+          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
         }
       });
 
@@ -59,11 +59,11 @@ describe('reportActions', () => {
     it('selects report indicators', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(addToReport(legendItem));
+      store.dispatch(addToReport(gasLegendItem));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
-          items: [legendItem],
+          items: [gasLegendItem],
           media: [Medium.gas],
           quantities: [Quantity.volume]
         })
@@ -97,12 +97,12 @@ describe('reportActions', () => {
     it('adds more than one legend item to report', () => {
       const store = configureMockStore(initialState);
 
-      store.dispatch(addToReport(legendItem));
+      store.dispatch(addToReport(gasLegendItem));
       store.dispatch(addToReport(districtHeatingLegendItem));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
-          items: [legendItem],
+          items: [gasLegendItem],
           quantities: [Quantity.volume],
           media: [Medium.gas]
         }),
@@ -110,6 +110,28 @@ describe('reportActions', () => {
           items: [districtHeatingLegendItem],
           media: [Medium.districtHeating],
           quantities: allQuantities[Medium.districtHeating]
+        })
+      ]);
+    });
+
+    it('copies the view settings for the same medium', () => {
+      const meters: LegendItem[] = [{...gasLegendItem, isRowExpanded: true}];
+      const store = configureMockStore({
+        ...initialState,
+        report: {
+          ...report,
+          savedReports: {meterPage: {id: 'meterPage', meters, mediumViewOptions}},
+        }
+      });
+
+      const newGasLegendItem: LegendItem = {...gasLegendItem, id: 2};
+      store.dispatch(addToReport(newGasLegendItem));
+
+      expect(store.getActions()).toEqual([
+        setSelectedItems({
+          items: [meters[0], {...newGasLegendItem, isRowExpanded: true}],
+          media: [Medium.gas],
+          quantities: allQuantities[Medium.gas]
         })
       ]);
     });
@@ -166,16 +188,16 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...initialReportState,
-          savedReports: {meterPage: {id: 'meterPage', meters: items}},
+          ...report,
+          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
         }
       });
 
-      store.dispatch(addAllToReport([legendItem]));
+      store.dispatch(addAllToReport([gasLegendItem]));
 
       expect(store.getActions()).toEqual([
         setSelectedItems({
-          items: [...items, legendItem],
+          items: [...items, gasLegendItem],
           media: [Medium.gas, Medium.water],
           quantities: [Quantity.volume]
         })
@@ -190,8 +212,8 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...initialReportState,
-          savedReports: {meterPage: {id: 'meterPage', meters: items}},
+          ...report,
+          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
         }
       });
 
@@ -210,25 +232,14 @@ describe('reportActions', () => {
       const store = configureMockStore({
         ...initialState,
         report: {
-          ...initialReportState,
-          savedReports: {meterPage: {id: 'meterPage', meters: items}},
+          ...report,
+          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
         }
       });
 
       store.dispatch(deleteItem(888));
 
       expect(store.getActions()).toEqual([]);
-    });
-  });
-
-  describe('hideAllLines', () => {
-
-    it('dispatches hide all lines action creator', () => {
-      const store = configureMockStore(initialState);
-
-      store.dispatch(hideAllLines());
-
-      expect(store.getActions()).toEqual([hideAllLines()]);
     });
   });
 

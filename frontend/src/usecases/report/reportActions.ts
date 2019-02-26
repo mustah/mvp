@@ -1,25 +1,25 @@
 import {find} from 'lodash';
 import {createStandardAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../components/dates/dateModels';
+import {Maybe} from '../../helpers/Maybe';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
+import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {Dispatcher, emptyActionOf, payloadActionOf, uuid} from '../../types/Types';
+import {Dispatcher, payloadActionOf, uuid} from '../../types/Types';
 import {LegendItem, SelectedReportPayload} from './reportModels';
 import {getLegendItems, getSelectedReportPayload} from './reportSelectors';
 
 export const SELECT_RESOLUTION = 'SELECT_RESOLUTION';
-export const SET_SELECTED_ITEMS = 'SET_SELECTED_ITEMS';
 export const TOGGLE_LINE = 'TOGGLE_LINE';
-export const HIDE_ALL_LINES = 'HIDE_ALL_LINES';
-export const REMOVE_SELECTED_LIST_ITEMS = 'REMOVE_SELECTED_LIST_ITEMS';
 
-export const setSelectedItems = payloadActionOf<SelectedReportPayload>(SET_SELECTED_ITEMS);
+export const setSelectedItems = createStandardAction('SET_SELECTED_ITEMS')<SelectedReportPayload>();
 export const selectResolution = payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
 export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
-export const hideAllLines = emptyActionOf(HIDE_ALL_LINES);
-export const removeSelectedListItems = emptyActionOf(REMOVE_SELECTED_LIST_ITEMS);
+export const hideAllByMedium = createStandardAction('HIDE_ALL_BY_MEDIUM')<Medium>();
+export const showHideMediumRows = createStandardAction('SHOW_HIDE_MEDIUM_ROWS')<Medium>();
+export const removeAllByMedium = createStandardAction('REMOVE_ALL_BY_MEDIUM')<Medium>();
 export const setReportTimePeriod = createStandardAction('SET_REPORT_TIME_PERIOD')<SelectionInterval>();
 
 export const limit: number = 100;
@@ -44,7 +44,10 @@ export const addToReport = (legendItem: LegendItem) =>
     const {report} = getState();
     const legendItems: LegendItem[] = getLegendItems(report);
     if (find(legendItems, (it: LegendItem) => it.id === legendItem.id) === undefined) {
-      const items: LegendItem[] = [...legendItems, legendItem];
+      const item: LegendItem = Maybe.maybe<LegendItem>(find(legendItems, {medium: legendItem.medium}))
+        .map(it => ({...it, ...legendItem}))
+        .orElse(legendItem);
+      const items: LegendItem[] = [...legendItems, item];
       selectItemsIfWithinLimits({dispatch, items});
     }
   };

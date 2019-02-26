@@ -3,7 +3,6 @@ import {RootState} from '../../../reducers/rootReducer';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {WithChildren} from '../../../types/Types';
 import {SideMenu} from '../components/SideMenu';
-import '../components/SideMenu.scss';
 
 export interface StateToProps {
   isSideMenuOpen: boolean;
