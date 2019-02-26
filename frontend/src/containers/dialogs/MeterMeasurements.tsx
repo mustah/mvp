@@ -96,7 +96,7 @@ const renderCreated = (created: UnixTimestamp, hasValues: boolean) => {
   const textual = hasValues
     ? timestamp(created * 1000)
     : <Error>{timestamp(created * 1000)}</Error>;
-  return <td className="no-wrap" key="created">{textual}</td>;
+  return <td className="no-wrap left-most" key="created">{textual}</td>;
 };
 
 const MeasurementsTable = ({readings, quantities}: ReadingsProps) => {
@@ -113,7 +113,6 @@ const MeasurementsTable = ({readings, quantities}: ReadingsProps) => {
       <GridColumn
         cell={renderTimestamp(quantities)}
         title={translate('readout')}
-        className="left-most"
         headerClassName="left-most"
         width={136}
       />

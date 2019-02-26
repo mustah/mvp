@@ -1,6 +1,8 @@
 @import '../../app/variables';
 
 .Overview {
+  padding: $lg-space;
+
   h2, h3 {
     margin: 0;
   }

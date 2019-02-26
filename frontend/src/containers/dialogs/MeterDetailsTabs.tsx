@@ -64,7 +64,7 @@ const renderEvent = ({dataItem: {name, type}}) => {
 };
 
 const renderDate = ({dataItem: {start}}) =>
-  <td><WrappedDateTime date={start} hasContent={!!start}/></td>;
+  <td className="left-most"><WrappedDateTime date={start} hasContent={!!start}/></td>;
 
 const renderStatus = ({dataItem: {status: {name}}}) => <td><Status label={name}/></td>;
 
@@ -153,7 +153,11 @@ class MeterDetailsTabs extends React.Component<Props, MeterDetailsState> {
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Grid data={eventLog} scrollable="none">
-              <GridColumn title={translate('date')} cell={renderDate}/>
+              <GridColumn
+                title={translate('date')}
+                cell={renderDate}
+                headerClassName="left-most"
+              />
               <GridColumn title={translate('event')} cell={renderEvent}/>
             </Grid>
             <TimestampInfoMessage/>

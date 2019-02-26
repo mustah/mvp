@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {MeterDetailsContainer} from '../../containers/dialogs/MeterDetailsContainer';
-import {Maybe} from '../../helpers/Maybe';
+import {Link} from 'react-router-dom';
+import {routes} from '../../app/routes';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {uuid} from '../../types/Types';
-import {OpenDialogInfoButton} from '../dialog/OpenDialogInfoButton';
+import {ButtonInfo} from '../buttons/ButtonInfo';
+import {Row} from '../layouts/row/Row';
 
 interface Props {
   meter: Meter;
@@ -22,7 +22,14 @@ const iconStyle: React.CSSProperties = {
 };
 
 export const MeterListItem = ({meter: {facility, id}}: Props) => (
-  <OpenDialogInfoButton label={facility} autoScrollBodyContent={true} labelStyle={labelStyle} iconStyle={iconStyle}>
-    <MeterDetailsContainer selectedId={Maybe.just<uuid>(id)}/>
-  </OpenDialogInfoButton>
+  <Row>
+    <Link to={`${routes.meter}/${id}`} className="link">
+      <ButtonInfo
+        label={facility}
+        iconStyle={iconStyle}
+        labelStyle={labelStyle}
+        title={facility.toString()}
+      />
+    </Link>
+  </Row>
 );
