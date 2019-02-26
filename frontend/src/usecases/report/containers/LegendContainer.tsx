@@ -6,7 +6,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
-import {deleteItem, hideAllByMedium, removeAllByMedium, showHideMediumRows, toggleLine} from '../reportActions';
+import {deleteItem, showHideAllByMedium, removeAllByMedium, showHideMediumRows, toggleLine} from '../reportActions';
 import {LegendItem, MediumViewOptions, ReportState} from '../reportModels';
 import {getLegendItems, getMediumViewOptions} from '../reportSelectors';
 
@@ -17,7 +17,7 @@ export interface StateToProps extends ReportState, HasContent {
 
 export interface DispatchToProps {
   deleteItem: OnClickWithId;
-  hideAllByMedium: OnClickWith<Medium>;
+  showHideAllByMedium: OnClickWith<Medium>;
   removeAllByMedium: OnClickWith<Medium>;
   showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
@@ -44,7 +44,7 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,
-  hideAllByMedium,
+  showHideAllByMedium,
   removeAllByMedium,
   showHideMediumRows,
   toggleLine,

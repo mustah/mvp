@@ -35,7 +35,7 @@ const state: State = {group: [{field: 'medium'}]};
 
 export const Legend = ({
   deleteItem,
-  hideAllByMedium,
+  showHideAllByMedium,
   isVisible,
   legendItems,
   mediumViewOptions,
@@ -91,7 +91,7 @@ export const Legend = ({
   const rowRenderProps: RowProps = {
     onExpandRow: (dataItem: any) => showHideMediumRows(dataItem.value as Medium),
     columnQuantities,
-    hideAllByMedium,
+    showHideAllByMedium,
     mediumViewOptions,
     removeAllByMedium
   };

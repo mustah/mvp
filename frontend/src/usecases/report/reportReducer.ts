@@ -5,13 +5,13 @@ import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Action, uuid} from '../../types/Types';
-import {LOGOUT_USER} from '../auth/authActions';
+import {logoutUser} from '../auth/authActions';
 import {
-  hideAllByMedium,
   removeAllByMedium,
-  SELECT_RESOLUTION,
+  selectResolution,
   setReportTimePeriod,
   setSelectedItems,
+  showHideAllByMedium,
   showHideMediumRows,
   toggleLine,
 } from './reportActions';
@@ -91,8 +91,7 @@ const toggleLegendItemVisibility = (state: ReportState, id: uuid): ReportState =
   )
 });
 
-const toggleShowHideAllByMedium = (state: ReportState, action: ActionTypes): ReportState => {
-  const medium: Medium = getMedium(action);
+const showHideAll = (state: ReportState, medium: Medium): ReportState => {
   const isAllLinesHidden = getMediumViewOption(state, medium).isAllLinesHidden;
   const meters: LegendItem[] = getLegendItemsMatchingMedium(state, medium)
     .map(it => ({...it, isHidden: !isAllLinesHidden}));
@@ -118,15 +117,15 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
         ...state,
         timePeriod: {...(action as Action<SelectionInterval>).payload}
       };
-    case SELECT_RESOLUTION:
+    case getType(selectResolution):
       return {
         ...state,
         resolution: (action as Action<TemporalResolution>).payload,
       };
     case getType(toggleLine):
       return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
-    case getType(hideAllByMedium):
-      return toggleShowHideAllByMedium(state, action);
+    case getType(showHideAllByMedium):
+      return showHideAll(state, getMedium(action));
     case getType(removeAllByMedium):
       return {
         ...state,
@@ -137,7 +136,7 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
         ...state,
         savedReports: savedReports(state, toggleLegendItemsRows(state, getMedium(action))),
       };
-    case LOGOUT_USER:
+    case getType(logoutUser):
       return initialState;
     default:
       return state;

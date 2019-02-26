@@ -2,7 +2,7 @@ import {mockSelectionAction} from '../../../__tests__/testActions';
 import {getId, groupById} from '../../../helpers/collections';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, Status} from '../../../types/Types';
-import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {logoutUser} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/mapMarkerActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {search} from '../../../usecases/search/searchActions';
@@ -263,7 +263,7 @@ describe('domainModelsReducer', () => {
         error: {message: 'an error'},
       };
 
-      const state = gatewayMapMarkers(initialState, {type: LOGOUT_USER});
+      const state = gatewayMapMarkers(initialState, logoutUser(undefined));
 
       const expected: NormalizedState<MapMarker> = {...initialDomain<MapMarker>()};
 

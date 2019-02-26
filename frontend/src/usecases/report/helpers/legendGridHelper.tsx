@@ -18,7 +18,7 @@ import {isGroupHeader} from './measurementGridHelper';
 export interface RowProps {
   onExpandRow: OnClick;
   columnQuantities: Quantity[];
-  hideAllByMedium: OnClickWith<Medium>;
+  showHideAllByMedium: OnClickWith<Medium>;
   mediumViewOptions: MediumViewOptions;
   removeAllByMedium: OnClickWith<Medium>;
 }
@@ -43,7 +43,7 @@ const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
 );
 
 const renderGroupHeaderTds = (props: RowProps, medium: Medium) => {
-  const {columnQuantities, hideAllByMedium, mediumViewOptions, removeAllByMedium} = props;
+  const {columnQuantities, showHideAllByMedium, mediumViewOptions, removeAllByMedium} = props;
   const tds = columnQuantities.map((quantity, index) => {
     const key = `group-header-td-${medium}-${quantity}`;
     const mediumQuantities = allQuantities[medium];
@@ -60,7 +60,7 @@ const renderGroupHeaderTds = (props: RowProps, medium: Medium) => {
     }
   });
   const removeAll = () => removeAllByMedium(medium);
-  const hideAll = () => hideAllByMedium(medium);
+  const hideAll = () => showHideAllByMedium(medium);
   const isAllHidden = !(!mediumViewOptions[medium].isAllLinesHidden);
   tds.push(
     <MediumTd

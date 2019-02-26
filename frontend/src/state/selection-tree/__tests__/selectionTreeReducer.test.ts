@@ -1,6 +1,6 @@
 import {EndPoints} from '../../../services/endPoints';
 import {uuid} from '../../../types/Types';
-import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {logoutUser} from '../../../usecases/auth/authActions';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
 import {Medium} from '../../ui/graph/measurement/measurementModels';
 import {
@@ -255,7 +255,7 @@ describe('selectionTreeReducer', () => {
     it('resets state to initial state', () => {
       const state: SelectionTreeState = selectionTree(initialState, actions.request());
 
-      const loggedOut = selectionTree(state, {type: LOGOUT_USER});
+      const loggedOut = selectionTree(state, logoutUser(undefined));
 
       expect(loggedOut).toEqual(initialState);
     });

@@ -1,6 +1,6 @@
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../../app/routes';
-import {LOGOUT_USER} from '../../auth/authActions';
+import {logoutUser} from '../../auth/authActions';
 import {search as searchAction} from '../searchActions';
 import {makeMeterQuery, QueryParameter} from '../searchModels';
 import {initialState, search, SearchState} from '../searchReducer';
@@ -80,7 +80,7 @@ describe('searchReducer', () => {
         ...makeMeterQuery('kungsbacka'),
       };
 
-      state = search(state, {type: LOGOUT_USER});
+      state = search(state, logoutUser(undefined));
 
       expect(state).toEqual(initialState);
     });

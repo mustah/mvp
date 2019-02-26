@@ -1,7 +1,7 @@
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {routes} from '../../../app/routes';
 import {EndPoints} from '../../../services/endPoints';
-import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {logoutUser} from '../../../usecases/auth/authActions';
 import {search} from '../../../usecases/search/searchActions';
 import {makeMeterQuery} from '../../../usecases/search/searchModels';
 import {makeActionsOf, RequestHandler} from '../../api/apiActions';
@@ -154,7 +154,7 @@ describe('summaryReducer', () => {
       state = summary(state, actions.success({numCities: 1, numAddresses: 2, numMeters: 2}));
       state = summary(state, actions.failure({message: 'failed for some reason'}));
 
-      state = summary(state, {type: LOGOUT_USER});
+      state = summary(state, logoutUser(undefined));
 
       expect(state).toEqual({...initialState});
     });

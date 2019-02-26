@@ -7,16 +7,14 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
-import {Dispatcher, payloadActionOf, uuid} from '../../types/Types';
+import {Dispatcher, uuid} from '../../types/Types';
 import {LegendItem, SelectedReportPayload} from './reportModels';
 import {getLegendItems, getSelectedReportPayload} from './reportSelectors';
 
-export const SELECT_RESOLUTION = 'SELECT_RESOLUTION';
-
 export const setSelectedItems = createStandardAction('SET_SELECTED_ITEMS')<SelectedReportPayload>();
-export const selectResolution = payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
+export const selectResolution = createStandardAction('SELECT_RESOLUTION')<TemporalResolution>();
 export const toggleLine = createStandardAction('TOGGLE_LINE')<uuid>();
-export const hideAllByMedium = createStandardAction('HIDE_ALL_BY_MEDIUM')<Medium>();
+export const showHideAllByMedium = createStandardAction('SHOW_HIDE_ALL_BY_MEDIUM')<Medium>();
 export const showHideMediumRows = createStandardAction('SHOW_HIDE_MEDIUM_ROWS')<Medium>();
 export const removeAllByMedium = createStandardAction('REMOVE_ALL_BY_MEDIUM')<Medium>();
 export const setReportTimePeriod = createStandardAction('SET_REPORT_TIME_PERIOD')<SelectionInterval>();

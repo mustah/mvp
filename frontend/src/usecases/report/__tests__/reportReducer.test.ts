@@ -7,7 +7,7 @@ import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementM
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {logoutUser} from '../../auth/authActions';
 import {
-  hideAllByMedium,
+  showHideAllByMedium,
   removeAllByMedium,
   selectResolution,
   setReportTimePeriod,
@@ -166,10 +166,10 @@ describe('reportReducer', () => {
     });
   });
 
-  describe('hideAllByMedium', () => {
+  describe('showHideAllByMedium', () => {
 
     it('does nothing with empty saved meter reports', () => {
-      const state: ReportState = report(initialState, hideAllByMedium(Medium.electricity));
+      const state: ReportState = report(initialState, showHideAllByMedium(Medium.electricity));
 
       expect(state).toEqual(initialState);
     });
@@ -180,7 +180,7 @@ describe('reportReducer', () => {
         savedReports: savedReportsOf([gasMeter])
       };
 
-      const nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
+      const nextState: ReportState = report(state, showHideAllByMedium(Medium.gas));
 
       const expected: LegendItem[] = [{...gasMeter, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -192,7 +192,7 @@ describe('reportReducer', () => {
         savedReports: savedReportsOf([gasMeter, {...gasMeter, id: 8}])
       };
 
-      const nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
+      const nextState: ReportState = report(state, showHideAllByMedium(Medium.gas));
 
       const expected: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter, id: 8, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expected);
@@ -205,14 +205,14 @@ describe('reportReducer', () => {
         savedReports: savedReportsOf([...items, gasMeter2])
       };
 
-      let nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
+      let nextState: ReportState = report(state, showHideAllByMedium(Medium.gas));
 
       let expected: ViewOption = {isAllLinesHidden: true};
       const expectedGasItems: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter2, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expectedGasItems);
       expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
 
-      nextState = report(nextState, hideAllByMedium(Medium.gas));
+      nextState = report(nextState, showHideAllByMedium(Medium.gas));
 
       expected = {isAllLinesHidden: false};
       expect(getHiddenLines(nextState)).toEqual([]);

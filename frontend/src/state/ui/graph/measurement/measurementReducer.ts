@@ -4,7 +4,7 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   removeAllByMedium,
-  SELECT_RESOLUTION,
+  selectResolution,
   setReportTimePeriod,
   setSelectedItems
 } from '../../../../usecases/report/reportActions';
@@ -65,7 +65,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
         isExportingToExcel: false,
       };
     case MEASUREMENT_CLEAR_ERROR:
-    case SELECT_RESOLUTION:
+    case getType(selectResolution):
     case getType(setReportTimePeriod):
     case getType(setSelectedItems):
     case getType(removeAllByMedium):
