@@ -1,7 +1,8 @@
+import {savedReportsOf} from '../../../__tests__/testDataFactory';
 import {Medium, Quantity, quantityAttributes} from '../../../state/ui/graph/measurement/measurementModels';
 import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem, ReportState} from '../reportModels';
-import {initialState, mediumViewOptions} from '../reportReducer';
+import {initialState} from '../reportReducer';
 import {getLegendItems, getThresholdMedia} from '../reportSelectors';
 
 describe('reportSelectors', () => {
@@ -28,13 +29,7 @@ describe('reportSelectors', () => {
     it('has one saved meter', () => {
       const state: ReportState = {
         ...initialState,
-        savedReports: {
-          meterPage: {
-            id: 'meterPage',
-            mediumViewOptions,
-            meters: [meter],
-          }
-        },
+        savedReports: savedReportsOf([meter]),
       };
 
       const expected: LegendItem[] = [meter];
@@ -44,13 +39,7 @@ describe('reportSelectors', () => {
     it('has two saved meters', () => {
       const state: ReportState = {
         ...initialState,
-        savedReports: {
-          meterPage: {
-            id: 'meterPage',
-            mediumViewOptions,
-            meters: [meter, meter2],
-          }
-        },
+        savedReports: savedReportsOf([meter, meter2]),
       };
 
       const expected: LegendItem[] = [meter, meter2];

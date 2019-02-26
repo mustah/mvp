@@ -1,4 +1,5 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
+import {savedReportsOf} from '../../../__tests__/testDataFactory';
 import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
 import {momentFrom} from '../../../helpers/dateHelpers';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
@@ -15,13 +16,11 @@ import {
   toggleLine
 } from '../reportActions';
 
-import {LegendItem, ViewOption, Report, ReportState, SelectedReportPayload} from '../reportModels';
-import {initialState, mediumViewOptions, report} from '../reportReducer';
+import {LegendItem, Report, ReportState, SelectedReportPayload, ViewOption} from '../reportModels';
+import {initialState, report} from '../reportReducer';
+import {getMediumViewOptions} from '../reportSelectors';
 
 describe('reportReducer', () => {
-
-  const savedReportsOf = (meters: LegendItem[]): ObjectsById<Report> =>
-    ({meterPage: {id: 'meterPage', meters, mediumViewOptions}});
 
   const items = [{id: 1, label: 'a', medium: Medium.gas}, {id: 2, label: 'b', medium: Medium.water}];
   const gasMeter: LegendItem = items[0];
@@ -205,13 +204,13 @@ describe('reportReducer', () => {
 
       let expected: ViewOption = {isAllLinesHidden: true};
       expect(nextState.hiddenLines).toEqual([1, 5]);
-      expect(nextState.savedReports.meterPage.mediumViewOptions[Medium.gas]).toEqual(expected);
+      expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
 
       nextState = report(nextState, hideAllByMedium(Medium.gas));
 
       expected = {isAllLinesHidden: false};
       expect(nextState.hiddenLines).toEqual([]);
-      expect(nextState.savedReports.meterPage.mediumViewOptions[Medium.gas]).toEqual(expected);
+      expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
     });
   });
 

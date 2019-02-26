@@ -1,10 +1,12 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {savedReportsOf} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {addAllToReport, addToReport, deleteItem, setSelectedItems} from '../reportActions';
-import {LegendItem} from '../reportModels';
-import {initialState as report, mediumViewOptions} from '../reportReducer';
+import {LegendItem, Report} from '../reportModels';
+import {initialState as report} from '../reportReducer';
 
 describe('reportActions', () => {
   type PartialRootState = Pick<RootState, 'report'> ;
@@ -21,6 +23,8 @@ describe('reportActions', () => {
     {id: 1, label: 'a', medium: Medium.gas},
     {id: 2, label: 'b', medium: Medium.water}
   ];
+
+  const savedReports: ObjectsById<Report> = savedReportsOf(items);
 
   beforeEach(() => {
     initialState = {report};
@@ -45,10 +49,7 @@ describe('reportActions', () => {
     it('does not fire an event if meter is already selected', () => {
       const store = configureMockStore({
         ...initialState,
-        report: {
-          ...report,
-          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
-        }
+        report: {...report, savedReports}
       });
 
       store.dispatch(addToReport(items[0]));
@@ -118,10 +119,7 @@ describe('reportActions', () => {
       const meters: LegendItem[] = [{...gasLegendItem, isRowExpanded: true}];
       const store = configureMockStore({
         ...initialState,
-        report: {
-          ...report,
-          savedReports: {meterPage: {id: 'meterPage', meters, mediumViewOptions}},
-        }
+        report: {...report, savedReports: savedReportsOf(meters)}
       });
 
       const newGasLegendItem: LegendItem = {...gasLegendItem, id: 2};
@@ -187,10 +185,7 @@ describe('reportActions', () => {
     it('appends items to report', () => {
       const store = configureMockStore({
         ...initialState,
-        report: {
-          ...report,
-          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
-        }
+        report: {...report, savedReports}
       });
 
       store.dispatch(addAllToReport([gasLegendItem]));
@@ -211,10 +206,7 @@ describe('reportActions', () => {
     it('deletes item by id', () => {
       const store = configureMockStore({
         ...initialState,
-        report: {
-          ...report,
-          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
-        }
+        report: {...report, savedReports}
       });
 
       store.dispatch(deleteItem(1));
@@ -231,10 +223,7 @@ describe('reportActions', () => {
     it('does nothing when id to remove does not exist', () => {
       const store = configureMockStore({
         ...initialState,
-        report: {
-          ...report,
-          savedReports: {meterPage: {id: 'meterPage', meters: items, mediumViewOptions}},
-        }
+        report: {...report, savedReports}
       });
 
       store.dispatch(deleteItem(888));
