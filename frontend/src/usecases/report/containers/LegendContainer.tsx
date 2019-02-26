@@ -3,7 +3,6 @@ import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
-import {isReportPage} from '../../../selectors/routerSelectors';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
@@ -13,7 +12,6 @@ import {getLegendItems, getMediumViewOptions} from '../reportSelectors';
 
 export interface StateToProps extends ReportState, HasContent {
   legendItems: LegendItem[];
-  isReportPage: boolean;
   mediumViewOptions: MediumViewOptions;
 }
 
@@ -31,13 +29,12 @@ export interface OwnProps extends Visible {
 
 const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
 
-const mapStateToProps = ({report, routing}: RootState): StateToProps => {
+const mapStateToProps = ({report}: RootState): StateToProps => {
   const {hiddenLines, resolution, savedReports} = report;
   const legendItems = getLegendItems(report);
   return ({
     legendItems,
     hiddenLines,
-    isReportPage: isReportPage(routing),
     hasContent: legendItems.length > 0,
     mediumViewOptions: getMediumViewOptions(report),
     resolution,

@@ -38,7 +38,6 @@ export const Legend = ({
   deleteItem,
   hideAllByMedium,
   hiddenLines,
-  isReportPage,
   isVisible,
   legendItems,
   mediumViewOptions,
