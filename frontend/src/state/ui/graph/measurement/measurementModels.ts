@@ -155,7 +155,7 @@ const mediumTexts: { [medium in Medium]: string } = {
   [Medium.unknown]: 'Unknown',
 };
 
-export const toMediumText = (medium: Medium): string => mediumTexts[medium] || mediumTexts[Medium.unknown];
+export const toMediumText = (medium: Medium): string => mediumTexts[medium];
 
 export const allQuantities: { [m in Medium]: Quantity[] } = {
   [Medium.districtHeating]: [
