@@ -1,0 +1,13 @@
+@import '../../app/variables';
+
+.EditMeterDefinitionContainer {
+  padding-left: 15px;
+
+  .SaveButton {
+    align-self: flex-start;
+
+    &.disabled {
+     background-color: $border-color !important;
+    }
+  }
+}

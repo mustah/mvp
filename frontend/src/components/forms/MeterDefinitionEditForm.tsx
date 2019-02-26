@@ -14,7 +14,7 @@ import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
 import {TextFieldInput} from '../inputs/TextFieldInput';
 import {Column} from '../layouts/column/Column';
-import './OrganisationEditForm.scss';
+import './MeterDefinitionEditForm.scss';
 
 const mediumById = (mediumId: number, mediums: Medium[]): Medium =>
   mediums.find(({id}) => id === mediumId)!;
@@ -76,17 +76,18 @@ export const MeterDefinitionEditForm = (
   };
 
   const organisationId: uuid = organisation ? organisation.id : noOrganisation().id;
+  const isDefault: boolean = organisationId === noOrganisation().id;
 
   return (
-    <>
       <form style={{flex: 1}} onSubmit={wrappedSubmit}>
-        <Column className="EditOrganisationContainer">
+        <Column className="EditMeterDefinitionContainer">
           <TextFieldInput
             autoComplete="off"
             floatingLabelText={nameLabel}
             hintText={nameLabel}
             id="name"
             value={name}
+            disabled={isDefault}
             onChange={setName}
           />
           <SelectFieldInput
@@ -94,6 +95,7 @@ export const MeterDefinitionEditForm = (
             floatingLabelText={mediumLabel}
             hintText={mediumLabel}
             id="medium"
+            disabled={isDefault}
             multiple={false}
             onChange={setMedium}
             value={Number(medium.id)}
@@ -103,6 +105,7 @@ export const MeterDefinitionEditForm = (
             floatingLabelText={organisationLabel}
             hintText={organisationLabel}
             id="organisation"
+            disabled={isDefault}
             multiple={false}
             onChange={setOrganisation}
             value={organisationId}
@@ -115,21 +118,21 @@ export const MeterDefinitionEditForm = (
             onClick={setAutoApply}
             value={autoApply + ''}
           />
+
+          <QuantityList
+            changedQuantities={setQuantities}
+            definitionQuantities={quantities}
+            allQuantities={allQuantities}
+            editable={!isDefault}
+          />
+
+          <ButtonSave
+            disabled={isDefault}
+            className="SaveButton"
+            type="submit"
+          />
         </Column>
 
-        <QuantityList
-          changedQuantities={setQuantities}
-          definitionQuantities={quantities}
-          allQuantities={allQuantities}
-        />
-
-        <ButtonSave
-          className="SaveButton"
-          type="submit"
-        />
-
       </form>
-
-    </>
   );
 };

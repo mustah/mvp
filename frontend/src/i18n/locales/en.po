@@ -20,6 +20,9 @@ msgstr "delete quantity"
 msgid "edit quantity"
 msgstr "edit quantity"
 
+msgid "add quantity"
+msgstr "add quantity"
+
 msgid "consumption"
 msgstr "consumption"
 

@@ -13,6 +13,7 @@ import {Loader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/MeterDefinitionsContainer';
 import {MeterDefinitionActions} from './MeterDefinitionActions';
+import './MeterDefinitionList.scss';
 
 type Props = StateToProps & DispatchToProps;
 
@@ -32,6 +33,13 @@ export const MeterDefinitionList = ({
   const isDefault = ({dataItem: {autoApply}}) => autoApply ? <td><NavigationCheck/></td> : <td/>;
   const actions = ({dataItem: {id}}) => <td><MeterDefinitionActions confirmDelete={openConfirm} id={id}/></td>;
 
+  const renderOrganisation = ({dataItem: {organisation}}) => {
+    const organisationName: string = organisation ? organisation.name : 'System';
+    return (
+      <td className={!organisation ? 'DefaultOrganisation' : ''}>{organisationName}</td>
+    );
+  };
+
   return (
     <Loader isFetching={isFetching}>
       <Column>
@@ -47,7 +55,7 @@ export const MeterDefinitionList = ({
         >
           <GridColumn headerClassName="left-most" className="left-most" field="name" title={translate('name')}/>
           <GridColumn field="medium.name" title={translate('medium')}/>
-          <GridColumn field="organisation.name" title={translate('organisation')}/>
+          <GridColumn cell={renderOrganisation} title={translate('organisation')}/>
           <GridColumn
             field="autoApply"
             title={translate('default')}

@@ -3,10 +3,7 @@ import * as React from 'react';
 import {ButtonLink} from '../../../components/buttons/ButtonLink';
 import {InputSelectableCell} from '../../../components/inputs/InputSelectableCell';
 import {translate} from '../../../services/translationService';
-import {
-  DisplayQuantity,
-  Quantity
-} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
+import {DisplayQuantity, Quantity} from '../../../state/domain-models/meter-definitions/meterDefinitionModels';
 import {QuantityActions} from './QuantityActions';
 import './QuantityList.scss';
 
@@ -14,13 +11,14 @@ interface OwnProps {
   changedQuantities: any;
   definitionQuantities: DisplayQuantity[];
   allQuantities: Quantity[];
+  editable: boolean;
 }
 
 type Props = OwnProps;
 
 type state = DisplayQuantity[];
 
-export const QuantityList = ({definitionQuantities, allQuantities, changedQuantities}: Props) => {
+export const QuantityList = ({definitionQuantities, allQuantities, changedQuantities, editable}: Props) => {
   let x = 0;
   definitionQuantities.forEach((q) => q.gridIndex = x++);
 
@@ -70,16 +68,20 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
 
   const actions = (rowItem) =>
     (
-      <td>
-        <QuantityActions
-          confirmDelete={deleteAction}
-          editAction={editQuantity}
-          cancelAction={cancelAction}
-          saveAction={saveAction}
-          inEdit={rowItem.dataItem.inEdit}
-          dataItem={rowItem}
-        />
-      </td>
+      editable ?
+        (
+          <td>
+            <QuantityActions
+              confirmDelete={deleteAction}
+              editAction={editQuantity}
+              cancelAction={cancelAction}
+              saveAction={saveAction}
+              inEdit={rowItem.dataItem.inEdit}
+              dataItem={rowItem}
+            />
+          </td>
+        )
+        : null
     );
 
   const quantitySelectChange = (event) => {
@@ -109,6 +111,15 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
     );
   };
 
+  const addNewQuantityButton = editable ?
+    (
+      <ButtonLink
+        className="k-button k-primary"
+        onClick={enterInsert}
+      >{translate('add quantity')}
+      </ButtonLink>
+    )
+    : null;
   return (
     <Grid
       style={{marginTop: 32, marginBottom: 32}}
@@ -118,11 +129,7 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
       editField="inEdit"
     >
       <GridToolbar>
-        <ButtonLink
-          className="k-button k-primary"
-          onClick={enterInsert}
-        >Add new
-        </ButtonLink>
+        {addNewQuantityButton}
       </GridToolbar>
 
       <GridColumn

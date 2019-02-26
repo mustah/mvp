@@ -2,20 +2,20 @@ import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {buttonStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ClassNamed, Clickable} from '../../types/Types';
+import {ClassNamed} from '../../types/Types';
+import classNames = require('classnames');
 
 interface ButtonSaveSubmitProps extends ClassNamed {
   type: 'submit';
+  disabled?: boolean;
 }
 
-type ButtonSaveOnClickProps = ClassNamed & Clickable;
-
-type ButtonSaveProps = ButtonSaveSubmitProps | ButtonSaveOnClickProps;
-
-export const ButtonSave = (props: ButtonSaveProps) => (
+export const ButtonSave = ({className, disabled, ...props}: ButtonSaveSubmitProps) => (
   <FlatButton
     {...props}
+    disabled={disabled}
     label={firstUpperTranslated('save')}
+    className={classNames(className, disabled ? 'disabled' : '')}
     style={buttonStyle}
   />
 );

@@ -26,6 +26,9 @@ msgstr "ta bort kvantitet"
 msgid "edit quantity"
 msgstr "redigera kvantitet"
 
+msgid "add quantity"
+msgstr "lägg till kvantitet"
+
 msgid "consumption"
 msgstr "förbrukning"
 
