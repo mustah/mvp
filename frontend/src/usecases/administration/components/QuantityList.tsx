@@ -136,7 +136,6 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
         headerClassName="col"
         className="col"
         field="quantityName"
-
         title={translate('quantity')}
         cell={quantityCell}
       />
@@ -144,13 +143,20 @@ export const QuantityList = ({definitionQuantities, allQuantities, changedQuanti
         headerClassName="col"
         className="col"
         field="displayUnit"
-        editable={true}
         title={translate('display unit')}
       />
       <GridColumn
         headerClassName="col"
         className="col"
+        field="consumption"
+        editor={'boolean'}
+        title={translate('consumption')}
+      />
+      <GridColumn
+        headerClassName="col"
+        className="col"
         field="precision"
+        editor="numeric"
         title={translate('precision')}
       />
       <GridColumn

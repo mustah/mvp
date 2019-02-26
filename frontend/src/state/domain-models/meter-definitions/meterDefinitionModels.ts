@@ -15,7 +15,7 @@ export type Medium = IdNamed;
 
 export interface DisplayQuantity extends IdNamed, Grid {
   quantityName: string;
-  consumption?: boolean;
+  consumption: boolean;
   displayUnit: string;
   precision: number;
 }
