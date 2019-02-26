@@ -7,7 +7,7 @@ import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconRightArrow} from '../../../components/icons/IconRightArrow';
 import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
-import {Medium as MediumText} from '../../../components/texts/Texts';
+import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {colorizeMeters} from '../../../state/ui/graph/measurement/graphContentsMapper';
 import {allQuantities, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
@@ -48,7 +48,7 @@ const renderGroupHeaderTds = (props: RowProps, medium: Medium) => {
     const key = `group-header-td-${medium}-${quantity}`;
     const mediumQuantities = allQuantities[medium];
     if (mediumQuantities.some((q) => q === quantity)) {
-      const checked = index < 2 || mediumQuantities.length === 1;
+      const checked = index < 1 || mediumQuantities.length === 1;
       return (
         <td key={key} className="check-box-td">
           <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
@@ -78,10 +78,11 @@ const renderGroupHeader = (props: RowProps, dataItem: any) => {
   const onClick = () => props.onExpandRow(dataItem);
   return (
     <tr className="GroupHeader Foldable" key={`group-header-${medium}`}>
-      <td colSpan={2}>
+      <td colSpan={2} key={`group-header-td-title-${medium}`}>
         <RowMiddle onClick={onClick} className="clickable">
           <IconRightArrow className={classNames('Foldable-arrow', {isVisible})}/>
           <MediumText className="Bold">{firstUpperTranslated(mediumText)}</MediumText>
+          <InfoText style={{marginLeft: 8, fontStyle: 'normal'}}>({dataItem.items.length})</InfoText>
         </RowMiddle>
       </td>
       {renderGroupHeaderTds(props, medium)}
