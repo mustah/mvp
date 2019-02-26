@@ -1,5 +1,6 @@
 import Checkbox from 'material-ui/Checkbox';
 import React from 'react';
+import {ValidatorForm} from 'react-material-ui-form-validator';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   Medium,
@@ -11,8 +12,8 @@ import {noOrganisation, Organisation} from '../../state/domain-models/organisati
 import {CallbackWithData, uuid} from '../../types/Types';
 import {QuantityList} from '../../usecases/administration/components/QuantityList';
 import {ButtonSave} from '../buttons/ButtonSave';
-import {SelectFieldInput} from '../inputs/InputSelectable';
-import {TextFieldInput} from '../inputs/TextFieldInput';
+import {ValidatedFieldInput} from '../inputs/ValidatedFieldInput';
+import {ValidatedInputSelectable} from '../inputs/ValidatedInputSelectable';
 import {Column} from '../layouts/column/Column';
 import './MeterDefinitionEditForm.scss';
 
@@ -78,61 +79,69 @@ export const MeterDefinitionEditForm = (
   const organisationId: uuid = organisation ? organisation.id : noOrganisation().id;
   const isDefault: boolean = organisationId === noOrganisation().id;
 
+  const requiredValidator: string[] = ['required'];
+  const requiredMessage: string[] = [firstUpperTranslated('required field')];
   return (
-      <form style={{flex: 1}} onSubmit={wrappedSubmit}>
-        <Column className="EditMeterDefinitionContainer">
-          <TextFieldInput
-            autoComplete="off"
-            floatingLabelText={nameLabel}
-            hintText={nameLabel}
-            id="name"
-            value={name}
-            disabled={isDefault}
-            onChange={setName}
-          />
-          <SelectFieldInput
-            options={mediums}
-            floatingLabelText={mediumLabel}
-            hintText={mediumLabel}
-            id="medium"
-            disabled={isDefault}
-            multiple={false}
-            onChange={setMedium}
-            value={Number(medium.id)}
-          />
-          <SelectFieldInput
-            options={organisations}
-            floatingLabelText={organisationLabel}
-            hintText={organisationLabel}
-            id="organisation"
-            disabled={isDefault}
-            multiple={false}
-            onChange={setOrganisation}
-            value={organisationId}
-          />
-          <Checkbox
-            label={firstUpperTranslated('default')}
-            id="autoApply"
-            disabled={true}
-            defaultChecked={autoApply}
-            onClick={setAutoApply}
-            value={autoApply + ''}
-          />
+    <ValidatorForm style={{flex: 1}} onSubmit={wrappedSubmit}>
+      <Column className="EditMeterDefinitionContainer">
+        <ValidatedFieldInput
+          autoComplete="off"
+          floatingLabelText={nameLabel}
+          hintText={nameLabel}
+          id="name"
+          value={name}
+          disabled={isDefault}
+          onChange={setName}
+          validators={requiredValidator}
+          errorMessages={requiredMessage}
+        />
+        <ValidatedInputSelectable
+          options={mediums}
+          floatingLabelText={mediumLabel}
+          hintText={mediumLabel}
+          id="medium"
+          disabled={isDefault}
+          multiple={false}
+          onChange={setMedium}
+          value={medium.id !== '' ? Number(medium.id) : ''}
+          validators={requiredValidator}
+          errorMessages={requiredMessage}
+        />
+        <ValidatedInputSelectable
+          options={organisations}
+          floatingLabelText={organisationLabel}
+          hintText={organisationLabel}
+          id="organisation"
+          disabled={isDefault}
+          multiple={false}
+          onChange={setOrganisation}
+          value={organisationId}
+          validators={requiredValidator}
+          errorMessages={requiredMessage}
+        />
+        <Checkbox
+          label={firstUpperTranslated('default')}
+          id="autoApply"
+          disabled={true}
+          defaultChecked={autoApply}
+          onClick={setAutoApply}
+          value={autoApply + ''}
+        />
 
-          <QuantityList
-            changedQuantities={setQuantities}
-            definitionQuantities={quantities}
-            allQuantities={allQuantities}
-            editable={!isDefault}
-          />
+        <QuantityList
+          changedQuantities={setQuantities}
+          definitionQuantities={quantities}
+          allQuantities={allQuantities}
+          editable={!isDefault}
+        />
 
-          <ButtonSave
-            disabled={isDefault}
-            className="SaveButton"
-            type="submit"
-          />
-        </Column>
+        <ButtonSave
+          disabled={isDefault}
+          className="SaveButton"
+          type="submit"
+        />
+      </Column>
 
-      </form>
+    </ValidatorForm>
   );
 };
