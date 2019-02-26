@@ -7,7 +7,6 @@ import {routes} from '../../../app/routes';
 import {actionMenuItemIconStyle, dividerStyle} from '../../../app/themes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown} from '../../../components/actions-dropdown/ActionsDropdown';
-import {IconReport} from '../../../components/icons/IconReport';
 import {translate} from '../../../services/translationService';
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, OnClick, OnClickWithId, RenderFunction, uuid} from '../../../types/Types';
@@ -16,19 +15,14 @@ interface Props {
   id: uuid;
   confirmDelete: OnClickWithId;
   onEditSelection: Callback;
-  onAddAllToReport: Callback;
 }
 
-export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToReport, onEditSelection}: Props) => {
+export const SavedSelectionActionsDropdown = ({id, confirmDelete, onEditSelection}: Props) => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onClickEditSelection = () => {
       onClick();
       onEditSelection();
-    };
-    const onClickAddAllToReport = () => {
-      onClick();
-      onAddAllToReport();
     };
     const onClickDelete = () => {
       onClick();
@@ -45,14 +39,6 @@ export const SavedSelectionActionsDropdown = ({id, confirmDelete, onAddAllToRepo
           />
         </Link>
       ),
-      (
-        <ActionMenuItem
-          leftIcon={<IconReport style={actionMenuItemIconStyle}/>}
-          name={translate('show all in report')}
-          onClick={onClickAddAllToReport}
-          key={`add-all-to-report-${id}`}
-        />
-      )
     ];
 
     return id !== initialSelectionId

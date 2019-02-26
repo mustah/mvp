@@ -43,10 +43,6 @@ const ListItems = ({
       ? allMetersSelectionListItem
       : savedSelections.entities[savedSelectionId];
 
-    const onAddAllToReport: Callback = () => {
-      history.push(routes.report);
-      selectSavedSelection(id);
-    };
     const onEditSelection: Callback = () => selectSavedSelection(id);
     const onSelect: Callback = () => {
       history.push(routes.meter);
@@ -73,7 +69,6 @@ const ListItems = ({
             <SavedSelectionActionsDropdown
               id={id}
               confirmDelete={confirmDelete}
-              onAddAllToReport={onAddAllToReport}
               onEditSelection={onEditSelection}
             />
           </Row>
