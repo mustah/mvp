@@ -23,6 +23,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition.MeterDefinitionBuilder;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -89,6 +90,12 @@ public interface TestFixtures {
       .id(gatewayId)
       .serial(gatewayId.toString())
       .productModel(randomUUID().toString());
+  }
+
+  default MeterDefinitionBuilder meterDefinition() {
+    return MeterDefinition.builder()
+      .name(randomUUID().toString())
+      .organisation(defaultOrganisation());
   }
 
   default Collection<Measurement> series(

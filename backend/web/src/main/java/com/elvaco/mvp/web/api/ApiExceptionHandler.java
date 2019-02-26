@@ -8,9 +8,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
-import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
+import com.elvaco.mvp.core.exception.InvalidDisplayQuantity;
+import com.elvaco.mvp.core.exception.InvalidMeterDefinition;
 import com.elvaco.mvp.core.exception.InvalidUserSelection;
 import com.elvaco.mvp.core.exception.NoPhysicalMeters;
+import com.elvaco.mvp.core.exception.NoSuchQuantity;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UnitConversionError;
@@ -131,8 +133,18 @@ public class ApiExceptionHandler {
     return badRequest(exception);
   }
 
-  @ExceptionHandler(InvalidQuantityForMeterType.class)
-  public ResponseEntity<ErrorMessageDto> handle(InvalidQuantityForMeterType exception) {
+  @ExceptionHandler(NoSuchQuantity.class)
+  public ResponseEntity<ErrorMessageDto> handle(NoSuchQuantity exception) {
+    return badRequest(exception);
+  }
+
+  @ExceptionHandler(InvalidMeterDefinition.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidMeterDefinition exception) {
+    return badRequest(exception);
+  }
+
+  @ExceptionHandler(InvalidDisplayQuantity.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidDisplayQuantity exception) {
     return badRequest(exception);
   }
 

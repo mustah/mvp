@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeasurementMessageResponseBuilder;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -20,6 +21,7 @@ import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
@@ -30,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DEFAULT_READ_INTERVAL_MINUTES;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TIMEZONE;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mappedQuantity;
-import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMedium;
 import static com.elvaco.mvp.core.util.CompletenessValidators.gatewayValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.logicalMeterValidator;
 import static com.elvaco.mvp.core.util.CompletenessValidators.physicalMeterValidator;
@@ -45,7 +47,9 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
   private final OrganisationUseCases organisationUseCases;
   private final MeasurementUseCases measurementUseCases;
   private final GatewayUseCases gatewayUseCases;
+  private final MeterDefinitionUseCases meterDefinitionUseCases;
   private final UnitConverter unitConverter;
+  private final MediumProvider mediumProvider;
 
   @Override
   public Optional<GetReferenceInfoDto> accept(MeteringMeasurementMessageDto measurementMessage) {
@@ -72,7 +76,10 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       .orElseGet(() -> LogicalMeter.builder()
         .externalId(facilityId)
         .organisationId(organisation.id)
-        .meterDefinition(resolveMeterDefinition(measurementMessage.values))
+        .meterDefinition(meterDefinitionUseCases.getAutoApplied(
+          organisation,
+          mediumProvider.getByNameOrThrow(resolveMedium(measurementMessage.values))
+        ))
         .build());
 
     String address = measurementMessage.meter.id;

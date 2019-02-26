@@ -14,6 +14,90 @@ msgstr ""
 msgid "within"
 msgstr "within"
 
+msgid "delete quantity"
+msgstr "delete quantity"
+
+msgid "edit quantity"
+msgstr "edit quantity"
+
+msgid "add quantity"
+msgstr "add quantity"
+
+msgid "consumption"
+msgstr "consumption"
+
+msgid "quantity"
+msgstr "quantity"
+
+msgid "precision"
+msgstr "precision"
+
+msgid "display unit"
+msgstr "display unit"
+
+msgid "default"
+msgstr "default"
+
+msgid "delete meter definition"
+msgstr "delete meter definitions"
+
+msgid "edit meter definition"
+msgstr "edit meter definitions"
+
+msgid "meter definitions"
+msgstr "meter definitions"
+
+msgid "add meter definition"
+msgstr "add meter definition"
+
+msgid "successfully deleted the meter definition {{name}}"
+msgstr "successfully deleted the meter definition '{{name}}'"
+
+msgid "failed to delete the meter definition: {{error}}"
+msgstr "failed to delete the meter definition: {{error}}"
+
+msgid "successfully created the meter definition {{name}}"
+msgstr "successfully created the meter definition '{{name}}'"
+
+msgid "failed to create meter definition: {{error}}"
+msgstr "failed to create meter definition: {{error}}"
+
+msgid "successfully updated the meter definition {{name}}"
+msgstr "successfully updated the meter definition '{{name}}'"
+
+msgid "failed to update meter definition: {{error}}"
+msgstr "failed to update meter definition: {{error}}"
+
+msgid "meter definitions"
+msgstr "meter definitions"
+
+msgid "your saved reports will appear here"
+msgstr "your saved reports will appear here"
+
+msgid "delete meter"
+msgstr "delete meter"
+
+msgid "are you sure you want to delete the meter {{facility}}"
+msgstr "are you sure you want to delete the meter '{{facility}}'"
+
+msgid "successfully deleted the meter {{facility}}"
+msgstr "successfully deleted the meter '{{facility}}'"
+
+msgid "failed to delete the meter: {{error}}"
+msgstr "failed to delete the meter: {{error}}"
+
+msgid "email not valid"
+msgstr "email not valid"
+
+msgid "required field"
+msgstr "required field"
+
+msgid "admin"
+msgstr "admin"
+
+msgid "metering"
+msgstr "metering"
+
 msgid "sync"
 msgstr "sync"
 
@@ -676,9 +760,6 @@ msgstr "during {{count}} days (or more)"
 #~ msgid "meter value"
 #~ msgstr "meter value"
 
-#~ msgid "consumption"
-#~ msgstr "consumption"
-
 #~ msgid "status"
 #~ msgstr "status"
 
@@ -690,9 +771,6 @@ msgstr "during {{count}} days (or more)"
 
 #~ msgid "inside temperature"
 #~ msgstr "inside temperature"
-
-#~ msgid "quantity"
-#~ msgstr "quantity"
 
 #~ msgid "info"
 #~ msgstr "info"

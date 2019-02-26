@@ -17,7 +17,7 @@ import {MapProps, SelectedId} from '../../../usecases/map/mapModels';
 import {DetailsDialogProps} from '../../dialog/DetailsDialog';
 import {EmptyContentProps} from '../../error-message/EmptyContent';
 import {withEmptyContent, WithEmptyContentProps} from '../../hoc/withEmptyContent';
-import {Loader} from '../../loading/Loader';
+import {RetryLoader} from '../../loading/Loader';
 import {Tab} from './Tab';
 import {TabContent} from './TabContent';
 import {TabHeaders} from './TabHeaders';
@@ -88,12 +88,12 @@ export const MainContentTabs = (props: MainContentTabsProps) => {
         {children}
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching} clearError={clearError} error={error}>
+        <RetryLoader isFetching={isFetching} clearError={clearError} error={error}>
           <>
             <MapClustersWrapper {...wrapperProps} />
             <DetailsDialog {...dialogProps}/>
           </>
-        </Loader>
+        </RetryLoader>
       </TabContent>
     </Tabs>
   );

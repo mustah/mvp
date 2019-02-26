@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -199,6 +200,21 @@ public class LogicalMeterRepository implements LogicalMeters {
   public LogicalMeter delete(LogicalMeter logicalMeter) {
     logicalMeterJpaRepository.delete(logicalMeter.id, logicalMeter.organisationId);
     return logicalMeter;
+  }
+
+  @Override
+  @CacheEvict(cacheNames = "logicalMeter.organisationIdExternalId")
+  @Transactional
+  public void changeMeterDefinition(
+    UUID organisationId,
+    MeterDefinition fromMeterDefinition,
+    MeterDefinition toMeterDefinition
+  ) {
+    logicalMeterJpaRepository.changeMeterDefinition(
+      organisationId,
+      fromMeterDefinition.id,
+      toMeterDefinition.id
+    );
   }
 
   private List<LogicalMeter> withStatusesOnly(

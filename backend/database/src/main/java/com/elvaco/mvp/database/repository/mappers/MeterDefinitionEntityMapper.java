@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class MeterDefinitionEntityMapper {
       Optional.ofNullable(domainModel.organisation)
         .map(OrganisationEntityMapper::toEntity)
         .orElse(null),
-      toDisplayQuantityEntities(domainModel),
+      Collections.emptySet(),
       domainModel.name,
       mediumEntityMapper.toMediumEntity(domainModel.medium),
       domainModel.autoApply
@@ -45,14 +46,11 @@ public class MeterDefinitionEntityMapper {
     );
   }
 
-  private Set<DisplayQuantityEntity> toDisplayQuantityEntities(
+  public Set<DisplayQuantityEntity> toDisplayQuantityEntities(
     MeterDefinition domainModel
   ) {
     return domainModel.quantities.stream()
-      .map(displayQuantity -> displayQuantityEntityMapper.toDisplayQuantityEntity(
-        domainModel.id,
-        displayQuantity
-      ))
+      .map(displayQuantityEntityMapper::toDisplayQuantityEntity)
       .collect(toSet());
   }
 }

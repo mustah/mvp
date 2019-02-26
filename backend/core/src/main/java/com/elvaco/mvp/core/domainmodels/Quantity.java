@@ -12,7 +12,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Quantity implements Identifiable<Integer> {
 
   public static final Quantity EXTERNAL_TEMPERATURE = new QuantityBuilder()

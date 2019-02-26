@@ -8,7 +8,7 @@ import {PasswordEditForm} from '../../../components/forms/PasswordEditForm';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowIndented} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
@@ -88,7 +88,7 @@ class UserEdit extends React.Component<Props, {}> {
         <MainTitle>{translate('edit user')}</MainTitle>
 
         <Paper style={paperStyle}>
-          <Loader isFetching={isFetching} error={error} clearError={clearError}>
+          <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
             <RowIndented>
               <Column style={userEditStyle}>
                 <UserEditForm
@@ -108,7 +108,7 @@ class UserEdit extends React.Component<Props, {}> {
                 />
               </Column>
             </RowIndented>
-          </Loader>
+          </RetryLoader>
         </Paper>
       </AdminPageLayout>
     );

@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.elvaco.mvp.core.domainmodels.Quantity;
 
+import static java.util.stream.Collectors.toList;
+
 public final class QuantityAccess implements QuantityProvider {
 
   private final ConcurrentHashMap<String, Quantity>
@@ -18,5 +20,10 @@ public final class QuantityAccess implements QuantityProvider {
   @Override
   public Optional<Quantity> getByName(String name) {
     return Optional.ofNullable(quantityMap.get(name));
+  }
+
+  @Override
+  public List<Quantity> all() {
+    return quantityMap.values().stream().collect(toList());
   }
 }

@@ -4,7 +4,6 @@ import com.elvaco.mvp.core.access.QuantityProvider;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.exception.NoSuchQuantity;
 import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementPk;
@@ -31,8 +30,7 @@ public class MeasurementEntityMapper {
   }
 
   public MeasurementEntity toEntity(Measurement domainModel) {
-    Quantity quantity = quantityProvider.getByName(domainModel.quantity)
-      .orElseThrow(() -> new NoSuchQuantity(domainModel.quantity));
+    Quantity quantity = quantityProvider.getByNameOrThrow(domainModel.quantity);
     return new MeasurementEntity(
       new MeasurementPk(
         domainModel.created,

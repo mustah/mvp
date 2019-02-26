@@ -8,7 +8,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
 import {OrganisationEditForm} from '../../../components/forms/OrganisationEditForm';
 import {RowIndented} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {AdminPageLayout} from '../../../containers/PageLayout';
 import {Maybe} from '../../../helpers/Maybe';
@@ -100,12 +100,12 @@ class OrganisationEdit extends React.Component<Props, {}> {
 
         <Paper style={paperStyle}>
           <RowIndented>
-            <Loader
+            <RetryLoader
               isFetching={isFetchingOrganisations}
               error={organisationsError}
               clearError={clearOrganisationErrors}
             >
-              <Loader
+              <RetryLoader
                 isFetching={isFetchingUserSelections}
                 error={userSelectionsError}
                 clearError={clearUserSelectionErrors}
@@ -118,8 +118,8 @@ class OrganisationEdit extends React.Component<Props, {}> {
                   updateOrganisation={updateOrganisation}
                   selections={values(selections)}
                 />
-              </Loader>
-            </Loader>
+              </RetryLoader>
+            </RetryLoader>
           </RowIndented>
         </Paper>
       </AdminPageLayout>

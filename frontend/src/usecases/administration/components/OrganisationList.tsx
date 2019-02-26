@@ -5,7 +5,7 @@ import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
-import {Loader} from '../../../components/loading/Loader';
+import {RetryLoader} from '../../../components/loading/Loader';
 import {translate} from '../../../services/translationService';
 import {DispatchToProps, StateToProps} from '../containers/OrganisationsContainer';
 import {AddOrganisationButton} from './AddOrganisationButton';
@@ -30,7 +30,7 @@ export const OrganisationList = ({
   const actions = ({dataItem: {id}}) => <td><OrganisationActions confirmDelete={openConfirm} id={id}/></td>;
 
   return (
-    <Loader isFetching={isFetching} error={error} clearError={clearError}>
+    <RetryLoader isFetching={isFetching} error={error} clearError={clearError}>
       <Column>
         <Row>
           <AddOrganisationButton/>
@@ -43,6 +43,6 @@ export const OrganisationList = ({
         </Grid>
         <ConfirmDialog isOpen={isOpen} close={closeConfirm} confirm={confirm}/>
       </Column>
-    </Loader>
+    </RetryLoader>
   );
 };

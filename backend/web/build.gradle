@@ -13,6 +13,7 @@ dependencies {
   compile 'org.springframework.security:spring-security-web'
   compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4'
   compile 'javax.servlet:javax.servlet-api:3.0.1'
+  compile 'javax.validation:validation-api:2.0.1.Final'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
 

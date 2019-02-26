@@ -13,6 +13,8 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition.MeterDefinitionBuilder;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Organisation.OrganisationBuilder;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -24,9 +26,11 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterAlarmLogs;
+import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.mappers.OrganisationEntityMapper;
@@ -51,8 +55,10 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   private final GatewayStatusLogs gatewayStatusLogs;
   private final MeterAlarmLogs meterAlarmLogs;
   private final Measurements measurements;
+  private final MeterDefinitions meterDefinitions;
   private final Organisations organisations;
   private final Users users;
+  private final UserSelections userSelections;
 
   @Override
   public Organisation defaultOrganisation() {
@@ -60,7 +66,15 @@ public class IntegrationTestFixtureContext implements TestFixtures {
   }
 
   Organisation given(OrganisationBuilder organisationBuilder) {
-    return organisations.save(organisationBuilder.build());
+    Organisation organisation = organisationBuilder.build();
+
+    if (organisation.selection != null) {
+      userSelections.save(organisation.selection);
+    }
+
+    return organisations.save(
+      organisation
+    );
   }
 
   OrganisationWithUsers given(OrganisationBuilder organisationBuilder, UserBuilder... newUsers) {
@@ -172,6 +186,15 @@ public class IntegrationTestFixtureContext implements TestFixtures {
 
   void given(Collection<Measurement> series) {
     series.forEach(measurements::save);
+  }
+
+  MeterDefinition given(MeterDefinitionBuilder meterDefinitionBuilder) {
+    return meterDefinitions.save(meterDefinitionBuilder.build());
+  }
+
+  User given(UserBuilder userBuilder) {
+    User user = userBuilder.build();
+    return users.save(user).withPassword(user.password);
   }
 
   private static PhysicalMeter connect(LogicalMeter logicalMeter, PhysicalMeter physicalMeter) {

@@ -31,6 +31,7 @@ import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.PropertiesUseCases;
@@ -79,6 +80,7 @@ class RabbitMqConfig {
   private final OrganisationUseCases organisationUseCases;
   private final MeasurementUseCases measurementUseCases;
   private final GatewayUseCases gatewayUseCases;
+  private final MeterDefinitionUseCases meterDefinitionUseCases;
   private final GeocodeService geocodeService;
   private final PropertiesUseCases propertiesUseCases;
   private final MeterAlarmLogs meterAlarmLogs;
@@ -94,7 +96,9 @@ class RabbitMqConfig {
       organisationUseCases,
       measurementUseCases,
       gatewayUseCases,
-      unitConverter
+      meterDefinitionUseCases,
+      unitConverter,
+      mediumProvider
     );
   }
 
@@ -111,7 +115,7 @@ class RabbitMqConfig {
       propertiesUseCases,
       meterSyncJobService,
       mediumProvider,
-      meterDefinitionProvider
+      meterDefinitionUseCases
     );
   }
 

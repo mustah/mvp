@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -119,6 +120,17 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   @Override
   public LogicalMeter delete(LogicalMeter logicalMeter) {
     throw new NotImplementedYet();
+  }
+
+  @Override
+  public void changeMeterDefinition(
+    UUID organisationId,
+    MeterDefinition fromMeterDefinition,
+    MeterDefinition toMeterDefinition
+  ) {
+    filter(isSameOrganisationId(organisationId))
+      .filter(lm -> lm.getMeterDefinition().id.equals(fromMeterDefinition.id))
+      .forEach(lm -> saveMock(lm.toBuilder().meterDefinition(toMeterDefinition).build()));
   }
 
   @Override

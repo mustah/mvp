@@ -20,6 +20,60 @@ msgstr "spara rapport"
 msgid "export to excel"
 msgstr "exportera till Excel"
 
+msgid "delete quantity"
+msgstr "ta bort kvantitet"
+
+msgid "edit quantity"
+msgstr "redigera kvantitet"
+
+msgid "add quantity"
+msgstr "lägg till kvantitet"
+
+msgid "consumption"
+msgstr "förbrukning"
+
+msgid "quantity"
+msgstr "storhet"
+
+msgid "precision"
+msgstr "precision"
+
+msgid "display unit"
+msgstr "visningsenhet"
+
+msgid "default"
+msgstr "standard"
+
+msgid "delete meter definition"
+msgstr "ta bort mätardefinition"
+
+msgid "edit meter definition"
+msgstr "redigera mätardefinition"
+
+msgid "meter definitions"
+msgstr "mätardefinitioner"
+
+msgid "add meter definition"
+msgstr "lägg till mätardefinition"
+
+msgid "successfully deleted the meter definition {{name}}"
+msgstr "lyckades ta bort mätardefinitionen '{{name}}'"
+
+msgid "failed to delete the meter definition: {{error}}"
+msgstr "lyckades inte ta bort mätardefinitionen: {{error}}"
+
+msgid "successfully created the meter definition {{name}}"
+msgstr "skapade mätardefinitionen '{{name}}'"
+
+msgid "failed to create meter definition: {{error}}"
+msgstr "misslyckades skapa mätardefinitionen: {{error}}"
+
+msgid "successfully updated the meter definition {{name}}"
+msgstr "lyckades uppdatera mätardefinitionen '{{name}}'"
+
+msgid "failed to update meter definition: {{error}}"
+msgstr "misslyckades med att uppdatera mätardefinitionen: {{error}}"
+
 msgid "delete meter"
 msgstr "ta bort mätare"
 
@@ -677,9 +731,6 @@ msgstr "under {{count}} dagar (eller mer)"
 #~ msgid "meter value"
 #~ msgstr "mätvärde"
 
-#~ msgid "consumption"
-#~ msgstr "förbrukning"
-
 #~ msgid "status"
 #~ msgstr "status"
 
@@ -691,9 +742,6 @@ msgstr "under {{count}} dagar (eller mer)"
 
 #~ msgid "inside temperature"
 #~ msgstr "temp. inomhus"
-
-#~ msgid "quantity"
-#~ msgstr "storhet"
 
 #~ msgid "info"
 #~ msgstr "info"

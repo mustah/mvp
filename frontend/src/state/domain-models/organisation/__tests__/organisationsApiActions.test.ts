@@ -1,8 +1,10 @@
 import axios from 'axios';
 import {default as MockAdapter} from 'axios-mock-adapter';
+import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Overwrite} from 'utility-types';
+import {routes} from '../../../../app/routes';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
@@ -70,6 +72,7 @@ describe('organisationsApiActions', () => {
         createOrganisation.success(returnedOrganisation as Organisation),
         showSuccessMessage('Successfully created the organisation ' +
                            `${returnedOrganisation.name} (${returnedOrganisation.slug})`),
+        routerActions.push(`${routes.adminOrganisations}`)
       ]);
     });
 
@@ -114,6 +117,7 @@ describe('organisationsApiActions', () => {
         createOrganisation.request(),
         createOrganisation.success(returnedOrganisation),
         showSuccessMessage(`Successfully created the organisation ${name} (${slug})`),
+        routerActions.push(`${routes.adminOrganisations}`)
       ]);
     });
 

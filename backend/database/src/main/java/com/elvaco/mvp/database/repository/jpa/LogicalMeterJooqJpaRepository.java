@@ -232,6 +232,19 @@ class LogicalMeterJooqJpaRepository
       .execute();
   }
 
+  @Override
+  public void changeMeterDefinition(
+    UUID organisationId,
+    Long fromMeterDefinitionId,
+    Long toMeterDefinitionId
+  ) {
+    dsl.update(LOGICAL_METER)
+      .set(LOGICAL_METER.METER_DEFINITION_ID, toMeterDefinitionId)
+      .where(LOGICAL_METER.ORGANISATION_ID.eq(organisationId))
+      .and(LOGICAL_METER.METER_DEFINITION_ID.eq(fromMeterDefinitionId))
+      .execute();
+  }
+
   private Page<String> fetchAllBy(
     RequestParameters parameters,
     Pageable pageable,

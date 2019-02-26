@@ -54,8 +54,17 @@ public final class RestClient {
     return template.getForEntity(apiUrlOf(url), clazz, urlVariables);
   }
 
-  public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
-    return template.postForEntity(apiUrlOf(url), request, responseType);
+  public <T> ResponseEntity<T> post(UrlTemplate url, Object request, Class<T> responseType) {
+    return post(url.template(), request, responseType, url.variables());
+  }
+
+  public <T> ResponseEntity<T> post(
+    String url,
+    Object request,
+    Class<T> responseType,
+    Object... urlVariables
+  ) {
+    return template.postForEntity(apiUrlOf(url), request, responseType, urlVariables);
   }
 
   public <T> ResponseEntity<List<T>> postList(
@@ -63,7 +72,7 @@ public final class RestClient {
     Object requestBody,
     Class<T> listedClass
   ) {
-    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
+    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<>() {
       @Override
       public Type getType() {
         return new ParameterizedTypeReferenceImpl(
@@ -144,7 +153,7 @@ public final class RestClient {
     Class<T> listedClass,
     Object... urlVariables
   ) {
-    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
+    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<>() {
       @Override
       public Type getType() {
         return new ParameterizedTypeReferenceImpl(
@@ -191,7 +200,7 @@ public final class RestClient {
     Object... variables
   ) {
     ParameterizedTypeReference<RestResponsePage<T>> responseType =
-      new ParameterizedTypeReference<RestResponsePage<T>>() {
+      new ParameterizedTypeReference<>() {
         @Override
         public Type getType() {
           return new ParameterizedTypeReferenceImpl(

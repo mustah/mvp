@@ -8,12 +8,11 @@ import java.util.Optional;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.domainmodels.Medium;
-import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 
 import org.junit.Test;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.mapToEvoMedium;
-import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMeterDefinition;
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.resolveMedium;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -23,7 +22,7 @@ public class MeteringMessageMapperTest {
 
   @Test
   public void unknownMediumIsMappedFromEmptyValueSet() {
-    assertThat(resolveMeterDefinition(emptyList())).isEqualTo(MeterDefinition.UNKNOWN);
+    assertThat(resolveMedium(emptyList())).isEqualTo(Medium.UNKNOWN_MEDIUM);
   }
 
   @Test
@@ -32,7 +31,7 @@ public class MeteringMessageMapperTest {
       new ValueDto(LocalDateTime.now(), 0.0, "MW", "UnknownQuantity")
     );
 
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN);
+    assertThat(resolveMedium(values)).isEqualTo(Medium.UNKNOWN_MEDIUM);
   }
 
   @Test
@@ -42,7 +41,7 @@ public class MeteringMessageMapperTest {
       newValueDto("Bluahe")
     );
 
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN);
+    assertThat(resolveMedium(values)).isEqualTo(Medium.UNKNOWN_MEDIUM);
   }
 
   @Test
@@ -107,7 +106,7 @@ public class MeteringMessageMapperTest {
       newValueDto("Energy")
     );
 
-    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.DEFAULT_DISTRICT_HEATING);
+    assertThat(resolveMedium(values)).isEqualTo(Medium.DISTRICT_HEATING);
   }
 
   private MediumProvider providerOf(Map<String, Medium> mediumMap) {

@@ -2,12 +2,8 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.access.MediumProvider;
-import com.elvaco.mvp.core.access.SystemMeterDefinitionProvider;
 import com.elvaco.mvp.core.domainmodels.FeatureType;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -24,54 +20,29 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Property;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.security.OrganisationPermissions;
-import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.core.usecase.GatewayUseCases;
-import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
-import com.elvaco.mvp.core.usecase.OrganisationUseCases;
-import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-import com.elvaco.mvp.core.usecase.PropertiesUseCases;
+import com.elvaco.mvp.core.usecase.MeterDefinitionUseCases;
 import com.elvaco.mvp.producers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.MeteringReferenceInfoMessageDto;
-import com.elvaco.mvp.testing.amqp.MockJobService;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
-import com.elvaco.mvp.testing.fixture.UserBuilder;
-import com.elvaco.mvp.testing.geocode.MockGeocodeService;
-import com.elvaco.mvp.testing.repository.MockGateways;
-import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
-import com.elvaco.mvp.testing.repository.MockMeterStatusLogs;
-import com.elvaco.mvp.testing.repository.MockOrganisations;
-import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
-import com.elvaco.mvp.testing.repository.MockProperties;
-import com.elvaco.mvp.testing.repository.MockUsers;
-import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_HOT_WATER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_ROOM_SENSOR;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_WATER;
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.UNKNOWN;
 import static com.elvaco.mvp.testing.fixture.LocationTestData.locationWithoutCoordinates;
 import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 @SuppressWarnings("ConstantConditions")
-public class MeteringReferenceInfoMessageConsumerTest {
+public class MeteringReferenceInfoMessageConsumerTest extends MessageConsumerTest {
 
   private static final String MANUFACTURER = "ELV";
   private static final String PRODUCT_MODEL = "CMi2110";
@@ -83,91 +54,36 @@ public class MeteringReferenceInfoMessageConsumerTest {
   private static final Integer READ_INTERVAL_IN_MINUTES = 15;
   private static final String HOT_WATER_MEDIUM = "Hot water";
   private static final String ADDRESS = "1234";
-  private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
-  private static final String ORGANISATION_SLUG = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
   private static final Location LOCATION_KUNGSBACKA = locationWithoutCoordinates().build();
   private static final long EXPECTED_DEFAULT_READ_INTERVAL = 60L;
   private static final String IP = "8.8.8.8";
   private static final String PHONE_NUMBER = "+4670123123";
-  private PhysicalMeters physicalMeters;
-  private Organisations organisations;
-  private LogicalMeters logicalMeters;
-  private Gateways gateways;
+
   private ReferenceInfoMessageConsumer messageHandler;
-  private MockGeocodeService geocodeService;
-  private PropertiesUseCases propertiesUseCases;
-  private MockMeterStatusLogs meterStatusLogs;
-  private MockJobService<MeteringReferenceInfoMessageDto> jobService;
-  private Map<String, Medium> mediumMap = Map.of(
-    UNKNOWN.medium.name, UNKNOWN.medium,
-    DEFAULT_HOT_WATER.medium.name, DEFAULT_HOT_WATER.medium,
-    DEFAULT_WATER.medium.name, DEFAULT_WATER.medium,
-    DEFAULT_DISTRICT_HEATING.medium.name, DEFAULT_DISTRICT_HEATING.medium,
-    DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
-  );
-
-  private Map<Medium, MeterDefinition> meterDefinitionMap = Map.of(
-    UNKNOWN.medium, UNKNOWN,
-    DEFAULT_HOT_WATER.medium, DEFAULT_HOT_WATER,
-    DEFAULT_WATER.medium, DEFAULT_WATER,
-    DEFAULT_DISTRICT_HEATING.medium, DEFAULT_DISTRICT_HEATING,
-    DEFAULT_ROOM_SENSOR.medium, DEFAULT_ROOM_SENSOR
-  );
-
-  private SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
-    meterDefinitionMap.get(medium));
-  private MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
 
   @Before
   public void setUp() {
-    AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
-      new UserBuilder()
-        .name("mock user")
-        .email("mock@somemail.nu")
-        .password("P@$$w0rD")
-        .organisation(new Organisation(
-          randomUUID(),
-          ORGANISATION_EXTERNAL_ID,
-          ORGANISATION_SLUG,
-          ORGANISATION_EXTERNAL_ID
-        ))
-        .asSuperAdmin()
-        .build(),
-      randomUUID().toString()
-    );
-    physicalMeters = new MockPhysicalMeters();
-    organisations = new MockOrganisations();
-    logicalMeters = new MockLogicalMetersWithCascading(physicalMeters);
-    gateways = new MockGateways();
-    geocodeService = new MockGeocodeService();
-    propertiesUseCases = new PropertiesUseCases(authenticatedUser, new MockProperties());
-
-    meterStatusLogs = new MockMeterStatusLogs();
-    jobService = new MockJobService<>();
-
+    super.setUp();
     messageHandler = new MeteringReferenceInfoMessageConsumer(
-      new LogicalMeterUseCases(authenticatedUser, logicalMeters),
-      new PhysicalMeterUseCases(authenticatedUser, physicalMeters, meterStatusLogs),
-      new OrganisationUseCases(
-        authenticatedUser,
-        organisations,
-        new OrganisationPermissions(new MockUsers(singletonList(
-          new UserBuilder()
-            .name("super-admin")
-            .email("super@admin.io")
-            .password("password")
-            .organisationElvaco()
-            .asSuperAdmin()
-            .build()
-        )))
-      ),
-      new GatewayUseCases(gateways, authenticatedUser),
+      logicalMeterUseCases,
+      physicalMeterUseCases,
+      organisationUseCases,
+      gatewayUseCases,
       geocodeService,
       propertiesUseCases,
       jobService,
       mediumProvider,
-      meterDefinitionProvider
+      new MeterDefinitionUseCases(
+        authenticatedUser,
+        meterDefinitions,
+        unitConverter,
+        organisations,
+        quantityProvider,
+        mediumProvider,
+        meterDefinitionProvider,
+        logicalMeters
+      )
     );
   }
 
@@ -386,6 +302,32 @@ public class MeteringReferenceInfoMessageConsumerTest {
     meter = logicalMeters.findAllWithDetails(new MockRequestParameters()).get(0);
     assertThat(meter.meterDefinition.medium.name)
       .isEqualTo(Medium.DISTRICT_HEATING);
+  }
+
+  @Test
+  public void setOrganisationDefaultMeterDefinition() {
+    messageHandler.accept(messageBuilder()
+      .medium(HOT_WATER_MEDIUM)
+      .organisationExternalId(ORGANISATION_EXTERNAL_ID).build());
+    Organisation organisation = organisations.findByExternalId(ORGANISATION_EXTERNAL_ID).get();
+    meterDefinitions.save(MeterDefinition.builder()
+      .organisation(organisation)
+      .medium(mediumProvider.getByNameOrThrow(HOT_WATER_MEDIUM))
+      .name("OrganisationDefault")
+      .autoApply(true)
+      .build());
+
+    String newExternalId = UUID.randomUUID().toString();
+    messageHandler.accept(messageBuilder()
+      .externalId(newExternalId)
+      .medium(HOT_WATER_MEDIUM)
+      .organisationExternalId(ORGANISATION_EXTERNAL_ID)
+      .build());
+
+    assertThat(logicalMeters.findAllByOrganisationId(organisation.id))
+      .filteredOn(lm -> lm.externalId.equals(newExternalId))
+      .flatExtracting(lm -> lm.meterDefinition.name, lm -> lm.meterDefinition.isDefault())
+      .containsOnly("OrganisationDefault", false);
   }
 
   @Test
