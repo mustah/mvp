@@ -5,7 +5,7 @@ import {SummaryComponent} from '../components/summary/SummaryComponent';
 import {RootState} from '../reducers/rootReducer';
 import {fetchSummary} from '../state/summary/summaryApiActions';
 import {SelectionSummary} from '../state/summary/summaryModels';
-import {getMeterParameters} from '../state/user-selection/userSelectionSelectors';
+import {allCurrentMeterParameters, getMeterParameters} from '../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters, Fetch} from '../types/Types';
 
 export interface StateToProps {
@@ -20,7 +20,7 @@ export interface DispatchToProps {
 
 export type Props = StateToProps & DispatchToProps;
 
-const mapStateToProps = ({
+const mapStateToProps = (amount: 'all' | 'selection') => ({
   userSelection: {userSelection},
   summary: {payload, isFetching},
   search: {validation: {query}}
@@ -28,7 +28,10 @@ const mapStateToProps = ({
   ({
     selectionSummary: payload,
     isFetching,
-    parameters: getMeterParameters({userSelection, query}),
+    parameters: amount === 'selection'
+      ? getMeterParameters({userSelection, query})
+      : allCurrentMeterParameters
+    ,
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
@@ -36,4 +39,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const SummaryContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SummaryComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps('selection'), mapDispatchToProps)(SummaryComponent);
+
+export const IgnoreSelectionSummaryContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps('all'), mapDispatchToProps)(SummaryComponent);
