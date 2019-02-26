@@ -1,6 +1,9 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
@@ -109,19 +112,19 @@ public class MeterDefinitionUseCases {
 
     meterDefinition.quantities.forEach(this::validateDisplayQuantity);
 
-    if (nameAlreadyExistingForOrganisation(meterDefinition)) {
+    if (!duplicatedQuantites(meterDefinition).isEmpty()) {
+      throw new InvalidMeterDefinition("Duplicated quantity");
+    }
+
+    if (nameExistsForOrganisation(meterDefinition)) {
       throw new InvalidMeterDefinition("Name must be unique for organisation");
     }
 
-    if (meterDefinition.isDefault()
-      && systemMeterDefinitionProvider.getByMedium(meterDefinition.medium)
-      .filter(md -> !md.id.equals(meterDefinition.id))
-      .isPresent()) {
+    if (meterDefinition.isDefault() && systemMeterDefinitionExistsForMedium(meterDefinition)) {
       throw new InvalidMeterDefinition("Only one system meter definition per medium is allowed");
     }
 
-    if (meterDefinition.autoApply
-      && !getAutoApplied(meterDefinition.organisation, meterDefinition.medium).isDefault()) {
+    if (meterDefinition.autoApply && autoAppliedExistsForOrganistaionAndMedium(meterDefinition)) {
       throw new InvalidMeterDefinition(
         "Only one auto applied meter definition per organisation and medium is allowed");
     }
@@ -133,7 +136,31 @@ public class MeterDefinitionUseCases {
     return newMeterDefinition;
   }
 
-  private boolean nameAlreadyExistingForOrganisation(MeterDefinition meterDefinition) {
+  private Set<DisplayQuantity> duplicatedQuantites(MeterDefinition meterDefinition) {
+    Set<DisplayQuantity> duplicates = new HashSet();
+    Set<String> temp = new HashSet();
+    meterDefinition.quantities.forEach(q -> {
+      if (!temp.add(q.quantity.name + q.displayMode.toString())) {
+        duplicates.add(q);
+      }
+    });
+    return duplicates;
+  }
+
+  private boolean systemMeterDefinitionExistsForMedium(MeterDefinition meterDefinition) {
+    return systemMeterDefinitionProvider.getByMedium(meterDefinition.medium)
+      .filter(md -> !md.id.equals(meterDefinition.id))
+      .isPresent();
+  }
+
+  private boolean autoAppliedExistsForOrganistaionAndMedium(MeterDefinition meterDefinition) {
+    return Optional.of(getAutoApplied(meterDefinition.organisation, meterDefinition.medium))
+      .filter(md -> !md.isDefault())
+      .filter(md -> !md.id.equals(meterDefinition.id))
+      .isPresent();
+  }
+
+  private boolean nameExistsForOrganisation(MeterDefinition meterDefinition) {
     if (meterDefinition.organisation == null) {
       return systemMeterDefinitionProvider.getByMedium(meterDefinition.medium)
         .filter(md -> !md.id.equals(meterDefinition.id))

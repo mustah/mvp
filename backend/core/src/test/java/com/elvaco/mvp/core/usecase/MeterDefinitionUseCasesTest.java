@@ -39,6 +39,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 
 public class MeterDefinitionUseCasesTest {
 
@@ -232,7 +233,40 @@ public class MeterDefinitionUseCasesTest {
   }
 
   @Test
-  public void meterDefintionIsAppliedToOrgansiationMetersAtCreate() {
+  public void savingWithDuplicatedQuantitesIsRejected() {
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    assertThatThrownBy(() -> useCases.save(
+      newMeterDefinition(
+        ELVACO_USER.organisation,
+        Set.of(
+          new DisplayQuantity(Quantity.ENERGY, DisplayMode.READOUT, Units.KILOWATT_HOURS),
+          new DisplayQuantity(Quantity.ENERGY, DisplayMode.READOUT, Units.MEGAWATT_HOURS)
+        )
+      ))
+    ).hasMessageContaining("Duplicated quantity");
+  }
+
+  @Test
+  public void savingWithBothReadoutAndConsumptionForQuantity() {
+    MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
+    var meterDefinition = useCases.save(
+      newMeterDefinition(
+        ELVACO_USER.organisation,
+        Set.of(
+          new DisplayQuantity(Quantity.ENERGY, DisplayMode.READOUT, Units.KILOWATT_HOURS),
+          new DisplayQuantity(Quantity.ENERGY, DisplayMode.CONSUMPTION, Units.KILOWATT_HOURS)
+        )
+      ));
+    assertThat(meterDefinitions.findById(meterDefinition.id).get().quantities)
+      .extracting(q -> q.quantity, q -> q.displayMode)
+      .containsOnly(
+        tuple(Quantity.ENERGY, DisplayMode.READOUT),
+        tuple(Quantity.ENERGY, DisplayMode.CONSUMPTION)
+      );
+  }
+
+  @Test
+  public void meterDefinitionIsAppliedToOrgansiationMetersAtCreate() {
     Organisation organisation = newOrganisation();
     var meter1 = LogicalMeter.builder()
       .organisationId(organisation.id)
@@ -245,12 +279,12 @@ public class MeterDefinitionUseCasesTest {
     LogicalMeters logicalMeters = new MockLogicalMeters(asList(meter1, meter2));
 
     var useCases = newUseCases(ELVACO_SUPER_ADMIN_USER, null, logicalMeters);
-    var organisationDefintion = useCases.save(newMeterDefinition(organisation).toBuilder()
+    var organisationDefinition = useCases.save(newMeterDefinition(organisation).toBuilder()
       .autoApply(true)
       .build());
 
     assertThat(logicalMeters.findById(meter1.id).get().meterDefinition)
-      .isEqualTo(organisationDefintion);
+      .isEqualTo(organisationDefinition);
     assertThat(logicalMeters.findById(meter2.id).get().meterDefinition)
       .isEqualTo(SYSTEM_METER_DEFINITION);
   }
@@ -261,10 +295,10 @@ public class MeterDefinitionUseCasesTest {
     MeterDefinition saved = meterDefinitions.save(md);
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_USER);
 
-    MeterDefinition updateMeterDefintion = saved.toBuilder()
+    MeterDefinition updateMeterDefinition = saved.toBuilder()
       .name(UUID.randomUUID().toString())
       .build();
-    assertThatThrownBy(() -> useCases.update(updateMeterDefintion))
+    assertThatThrownBy(() -> useCases.update(updateMeterDefinition))
       .isInstanceOf(Unauthorized.class).hasMessageContaining("User is not authorized to save");
   }
 
@@ -274,10 +308,10 @@ public class MeterDefinitionUseCasesTest {
     MeterDefinition saved = meterDefinitions.save(md);
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_ADMIN_USER);
 
-    MeterDefinition updateMeterDefintion = saved.toBuilder().medium(newMedium()).build();
-    useCases.update(updateMeterDefintion);
+    MeterDefinition updateMeterDefinition = saved.toBuilder().medium(newMedium()).build();
+    useCases.update(updateMeterDefinition);
 
-    assertThat(meterDefinitions.findById(md.id).get().name).isEqualTo(updateMeterDefintion.name);
+    assertThat(meterDefinitions.findById(md.id).get().name).isEqualTo(updateMeterDefinition.name);
   }
 
   @Test
@@ -286,10 +320,10 @@ public class MeterDefinitionUseCasesTest {
     MeterDefinition saved = meterDefinitions.save(md);
     MeterDefinitionUseCases useCases = newUseCases(ELVACO_SUPER_ADMIN_USER);
 
-    MeterDefinition updateMeterDefintion = saved.toBuilder().medium(newMedium()).build();
-    useCases.update(updateMeterDefintion);
+    MeterDefinition updateMeterDefinition = saved.toBuilder().medium(newMedium()).build();
+    useCases.update(updateMeterDefinition);
 
-    assertThat(meterDefinitions.findById(md.id).get().name).isEqualTo(updateMeterDefintion.name);
+    assertThat(meterDefinitions.findById(md.id).get().name).isEqualTo(updateMeterDefinition.name);
   }
 
   @Test
@@ -301,10 +335,10 @@ public class MeterDefinitionUseCasesTest {
       DisplayMode.READOUT,
       Units.PERCENT
     );
-    MeterDefinition updateMeterDefintion = SYSTEM_METER_DEFINITION.toBuilder()
+    MeterDefinition updateMeterDefinition = SYSTEM_METER_DEFINITION.toBuilder()
       .quantities(Set.of(displayQuantity))
       .build();
-    useCases.update(updateMeterDefintion);
+    useCases.update(updateMeterDefinition);
 
     assertThat(meterDefinitions.findById(SYSTEM_METER_DEFINITION.id)
       .get().quantities).containsExactly(displayQuantity);
@@ -382,25 +416,25 @@ public class MeterDefinitionUseCasesTest {
     meterDefinitions.save(md1);
     meterDefinitions.save(md2);
 
-    var meterWithDefintion1 = LogicalMeter.builder()
+    var meterWithDefinition1 = LogicalMeter.builder()
       .organisationId(md1.organisation.id)
       .meterDefinition(md1)
       .build();
-    var meterWithDefintion2 = LogicalMeter.builder()
+    var meterWithDefinition2 = LogicalMeter.builder()
       .organisationId(md2.organisation.id)
       .meterDefinition(md2)
       .build();
     LogicalMeters mockLogicalMeters = new MockLogicalMeters(asList(
-      meterWithDefintion1,
-      meterWithDefintion2
+      meterWithDefinition1,
+      meterWithDefinition2
     ));
     var useCases = newUseCases(ELVACO_SUPER_ADMIN_USER, null, mockLogicalMeters);
 
     useCases.deleteById(md1.id);
 
-    assertThat(mockLogicalMeters.findById(meterWithDefintion1.id).get().meterDefinition)
+    assertThat(mockLogicalMeters.findById(meterWithDefinition1.id).get().meterDefinition)
       .isEqualTo(SYSTEM_METER_DEFINITION);
-    assertThat(mockLogicalMeters.findById(meterWithDefintion2.id).get().meterDefinition)
+    assertThat(mockLogicalMeters.findById(meterWithDefinition2.id).get().meterDefinition)
       .isEqualTo(md2);
   }
 
