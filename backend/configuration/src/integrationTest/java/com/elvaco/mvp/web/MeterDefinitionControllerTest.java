@@ -17,6 +17,7 @@ import com.elvaco.mvp.testdata.Url;
 import com.elvaco.mvp.web.dto.DisplayQuantityDto;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MediumDto;
 import com.elvaco.mvp.web.dto.MeterDefinitionDto;
 import com.elvaco.mvp.web.dto.QuantityDto;
@@ -123,13 +124,12 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void create_subOrganisationsCannotOwnDefinitions() {
     Organisation subOrg = given(subOrganisation());
 
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.WATER);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
       OrganisationDtoMapper.toDto(subOrg),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.WATER)),
       true
     );
 
@@ -145,13 +145,12 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void create_adminCreatesMeterDefinition() {
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.WATER);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.WATER)),
       false
     );
 
@@ -173,13 +172,12 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING)
       .organisationId(context().organisationId()));
 
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)),
       true
     );
 
@@ -195,13 +193,12 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void create_userCannotCreateDefinition() {
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.WATER);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.WATER)),
       true
     );
 
@@ -218,13 +215,12 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   public void create_cannotCreateDefinitionForOtherOrganisation() {
     Organisation otherOrganisation = given(organisation());
 
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.WATER);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Collections.emptySet(),
       OrganisationDtoMapper.toDto(otherOrganisation),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.WATER)),
       true
     );
 
@@ -239,7 +235,6 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void create_withDisplayQuantities() {
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.ELECTRICITY);
     DisplayQuantityDto displayQuantityDto = new DisplayQuantityDto(
       Quantity.POWER.name,
       false,
@@ -251,7 +246,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
       "test",
       Set.of(displayQuantityDto),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.ELECTRICITY)),
       false
     );
 
@@ -275,14 +270,51 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void create_measurementsUsesNewMeterDefinition() {
+    var start = context().now();
+    var logicalMeter = given(logicalMeter()
+      .meterDefinition(MeterDefinition.DEFAULT_DISTRICT_HEATING));
+    given(series(logicalMeter, Quantity.ENERGY, start, 2000, 4000, 12000));
+    given(series(logicalMeter, Quantity.POWER, start, 1, 5));
+
+    String url = "/measurements?quantity=Energy,Power"
+      + "&logicalMeterId=" + logicalMeter.id
+      + "&after=" + start
+      + "&before=" + start.plusHours(1);
+    var measurementSeriesDtos = asUser().getList(url, MeasurementSeriesDto.class).getBody();
+
+    assertThat(measurementSeriesDtos)
+      .flatExtracting(dto -> dto.values)
+      .extracting(value -> value.value)
+      .containsOnly(2000.0, 8000.0, 1.0, 5.0);
+
+    MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
+      null,
+      "Energy as MWh",
+      Set.of(new DisplayQuantityDto(Quantity.ENERGY.name, true, Units.MEGAWATT_HOURS, 1)),
+      OrganisationDtoMapper.toDto(context().defaultOrganisation()),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING)),
+      true
+    );
+
+    asAdmin().post(meterDefinitionsUrl(), meterDefinition, MeterDefinitionDto.class);
+
+    measurementSeriesDtos = asUser().getList(url, MeasurementSeriesDto.class).getBody();
+
+    assertThat(measurementSeriesDtos)
+      .flatExtracting(dto -> dto.values)
+      .extracting(value -> value.value)
+      .containsExactly(2.0, 8.0);
+  }
+
+  @Test
   public void create_withInvalidDisplayQuantityName() {
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.ELECTRICITY);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Set.of(new DisplayQuantityDto("Not a valid quantity name", false, Units.WATT, 3)),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.ELECTRICITY)),
       true
     );
 
@@ -297,13 +329,12 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
 
   @Test
   public void create_withInvalidDisplayQuantityDecimals() {
-    Medium medium = mediumProvider.getByNameOrThrow(Medium.ELECTRICITY);
     MeterDefinitionDto meterDefinition = new MeterDefinitionDto(
       null,
       "test",
       Set.of(new DisplayQuantityDto(Quantity.POWER.name, false, Units.WATT, -1)),
       OrganisationDtoMapper.toDto(context().defaultOrganisation()),
-      new IdNamedDto(medium.id.toString(), medium.name),
+      getMediumDto(mediumProvider.getByNameOrThrow(Medium.ELECTRICITY)),
       true
     );
 
@@ -472,6 +503,10 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
     List<Quantity> all = quantityProvider.all();
     assertThat(quantityDtos).extracting(dto -> dto.name)
       .containsExactlyElementsOf(all.stream().map(m -> m.name).collect(toList()));
+  }
+
+  private IdNamedDto getMediumDto(Medium medium) {
+    return new IdNamedDto(medium.id.toString(), medium.name);
   }
 
   private static Url meterDefinitionsUrl() {
