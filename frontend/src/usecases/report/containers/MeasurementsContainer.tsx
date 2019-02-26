@@ -15,7 +15,7 @@ import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 import {addAllToReport} from '../reportActions';
 import {LegendItem} from '../reportModels';
-import {getLegendItems, getMeasurementParameters} from '../reportSelectors';
+import {getHiddenLines, getLegendItems, getMeasurementParameters} from '../reportSelectors';
 
 export interface StateToProps {
   hiddenLines: uuid[];
@@ -37,13 +37,13 @@ export interface DispatchToProps {
 const mapStateToProps = (rootState: RootState): StateToProps => {
   const {report, measurement, userSelection: {userSelection}} = rootState;
   return ({
-    hiddenLines: report.hiddenLines,
+    hasMeters: getLegendItems(report).length > 0,
+    hasContent: hasMeasurements(measurement.measurementResponse),
+    hiddenLines: getHiddenLines(report),
     measurement,
     parameters: getMeterParameters({userSelection}),
     requestParameters: getMeasurementParameters(rootState),
     userSelectionId: getUserSelectionId(rootState.userSelection),
-    hasMeters: getLegendItems(report).length > 0,
-    hasContent: hasMeasurements(measurement.measurementResponse)
   });
 };
 

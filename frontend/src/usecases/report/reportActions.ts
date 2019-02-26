@@ -12,11 +12,10 @@ import {LegendItem, SelectedReportPayload} from './reportModels';
 import {getLegendItems, getSelectedReportPayload} from './reportSelectors';
 
 export const SELECT_RESOLUTION = 'SELECT_RESOLUTION';
-export const TOGGLE_LINE = 'TOGGLE_LINE';
 
 export const setSelectedItems = createStandardAction('SET_SELECTED_ITEMS')<SelectedReportPayload>();
 export const selectResolution = payloadActionOf<TemporalResolution>(SELECT_RESOLUTION);
-export const toggleLine = payloadActionOf<uuid>(TOGGLE_LINE);
+export const toggleLine = createStandardAction('TOGGLE_LINE')<uuid>();
 export const hideAllByMedium = createStandardAction('HIDE_ALL_BY_MEDIUM')<Medium>();
 export const showHideMediumRows = createStandardAction('SHOW_HIDE_MEDIUM_ROWS')<Medium>();
 export const removeAllByMedium = createStandardAction('REMOVE_ALL_BY_MEDIUM')<Medium>();

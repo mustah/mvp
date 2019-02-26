@@ -49,9 +49,10 @@ const renderGroupHeaderTds = (props: RowProps, medium: Medium) => {
     const mediumQuantities = allQuantities[medium];
     if (mediumQuantities.some((q) => q === quantity)) {
       const checked = index < 1 || mediumQuantities.length === 1;
+      const iconStyle = {fill: colorizeMeters(quantity)};
       return (
         <td key={key} className="check-box-td">
-          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
+          <Checkbox checked={checked} onCheck={noop} iconStyle={iconStyle}/>
         </td>
       );
     } else {
@@ -60,11 +61,12 @@ const renderGroupHeaderTds = (props: RowProps, medium: Medium) => {
   });
   const removeAll = () => removeAllByMedium(medium);
   const hideAll = () => hideAllByMedium(medium);
+  const isAllHidden = !(!mediumViewOptions[medium].isAllLinesHidden);
   tds.push(
     <MediumTd
-      key={`group-header-last-td-${medium}`}
+      key={`group-header-last-td-${medium}-${isAllHidden}`}
       hideAll={hideAll}
-      isAllHidden={!(!mediumViewOptions[medium].isAllLinesHidden)}
+      isAllHidden={isAllHidden}
       removeAll={removeAll}
     />
   );

@@ -5,6 +5,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {MeasurementParameters} from '../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
+import {uuid} from '../../types/Types';
 import {LegendItem, MediumViewOptions, Report, ReportState, SelectedReportPayload} from './reportModels';
 
 const orderedMedia: Medium[] = Object.keys(allQuantities) as Medium[];
@@ -37,6 +38,11 @@ const selectedReportPayloadCombiner = (legendItems: LegendItem[]): SelectedRepor
 export const getMeterPage = (state: ReportState): Report => state.savedReports.meterPage;
 export const getMediumViewOptions = (state: ReportState): MediumViewOptions => getMeterPage(state).mediumViewOptions;
 export const getLegendItems = (state: ReportState): LegendItem[] => getMeterPage(state).meters;
+export const getHiddenLines =
+  createSelector<ReportState, LegendItem[], uuid[]>(
+    getLegendItems,
+    (items) => items.filter(it => it.isHidden).map(({id}) => id)
+  );
 
 export const getSelectedReportPayload =
   createSelector<LegendItem[], LegendItem[], SelectedReportPayload>(

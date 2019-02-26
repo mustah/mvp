@@ -15,13 +15,14 @@ describe('reportActions', () => {
 
   let initialState: PartialRootState;
 
-  const gasLegendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas};
-  const districtHeatingLegendItem: LegendItem = {id: 5, label: '5', medium: Medium.districtHeating};
-  const unknownLegendItem: LegendItem = {id: 9, label: '9', medium: Medium.unknown};
+  const isHidden = false;
+  const gasLegendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas, isHidden};
+  const districtHeatingLegendItem: LegendItem = {id: 5, label: '5', medium: Medium.districtHeating, isHidden};
+  const unknownLegendItem: LegendItem = {id: 9, label: '9', medium: Medium.unknown, isHidden};
 
   const items: LegendItem[] = [
-    {id: 1, label: 'a', medium: Medium.gas},
-    {id: 2, label: 'b', medium: Medium.water}
+    {id: 1, label: 'a', medium: Medium.gas, isHidden},
+    {id: 2, label: 'b', medium: Medium.water, isHidden}
   ];
 
   const savedReports: ObjectsById<Report> = savedReportsOf(items);
@@ -154,7 +155,7 @@ describe('reportActions', () => {
     it('excludes meters with unknown medium', () => {
       const store = configureMockStore(initialState);
 
-      const payloadItems: LegendItem[] = [...items, {id: 3, label: 'u', medium: Medium.unknown}];
+      const payloadItems: LegendItem[] = [...items, {id: 3, label: 'u', medium: Medium.unknown, isHidden}];
 
       store.dispatch(addAllToReport(payloadItems));
 
@@ -236,7 +237,7 @@ describe('reportActions', () => {
 
     it('saves to current report', () => {
       const store = configureMockStore({...initialState});
-      const items: LegendItem[] = [{id: 1, label: 'a', medium: Medium.electricity}];
+      const items: LegendItem[] = [{id: 1, label: 'a', medium: Medium.electricity, isHidden}];
 
       store.dispatch(addAllToReport(items));
 

@@ -1,7 +1,6 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Period, TemporalResolution} from '../../components/dates/dateModels';
-import {toggle} from '../../helpers/collections';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
@@ -14,7 +13,7 @@ import {
   setReportTimePeriod,
   setSelectedItems,
   showHideMediumRows,
-  TOGGLE_LINE
+  toggleLine,
 } from './reportActions';
 import {LegendItem, MediumViewOptions, Report, ReportState, SelectedReportPayload, ViewOption} from './reportModels';
 import {getLegendItems, getMediumViewOptions} from './reportSelectors';
@@ -30,7 +29,6 @@ export const mediumViewOptions: MediumViewOptions = {
 };
 
 export const initialState: ReportState = {
-  hiddenLines: [],
   resolution: TemporalResolution.hour,
   savedReports: {
     meterPage: {
@@ -66,35 +64,41 @@ const savedReports = (state: ReportState, meters: LegendItem[]): ObjectsById<Rep
   }
 );
 
-const toggleHiddenLines = (state: ReportState, medium: Medium): ObjectsById<Report> => {
-  const mediumViewOptions: MediumViewOptions = getMediumViewOptions(state);
-  const option = mediumViewOptions[medium];
-  return ({
-      ...state.savedReports,
-      ['meterPage']: {
-        ...state.savedReports.meterPage,
-        mediumViewOptions: {
-          ...mediumViewOptions,
-          [medium]: {...option, isAllLinesHidden: !option.isAllLinesHidden}
+const toggleHiddenLines = (savedReports: ObjectsById<Report>, medium: Medium): ObjectsById<Report> => {
+  if (savedReports.meterPage.meters.filter(it => it.medium === medium).length > 0) {
+    const mediumViewOptions: MediumViewOptions = savedReports.meterPage.mediumViewOptions;
+    const option = mediumViewOptions[medium];
+    return ({
+        ...savedReports,
+        ['meterPage']: {
+          ...savedReports.meterPage,
+          mediumViewOptions: {
+            ...mediumViewOptions,
+            [medium]: {...option, isAllLinesHidden: !option.isAllLinesHidden}
+          }
         }
       }
-    }
-  );
+    );
+  }
+  return savedReports;
 };
 
-const toggleLine = (state: ReportState, {payload}: Action<uuid>): ReportState => ({
+const toggleLegendItemVisibility = (state: ReportState, id: uuid): ReportState => ({
   ...state,
-  hiddenLines: toggle(payload, state.hiddenLines)
+  savedReports: savedReports(
+    state,
+    getLegendItems(state).map(it => it.id === id ? {...it, isHidden: !it.isHidden} : it)
+  )
 });
 
-const toggleShowHideAllByMedium = (action: ActionTypes, state: ReportState): ReportState => {
+const toggleShowHideAllByMedium = (state: ReportState, action: ActionTypes): ReportState => {
   const medium: Medium = getMedium(action);
   const isAllLinesHidden = getMediumViewOption(state, medium).isAllLinesHidden;
-  const meterIds: uuid[] = getLegendItemsMatchingMedium(state, medium).map(({id}) => id);
+  const meters: LegendItem[] = getLegendItemsMatchingMedium(state, medium)
+    .map(it => ({...it, isHidden: !isAllLinesHidden}));
   return {
     ...state,
-    hiddenLines: isAllLinesHidden ? state.hiddenLines.filter(id => !meterIds.includes(id)) : [...meterIds],
-    savedReports: meterIds.length ? toggleHiddenLines(state, medium) : state.savedReports,
+    savedReports: toggleHiddenLines(savedReports(state, meters), medium),
   };
 };
 
@@ -119,14 +123,13 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
         ...state,
         resolution: (action as Action<TemporalResolution>).payload,
       };
-    case TOGGLE_LINE:
-      return toggleLine(state, action as Action<uuid>);
+    case getType(toggleLine):
+      return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
     case getType(hideAllByMedium):
-      return toggleShowHideAllByMedium(action, state);
+      return toggleShowHideAllByMedium(state, action);
     case getType(removeAllByMedium):
       return {
         ...state,
-        hiddenLines: [],
         savedReports: savedReports(state, getLegendItemsNotMatchingMedium(state, getMedium(action))),
       };
     case getType(showHideMediumRows):

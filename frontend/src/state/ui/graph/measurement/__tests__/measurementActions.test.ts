@@ -62,6 +62,7 @@ describe('measurementActions', () => {
         id,
         medium,
         label,
+        isHidden: false,
       });
     };
 

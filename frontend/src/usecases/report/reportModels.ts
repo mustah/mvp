@@ -9,6 +9,7 @@ export interface LegendItem {
   id: uuid;
   label: string;
   medium: Medium;
+  isHidden: boolean;
   isRowExpanded?: boolean;
 }
 
@@ -24,7 +25,6 @@ export interface Report extends Identifiable {
 }
 
 export interface ReportState {
-  hiddenLines: uuid[];
   resolution: TemporalResolution;
   savedReports: ObjectsById<Report>;
   timePeriod: SelectionInterval;

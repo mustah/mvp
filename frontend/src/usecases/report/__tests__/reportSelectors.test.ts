@@ -13,12 +13,14 @@ describe('reportSelectors', () => {
       id: 1,
       label: 'extId1',
       medium: Medium.water,
+      isHidden: false,
     };
 
     const meter2: LegendItem = {
       id: 2,
       label: 'extId2',
       medium: Medium.gas,
+      isHidden: false,
     };
 
     it('has no selected items', () => {

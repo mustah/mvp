@@ -18,11 +18,15 @@ import {
 
 import {LegendItem, Report, ReportState, SelectedReportPayload, ViewOption} from '../reportModels';
 import {initialState, report} from '../reportReducer';
-import {getMediumViewOptions} from '../reportSelectors';
+import {getHiddenLines, getLegendItems, getMediumViewOptions} from '../reportSelectors';
 
 describe('reportReducer', () => {
 
-  const items = [{id: 1, label: 'a', medium: Medium.gas}, {id: 2, label: 'b', medium: Medium.water}];
+  const isHidden = false;
+  const items: LegendItem[] = [
+    {id: 1, label: 'a', medium: Medium.gas, isHidden},
+    {id: 2, label: 'b', medium: Medium.water, isHidden}
+  ];
   const gasMeter: LegendItem = items[0];
   const waterMeter: LegendItem = items[1];
 
@@ -99,7 +103,6 @@ describe('reportReducer', () => {
       const end: Date = momentFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
-      const items = [{id: 1, label: 'a', medium: Medium.gas}, {id: 2, label: 'b', medium: Medium.water}];
       const payload: SelectedReportPayload = {
         items,
         quantities: [],
@@ -120,24 +123,20 @@ describe('reportReducer', () => {
   describe('toggleLine', () => {
 
     it('should add hide legend item id', () => {
-      const state: ReportState = report(initialState, toggleLine(2));
+      const state: ReportState = {...initialState, savedReports};
+      const nextState: ReportState = report(state, toggleLine(gasMeter.id));
 
-      const expected: ReportState = {...initialState, hiddenLines: [2]};
-      expect(state).toEqual(expected);
+      const expected: LegendItem[] = [{...gasMeter, isHidden: true}, waterMeter];
+      expect(getLegendItems(nextState)).toEqual(expected);
     });
 
     it('should remove existing hidden legend item id ', () => {
-      const state: ReportState = report({...initialState, hiddenLines: [2]}, toggleLine(2));
+      const meters: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: true}];
+      const state: ReportState = {...initialState, savedReports: savedReportsOf(meters)};
+      const nextState: ReportState = report(state, toggleLine(gasMeter.id));
 
-      const expected: ReportState = {...initialState, hiddenLines: []};
-      expect(state).toEqual(expected);
-    });
-
-    it('appends to hidden legend items', () => {
-      const state: ReportState = report({...initialState, hiddenLines: [2]}, toggleLine(3));
-
-      const expected: ReportState = {...initialState, hiddenLines: [2, 3]};
-      expect(state).toEqual(expected);
+      const expected: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: false}];
+      expect(getLegendItems(nextState)).toEqual(expected);
     });
   });
 
@@ -183,33 +182,40 @@ describe('reportReducer', () => {
 
       const nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
 
-      expect(nextState.hiddenLines).toEqual([gasMeter.id]);
+      const expected: LegendItem[] = [{...gasMeter, isHidden: true}];
+      expect(getLegendItems(nextState)).toEqual(expected);
     });
 
     it('hides all lines for given medium', () => {
-      const state: ReportState = {...initialState, savedReports};
+      const state: ReportState = {
+        ...initialState,
+        savedReports: savedReportsOf([gasMeter, {...gasMeter, id: 8}])
+      };
 
       const nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
 
-      expect(nextState.hiddenLines).toEqual([gasMeter.id]);
+      const expected: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter, id: 8, isHidden: true}];
+      expect(getLegendItems(nextState)).toEqual(expected);
     });
 
     it('can show all lines again', () => {
+      const gasMeter2 = {...gasMeter, id: 5};
       const state: ReportState = {
         ...initialState,
-        savedReports: savedReportsOf([...items, {...gasMeter, id: 5}])
+        savedReports: savedReportsOf([...items, gasMeter2])
       };
 
       let nextState: ReportState = report(state, hideAllByMedium(Medium.gas));
 
       let expected: ViewOption = {isAllLinesHidden: true};
-      expect(nextState.hiddenLines).toEqual([1, 5]);
+      const expectedGasItems: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter2, isHidden: true}];
+      expect(getLegendItems(nextState)).toEqual(expectedGasItems);
       expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
 
       nextState = report(nextState, hideAllByMedium(Medium.gas));
 
       expected = {isAllLinesHidden: false};
-      expect(nextState.hiddenLines).toEqual([]);
+      expect(getHiddenLines(nextState)).toEqual([]);
       expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
     });
   });
@@ -241,11 +247,7 @@ describe('reportReducer', () => {
     });
 
     it('removes all selected and hidden list items', () => {
-      const state: ReportState = {
-        ...initialState,
-        hiddenLines: items.map((it) => it.id),
-        savedReports,
-      };
+      const state: ReportState = {...initialState, savedReports};
 
       const nextState: ReportState = report(state, removeAllByMedium(Medium.water));
 
@@ -253,11 +255,7 @@ describe('reportReducer', () => {
     });
 
     it('removes all one for each medium', () => {
-      const state: ReportState = {
-        ...initialState,
-        hiddenLines: items.map((it) => it.id),
-        savedReports,
-      };
+      const state: ReportState = {...initialState, savedReports};
 
       let nextState: ReportState = report(state, removeAllByMedium(Medium.gas));
       nextState = report(nextState, removeAllByMedium(Medium.water));

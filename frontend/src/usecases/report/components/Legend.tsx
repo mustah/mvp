@@ -7,7 +7,6 @@ import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
 import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
-import {isDefined} from '../../../helpers/commonHelpers';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
@@ -37,7 +36,6 @@ const state: State = {group: [{field: 'medium'}]};
 export const Legend = ({
   deleteItem,
   hideAllByMedium,
-  hiddenLines,
   isVisible,
   legendItems,
   mediumViewOptions,
@@ -49,15 +47,14 @@ export const Legend = ({
   const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
   const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
 
-  const renderIconButtonsCell = ({dataItem: {id}}: GridCellProps) => {
-    const checked = isDefined(hiddenLines.find((it) => it === id));
+  const renderIconButtonsCell = ({dataItem: {id, isHidden}}: GridCellProps) => {
     const onDeleteItem = () => deleteItem(id);
     const onToggleItem = () => toggleLine(id);
     return (
       <td className="icons">
         <RowLeft>
           <RowRight>
-            <ButtonVisibility key={`checked-${id}-${checked}`} onClick={onToggleItem} checked={checked}/>
+            <ButtonVisibility key={`checked-${id}-${isHidden}`} onClick={onToggleItem} checked={isHidden}/>
           </RowRight>
           <RowRight>
             <ButtonDelete key={`delete-item-${id}`} onClick={onDeleteItem}/>

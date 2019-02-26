@@ -3,4 +3,4 @@ import {getMediumType} from '../../../state/ui/graph/measurement/measurementMode
 import {LegendItem} from '../reportModels';
 
 export const toLegendItem = ({id, facility, medium}: Meter): LegendItem =>
-  ({id, label: facility as string, medium: getMediumType(medium)});
+  ({id, label: facility as string, medium: getMediumType(medium), isHidden: false});

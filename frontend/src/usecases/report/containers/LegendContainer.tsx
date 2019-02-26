@@ -30,11 +30,10 @@ export interface OwnProps extends Visible {
 const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
 
 const mapStateToProps = ({report}: RootState): StateToProps => {
-  const {hiddenLines, resolution, savedReports} = report;
+  const {resolution, savedReports} = report;
   const legendItems = getLegendItems(report);
   return ({
     legendItems,
-    hiddenLines,
     hasContent: legendItems.length > 0,
     mediumViewOptions: getMediumViewOptions(report),
     resolution,
