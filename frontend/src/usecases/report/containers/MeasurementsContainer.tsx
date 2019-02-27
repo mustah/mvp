@@ -4,10 +4,12 @@ import {RootState} from '../../../reducers/rootReducer';
 import {
   exportToExcelSuccess,
   fetchMeasurements,
-  measurementClearError,
-  MeasurementParameters
-} from '../../../state/ui/graph/measurement/measurementActions';
-import {FetchMeasurements, MeasurementState} from '../../../state/ui/graph/measurement/measurementModels';
+  measurementClearError} from '../../../state/ui/graph/measurement/measurementActions';
+import {
+  FetchMeasurements,
+  MeasurementParameters,
+  MeasurementState
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
@@ -15,7 +17,7 @@ import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 import {addAllToReport} from '../reportActions';
 import {LegendItem} from '../reportModels';
-import {getHiddenLines, getLegendItems, getMeasurementParameters} from '../reportSelectors';
+import {getHiddenLines, getMeasurementParameters, hasLegendItems} from '../reportSelectors';
 
 export interface StateToProps {
   hiddenLines: uuid[];
@@ -37,7 +39,7 @@ export interface DispatchToProps {
 const mapStateToProps = (rootState: RootState): StateToProps => {
   const {report, measurement, userSelection: {userSelection}} = rootState;
   return ({
-    hasMeters: getLegendItems(report).length > 0,
+    hasMeters: hasLegendItems(report),
     hasContent: hasMeasurements(measurement.measurementResponse),
     hiddenLines: getHiddenLines(report),
     measurement,

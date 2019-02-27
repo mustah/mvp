@@ -40,9 +40,10 @@ export const Legend = ({
   legendItems,
   mediumViewOptions,
   removeAllByMedium,
-  toggleLine,
   showHideLegend,
   showHideMediumRows,
+  toggleLine,
+  toggleQuantityByMedium,
 }: DispatchToProps & StateToProps & OwnProps) => {
   const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
   const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
@@ -93,7 +94,8 @@ export const Legend = ({
     columnQuantities,
     showHideAllByMedium,
     mediumViewOptions,
-    removeAllByMedium
+    removeAllByMedium,
+    toggleQuantityByMedium
   };
 
   return (

@@ -9,7 +9,7 @@ import {OnSelectResolution, SelectionInterval} from '../../../state/user-selecti
 import {Callback, CallbackWith, OnClick} from '../../../types/Types';
 import {Toolbar} from '../components/Toolbar';
 import {selectResolution, setReportTimePeriod} from '../reportActions';
-import {getLegendItems} from '../reportSelectors';
+import {hasLegendItems} from '../reportSelectors';
 
 interface StateToProps {
   hasLegendItems: boolean;
@@ -40,7 +40,7 @@ const mapStateToProps = ({
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
   ({
-    hasLegendItems: getLegendItems(report).length > 0,
+    hasLegendItems: hasLegendItems(report),
     hasMeasurements: measurements.length > 0,
     isFetching,
     isExportingToExcel,

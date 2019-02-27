@@ -1,31 +1,33 @@
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Period, TemporalResolution} from '../../components/dates/dateModels';
+import {toggle} from '../../helpers/collections';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Action, uuid} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';
 import {
+  addLegendItems,
   removeAllByMedium,
   selectResolution,
   setReportTimePeriod,
-  setSelectedItems,
   showHideAllByMedium,
   showHideMediumRows,
   toggleLine,
+  toggleQuantityByMedium,
 } from './reportActions';
-import {LegendItem, MediumViewOptions, Report, ReportState, SelectedReportPayload, ViewOption} from './reportModels';
-import {getLegendItems, getMediumViewOptions} from './reportSelectors';
+import {LegendItem, MediumViewOptions, QuantityMedium, Report, ReportState, ViewOptions} from './reportModels';
+import {getLegendItems, getMediumViewOptions, getViewOptions} from './reportSelectors';
 
 export const mediumViewOptions: MediumViewOptions = {
-  [Medium.districtHeating]: {},
-  [Medium.gas]: {},
-  [Medium.water]: {},
-  [Medium.hotWater]: {},
-  [Medium.electricity]: {},
-  [Medium.roomSensor]: {},
-  [Medium.unknown]: {},
+  [Medium.districtHeating]: {quantities: []},
+  [Medium.gas]: {quantities: []},
+  [Medium.water]: {quantities: []},
+  [Medium.hotWater]: {quantities: []},
+  [Medium.electricity]: {quantities: []},
+  [Medium.roomSensor]: {quantities: []},
+  [Medium.unknown]: {quantities: []},
 };
 
 export const initialState: ReportState = {
@@ -41,8 +43,6 @@ export const initialState: ReportState = {
     period: Period.latest,
   },
 };
-
-const getMediumViewOption = (state: ReportState, medium: Medium): ViewOption => getMediumViewOptions(state)[medium];
 
 const getMedium = (action: ActionTypes): Medium => (action as Action<Medium>).payload;
 
@@ -67,20 +67,39 @@ const savedReports = (state: ReportState, meters: LegendItem[]): ObjectsById<Rep
 const toggleHiddenLines = (savedReports: ObjectsById<Report>, medium: Medium): ObjectsById<Report> => {
   if (savedReports.meterPage.meters.filter(it => it.medium === medium).length > 0) {
     const mediumViewOptions: MediumViewOptions = savedReports.meterPage.mediumViewOptions;
-    const option = mediumViewOptions[medium];
+    const viewOptions: ViewOptions = mediumViewOptions[medium];
     return ({
         ...savedReports,
         ['meterPage']: {
           ...savedReports.meterPage,
           mediumViewOptions: {
             ...mediumViewOptions,
-            [medium]: {...option, isAllLinesHidden: !option.isAllLinesHidden}
+            [medium]: {...viewOptions, isAllLinesHidden: !viewOptions.isAllLinesHidden}
           }
         }
       }
     );
   }
   return savedReports;
+};
+
+const toggleQuantityMedium = (state: ReportState, {medium, quantity}: QuantityMedium): ObjectsById<Report> => {
+  const mediumViewOptions = getMediumViewOptions(state);
+  const viewOptions: ViewOptions = mediumViewOptions[medium];
+  const quantities = toggle(quantity, viewOptions.quantities);
+  const meters = getLegendItems(state).map(it => it.medium === medium ? {...it, quantities} : it);
+  return ({
+      ...state.savedReports,
+      ['meterPage']: {
+        ...state.savedReports.meterPage,
+        meters,
+        mediumViewOptions: {
+          ...mediumViewOptions,
+          [medium]: {...viewOptions, quantities}
+        }
+      }
+    }
+  );
 };
 
 const toggleLegendItemVisibility = (state: ReportState, id: uuid): ReportState => ({
@@ -92,7 +111,7 @@ const toggleLegendItemVisibility = (state: ReportState, id: uuid): ReportState =
 });
 
 const showHideAll = (state: ReportState, medium: Medium): ReportState => {
-  const isAllLinesHidden = getMediumViewOption(state, medium).isAllLinesHidden;
+  const isAllLinesHidden = getViewOptions(state, medium).isAllLinesHidden;
   const meters: LegendItem[] = getLegendItemsMatchingMedium(state, medium)
     .map(it => ({...it, isHidden: !isAllLinesHidden}));
   return {
@@ -102,15 +121,15 @@ const showHideAll = (state: ReportState, medium: Medium): ReportState => {
 };
 
 type ActionTypes =
-  | Action<SelectedReportPayload | string[] | uuid | TemporalResolution | SelectionInterval | Medium>
+  | Action<LegendItem[] | string[] | uuid | TemporalResolution | SelectionInterval | Medium | QuantityMedium>
   | EmptyAction<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
   switch (action.type) {
-    case getType(setSelectedItems):
+    case getType(addLegendItems):
       return {
         ...state,
-        savedReports: savedReports(state, (action as Action<SelectedReportPayload>).payload.items)
+        savedReports: savedReports(state, (action as Action<LegendItem[]>).payload)
       };
     case getType(setReportTimePeriod):
       return {
@@ -135,6 +154,11 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
       return {
         ...state,
         savedReports: savedReports(state, toggleLegendItemsRows(state, getMedium(action))),
+      };
+    case getType(toggleQuantityByMedium):
+      return {
+        ...state,
+        savedReports: toggleQuantityMedium(state, (action as Action<QuantityMedium>).payload),
       };
     case getType(logoutUser):
       return initialState;

@@ -1,5 +1,10 @@
 import {savedReportsOf} from '../../../__tests__/testDataFactory';
-import {Medium, Quantity, quantityAttributes} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  allQuantities,
+  Medium,
+  Quantity,
+  quantityAttributes
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem, ReportState} from '../reportModels';
 import {initialState} from '../reportReducer';
@@ -14,6 +19,7 @@ describe('reportSelectors', () => {
       label: 'extId1',
       medium: Medium.water,
       isHidden: false,
+      quantities: [allQuantities[Medium.water][0]]
     };
 
     const meter2: LegendItem = {
@@ -21,6 +27,7 @@ describe('reportSelectors', () => {
       label: 'extId2',
       medium: Medium.gas,
       isHidden: false,
+      quantities: [allQuantities[Medium.gas][0]]
     };
 
     it('has no selected items', () => {
@@ -64,4 +71,5 @@ describe('reportSelectors', () => {
       expect(getThresholdMedia(state)).toEqual(expected);
     });
   });
+
 });

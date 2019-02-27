@@ -7,39 +7,37 @@ import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementM
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {logoutUser} from '../../auth/authActions';
 import {
-  showHideAllByMedium,
+  addLegendItems,
   removeAllByMedium,
   selectResolution,
   setReportTimePeriod,
-  setSelectedItems,
+  showHideAllByMedium,
   showHideMediumRows,
-  toggleLine
+  toggleLine,
+  toggleQuantityByMedium
 } from '../reportActions';
 
-import {LegendItem, Report, ReportState, SelectedReportPayload, ViewOption} from '../reportModels';
+import {LegendItem, QuantityMedium, Report, ReportState, ViewOptions} from '../reportModels';
 import {initialState, report} from '../reportReducer';
-import {getHiddenLines, getLegendItems, getMediumViewOptions} from '../reportSelectors';
+import {getHiddenLines, getLegendItems, getViewOptions} from '../reportSelectors';
 
 describe('reportReducer', () => {
 
   const isHidden = false;
+  const quantities: Quantity[] = [];
+
   const items: LegendItem[] = [
-    {id: 1, label: 'a', medium: Medium.gas, isHidden},
-    {id: 2, label: 'b', medium: Medium.water, isHidden}
+    {id: 1, label: 'a', medium: Medium.gas, isHidden, quantities},
+    {id: 2, label: 'b', medium: Medium.water, isHidden, quantities}
   ];
   const gasMeter: LegendItem = items[0];
   const waterMeter: LegendItem = items[1];
+  const meter: LegendItem = {id: 4, label: 'dh', medium: Medium.districtHeating, isHidden, quantities};
 
   const savedReports: ObjectsById<Report> = savedReportsOf(items);
 
   it('makes sure the legend items is set to payload', () => {
-    const payload: SelectedReportPayload = {
-      items,
-      quantities: [Quantity.energy],
-      media: [Medium.districtHeating],
-    };
-
-    const nextState: ReportState = report(initialState, setSelectedItems(payload));
+    const nextState: ReportState = report(initialState, addLegendItems(items));
 
     const expected: ReportState = {
       ...initialState,
@@ -70,12 +68,7 @@ describe('reportReducer', () => {
   describe('change period', () => {
 
     it('should not clear selected list items when changing global period', () => {
-      const payload: SelectedReportPayload = {
-        items,
-        quantities: [],
-        media: [],
-      };
-      const state: ReportState = report(initialState, setSelectedItems(payload));
+      const state: ReportState = report(initialState, addLegendItems(items));
 
       const expected: ReportState = {...initialState, savedReports};
       expect(state).toEqual(expected);
@@ -103,15 +96,9 @@ describe('reportReducer', () => {
       const end: Date = momentFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
-      const payload: SelectedReportPayload = {
-        items,
-        quantities: [],
-        media: [],
-      };
-      const state: ReportState = report(initialState, setSelectedItems(payload));
+      const state: ReportState = report(initialState, addLegendItems(items));
 
       const expected: ReportState = {...initialState, savedReports};
-
       expect(state).toEqual(expected);
 
       const newState: ReportState = report(state, setCustomDateRange(dateRange));
@@ -205,18 +192,20 @@ describe('reportReducer', () => {
         savedReports: savedReportsOf([...items, gasMeter2])
       };
 
-      let nextState: ReportState = report(state, showHideAllByMedium(Medium.gas));
+      const medium = Medium.gas;
+      let nextState: ReportState = report(state, showHideAllByMedium(medium));
 
-      let expected: ViewOption = {isAllLinesHidden: true};
+      let expected: ViewOptions = {isAllLinesHidden: true, quantities};
       const expectedGasItems: LegendItem[] = [{...gasMeter, isHidden: true}, {...gasMeter2, isHidden: true}];
       expect(getLegendItems(nextState)).toEqual(expectedGasItems);
-      expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
+      expect(getHiddenLines(nextState)).toEqual([gasMeter.id, gasMeter2.id]);
+      expect(getViewOptions(nextState, medium)).toEqual(expected);
 
-      nextState = report(nextState, showHideAllByMedium(Medium.gas));
+      nextState = report(nextState, showHideAllByMedium(medium));
 
-      expected = {isAllLinesHidden: false};
+      expected = {isAllLinesHidden: false, quantities};
       expect(getHiddenLines(nextState)).toEqual([]);
-      expect(getMediumViewOptions(nextState)[Medium.gas]).toEqual(expected);
+      expect(getViewOptions(nextState, medium)).toEqual(expected);
     });
   });
 
@@ -296,6 +285,51 @@ describe('reportReducer', () => {
       const item1: LegendItem = {...gasMeter, isRowExpanded: true};
       const item2: LegendItem = {...gasMeter2, isRowExpanded: true};
       expect(nextState).toEqual({...initialState, savedReports: savedReportsOf([item1, waterMeter, item2])});
+    });
+
+    describe('toggleQuantityByMedium', () => {
+
+      it('selects single quantity for given medium', () => {
+        const state: ReportState = {...initialState, savedReports};
+        const payload: QuantityMedium = {medium: Medium.gas, quantity: Quantity.volume};
+
+        const nextState: ReportState = report(state, toggleQuantityByMedium(payload));
+
+        expect(getViewOptions(nextState, Medium.gas).quantities).toEqual([Quantity.volume]);
+
+        const expected: LegendItem[] = [{...gasMeter, quantities: [Quantity.volume]}, waterMeter];
+        expect(getLegendItems(nextState)).toEqual(expected);
+      });
+
+      it('selects more than one quantity for given medium', () => {
+        const state: ReportState = {...initialState, savedReports: savedReportsOf([...items, meter])};
+        const payload: QuantityMedium = {medium: Medium.districtHeating, quantity: Quantity.power};
+
+        let nextState: ReportState = report(state, toggleQuantityByMedium(payload));
+        nextState = report(nextState, toggleQuantityByMedium({...payload, quantity: Quantity.flow}));
+
+        const quantities: Quantity[] = [Quantity.power, Quantity.flow];
+        const legendItems: LegendItem[] = [...items, {...meter, quantities}];
+
+        expect(getViewOptions(nextState, Medium.districtHeating).quantities).toEqual(quantities);
+        expect(getLegendItems(nextState)).toEqual(legendItems);
+      });
+
+      it('de-selects already selected quantity for given medium', () => {
+        const state: ReportState = {...initialState, savedReports: savedReportsOf([...items, meter])};
+        const payload: QuantityMedium = {medium: Medium.districtHeating, quantity: Quantity.power};
+
+        let nextState: ReportState = report(state, toggleQuantityByMedium(payload));
+        nextState = report(nextState, toggleQuantityByMedium({...payload, quantity: Quantity.flow}));
+        nextState = report(nextState, toggleQuantityByMedium({...payload, quantity: Quantity.flow}));
+
+        const quantities: Quantity[] = [Quantity.power];
+        const legendItems: LegendItem[] = [...items, {...meter, quantities}];
+
+        expect(getViewOptions(nextState, Medium.districtHeating).quantities).toEqual(quantities);
+        expect(getLegendItems(nextState)).toEqual(legendItems);
+      });
+
     });
 
   });

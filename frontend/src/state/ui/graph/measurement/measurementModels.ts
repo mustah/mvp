@@ -1,8 +1,10 @@
 import {Overwrite} from 'utility-types';
+import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
+import {SelectedReportItems} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
-import {MeasurementParameters} from './measurementActions';
+import {SelectedParameters} from '../../../user-selection/userSelectionModels';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;
@@ -20,6 +22,13 @@ export interface MeasurementState {
 }
 
 export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;
+
+export interface MeasurementParameters {
+  resolution: TemporalResolution;
+  selectedReportItems: SelectedReportItems;
+  selectionParameters: SelectedParameters;
+}
+
 export type FetchMeasurements = (requestParameters: MeasurementParameters) => void;
 
 export interface Reading {

@@ -3,8 +3,8 @@ import thunk from 'redux-thunk';
 import {savedReportsOf} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {allQuantities, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {addAllToReport, addToReport, deleteItem, setSelectedItems} from '../reportActions';
+import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {addAllToReport, addLegendItems, addToReport, deleteItem} from '../reportActions';
 import {LegendItem, Report} from '../reportModels';
 import {initialState as report} from '../reportReducer';
 
@@ -16,13 +16,21 @@ describe('reportActions', () => {
   let initialState: PartialRootState;
 
   const isHidden = false;
-  const gasLegendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas, isHidden};
-  const districtHeatingLegendItem: LegendItem = {id: 5, label: '5', medium: Medium.districtHeating, isHidden};
-  const unknownLegendItem: LegendItem = {id: 9, label: '9', medium: Medium.unknown, isHidden};
+  const quantities: Quantity[] = [];
+
+  const gasLegendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas, isHidden, quantities};
+  const districtHeatingLegendItem: LegendItem = {
+    id: 5,
+    label: '5',
+    medium: Medium.districtHeating,
+    isHidden,
+    quantities
+  };
+  const unknownLegendItem: LegendItem = {id: 9, label: '9', medium: Medium.unknown, isHidden, quantities};
 
   const items: LegendItem[] = [
-    {id: 1, label: 'a', medium: Medium.gas, isHidden},
-    {id: 2, label: 'b', medium: Medium.water, isHidden}
+    {id: 1, label: 'a', medium: Medium.gas, isHidden, quantities},
+    {id: 2, label: 'b', medium: Medium.water, isHidden, quantities}
   ];
 
   const savedReports: ObjectsById<Report> = savedReportsOf(items);
@@ -38,13 +46,7 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(gasLegendItem));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [gasLegendItem],
-          media: [Medium.gas],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems([gasLegendItem])]);
     });
 
     it('does not fire an event if meter is already selected', () => {
@@ -63,13 +65,7 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(gasLegendItem));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [gasLegendItem],
-          media: [Medium.gas],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems([gasLegendItem])]);
     });
 
     it('does not add unknown medium meter to graph', () => {
@@ -77,9 +73,7 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(unknownLegendItem));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({items: [], media: [], quantities: []})
-      ]);
+      expect(store.getActions()).toEqual([]);
     });
 
     it('adds new id to selected with already selected non-default quantity', () => {
@@ -87,13 +81,7 @@ describe('reportActions', () => {
 
       store.dispatch(addToReport(districtHeatingLegendItem));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [districtHeatingLegendItem],
-          media: [Medium.districtHeating],
-          quantities: allQuantities[Medium.districtHeating]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems([districtHeatingLegendItem])]);
     });
 
     it('adds more than one legend item to report', () => {
@@ -103,16 +91,8 @@ describe('reportActions', () => {
       store.dispatch(addToReport(districtHeatingLegendItem));
 
       expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [gasLegendItem],
-          quantities: [Quantity.volume],
-          media: [Medium.gas]
-        }),
-        setSelectedItems({
-          items: [districtHeatingLegendItem],
-          media: [Medium.districtHeating],
-          quantities: allQuantities[Medium.districtHeating]
-        })
+        addLegendItems([gasLegendItem]),
+        addLegendItems([districtHeatingLegendItem])
       ]);
     });
 
@@ -126,13 +106,7 @@ describe('reportActions', () => {
       const newGasLegendItem: LegendItem = {...gasLegendItem, id: 2};
       store.dispatch(addToReport(newGasLegendItem));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [meters[0], {...newGasLegendItem, isRowExpanded: true}],
-          media: [Medium.gas],
-          quantities: allQuantities[Medium.gas]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems([meters[0], {...newGasLegendItem, isRowExpanded: true}])]);
     });
   });
 
@@ -143,29 +117,20 @@ describe('reportActions', () => {
 
       store.dispatch(addAllToReport(items));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items,
-          media: [Medium.gas, Medium.water],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems(items)]);
     });
 
     it('excludes meters with unknown medium', () => {
       const store = configureMockStore(initialState);
 
-      const payloadItems: LegendItem[] = [...items, {id: 3, label: 'u', medium: Medium.unknown, isHidden}];
+      const payloadItems: LegendItem[] = [
+        ...items,
+        {id: 3, label: 'u', medium: Medium.unknown, isHidden, quantities: []}
+      ];
 
       store.dispatch(addAllToReport(payloadItems));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items,
-          media: [Medium.gas, Medium.water],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems(items)]);
     });
 
     it('duplicate meter ids are removed', () => {
@@ -174,13 +139,7 @@ describe('reportActions', () => {
 
       store.dispatch(addAllToReport(payloadItems));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items,
-          media: [Medium.gas, Medium.water],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems(items)]);
     });
 
     it('appends items to report', () => {
@@ -191,13 +150,7 @@ describe('reportActions', () => {
 
       store.dispatch(addAllToReport([gasLegendItem]));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [...items, gasLegendItem],
-          media: [Medium.gas, Medium.water],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems([...items, gasLegendItem])]);
     });
 
   });
@@ -212,13 +165,7 @@ describe('reportActions', () => {
 
       store.dispatch(deleteItem(1));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items: [items[1]],
-          media: [Medium.water],
-          quantities: [Quantity.volume]
-        })
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems([items[1]])]);
     });
 
     it('does nothing when id to remove does not exist', () => {
@@ -237,17 +184,10 @@ describe('reportActions', () => {
 
     it('saves to current report', () => {
       const store = configureMockStore({...initialState});
-      const items: LegendItem[] = [{id: 1, label: 'a', medium: Medium.electricity, isHidden}];
 
       store.dispatch(addAllToReport(items));
 
-      expect(store.getActions()).toEqual([
-        setSelectedItems({
-          items,
-          media: [Medium.electricity],
-          quantities: allQuantities[Medium.electricity],
-        }),
-      ]);
+      expect(store.getActions()).toEqual([addLegendItems(items)]);
     });
   });
 });

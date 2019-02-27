@@ -11,13 +11,15 @@ export interface LegendItem {
   medium: Medium;
   isHidden: boolean;
   isRowExpanded?: boolean;
+  quantities: Quantity[];
 }
 
-export interface ViewOption {
+export interface ViewOptions {
   isAllLinesHidden?: boolean;
+  quantities: Quantity[];
 }
 
-export type MediumViewOptions = { [medium in Medium]: ViewOption };
+export type MediumViewOptions = { [medium in Medium]: ViewOptions };
 
 export interface Report extends Identifiable {
   meters: LegendItem[];
@@ -74,8 +76,11 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-export interface SelectedReportPayload {
-  items: LegendItem[];
-  media: Medium[];
-  quantities: Quantity[];
+export interface SelectedReportItems {
+  meters: LegendItem[];
+}
+
+export interface QuantityMedium {
+  medium: Medium;
+  quantity: Quantity;
 }

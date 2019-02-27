@@ -3,10 +3,11 @@ import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import {
+  addLegendItems,
   removeAllByMedium,
   selectResolution,
   setReportTimePeriod,
-  setSelectedItems
+  toggleQuantityByMedium
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
@@ -67,8 +68,9 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
     case MEASUREMENT_CLEAR_ERROR:
     case getType(selectResolution):
     case getType(setReportTimePeriod):
-    case getType(setSelectedItems):
+    case getType(addLegendItems):
     case getType(removeAllByMedium):
+    case getType(toggleQuantityByMedium):
     case SEARCH:
       return initialState;
     default:

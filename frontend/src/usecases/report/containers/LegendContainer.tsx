@@ -6,9 +6,16 @@ import {RootState} from '../../../reducers/rootReducer';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
-import {deleteItem, showHideAllByMedium, removeAllByMedium, showHideMediumRows, toggleLine} from '../reportActions';
-import {LegendItem, MediumViewOptions, ReportState} from '../reportModels';
-import {getLegendItems, getMediumViewOptions} from '../reportSelectors';
+import {
+  deleteItem,
+  removeAllByMedium,
+  showHideAllByMedium,
+  showHideMediumRows,
+  toggleLine,
+  toggleQuantityByMedium
+} from '../reportActions';
+import {LegendItem, MediumViewOptions, QuantityMedium, ReportState} from '../reportModels';
+import {getLegendItems, getMediumViewOptions, hasLegendItems} from '../reportSelectors';
 
 export interface StateToProps extends ReportState, HasContent {
   legendItems: LegendItem[];
@@ -21,6 +28,7 @@ export interface DispatchToProps {
   removeAllByMedium: OnClickWith<Medium>;
   showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
+  toggleQuantityByMedium: OnClickWith<QuantityMedium>;
 }
 
 export interface OwnProps extends Visible {
@@ -31,10 +39,9 @@ const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
 
 const mapStateToProps = ({report}: RootState): StateToProps => {
   const {resolution, savedReports} = report;
-  const legendItems = getLegendItems(report);
   return ({
-    legendItems,
-    hasContent: legendItems.length > 0,
+    legendItems: getLegendItems(report),
+    hasContent: hasLegendItems(report),
     mediumViewOptions: getMediumViewOptions(report),
     resolution,
     savedReports,
@@ -48,6 +55,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   removeAllByMedium,
   showHideMediumRows,
   toggleLine,
+  toggleQuantityByMedium,
 }, dispatch);
 
 export const LegendContainer =
