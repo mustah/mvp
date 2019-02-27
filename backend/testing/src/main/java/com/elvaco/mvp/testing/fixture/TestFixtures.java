@@ -22,6 +22,9 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter.LogicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Measurement.MeasurementBuilder;
+import com.elvaco.mvp.core.domainmodels.MeasurementUnit;
+import com.elvaco.mvp.core.domainmodels.Medium;
+import com.elvaco.mvp.core.domainmodels.Medium.MediumBuilder;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition.MeterDefinitionBuilder;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -31,6 +34,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry.StatusLogEntryBuilder;
+import com.elvaco.mvp.core.unitconverter.UnitConverter;
 import com.elvaco.mvp.core.util.Slugify;
 
 import static java.util.UUID.randomUUID;
@@ -94,8 +98,16 @@ public interface TestFixtures {
 
   default MeterDefinitionBuilder meterDefinition() {
     return MeterDefinition.builder()
+      .id(random().nextLong())
       .name(randomUUID().toString())
-      .organisation(defaultOrganisation());
+      .organisation(defaultOrganisation())
+      .medium(medium().build());
+  }
+
+  default MediumBuilder medium() {
+    return Medium.builder()
+      .id(random().nextLong())
+      .name(randomUUID().toString());
   }
 
   default Collection<Measurement> series(
@@ -267,5 +279,21 @@ public interface TestFixtures {
       .primaryKey(logicalMeter.activePhysicalMeter(now()).orElseThrow().primaryKey())
       .start(now())
       .mask(0);
+  }
+
+  default UnitConverter unitConverter(boolean isSameDimension) {
+    return new UnitConverter() {
+      @Override
+      public MeasurementUnit convert(
+        MeasurementUnit measurementUnit, String targetUnit
+      ) {
+        return measurementUnit;
+      }
+
+      @Override
+      public boolean isSameDimension(String firstUnit, String secondUnit) {
+        return isSameDimension;
+      }
+    };
   }
 }

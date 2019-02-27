@@ -48,6 +48,9 @@ public class MeterDefinitionUseCases {
   }
 
   public List<MeterDefinition> findAll() {
+    if (currentUser.isSuperAdmin()) {
+      return meterDefinitions.findAll();
+    }
     return meterDefinitions.findAll(
       currentUser.subOrganisationParameters().getEffectiveOrganisationId()
     );

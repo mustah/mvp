@@ -41,13 +41,13 @@ public class MockMeterDefinitions extends MockRepository<Long, MeterDefinition>
   @Override
   public List<MeterDefinition> findAll(UUID organisationId) {
     return allMocks().stream()
-      .filter(md -> (md.organisation != null && md.organisation.id.equals(organisationId)))
+      .filter(md -> md.organisation == null || md.organisation.id.equals(organisationId))
       .collect(toList());
   }
 
   @Override
   public List<MeterDefinition> findAll() {
-    return null;
+    return allMocks();
   }
 
   @Override

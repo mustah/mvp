@@ -46,11 +46,11 @@ public class MeteringMessageMapper {
   );
 
   private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = Map.ofEntries(
-    entry("Return temp.", Quantity.RETURN_TEMPERATURE), //*
-    entry("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE), //*
-    entry("Flow temp.", Quantity.FORWARD_TEMPERATURE), //*
-    entry("Volume flow", Quantity.VOLUME_FLOW), //*
-    entry("Power", Quantity.POWER), //*
+    entry("Return temp.", Quantity.RETURN_TEMPERATURE),
+    entry("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE),
+    entry("Flow temp.", Quantity.FORWARD_TEMPERATURE),
+    entry("Volume flow", Quantity.VOLUME_FLOW),
+    entry("Power", Quantity.POWER),
     entry("Volume", Quantity.VOLUME),
     entry("Energy", Quantity.ENERGY),
     entry("External temp", Quantity.EXTERNAL_TEMPERATURE),

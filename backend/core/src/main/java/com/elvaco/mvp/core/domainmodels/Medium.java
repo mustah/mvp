@@ -3,12 +3,14 @@ package com.elvaco.mvp.core.domainmodels;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 @ToString
 public class Medium {
   public static final String UNKNOWN_MEDIUM = "Unknown medium";

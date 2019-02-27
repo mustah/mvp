@@ -382,7 +382,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_systemMeterDefintitionCanNotBeDeleted() {
+  public void delete_systemMeterDefinitionCanNotBeDeleted() {
     var meterDefinition = systemMeterDefinitionProvider.getByMediumOrThrow(
       mediumProvider.getByNameOrThrow(Medium.WATER));
 
@@ -394,7 +394,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_superAdminCanDeleteOrganisationMeterDefintition() {
+  public void delete_superAdminCanDeleteOrganisationMeterDefinition() {
     var organisation = given(organisation());
     var meterDefinition = given(
       meterDefinition()
@@ -420,7 +420,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_adminCanDeleteOrganisationMeterDefintition() {
+  public void delete_adminCanDeleteOrganisationMeterDefinition() {
     var meterDefinition = given(meterDefinition()
       .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
     );
@@ -434,7 +434,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_adminCanNotDeleteOrganisationMeterDefintitionForOtherOrganisation() {
+  public void delete_adminCanNotDeleteOrganisationMeterDefinitionForOtherOrganisation() {
     var organisation = given(organisation());
     var meterDefinition = given(
       meterDefinition()
@@ -451,7 +451,7 @@ public class MeterDefinitionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void delete_userCanNotDeleteMeterDefintition() {
+  public void delete_userCanNotDeleteMeterDefinition() {
     var meterDefinition = given(
       meterDefinition()
         .medium(mediumProvider.getByNameOrThrow(Medium.DISTRICT_HEATING))
