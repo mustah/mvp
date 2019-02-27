@@ -44,8 +44,11 @@ export const Legend = ({
   showHideMediumRows,
   toggleLine,
   toggleQuantityByMedium,
+  toggleQuantityById,
 }: DispatchToProps & StateToProps & OwnProps) => {
-  const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
+  const [quantityGridColumns, columnQuantities] =
+    React.useMemo(() => renderColumns(legendItems, toggleQuantityById), [legendItems]);
+
   const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
 
   const renderIconButtonsCell = ({dataItem: {id, isHidden}}: GridCellProps) => {
@@ -95,7 +98,7 @@ export const Legend = ({
     showHideAllByMedium,
     mediumViewOptions,
     removeAllByMedium,
-    toggleQuantityByMedium
+    toggleQuantityByMedium,
   };
 
   return (

@@ -11,10 +11,10 @@ import {
   removeAllByMedium,
   showHideAllByMedium,
   showHideMediumRows,
-  toggleLine,
+  toggleLine, toggleQuantityById,
   toggleQuantityByMedium
 } from '../reportActions';
-import {LegendItem, MediumViewOptions, QuantityMedium, ReportState} from '../reportModels';
+import {LegendItem, MediumViewOptions, QuantityId, QuantityMedium, ReportState} from '../reportModels';
 import {getLegendItems, getMediumViewOptions, hasLegendItems} from '../reportSelectors';
 
 export interface StateToProps extends ReportState, HasContent {
@@ -29,6 +29,7 @@ export interface DispatchToProps {
   showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
   toggleQuantityByMedium: OnClickWith<QuantityMedium>;
+  toggleQuantityById: OnClickWith<QuantityId>;
 }
 
 export interface OwnProps extends Visible {
@@ -56,6 +57,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   showHideMediumRows,
   toggleLine,
   toggleQuantityByMedium,
+  toggleQuantityById,
 }, dispatch);
 
 export const LegendContainer =

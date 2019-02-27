@@ -8,13 +8,14 @@ import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Dispatcher, uuid} from '../../types/Types';
-import {LegendItem, QuantityMedium} from './reportModels';
+import {LegendItem, QuantityId, QuantityMedium} from './reportModels';
 import {getLegendItems} from './reportSelectors';
 
 export const addLegendItems = createStandardAction('ADD_LEGEND_ITEMS')<LegendItem[]>();
 export const selectResolution = createStandardAction('SELECT_RESOLUTION')<TemporalResolution>();
 export const toggleLine = createStandardAction('TOGGLE_LINE')<uuid>();
 export const toggleQuantityByMedium = createStandardAction('TOGGLE_QUANTITY_BY_MEDIUM')<QuantityMedium>();
+export const toggleQuantityById = createStandardAction('TOGGLE_QUANTITY_BY_ID')<QuantityId>();
 export const showHideAllByMedium = createStandardAction('SHOW_HIDE_ALL_BY_MEDIUM')<Medium>();
 export const showHideMediumRows = createStandardAction('SHOW_HIDE_MEDIUM_ROWS')<Medium>();
 export const removeAllByMedium = createStandardAction('REMOVE_ALL_BY_MEDIUM')<Medium>();

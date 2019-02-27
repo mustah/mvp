@@ -84,3 +84,8 @@ export interface QuantityMedium {
   medium: Medium;
   quantity: Quantity;
 }
+
+export interface QuantityId {
+  id: uuid;
+  quantity: Quantity;
+}

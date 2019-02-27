@@ -1,6 +1,6 @@
 import {GridCellProps, GridColumn, GridRowProps} from '@progress/kendo-react-grid';
 import {default as classNames} from 'classnames';
-import {noop, toArray} from 'lodash';
+import {toArray} from 'lodash';
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
@@ -12,7 +12,7 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {colorizeMeters} from '../../../state/ui/graph/measurement/graphContentsMapper';
 import {allQuantities, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary, OnClick, OnClickWith} from '../../../types/Types';
-import {LegendItem, MediumViewOptions, QuantityMedium} from '../reportModels';
+import {LegendItem, MediumViewOptions, QuantityId, QuantityMedium} from '../reportModels';
 import {isGroupHeader} from './measurementGridHelper';
 
 interface CurrentMedium {
@@ -131,14 +131,15 @@ export const rowRenderer = (props: RowProps) =>
     }
   };
 
-const renderQuantityCell = (quantity: Quantity) =>
+const renderQuantityCell = (quantity: Quantity, toggleQuantityById: OnClickWith<QuantityId>) =>
   ({dataItem: {id, label, medium, quantities}}: GridCellProps) => {
     if (allQuantities[medium].some(q => q === quantity)) {
       const checkboxProps = checkboxPropsFrom(quantities, quantity);
       const {checked, disabled} = checkboxProps;
+      const onClick = () => toggleQuantityById({id, quantity});
       return (
         <td key={`item-td-${medium}-${quantity}-${checked}-${disabled}`}>
-          <Checkbox {...checkboxProps} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
+          <Checkbox {...checkboxProps} onCheck={onClick} iconStyle={{fill: colorizeMeters(quantity)}}/>
         </td>);
     } else {
       return <td/>;
@@ -148,7 +149,7 @@ const renderQuantityCell = (quantity: Quantity) =>
 export const quantityColumnWidth = 76;
 
 export const renderColumns =
-  (legendItems: LegendItem[]): [React.ReactNode[], Quantity[]] => {
+  (legendItems: LegendItem[], toggleQuantityById: OnClickWith<QuantityId>): [React.ReactNode[], Quantity[]] => {
     const columns: Dictionary<React.ReactNode> = {};
     const columnQuantities: Quantity[] = [];
 
@@ -159,7 +160,7 @@ export const renderColumns =
             <GridColumn
               key={`legend-${id}-${label}-${medium}-${quantity}`}
               title={`${translate(`${quantity} short`)}`}
-              cell={renderQuantityCell(quantity)}
+              cell={renderQuantityCell(quantity, toggleQuantityById)}
               width={quantityColumnWidth}
             />);
           columnQuantities.push(quantity);
