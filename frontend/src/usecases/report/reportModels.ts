@@ -9,15 +9,24 @@ export interface LegendItem {
   id: uuid;
   label: string;
   medium: Medium;
+  isHidden: boolean;
+  isRowExpanded?: boolean;
+  quantities: Quantity[];
 }
+
+export interface ViewOptions {
+  isAllLinesHidden?: boolean;
+  quantities: Quantity[];
+}
+
+export type MediumViewOptions = { [medium in Medium]: ViewOptions };
 
 export interface Report extends Identifiable {
   meters: LegendItem[];
+  mediumViewOptions: MediumViewOptions;
 }
 
 export interface ReportState {
-  isAllLinesHidden: boolean;
-  hiddenLines: uuid[];
   resolution: TemporalResolution;
   savedReports: ObjectsById<Report>;
   timePeriod: SelectionInterval;
@@ -67,8 +76,11 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-export interface SelectedReportPayload {
-  items: LegendItem[];
-  media: Medium[];
-  quantities: Quantity[];
+export interface SelectedReportItems {
+  meters: LegendItem[];
+}
+
+export interface QuantityMedium {
+  medium: Medium;
+  quantity: Quantity;
 }

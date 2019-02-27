@@ -3,7 +3,7 @@ import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {LOGOUT_USER} from '../../usecases/auth/authActions';
+import {logoutUser} from '../../usecases/auth/authActions';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {QueryParameter} from '../../usecases/search/searchModels';
@@ -175,7 +175,7 @@ const resetStateOnLogoutReducer = <S extends Identifiable>(
   {type}: ActionTypes<S>,
 ): NormalizedState<S> => {
   switch (type) {
-    case LOGOUT_USER:
+    case getType(logoutUser):
       return initialDomain<S>();
     default:
       return state;
@@ -193,7 +193,7 @@ export const resetReducer = <S>(
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
     case RESET_SELECTION:
-    case LOGOUT_USER:
+    case getType(logoutUser):
       return initialState;
     default:
       return state;

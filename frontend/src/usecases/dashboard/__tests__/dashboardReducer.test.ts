@@ -1,7 +1,7 @@
 import {WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {EndPoints} from '../../../services/endPoints';
 import {makeActionsOf, RequestHandler} from '../../../state/api/apiActions';
-import {LOGOUT_USER} from '../../auth/authActions';
+import {logoutUser} from '../../auth/authActions';
 import {DashboardModel} from '../dashboardModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 
@@ -73,7 +73,7 @@ describe('dashboardReducer', () => {
         actions.failure({message: 'error'}),
       );
 
-      state = dashboard(state, {type: LOGOUT_USER});
+      state = dashboard(state, logoutUser(undefined));
 
       expect(state).toEqual({isFetching: false, isSuccessfullyFetched: false});
     });

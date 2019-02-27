@@ -1,6 +1,6 @@
 import {LegendItem} from '../../../usecases/report/reportModels';
 import {ObjectsById} from '../../domain-models/domainModels';
-import {Medium} from '../../ui/graph/measurement/measurementModels';
+import {Medium, Quantity} from '../../ui/graph/measurement/measurementModels';
 import {SelectionTreeItemType, SelectionTreeViewComposite} from '../../ui/selection-tree/selectionTreeModels';
 import {SelectionTreeMeter, SelectionTreeState} from '../selectionTreeModels';
 import {initialState} from '../selectionTreeReducer';
@@ -128,6 +128,9 @@ describe('selectionTreeSelectors', () => {
 
   describe('getLegendItemsWithLimit', () => {
 
+    const isHidden = false;
+    const quantities: Quantity[] = [];
+
     it('handles no selection tree meters', () => {
       expect(getLegendItemsWithLimit()).toEqual([]);
     });
@@ -143,7 +146,7 @@ describe('selectionTreeSelectors', () => {
         1: {id: 1, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
       };
 
-      const expected: LegendItem[] = [{id: 1, label: 'a', medium: Medium.gas}];
+      const expected: LegendItem[] = [{id: 1, label: 'a', medium: Medium.gas, isHidden, quantities}];
       expect(getLegendItemsWithLimit(meters)).toEqual(expected);
     });
 
@@ -154,8 +157,8 @@ describe('selectionTreeSelectors', () => {
       };
 
       const expected: LegendItem[] = [
-        {id: 1, label: 'a', medium: Medium.gas},
-        {id: 2, label: 'b', medium: Medium.water}
+        {id: 1, label: 'a', medium: Medium.gas, isHidden, quantities},
+        {id: 2, label: 'b', medium: Medium.water, isHidden, quantities}
       ];
       expect(getLegendItemsWithLimit(meters)).toEqual(expected);
     });

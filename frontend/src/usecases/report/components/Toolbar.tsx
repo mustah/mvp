@@ -12,17 +12,15 @@ import {DateRange, Period} from '../../../components/dates/dateModels';
 import {PeriodSelection} from '../../../components/dates/PeriodSelection';
 import {ResolutionSelection} from '../../../components/dates/ResolutionSelection';
 import {Row, RowMiddle, RowRight, RowSpaceBetween} from '../../../components/layouts/row/Row';
-import {IconProps, PopoverMenu} from '../../../components/popover/PopoverMenu';
+import {IconProps} from '../../../components/popover/PopoverMenu';
 import {Maybe} from '../../../helpers/Maybe';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ToolbarView} from '../../../state/ui/toolbar/toolbarModels';
 import {Clickable, Selectable} from '../../../types/Types';
-import {LegendContainer} from '../containers/LegendContainer';
 import {Props} from '../containers/ToolbarContainer';
 import './Toolbar.scss';
 import FlatButtonProps = __MaterialUI.FlatButtonProps;
 import IconButtonProps = __MaterialUI.IconButtonProps;
-import origin = __MaterialUI.propTypes.origin;
 
 const roundedIconStyle: React.CSSProperties = {
   padding: 0,
@@ -80,18 +78,13 @@ const LegendActionButton = ({onClick, disabled}: Clickable & IconProps) => (
   </ToolbarIconButton>
 );
 
-const anchorOrigin: origin = {horizontal: 'left', vertical: 'top'};
-const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
-
-const renderPopoverContent = () => <LegendContainer/>;
-
 export const Toolbar = ({
   changeToolbarView,
   hasLegendItems,
   hasMeasurements,
   resolution,
   selectResolution,
-  toggleLegend,
+  showHideLegend,
   exportToExcel,
   isFetching,
   isExportingToExcel,
@@ -109,8 +102,6 @@ export const Toolbar = ({
   });
 
   const customDateRange = Maybe.maybe(timePeriod.customDateRange);
-
-  const legendIconProps: IconProps = {disabled: !hasLegendItems};
 
   return (
     <RowSpaceBetween className="Toolbar">
@@ -153,14 +144,6 @@ export const Toolbar = ({
       </Row>
 
       <RowRight className={classNames('Tabs-DropdownMenus')}>
-        <PopoverMenu
-          popoverClassName="Popover-Legend"
-          IconComponent={LegendActionButton}
-          iconProps={legendIconProps}
-          anchorOrigin={anchorOrigin}
-          targetOrigin={targetOrigin}
-          renderPopoverContent={renderPopoverContent}
-        />
         <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
           disabled={!hasLegendItems}
@@ -170,6 +153,7 @@ export const Toolbar = ({
           setCustomDateRange={setCustomDateRange}
           style={{marginBottom: 0, marginLeft: 0}}
         />
+        <LegendActionButton onClick={showHideLegend} disabled={!hasLegendItems}/>
       </RowRight>
     </RowSpaceBetween>
   );

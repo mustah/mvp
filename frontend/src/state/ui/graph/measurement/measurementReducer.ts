@@ -3,10 +3,11 @@ import {EmptyAction} from 'typesafe-actions/dist/types';
 import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import {
-  REMOVE_SELECTED_LIST_ITEMS,
-  SELECT_RESOLUTION,
-  SET_SELECTED_ITEMS,
-  setReportTimePeriod
+  addLegendItems,
+  removeAllByMedium,
+  selectResolution,
+  setReportTimePeriod,
+  toggleQuantityByMedium
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
@@ -65,10 +66,11 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
         isExportingToExcel: false,
       };
     case MEASUREMENT_CLEAR_ERROR:
-    case SELECT_RESOLUTION:
+    case getType(selectResolution):
     case getType(setReportTimePeriod):
-    case SET_SELECTED_ITEMS:
-    case REMOVE_SELECTED_LIST_ITEMS:
+    case getType(addLegendItems):
+    case getType(removeAllByMedium):
+    case getType(toggleQuantityByMedium):
     case SEARCH:
       return initialState;
     default:

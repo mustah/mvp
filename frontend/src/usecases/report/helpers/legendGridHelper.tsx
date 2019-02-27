@@ -3,63 +3,112 @@ import {default as classNames} from 'classnames';
 import {noop, toArray} from 'lodash';
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
+import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
+import {ButtonVisibility} from '../../../components/buttons/ButtonVisibility';
 import {IconRightArrow} from '../../../components/icons/IconRightArrow';
-import {RowMiddle} from '../../../components/layouts/row/Row';
-import {Medium as MediumText} from '../../../components/texts/Texts';
+import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
+import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {colorizeMeters} from '../../../state/ui/graph/measurement/graphContentsMapper';
 import {allQuantities, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
-import {Dictionary, OnClick} from '../../../types/Types';
-import {LegendItem} from '../reportModels';
+import {Dictionary, OnClick, OnClickWith} from '../../../types/Types';
+import {LegendItem, MediumViewOptions, QuantityMedium} from '../reportModels';
 import {isGroupHeader} from './measurementGridHelper';
 
-const renderQuantityCell = (quantity: Quantity) =>
-  ({dataItem: {id, label, medium}, columnIndex}: GridCellProps) => {
-    const mediumQuantities = allQuantities[medium];
-    if (mediumQuantities.some((q) => q === quantity)) {
-      const checked = columnIndex && columnIndex === 2 || columnIndex === 3 || mediumQuantities.length < 3;
-      return (
-        <td>
-          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
-        </td>);
-    } else {
-      return <td/>;
-    }
-  };
+interface CurrentMedium {
+  medium: Medium;
+}
 
-const renderGroupHeaderTds = (medium: Medium, columnQuantities: Quantity[]) => {
-  const tds = columnQuantities.map((quantity, index) => {
+export interface RowProps {
+  columnQuantities: Quantity[];
+  onExpandRow: OnClick;
+  mediumViewOptions: MediumViewOptions;
+  removeAllByMedium: OnClickWith<Medium>;
+  showHideAllByMedium: OnClickWith<Medium>;
+  toggleQuantityByMedium: OnClickWith<QuantityMedium>;
+}
+
+interface MediumTdProps {
+  removeAll: OnClick;
+  hideAll: OnClick;
+  isAllHidden: boolean;
+}
+
+const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
+  <td className="check-box-td">
+    <RowLeft>
+      <RowRight title={firstUpperTranslated('hide all')}>
+        <ButtonVisibility onClick={hideAll} checked={isAllHidden}/>
+      </RowRight>
+      <RowRight title={firstUpperTranslated('remove all')}>
+        <ButtonDelete onClick={removeAll}/>
+      </RowRight>
+    </RowLeft>
+  </td>
+);
+
+interface CheckboxProps {
+  checked: boolean;
+  disabled: boolean;
+}
+
+const checkboxPropsFrom = (quantities: Quantity[], quantity: Quantity): CheckboxProps => {
+  const checked = quantities.indexOf(quantity) !== -1;
+  const disabled = !checked && quantities.length === 2;
+  return {checked, disabled};
+};
+
+const renderGroupHeaderTds = ({
+  columnQuantities,
+  medium,
+  mediumViewOptions,
+  removeAllByMedium,
+  showHideAllByMedium,
+  toggleQuantityByMedium
+}: RowProps & CurrentMedium) => {
+  const tds = columnQuantities.map((quantity) => {
     const key = `group-header-td-${medium}-${quantity}`;
-    const mediumQuantities = allQuantities[medium];
-    if (mediumQuantities.some((q) => q === quantity)) {
-      const checked = index < 2 || mediumQuantities.length < 3;
+    if (allQuantities[medium].some(q => q === quantity)) {
+      const checkboxProps = checkboxPropsFrom(mediumViewOptions[medium].quantities, quantity);
+      const {checked, disabled} = checkboxProps;
+      const onClick = () => toggleQuantityByMedium({medium, quantity});
       return (
-        <td key={key} className="check-box-td">
-          <Checkbox checked={checked} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
+        <td key={`group-header-td-${medium}-${quantity}-${checked}-${disabled}`} className="check-box-td">
+          <Checkbox {...checkboxProps} onCheck={onClick} iconStyle={{fill: colorizeMeters(quantity)}}/>
         </td>
       );
     } else {
       return <td key={key}/>;
     }
   });
-  tds.push(<td key={`group-header-last-td-${medium}`}/>);
+
+  const removeAll = () => removeAllByMedium(medium);
+  const hideAll = () => showHideAllByMedium(medium);
+  const isAllHidden = !(!mediumViewOptions[medium].isAllLinesHidden);
+  tds.push(
+    <MediumTd
+      key={`group-header-last-td-${medium}-${isAllHidden}`}
+      hideAll={hideAll}
+      isAllHidden={isAllHidden}
+      removeAll={removeAll}
+    />);
   return tds;
 };
 
-const renderGroupHeader = (onExpandRow: OnClick, dataItem: any, columnQuantities: Quantity[]) => {
+const renderGroupHeader = (props: RowProps, dataItem: any) => {
   const medium: Medium = dataItem.value;
-  const mediumText = toMediumText(medium).toLowerCase();
-  const onClick = () => onExpandRow(dataItem);
-  const isVisible = !!dataItem.expanded;
+  const isVisible = dataItem.items[0].isRowExpanded;
+  const onClick = () => props.onExpandRow(dataItem);
   return (
-    <tr className="GroupHeader Foldable">
-      <td colSpan={2}>
+    <tr className="GroupHeader Foldable" key={`group-header-${medium}`}>
+      <td colSpan={2} key={`group-header-td-title-${medium}`}>
         <RowMiddle onClick={onClick} className="clickable">
           <IconRightArrow className={classNames('Foldable-arrow', {isVisible})}/>
-          <MediumText className="Bold">{firstUpperTranslated(mediumText)}</MediumText>
+          <MediumText className="Bold">{firstUpperTranslated(toMediumText(medium).toLowerCase())}</MediumText>
+          <InfoText style={{marginLeft: 8, fontStyle: 'normal'}}>({dataItem.items.length})</InfoText>
         </RowMiddle>
       </td>
-      {renderGroupHeaderTds(medium, columnQuantities)}
+      {renderGroupHeaderTds({...props, medium})}
     </tr>
   );
 };
@@ -67,22 +116,36 @@ const renderGroupHeader = (onExpandRow: OnClick, dataItem: any, columnQuantities
 type TableRow = React.ReactElement<HTMLTableRowElement>;
 
 const renderDataRow = (tr: TableRow, dataItem: any) => {
-  const {expanded, last} = dataItem;
-  return expanded
+  const {isRowExpanded, last} = dataItem;
+  return isRowExpanded
     ? last ? React.cloneElement(tr, {className: 'last'}, tr.props.children) : tr
     : null;
 };
 
-export const rowRenderer = (onExpandRow: OnClick, columnQuantities: Quantity[]) =>
+export const rowRenderer = (props: RowProps) =>
   (tr: TableRow, {dataItem, rowType}: GridRowProps) => {
     if (isGroupHeader(rowType)) {
-      return renderGroupHeader(onExpandRow, dataItem, columnQuantities);
+      return renderGroupHeader(props, dataItem);
     } else {
       return renderDataRow(tr, dataItem);
     }
   };
 
-export const quantityWidth = 84;
+const renderQuantityCell = (quantity: Quantity) =>
+  ({dataItem: {id, label, medium, quantities}}: GridCellProps) => {
+    if (allQuantities[medium].some(q => q === quantity)) {
+      const checkboxProps = checkboxPropsFrom(quantities, quantity);
+      const {checked, disabled} = checkboxProps;
+      return (
+        <td key={`item-td-${medium}-${quantity}-${checked}-${disabled}`}>
+          <Checkbox {...checkboxProps} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
+        </td>);
+    } else {
+      return <td/>;
+    }
+  };
+
+export const quantityColumnWidth = 76;
 
 export const renderColumns =
   (legendItems: LegendItem[]): [React.ReactNode[], Quantity[]] => {
@@ -97,7 +160,7 @@ export const renderColumns =
               key={`legend-${id}-${label}-${medium}-${quantity}`}
               title={`${translate(`${quantity} short`)}`}
               cell={renderQuantityCell(quantity)}
-              width={quantityWidth}
+              width={quantityColumnWidth}
             />);
           columnQuantities.push(quantity);
         }

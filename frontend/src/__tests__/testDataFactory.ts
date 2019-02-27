@@ -1,6 +1,9 @@
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
+import {ObjectsById} from '../state/domain-models/domainModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Identifiable, uuid} from '../types/Types';
+import {LegendItem, Report} from '../usecases/report/reportModels';
+import {mediumViewOptions} from '../usecases/report/reportReducer';
 
 const meters = [
   {id: 'm1', name: 'UNICOcoder'},
@@ -66,3 +69,6 @@ export const makeMeterDto = (id: number, city: string, address: string): MeterDt
     ...meter,
   };
 };
+
+export const savedReportsOf = (meters: LegendItem[]): ObjectsById<Report> =>
+  ({meterPage: {id: 'meterPage', meters, mediumViewOptions}});

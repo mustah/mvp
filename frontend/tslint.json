@@ -43,7 +43,7 @@
     "no-var-requires": false,
     "no-trailing-whitespace": true,
     "ordered-imports": false,
-    "arrow-parens": true,
+    "arrow-parens": false,
     "interface-name": [
       true,
       "never-prefix"

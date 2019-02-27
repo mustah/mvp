@@ -86,6 +86,14 @@ export const mvpTheme = getMuiTheme({
   }
 });
 
+export const appBarHeight: number = mvpTheme.appBar!.height!;
+
+export const drawerContainerStyle: React.CSSProperties = {
+  boxShadow,
+  top: appBarHeight,
+  paddingBottom: appBarHeight + 24,
+};
+
 export const sideMenuWidth = 300;
 
 export const iconStyle: React.CSSProperties = {

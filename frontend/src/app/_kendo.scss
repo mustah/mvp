@@ -122,25 +122,25 @@ $pager-number-hovered-text: $primary-fg-active;
     .k-grouping-header {
       display: none;
     }
-  }
 
-  th {
-    border-bottom-width: 0;
+    th {
+      border-bottom-width: 0;
 
-    &.left-most {
-      padding-left: $xs-space;
+      &.left-most {
+        padding-left: $xs-space;
+      }
     }
-  }
 
-  tr.last {
+    tr.last {
+      td {
+        border-bottom: 1px solid $border-color;
+      }
+    }
+
     td {
-      border-bottom: 1px solid $border-color;
-    }
-  }
-
-  td {
-    &.left-most {
-      padding-left: $xs-space;
+      &.left-most {
+        padding-left: $xs-space;
+      }
     }
   }
 }

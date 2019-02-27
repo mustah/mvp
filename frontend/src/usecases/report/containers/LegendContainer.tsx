@@ -1,40 +1,48 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
-import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
+import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
-import {isReportPage} from '../../../selectors/routerSelectors';
-import {firstUpperTranslated} from '../../../services/translationService';
-import {OnClick, OnClickWithId} from '../../../types/Types';
+import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
+import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
-import {deleteItem, hideAllLines, removeSelectedListItems, toggleLine} from '../reportActions';
-import {LegendItem, ReportState} from '../reportModels';
-import {getLegendItems} from '../reportSelectors';
+import {
+  deleteItem,
+  removeAllByMedium,
+  showHideAllByMedium,
+  showHideMediumRows,
+  toggleLine,
+  toggleQuantityByMedium
+} from '../reportActions';
+import {LegendItem, MediumViewOptions, QuantityMedium, ReportState} from '../reportModels';
+import {getLegendItems, getMediumViewOptions, hasLegendItems} from '../reportSelectors';
 
-export interface StateToProps extends ReportState, WithEmptyContentProps {
+export interface StateToProps extends ReportState, HasContent {
   legendItems: LegendItem[];
-  isReportPage: boolean;
+  mediumViewOptions: MediumViewOptions;
 }
 
 export interface DispatchToProps {
   deleteItem: OnClickWithId;
-  hideAllLines: OnClick;
+  showHideAllByMedium: OnClickWith<Medium>;
+  removeAllByMedium: OnClickWith<Medium>;
+  showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
-  removeSelectedListItems: OnClick;
+  toggleQuantityByMedium: OnClickWith<QuantityMedium>;
 }
 
-const LegendComponent = withEmptyContent<DispatchToProps & StateToProps>(Legend);
+export interface OwnProps extends Visible {
+  showHideLegend: OnClick;
+}
 
-const mapStateToProps = ({report, routing}: RootState): StateToProps => {
-  const {hiddenLines, resolution, savedReports} = report;
-  const legendItems = getLegendItems(report);
+const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
+
+const mapStateToProps = ({report}: RootState): StateToProps => {
+  const {resolution, savedReports} = report;
   return ({
-    legendItems,
-    hiddenLines,
-    isAllLinesHidden: report.isAllLinesHidden,
-    isReportPage: isReportPage(routing),
-    hasContent: legendItems.length > 0,
-    noContentText: firstUpperTranslated('select meters'),
+    legendItems: getLegendItems(report),
+    hasContent: hasLegendItems(report),
+    mediumViewOptions: getMediumViewOptions(report),
     resolution,
     savedReports,
     timePeriod: {period: Period.latest}, // TODO timePeriod is unused but I could not exclude it from ReportState
@@ -43,10 +51,12 @@ const mapStateToProps = ({report, routing}: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,
-  removeSelectedListItems,
-  hideAllLines,
+  showHideAllByMedium,
+  removeAllByMedium,
+  showHideMediumRows,
   toggleLine,
+  toggleQuantityByMedium,
 }, dispatch);
 
 export const LegendContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(LegendComponent);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(LegendComponent);

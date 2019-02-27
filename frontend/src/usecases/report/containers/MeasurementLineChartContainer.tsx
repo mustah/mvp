@@ -31,7 +31,7 @@ import {ActiveDot, ActiveDotReChartProps} from '../components/line-chart/ActiveD
 import {CustomizedTooltip} from '../components/line-chart/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/line-chart/Dot';
 import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
-import {getLegendItems} from '../reportSelectors';
+import {hasLegendItems} from '../reportSelectors';
 
 export interface GraphProps {
   outerHiddenKeys: uuid[];
@@ -250,7 +250,7 @@ const mapStateToProps = ({report, measurement, userSelection: {userSelection}, u
   ({
     ...getSelectedPeriod(userSelection),
     isSideMenuOpen: isSideMenuOpen(ui),
-    hasMeters: getLegendItems(report).length > 0,
+    hasMeters: hasLegendItems(report),
     hasContent: hasMeasurements(measurement.measurementResponse)
   });
 

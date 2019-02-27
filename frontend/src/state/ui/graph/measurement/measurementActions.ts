@@ -22,16 +22,14 @@ import {
 } from '../../../../types/Types';
 import {logout} from '../../../../usecases/auth/authActions';
 import {OnLogout} from '../../../../usecases/auth/authModels';
-import {LegendItem} from '../../../../usecases/report/reportModels';
-import {getSelectedReportPayload} from '../../../../usecases/report/reportSelectors';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {SelectedParameters, SelectionInterval} from '../../../user-selection/userSelectionModels';
 import {
-  allQuantities,
   initialMeterMeasurementsState,
   Measurement,
   MeasurementApiResponse,
+  MeasurementParameters,
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementState,
@@ -67,14 +65,14 @@ export const exportToExcel = () =>
 const measurementMeterUri = (
   quantity: Quantity,
   resolution: TemporalResolution,
-  meters: uuid[],
+  meterIds: uuid[],
   {dateRange}: SelectedParameters,
 ): EncodedUriParameters =>
   encodeRequestParameters({
     ...requestParametersFrom({dateRange}),
     quantity,
     resolution,
-    logicalMeterId: meters.map((id: uuid): string => id.toString()),
+    logicalMeterId: meterIds.map((id: uuid): string => id.toString()),
   });
 
 interface GraphDataResponse {
@@ -88,49 +86,39 @@ interface GroupedRequests {
   meters: GraphDataRequests;
 }
 
+type QuantityToMeterIds = { [q in Quantity]: uuid[] };
+
+const makeQuantityToMeterIdsMap = (): QuantityToMeterIds =>
+  Object.keys(Quantity)
+    .map(k => Quantity[k])
+    .reduce((acc, quantity) => ({...acc, [quantity]: []}), {});
+
 const requestsPerQuantity = ({
-  items,
   resolution,
+  selectedReportItems: {meters},
   selectionParameters,
-  shouldMakeAverageRequest,
 }: MeasurementParameters): GroupedRequests => {
-  const meterByQuantity: Partial<{ [quantity in Quantity]: Set<uuid> }> = {};
+  const requests: GroupedRequests = {average: [], meters: []};
+  const quantityToMeterIds = makeQuantityToMeterIdsMap();
 
-  const {quantities} = getSelectedReportPayload(items);
+  flatMap(meters, it => it.quantities.forEach(q => quantityToMeterIds[q].push(it.id)));
 
-  quantities.forEach((quantity: Quantity) => {
-    meterByQuantity[quantity] = new Set();
-  });
-
-  const requests: GroupedRequests = {
-    average: [],
-    meters: [],
-  };
-
-  items.forEach(({medium, id}: LegendItem) => {
-    const meterQuantities: Quantity[] = allQuantities[medium];
-    quantities
-      .filter((quantity: Quantity) => meterQuantities.includes(quantity))
-      .forEach((quantity: Quantity) => meterByQuantity[quantity]!.add(id));
-  });
-
-  requests.meters = Object.keys(meterByQuantity)
-    .filter((quantity) => meterByQuantity[quantity]!.size)
+  requests.meters = Object.keys(quantityToMeterIds)
+    .filter((q: Quantity) => quantityToMeterIds[q].length > 0)
     .map((quantity: Quantity) =>
       restClient.getParallel(makeUrl(
         EndPoints.measurements,
-        measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
+        measurementMeterUri(quantity, resolution, quantityToMeterIds[quantity], selectionParameters),
       )));
 
-  if (shouldMakeAverageRequest) {
-    requests.average = Object.keys(meterByQuantity)
-      .filter((quantity) => meterByQuantity[quantity]!.size > 1)
-      .map((quantity: Quantity) =>
-        restClient.getParallel(makeUrl(
-          EndPoints.measurements.concat('/average'),
-          measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
-        )));
-  }
+  // TODO[!must!] fix average in next issue!!!
+  //
+  //   requests.average = Object.keys(meterByQuantity)
+  //     .map((quantity: Quantity) =>
+  //       restClient.getParallel(makeUrl(
+  //         EndPoints.measurements.concat('/average'),
+  //         measurementMeterUri(quantity, resolution, Array.from(meterByQuantity[quantity]!), selectionParameters),
+  //       )));
 
   return requests;
 };
@@ -139,13 +127,6 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
   ...averageEntity,
   values: averageEntity.values.filter(({value}) => value !== undefined),
 });
-
-export interface MeasurementParameters {
-  items: LegendItem[];
-  resolution: TemporalResolution;
-  selectionParameters: SelectedParameters;
-  shouldMakeAverageRequest?: boolean;
-}
 
 const shouldFetchMeasurements: FetchIfNeeded = (getState: GetState): boolean => {
   const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().measurement;

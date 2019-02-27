@@ -12,7 +12,7 @@ import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
 import {logoutUser} from '../../../../../usecases/auth/authActions';
 import {AuthState, Unauthorized} from '../../../../../usecases/auth/authModels';
-import {LegendItem} from '../../../../../usecases/report/reportModels';
+import {LegendItem, SelectedReportItems} from '../../../../../usecases/report/reportModels';
 import {noInternetConnection, requestTimeout} from '../../../../api/apiActions';
 import {Role, User} from '../../../../domain-models/user/userModels';
 import {
@@ -22,14 +22,13 @@ import {
   MEASUREMENT_REQUEST,
   MEASUREMENT_SUCCESS,
   measurementFailure,
-  MeasurementParameters,
   measurementRequest,
   measurementSuccess
 } from '../measurementActions';
 import {
   allQuantities,
   AverageResponsePart,
-  MeasurementApiResponse,
+  MeasurementApiResponse, MeasurementParameters,
   MeasurementState,
   MeasurementValues,
   Medium,
@@ -58,11 +57,7 @@ describe('measurementActions', () => {
 
     const legendItemOf = (medium: Medium, label: string = 'facility-1'): LegendItem => {
       const id = idGenerator.uuid().toString();
-      return ({
-        id,
-        medium,
-        label,
-      });
+      return ({id, medium, label, isHidden: false, quantities: [allQuantities[medium][0]]});
     };
 
     const makeMeasurementResponse = ({id, label}: LegendItem) => ({
@@ -76,10 +71,10 @@ describe('measurementActions', () => {
       unit: 'mW',
     });
 
-    const justValues: MeasurementValues = [
-      {when: 1516521585107, value: 0.0},
-      {when: 1516521585109, value: 0.55},
-    ];
+    // const justValues: MeasurementValues = [
+    //   {when: 1516521585107, value: 0.0},
+    //   {when: 1516521585109, value: 0.55},
+    // ];
 
     const values: MeasurementValues = [
       {when: 1516521585107, value: 0.0},
@@ -97,16 +92,17 @@ describe('measurementActions', () => {
         }
       );
 
+    const selectedReportItems: SelectedReportItems = {meters: []};
+
     beforeEach(() => {
       defaultParameters = {
-        items: [],
         resolution: TemporalResolution.day,
         selectionParameters: {
           dateRange: {
             period: Period.currentMonth,
           }
         },
-        shouldMakeAverageRequest: true,
+        selectedReportItems,
       };
     });
 
@@ -169,7 +165,7 @@ describe('measurementActions', () => {
 
         const requestedUrls = onFetchAsync(unknownMeter, meter);
 
-        await store.dispatch(fetchMeasurements({...defaultParameters, items: []}));
+        await store.dispatch(fetchMeasurements({...defaultParameters}));
 
         expect(requestedUrls).toHaveLength(0);
         expect(store.getActions()).toEqual([]);
@@ -184,10 +180,13 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [roomSensorMeter, gasMeter]
+          selectedReportItems: {
+            ...selectedReportItems,
+            meters: [roomSensorMeter, gasMeter]
+          }
         }));
 
-        expect(requestedUrls).toHaveLength(3);
+        expect(requestedUrls).toHaveLength(2);
 
         const [externalTemperature, volume] = requestedUrls.map(
           (url: string) => new URL(`${mockHost}${url}`),
@@ -211,8 +210,6 @@ describe('measurementActions', () => {
             measurements: [
               makeMeasurementResponse(roomSensorMeter),
               makeMeasurementResponse(roomSensorMeter),
-              makeMeasurementResponse(roomSensorMeter),
-              makeMeasurementResponse(gasMeter),
               makeMeasurementResponse(gasMeter),
               makeMeasurementResponse(gasMeter),
             ],
@@ -225,32 +222,37 @@ describe('measurementActions', () => {
 
     describe('fetch average ', () => {
 
-      it('includes average when asking for measurements for multiple meters with the same quantity', async () => {
-        const store = storeWith(initialState);
-        const firstRoomSensor = legendItemOf(Medium.roomSensor);
-        const secondRoomSensor = legendItemOf(Medium.roomSensor);
-        const requestedUrls: string[] = onFetchAsync(firstRoomSensor, secondRoomSensor);
+      // TODO[!must!] resolve when impl. average
 
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          items: [firstRoomSensor, secondRoomSensor],
-        }));
-
-        expect(requestedUrls).toHaveLength(4);
-
-        const [averageUrl] = requestedUrls
-          .filter((url: string) => url.match('average'))
-          .map((url: string) => new URL(`${mockHost}${url}`));
-
-        expect(averageUrl.pathname).toEqual('/measurements/average');
-        expect(averageUrl.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
-        expect(averageUrl.searchParams.getAll('logicalMeterId')).toEqual(
-          [firstRoomSensor.id, secondRoomSensor.id]
-        );
-        expect(averageUrl.searchParams.get('before')).toBeTruthy();
-        expect(averageUrl.searchParams.get('after')).toBeTruthy();
-        expect(store.getActions().map((action) => (action.type))).toEqual([MEASUREMENT_REQUEST, MEASUREMENT_SUCCESS]);
-      });
+      // it('includes average when asking for measurements for multiple meters with the same quantity', async () => {
+      //   const store = storeWith(initialState);
+      //   const firstRoomSensor = legendItemOf(Medium.roomSensor);
+      //   const secondRoomSensor = legendItemOf(Medium.roomSensor);
+      //   const requestedUrls: string[] = onFetchAsync(firstRoomSensor, secondRoomSensor);
+      //
+      //   await store.dispatch(fetchMeasurements({
+      //     ...defaultParameters,
+      //     selectedReportItems: {
+      //       ...selectedReportItems,
+      //       items: [firstRoomSensor, secondRoomSensor],
+      //     },
+      //   }));
+      //
+      //   expect(requestedUrls).toHaveLength(4);
+      //
+      //   const [averageUrl] = requestedUrls
+      //     .filter((url: string) => url.match('average'))
+      //     .map((url: string) => new URL(`${mockHost}${url}`));
+      //
+      //   expect(averageUrl.pathname).toEqual('/measurements/average');
+      //   expect(averageUrl.searchParams.get('quantity')).toEqual(Quantity.externalTemperature);
+      //   expect(averageUrl.searchParams.getAll('logicalMeterId')).toEqual(
+      //     [firstRoomSensor.id, secondRoomSensor.id]
+      //   );
+      //   expect(averageUrl.searchParams.get('before')).toBeTruthy();
+      //   expect(averageUrl.searchParams.get('after')).toBeTruthy();
+      //   expect(store.getActions().map((action) => (action.type))).toEqual([MEASUREMENT_REQUEST,
+      // MEASUREMENT_SUCCESS]); });
 
       it('makes one measurements and one average requests', async () => {
         const store = storeWith(initialState);
@@ -260,66 +262,79 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [firstDistrictHeating, secondDistrictHeating],
+          selectedReportItems: {
+            ...selectedReportItems,
+            meters: [firstDistrictHeating, secondDistrictHeating],
+          }
         }));
 
-        expect(requestedUrls).toHaveLength(14);
+        expect(requestedUrls).toHaveLength(1);
         expect(store.getActions().map((action) => (action.type))).toEqual([MEASUREMENT_REQUEST, MEASUREMENT_SUCCESS]);
       });
 
-      it('filters out average readouts without values', async () => {
-        const store = storeWith(initialState);
-        const first = legendItemOf(Medium.districtHeating);
-        const second = legendItemOf(Medium.districtHeating, 'facility-2');
+      // TODO[!must!] resolve when impl. average
 
-        onFetchAsync(first, second);
+      // it('filters out average readouts without values', async () => {
+      //   const store = storeWith(initialState);
+      //   const first = legendItemOf(Medium.districtHeating);
+      //   const second = legendItemOf(Medium.districtHeating, 'facility-2');
+      //
+      //   onFetchAsync(first, second);
+      //
+      //   await store.dispatch(fetchMeasurements({
+      //     ...defaultParameters,
+      //     selectedReportItems: {
+      //       ...selectedReportItems,
+      //       items: [first, second],
+      //     }
+      //   }));
+      //
+      //   expect(store.getActions()).toEqual([
+      //     measurementRequest(),
+      //     measurementSuccess({
+      //       measurements: [
+      //         ...allQuantities[first.medium].map((_) => makeMeasurementResponse(first)),
+      //         ...allQuantities[second.medium].map((_) => makeMeasurementResponse(second)),
+      //       ],
+      //       average: allQuantities[first.medium].map((_) => ({
+      //         ...makeMeasurementAverageResponse(),
+      //         values: justValues
+      //       })),
+      //     }),
+      //   ]);
+      // });
 
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          items: [first, second],
-        }));
+      // TODO[!must!] resolve when impl. average
 
-        expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementSuccess({
-            measurements: [
-              ...allQuantities[first.medium].map((_) => makeMeasurementResponse(first)),
-              ...allQuantities[second.medium].map((_) => makeMeasurementResponse(second)),
-            ],
-            average: allQuantities[first.medium].map((_) => ({
-              ...makeMeasurementAverageResponse(),
-              values: justValues
-            })),
-          }),
-        ]);
-      });
-
-      it('keeps average readouts with a value of 0', async () => {
-        const store = storeWith(initialState);
-        const first = legendItemOf(Medium.districtHeating);
-        const second = legendItemOf(Medium.districtHeating, 'facility-2');
-
-        onFetchAsync(first, second);
-
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          items: [first, second],
-        }));
-
-        expect(store.getActions()).toEqual([
-          measurementRequest(),
-          measurementSuccess({
-            measurements: [
-              ...allQuantities[first.medium].map((_) => makeMeasurementResponse(first)),
-              ...allQuantities[second.medium].map((_) => makeMeasurementResponse(second))
-            ],
-            average: allQuantities[first.medium].map((_) => ({
-              ...makeMeasurementAverageResponse(),
-              values: justValues
-            })),
-          }),
-        ]);
-      });
+      // it('keeps average readouts with a value of 0', async () => {
+      //   const store = storeWith(initialState);
+      //   const first = legendItemOf(Medium.districtHeating);
+      //   const second = legendItemOf(Medium.districtHeating, 'facility-2');
+      //
+      //   onFetchAsync(first, second);
+      //
+      //   await store.dispatch(fetchMeasurements({
+      //     ...defaultParameters,
+      //     selectedReportItems: {
+      //       ...selectedReportItems,
+      //       items: [first, second],
+      //     }
+      //   }));
+      //
+      //   expect(store.getActions()).toEqual([
+      //     measurementRequest(),
+      //     measurementSuccess({
+      //       measurements: [
+      //         ...allQuantities[first.medium].map((_) => makeMeasurementResponse(first)),
+      //         ...allQuantities[second.medium].map((_) => makeMeasurementResponse(second))
+      //       ],
+      //       average: allQuantities[first.medium].map((_) => ({
+      //         ...makeMeasurementAverageResponse(),
+      //         values: justValues
+      //       })),
+      //     }),
+      //   ]);
+      // });
 
       it('does not fetch measurements when there are not items to fetch', async () => {
         const store = storeWith(initialState);
@@ -328,10 +343,7 @@ describe('measurementActions', () => {
 
         onFetchAsync(first, second);
 
-        await store.dispatch(fetchMeasurements({
-          ...defaultParameters,
-          items: [],
-        }));
+        await store.dispatch(fetchMeasurements(defaultParameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -410,7 +422,10 @@ describe('measurementActions', () => {
 
         await store.dispatch(fetchMeasurements({
           ...defaultParameters,
-          items: [meter],
+          selectedReportItems: {
+            ...selectedReportItems,
+            meters: [meter],
+          }
         }));
       };
 

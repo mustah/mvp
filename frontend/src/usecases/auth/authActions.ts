@@ -12,13 +12,11 @@ import {uuid} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 import {getOrganisationSlug} from './authSelectors';
 
-export const LOGOUT_USER = 'LOGOUT_USER';
-
 export const loginRequest = createAction('LOGIN_REQUEST');
 export const loginSuccess = createStandardAction('LOGIN_SUCCESS')<Authorized>();
 export const loginFailure = createStandardAction('LOGIN_FAILURE')<Unauthorized>();
 
-export const logoutUser = createStandardAction(LOGOUT_USER)<Unauthorized | undefined>();
+export const logoutUser = createStandardAction('LOGOUT_USER')<Unauthorized | undefined>();
 
 export const authSetUser = createStandardAction('AUTH_SET_USER_INFO')<User>();
 

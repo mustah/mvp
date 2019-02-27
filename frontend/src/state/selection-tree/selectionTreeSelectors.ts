@@ -11,7 +11,13 @@ import {SelectionTreeEntities, SelectionTreeMeter, SelectionTreeState} from './s
 export const getLegendItemsWithLimit = (meters?: ObjectsById<SelectionTreeMeter>): LegendItem[] =>
   meters
     ? toArray(meters).splice(0, limit)
-      .map(({id, name: label, medium}: SelectionTreeMeter) => ({id, label, medium}))
+      .map(({id, name: label, medium}: SelectionTreeMeter): LegendItem => ({
+        id,
+        label,
+        medium,
+        isHidden: false,
+        quantities: []
+      }))
     : [];
 
 interface ItemProps extends Identifiable {

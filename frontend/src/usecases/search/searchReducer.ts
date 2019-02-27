@@ -11,7 +11,7 @@ import {
   setThresholdAction,
 } from '../../state/user-selection/userSelectionActions';
 import {Action} from '../../types/Types';
-import {LOGOUT_USER} from '../auth/authActions';
+import {logoutUser} from '../auth/authActions';
 import {SEARCH} from './searchActions';
 import {Query, QueryParameter} from './searchModels';
 
@@ -42,7 +42,7 @@ export const search = (state: SearchState = initialState, action: Actions): Sear
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
     case RESET_SELECTION:
-    case LOGOUT_USER:
+    case getType(logoutUser):
       return initialState;
     default:
       return state;

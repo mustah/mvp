@@ -3,7 +3,7 @@ import {makeMeter} from '../../../__tests__/testDataFactory';
 import {RequestParameter} from '../../../helpers/urlFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable} from '../../../types/Types';
-import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {logoutUser} from '../../../usecases/auth/authActions';
 import {ApiRequestSortingOptions} from '../../ui/pagination/paginationModels';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
@@ -406,7 +406,7 @@ describe('paginatedDomainModelsReducer', () => {
         gateways: {...makeInitialState<Gateway>()},
       };
 
-      state = paginatedDomainModels(state, {type: LOGOUT_USER});
+      state = paginatedDomainModels(state, logoutUser(undefined));
 
       expect(state).toEqual(expected);
     });

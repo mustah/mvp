@@ -1,4 +1,10 @@
-import {Medium, Quantity, quantityAttributes} from '../../../state/ui/graph/measurement/measurementModels';
+import {savedReportsOf} from '../../../__tests__/testDataFactory';
+import {
+  allQuantities,
+  Medium,
+  Quantity,
+  quantityAttributes
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
 import {LegendItem, ReportState} from '../reportModels';
 import {initialState} from '../reportReducer';
@@ -12,12 +18,16 @@ describe('reportSelectors', () => {
       id: 1,
       label: 'extId1',
       medium: Medium.water,
+      isHidden: false,
+      quantities: [allQuantities[Medium.water][0]]
     };
 
     const meter2: LegendItem = {
       id: 2,
       label: 'extId2',
       medium: Medium.gas,
+      isHidden: false,
+      quantities: [allQuantities[Medium.gas][0]]
     };
 
     it('has no selected items', () => {
@@ -28,12 +38,7 @@ describe('reportSelectors', () => {
     it('has one saved meter', () => {
       const state: ReportState = {
         ...initialState,
-        savedReports: {
-          meterPage: {
-            id: 'meterPage',
-            meters: [meter]
-          }
-        },
+        savedReports: savedReportsOf([meter]),
       };
 
       const expected: LegendItem[] = [meter];
@@ -43,30 +48,10 @@ describe('reportSelectors', () => {
     it('has two saved meters', () => {
       const state: ReportState = {
         ...initialState,
-        savedReports: {
-          meterPage: {
-            id: 'meterPage',
-            meters: [meter, meter2]
-          }
-        },
+        savedReports: savedReportsOf([meter, meter2]),
       };
 
       const expected: LegendItem[] = [meter, meter2];
-      expect(getLegendItems(state)).toEqual(expected);
-    });
-
-    it('has meterPage id', () => {
-      const state: ReportState = {
-        ...initialState,
-        savedReports: {
-          someId: {
-            id: 'someId',
-            meters: [meter, meter2]
-          }
-        },
-      };
-
-      const expected: LegendItem[] = [];
       expect(getLegendItems(state)).toEqual(expected);
     });
   });
@@ -86,4 +71,5 @@ describe('reportSelectors', () => {
       expect(getThresholdMedia(state)).toEqual(expected);
     });
   });
+
 });
