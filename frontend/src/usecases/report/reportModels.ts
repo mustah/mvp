@@ -55,14 +55,10 @@ export interface LineProps {
   origin: MeasurementOrigin;
 }
 
-export interface ProprietaryLegendProps extends LegendPayload {
-  color: string;
-}
-
 export interface GraphContents {
   axes: Axes;
   data: object[];
-  legend: ProprietaryLegendProps[];
+  legend: LegendPayload[];
   lines: LineProps[];
 }
 

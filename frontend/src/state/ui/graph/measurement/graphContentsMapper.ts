@@ -1,6 +1,7 @@
+import {LegendPayload} from 'recharts';
 import {colors} from '../../../../app/themes';
 import {Dictionary} from '../../../../types/Types';
-import {Axes, GraphContents, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {Axes, GraphContents} from '../../../../usecases/report/reportModels';
 import {AverageResponsePart, MeasurementResponse, MeasurementResponsePart, Quantity} from './measurementModels';
 
 const colorize =
@@ -55,10 +56,7 @@ export const toGraphContents =
     const uniqueMeters = new Set<string>();
     let firstTimestamp;
 
-    const legendsMeters: Dictionary<ProprietaryLegendProps> = measurements.reduce((
-      prev,
-      {quantity},
-    ) => (
+    const legendsMeters: Dictionary<LegendPayload> = measurements.reduce((prev, {quantity}) => (
       prev[quantity]
         ? prev
         : {
@@ -70,10 +68,7 @@ export const toGraphContents =
           },
         }), {});
 
-    const legendsAverage: Dictionary<ProprietaryLegendProps> = average.reduce((
-      prev,
-      {quantity},
-    ) => (
+    const legendsAverage: Dictionary<LegendPayload> = average.reduce((prev, {quantity}) => (
       prev[quantity]
         ? prev
         : {
@@ -85,7 +80,7 @@ export const toGraphContents =
           },
         }), {});
 
-    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
+    const legends: Dictionary<LegendPayload> = {...legendsMeters, ...legendsAverage};
 
     measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
@@ -98,7 +93,6 @@ export const toGraphContents =
         if (!byDate[created]) {
           byDate[created] = {};
         }
-        // we should already have filtered out missing values
         byDate[created][dataKey] = value!;
       });
 
@@ -160,7 +154,6 @@ export const toGraphContents =
         if (!byDate[created]) {
           byDate[created] = {};
         }
-        // we should already have filtered out missing values
         byDate[created][dataKey] = value!;
       });
     });
