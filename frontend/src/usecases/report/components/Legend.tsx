@@ -11,7 +11,13 @@ import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {DispatchToProps, OwnProps, StateToProps} from '../containers/LegendContainer';
-import {quantityColumnWidth, renderColumns, RowProps, rowRenderer} from '../helpers/legendGridHelper';
+import {
+  ColumnRenderProps,
+  quantityColumnWidth,
+  renderColumns,
+  RowProps,
+  rowRenderer
+} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
 import './Legend.scss';
 
@@ -40,12 +46,17 @@ export const Legend = ({
   legendItems,
   mediumViewOptions,
   removeAllByMedium,
+  selectedQuantityColumns,
   showHideLegend,
   showHideMediumRows,
   toggleLine,
   toggleQuantityByMedium,
+  toggleQuantityById,
 }: DispatchToProps & StateToProps & OwnProps) => {
-  const [quantityGridColumns, columnQuantities] = React.useMemo(() => renderColumns(legendItems), [legendItems]);
+  const columnRenderProps: ColumnRenderProps = {legendItems, selectedQuantityColumns, toggleQuantityById};
+  const [quantityGridColumns, columnQuantities] =
+    React.useMemo(() => renderColumns(columnRenderProps), [legendItems]);
+
   const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
 
   const renderIconButtonsCell = ({dataItem: {id, isHidden}}: GridCellProps) => {
@@ -95,7 +106,7 @@ export const Legend = ({
     showHideAllByMedium,
     mediumViewOptions,
     removeAllByMedium,
-    toggleQuantityByMedium
+    toggleQuantityByMedium,
   };
 
   return (

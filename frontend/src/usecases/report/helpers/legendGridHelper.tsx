@@ -1,6 +1,6 @@
 import {GridCellProps, GridColumn, GridRowProps} from '@progress/kendo-react-grid';
 import {default as classNames} from 'classnames';
-import {noop, toArray} from 'lodash';
+import {toArray} from 'lodash';
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {ButtonDelete} from '../../../components/buttons/ButtonDelete';
@@ -12,11 +12,24 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {colorizeMeters} from '../../../state/ui/graph/measurement/graphContentsMapper';
 import {allQuantities, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary, OnClick, OnClickWith} from '../../../types/Types';
-import {LegendItem, MediumViewOptions, QuantityMedium} from '../reportModels';
+import {LegendItem, MediumViewOptions, QuantityId, QuantityMedium, SelectedQuantityColumns} from '../reportModels';
 import {isGroupHeader} from './measurementGridHelper';
 
 interface CurrentMedium {
   medium: Medium;
+}
+
+interface CurrentQuantity {
+  quantity: Quantity;
+}
+
+interface QuantityCell {
+  selectedQuantityColumns: SelectedQuantityColumns;
+  toggleQuantityById: OnClickWith<QuantityId>;
+}
+
+export interface ColumnRenderProps extends QuantityCell {
+  legendItems: LegendItem[];
 }
 
 export interface RowProps {
@@ -52,7 +65,7 @@ interface CheckboxProps {
   disabled: boolean;
 }
 
-const checkboxPropsFrom = (quantities: Quantity[], quantity: Quantity): CheckboxProps => {
+const checkboxPropsOf = (quantities: Quantity[], quantity: Quantity): CheckboxProps => {
   const checked = quantities.indexOf(quantity) !== -1;
   const disabled = !checked && quantities.length === 2;
   return {checked, disabled};
@@ -69,7 +82,7 @@ const renderGroupHeaderTds = ({
   const tds = columnQuantities.map((quantity) => {
     const key = `group-header-td-${medium}-${quantity}`;
     if (allQuantities[medium].some(q => q === quantity)) {
-      const checkboxProps = checkboxPropsFrom(mediumViewOptions[medium].quantities, quantity);
+      const checkboxProps = checkboxPropsOf(mediumViewOptions[medium].quantities, quantity);
       const {checked, disabled} = checkboxProps;
       const onClick = () => toggleQuantityByMedium({medium, quantity});
       return (
@@ -131,14 +144,17 @@ export const rowRenderer = (props: RowProps) =>
     }
   };
 
-const renderQuantityCell = (quantity: Quantity) =>
+const renderQuantityCell = ({quantity, selectedQuantityColumns, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
   ({dataItem: {id, label, medium, quantities}}: GridCellProps) => {
     if (allQuantities[medium].some(q => q === quantity)) {
-      const checkboxProps = checkboxPropsFrom(quantities, quantity);
-      const {checked, disabled} = checkboxProps;
+      const quantityColumns = selectedQuantityColumns[medium];
+      const checked = quantities.indexOf(quantity) !== -1;
+      const disabled = !checked && quantityColumns.length === 2 && quantityColumns.indexOf(quantity) === -1;
+      const checkboxProps: CheckboxProps = {checked, disabled};
+      const onClick = () => toggleQuantityById({id, quantity});
       return (
         <td key={`item-td-${medium}-${quantity}-${checked}-${disabled}`}>
-          <Checkbox {...checkboxProps} onCheck={noop} iconStyle={{fill: colorizeMeters(quantity)}}/>
+          <Checkbox {...checkboxProps} onCheck={onClick} iconStyle={{fill: colorizeMeters(quantity)}}/>
         </td>);
     } else {
       return <td/>;
@@ -148,7 +164,7 @@ const renderQuantityCell = (quantity: Quantity) =>
 export const quantityColumnWidth = 76;
 
 export const renderColumns =
-  (legendItems: LegendItem[]): [React.ReactNode[], Quantity[]] => {
+  ({legendItems, ...otherProps}: ColumnRenderProps): [React.ReactNode[], Quantity[]] => {
     const columns: Dictionary<React.ReactNode> = {};
     const columnQuantities: Quantity[] = [];
 
@@ -159,7 +175,7 @@ export const renderColumns =
             <GridColumn
               key={`legend-${id}-${label}-${medium}-${quantity}`}
               title={`${translate(`${quantity} short`)}`}
-              cell={renderQuantityCell(quantity)}
+              cell={renderQuantityCell({...otherProps, quantity})}
               width={quantityColumnWidth}
             />);
           columnQuantities.push(quantity);

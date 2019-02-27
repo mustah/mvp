@@ -1,4 +1,5 @@
 import {createSelector} from 'reselect';
+import {unique} from '../../helpers/collections';
 import {identity} from '../../helpers/commonHelpers';
 import {RootState} from '../../reducers/rootReducer';
 import {
@@ -9,7 +10,7 @@ import {
 } from '../../state/ui/graph/measurement/measurementModels';
 import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
 import {uuid} from '../../types/Types';
-import {LegendItem, MediumViewOptions, Report, ReportState, ViewOptions} from './reportModels';
+import {LegendItem, MediumViewOptions, Report, ReportState, SelectedQuantityColumns, ViewOptions} from './reportModels';
 
 export const getMeterPage = (state: ReportState): Report => state.savedReports.meterPage;
 export const getMediumViewOptions = (state: ReportState): MediumViewOptions => getMeterPage(state).mediumViewOptions;
@@ -17,10 +18,25 @@ export const getViewOptions = (state: ReportState, medium: Medium): ViewOptions 
 export const getLegendItems = (state: ReportState): LegendItem[] => getMeterPage(state).meters;
 export const hasLegendItems = (state: ReportState): boolean => getLegendItems(state).length > 0;
 
+export const makeMediumQuantitiesMap = (): SelectedQuantityColumns =>
+  Object.keys(Medium)
+    .map(k => Medium[k])
+    .reduce((acc, medium) => ({...acc, [medium]: []}), {});
+
 export const getHiddenLines =
   createSelector<ReportState, LegendItem[], uuid[]>(
     getLegendItems,
     (items) => items.filter(it => it.isHidden).map(({id}) => id)
+  );
+
+export const getSelectedQuantityColumns =
+  createSelector<ReportState, LegendItem[], SelectedQuantityColumns>(
+    getLegendItems,
+    items => {
+      const columns: SelectedQuantityColumns = makeMediumQuantitiesMap();
+      items.forEach(it => columns[it.medium] = unique([...columns[it.medium], ...it.quantities]));
+      return columns;
+    }
   );
 
 export const getMeasurementParameters =

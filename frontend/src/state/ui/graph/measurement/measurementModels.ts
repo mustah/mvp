@@ -133,7 +133,7 @@ export const getDisplayModeText = (quantity: Quantity | string | undefined): str
     : 'meter value';
 };
 
-export const enum Medium {
+export enum Medium {
   electricity = 'electricity',
   districtHeating = 'districtHeating',
   gas = 'gas',

@@ -19,7 +19,9 @@ export interface ViewOptions {
   quantities: Quantity[];
 }
 
-export type MediumViewOptions = { [medium in Medium]: ViewOptions };
+export type MediumViewOptions = { [m in Medium]: ViewOptions };
+
+export type SelectedQuantityColumns = { [m in Medium]: Quantity[] };
 
 export interface Report extends Identifiable {
   meters: LegendItem[];
@@ -82,5 +84,10 @@ export interface SelectedReportItems {
 
 export interface QuantityMedium {
   medium: Medium;
+  quantity: Quantity;
+}
+
+export interface QuantityId {
+  id: uuid;
   quantity: Quantity;
 }

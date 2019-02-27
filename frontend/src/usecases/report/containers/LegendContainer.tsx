@@ -12,23 +12,33 @@ import {
   showHideAllByMedium,
   showHideMediumRows,
   toggleLine,
+  toggleQuantityById,
   toggleQuantityByMedium
 } from '../reportActions';
-import {LegendItem, MediumViewOptions, QuantityMedium, ReportState} from '../reportModels';
-import {getLegendItems, getMediumViewOptions, hasLegendItems} from '../reportSelectors';
+import {
+  LegendItem,
+  MediumViewOptions,
+  QuantityId,
+  QuantityMedium,
+  ReportState,
+  SelectedQuantityColumns
+} from '../reportModels';
+import {getLegendItems, getMediumViewOptions, getSelectedQuantityColumns, hasLegendItems} from '../reportSelectors';
 
 export interface StateToProps extends ReportState, HasContent {
   legendItems: LegendItem[];
   mediumViewOptions: MediumViewOptions;
+  selectedQuantityColumns: SelectedQuantityColumns;
 }
 
 export interface DispatchToProps {
   deleteItem: OnClickWithId;
-  showHideAllByMedium: OnClickWith<Medium>;
   removeAllByMedium: OnClickWith<Medium>;
+  showHideAllByMedium: OnClickWith<Medium>;
   showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
   toggleQuantityByMedium: OnClickWith<QuantityMedium>;
+  toggleQuantityById: OnClickWith<QuantityId>;
 }
 
 export interface OwnProps extends Visible {
@@ -45,6 +55,7 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
     mediumViewOptions: getMediumViewOptions(report),
     resolution,
     savedReports,
+    selectedQuantityColumns: getSelectedQuantityColumns(report),
     timePeriod: {period: Period.latest}, // TODO timePeriod is unused but I could not exclude it from ReportState
   });
 };
@@ -56,6 +67,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   showHideMediumRows,
   toggleLine,
   toggleQuantityByMedium,
+  toggleQuantityById,
 }, dispatch);
 
 export const LegendContainer =

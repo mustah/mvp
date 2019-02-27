@@ -15,9 +15,18 @@ import {
   showHideAllByMedium,
   showHideMediumRows,
   toggleLine,
+  toggleQuantityById,
   toggleQuantityByMedium,
 } from './reportActions';
-import {LegendItem, MediumViewOptions, QuantityMedium, Report, ReportState, ViewOptions} from './reportModels';
+import {
+  LegendItem,
+  MediumViewOptions,
+  QuantityId,
+  QuantityMedium,
+  Report,
+  ReportState,
+  ViewOptions
+} from './reportModels';
 import {getLegendItems, getMediumViewOptions, getViewOptions} from './reportSelectors';
 
 export const mediumViewOptions: MediumViewOptions = {
@@ -88,18 +97,23 @@ const toggleQuantityMedium = (state: ReportState, {medium, quantity}: QuantityMe
   const viewOptions: ViewOptions = mediumViewOptions[medium];
   const quantities = toggle(quantity, viewOptions.quantities);
   const meters = getLegendItems(state).map(it => it.medium === medium ? {...it, quantities} : it);
-  return ({
-      ...state.savedReports,
-      ['meterPage']: {
-        ...state.savedReports.meterPage,
-        meters,
-        mediumViewOptions: {
-          ...mediumViewOptions,
-          [medium]: {...viewOptions, quantities}
-        }
+  return {
+    ...state.savedReports,
+    ['meterPage']: {
+      ...state.savedReports.meterPage,
+      meters,
+      mediumViewOptions: {
+        ...mediumViewOptions,
+        [medium]: {...viewOptions, quantities}
       }
     }
-  );
+  };
+};
+
+const toggleQuantityId = (state: ReportState, {id, quantity}: QuantityId): ObjectsById<Report> => {
+  const meters = getLegendItems(state).map(
+    it => it.id === id ? {...it, quantities: toggle(quantity, it.quantities)} : it);
+  return savedReports(state, meters);
 };
 
 const toggleLegendItemVisibility = (state: ReportState, id: uuid): ReportState => ({
@@ -121,7 +135,8 @@ const showHideAll = (state: ReportState, medium: Medium): ReportState => {
 };
 
 type ActionTypes =
-  | Action<LegendItem[] | string[] | uuid | TemporalResolution | SelectionInterval | Medium | QuantityMedium>
+  | Action<LegendItem[] | string[] | uuid | TemporalResolution | SelectionInterval | Medium>
+  | Action<QuantityMedium | QuantityId>
   | EmptyAction<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
@@ -159,6 +174,11 @@ export const report = (state: ReportState = initialState, action: ActionTypes): 
       return {
         ...state,
         savedReports: toggleQuantityMedium(state, (action as Action<QuantityMedium>).payload),
+      };
+    case getType(toggleQuantityById):
+      return {
+        ...state,
+        savedReports: toggleQuantityId(state, (action as Action<QuantityId>).payload),
       };
     case getType(logoutUser):
       return initialState;

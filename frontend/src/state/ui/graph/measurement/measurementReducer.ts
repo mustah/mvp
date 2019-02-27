@@ -7,6 +7,7 @@ import {
   removeAllByMedium,
   selectResolution,
   setReportTimePeriod,
+  toggleQuantityById,
   toggleQuantityByMedium
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
@@ -71,6 +72,7 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
     case getType(addLegendItems):
     case getType(removeAllByMedium):
     case getType(toggleQuantityByMedium):
+    case getType(toggleQuantityById):
     case SEARCH:
       return initialState;
     default:

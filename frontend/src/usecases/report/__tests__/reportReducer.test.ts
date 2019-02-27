@@ -14,10 +14,11 @@ import {
   showHideAllByMedium,
   showHideMediumRows,
   toggleLine,
+  toggleQuantityById,
   toggleQuantityByMedium
 } from '../reportActions';
 
-import {LegendItem, QuantityMedium, Report, ReportState, ViewOptions} from '../reportModels';
+import {LegendItem, QuantityId, QuantityMedium, Report, ReportState, ViewOptions} from '../reportModels';
 import {initialState, report} from '../reportReducer';
 import {getHiddenLines, getLegendItems, getViewOptions} from '../reportSelectors';
 
@@ -328,6 +329,39 @@ describe('reportReducer', () => {
 
         expect(getViewOptions(nextState, Medium.districtHeating).quantities).toEqual(quantities);
         expect(getLegendItems(nextState)).toEqual(legendItems);
+      });
+
+    });
+
+    describe('toggleQuantityById', () => {
+
+      it('selects single quantity for given legend item', () => {
+        const state: ReportState = {...initialState, savedReports};
+        const payload: QuantityId = {id: gasMeter.id, quantity: Quantity.volume};
+
+        const nextState: ReportState = report(state, toggleQuantityById(payload));
+
+        const expected: LegendItem[] = [{...gasMeter, quantities: [Quantity.volume]}, waterMeter];
+        expect(getLegendItems(nextState)).toEqual(expected);
+      });
+
+      it('de-selects selected quantity for given legend item', () => {
+        const meters = [{...gasMeter, quantities: [Quantity.volume]}, waterMeter];
+        const state: ReportState = {...initialState, savedReports: savedReportsOf(meters)};
+        const payload: QuantityId = {id: gasMeter.id, quantity: Quantity.volume};
+
+        const nextState: ReportState = report(state, toggleQuantityById(payload));
+
+        expect(getLegendItems(nextState)).toEqual(items);
+      });
+
+      it('does nothing when id does not exist', () => {
+        const state: ReportState = {...initialState, savedReports};
+        const payload: QuantityId = {id: -999, quantity: Quantity.volume};
+
+        const nextState: ReportState = report(state, toggleQuantityById(payload));
+
+        expect(getLegendItems(nextState)).toEqual(items);
       });
 
     });
