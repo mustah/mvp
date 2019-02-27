@@ -26,3 +26,5 @@ export const groupById = <T extends Identifiable>(items: T[]): ObjectsById<T> =>
     },
     {}
   );
+
+export const unique = <T>(items: T[]): T[] => Array.from<T>(new Set<T>(items));

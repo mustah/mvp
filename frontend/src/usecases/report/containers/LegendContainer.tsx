@@ -11,21 +11,30 @@ import {
   removeAllByMedium,
   showHideAllByMedium,
   showHideMediumRows,
-  toggleLine, toggleQuantityById,
+  toggleLine,
+  toggleQuantityById,
   toggleQuantityByMedium
 } from '../reportActions';
-import {LegendItem, MediumViewOptions, QuantityId, QuantityMedium, ReportState} from '../reportModels';
-import {getLegendItems, getMediumViewOptions, hasLegendItems} from '../reportSelectors';
+import {
+  LegendItem,
+  MediumViewOptions,
+  QuantityId,
+  QuantityMedium,
+  ReportState,
+  SelectedQuantityColumns
+} from '../reportModels';
+import {getLegendItems, getMediumViewOptions, getSelectedQuantityColumns, hasLegendItems} from '../reportSelectors';
 
 export interface StateToProps extends ReportState, HasContent {
   legendItems: LegendItem[];
   mediumViewOptions: MediumViewOptions;
+  selectedQuantityColumns: SelectedQuantityColumns;
 }
 
 export interface DispatchToProps {
   deleteItem: OnClickWithId;
-  showHideAllByMedium: OnClickWith<Medium>;
   removeAllByMedium: OnClickWith<Medium>;
+  showHideAllByMedium: OnClickWith<Medium>;
   showHideMediumRows: OnClickWith<Medium>;
   toggleLine: OnClickWithId;
   toggleQuantityByMedium: OnClickWith<QuantityMedium>;
@@ -46,6 +55,7 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
     mediumViewOptions: getMediumViewOptions(report),
     resolution,
     savedReports,
+    selectedQuantityColumns: getSelectedQuantityColumns(report),
     timePeriod: {period: Period.latest}, // TODO timePeriod is unused but I could not exclude it from ReportState
   });
 };
