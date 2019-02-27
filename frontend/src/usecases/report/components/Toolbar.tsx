@@ -163,6 +163,7 @@ export const Toolbar = ({
         />
         <ResolutionSelection disabled={!hasMeasurements} resolution={resolution} selectResolution={selectResolution}/>
         <PeriodSelection
+          disabled={!hasLegendItems}
           customDateRange={customDateRange}
           period={timePeriod.period}
           selectPeriod={selectPeriod}

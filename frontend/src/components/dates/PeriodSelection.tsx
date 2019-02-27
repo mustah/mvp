@@ -16,6 +16,7 @@ interface NullableDateRange {
 }
 
 interface Props extends Styled {
+  disabled?: boolean;
   customDateRange: Maybe<DateRange>;
   period: Period;
   selectPeriod: OnSelectPeriod;
@@ -31,7 +32,7 @@ export class PeriodSelection extends React.Component<Props, State> {
   state: State = {periodSelectorOpen: false};
 
   render() {
-    const {period, customDateRange, style} = this.props;
+    const {customDateRange, disabled, period, style} = this.props;
 
     const timePeriods: MenuItemProps[] = [
       {
@@ -84,6 +85,7 @@ export class PeriodSelection extends React.Component<Props, State> {
         menuItems={timePeriods}
         value={period}
         style={style}
+        disabled={disabled}
       >
         <PeriodConfirmDialog
           isOpen={this.state.periodSelectorOpen}
