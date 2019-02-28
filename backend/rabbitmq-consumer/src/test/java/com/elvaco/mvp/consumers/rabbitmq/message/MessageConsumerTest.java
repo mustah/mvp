@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.access.MediumProvider;
 import com.elvaco.mvp.core.access.QuantityProvider;
@@ -68,6 +69,37 @@ public class MessageConsumerTest {
   static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   static final String ORGANISATION_SLUG = "some-organisation";
 
+  private static Map<String, Medium> mediumMap = Map.of(
+    UNKNOWN.medium.name, UNKNOWN.medium,
+    DEFAULT_HOT_WATER.medium.name, DEFAULT_HOT_WATER.medium,
+    DEFAULT_WATER.medium.name, DEFAULT_WATER.medium,
+    DEFAULT_DISTRICT_HEATING.medium.name, DEFAULT_DISTRICT_HEATING.medium,
+    DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
+  );
+
+  private static Map<Medium, MeterDefinition> meterDefinitionMap = Map.of(
+    UNKNOWN.medium, UNKNOWN,
+    DEFAULT_HOT_WATER.medium, DEFAULT_HOT_WATER,
+    DEFAULT_WATER.medium, DEFAULT_WATER,
+    DEFAULT_DISTRICT_HEATING.medium, DEFAULT_DISTRICT_HEATING,
+    DEFAULT_ROOM_SENSOR.medium, DEFAULT_ROOM_SENSOR
+  );
+
+  private static Map<String, Quantity> quantityMap = List.of(
+    VOLUME,
+    VOLUME_FLOW,
+    TEMPERATURE,
+    HUMIDITY,
+    ENERGY,
+    POWER,
+    FORWARD_TEMPERATURE,
+    RETURN_TEMPERATURE,
+    DIFFERENCE_TEMPERATURE,
+    ENERGY_RETURN,
+    REACTIVE_ENERGY,
+    EXTERNAL_TEMPERATURE
+  ).stream().collect(Collectors.toMap(q -> q.name, q -> q));
+
   AuthenticatedUser authenticatedUser;
   PhysicalMeters physicalMeters;
   Organisations organisations;
@@ -84,7 +116,13 @@ public class MessageConsumerTest {
   MockMeterStatusLogs meterStatusLogs;
   MockJobService<MeteringReferenceInfoMessageDto> jobService;
 
+  MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
+  SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
+    meterDefinitionMap.get(medium));
+  QuantityProvider quantityProvider = name -> Optional.ofNullable(quantityMap.get(name));
+
   UnitConverter unitConverter = new UnitConverter() {
+    @Nullable
     @Override
     public MeasurementUnit convert(
       MeasurementUnit measurementUnit, String targetUnit
@@ -97,41 +135,6 @@ public class MessageConsumerTest {
       return true;
     }
   };
-
-  private Map<String, Medium> mediumMap = Map.of(
-    UNKNOWN.medium.name, UNKNOWN.medium,
-    DEFAULT_HOT_WATER.medium.name, DEFAULT_HOT_WATER.medium,
-    DEFAULT_WATER.medium.name, DEFAULT_WATER.medium,
-    DEFAULT_DISTRICT_HEATING.medium.name, DEFAULT_DISTRICT_HEATING.medium,
-    DEFAULT_ROOM_SENSOR.medium.name, DEFAULT_ROOM_SENSOR.medium
-  );
-  MediumProvider mediumProvider = name -> Optional.ofNullable(mediumMap.get(name));
-  private Map<Medium, MeterDefinition> meterDefinitionMap = Map.of(
-    UNKNOWN.medium, UNKNOWN,
-    DEFAULT_HOT_WATER.medium, DEFAULT_HOT_WATER,
-    DEFAULT_WATER.medium, DEFAULT_WATER,
-    DEFAULT_DISTRICT_HEATING.medium, DEFAULT_DISTRICT_HEATING,
-    DEFAULT_ROOM_SENSOR.medium, DEFAULT_ROOM_SENSOR
-  );
-  SystemMeterDefinitionProvider meterDefinitionProvider = medium -> Optional.ofNullable(
-    meterDefinitionMap.get(medium));
-
-  private Map<String, Quantity> quantityMap = List.of(
-    VOLUME,
-    VOLUME_FLOW,
-    TEMPERATURE,
-    HUMIDITY,
-    ENERGY,
-    POWER,
-    FORWARD_TEMPERATURE,
-    RETURN_TEMPERATURE,
-    DIFFERENCE_TEMPERATURE,
-    ENERGY_RETURN,
-    REACTIVE_ENERGY,
-    EXTERNAL_TEMPERATURE
-  ).stream().collect(Collectors.toMap(q -> q.name, q -> q));
-
-  QuantityProvider quantityProvider = name -> Optional.ofNullable(quantityMap.get(name));
 
   @Before
   public void setUp() {

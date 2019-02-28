@@ -40,14 +40,17 @@ public class MeterDefinitionUseCases {
     if (meterDefinition.isDefault()) {
       throw new Unauthorized("System meter definitions can not be created");
     }
-    return persist(meterDefinition, true);
-  }
-
-  public MeterDefinition update(MeterDefinition meterDefinition) {
     return persist(meterDefinition, false);
   }
 
+  public MeterDefinition update(MeterDefinition meterDefinition) {
+    return persist(meterDefinition, true);
+  }
+
   public List<MeterDefinition> findAll() {
+    if (currentUser.isSuperAdmin()) {
+      return meterDefinitions.findAll();
+    }
     return meterDefinitions.findAll(
       currentUser.subOrganisationParameters().getEffectiveOrganisationId()
     );
@@ -97,7 +100,7 @@ public class MeterDefinitionUseCases {
       .orElseGet(() -> systemMeterDefinitionProvider.getByMediumOrThrow(medium));
   }
 
-  private MeterDefinition persist(MeterDefinition meterDefinition, boolean apply) {
+  private MeterDefinition persist(MeterDefinition meterDefinition, boolean isUpdate) {
     if (!hasAdminAccess(meterDefinition)) {
       throw new Unauthorized("User is not authorized to save this entity");
     }
@@ -129,8 +132,15 @@ public class MeterDefinitionUseCases {
         "Only one auto applied meter definition per organisation and medium is allowed");
     }
 
+    if (isUpdate) {
+      meterDefinitions.findById(meterDefinition.id)
+        .filter(previous -> !previous.isDefault())
+        .filter(previous -> !previous.organisation.id.equals(meterDefinition.organisation.id))
+        .ifPresent(previous -> resetToDefaultOnConnectedMeters(previous));
+    }
+
     MeterDefinition newMeterDefinition = meterDefinitions.save(meterDefinition);
-    if (apply) {
+    if (meterDefinition.autoApply) {
       autoApplyOnExistingMeters(newMeterDefinition);
     }
     return newMeterDefinition;

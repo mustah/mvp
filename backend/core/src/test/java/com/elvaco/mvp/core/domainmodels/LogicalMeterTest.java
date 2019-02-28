@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LogicalMeterTest extends DefaultTestFixture {
 
   @Test
-  public void medium() {
+  public void mediumFromMeterDefinition() {
     LogicalMeter heatingMeter = logicalMeter()
       .meterDefinition(DEFAULT_DISTRICT_HEATING)
       .build();
