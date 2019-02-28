@@ -35,18 +35,18 @@ interface OwnProps {
 export type Props = StateToProps & DispatchToProps & OwnProps;
 
 const mapStateToProps = ({
-  report,
+  report: {savedReports, temporal: {resolution, timePeriod}},
   measurement: {measurementResponse: {measurements}, isFetching, isExportingToExcel},
   ui: {toolbar: {measurement: {view}}}
 }: RootState): StateToProps =>
   ({
-    hasLegendItems: hasLegendItems(report),
+    hasLegendItems: hasLegendItems(savedReports),
     hasMeasurements: measurements.length > 0,
     isFetching,
     isExportingToExcel,
-    resolution: report.resolution,
+    resolution,
+    timePeriod,
     view,
-    timePeriod: report.timePeriod,
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

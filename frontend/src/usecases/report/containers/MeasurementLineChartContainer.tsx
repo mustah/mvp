@@ -5,6 +5,7 @@ import {
   ContentRenderer,
   LabelProps,
   Legend,
+  LegendPayload,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -30,7 +31,7 @@ import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotReChartProps} from '../components/line-chart/ActiveDot';
 import {CustomizedTooltip} from '../components/line-chart/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/line-chart/Dot';
-import {ActiveDataPoint, GraphContents, LineProps, ProprietaryLegendProps} from '../reportModels';
+import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
 import {hasLegendItems} from '../reportSelectors';
 
 export interface GraphProps {
@@ -64,7 +65,7 @@ interface GraphContentProps {
   data?: object[];
   key: string;
   lines: Children[];
-  legend: ProprietaryLegendProps[];
+  legend: LegendPayload[];
   legendClick: OnClick;
   setTooltipPayload: OnClick;
 }
@@ -246,11 +247,16 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
 
 }
 
-const mapStateToProps = ({report, measurement, userSelection: {userSelection}, ui}: RootState): StateToProps =>
+const mapStateToProps = ({
+  report: {savedReports},
+  measurement,
+  userSelection: {userSelection},
+  ui,
+}: RootState): StateToProps =>
   ({
     ...getSelectedPeriod(userSelection),
     isSideMenuOpen: isSideMenuOpen(ui),
-    hasMeters: hasLegendItems(report),
+    hasMeters: hasLegendItems(savedReports),
     hasContent: hasMeasurements(measurement.measurementResponse)
   });
 

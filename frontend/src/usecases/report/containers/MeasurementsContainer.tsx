@@ -4,7 +4,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {
   exportToExcelSuccess,
   fetchMeasurements,
-  measurementClearError} from '../../../state/ui/graph/measurement/measurementActions';
+  measurementClearError
+} from '../../../state/ui/graph/measurement/measurementActions';
 import {
   FetchMeasurements,
   MeasurementParameters,
@@ -37,11 +38,11 @@ export interface DispatchToProps {
 }
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {report, measurement, userSelection: {userSelection}} = rootState;
+  const {report: {savedReports}, measurement, userSelection: {userSelection}} = rootState;
   return ({
-    hasMeters: hasLegendItems(report),
+    hasMeters: hasLegendItems(savedReports),
     hasContent: hasMeasurements(measurement.measurementResponse),
-    hiddenLines: getHiddenLines(report),
+    hiddenLines: getHiddenLines(savedReports),
     measurement,
     parameters: getMeterParameters({userSelection}),
     requestParameters: getMeasurementParameters(rootState),

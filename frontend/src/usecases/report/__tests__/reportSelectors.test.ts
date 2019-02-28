@@ -1,4 +1,4 @@
-import {savedReportsOf} from '../../../__tests__/testDataFactory';
+import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {
   allQuantities,
   Medium,
@@ -6,8 +6,8 @@ import {
   quantityAttributes
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
-import {LegendItem, ReportState, SelectedQuantityColumns} from '../reportModels';
-import {initialState} from '../reportReducer';
+import {LegendItem, SavedReportsState, SelectedQuantityColumns} from '../reportModels';
+import {initialSavedReportState} from '../reportReducer';
 import {
   getLegendItems,
   getSelectedQuantityColumns,
@@ -37,13 +37,13 @@ describe('reportSelectors', () => {
 
     it('has no selected items', () => {
       const expected: LegendItem[] = [];
-      expect(getLegendItems(initialState)).toEqual(expected);
+      expect(getLegendItems(initialSavedReportState)).toEqual(expected);
     });
 
     it('has one saved meter', () => {
-      const state: ReportState = {
-        ...initialState,
-        savedReports: savedReportsOf([meter]),
+      const state: SavedReportsState = {
+        ...initialSavedReportState,
+        ...savedReportsWith([meter]),
       };
 
       const expected: LegendItem[] = [meter];
@@ -51,9 +51,9 @@ describe('reportSelectors', () => {
     });
 
     it('has two saved meters', () => {
-      const state: ReportState = {
-        ...initialState,
-        savedReports: savedReportsOf([meter, meter2]),
+      const state: SavedReportsState = {
+        ...initialSavedReportState,
+        ...savedReportsWith([meter, meter2]),
       };
 
       const expected: LegendItem[] = [meter, meter2];
@@ -68,9 +68,9 @@ describe('reportSelectors', () => {
       const meter1: LegendItem = {...districtHeating, id: 1, quantities: [Quantity.flow]};
       const meter2: LegendItem = {...districtHeating, id: 2, quantities: [Quantity.power]};
       const meter3: LegendItem = {...districtHeating, id: 3, quantities: [Quantity.flow]};
-      const state: ReportState = {
-        ...initialState,
-        savedReports: savedReportsOf([meter1, meter2, meter3]),
+      const state: SavedReportsState = {
+        ...initialSavedReportState,
+        ...savedReportsWith([meter1, meter2, meter3]),
       };
 
       const expected: SelectedQuantityColumns = {

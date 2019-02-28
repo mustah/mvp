@@ -10,13 +10,28 @@ import {
 } from '../../state/ui/graph/measurement/measurementModels';
 import {ThresholdQuery} from '../../state/user-selection/userSelectionModels';
 import {uuid} from '../../types/Types';
-import {LegendItem, MediumViewOptions, Report, ReportState, SelectedQuantityColumns, ViewOptions} from './reportModels';
+import {
+  LegendItem,
+  MediumViewOptions,
+  Report,
+  SavedReportsState,
+  SelectedQuantityColumns,
+  ViewOptions
+} from './reportModels';
 
-export const getMeterPage = (state: ReportState): Report => state.savedReports.meterPage;
-export const getMediumViewOptions = (state: ReportState): MediumViewOptions => getMeterPage(state).mediumViewOptions;
-export const getViewOptions = (state: ReportState, medium: Medium): ViewOptions => getMediumViewOptions(state)[medium];
-export const getLegendItems = (state: ReportState): LegendItem[] => getMeterPage(state).meters;
-export const hasLegendItems = (state: ReportState): boolean => getLegendItems(state).length > 0;
+export const getMeterPage = (state: SavedReportsState): Report => state.meterPage;
+
+export const getMediumViewOptions = (state: SavedReportsState): MediumViewOptions =>
+  getMeterPage(state).mediumViewOptions;
+
+export const getViewOptions = (state: SavedReportsState, medium: Medium): ViewOptions =>
+  getMediumViewOptions(state)[medium];
+
+export const getLegendItems = (state: SavedReportsState): LegendItem[] =>
+  getMeterPage(state).meters;
+
+export const hasLegendItems = (state: SavedReportsState): boolean =>
+  getLegendItems(state).length > 0;
 
 export const makeMediumQuantitiesMap = (): SelectedQuantityColumns =>
   Object.keys(Medium)
@@ -24,13 +39,13 @@ export const makeMediumQuantitiesMap = (): SelectedQuantityColumns =>
     .reduce((acc, medium) => ({...acc, [medium]: []}), {});
 
 export const getHiddenLines =
-  createSelector<ReportState, LegendItem[], uuid[]>(
+  createSelector<SavedReportsState, LegendItem[], uuid[]>(
     getLegendItems,
     (items) => items.filter(it => it.isHidden).map(({id}) => id)
   );
 
 export const getSelectedQuantityColumns =
-  createSelector<ReportState, LegendItem[], SelectedQuantityColumns>(
+  createSelector<SavedReportsState, LegendItem[], SelectedQuantityColumns>(
     getLegendItems,
     items => {
       const columns: SelectedQuantityColumns = makeMediumQuantitiesMap();
@@ -43,14 +58,14 @@ export const getMeasurementParameters =
   createSelector<RootState, RootState, MeasurementParameters>(
     identity,
     ({
-      report,
+      report: {savedReports, temporal},
       userSelection: {userSelection: {selectionParameters}},
     }) => ({
-      resolution: report.resolution,
-      selectedReportItems: {meters: getMeterPage(report).meters},
+      resolution: temporal.resolution,
+      selectedReportItems: {meters: getMeterPage(savedReports).meters},
       selectionParameters: {
         ...selectionParameters,
-        dateRange: report.timePeriod,
+        dateRange: temporal.timePeriod,
       },
     })
   );

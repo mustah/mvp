@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Period} from '../../../components/dates/dateModels';
+import {TemporalResolution} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
 import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
@@ -20,14 +20,16 @@ import {
   MediumViewOptions,
   QuantityId,
   QuantityMedium,
-  ReportState,
+  SavedReportsState,
   SelectedQuantityColumns
 } from '../reportModels';
 import {getLegendItems, getMediumViewOptions, getSelectedQuantityColumns, hasLegendItems} from '../reportSelectors';
 
-export interface StateToProps extends ReportState, HasContent {
+export interface StateToProps extends HasContent {
   legendItems: LegendItem[];
   mediumViewOptions: MediumViewOptions;
+  resolution: TemporalResolution;
+  savedReports: SavedReportsState;
   selectedQuantityColumns: SelectedQuantityColumns;
 }
 
@@ -48,15 +50,14 @@ export interface OwnProps extends Visible {
 const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
 
 const mapStateToProps = ({report}: RootState): StateToProps => {
-  const {resolution, savedReports} = report;
+  const {temporal: {resolution}, savedReports} = report;
   return ({
-    legendItems: getLegendItems(report),
-    hasContent: hasLegendItems(report),
-    mediumViewOptions: getMediumViewOptions(report),
+    hasContent: hasLegendItems(savedReports),
+    legendItems: getLegendItems(savedReports),
+    mediumViewOptions: getMediumViewOptions(savedReports),
     resolution,
     savedReports,
-    selectedQuantityColumns: getSelectedQuantityColumns(report),
-    timePeriod: {period: Period.latest}, // TODO timePeriod is unused but I could not exclude it from ReportState
+    selectedQuantityColumns: getSelectedQuantityColumns(savedReports),
   });
 };
 

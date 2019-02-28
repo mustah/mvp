@@ -28,10 +28,16 @@ export interface Report extends Identifiable {
   mediumViewOptions: MediumViewOptions;
 }
 
-export interface ReportState {
+export type SavedReportsState = ObjectsById<Report>;
+
+export interface TemporalReportState {
   resolution: TemporalResolution;
-  savedReports: ObjectsById<Report>;
   timePeriod: SelectionInterval;
+}
+
+export interface ReportState {
+  savedReports: SavedReportsState;
+  temporal: TemporalReportState;
 }
 
 export interface Axes {
@@ -55,14 +61,10 @@ export interface LineProps {
   origin: MeasurementOrigin;
 }
 
-export interface ProprietaryLegendProps extends LegendPayload {
-  color: string;
-}
-
 export interface GraphContents {
   axes: Axes;
   data: object[];
-  legend: ProprietaryLegendProps[];
+  legend: LegendPayload[];
   lines: LineProps[];
 }
 
