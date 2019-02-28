@@ -44,7 +44,8 @@ public class LogicalMeterUseCases {
 
   public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
     RequestParameters parameters) {
-    return logicalMeters.findAllCollectionStatsPerDate(parameters);
+    return logicalMeters.findAllCollectionStatsPerDate(
+      parameters.ensureOrganisationFilters(currentUser));
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

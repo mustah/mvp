@@ -1,8 +1,14 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.DoubleStream;
 
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
@@ -19,7 +25,6 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_DISTRICT_HEATING;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DEFAULT_GAS;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.AFTER;
 import static com.elvaco.mvp.core.spi.data.RequestParameter.BEFORE;
@@ -104,12 +109,12 @@ public class DashboardControllerTest extends IntegrationTest {
   public void findAllWithCollectionStatusForMediumGas() {
     var meter = given(logicalMeter().meterDefinition(DEFAULT_GAS));
     ZonedDateTime start = context().now();
-    ZonedDateTime end = start.plusHours(2);
+    ZonedDateTime end = start.plusDays(1);
     given(series(
       meter,
       Quantity.VOLUME,
       start,
-      1.0
+      DoubleStream.iterate(0, d -> d + 1.0).limit(12).toArray()
     ));
 
     ResponseEntity<DashboardDto> response = asUser()
@@ -133,13 +138,28 @@ public class DashboardControllerTest extends IntegrationTest {
   @Test
   public void findAllWithCollectionStatus() {
     ZonedDateTime start = context().now();
-    ZonedDateTime end = start.plusHours(2);
-    var meter = given(logicalMeter().meterDefinition(DEFAULT_DISTRICT_HEATING));
+    ZonedDateTime end = start.plusDays(2);
+
+    PhysicalMeter phys24 = physicalMeter().readIntervalMinutes(1440).build();
+    List<LogicalMeter> meters = new ArrayList<>(given(
+      logicalMeter(),
+      logicalMeter().physicalMeters((List<PhysicalMeter>) Arrays.asList(phys24))
+    ));
+    //36 out of 48  (75%)
     given(series(
-      meter,
+      meters.get(0),
       Quantity.POWER,
       start,
-      1
+      DoubleStream.iterate(0, d -> d + 1.0).limit(36).toArray()
+
+    ));
+    //One out of two (50%)
+    given(series(
+      meters.get(1),
+      Quantity.POWER,
+      start,
+      DoubleStream.iterate(0, d -> d + 1.0).limit(1).toArray()
+
     ));
 
     ResponseEntity<DashboardDto> response = asUser()
@@ -156,7 +176,7 @@ public class DashboardControllerTest extends IntegrationTest {
     assertThat(dashboardDtos.widgets.get(0))
       .isEqualTo(new WidgetDto(
         WidgetType.COLLECTION.name,
-        50
+        62.5
       ));
   }
 }
