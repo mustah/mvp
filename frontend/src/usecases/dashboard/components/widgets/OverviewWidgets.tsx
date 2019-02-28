@@ -5,7 +5,7 @@ import {WidgetModel} from '../../../../components/indicators/indicatorWidgetMode
 import {Column, ColumnCenter} from '../../../../components/layouts/column/Column';
 import {translate} from '../../../../services/translationService';
 import './OverviewWidgets.scss';
-import {Widget} from './Widget';
+import {EmptyWidget, Widget} from './Widget';
 
 interface Props {
   isFetching: boolean;
@@ -40,6 +40,7 @@ export const OverviewWidgets = ({isFetching, widgets}: Props) => {
           <LoadingIndicator isFetching={isFetching} widget={widget}/>
         </ColumnCenter>
       </Widget>
+      <EmptyWidget style={{height: 90}}/>
     </Column>
   );
 };

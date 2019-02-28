@@ -1,8 +1,8 @@
 @import "../../../../app/variables";
 
 .OverviewWidgets {
+  width: $overview-widget-width;
   .Widget {
-    width: $overview-widget-width;
     padding-top: 0;
 
     .Indicator-wrapper {
