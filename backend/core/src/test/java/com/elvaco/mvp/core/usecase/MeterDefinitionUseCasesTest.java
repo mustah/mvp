@@ -364,6 +364,42 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   }
 
   @Test
+  public void update_logicalMetersAreUpdatedWhenOrganisationIsUpdated() {
+    Organisation organisation1 = organisation().name("Organisation1").build();
+    Organisation organisation2 = organisation().name("Organisation2").build();
+
+    var meterDefintion1 = meterDefinitions.save(meterDefinition()
+      .organisation(organisation1)
+      .medium(systemMeterDefinition.medium)
+      .name("The one to change")
+      .autoApply(true)
+      .build());
+
+    var meter1 = logicalMeter()
+      .organisationId(organisation1.id)
+      .meterDefinition(meterDefintion1)
+      .externalId("Meter1")
+      .build();
+    var meter2 = logicalMeter()
+      .organisationId(organisation2.id)
+      .meterDefinition(systemMeterDefinition)
+      .externalId("Meter2")
+      .build();
+    LogicalMeters logicalMeters = new MockLogicalMeters(asList(meter1, meter2));
+
+    var updatedMeterDefinition = newUseCases(ELVACO_SUPER_ADMIN_USER, logicalMeters)
+      .update(meterDefintion1.toBuilder()
+        .organisation(organisation2)
+        .autoApply(true)
+        .build());
+
+    assertThat(logicalMeters.findById(meter1.id).get().meterDefinition)
+      .isEqualTo(systemMeterDefinition);
+    assertThat(logicalMeters.findById(meter2.id).get().meterDefinition)
+      .isEqualTo(updatedMeterDefinition);
+  }
+
+  @Test
   public void superAdminCanNotDeleteSystemMeterDefinition() {
     assertThatThrownBy(() -> newUseCases(ELVACO_SUPER_ADMIN_USER)
       .deleteById(systemMeterDefinition.id))
@@ -464,7 +500,7 @@ public class MeterDefinitionUseCasesTest extends DefaultTestFixture {
   }
 
   MeterDefinition systemMeterDefinition() {
-    return meterDefinition().organisation(null).build();
+    return meterDefinition().organisation(null).name("System Default").build();
   }
 
   MeterDefinition meterDefinition(Organisation organisation) {
