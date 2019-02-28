@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.dto.CollectionStatsDto;
+import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.PagedLogicalMeterDto;
@@ -63,4 +65,25 @@ public class LogicalMeterController {
       .map(LogicalMeterDtoMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }
+
+  @GetMapping("/stats/facility")
+  public org.springframework.data.domain.Page<CollectionStatsDto> collectionStats(
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable
+  ) {
+    var page = logicalMeterUseCases.findAllCollectionStats(
+      RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID),
+      new PageableAdapter(pageable)
+    );
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements());
+  }
+
+  @GetMapping("/stats/date")
+  public List<CollectionStatsPerDateDto> collectionStatsPerDate(
+    @RequestParam MultiValueMap<String, String> requestParams) {
+    return logicalMeterUseCases.findAllCollectionStatsPerDate(
+      RequestParametersAdapter.of(requestParams, LOGICAL_METER_ID)
+    );
+  }
+
 }

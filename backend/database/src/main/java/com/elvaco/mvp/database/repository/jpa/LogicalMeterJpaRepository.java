@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeterCollectionStats;
+import com.elvaco.mvp.core.dto.CollectionStatsDto;
+import com.elvaco.mvp.core.dto.CollectionStatsPerDateDto;
 import com.elvaco.mvp.core.dto.LogicalMeterSummaryDto;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -39,6 +41,10 @@ public interface LogicalMeterJpaRepository {
   Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters);
 
   List<LogicalMeterCollectionStats> findMeterCollectionStats(RequestParameters parameters);
+
+  Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters, Pageable pageable);
+
+  List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(RequestParameters parameters);
 
   void delete(UUID id, UUID organisationId);
 
