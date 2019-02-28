@@ -28,10 +28,16 @@ export interface Report extends Identifiable {
   mediumViewOptions: MediumViewOptions;
 }
 
-export interface ReportState {
+export type SavedReportsState = ObjectsById<Report>;
+
+export interface TemporalReportState {
   resolution: TemporalResolution;
-  savedReports: ObjectsById<Report>;
   timePeriod: SelectionInterval;
+}
+
+export interface ReportState {
+  savedReports: SavedReportsState;
+  temporal: TemporalReportState;
 }
 
 export interface Axes {

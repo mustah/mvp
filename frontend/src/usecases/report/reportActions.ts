@@ -40,8 +40,8 @@ const selectItemsIfWithinLimits = ({dispatch, items}: DispatchWithinLimits) => {
 
 export const addToReport = (legendItem: LegendItem) =>
   (dispatch, getState: GetState) => {
-    const {report} = getState();
-    const legendItems: LegendItem[] = getLegendItems(report);
+    const {report: {savedReports}} = getState();
+    const legendItems: LegendItem[] = getLegendItems(savedReports);
     if (legendItem.medium !== Medium.unknown
         && find(legendItems, (it: LegendItem) => it.id === legendItem.id) === undefined) {
       const item: LegendItem = Maybe.maybe<LegendItem>(find(legendItems, {medium: legendItem.medium}))
@@ -54,7 +54,7 @@ export const addToReport = (legendItem: LegendItem) =>
 
 export const deleteItem = (id: uuid) =>
   (dispatch, getState: GetState) => {
-    const legendItems = getLegendItems(getState().report);
+    const legendItems = getLegendItems(getState().report.savedReports);
     const items: LegendItem[] = legendItems.filter((item: LegendItem) => item.id !== id);
     if (legendItems.length !== items.length) {
       selectItemsIfWithinLimits({dispatch, items});
@@ -63,6 +63,6 @@ export const deleteItem = (id: uuid) =>
 
 export const addAllToReport = (items: LegendItem[]) =>
   (dispatch, getState: GetState) => {
-    const legendItems: LegendItem[] = getLegendItems(getState().report);
+    const legendItems: LegendItem[] = getLegendItems(getState().report.savedReports);
     selectItemsIfWithinLimits({dispatch, items: [...legendItems, ...items.filter(it => it.medium !== Medium.unknown)]});
   };

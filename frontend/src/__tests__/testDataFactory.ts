@@ -1,8 +1,7 @@
 import {EventLog, Meter} from '../state/domain-models-paginated/meter/meterModels';
-import {ObjectsById} from '../state/domain-models/domainModels';
 import {LocationHolder} from '../state/domain-models/location/locationModels';
 import {Identifiable, uuid} from '../types/Types';
-import {LegendItem, Report} from '../usecases/report/reportModels';
+import {LegendItem, SavedReportsState} from '../usecases/report/reportModels';
 import {mediumViewOptions} from '../usecases/report/reportReducer';
 
 const meters = [
@@ -70,5 +69,5 @@ export const makeMeterDto = (id: number, city: string, address: string): MeterDt
   };
 };
 
-export const savedReportsOf = (meters: LegendItem[]): ObjectsById<Report> =>
+export const savedReportsWith = (meters: LegendItem[]): SavedReportsState =>
   ({meterPage: {id: 'meterPage', meters, mediumViewOptions}});

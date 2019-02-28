@@ -247,11 +247,16 @@ class GraphComponent extends React.Component<Props, GraphComponentState> {
 
 }
 
-const mapStateToProps = ({report, measurement, userSelection: {userSelection}, ui}: RootState): StateToProps =>
+const mapStateToProps = ({
+  report: {savedReports},
+  measurement,
+  userSelection: {userSelection},
+  ui,
+}: RootState): StateToProps =>
   ({
     ...getSelectedPeriod(userSelection),
     isSideMenuOpen: isSideMenuOpen(ui),
-    hasMeters: hasLegendItems(report),
+    hasMeters: hasLegendItems(savedReports),
     hasContent: hasMeasurements(measurement.measurementResponse)
   });
 

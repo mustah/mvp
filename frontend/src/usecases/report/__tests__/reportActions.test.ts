@@ -1,11 +1,10 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {savedReportsOf} from '../../../__tests__/testDataFactory';
+import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {RootState} from '../../../reducers/rootReducer';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {addAllToReport, addLegendItems, addToReport, deleteItem} from '../reportActions';
-import {LegendItem, Report} from '../reportModels';
+import {LegendItem, SavedReportsState} from '../reportModels';
 import {initialState as report} from '../reportReducer';
 
 describe('reportActions', () => {
@@ -33,7 +32,7 @@ describe('reportActions', () => {
     {id: 2, label: 'b', medium: Medium.water, isHidden, quantities}
   ];
 
-  const savedReports: ObjectsById<Report> = savedReportsOf(items);
+  const savedReports: SavedReportsState = savedReportsWith(items);
 
   beforeEach(() => {
     initialState = {report};
@@ -100,7 +99,7 @@ describe('reportActions', () => {
       const meters: LegendItem[] = [{...gasLegendItem, isRowExpanded: true}];
       const store = configureMockStore({
         ...initialState,
-        report: {...report, savedReports: savedReportsOf(meters)}
+        report: {...report, savedReports: savedReportsWith(meters)}
       });
 
       const newGasLegendItem: LegendItem = {...gasLegendItem, id: 2};
