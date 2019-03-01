@@ -1,6 +1,5 @@
 import {LegendPayload} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
-import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Identifiable, uuid} from '../../types/Types';
@@ -34,7 +33,9 @@ export interface Report extends Identifiable {
   legendViewOptions: LegendViewOptions;
 }
 
-export type SavedReportsState = ObjectsById<Report>;
+export interface SavedReportsState {
+  meterPage: Report;
+}
 
 export interface TemporalReportState {
   resolution: TemporalResolution;

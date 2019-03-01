@@ -53,15 +53,12 @@ const getLegendType = (action: ActionTypes): LegendType => (action as Action<Leg
 const toggleLegendItemsRows = (state: SavedReportsState, type: LegendType): LegendItem[] =>
   getLegendItems(state).map(it => it.type === type ? {...it, isRowExpanded: !it.isRowExpanded} : it);
 
-const getLegendItemsNotMatchingType = (state: SavedReportsState, type: LegendType): LegendItem[] =>
-  getLegendItems(state).filter(it => it.type !== type);
-
 const getLegendItemsMatchingType = (state: SavedReportsState, type: LegendType): LegendItem[] =>
   getLegendItems(state).filter(it => it.type === type);
 
-const makeSavedReports = (state: SavedReportsState, legendItems: LegendItem[]): SavedReportsState => ({
+const setLegendItems = (state: SavedReportsState, legendItems: LegendItem[]): SavedReportsState => ({
     ...state,
-    ['meterPage']: {
+    meterPage: {
       ...state.meterPage,
       legendItems
     }
@@ -74,7 +71,7 @@ const toggleHiddenLines = (savedReports: SavedReportsState, legendType: LegendTy
     const viewOptions: ViewOptions = legendViewOptions[legendType];
     return ({
         ...savedReports,
-        ['meterPage']: {
+        meterPage: {
           ...savedReports.meterPage,
           legendViewOptions: {
             ...legendViewOptions,
@@ -97,7 +94,7 @@ const toggleQuantityLegendType = (
   const legendItems = getLegendItems(state).map(it => it.type === type ? {...it, quantities} : it);
   return {
     ...state,
-    ['meterPage']: {
+    meterPage: {
       ...state.meterPage,
       legendItems,
       legendViewOptions: {
@@ -108,37 +105,54 @@ const toggleQuantityLegendType = (
   };
 };
 
+const removeAllByLegendType = (state: SavedReportsState, type: LegendType): SavedReportsState => {
+  const legendViewOptions = state.meterPage.legendViewOptions;
+  const legendItems = getLegendItems(state).filter(it => it.type !== type);
+  return ({
+      ...state,
+      meterPage: {
+        ...state.meterPage,
+        legendItems,
+        legendViewOptions: {
+          ...legendViewOptions,
+          [type]: {quantities: []}
+        }
+      }
+    }
+  );
+};
+
 const toggleQuantityId = (state: SavedReportsState, {id, quantity}: QuantityId): SavedReportsState => {
   const meters = getLegendItems(state)
     .map(it => it.id === id ? {...it, quantities: toggle(quantity, it.quantities)} : it);
-  return makeSavedReports(state, meters);
+  return setLegendItems(state, meters);
 };
 
 const toggleLegendItemVisibility = (state: SavedReportsState, id: uuid): SavedReportsState => {
   const meters = getLegendItems(state).map(it => it.id === id ? {...it, isHidden: !it.isHidden} : it);
-  return makeSavedReports(state, meters);
+  return setLegendItems(state, meters);
 };
 
 const showHideAll = (state: SavedReportsState, legendType: LegendType): SavedReportsState => {
   const isAllLinesHidden = getViewOptions(state, legendType).isAllLinesHidden;
   const meters: LegendItem[] = getLegendItemsMatchingType(state, legendType)
     .map(it => ({...it, isHidden: !isAllLinesHidden}));
-  return toggleHiddenLines(makeSavedReports(state, meters), legendType);
+  return toggleHiddenLines(setLegendItems(state, meters), legendType);
 };
 
 export const savedReports =
   (state: SavedReportsState = initialSavedReportState, action: ActionTypes): SavedReportsState => {
     switch (action.type) {
       case getType(addLegendItems):
-        return makeSavedReports(state, (action as Action<LegendItem[]>).payload);
+        return setLegendItems(state, (action as Action<LegendItem[]>).payload);
       case getType(toggleLine):
         return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
       case getType(showHideAllByType):
         return showHideAll(state, getLegendType(action));
       case getType(removeAllByType):
-        return makeSavedReports(state, getLegendItemsNotMatchingType(state, getLegendType(action)));
+        return removeAllByLegendType(state, getLegendType(action));
       case getType(showHideLegendRows):
-        return makeSavedReports(state, toggleLegendItemsRows(state, getLegendType(action)));
+        return setLegendItems(state, toggleLegendItemsRows(state, getLegendType(action)));
       case getType(toggleQuantityByType):
         return toggleQuantityLegendType(state, (action as Action<QuantityLegendType>).payload);
       case getType(toggleQuantityById):

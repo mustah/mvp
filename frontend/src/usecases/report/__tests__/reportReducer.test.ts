@@ -187,6 +187,48 @@ describe('reportReducer', () => {
 
       expect(nextState).toEqual(initialState);
     });
+
+    it('resets view options for given legend type', () => {
+      const payload: QuantityLegendType = {type: Medium.gas, quantity: Quantity.volume};
+
+      let nextState: SavedReportsState = savedReports(savedReportsWith([gasMeter]), toggleQuantityByType(payload));
+
+      expect(getViewOptions(nextState, Medium.gas).quantities).toEqual([Quantity.volume]);
+
+      nextState = savedReports(nextState, removeAllByType(Medium.gas));
+
+      expect(nextState).toEqual(initialSavedReportState);
+    });
+
+    it('resets view options for given legend type but keeps view options for other type', () => {
+      const payload1: QuantityLegendType = {type: Medium.gas, quantity: Quantity.volume};
+      const payload2: QuantityLegendType = {type: Medium.water, quantity: Quantity.volume};
+
+      const state = savedReportsWith(items);
+
+      let nextState: SavedReportsState = savedReports(state, toggleQuantityByType(payload1));
+      nextState = savedReports(nextState, toggleQuantityByType(payload2));
+
+      expect(getViewOptions(nextState, Medium.gas).quantities).toEqual([Quantity.volume]);
+      expect(getViewOptions(nextState, Medium.water).quantities).toEqual([Quantity.volume]);
+
+      nextState = savedReports(nextState, removeAllByType(Medium.gas));
+
+      const expected: SavedReportsState = {
+        ...initialSavedReportState,
+        meterPage: {
+          ...initialSavedReportState.meterPage,
+          legendItems: [{...waterMeter, quantities: [Quantity.volume]}],
+          legendViewOptions: {
+            ...initialSavedReportState.meterPage.legendViewOptions,
+            [Medium.water]: {quantities: [Quantity.volume]},
+            [Medium.gas]: {quantities: []},
+          }
+        }
+      };
+      expect(nextState).toEqual(expected);
+    });
+
   });
 
   describe('showHideLegendRows', () => {
