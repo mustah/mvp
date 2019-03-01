@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -300,7 +301,7 @@ class LogicalMeterJooqJpaRepository
     List<CollectionStatsPerDateDto> logicalMeters = select.fetch()
       .stream()
       .map(record -> new CollectionStatsPerDateDto(
-        record.value2(),
+        record.value2().atStartOfDay(ZoneId.of("UTC+1")),
         (Double) record.value1().doubleValue()
       )).collect(toList());
     return logicalMeters;
