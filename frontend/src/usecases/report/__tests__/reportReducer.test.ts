@@ -1,16 +1,13 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
-import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
+import {DateRange} from '../../../components/dates/dateModels';
 import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
-import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
+import {setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {logoutUser} from '../../auth/authActions';
 import {
   addLegendItems,
   removeAllByType,
-  selectResolution,
-  setReportTimePeriod,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -18,23 +15,8 @@ import {
   toggleQuantityByType
 } from '../reportActions';
 
-import {
-  LegendItem,
-  QuantityId,
-  QuantityLegendType,
-  ReportState,
-  SavedReportsState,
-  TemporalReportState,
-  ViewOptions
-} from '../reportModels';
-import {
-  initialSavedReportState,
-  initialState,
-  initialTemporalState,
-  report,
-  savedReports,
-  temporal
-} from '../reportReducer';
+import {LegendItem, QuantityId, QuantityLegendType, ReportState, SavedReportsState, ViewOptions} from '../reportModels';
+import {initialSavedReportState, initialState, report, savedReports} from '../reportReducer';
 import {getHiddenLines, getLegendItems, getViewOptions} from '../reportSelectors';
 
 describe('reportReducer', () => {
@@ -81,28 +63,6 @@ describe('reportReducer', () => {
     });
   });
 
-  describe('change period', () => {
-
-    it('should not clear selected list items when changing global period', () => {
-      const state: TemporalReportState = temporal(initialTemporalState, addLegendItems(items));
-
-      expect(state).toEqual(initialTemporalState);
-
-      const newState: TemporalReportState = temporal(state, selectPeriod(Period.currentMonth));
-      expect(newState).toBe(state);
-    });
-
-    it('can change its time period', () => {
-      const action = setReportTimePeriod({period: Period.currentMonth});
-
-      const afterChange: TemporalReportState = temporal(initialTemporalState, action);
-
-      const expected: SelectionInterval = {period: Period.currentMonth};
-      expect(afterChange.timePeriod).toEqual(expected);
-    });
-
-  });
-
   describe('change custom date range', () => {
 
     it('should not clear selected list items', () => {
@@ -137,32 +97,6 @@ describe('reportReducer', () => {
 
       const expected: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: false}];
       expect(getLegendItems(nextState)).toEqual(expected);
-    });
-  });
-
-  describe('selectResolution', () => {
-
-    it('can select hourly resolution', () => {
-      const payload = TemporalResolution.hour;
-
-      const state: TemporalReportState = temporal(initialTemporalState, selectResolution(payload));
-
-      const expected: TemporalReportState = {...initialTemporalState, resolution: payload};
-      expect(state).toEqual(expected);
-    });
-
-    it('changes resolution', () => {
-      const payload = TemporalResolution.hour;
-
-      let state: TemporalReportState = temporal(initialTemporalState, selectResolution(payload));
-
-      let expected: TemporalReportState = {...initialTemporalState, resolution: payload};
-      expect(state).toEqual(expected);
-
-      state = temporal(initialTemporalState, selectResolution(TemporalResolution.month));
-
-      expected = {...initialTemporalState, resolution: TemporalResolution.month};
-      expect(state).toEqual(expected);
     });
   });
 

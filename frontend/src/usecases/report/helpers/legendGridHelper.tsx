@@ -11,7 +11,7 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {allQuantitiesMap, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
-import {ColumnQuantities, LegendType, MediumViewOptions, QuantityId, SelectedQuantityColumns} from '../reportModels';
+import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantityColumns} from '../reportModels';
 import {colorOf} from './graphContentsMapper';
 import {isGroupHeader} from './measurementGridHelper';
 
@@ -30,7 +30,7 @@ export interface QuantityCell extends ColumnQuantities {
 
 export interface RowProps extends ColumnQuantities, RowDispatch {
   onExpandRow: OnClick;
-  mediumViewOptions: MediumViewOptions;
+  mediumViewOptions: LegendViewOptions;
 }
 
 interface MediumTdProps {

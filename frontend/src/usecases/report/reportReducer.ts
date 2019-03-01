@@ -1,17 +1,13 @@
 import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
-import {Period, TemporalResolution} from '../../components/dates/dateModels';
 import {toggle} from '../../helpers/collections';
 import {Medium} from '../../state/ui/graph/measurement/measurementModels';
-import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Action, uuid} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';
 import {
   addLegendItems,
   removeAllByType,
-  selectResolution,
-  setReportTimePeriod,
   showHideAllByType,
   showHideLegendRows,
   toggleLine,
@@ -20,33 +16,27 @@ import {
 } from './reportActions';
 import {
   LegendItem,
-  MediumViewOptions,
+  LegendType,
+  LegendViewOptions,
   QuantityId,
   QuantityLegendType,
   ReportState,
   SavedReportsState,
-  TemporalReportState,
   ViewOptions
 } from './reportModels';
-import {getLegendItems, getMediumViewOptions, getViewOptions} from './reportSelectors';
+import {getLegendItems, getLegendViewOptions, getViewOptions} from './reportSelectors';
+import {initialState as initialTemporalState, temporal} from './temporalReducer';
 
-export const makeInitialLegendTypeViewOptions = (): MediumViewOptions =>
+export const makeInitialLegendTypeViewOptions = (): LegendViewOptions =>
   Object.keys(Medium).map(k => Medium[k])
     .reduce((acc, medium) => ({...acc, [medium]: {quantities: []}}), {aggregate: {quantities: []}});
-
-export const mediumViewOptions: MediumViewOptions = makeInitialLegendTypeViewOptions();
 
 export const initialSavedReportState: SavedReportsState = {
   meterPage: {
     id: 'meterPage',
     legendItems: [],
-    mediumViewOptions,
+    legendViewOptions: makeInitialLegendTypeViewOptions(),
   }
-};
-
-export const initialTemporalState: TemporalReportState = {
-  resolution: TemporalResolution.hour,
-  timePeriod: {period: Period.latest},
 };
 
 export const initialState: ReportState = {
@@ -54,16 +44,20 @@ export const initialState: ReportState = {
   temporal: initialTemporalState
 };
 
-const getMedium = (action: ActionTypes): Medium => (action as Action<Medium>).payload;
+type ActionTypes =
+  | Action<LegendItem[] | uuid | LegendType | QuantityLegendType | QuantityId>
+  | EmptyAction<string>;
 
-const toggleLegendItemsRows = (state: SavedReportsState, medium: Medium): LegendItem[] =>
-  getLegendItems(state).map(it => it.type === medium ? {...it, isRowExpanded: !it.isRowExpanded} : it);
+const getLegendType = (action: ActionTypes): LegendType => (action as Action<LegendType>).payload;
 
-const getLegendItemsNotMatchingMedium = (state: SavedReportsState, medium: Medium): LegendItem[] =>
-  getLegendItems(state).filter(it => it.type !== medium);
+const toggleLegendItemsRows = (state: SavedReportsState, type: LegendType): LegendItem[] =>
+  getLegendItems(state).map(it => it.type === type ? {...it, isRowExpanded: !it.isRowExpanded} : it);
 
-const getLegendItemsMatchingMedium = (state: SavedReportsState, medium: Medium): LegendItem[] =>
-  getLegendItems(state).filter(it => it.type === medium);
+const getLegendItemsNotMatchingType = (state: SavedReportsState, type: LegendType): LegendItem[] =>
+  getLegendItems(state).filter(it => it.type !== type);
+
+const getLegendItemsMatchingType = (state: SavedReportsState, type: LegendType): LegendItem[] =>
+  getLegendItems(state).filter(it => it.type === type);
 
 const makeSavedReports = (state: SavedReportsState, legendItems: LegendItem[]): SavedReportsState => ({
     ...state,
@@ -74,17 +68,17 @@ const makeSavedReports = (state: SavedReportsState, legendItems: LegendItem[]): 
   }
 );
 
-const toggleHiddenLines = (savedReports: SavedReportsState, medium: Medium): SavedReportsState => {
-  if (savedReports.meterPage.legendItems.filter(it => it.type === medium).length > 0) {
-    const mediumViewOptions: MediumViewOptions = savedReports.meterPage.mediumViewOptions;
-    const viewOptions: ViewOptions = mediumViewOptions[medium];
+const toggleHiddenLines = (savedReports: SavedReportsState, legendType: LegendType): SavedReportsState => {
+  if (savedReports.meterPage.legendItems.filter(it => it.type === legendType).length > 0) {
+    const legendViewOptions: LegendViewOptions = savedReports.meterPage.legendViewOptions;
+    const viewOptions: ViewOptions = legendViewOptions[legendType];
     return ({
         ...savedReports,
         ['meterPage']: {
           ...savedReports.meterPage,
-          mediumViewOptions: {
-            ...mediumViewOptions,
-            [medium]: {...viewOptions, isAllLinesHidden: !viewOptions.isAllLinesHidden}
+          legendViewOptions: {
+            ...legendViewOptions,
+            [legendType]: {...viewOptions, isAllLinesHidden: !viewOptions.isAllLinesHidden}
           }
         }
       }
@@ -93,9 +87,12 @@ const toggleHiddenLines = (savedReports: SavedReportsState, medium: Medium): Sav
   return savedReports;
 };
 
-const toggleQuantityMedium = (state: SavedReportsState, {type, quantity}: QuantityLegendType): SavedReportsState => {
-  const mediumViewOptions = getMediumViewOptions(state);
-  const viewOptions: ViewOptions = mediumViewOptions[type];
+const toggleQuantityLegendType = (
+  state: SavedReportsState,
+  {type, quantity}: QuantityLegendType
+): SavedReportsState => {
+  const legendViewOptions = getLegendViewOptions(state);
+  const viewOptions: ViewOptions = legendViewOptions[type];
   const quantities = toggle(quantity, viewOptions.quantities);
   const legendItems = getLegendItems(state).map(it => it.type === type ? {...it, quantities} : it);
   return {
@@ -103,8 +100,8 @@ const toggleQuantityMedium = (state: SavedReportsState, {type, quantity}: Quanti
     ['meterPage']: {
       ...state.meterPage,
       legendItems,
-      mediumViewOptions: {
-        ...mediumViewOptions,
+      legendViewOptions: {
+        ...legendViewOptions,
         [type]: {...viewOptions, quantities}
       }
     }
@@ -122,48 +119,28 @@ const toggleLegendItemVisibility = (state: SavedReportsState, id: uuid): SavedRe
   return makeSavedReports(state, meters);
 };
 
-const showHideAll = (state: SavedReportsState, medium: Medium): SavedReportsState => {
-  const isAllLinesHidden = getViewOptions(state, medium).isAllLinesHidden;
-  const meters: LegendItem[] = getLegendItemsMatchingMedium(state, medium)
+const showHideAll = (state: SavedReportsState, legendType: LegendType): SavedReportsState => {
+  const isAllLinesHidden = getViewOptions(state, legendType).isAllLinesHidden;
+  const meters: LegendItem[] = getLegendItemsMatchingType(state, legendType)
     .map(it => ({...it, isHidden: !isAllLinesHidden}));
-  return toggleHiddenLines(makeSavedReports(state, meters), medium);
+  return toggleHiddenLines(makeSavedReports(state, meters), legendType);
 };
 
-type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<string>;
-
-export const temporal =
-  (state: TemporalReportState = initialTemporalState, action: ActionTypes): TemporalReportState => {
-    switch (action.type) {
-      case getType(setReportTimePeriod):
-        return {...state, timePeriod: {...(action as Action<SelectionInterval>).payload}};
-      case getType(selectResolution):
-        return {...state, resolution: (action as Action<TemporalResolution>).payload};
-      case getType(logoutUser):
-        return initialTemporalState;
-      default:
-        return state;
-    }
-  };
-
-type SavedReportsActionTypes =
-  | Action<LegendItem[] | uuid | Medium | QuantityLegendType | QuantityId>
-  | EmptyAction<string>;
-
 export const savedReports =
-  (state: SavedReportsState = initialSavedReportState, action: SavedReportsActionTypes): SavedReportsState => {
+  (state: SavedReportsState = initialSavedReportState, action: ActionTypes): SavedReportsState => {
     switch (action.type) {
       case getType(addLegendItems):
         return makeSavedReports(state, (action as Action<LegendItem[]>).payload);
       case getType(toggleLine):
         return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
       case getType(showHideAllByType):
-        return showHideAll(state, getMedium(action));
+        return showHideAll(state, getLegendType(action));
       case getType(removeAllByType):
-        return makeSavedReports(state, getLegendItemsNotMatchingMedium(state, getMedium(action)));
+        return makeSavedReports(state, getLegendItemsNotMatchingType(state, getLegendType(action)));
       case getType(showHideLegendRows):
-        return makeSavedReports(state, toggleLegendItemsRows(state, getMedium(action)));
+        return makeSavedReports(state, toggleLegendItemsRows(state, getLegendType(action)));
       case getType(toggleQuantityByType):
-        return toggleQuantityMedium(state, (action as Action<QuantityLegendType>).payload);
+        return toggleQuantityLegendType(state, (action as Action<QuantityLegendType>).payload);
       case getType(toggleQuantityById):
         return toggleQuantityId(state, (action as Action<QuantityId>).payload);
       case getType(logoutUser):
