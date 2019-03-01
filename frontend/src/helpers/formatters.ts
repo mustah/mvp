@@ -1,6 +1,6 @@
 import {default as numeral} from 'numeral';
 import {firstUpper} from '../services/translationService';
-import {momentFrom} from './dateHelpers';
+import {momentAtUtcPlusOneFrom} from './dateHelpers';
 
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
   collectionPercentage !== undefined && collectionPercentage > 100;
@@ -23,7 +23,7 @@ export const formatCollectionPercentage =
   };
 
 export const formatDate = (date: Date, format: string = 'DD/MM'): string =>
-  momentFrom(date).format(format);
+  momentAtUtcPlusOneFrom(date).format(format);
 
 export const roundMeasurement = (num: number | string): string =>
   round(num, '0.000');

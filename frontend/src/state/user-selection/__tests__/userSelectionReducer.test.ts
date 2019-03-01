@@ -1,5 +1,5 @@
 import {DateRange, Period} from '../../../components/dates/dateModels';
-import {momentFrom} from '../../../helpers/dateHelpers';
+import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {EndPoints} from '../../../services/endPoints';
 import {IdNamed, toIdNamed} from '../../../types/Types';
 import {
@@ -77,8 +77,8 @@ describe('userSelectionReducer', () => {
 
     it('sets custom date range', () => {
       const initialState: UserSelectionState = userSelection(undefined, {type: 'whatever'});
-      const start: Date = momentFrom('2018-12-09').toDate();
-      const end: Date = momentFrom('2018-12-24').toDate();
+      const start: Date = momentAtUtcPlusOneFrom('2018-12-09').toDate();
+      const end: Date = momentAtUtcPlusOneFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
       const expected: UserSelectionState = {

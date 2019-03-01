@@ -1,5 +1,5 @@
 import {Period} from '../../components/dates/dateModels';
-import {displayDate, momentFrom, prettyRange, toPeriodApiParameters} from '../dateHelpers';
+import {displayDate, momentAtUtcPlusOneFrom, prettyRange, toPeriodApiParameters} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 
 describe('dateHelper', () => {
@@ -8,7 +8,7 @@ describe('dateHelper', () => {
 
     it('defaults to no limits if no start/end time is given', () => {
       expect(toPeriodApiParameters({
-        start: momentFrom('2018-03-23 11:00:00').toDate(),
+        start: momentAtUtcPlusOneFrom('2018-03-23 11:00:00').toDate(),
         period: Period.latest,
         customDateRange: Maybe.nothing(),
       })).toEqual([
@@ -21,7 +21,7 @@ describe('dateHelper', () => {
   describe('user friendliness', () => {
 
     it('can be expressed in a friendly looking way', () => {
-      const endOfNovember = momentFrom('2013-11-24 11:00:00').toDate();
+      const endOfNovember = momentAtUtcPlusOneFrom('2013-11-24 11:00:00').toDate();
       const timePeriod = prettyRange({
         start: endOfNovember,
         period: Period.currentMonth,
@@ -32,7 +32,7 @@ describe('dateHelper', () => {
 
     it('can be consumed by the MVP REST API', () => {
       const apiFriendlyOutput = toPeriodApiParameters({
-        start: momentFrom('2012-02-04').toDate(),
+        start: momentAtUtcPlusOneFrom('2012-02-04').toDate(),
         period: Period.currentMonth,
         customDateRange: Maybe.nothing(),
       });
@@ -56,7 +56,7 @@ describe('dateHelper', () => {
     describe('can be constructed from relative terms', () => {
       it('knows about previous month', () => {
         const prevMonthRange = prettyRange({
-          start: momentFrom('2013-03-25').toDate(),
+          start: momentAtUtcPlusOneFrom('2013-03-25').toDate(),
           period: Period.previousMonth,
           customDateRange: Maybe.nothing(),
         });
@@ -65,7 +65,7 @@ describe('dateHelper', () => {
 
       it('knows about previous 7 days', () => {
         const prevWeek = prettyRange({
-          start: momentFrom('2013-03-14T00:00:00Z').toDate(),
+          start: momentAtUtcPlusOneFrom('2013-03-14T00:00:00Z').toDate(),
           period: Period.previous7Days,
           customDateRange: Maybe.nothing(),
         });
@@ -74,7 +74,7 @@ describe('dateHelper', () => {
 
       it('knows about current week', () => {
         const currentWeekApiParameters = prettyRange({
-          start: momentFrom('2017-11-10T00:00:00Z').toDate(),
+          start: momentAtUtcPlusOneFrom('2017-11-10T00:00:00Z').toDate(),
           period: Period.currentWeek,
           customDateRange: Maybe.nothing(),
         });
@@ -84,7 +84,7 @@ describe('dateHelper', () => {
 
       it('knows about current month', () => {
         const currentMonthApiParameters = prettyRange({
-          start: momentFrom('2017-11-23T00:00:00Z').toDate(),
+          start: momentAtUtcPlusOneFrom('2017-11-23T00:00:00Z').toDate(),
           period: Period.currentMonth,
           customDateRange: Maybe.nothing(),
         });
@@ -93,7 +93,7 @@ describe('dateHelper', () => {
 
       it('knows about last 24 h', () => {
         const currentDayApiParameters = prettyRange({
-          start: momentFrom('2013-03-13T00:00:00Z').toDate(),
+          start: momentAtUtcPlusOneFrom('2013-03-13T00:00:00Z').toDate(),
           period: Period.latest,
           customDateRange: Maybe.nothing(),
         });
@@ -101,11 +101,11 @@ describe('dateHelper', () => {
       });
 
       it('knows about a custom time period', () => {
-        const start = momentFrom('2013-03-13T00:00:00Z').toDate();
-        const end = momentFrom('2013-03-13T00:00:00Z').toDate();
+        const start = momentAtUtcPlusOneFrom('2013-03-13T00:00:00Z').toDate();
+        const end = momentAtUtcPlusOneFrom('2013-03-13T00:00:00Z').toDate();
 
         const currentDayApiParameters = prettyRange({
-          start: momentFrom('2013-03-25T00:00:00Z').toDate(),
+          start: momentAtUtcPlusOneFrom('2013-03-25T00:00:00Z').toDate(),
           period: Period.custom,
           customDateRange: Maybe.just({start, end}),
         });

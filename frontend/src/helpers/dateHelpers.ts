@@ -9,7 +9,7 @@ import {RequestParameter, RequestParameters} from './urlFactory';
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
-export const momentFrom = (input?: moment.MomentInput): moment.Moment => moment(input).tz('UTC');
+export const momentAtUtcPlusOneFrom = (input?: moment.MomentInput): moment.Moment => moment(input).utcOffset('+0100');
 
 export const changeLocale = (language: string): string => moment.locale(language);
 
@@ -17,7 +17,7 @@ export const changeLocale = (language: string): string => moment.locale(language
  * Calculate absolute start- and end dates based on an input date and a relative time period.
  */
 const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
-  const zonedDate = momentFrom(now);
+  const zonedDate = momentAtUtcPlusOneFrom(now);
   switch (period) {
     case Period.currentMonth:
       return {
@@ -42,8 +42,8 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
       };
     case Period.custom:
       return customDateRange.map(({start, end}) => ({
-        start: momentFrom(start).startOf('day').toDate(),
-        end: momentFrom(end).add(1, 'days').startOf('day').toDate(),
+        start: momentAtUtcPlusOneFrom(start).startOf('day').toDate(),
+        end: momentAtUtcPlusOneFrom(end).add(1, 'days').startOf('day').toDate(),
       })).orElse({
         start: zonedDate.clone().startOf('day').toDate(),
         end: zonedDate.clone().startOf('day').toDate()
@@ -61,7 +61,7 @@ const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>)
 export const newDateRange = (
   period: Period,
   customDateRange: Maybe<DateRange> = Maybe.nothing(),
-  start: Date = momentFrom().toDate(),
+  start: Date = momentAtUtcPlusOneFrom().toDate(),
 ): DateRange => dateRange(start, period, customDateRange);
 
 export const yyyymmdd = 'YYYY-MM-DD';
@@ -71,8 +71,8 @@ const hhmmss = 'HH:mm:ss.sss';
 const apiFormat = `${yyyymmdd}T${hhmmss}+01:00`;
 
 const toApiParameters = ({start, end}: DateRange): EncodedUriParameters[] => [
-  `after=${encodeURIComponent(momentFrom(start).format(apiFormat))}`,
-  `before=${encodeURIComponent(momentFrom(end).format(apiFormat))}`,
+  `after=${encodeURIComponent(momentAtUtcPlusOneFrom(start).format(apiFormat))}`,
+  `before=${encodeURIComponent(momentAtUtcPlusOneFrom(end).format(apiFormat))}`,
 ];
 
 export interface CurrentPeriod {
@@ -94,13 +94,13 @@ export const queryParametersOfDateRange = ({
 }: SelectionInterval): RequestParameters => {
   const {start, end}: DateRange = newDateRange(period, Maybe.maybe(customDateRange));
   return {
-    [RequestParameter.after]: momentFrom(start).format(apiFormat),
-    [RequestParameter.before]: momentFrom(end).format(apiFormat),
+    [RequestParameter.after]: momentAtUtcPlusOneFrom(start).format(apiFormat),
+    [RequestParameter.before]: momentAtUtcPlusOneFrom(end).format(apiFormat),
   };
 };
 
 const toFriendlyIso8601 = ({start, end}: DateRange): string =>
-  `${momentFrom(start).format(yyyymmdd)} - ${momentFrom(end).format(yyyymmdd)}`;
+  `${momentAtUtcPlusOneFrom(start).format(yyyymmdd)} - ${momentAtUtcPlusOneFrom(end).format(yyyymmdd)}`;
 
 export const prettyRange = ({start, period, customDateRange}: CurrentPeriod): string =>
   toFriendlyIso8601(newDateRange(period, customDateRange, start));
@@ -111,4 +111,4 @@ export const shortTimestamp = (input: moment.MomentInput): string =>
 export const timestamp = (input: moment.MomentInput): string => displayDate(input);
 
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
-  momentFrom(input).add(1, 'hours').format(format);
+  momentAtUtcPlusOneFrom(input).format(format);

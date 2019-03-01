@@ -1,5 +1,5 @@
 import {Period} from '../../../components/dates/dateModels';
-import {momentFrom, newDateRange} from '../../../helpers/dateHelpers';
+import {momentAtUtcPlusOneFrom, newDateRange} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {EventLogType} from '../../../state/domain-models-paginated/meter/meterModels';
 import {eventsDataFormatter} from '../../../state/domain-models-paginated/meter/meterSchema';
@@ -99,7 +99,7 @@ describe('dialogHelper', () => {
     const readIntervalMinutes = 60;
     const oneHourInSeconds: number = 60 * 60;
 
-    const start = momentFrom('2018-01-01T00:00:00Z').toDate();
+    const start = momentAtUtcPlusOneFrom('2018-01-01T00:00:00Z').toDate();
     const dateRange = newDateRange(Period.latest, Maybe.nothing(), start);
     const startHour: UnixTimestamp = dateRange.start.valueOf() / 1000;
 
@@ -269,7 +269,6 @@ describe('dialogHelper', () => {
       });
 
     });
-
   });
 
 });

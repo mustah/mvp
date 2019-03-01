@@ -1,7 +1,7 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
 import {DateRange, Period, TemporalResolution} from '../../../components/dates/dateModels';
-import {momentFrom} from '../../../helpers/dateHelpers';
+import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {selectPeriod, setCustomDateRange} from '../../../state/user-selection/userSelectionActions';
 import {SelectionInterval} from '../../../state/user-selection/userSelectionModels';
@@ -106,8 +106,8 @@ describe('reportReducer', () => {
   describe('change custom date range', () => {
 
     it('should not clear selected list items', () => {
-      const start: Date = momentFrom('2018-12-09').toDate();
-      const end: Date = momentFrom('2018-12-24').toDate();
+      const start: Date = momentAtUtcPlusOneFrom('2018-12-09').toDate();
+      const end: Date = momentAtUtcPlusOneFrom('2018-12-24').toDate();
       const dateRange: DateRange = {start, end};
 
       const state: ReportState = report(initialState, addLegendItems(items));

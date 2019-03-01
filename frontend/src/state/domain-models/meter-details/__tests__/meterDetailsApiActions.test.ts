@@ -3,7 +3,7 @@ import {default as MockAdapter} from 'axios-mock-adapter';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../../components/dates/dateModels';
-import {momentFrom} from '../../../../helpers/dateHelpers';
+import {momentAtUtcPlusOneFrom} from '../../../../helpers/dateHelpers';
 import {makeApiParametersOf} from '../../../../helpers/urlFactory';
 import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
@@ -22,7 +22,7 @@ describe('meterDetailsApiActions', () => {
   let mockRestClient: MockAdapter;
   let store;
 
-  const now = momentFrom().toDate();
+  const now = momentAtUtcPlusOneFrom().toDate();
   const dateRange: SelectionInterval = {
     period: Period.custom,
     customDateRange: {
