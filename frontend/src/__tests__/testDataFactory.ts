@@ -69,5 +69,5 @@ export const makeMeterDto = (id: number, city: string, address: string): MeterDt
   };
 };
 
-export const savedReportsWith = (meters: LegendItem[]): SavedReportsState =>
-  ({meterPage: {id: 'meterPage', meters, mediumViewOptions}});
+export const savedReportsWith = (legendItems: LegendItem[]): SavedReportsState =>
+  ({meterPage: {id: 'meterPage', legendItems, mediumViewOptions}});

@@ -4,11 +4,17 @@ import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Identifiable, uuid} from '../../types/Types';
+import {LegendType} from './reportModels';
+
+export type LegendType = Medium | 'aggregate';
+
+export const isMedium = (type: LegendType): type is Medium => Medium[type] !== undefined;
+export const isAggregate = (type: LegendType): type is 'aggregate' => !isMedium(type);
 
 export interface LegendItem {
   id: uuid;
   label: string;
-  medium: Medium;
+  type: LegendType;
   isHidden: boolean;
   isRowExpanded?: boolean;
   quantities: Quantity[];
@@ -19,12 +25,12 @@ export interface ViewOptions {
   quantities: Quantity[];
 }
 
-export type MediumViewOptions = { [m in Medium]: ViewOptions };
+export type MediumViewOptions = { [p in LegendType]: ViewOptions };
 
-export type SelectedQuantityColumns = { [m in Medium]: Quantity[] };
+export type SelectedQuantityColumns = { [p in LegendType]: Quantity[] };
 
 export interface Report extends Identifiable {
-  meters: LegendItem[];
+  legendItems: LegendItem[];
   mediumViewOptions: MediumViewOptions;
 }
 
@@ -40,12 +46,14 @@ export interface ReportState {
   temporal: TemporalReportState;
 }
 
+export interface ColumnQuantities {
+  columnQuantities: Quantity[];
+}
+
 export interface Axes {
   left?: string;
   right?: string;
 }
-
-type MeasurementOrigin = 'meter' | 'average';
 
 export interface LineProps {
   id: string;
@@ -58,7 +66,6 @@ export interface LineProps {
   stroke: string;
   strokeWidth?: number;
   yAxisId: string;
-  origin: MeasurementOrigin;
 }
 
 export interface GraphContents {
@@ -80,12 +87,8 @@ export interface ActiveDataPoint {
   value: number;
 }
 
-export interface SelectedReportItems {
-  meters: LegendItem[];
-}
-
-export interface QuantityMedium {
-  medium: Medium;
+export interface QuantityLegendType {
+  type: LegendType;
   quantity: Quantity;
 }
 

@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   exportToExcelSuccess,
   fetchMeasurements,
@@ -11,9 +12,11 @@ import {
   MeasurementParameters,
   MeasurementState
 } from '../../../state/ui/graph/measurement/measurementModels';
-import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSelectors';
+import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
+import {fetchUserSelections} from '../../../state/user-selection/userSelectionActions';
+import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getMeterParameters, getUserSelectionId} from '../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackWith, EncodedUriParameters, OnClick, uuid} from '../../../types/Types';
+import {Callback, CallbackWith, EncodedUriParameters, Fetch, OnClick, uuid} from '../../../types/Types';
 import {MeasurementLineChart} from '../components/MeasurementLineChart';
 import {Measurements} from '../components/Measurements';
 import {addAllToReport} from '../reportActions';
@@ -25,34 +28,43 @@ export interface StateToProps {
   parameters: EncodedUriParameters;
   requestParameters: MeasurementParameters;
   measurement: MeasurementState;
+  userSelections: NormalizedState<UserSelection>;
   userSelectionId: uuid;
-  hasMeters: boolean;
+  hasLegendItems: boolean;
   hasContent: boolean;
 }
 
 export interface DispatchToProps {
   clearError: OnClick;
   fetchMeasurements: FetchMeasurements;
+  fetchUserSelections: Fetch;
   addAllToReport: CallbackWith<LegendItem[]>;
   exportToExcelSuccess: Callback;
 }
 
 const mapStateToProps = (rootState: RootState): StateToProps => {
-  const {report: {savedReports}, measurement, userSelection: {userSelection}} = rootState;
+  const {
+    domainModels: {userSelections},
+    report: {savedReports},
+    measurement,
+    userSelection: {userSelection},
+  } = rootState;
   return ({
-    hasMeters: hasLegendItems(savedReports),
-    hasContent: hasMeasurements(measurement.measurementResponse),
+    hasLegendItems: hasLegendItems(savedReports),
+    hasContent: hasMeasurementValues(measurement.measurementResponse),
     hiddenLines: getHiddenLines(savedReports),
     measurement,
     parameters: getMeterParameters({userSelection}),
     requestParameters: getMeasurementParameters(rootState),
     userSelectionId: getUserSelectionId(rootState.userSelection),
+    userSelections,
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError,
   fetchMeasurements,
+  fetchUserSelections,
   addAllToReport,
   exportToExcelSuccess,
 }, dispatch);

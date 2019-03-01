@@ -18,6 +18,7 @@ export const enum EndPoints {
   authenticate = '/authenticate',
   logout = '/logout',
   measurements = '/measurements',
+  measurementsAverage = '/measurements/average',
   measurementsPaged = '/measurements/paged',
   organisations = '/organisations',
   dashboard = '/dashboards/current',

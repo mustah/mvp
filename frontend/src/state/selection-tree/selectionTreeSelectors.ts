@@ -14,7 +14,7 @@ export const getLegendItemsWithLimit = (meters?: ObjectsById<SelectionTreeMeter>
       .map(({id, name: label, medium}: SelectionTreeMeter): LegendItem => ({
         id,
         label,
-        medium,
+        type: medium,
         isHidden: false,
         quantities: []
       }))

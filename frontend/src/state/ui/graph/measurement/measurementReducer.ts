@@ -4,11 +4,11 @@ import {Maybe} from '../../../../helpers/Maybe';
 import {Action, ErrorResponse} from '../../../../types/Types';
 import {
   addLegendItems,
-  removeAllByMedium,
+  removeAllByType,
   selectResolution,
   setReportTimePeriod,
   toggleQuantityById,
-  toggleQuantityByMedium
+  toggleQuantityByType
 } from '../../../../usecases/report/reportActions';
 import {SEARCH} from '../../../../usecases/search/searchActions';
 import {resetReducer} from '../../../domain-models/domainModelsReducer';
@@ -70,8 +70,8 @@ export const measurement = (state: MeasurementState = initialState, action: Acti
     case getType(selectResolution):
     case getType(setReportTimePeriod):
     case getType(addLegendItems):
-    case getType(removeAllByMedium):
-    case getType(toggleQuantityByMedium):
+    case getType(removeAllByType):
+    case getType(toggleQuantityByType):
     case getType(toggleQuantityById):
     case SEARCH:
       return initialState;

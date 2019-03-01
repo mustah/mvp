@@ -8,17 +8,17 @@ import {Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Dispatcher, uuid} from '../../types/Types';
-import {LegendItem, QuantityId, QuantityMedium} from './reportModels';
+import {LegendItem, LegendType, QuantityId, QuantityLegendType} from './reportModels';
 import {getLegendItems} from './reportSelectors';
 
 export const addLegendItems = createStandardAction('ADD_LEGEND_ITEMS')<LegendItem[]>();
 export const selectResolution = createStandardAction('SELECT_RESOLUTION')<TemporalResolution>();
 export const toggleLine = createStandardAction('TOGGLE_LINE')<uuid>();
-export const toggleQuantityByMedium = createStandardAction('TOGGLE_QUANTITY_BY_MEDIUM')<QuantityMedium>();
+export const toggleQuantityByType = createStandardAction('TOGGLE_QUANTITY_BY_TYPE')<QuantityLegendType>();
 export const toggleQuantityById = createStandardAction('TOGGLE_QUANTITY_BY_ID')<QuantityId>();
-export const showHideAllByMedium = createStandardAction('SHOW_HIDE_ALL_BY_MEDIUM')<Medium>();
-export const showHideMediumRows = createStandardAction('SHOW_HIDE_MEDIUM_ROWS')<Medium>();
-export const removeAllByMedium = createStandardAction('REMOVE_ALL_BY_MEDIUM')<Medium>();
+export const showHideAllByType = createStandardAction('SHOW_HIDE_ALL_BY_TYPE')<LegendType>();
+export const showHideLegendRows = createStandardAction('SHOW_HIDE_LEGEND_ROWS')<LegendType>();
+export const removeAllByType = createStandardAction('REMOVE_ALL_BY_TYPE')<LegendType>();
 export const setReportTimePeriod = createStandardAction('SET_REPORT_TIME_PERIOD')<SelectionInterval>();
 
 export const limit: number = 100;
@@ -42,9 +42,9 @@ export const addToReport = (legendItem: LegendItem) =>
   (dispatch, getState: GetState) => {
     const {report: {savedReports}} = getState();
     const legendItems: LegendItem[] = getLegendItems(savedReports);
-    if (legendItem.medium !== Medium.unknown
-        && find(legendItems, (it: LegendItem) => it.id === legendItem.id) === undefined) {
-      const item: LegendItem = Maybe.maybe<LegendItem>(find(legendItems, {medium: legendItem.medium}))
+    const {type, id} = legendItem;
+    if (type !== Medium.unknown && find(legendItems, it => it.id === id) === undefined) {
+      const item: LegendItem = Maybe.maybe<LegendItem>(find(legendItems, {type: legendItem.type}))
         .map(it => ({...it, ...legendItem}))
         .orElse(legendItem);
       const items: LegendItem[] = [...legendItems, item];
@@ -64,5 +64,5 @@ export const deleteItem = (id: uuid) =>
 export const addAllToReport = (items: LegendItem[]) =>
   (dispatch, getState: GetState) => {
     const legendItems: LegendItem[] = getLegendItems(getState().report.savedReports);
-    selectItemsIfWithinLimits({dispatch, items: [...legendItems, ...items.filter(it => it.medium !== Medium.unknown)]});
+    selectItemsIfWithinLimits({dispatch, items: [...legendItems, ...items.filter(it => it.type !== Medium.unknown)]});
   };

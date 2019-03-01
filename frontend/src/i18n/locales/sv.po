@@ -642,6 +642,9 @@ msgstr "inga sparade urval"
 msgid "show average in report"
 msgstr "visa medelvärde i rapport"
 
+msgid "average"
+msgstr "medelvärde"
+
 msgid "admin"
 msgstr "admin"
 

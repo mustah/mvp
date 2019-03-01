@@ -2,9 +2,10 @@ import {Overwrite} from 'utility-types';
 import {TemporalResolution} from '../../../../components/dates/dateModels';
 import {Maybe} from '../../../../helpers/Maybe';
 import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Types';
-import {SelectedReportItems} from '../../../../usecases/report/reportModels';
+import {LegendItem, LegendType} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {SelectedParameters} from '../../../user-selection/userSelectionModels';
+import {MeasurementsApiResponse} from './measurementModels';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;
@@ -24,8 +25,8 @@ export interface MeasurementState {
 export type MeasurementsByQuantity = Partial<{ [key in Quantity]: Measurement }>;
 
 export interface MeasurementParameters {
+  legendItems: LegendItem[];
   resolution: TemporalResolution;
-  selectedReportItems: SelectedReportItems;
   selectionParameters: SelectedParameters;
 }
 
@@ -51,30 +52,22 @@ export type MeasurementValues = Array<{
   value?: number;
 }>;
 
-export interface AverageResponsePart {
+export interface MeasurementResponsePart {
+  address?: string;
+  city?: string;
   id: string;
+  label: string;
+  medium?: string;
   quantity: Quantity;
   unit: string;
-  label: string;
   values: MeasurementValues;
 }
 
-export interface MeasurementResponsePart extends AverageResponsePart {
-  address: string;
-  city: string;
-  medium: string;
-}
+export type MeasurementsApiResponse = MeasurementResponsePart[];
 
-export type MeasurementApiResponse = MeasurementResponsePart[];
-
-export interface Measurements {
-  measurements: MeasurementApiResponse;
-}
-
-type AverageApiResponse = AverageResponsePart[];
-
-export interface MeasurementResponse extends Measurements {
-  average: AverageApiResponse;
+export interface MeasurementResponse {
+  measurements: MeasurementsApiResponse;
+  average: MeasurementsApiResponse;
 }
 
 export interface QuantityAttributes {
@@ -96,6 +89,8 @@ export enum Quantity {
   energyReactive = 'Reactive energy',
   externalTemperature = 'External temperature',
 }
+
+export const quantities: Quantity[] = Object.keys(Quantity).map(it => Quantity[it]);
 
 enum QuantityDisplayMode {
   meterValue = 1,
@@ -166,7 +161,7 @@ const mediumTexts: { [medium in Medium]: string } = {
 
 export const toMediumText = (medium: Medium): string => mediumTexts[medium];
 
-export const allQuantities: { [m in Medium]: Quantity[] } = {
+export const allQuantitiesMap: { [p in LegendType]: Quantity[] } = {
   [Medium.districtHeating]: [
     Quantity.energy,
     Quantity.volume,
@@ -196,7 +191,13 @@ export const allQuantities: { [m in Medium]: Quantity[] } = {
     Quantity.relativeHumidity,
   ],
   [Medium.unknown]: [],
+  aggregate: [...quantities],
 };
+
+export const quantitiesToExclude = [
+  Quantity.energyReactive,
+  Quantity.energyReturn,
+];
 
 export interface MeterMeasurementsState {
   isFetching: boolean;

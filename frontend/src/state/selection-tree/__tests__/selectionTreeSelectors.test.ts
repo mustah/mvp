@@ -146,7 +146,7 @@ describe('selectionTreeSelectors', () => {
         1: {id: 1, name: 'a', address: 'b', city: 'c', medium: Medium.gas},
       };
 
-      const expected: LegendItem[] = [{id: 1, label: 'a', medium: Medium.gas, isHidden, quantities}];
+      const expected: LegendItem[] = [{id: 1, label: 'a', type: Medium.gas, isHidden, quantities}];
       expect(getLegendItemsWithLimit(meters)).toEqual(expected);
     });
 
@@ -157,8 +157,8 @@ describe('selectionTreeSelectors', () => {
       };
 
       const expected: LegendItem[] = [
-        {id: 1, label: 'a', medium: Medium.gas, isHidden, quantities},
-        {id: 2, label: 'b', medium: Medium.water, isHidden, quantities}
+        {id: 1, label: 'a', type: Medium.gas, isHidden, quantities},
+        {id: 2, label: 'b', type: Medium.water, isHidden, quantities}
       ];
       expect(getLegendItemsWithLimit(meters)).toEqual(expected);
     });

@@ -1,24 +1,18 @@
 import {LegendPayload} from 'recharts';
-import {colors} from '../../../../app/themes';
-import {Dictionary} from '../../../../types/Types';
-import {Axes, GraphContents} from '../../../../usecases/report/reportModels';
-import {AverageResponsePart, MeasurementResponse, MeasurementResponsePart, Quantity} from './measurementModels';
+import {colors} from '../../../app/themes';
+import {
+  MeasurementResponse,
+  MeasurementResponsePart,
+  Quantity
+} from '../../../state/ui/graph/measurement/measurementModels';
+import {Dictionary} from '../../../types/Types';
+import {Axes, GraphContents} from '../reportModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
     (quantity: Quantity) => colorSchema[quantity as string] || colors.blueA700;
 
-const colorizeAverage = colorize({
-  [Quantity.volume as string]: '#5555ff',
-  [Quantity.flow as string]: '#ff99ff',
-  [Quantity.energy as string]: '#439c43',
-  [Quantity.power as string]: '#00aaaa',
-  [Quantity.forwardTemperature as string]: '#843939',
-  [Quantity.returnTemperature as string]: '#a7317d',
-  [Quantity.differenceTemperature as string]: '#004d78',
-});
-
-export const colorizeMeters = colorize({
+export const colorOf = colorize({
   [Quantity.volume as string]: '#651FFF',
   [Quantity.flow as string]: '#F50057',
   [Quantity.energy as string]: '#00E676',
@@ -40,8 +34,45 @@ const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined =
   return undefined;
 };
 
+interface AggregateKey {
+  label: string;
+  id: string;
+}
+
+const makeAggregateKey = ({label, id}: AggregateKey): string => `aggregate-${label}-${id}`;
+
+const makeLegendPayload = ({average, measurements}: MeasurementResponse): LegendPayload[] => {
+  const meterLegends: Dictionary<LegendPayload> = measurements.reduce((prev, {quantity}) => (
+    prev[quantity]
+      ? prev
+      : {
+        ...prev,
+        [quantity]: {
+          type: 'line',
+          color: colorOf(quantity),
+          value: quantity,
+        },
+      }), {});
+
+  const aggregateLegends: Dictionary<LegendPayload> = average.reduce((prev, {id, label, quantity}) => (
+    prev[label]
+      ? prev
+      : {
+        ...prev,
+        [makeAggregateKey({id, label})]: {
+          type: 'line',
+          color: colorOf(quantity),
+          value: `Average ${quantity}`,
+        },
+      }), {});
+
+  const legends: Dictionary<LegendPayload> = {...aggregateLegends, ...meterLegends};
+
+  return Object.keys(legends).map((legend) => legends[legend]);
+};
+
 export const toGraphContents =
-  ({measurements, average}: MeasurementResponse): GraphContents => {
+  (response: MeasurementResponse): GraphContents => {
     const graphContents: GraphContents = {
       axes: {
         left: undefined,
@@ -52,35 +83,12 @@ export const toGraphContents =
       lines: [],
     };
 
-    const byDate: {[when: number]: {[label: string]: number}} = {};
     const uniqueMeters = new Set<string>();
+    const byDate: {[when: number]: {[label: string]: number}} = {};
+
     let firstTimestamp;
 
-    const legendsMeters: Dictionary<LegendPayload> = measurements.reduce((prev, {quantity}) => (
-      prev[quantity]
-        ? prev
-        : {
-          ...prev,
-          [quantity]: {
-            type: 'line',
-            color: colorizeMeters(quantity as Quantity),
-            value: quantity,
-          },
-        }), {});
-
-    const legendsAverage: Dictionary<LegendPayload> = average.reduce((prev, {quantity}) => (
-      prev[quantity]
-        ? prev
-        : {
-          ...prev,
-          [`average-${quantity}`]: {
-            type: 'line',
-            color: colorizeAverage(quantity as Quantity),
-            value: `Average ${quantity}`,
-          },
-        }), {});
-
-    const legends: Dictionary<LegendPayload> = {...legendsMeters, ...legendsAverage};
+    const {measurements, average} = response;
 
     measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
@@ -115,15 +123,14 @@ export const toGraphContents =
           city,
           address,
           medium,
-          stroke: colorizeMeters(quantity as Quantity),
-          strokeWidth: 3,
+          stroke: colorOf(quantity),
+          strokeWidth: 2,
           yAxisId,
-          origin: 'meter',
         });
       }
     });
 
-    average.forEach(({id, quantity, values, unit}: AverageResponsePart) => {
+    average.forEach(({id, label, quantity, values, unit}: MeasurementResponsePart) => {
       if (!graphContents.axes.left) {
         graphContents.axes.left = unit;
       } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
@@ -134,16 +141,15 @@ export const toGraphContents =
       if (!yAxisId) {
         return;
       }
-      const dataKey: string = `Average ${quantity}`;
+      const dataKey: string = `Average ${label}`;
       graphContents.lines.push({
         id,
         dataKey,
-        key: `average-${quantity}`,
-        name: dataKey,
-        stroke: colorizeAverage(quantity as Quantity),
+        key: makeAggregateKey({id, label}),
+        name: label,
+        stroke: colorOf(quantity),
         strokeWidth: 4,
         yAxisId,
-        origin: 'average',
       });
 
       values.forEach(({when, value}) => {
@@ -158,11 +164,11 @@ export const toGraphContents =
       });
     });
 
-    graphContents.data = Object.keys(byDate).map((created) => ({
-      ...byDate[created],
-      name: Number(created),
-    })).sort(({name: createdA}, {name: createdB}) => createdA - createdB);
+    graphContents.data = Object.keys(byDate)
+      .map(created => ({...byDate[created], name: Number(created)}))
+      .sort(({name: createdA}, {name: createdB}) => createdA - createdB);
 
-    graphContents.legend = Object.keys(legends).map((legend) => legends[legend]);
+    graphContents.legend = makeLegendPayload(response);
+
     return graphContents;
   };

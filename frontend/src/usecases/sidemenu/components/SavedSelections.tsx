@@ -10,6 +10,7 @@ import {history} from '../../../index';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {initialSelectionId} from '../../../state/user-selection/userSelectionModels';
 import {Callback, IdNamed, OnClickWithId, uuid} from '../../../types/Types';
+import {toAggregateLegendItem} from '../../report/helpers/legendHelper';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
 import {CreateNewSelectionListItem} from './CreateNewSelectionListItem';
 import {LoadingListItems} from './LoadingListItems';
@@ -24,6 +25,7 @@ interface ConfirmDelete {
 type Props = DispatchToProps & StateToProps;
 
 const ListItems = ({
+  addToReport,
   confirmDelete,
   isMeterPage,
   fetchUserSelections,
@@ -43,7 +45,14 @@ const ListItems = ({
       ? allMetersSelectionListItem
       : savedSelections.entities[savedSelectionId];
 
+    const onShowAverageInReport: Callback = () => {
+      history.push(routes.report);
+      addToReport(toAggregateLegendItem({id, name}));
+      selectSavedSelection(id);
+    };
+
     const onEditSelection: Callback = () => selectSavedSelection(id);
+
     const onSelect: Callback = () => {
       history.push(routes.meter);
       if (id === initialSelectionId) {
@@ -69,6 +78,7 @@ const ListItems = ({
             <SavedSelectionActionsDropdown
               id={id}
               confirmDelete={confirmDelete}
+              onShowAverageInReport={onShowAverageInReport}
               onEditSelection={onEditSelection}
             />
           </Row>

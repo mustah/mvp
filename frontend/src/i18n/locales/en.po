@@ -669,6 +669,9 @@ msgstr "no saved selections"
 msgid "show average in report"
 msgstr "show average in report"
 
+msgid "average"
+msgstr "average"
+
 msgid "admin"
 msgstr "admin"
 
