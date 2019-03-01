@@ -148,7 +148,7 @@ export const toGraphContents =
         key: makeAggregateKey({id, label}),
         name: label,
         stroke: colorOf(quantity),
-        strokeWidth: 5,
+        strokeWidth: 4,
         yAxisId,
       });
 
