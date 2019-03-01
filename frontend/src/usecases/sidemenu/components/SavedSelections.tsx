@@ -4,6 +4,7 @@ import {routes} from '../../../app/routes';
 import {listItemInnerDivStyle, listItemStyle, listItemStyleSelected, secondaryBgHover} from '../../../app/themes';
 import {useConfirmDialog} from '../../../components/dialog/confirmDialogHook';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
+import {withContent} from '../../../components/hoc/withContent';
 import {Row, RowMiddle, RowSpaceBetween} from '../../../components/layouts/row/Row';
 import {Medium} from '../../../components/texts/Texts';
 import {history} from '../../../index';
@@ -14,7 +15,7 @@ import {toAggregateLegendItem} from '../../report/helpers/legendHelper';
 import {DispatchToProps, StateToProps} from '../containers/SavedSelectionsContainer';
 import {CreateNewSelectionListItem} from './CreateNewSelectionListItem';
 import {LoadingListItems} from './LoadingListItems';
-import {SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
+import {ActionDropdownProps, SavedSelectionActionsDropdown} from './SavedSelectionActionsDropdown';
 import './SavedSelections.scss';
 import './UserSelectionActionDropdown.scss';
 
@@ -23,6 +24,8 @@ interface ConfirmDelete {
 }
 
 type Props = DispatchToProps & StateToProps;
+
+const SavedSelectionActionsDropdownWrapper = withContent<ActionDropdownProps>(SavedSelectionActionsDropdown);
 
 const ListItems = ({
   addToReport,
@@ -75,8 +78,9 @@ const ListItems = ({
             <Medium className="first-uppercase">{name}</Medium>
           </RowMiddle>
           <Row className="UserSelectionActionDropdown">
-            <SavedSelectionActionsDropdown
+            <SavedSelectionActionsDropdownWrapper
               id={id}
+              hasContent={id !== initialSelectionId}
               confirmDelete={confirmDelete}
               onShowAverageInReport={onShowAverageInReport}
               onEditSelection={onEditSelection}

@@ -18,63 +18,64 @@ export interface DispatchProps {
   onShowAverageInReport: Callback;
 }
 
-interface Props extends DispatchProps {
+export interface ActionDropdownProps extends DispatchProps {
   id: uuid;
 }
 
-export const SavedSelectionActionsDropdown = ({id, confirmDelete, onShowAverageInReport, onEditSelection}: Props) => {
+export const SavedSelectionActionsDropdown =
+  ({id, confirmDelete, onShowAverageInReport, onEditSelection}: ActionDropdownProps) => {
 
-  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
-    const onClickEditSelection = () => {
-      onClick();
-      onEditSelection();
-    };
-    const onClickShowAverageInReport = () => {
-      onClick();
-      onShowAverageInReport();
-    };
-    const onClickDelete = () => {
-      onClick();
-      confirmDelete(id);
-    };
+    const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
+      const onClickEditSelection = () => {
+        onClick();
+        onEditSelection();
+      };
+      const onClickShowAverageInReport = () => {
+        onClick();
+        onShowAverageInReport();
+      };
+      const onClickDelete = () => {
+        onClick();
+        confirmDelete(id);
+      };
 
-    const actionMenuItems = [
-      (
-        <Link to={`${routes.selection}`} className="link" key={`edit-user-selection-${id}`}>
-          <ActionMenuItem
-            leftIcon={<ImageEdit style={actionMenuItemIconStyle}/>}
-            name={translate('edit user selection')}
-            onClick={onClickEditSelection}
-          />
-        </Link>
-      ),
-    ];
-
-    return id !== initialSelectionId
-      ? [
-        ...actionMenuItems,
+      const actionMenuItems = [
         (
-          <ActionMenuItem
-            leftIcon={<IconReport style={actionMenuItemIconStyle}/>}
-            name={translate('show average in report')}
-            onClick={onClickShowAverageInReport}
-            key={`show-average-in-report-${id}`}
-          />
+          <Link to={`${routes.selection}`} className="link" key={`edit-user-selection-${id}`}>
+            <ActionMenuItem
+              leftIcon={<ImageEdit style={actionMenuItemIconStyle}/>}
+              name={translate('edit user selection')}
+              onClick={onClickEditSelection}
+            />
+          </Link>
         ),
-        (
-          <Divider style={dividerStyle} key={`user-selection-divider-${id}`}/>
-        ),
-        (
-          <ActionMenuItem
-            leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
-            name={translate('delete user selection')}
-            onClick={onClickDelete}
-            key={`delete-user-selection-${id}`}
-          />
-        )
-      ]
-      : actionMenuItems;
+      ];
+
+      return id !== initialSelectionId
+        ? [
+          ...actionMenuItems,
+          (
+            <ActionMenuItem
+              leftIcon={<IconReport style={actionMenuItemIconStyle}/>}
+              name={translate('show average in report')}
+              onClick={onClickShowAverageInReport}
+              key={`show-average-in-report-${id}`}
+            />
+          ),
+          (
+            <Divider style={dividerStyle} key={`user-selection-divider-${id}`}/>
+          ),
+          (
+            <ActionMenuItem
+              leftIcon={<ActionDelete style={actionMenuItemIconStyle}/>}
+              name={translate('delete user selection')}
+              onClick={onClickDelete}
+              key={`delete-user-selection-${id}`}
+            />
+          )
+        ]
+        : actionMenuItems;
+    };
+
+    return <ActionsDropdown renderPopoverContent={renderPopoverContent}/>;
   };
-
-  return <ActionsDropdown renderPopoverContent={renderPopoverContent}/>;
-};
