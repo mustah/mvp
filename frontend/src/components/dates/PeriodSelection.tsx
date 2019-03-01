@@ -1,7 +1,7 @@
 import {Moment} from 'moment-timezone';
 import * as React from 'react';
 import {dropdownListStyle} from '../../app/themes';
-import {momentFrom, prettyRange} from '../../helpers/dateHelpers';
+import {momentAtUtcPlusOneFrom, prettyRange} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
@@ -75,8 +75,8 @@ export class PeriodSelection extends React.Component<Props, State> {
     ];
 
     const {start, end} = customDateRange.map<NullableDateRange>(({start, end}) => ({
-      start: momentFrom(start),
-      end: momentFrom(end),
+      start: momentAtUtcPlusOneFrom(start),
+      end: momentAtUtcPlusOneFrom(end),
     })).orElse({start: null, end: null});
 
     return (

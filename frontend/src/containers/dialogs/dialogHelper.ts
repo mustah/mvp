@@ -14,7 +14,7 @@ export const fillMissingMeasurements =
       return existingReadings;
     }
 
-    const startInSeconds = (start.valueOf() / 1000) - (readIntervalMinutes * 60);
+    const startInSeconds = (start.valueOf() / 1000);
     const numRows = (end.valueOf() - start.valueOf()) / (1000 * readIntervalMinutes * 60);
     const withMissingReadings: Readings = {...existingReadings};
 

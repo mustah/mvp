@@ -1,4 +1,4 @@
-import {momentFrom} from '../dateHelpers';
+import {momentAtUtcPlusOneFrom} from '../dateHelpers';
 import {cityWithoutCountry, formatCollectionPercentage, formatDate, round, roundMeasurement} from '../formatters';
 
 describe('formatters', () => {
@@ -44,21 +44,21 @@ describe('formatters', () => {
   describe('Format dates', () => {
 
     test('Without specifying format, result defaults to FORMAT_DATE_DAY_MONTH', () => {
-      const date = momentFrom('2017-03-21T22:00:00Z').toDate();
+      const date = momentAtUtcPlusOneFrom('2017-03-21T22:00:00Z').toDate();
 
       expect(formatDate(date)).toEqual('21/03');
     });
 
     test('Custom format', () => {
-      const date = momentFrom('2017-03-21T00:00:00Z').toDate();
+      const date = momentAtUtcPlusOneFrom('2017-03-21T00:00:00Z').toDate();
 
       expect(formatDate(date, 'DD/MM/YYYY')).toEqual('21/03/2017');
     });
 
     test('UNIX timestamp in millisecond precision, to formatted date string', () => {
-      const date = momentFrom('2017-03-21T11:00:00Z').toDate();
+      const date = momentAtUtcPlusOneFrom('2017-03-21T11:00:00Z').toDate();
 
-      expect(formatDate(date, 'YY-MM-DD HH:mm')).toEqual('17-03-21 11:00');
+      expect(formatDate(date, 'YY-MM-DD HH:mm')).toEqual('17-03-21 12:00');
     });
   });
 

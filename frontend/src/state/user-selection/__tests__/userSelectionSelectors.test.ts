@@ -1,6 +1,6 @@
 import {urlFromParameters} from '../../../__tests__/urlFromParameters';
 import {Period} from '../../../components/dates/dateModels';
-import {momentFrom} from '../../../helpers/dateHelpers';
+import {momentAtUtcPlusOneFrom} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {meterParameters, RequestParameter} from '../../../helpers/urlFactory';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../../types/Types';
@@ -33,7 +33,7 @@ describe('userSelectionSelectors', () => {
   const gothenburg: IdNamed = {name: 'göteborg', id: 'sweden,göteborg'};
 
   const initialUserSelectionState: UserSelectionState = {...initialState};
-  const start: Date = momentFrom('2018-02-02T00:00:00Z').toDate();
+  const start: Date = momentAtUtcPlusOneFrom('2018-02-02T00:00:00Z').toDate();
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialUserSelectionState,
     pagination: getPagination({

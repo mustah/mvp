@@ -1,10 +1,10 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.elvaco.mvp.core.domainmodels.Medium;
@@ -58,9 +58,11 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
     for (int i = 0; i < meters.size(); i++) {
       boolean isFailing = random.nextInt(10) >= 8;
 
-      ZonedDateTime startDate = ZonedDateTime.now(TimeZone.getTimeZone("UTC").toZoneId())
+      ZonedDateTime startDate = ZonedDateTime.now()
         .truncatedTo(ChronoUnit.DAYS)
-        .minusDays(DAYS_TO_ADD);
+        .minusDays(DAYS_TO_ADD)
+        //TODO: We should probably use the meter's utc-offset here instead...
+        .withZoneSameLocal(ZoneId.of("UTC+1"));
 
       PhysicalMeter physicalMeter = meters.get(i);
       measurementJpaRepository.saveAll(createMeasurements(

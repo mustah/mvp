@@ -3,7 +3,7 @@ import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {RelationalOperator, SelectedParameters} from '../../state/user-selection/userSelectionModels';
 import {EncodedUriParameters, IdNamed, toIdNamed} from '../../types/Types';
-import {momentFrom, toPeriodApiParameters} from '../dateHelpers';
+import {momentAtUtcPlusOneFrom, toPeriodApiParameters} from '../dateHelpers';
 import {idGenerator} from '../idGenerator';
 import {Maybe} from '../Maybe';
 import {
@@ -69,7 +69,7 @@ describe('urlFactory', () => {
   describe('encodeRequestParameters', () => {
 
     it('encodes map to encoded key-value string', () => {
-      const nowInApiFormat = momentFrom().format(`YYYY-MM-DDTHH:mm:ss.sss+01:00`);
+      const nowInApiFormat = momentAtUtcPlusOneFrom().format(`YYYY-MM-DDTHH:mm:ss.sss+01:00`);
       const facilityId: string = idGenerator.uuid().toString();
 
       const after = nowInApiFormat;
@@ -202,7 +202,7 @@ describe('urlFactory', () => {
   });
 
   describe('toPeriodApiParameters', () => {
-    const now: Date = momentFrom('2018-02-02T00:00:00Z').toDate();
+    const now: Date = momentAtUtcPlusOneFrom('2018-02-02T00:00:00Z').toDate();
 
     it('know about the last 24h', () => {
       expect(toPeriodApiParameters({
@@ -265,8 +265,8 @@ describe('urlFactory', () => {
     });
 
     it('knows about a custom period', () => {
-      const start: Date = momentFrom('2018-02-02T00:00:00Z').toDate();
-      const end: Date = momentFrom('2018-02-10T00:00:00Z').toDate();
+      const start: Date = momentAtUtcPlusOneFrom('2018-02-02T00:00:00Z').toDate();
+      const end: Date = momentAtUtcPlusOneFrom('2018-02-10T00:00:00Z').toDate();
 
       const customPeriodApiParameters = toPeriodApiParameters({
         start: now,
