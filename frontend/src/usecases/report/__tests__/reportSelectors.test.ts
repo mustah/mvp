@@ -1,18 +1,12 @@
 import {savedReportsWith} from '../../../__tests__/testDataFactory';
-import {
-  allQuantities,
-  Medium,
-  Quantity,
-  quantityAttributes
-} from '../../../state/ui/graph/measurement/measurementModels';
-import {RelationalOperator, ThresholdQuery} from '../../../state/user-selection/userSelectionModels';
+import {allQuantitiesMap, Medium, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {makeColumnQuantities} from '../helpers/legendHelper';
 import {LegendItem, SavedReportsState, SelectedQuantityColumns} from '../reportModels';
 import {initialSavedReportState} from '../reportReducer';
 import {
   getLegendItems,
   getSelectedQuantityColumns,
-  getThresholdMedia,
-  makeMediumQuantitiesMap
+  makeLegendTypeQuantitiesMap
 } from '../reportSelectors';
 
 describe('reportSelectors', () => {
@@ -20,17 +14,17 @@ describe('reportSelectors', () => {
   const meter: LegendItem = {
     id: 1,
     label: 'extId1',
-    medium: Medium.water,
+    type: Medium.water,
     isHidden: false,
-    quantities: [allQuantities[Medium.water][0]]
+    quantities: [allQuantitiesMap[Medium.water][0]]
   };
 
   const meter2: LegendItem = {
     id: 2,
     label: 'extId2',
-    medium: Medium.gas,
+    type: Medium.gas,
     isHidden: false,
-    quantities: [allQuantities[Medium.gas][0]]
+    quantities: [allQuantitiesMap[Medium.gas][0]]
   };
 
   describe('getLegendItems', () => {
@@ -63,8 +57,8 @@ describe('reportSelectors', () => {
 
   describe('getSelectedQuantityColumns', () => {
 
-    it('collects all selected quantities for each medium', () => {
-      const districtHeating: LegendItem = {...meter, medium: Medium.districtHeating};
+    it('collects all selected quantities for each type', () => {
+      const districtHeating: LegendItem = {...meter, type: Medium.districtHeating};
       const meter1: LegendItem = {...districtHeating, id: 1, quantities: [Quantity.flow]};
       const meter2: LegendItem = {...districtHeating, id: 2, quantities: [Quantity.power]};
       const meter3: LegendItem = {...districtHeating, id: 3, quantities: [Quantity.flow]};
@@ -74,7 +68,7 @@ describe('reportSelectors', () => {
       };
 
       const expected: SelectedQuantityColumns = {
-        ...makeMediumQuantitiesMap(),
+        ...makeLegendTypeQuantitiesMap(),
         [Medium.districtHeating]: [Quantity.flow, Quantity.power],
       };
       expect(getSelectedQuantityColumns(state)).toEqual(expected);
@@ -82,19 +76,19 @@ describe('reportSelectors', () => {
 
   });
 
-  describe('getThresholdMedia', () => {
+  describe('makeColumnQuantities', () => {
 
-    it('get media from selected threshold', () => {
-      const state: ThresholdQuery = {
-        quantity: Quantity.returnTemperature,
-        relationalOperator: RelationalOperator.lt,
-        unit: quantityAttributes[Quantity.returnTemperature].unit,
-        value: '0',
-      };
+    it('has no quantities selected when no', () => {
+      expect(makeColumnQuantities(initialSavedReportState)).toEqual([]);
+    });
 
-      const expected: Medium[] = [Medium.districtHeating];
+    it('collects all selected quantities for each type', () => {
+      const meter1: LegendItem = {...meter, id: 1, type: Medium.districtHeating};
+      const meter2: LegendItem = {...meter, id: 3, type: Medium.roomSensor};
 
-      expect(getThresholdMedia(state)).toEqual(expected);
+      const expected: Quantity[] = [...allQuantitiesMap.districtHeating, ...allQuantitiesMap.roomSensor];
+
+      expect(makeColumnQuantities(savedReportsWith([meter1, meter2, meter2]))).toEqual(expected);
     });
 
   });

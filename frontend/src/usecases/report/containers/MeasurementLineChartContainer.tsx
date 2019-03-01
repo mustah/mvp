@@ -24,7 +24,7 @@ import {shortTimestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {hasMeasurements} from '../../../state/ui/graph/measurement/measurementSelectors';
+import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurementSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, OnClick, uuid} from '../../../types/Types';
@@ -79,8 +79,8 @@ const renderGraphContents = (
 ): Children[] => {
 
   const components: Children[] = lines
-    .filter((line) => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
-    .filter((line) => outerHiddenKeys.indexOf(line.id) === -1)
+    .filter(line => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
+    .filter(line => outerHiddenKeys.indexOf(line.id) === -1)
     .map((props: LineProps, index: number) => {
       const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
       return (
@@ -103,9 +103,7 @@ const renderGraphContents = (
 
   if (right) {
     const rightLabel: LabelProps = {value: right, position: 'insideRight', angle: 90, dy: -10};
-    components.push((
-      <YAxis key="rightYAxis" label={rightLabel} yAxisId="right" orientation="right"/>
-    ));
+    components.push(<YAxis key="rightYAxis" label={rightLabel} yAxisId="right" orientation="right"/>);
   }
 
   return components;
@@ -257,7 +255,7 @@ const mapStateToProps = ({
     ...getSelectedPeriod(userSelection),
     isSideMenuOpen: isSideMenuOpen(ui),
     hasMeters: hasLegendItems(savedReports),
-    hasContent: hasMeasurements(measurement.measurementResponse)
+    hasContent: hasMeasurementValues(measurement.measurementResponse)
   });
 
 export const MeasurementLineChartContainer =

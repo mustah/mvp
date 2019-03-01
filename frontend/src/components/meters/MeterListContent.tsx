@@ -95,7 +95,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     hasContent,
   };
 
-  const onAddAllToReport = () => addAllToReport(result.map((id) => entities[id]).map(toLegendItem));
+  const onAddAllToReport = () => addAllToReport(result.map(id => entities[id]).map(toLegendItem));
   const onClearError = () => clearError({page});
   const onSyncMeters = () => syncMeters(result);
 

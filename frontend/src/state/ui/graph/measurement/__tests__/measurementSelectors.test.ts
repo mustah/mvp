@@ -1,13 +1,13 @@
+import {toGraphContents} from '../../../../../usecases/report/helpers/graphContentsMapper';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
-import {toGraphContents} from '../graphContentsMapper';
 import {
-  MeasurementApiResponse,
   MeasurementResponse,
   MeasurementResponsePart,
+  MeasurementsApiResponse,
   MeasurementValues,
   Quantity
 } from '../measurementModels';
-import {hasMeasurements} from '../measurementSelectors';
+import {hasMeasurementValues} from '../measurementSelectors';
 
 describe('measurementSelectors', () => {
 
@@ -54,9 +54,9 @@ describe('measurementSelectors', () => {
       });
     });
 
-    describe('hasMeasurements', () => {
+    describe('hasMeasurementValues', () => {
       it('returns false when no measurements in response', () => {
-        expect(hasMeasurements(emptyResponses)).toBe(false);
+        expect(hasMeasurementValues(emptyResponses)).toBe(false);
       });
 
       it('returns false when measurements has no values', () => {
@@ -64,11 +64,11 @@ describe('measurementSelectors', () => {
           ...measurementResponse,
           measurements: [{...responsePart, values: []}],
         };
-        expect(hasMeasurements(response)).toBe(false);
+        expect(hasMeasurementValues(response)).toBe(false);
       });
 
       it('returns true when measurements has points with values', () => {
-        expect(hasMeasurements(measurementResponse)).toBe(true);
+        expect(hasMeasurementValues(measurementResponse)).toBe(true);
       });
 
       it('returns false when measurements has points, but no values', () => {
@@ -76,12 +76,22 @@ describe('measurementSelectors', () => {
           ...measurementResponse,
           measurements: [{...responsePart, values: [{when: 1516521585107}]}],
         };
-        expect(hasMeasurements(response)).toBe(false);
+        expect(hasMeasurementValues(response)).toBe(false);
       });
+
+      it('has measurements where there are average responses', () => {
+        const response: MeasurementResponse = {
+          measurements: [],
+          average: [responsePart]
+        };
+        expect(hasMeasurementValues(response)).toBe(true);
+      });
+
     });
+
     describe('axes', () => {
       it('extracts a single axis if all measurements are of the same unit', () => {
-        const sameUnit: MeasurementApiResponse = [
+        const sameUnit: MeasurementsApiResponse = [
           {
             id: 'meter a',
             city: 'Varberg',
@@ -120,7 +130,7 @@ describe('measurementSelectors', () => {
       });
 
       it('extracts two axes if measurements are of exactly two different units', () => {
-        const twoDifferentUnits: MeasurementApiResponse = [
+        const twoDifferentUnits: MeasurementsApiResponse = [
           {
             id: 'meter a',
             city: 'Varberg',
@@ -163,7 +173,7 @@ describe('measurementSelectors', () => {
       });
 
       it('ignores all measurements of a third unit, if there already are two', () => {
-        const threeDifferentUnits: MeasurementApiResponse = [
+        const threeDifferentUnits: MeasurementsApiResponse = [
           {
             id: 'meter a',
             city: 'Varberg',
@@ -224,7 +234,7 @@ describe('measurementSelectors', () => {
         'adjusts the starting position of the x-axis to the first measurement, not average',
         () => {
           const firstMeasurement: number = 1516521585107;
-          const slightlyLaterThanFirstAverage: MeasurementApiResponse = [
+          const slightlyLaterThanFirstAverage: MeasurementsApiResponse = [
             {
               id: 'meter a',
               city: 'Varberg',
@@ -242,7 +252,7 @@ describe('measurementSelectors', () => {
             },
           ];
 
-          const average: MeasurementApiResponse = [
+          const average: MeasurementsApiResponse = [
             {
               id: 'meter a',
               city: 'Varberg',

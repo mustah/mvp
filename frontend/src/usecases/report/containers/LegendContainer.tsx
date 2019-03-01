@@ -3,29 +3,36 @@ import {bindActionCreators} from 'redux';
 import {TemporalResolution} from '../../../components/dates/dateModels';
 import {withContent} from '../../../components/hoc/withContent';
 import {RootState} from '../../../reducers/rootReducer';
-import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {HasContent, OnClick, OnClickWith, OnClickWithId, Visible} from '../../../types/Types';
 import {Legend} from '../components/Legend';
+import {makeColumnQuantities} from '../helpers/legendHelper';
 import {
   deleteItem,
-  removeAllByMedium,
-  showHideAllByMedium,
-  showHideMediumRows,
+  removeAllByType,
+  showHideAllByType,
+  showHideLegendRows,
   toggleLine,
   toggleQuantityById,
-  toggleQuantityByMedium
+  toggleQuantityByType
 } from '../reportActions';
 import {
+  ColumnQuantities,
   LegendItem,
+  LegendType,
   MediumViewOptions,
   QuantityId,
-  QuantityMedium,
+  QuantityLegendType,
   SavedReportsState,
   SelectedQuantityColumns
 } from '../reportModels';
-import {getLegendItems, getMediumViewOptions, getSelectedQuantityColumns, hasLegendItems} from '../reportSelectors';
+import {
+  getLegendItems,
+  getMediumViewOptions,
+  getSelectedQuantityColumns,
+  hasLegendItems
+} from '../reportSelectors';
 
-export interface StateToProps extends HasContent {
+export interface StateToProps extends HasContent, ColumnQuantities {
   legendItems: LegendItem[];
   mediumViewOptions: MediumViewOptions;
   resolution: TemporalResolution;
@@ -33,13 +40,16 @@ export interface StateToProps extends HasContent {
   selectedQuantityColumns: SelectedQuantityColumns;
 }
 
-export interface DispatchToProps {
+export interface RowDispatch {
+  removeAllByType: OnClickWith<LegendType>;
+  showHideAllByType: OnClickWith<LegendType>;
+  toggleQuantityByType: OnClickWith<QuantityLegendType>;
+}
+
+export interface DispatchToProps extends RowDispatch {
   deleteItem: OnClickWithId;
-  removeAllByMedium: OnClickWith<Medium>;
-  showHideAllByMedium: OnClickWith<Medium>;
-  showHideMediumRows: OnClickWith<Medium>;
+  showHideLegendRows: OnClickWith<LegendType>;
   toggleLine: OnClickWithId;
-  toggleQuantityByMedium: OnClickWith<QuantityMedium>;
   toggleQuantityById: OnClickWith<QuantityId>;
 }
 
@@ -52,6 +62,7 @@ const LegendComponent = withContent<DispatchToProps & StateToProps>(Legend);
 const mapStateToProps = ({report}: RootState): StateToProps => {
   const {temporal: {resolution}, savedReports} = report;
   return ({
+    columnQuantities: makeColumnQuantities(savedReports),
     hasContent: hasLegendItems(savedReports),
     legendItems: getLegendItems(savedReports),
     mediumViewOptions: getMediumViewOptions(savedReports),
@@ -63,11 +74,11 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteItem,
-  showHideAllByMedium,
-  removeAllByMedium,
-  showHideMediumRows,
+  showHideAllByType,
+  removeAllByType,
+  showHideLegendRows,
   toggleLine,
-  toggleQuantityByMedium,
+  toggleQuantityByType,
   toggleQuantityById,
 }, dispatch);
 

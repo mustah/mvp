@@ -115,7 +115,7 @@ export const encodeRequestParameters = (parameters: RequestParameters): EncodedU
     .map((parameter: RequestParameter): EncodedUriParameters => {
       const value: string | string[] = parameters[parameter]!;
       return Array.isArray(value)
-        ? value.map((singleValue: string) => `${parameter}=${encodeURIComponent(singleValue)}`).join('&')
+        ? value.map(value => `${parameter}=${encodeURIComponent(value)}`).join('&')
         : `${parameter}=${encodeURIComponent(value)}`;
     })
     .join('&');

@@ -11,7 +11,9 @@ import {
 } from '../../../state/user-selection/userSelectionActions';
 import {UserSelection} from '../../../state/user-selection/userSelectionModels';
 import {getUserSelection} from '../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackWithId, OnClick} from '../../../types/Types';
+import {Callback, CallbackWithId, OnClick, OnClickWith} from '../../../types/Types';
+import {addToReport} from '../../report/reportActions';
+import {LegendItem} from '../../report/reportModels';
 import {SavedSelections} from '../components/SavedSelections';
 
 export interface StateToProps {
@@ -25,6 +27,7 @@ export interface DispatchToProps {
   fetchUserSelections: Callback;
   resetSelection: OnClick;
   selectSavedSelection: OnClick;
+  addToReport: OnClickWith<LegendItem>;
 }
 
 const mapStateToProps =
@@ -35,6 +38,7 @@ const mapStateToProps =
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  addToReport,
   deleteUserSelection,
   fetchUserSelections,
   resetSelection,

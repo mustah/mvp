@@ -1,16 +1,16 @@
+import {flatMap} from 'lodash';
 import * as React from 'react';
 import {createSelector} from 'reselect';
-import {isDefined} from '../../../../helpers/commonHelpers';
+import {identity, isDefined} from '../../../../helpers/commonHelpers';
 import {uuid} from '../../../../types/Types';
+import {toGraphContents} from '../../../../usecases/report/helpers/graphContentsMapper';
 import {GraphContents} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
-import {toGraphContents} from './graphContentsMapper';
 import {
-  allQuantities,
+  allQuantitiesMap,
   ExistingReadings,
   Measurement,
   MeasurementResponse,
-  MeasurementResponsePart,
   Medium,
   Quantity,
   Reading
@@ -40,17 +40,18 @@ export const groupMeasurementsByDate =
 
     return {
       readings,
-      quantities: allQuantities[medium].filter((q) => quantitiesFoundInResponse.has(q)),
+      quantities: allQuantitiesMap[medium].filter((q) => quantitiesFoundInResponse.has(q)),
     };
   };
 
 export const useGraphContents = (responses: MeasurementResponse): GraphContents =>
   React.useMemo<GraphContents>(() => toGraphContents(responses), [responses]);
 
-export const hasMeasurements = createSelector<MeasurementResponse, MeasurementResponsePart[], boolean>(
-  (measurements: MeasurementResponse) => measurements.measurements,
-  (measurements) => measurements
-                      .filter((measurement) =>
-                        measurement.values.find((value) => value.value !== undefined)
-                      ).filter(isDefined).length > 0
+export const hasMeasurementValues = createSelector<MeasurementResponse, MeasurementResponse, boolean>(
+  identity,
+  ({average, measurements}: MeasurementResponse) =>
+    [
+      ...flatMap(average, it => it.values).filter(it => isDefined(it.value)),
+      ...flatMap(measurements, it => it.values).filter(it => isDefined(it.value)),
+    ].length > 0
 );

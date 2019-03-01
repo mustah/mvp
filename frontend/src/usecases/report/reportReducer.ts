@@ -9,20 +9,20 @@ import {Action, uuid} from '../../types/Types';
 import {logoutUser} from '../auth/authActions';
 import {
   addLegendItems,
-  removeAllByMedium,
+  removeAllByType,
   selectResolution,
   setReportTimePeriod,
-  showHideAllByMedium,
-  showHideMediumRows,
+  showHideAllByType,
+  showHideLegendRows,
   toggleLine,
   toggleQuantityById,
-  toggleQuantityByMedium,
+  toggleQuantityByType,
 } from './reportActions';
 import {
   LegendItem,
   MediumViewOptions,
   QuantityId,
-  QuantityMedium,
+  QuantityLegendType,
   ReportState,
   SavedReportsState,
   TemporalReportState,
@@ -30,15 +30,11 @@ import {
 } from './reportModels';
 import {getLegendItems, getMediumViewOptions, getViewOptions} from './reportSelectors';
 
-export const mediumViewOptions: MediumViewOptions = {
-  [Medium.districtHeating]: {quantities: []},
-  [Medium.gas]: {quantities: []},
-  [Medium.water]: {quantities: []},
-  [Medium.hotWater]: {quantities: []},
-  [Medium.electricity]: {quantities: []},
-  [Medium.roomSensor]: {quantities: []},
-  [Medium.unknown]: {quantities: []},
-};
+export const makeInitialLegendTypeViewOptions = (): MediumViewOptions =>
+  Object.keys(Medium).map(k => Medium[k])
+    .reduce((acc, medium) => ({...acc, [medium]: {quantities: []}}), {aggregate: {quantities: []}});
+
+export const mediumViewOptions: MediumViewOptions = makeInitialLegendTypeViewOptions();
 
 export const initialSavedReportState: SavedReportsState = {
   meterPage: {
@@ -61,13 +57,13 @@ export const initialState: ReportState = {
 const getMedium = (action: ActionTypes): Medium => (action as Action<Medium>).payload;
 
 const toggleLegendItemsRows = (state: SavedReportsState, medium: Medium): LegendItem[] =>
-  getLegendItems(state).map(it => it.medium === medium ? {...it, isRowExpanded: !it.isRowExpanded} : it);
+  getLegendItems(state).map(it => it.type === medium ? {...it, isRowExpanded: !it.isRowExpanded} : it);
 
 const getLegendItemsNotMatchingMedium = (state: SavedReportsState, medium: Medium): LegendItem[] =>
-  getLegendItems(state).filter(it => it.medium !== medium);
+  getLegendItems(state).filter(it => it.type !== medium);
 
 const getLegendItemsMatchingMedium = (state: SavedReportsState, medium: Medium): LegendItem[] =>
-  getLegendItems(state).filter(it => it.medium === medium);
+  getLegendItems(state).filter(it => it.type === medium);
 
 const makeSavedReports = (state: SavedReportsState, meters: LegendItem[]): SavedReportsState => ({
     ...state,
@@ -79,7 +75,7 @@ const makeSavedReports = (state: SavedReportsState, meters: LegendItem[]): Saved
 );
 
 const toggleHiddenLines = (savedReports: SavedReportsState, medium: Medium): SavedReportsState => {
-  if (savedReports.meterPage.meters.filter(it => it.medium === medium).length > 0) {
+  if (savedReports.meterPage.meters.filter(it => it.type === medium).length > 0) {
     const mediumViewOptions: MediumViewOptions = savedReports.meterPage.mediumViewOptions;
     const viewOptions: ViewOptions = mediumViewOptions[medium];
     return ({
@@ -97,11 +93,11 @@ const toggleHiddenLines = (savedReports: SavedReportsState, medium: Medium): Sav
   return savedReports;
 };
 
-const toggleQuantityMedium = (state: SavedReportsState, {medium, quantity}: QuantityMedium): SavedReportsState => {
+const toggleQuantityMedium = (state: SavedReportsState, {type, quantity}: QuantityLegendType): SavedReportsState => {
   const mediumViewOptions = getMediumViewOptions(state);
-  const viewOptions: ViewOptions = mediumViewOptions[medium];
+  const viewOptions: ViewOptions = mediumViewOptions[type];
   const quantities = toggle(quantity, viewOptions.quantities);
-  const meters = getLegendItems(state).map(it => it.medium === medium ? {...it, quantities} : it);
+  const meters = getLegendItems(state).map(it => it.type === type ? {...it, quantities} : it);
   return {
     ...state,
     ['meterPage']: {
@@ -109,7 +105,7 @@ const toggleQuantityMedium = (state: SavedReportsState, {medium, quantity}: Quan
       meters,
       mediumViewOptions: {
         ...mediumViewOptions,
-        [medium]: {...viewOptions, quantities}
+        [type]: {...viewOptions, quantities}
       }
     }
   };
@@ -150,7 +146,7 @@ export const temporal =
   };
 
 type SavedReportsActionTypes =
-  | Action<LegendItem[] | uuid | Medium | QuantityMedium | QuantityId>
+  | Action<LegendItem[] | uuid | Medium | QuantityLegendType | QuantityId>
   | EmptyAction<string>;
 
 export const savedReports =
@@ -160,14 +156,14 @@ export const savedReports =
         return makeSavedReports(state, (action as Action<LegendItem[]>).payload);
       case getType(toggleLine):
         return toggleLegendItemVisibility(state, (action as Action<uuid>).payload);
-      case getType(showHideAllByMedium):
+      case getType(showHideAllByType):
         return showHideAll(state, getMedium(action));
-      case getType(removeAllByMedium):
+      case getType(removeAllByType):
         return makeSavedReports(state, getLegendItemsNotMatchingMedium(state, getMedium(action)));
-      case getType(showHideMediumRows):
+      case getType(showHideLegendRows):
         return makeSavedReports(state, toggleLegendItemsRows(state, getMedium(action)));
-      case getType(toggleQuantityByMedium):
-        return toggleQuantityMedium(state, (action as Action<QuantityMedium>).payload);
+      case getType(toggleQuantityByType):
+        return toggleQuantityMedium(state, (action as Action<QuantityLegendType>).payload);
       case getType(toggleQuantityById):
         return toggleQuantityId(state, (action as Action<QuantityId>).payload);
       case getType(logoutUser):

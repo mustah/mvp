@@ -9,16 +9,10 @@ import {Column} from '../../../components/layouts/column/Column';
 import {RowLeft, RowRight} from '../../../components/layouts/row/Row';
 import {orUnknown} from '../../../helpers/translations';
 import {translate} from '../../../services/translationService';
-import {Medium} from '../../../state/ui/graph/measurement/measurementModels';
 import {DispatchToProps, OwnProps, StateToProps} from '../containers/LegendContainer';
-import {
-  ColumnRenderProps,
-  quantityColumnWidth,
-  renderColumns,
-  RowProps,
-  rowRenderer
-} from '../helpers/legendGridHelper';
+import {QuantityCell, quantityColumnWidth, renderColumns, RowProps, rowRenderer} from '../helpers/legendGridHelper';
 import {cellRender, headerCellRender} from '../helpers/measurementGridHelper';
+import {LegendType} from '../reportModels';
 import './Legend.scss';
 
 const legendGridStyle: React.CSSProperties = {
@@ -37,26 +31,29 @@ const renderLabelCell = ({dataItem: {label, city, address}}: GridCellProps) =>
     )
     : <td>-</td>;
 
-const state: State = {group: [{field: 'medium'}]};
+const state: State = {group: [{field: 'type'}]};
 
 export const Legend = ({
+  columnQuantities,
   deleteItem,
-  showHideAllByMedium,
+  showHideAllByType,
   isVisible,
   legendItems,
   mediumViewOptions,
-  removeAllByMedium,
+  removeAllByType,
   selectedQuantityColumns,
   showHideLegend,
-  showHideMediumRows,
+  showHideLegendRows,
   toggleLine,
-  toggleQuantityByMedium,
+  toggleQuantityByType,
   toggleQuantityById,
 }: DispatchToProps & StateToProps & OwnProps) => {
-  const columnRenderProps: ColumnRenderProps = {legendItems, selectedQuantityColumns, toggleQuantityById};
-  const [quantityGridColumns, columnQuantities] =
-    React.useMemo(() => renderColumns(columnRenderProps), [legendItems]);
-
+  const columnRenderProps: QuantityCell = {
+    columnQuantities,
+    selectedQuantityColumns,
+    toggleQuantityById
+  };
+  const quantityGridColumns = React.useMemo(() => renderColumns(columnRenderProps), [legendItems]);
   const dataResult: DataResult = React.useMemo(() => process(legendItems, state), [legendItems]);
 
   const renderIconButtonsCell = ({dataItem: {id, isHidden}}: GridCellProps) => {
@@ -101,12 +98,12 @@ export const Legend = ({
   ];
 
   const rowRenderProps: RowProps = {
-    onExpandRow: (dataItem: any) => showHideMediumRows(dataItem.value as Medium),
     columnQuantities,
-    showHideAllByMedium,
     mediumViewOptions,
-    removeAllByMedium,
-    toggleQuantityByMedium,
+    onExpandRow: (dataItem: any) => showHideLegendRows(dataItem.value as LegendType),
+    removeAllByType,
+    showHideAllByType,
+    toggleQuantityByType,
   };
 
   return (

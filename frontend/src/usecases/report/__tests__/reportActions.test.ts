@@ -17,19 +17,19 @@ describe('reportActions', () => {
   const isHidden = false;
   const quantities: Quantity[] = [];
 
-  const gasLegendItem: LegendItem = {id: 0, label: '1', medium: Medium.gas, isHidden, quantities};
+  const gasLegendItem: LegendItem = {id: 0, label: '1', type: Medium.gas, isHidden, quantities};
   const districtHeatingLegendItem: LegendItem = {
     id: 5,
     label: '5',
-    medium: Medium.districtHeating,
+    type: Medium.districtHeating,
     isHidden,
     quantities
   };
-  const unknownLegendItem: LegendItem = {id: 9, label: '9', medium: Medium.unknown, isHidden, quantities};
+  const unknownLegendItem: LegendItem = {id: 9, label: '9', type: Medium.unknown, isHidden, quantities};
 
   const items: LegendItem[] = [
-    {id: 1, label: 'a', medium: Medium.gas, isHidden, quantities},
-    {id: 2, label: 'b', medium: Medium.water, isHidden, quantities}
+    {id: 1, label: 'a', type: Medium.gas, isHidden, quantities},
+    {id: 2, label: 'b', type: Medium.water, isHidden, quantities}
   ];
 
   const savedReports: SavedReportsState = savedReportsWith(items);
@@ -67,7 +67,7 @@ describe('reportActions', () => {
       expect(store.getActions()).toEqual([addLegendItems([gasLegendItem])]);
     });
 
-    it('does not add unknown medium meter to graph', () => {
+    it('does not add unknown type meter to graph', () => {
       const store = configureMockStore(initialState);
 
       store.dispatch(addToReport(unknownLegendItem));
@@ -95,7 +95,7 @@ describe('reportActions', () => {
       ]);
     });
 
-    it('copies the view settings for the same medium', () => {
+    it('copies the view settings for the same type', () => {
       const meters: LegendItem[] = [{...gasLegendItem, isRowExpanded: true}];
       const store = configureMockStore({
         ...initialState,
@@ -119,12 +119,12 @@ describe('reportActions', () => {
       expect(store.getActions()).toEqual([addLegendItems(items)]);
     });
 
-    it('excludes meters with unknown medium', () => {
+    it('excludes meters with unknown type', () => {
       const store = configureMockStore(initialState);
 
       const payloadItems: LegendItem[] = [
         ...items,
-        {id: 3, label: 'u', medium: Medium.unknown, isHidden, quantities: []}
+        {id: 3, label: 'u', type: Medium.unknown, isHidden, quantities: []}
       ];
 
       store.dispatch(addAllToReport(payloadItems));
