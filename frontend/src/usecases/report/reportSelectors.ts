@@ -5,8 +5,8 @@ import {RootState} from '../../reducers/rootReducer';
 import {MeasurementParameters, Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {uuid} from '../../types/Types';
 import {
-  LegendItem,
-  MediumViewOptions,
+  LegendItem, LegendType,
+  LegendViewOptions,
   Report,
   SavedReportsState,
   SelectedQuantityColumns,
@@ -15,11 +15,11 @@ import {
 
 export const getMeterPage = (state: SavedReportsState): Report => state.meterPage;
 
-export const getMediumViewOptions = (state: SavedReportsState): MediumViewOptions =>
-  getMeterPage(state).mediumViewOptions;
+export const getLegendViewOptions = (state: SavedReportsState): LegendViewOptions =>
+  getMeterPage(state).legendViewOptions;
 
-export const getViewOptions = (state: SavedReportsState, medium: Medium): ViewOptions =>
-  getMediumViewOptions(state)[medium];
+export const getViewOptions = (state: SavedReportsState, type: LegendType): ViewOptions =>
+  getLegendViewOptions(state)[type];
 
 export const getLegendItems = (state: SavedReportsState): LegendItem[] =>
   getMeterPage(state).legendItems;

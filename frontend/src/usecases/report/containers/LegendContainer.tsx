@@ -19,7 +19,7 @@ import {
   ColumnQuantities,
   LegendItem,
   LegendType,
-  MediumViewOptions,
+  LegendViewOptions,
   QuantityId,
   QuantityLegendType,
   SavedReportsState,
@@ -27,14 +27,14 @@ import {
 } from '../reportModels';
 import {
   getLegendItems,
-  getMediumViewOptions,
+  getLegendViewOptions,
   getSelectedQuantityColumns,
   hasLegendItems
 } from '../reportSelectors';
 
 export interface StateToProps extends HasContent, ColumnQuantities {
   legendItems: LegendItem[];
-  mediumViewOptions: MediumViewOptions;
+  mediumViewOptions: LegendViewOptions;
   resolution: TemporalResolution;
   savedReports: SavedReportsState;
   selectedQuantityColumns: SelectedQuantityColumns;
@@ -65,7 +65,7 @@ const mapStateToProps = ({report}: RootState): StateToProps => {
     columnQuantities: makeColumnQuantities(savedReports),
     hasContent: hasLegendItems(savedReports),
     legendItems: getLegendItems(savedReports),
-    mediumViewOptions: getMediumViewOptions(savedReports),
+    mediumViewOptions: getLegendViewOptions(savedReports),
     resolution,
     savedReports,
     selectedQuantityColumns: getSelectedQuantityColumns(savedReports),
