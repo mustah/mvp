@@ -96,16 +96,21 @@ describe('reportActions', () => {
     });
 
     it('copies the view settings for the same type', () => {
-      const meters: LegendItem[] = [{...gasLegendItem, isRowExpanded: true}];
+      const legendItems: LegendItem[] = [{...gasLegendItem, isRowExpanded: true}];
       const store = configureMockStore({
         ...initialState,
-        report: {...report, savedReports: savedReportsWith(meters)}
+        report: {...report, savedReports: savedReportsWith(legendItems)}
       });
 
       const newGasLegendItem: LegendItem = {...gasLegendItem, id: 2};
       store.dispatch(addToReport(newGasLegendItem));
 
-      expect(store.getActions()).toEqual([addLegendItems([meters[0], {...newGasLegendItem, isRowExpanded: true}])]);
+      expect(store.getActions()).toEqual([
+        addLegendItems([
+          legendItems[0],
+          {...newGasLegendItem, isRowExpanded: true}
+        ])
+      ]);
     });
   });
 

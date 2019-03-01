@@ -22,7 +22,7 @@ export const getViewOptions = (state: SavedReportsState, medium: Medium): ViewOp
   getMediumViewOptions(state)[medium];
 
 export const getLegendItems = (state: SavedReportsState): LegendItem[] =>
-  getMeterPage(state).meters;
+  getMeterPage(state).legendItems;
 
 export const hasLegendItems = (state: SavedReportsState): boolean =>
   getLegendItems(state).length > 0;

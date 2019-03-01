@@ -30,7 +30,7 @@ export type MediumViewOptions = { [p in LegendType]: ViewOptions };
 export type SelectedQuantityColumns = { [p in LegendType]: Quantity[] };
 
 export interface Report extends Identifiable {
-  meters: LegendItem[];
+  legendItems: LegendItem[];
   mediumViewOptions: MediumViewOptions;
 }
 

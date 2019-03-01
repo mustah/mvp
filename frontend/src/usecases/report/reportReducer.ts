@@ -39,7 +39,7 @@ export const mediumViewOptions: MediumViewOptions = makeInitialLegendTypeViewOpt
 export const initialSavedReportState: SavedReportsState = {
   meterPage: {
     id: 'meterPage',
-    meters: [],
+    legendItems: [],
     mediumViewOptions,
   }
 };
@@ -65,17 +65,17 @@ const getLegendItemsNotMatchingMedium = (state: SavedReportsState, medium: Mediu
 const getLegendItemsMatchingMedium = (state: SavedReportsState, medium: Medium): LegendItem[] =>
   getLegendItems(state).filter(it => it.type === medium);
 
-const makeSavedReports = (state: SavedReportsState, meters: LegendItem[]): SavedReportsState => ({
+const makeSavedReports = (state: SavedReportsState, legendItems: LegendItem[]): SavedReportsState => ({
     ...state,
     ['meterPage']: {
       ...state.meterPage,
-      meters
+      legendItems
     }
   }
 );
 
 const toggleHiddenLines = (savedReports: SavedReportsState, medium: Medium): SavedReportsState => {
-  if (savedReports.meterPage.meters.filter(it => it.type === medium).length > 0) {
+  if (savedReports.meterPage.legendItems.filter(it => it.type === medium).length > 0) {
     const mediumViewOptions: MediumViewOptions = savedReports.meterPage.mediumViewOptions;
     const viewOptions: ViewOptions = mediumViewOptions[medium];
     return ({
@@ -97,12 +97,12 @@ const toggleQuantityMedium = (state: SavedReportsState, {type, quantity}: Quanti
   const mediumViewOptions = getMediumViewOptions(state);
   const viewOptions: ViewOptions = mediumViewOptions[type];
   const quantities = toggle(quantity, viewOptions.quantities);
-  const meters = getLegendItems(state).map(it => it.type === type ? {...it, quantities} : it);
+  const legendItems = getLegendItems(state).map(it => it.type === type ? {...it, quantities} : it);
   return {
     ...state,
     ['meterPage']: {
       ...state.meterPage,
-      meters,
+      legendItems,
       mediumViewOptions: {
         ...mediumViewOptions,
         [type]: {...viewOptions, quantities}

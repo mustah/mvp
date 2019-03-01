@@ -131,9 +131,9 @@ describe('reportReducer', () => {
     });
 
     it('should remove existing hidden legend item id ', () => {
-      const meters: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: true}];
+      const legendItems: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: true}];
 
-      const nextState: SavedReportsState = savedReports(savedReportsWith(meters), toggleLine(gasMeter.id));
+      const nextState: SavedReportsState = savedReports(savedReportsWith(legendItems), toggleLine(gasMeter.id));
 
       const expected: LegendItem[] = [{...waterMeter, isHidden: true}, {...gasMeter, isHidden: false}];
       expect(getLegendItems(nextState)).toEqual(expected);
