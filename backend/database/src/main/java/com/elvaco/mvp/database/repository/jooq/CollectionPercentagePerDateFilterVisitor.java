@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.repository.jooq;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 import com.elvaco.mvp.core.domainmodels.SelectionPeriod;
 import com.elvaco.mvp.core.filter.PeriodFilter;
@@ -49,8 +49,8 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
       throw new RuntimeException("No period selected");
     } else {
       Table series = JooqUtils.dateSerieFor(
-        period.start.toOffsetDateTime(),
-        period.stop.toOffsetDateTime().minusDays(1L),
+        period.start.toLocalDate(),
+        period.stop.toLocalDate().minusDays(1L),
         "1 days",
         false,
         "gendate"
@@ -76,7 +76,8 @@ public class CollectionPercentagePerDateFilterVisitor extends EmptyFilterVisitor
             .divide(nullif(PHYSICAL_METER.READ_INTERVAL_MINUTES, 0L)).as("expected"),
           field("gendate")
 
-        ).from(select(cast(field("gendate"),OffsetDateTime.class).as("gendate")).from(series)
+        ).from(select(cast(field("gendate at time zone 'UTC'"),LocalDate.class).as("gendate"))
+          .from(series)
           .asTable("series")
           .leftJoin(
           dsl.select(

@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -205,66 +205,6 @@ class LogicalMeterJooqJpaRepository
   }
 
   @Override
-  public Page<CollectionStatsDto> findAllCollectionStats(RequestParameters parameters,
-                                                          Pageable pageable) {
-    var selectQuery = dsl.select(
-      LOGICAL_METER.ID,
-      LOGICAL_METER.EXTERNAL_ID,
-      PHYSICAL_METER.READ_INTERVAL_MINUTES,
-      when(PHYSICAL_METER.READ_INTERVAL_MINUTES.ne(0L), coalesce(COLLECTION_PERCENTAGE,0.0))
-      .otherwise(DSL.inline((Double)null)).as("collectionPercentage2"),
-      LAST_DATA
-      ).from(LOGICAL_METER);
-
-    var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
-
-    FilterVisitors.logicalMeterWithCollectionPercentageAndLastData(dsl,measurementThresholdParser)
-      .accept(toFilters(parameters))
-      .andJoinsOn(selectQuery)
-      .andJoinsOn(countQuery);
-
-    var select = selectQuery
-      .orderBy(resolveSortFields(parameters,
-        COLLECTION_SORT_FIELDS_MAP,
-        LOGICAL_METER.EXTERNAL_ID.asc()))
-      .limit(pageable.getPageSize())
-      .offset(Long.valueOf(pageable.getOffset()).intValue());
-
-    List<CollectionStatsDto> logicalMeters = select.fetch()
-      .stream()
-      .map(record -> new CollectionStatsDto(record.value1(),
-        record.value2(),
-        record.value3().intValue(),
-        record.value4(),
-        record.value5()))
-      .collect(toList());
-    return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
-  }
-
-  @Override
-  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
-    RequestParameters parameters) {
-    var selectQuery = dsl.select(
-      avg(field("actual",Double.class).divide(field("expected",Double.class))).times(100.0),
-      field("gendate",OffsetDateTime.class)
-    ).from(LOGICAL_METER);
-
-
-    FilterVisitors.collectionPercentagePerDate(dsl,measurementThresholdParser)
-      .accept(toFilters(parameters))
-      .andJoinsOn(selectQuery);
-
-    var select = selectQuery
-      .groupBy(field("gendate")).orderBy(field("gendate").asc());
-
-    List<CollectionStatsPerDateDto> logicalMeters = select.fetch()
-      .stream()
-      .map(record -> new CollectionStatsPerDateDto(record.value2(),
-        (Double)record.value1().doubleValue())).collect(toList());
-    return logicalMeters;
-  }
-
-  @Override
   public Set<LogicalMeterWithLocation> findAllForSelectionTree(RequestParameters parameters) {
     var query = dsl.select(
       LOGICAL_METER.ID,
@@ -296,6 +236,74 @@ class LogicalMeterJooqJpaRepository
       .accept(toFilters(parameters)).andJoinsOn(query);
 
     return query.fetchInto(LogicalMeterCollectionStats.class);
+  }
+
+  @Override
+  public Page<CollectionStatsDto> findAllCollectionStats(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    var selectQuery = dsl.select(
+      LOGICAL_METER.ID,
+      LOGICAL_METER.EXTERNAL_ID,
+      PHYSICAL_METER.READ_INTERVAL_MINUTES,
+      when(PHYSICAL_METER.READ_INTERVAL_MINUTES.ne(0L), coalesce(COLLECTION_PERCENTAGE, 0.0))
+        .otherwise(DSL.inline((Double) null)).as("collectionPercentage2"),
+      LAST_DATA
+    ).from(LOGICAL_METER);
+
+    var countQuery = dsl.selectDistinct(LOGICAL_METER.ID, PHYSICAL_METER.ID).from(LOGICAL_METER);
+
+    FilterVisitors.logicalMeterWithCollectionPercentageAndLastData(dsl, measurementThresholdParser)
+      .accept(toFilters(parameters))
+      .andJoinsOn(selectQuery)
+      .andJoinsOn(countQuery);
+
+    var select = selectQuery
+      .orderBy(resolveSortFields(
+        parameters,
+        COLLECTION_SORT_FIELDS_MAP,
+        LOGICAL_METER.EXTERNAL_ID.asc()
+      ))
+      .limit(pageable.getPageSize())
+      .offset(Long.valueOf(pageable.getOffset()).intValue());
+
+    List<CollectionStatsDto> logicalMeters = select.fetch()
+      .stream()
+      .map(record -> new CollectionStatsDto(
+        record.value1(),
+        record.value2(),
+        record.value3().intValue(),
+        record.value4(),
+        record.value5()
+      ))
+      .collect(toList());
+    return getPage(logicalMeters, pageable, () -> dsl.fetchCount(countQuery));
+  }
+
+  @Override
+  public List<CollectionStatsPerDateDto> findAllCollectionStatsPerDate(
+    RequestParameters parameters
+  ) {
+    var selectQuery = dsl.select(
+      avg(field("actual", Double.class).divide(field("expected", Double.class))).times(100.0),
+      field("gendate", LocalDate.class)
+    ).from(LOGICAL_METER);
+
+    FilterVisitors.collectionPercentagePerDate(dsl, measurementThresholdParser)
+      .accept(toFilters(parameters))
+      .andJoinsOn(selectQuery);
+
+    var select = selectQuery
+      .groupBy(field("gendate")).orderBy(field("gendate").asc());
+
+    List<CollectionStatsPerDateDto> logicalMeters = select.fetch()
+      .stream()
+      .map(record -> new CollectionStatsPerDateDto(
+        record.value2(),
+        (Double) record.value1().doubleValue()
+      )).collect(toList());
+    return logicalMeters;
   }
 
   @Override
