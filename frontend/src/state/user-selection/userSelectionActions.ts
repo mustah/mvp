@@ -106,12 +106,14 @@ const tryMigrateSelectionParameters =
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: GetState) => {
     const selections: NormalizedState<UserSelection> = getState().domainModels.userSelections;
+    const currentSelection: UserSelection = getState().userSelection.userSelection;
     const savedSelectionId = selections.result
       .find((id: uuid) => id === selectedId);
 
     Maybe.maybe<uuid>(savedSelectionId)
       .map((id: uuid) => selections.entities[id])
       .map((userSelection: UserSelection) => tryMigrateSelectionParameters(dispatch, userSelection))
+      .filter((userSelection: UserSelection) => currentSelection.id !== userSelection.id)
       .map((userSelection: UserSelection) => dispatch(selectSavedSelectionAction(userSelection)));
   };
 
