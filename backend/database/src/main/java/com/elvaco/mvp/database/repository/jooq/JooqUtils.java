@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.jooq;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.temporal.Temporal;
 
 import com.elvaco.mvp.core.domainmodels.MeasurementThreshold;
 import com.elvaco.mvp.core.domainmodels.PeriodRange;
@@ -28,7 +29,6 @@ import static org.jooq.impl.DSL.val;
 @UtilityClass
 public class JooqUtils {
 
-  public static final Table<?> METER_STATS = table("meter_stats");
   public static final Field<Double> COLLECTION_PERCENTAGE = field(
     "collection_percentage",
     Double.class
@@ -37,6 +37,7 @@ public class JooqUtils {
     "last_data",
     OffsetDateTime.class
   );
+  static final Table<?> METER_STATS = table("meter_stats");
 
   public static Condition periodContains(Field<PeriodRange> field, OffsetDateTime time) {
     return condition("range_contains_elem({0}, {1})", field, val(time));
@@ -80,11 +81,13 @@ public class JooqUtils {
     }
   }
 
-  public static Table<Record> dateSerieFor(OffsetDateTime from,
-                                           OffsetDateTime to,
-                                           String resolution,
-                                           boolean isConsumption,
-                                           String valueFieldName) {
+  public static Table<Record> dateSerieFor(
+    Temporal from,
+    Temporal to,
+    String resolution,
+    boolean isConsumption,
+    String valueFieldName
+  ) {
     String expr;
     if (isConsumption) {
       expr = "generate_series({0} at time zone 'UTC',"

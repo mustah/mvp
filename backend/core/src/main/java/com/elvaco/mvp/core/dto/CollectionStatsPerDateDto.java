@@ -1,6 +1,6 @@
 package com.elvaco.mvp.core.dto;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CollectionStatsPerDateDto {
-  public OffsetDateTime date;
+  public LocalDate date;
   public Double collectionPercentage;
 }
