@@ -1,0 +1,52 @@
+@import "../../../app/variables";
+
+.Toolbar {
+  height: 48px;
+  border-bottom: 1px solid $border-color;
+
+  .Toolbar-ViewSettings {
+    border-right: 1px solid $border-color;
+    padding-right: $space;
+    margin-right: $space;
+  }
+
+  .ToolbarIconButton {
+    &:hover {
+      background-color: $primary-bg-hover !important;
+
+      svg {
+        fill: $blue-A700 !important;
+      }
+    }
+
+    &.isSelected {
+      svg {
+        fill: $blue-A700 !important;
+      }
+    }
+  }
+
+  .ToolbarActionButton {
+    color: $lightest-black !important;
+
+    svg {
+      fill: $lightest-black !important;
+    }
+
+    &:hover {
+      color: $blackest !important;
+
+      svg {
+        fill: $blackest !important;
+      }
+    }
+
+    &.disabled, &.disabled:hover {
+      color: $border-color !important;
+
+      svg {
+        fill: $border-color !important;
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ export const enum TabName {
   graph = 'graph',
   table = 'table',
   values = 'values',
+  collection = 'collection',
   log = 'log',
   connectedGateways = 'connectedGateways',
 }

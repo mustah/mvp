@@ -20,6 +20,12 @@ describe('paginationReducer', () => {
       totalElements: 100,
       useCases: {component1: {page: 0}, component2: {page: 0}},
     },
+    collectionStatFacilities: {
+      size: paginationPageSize,
+      totalPages: 10,
+      totalElements: 100,
+      useCases: {component1: {page: 0}, component2: {page: 0}},
+    },
   };
 
   describe('pagination meta data', () => {
@@ -58,6 +64,7 @@ describe('paginationReducer', () => {
     const paginatedState: PaginationState = {
       meters: {size: paginationPageSize, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
       gateways: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
+      collectionStatFacilities: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
     };
     const payload: PaginationMetadataPayload = {
       entityType: 'meters',
@@ -74,6 +81,7 @@ describe('paginationReducer', () => {
         useCases: {validationList: {page: 1}},
       },
       gateways: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
+      collectionStatFacilities: {size: paginationPageSize, totalPages: -1, totalElements: -1, useCases: {}},
     });
 
   });
@@ -131,6 +139,7 @@ describe('paginationReducer', () => {
           useCases: {validationList: {page: 1}},
         },
         gateways: {size: paginationPageSize, totalPages: 10, totalElements: 10, useCases: {}},
+        collectionStatFacilities: {size: paginationPageSize, totalPages: 10, totalElements: 10, useCases: {}},
       };
 
       expect(pagination(

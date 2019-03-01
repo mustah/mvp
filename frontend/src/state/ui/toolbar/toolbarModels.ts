@@ -9,6 +9,7 @@ export interface ToolbarViewSettings {
 
 export interface ToolbarState {
   measurement: ToolbarViewSettings;
+  collection: ToolbarViewSettings;
 }
 
 export type OnChangeToolbarView = (view: ToolbarView) => void;

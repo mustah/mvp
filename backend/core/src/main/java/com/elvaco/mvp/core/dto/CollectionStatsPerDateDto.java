@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CollectionStatsPerDateDto {
-  public ZonedDateTime date;
+  public ZonedDateTime id;
   public Double collectionPercentage;
 }

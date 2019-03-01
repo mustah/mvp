@@ -2,14 +2,17 @@ import {Location} from 'history';
 import {isEqual} from 'lodash';
 import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
+import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
 import {routes} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../domain-models/domainModelsReducer';
+import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -171,8 +174,23 @@ const metersReducer = <T extends Identifiable>(
         return {...makeInitialState<T>()};
       }
       break;
-    case SORT_TABLE:
+    case SORT_TABLE(EndPoints.meters): {
       return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
+    }
+  }
+  return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
+};
+
+const collectionStatFacilitiesReducer = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T> = makeInitialState<T>(),
+  action: ActionTypes<T>,
+): NormalizedPaginatedState<T> => {
+  switch (action.type) {
+    case getType(setCollectionTimePeriod):
+      return makeInitialState<T>();
+    case SORT_TABLE(EndPoints.collectionStatFacility): {
+      return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
+    }
   }
   return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
 };
@@ -233,8 +251,14 @@ const reducerFor = <T extends Identifiable>(
 
 export const meters = reducerFor<Meter>('meters', EndPoints.meters, metersReducer);
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
+export const collectionStatFacilities = reducerFor<CollectionStat>(
+  'collectionStatFacilities',
+  EndPoints.collectionStatFacility,
+  collectionStatFacilitiesReducer
+);
 
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({
   meters,
   gateways,
+  collectionStatFacilities,
 });

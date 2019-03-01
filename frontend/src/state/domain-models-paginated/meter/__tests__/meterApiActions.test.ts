@@ -39,6 +39,7 @@ describe('meterApiActions', () => {
     paginatedDomainModels: {
       meters: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
       gateways: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
+      collectionStatFacilities: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
     },
   };
 
@@ -136,6 +137,12 @@ describe('meterApiActions', () => {
             entities: {},
             result: {},
           },
+          collectionStatFacilities: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
+          },
         },
       };
       store = configureMockStore(initialState);
@@ -156,6 +163,12 @@ describe('meterApiActions', () => {
             result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false}},
           },
           gateways: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
+          },
+          collectionStatFacilities: {
             isFetchingSingle: false,
             nonExistingSingles: {},
             entities: {},
@@ -187,6 +200,12 @@ describe('meterApiActions', () => {
             },
           },
           gateways: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
+          },
+          collectionStatFacilities: {
             isFetchingSingle: false,
             nonExistingSingles: {},
             entities: {},

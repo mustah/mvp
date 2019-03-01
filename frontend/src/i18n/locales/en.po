@@ -101,6 +101,9 @@ msgstr "admin"
 msgid "metering"
 msgstr "metering"
 
+msgid "latency"
+msgstr "latency"
+
 msgid "sync"
 msgstr "sync"
 
