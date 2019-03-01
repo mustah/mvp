@@ -8,11 +8,11 @@ import {IconRightArrow} from '../../../components/icons/IconRightArrow';
 import {RowLeft, RowMiddle, RowRight} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {colorOf} from './graphContentsMapper';
 import {allQuantitiesMap, Medium, Quantity, toMediumText} from '../../../state/ui/graph/measurement/measurementModels';
 import {OnClick, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
 import {ColumnQuantities, LegendType, MediumViewOptions, QuantityId, SelectedQuantityColumns} from '../reportModels';
+import {colorOf} from './graphContentsMapper';
 import {isGroupHeader} from './measurementGridHelper';
 
 interface CurrentLegendType {
@@ -52,17 +52,6 @@ const MediumTd = ({hideAll, isAllHidden, removeAll}: MediumTdProps) => (
   </td>
 );
 
-interface CheckboxProps {
-  checked: boolean;
-  disabled: boolean;
-}
-
-const checkboxPropsOf = (quantities: Quantity[], quantity: Quantity): CheckboxProps => {
-  const checked = quantities.some(it => it === quantity);
-  const disabled = !checked && quantities.length === 2;
-  return {checked, disabled};
-};
-
 const renderGroupHeaderTds = ({
   columnQuantities,
   mediumViewOptions,
@@ -74,12 +63,11 @@ const renderGroupHeaderTds = ({
   const tds = columnQuantities.map((quantity) => {
     const key = `group-header-td-${type}-${quantity}`;
     if (allQuantitiesMap[type].some(q => q === quantity)) {
-      const checkboxProps = checkboxPropsOf(mediumViewOptions[type].quantities, quantity);
-      const {checked, disabled} = checkboxProps;
+      const checked = mediumViewOptions[type].quantities.indexOf(quantity) !== -1;
       const onClick = () => toggleQuantityByType({type, quantity});
       return (
-        <td key={`group-header-td-${type}-${quantity}-${checked}-${disabled}`} className="check-box-td">
-          <Checkbox {...checkboxProps} onCheck={onClick} iconStyle={{fill: colorOf(quantity)}}/>
+        <td key={`group-header-td-${type}-${quantity}-${checked}`} className="check-box-td">
+          <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorOf(quantity)}}/>
         </td>
       );
     } else {
@@ -142,14 +130,11 @@ const renderQuantityCell =
   ({quantity, selectedQuantityColumns, toggleQuantityById}: QuantityCell & CurrentQuantity) =>
     ({dataItem: {id, label, type, quantities}}: GridCellProps) => {
       if (allQuantitiesMap[type].some(q => q === quantity)) {
-        const quantityColumns = selectedQuantityColumns[type];
-        const checked = quantities.some(it => it === quantity);
-        const disabled = !checked && quantityColumns.length === 2 && quantityColumns.some(it => it === quantity);
-        const checkboxProps: CheckboxProps = {checked, disabled};
+        const checked = quantities.indexOf(quantity) !== -1;
         const onClick = () => toggleQuantityById({id, quantity});
         return (
-          <td key={`item-td-${type}-${quantity}-${checked}-${disabled}`}>
-            <Checkbox {...checkboxProps} onCheck={onClick} iconStyle={{fill: colorOf(quantity)}}/>
+          <td key={`item-td-${type}-${quantity}-${checked}`}>
+            <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorOf(quantity)}}/>
           </td>);
       } else {
         return <td/>;
