@@ -49,7 +49,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
           <RowCenter className="customerLogo">
-            <Logo src={getLoginLogoPath(organisation)}/>
+            <Logo className="login" src={getLoginLogoPath(organisation)}/>
           </RowCenter>
           <form onSubmit={this.onSubmit}>
             <TextFieldInput

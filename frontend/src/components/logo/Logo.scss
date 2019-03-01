@@ -1,6 +1,10 @@
 .Logo {
   min-width: 136px;
 
+  &.login {
+    height: 56px;
+  }
+
   &.small {
     max-height: 40px;
   }

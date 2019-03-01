@@ -1,5 +1,5 @@
-import evoBetaLogo from '../assets/images/evo_beta_logo.svg';
-import evoBetaLogoBlue from '../assets/images/evo_beta_logo_blue.svg';
+import evoLogoBlue from '../assets/images/elvaco.evo_logo_blue_cmyk.svg';
+import evoLogo from '../assets/images/elvaco.evo_logo_wt.svg';
 import wayneIndustries from '../assets/images/wayne-industries.png';
 import {uuid} from '../types/Types';
 
@@ -33,7 +33,7 @@ const organisationLogo = {
 };
 
 export const getLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || evoBetaLogo;
+  organisationLogo[organisationId] || evoLogo;
 
 export const getLoginLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || evoBetaLogoBlue;
+  organisationLogo[organisationId] || evoLogoBlue;
