@@ -158,6 +158,20 @@ describe('userSelectionActions', () => {
       expect(store.getActions()).toEqual([]);
     });
 
+    it('does not dispatch if already selected selection is selected', () => {
+      const rootStateWithSelectedSelection = {
+        ...rootState,
+        userSelection: {
+          ...initialState,
+          id: 42,
+        },
+      };
+      store = configureMockStore(rootStateWithSelectedSelection);
+
+      store.dispatch(selectSavedSelection(42));
+      expect(store.getActions()).toEqual([]);
+    });
+
     describe('shouldMigrateSelectionParameters', () => {
 
       const oldSelectedParameters: OldSelectionParameters = {
