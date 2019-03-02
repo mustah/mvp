@@ -1,4 +1,5 @@
 import {Dispatch} from 'react-redux';
+import {createStandardAction} from 'typesafe-actions';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
@@ -24,11 +25,8 @@ export const domainModelsPaginatedFailure = (endPoint: EndPoints) => `DOMAIN_MOD
 export const domainModelPaginatedClearError = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
 
-export const SORT_TABLE = (endPoint: EndPoints) =>
-  `SORT_TABLE${endPoint}`;
-
-export const sortTable =  (endPoint: EndPoints) =>
-  payloadActionOf<ApiRequestSortingOptions[] | undefined>(SORT_TABLE(endPoint));
+export const sortTableAction = (endPoint: EndPoints) =>
+  createStandardAction(`SORT_TABLE${endPoint}`)<ApiRequestSortingOptions[] | undefined>();
 
 export const clearError = (endPoint: EndPoints) =>
   payloadActionOf<PageNumbered>(domainModelPaginatedClearError(endPoint));

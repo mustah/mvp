@@ -33,7 +33,6 @@ const mapStateToProps = (
     auth: {user},
     userSelection: {userSelection},
     paginatedDomainModels: {meters},
-    routing,
     ui: {pagination: paginationModel},
     search: {validation: {query}},
   }: RootState,
@@ -45,15 +44,15 @@ const mapStateToProps = (
   const {sort} = meters;
 
   return ({
+    entityType,
     entities: getPaginatedEntities<Meter>(meters),
-    result: getPageResult(meters, page),
+    error: getPageError<Meter>(meters, page),
+    result: getPageResult<Meter>(meters, page),
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
-    sort,
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),
     pagination,
-    error: getPageError<Meter>(meters, page),
-    entityType,
+    sort,
   });
 };
 

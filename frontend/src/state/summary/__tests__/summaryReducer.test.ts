@@ -232,6 +232,17 @@ describe('summaryReducer', () => {
 
       expect(state).toEqual(initialState);
     });
+
+    it('keeps the state when location changes to search result page', () => {
+      const state: SummaryState = {
+        ...initialState,
+        payload: {...initialState.payload, numMeters: 2}
+      };
+
+      const nextState = summary(state, {type: LOCATION_CHANGE, payload: {pathname: routes.searchResult}});
+
+      expect(nextState).toBe(state);
+    });
   });
 
 });

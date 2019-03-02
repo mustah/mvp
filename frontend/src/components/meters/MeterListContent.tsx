@@ -19,7 +19,6 @@ import {
   EncodedUriParameters,
   ErrorResponse,
   FetchPaginated,
-  HasContent,
   OnClick,
   OnClickWith,
   OnClickWithId,
@@ -68,8 +67,7 @@ export interface MeterListActionDropdownProps {
 
 const MeterListWrapper = withEmptyContent<MeterListProps & WithEmptyContentProps>(MeterList);
 
-const MeterListActionsDropdownEnhanced =
-  withContent<HasContent & MeterListActionDropdownProps>(MeterListActionsDropdown);
+const MeterListActionsDropdownWrapper = withContent<MeterListActionDropdownProps>(MeterListActionsDropdown);
 
 export const MeterListContent = (props: MeterListProps & WithChildren) => {
   const {
@@ -102,7 +100,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
   return (
     <RetryLoader isFetching={isFetching} error={error} clearError={onClearError}>
       <Column className="MeterListContent">
-        <MeterListActionsDropdownEnhanced
+        <MeterListActionsDropdownWrapper
           addAllToReport={onAddAllToReport}
           syncMeters={onSyncMeters}
           hasContent={hasContent}

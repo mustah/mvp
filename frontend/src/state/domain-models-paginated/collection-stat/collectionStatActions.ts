@@ -2,7 +2,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {CollectionStat} from '../../domain-models/collection-stat/collectionStatModels';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
-import {fetchIfNeeded, sortTable} from '../paginatedDomainModelsActions';
+import {fetchIfNeeded, sortTableAction} from '../paginatedDomainModelsActions';
 import {collectionStatDataFormatter} from './collectionStatSchema';
 
 export const fetchCollectionStatsFacilityPaged = fetchIfNeeded<CollectionStat>(
@@ -15,4 +15,4 @@ export const fetchCollectionStatsFacilityPaged = fetchIfNeeded<CollectionStat>(
   },
 );
 
-export const sortTableCollectionStats = sortTable(EndPoints.collectionStatFacility);
+export const sortTableCollectionStats = sortTableAction(EndPoints.collectionStatFacility);

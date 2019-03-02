@@ -1,18 +1,15 @@
 import {Location} from 'history';
 import {isEqual} from 'lodash';
-import {LOCATION_CHANGE} from 'react-router-redux';
 import {combineReducers, Reducer} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
-import {routes} from '../../app/routes';
 import {Maybe} from '../../helpers/Maybe';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
-import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {SEARCH} from '../../usecases/search/searchActions';
+import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ObjectsById} from '../domain-models/domainModels';
 import {resetReducer} from '../domain-models/domainModelsReducer';
-import {CollectionStat} from '../domain-models/collection-stat/collectionStatModels';
 import {ApiRequestSortingOptions} from '../ui/pagination/paginationModels';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -28,7 +25,7 @@ import {
   domainModelsPaginatedFailure,
   domainModelsPaginatedGetSuccess,
   domainModelsPaginatedRequest,
-  SORT_TABLE,
+  sortTableAction,
 } from './paginatedDomainModelsActions';
 import {
   domainModelsPaginatedDeleteFailure,
@@ -168,17 +165,11 @@ const metersReducer = <T extends Identifiable>(
   action: ActionTypes<T>,
 ): NormalizedPaginatedState<T> => {
   switch (action.type) {
-    case LOCATION_CHANGE:
-      const location = (action as Action<Location>).payload;
-      if (location.pathname === routes.selection) {
-        return {...makeInitialState<T>()};
-      }
-      break;
-    case SORT_TABLE(EndPoints.meters): {
+    case getType(sortTableAction(EndPoints.meters)):
       return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
-    }
+    default:
+      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
   }
-  return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
 };
 
 const collectionStatFacilitiesReducer = <T extends Identifiable>(
@@ -186,13 +177,11 @@ const collectionStatFacilitiesReducer = <T extends Identifiable>(
   action: ActionTypes<T>,
 ): NormalizedPaginatedState<T> => {
   switch (action.type) {
-    case getType(setCollectionTimePeriod):
-      return makeInitialState<T>();
-    case SORT_TABLE(EndPoints.collectionStatFacility): {
+    case getType(sortTableAction(EndPoints.collectionStatFacility)):
       return sortTable(state, (action as Action<ApiRequestSortingOptions[]>).payload);
-    }
+    default:
+      return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
   }
-  return resetReducer<NormalizedPaginatedState<T>>(state, action, makeInitialState<T>());
 };
 
 const sortTable = <T extends Identifiable = Identifiable>(
