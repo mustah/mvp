@@ -7,7 +7,7 @@ import {hasMeasurementValues} from '../../../state/ui/graph/measurement/measurem
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {uuid} from '../../../types/Types';
-import {GraphComponent} from '../components/GraphComponent';
+import {LineChartComponent} from '../components/line-chart/LineChartComponent';
 import {GraphContents} from '../reportModels';
 import {hasLegendItems} from '../reportSelectors';
 
@@ -38,4 +38,4 @@ const mapStateToProps = ({
   });
 
 export const MeasurementLineChartContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps)(GraphComponent);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps)(LineChartComponent);

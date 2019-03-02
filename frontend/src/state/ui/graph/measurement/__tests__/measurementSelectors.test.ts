@@ -4,7 +4,7 @@ import {
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementsApiResponse,
-  MeasurementValues,
+  MeasurementValue,
   Quantity
 } from '../measurementModels';
 import {hasMeasurementValues} from '../measurementSelectors';
@@ -13,7 +13,7 @@ describe('measurementSelectors', () => {
 
   const emptyResponses: MeasurementResponse = {measurements: [], average: []};
 
-  const values: MeasurementValues = [
+  const values: MeasurementValue[] = [
     {
       when: 1516521585107,
       value: 0.4353763591158477,
@@ -230,9 +230,7 @@ describe('measurementSelectors', () => {
         expect(graphContents.axes.right).toEqual('kWh');
       });
 
-      it(
-        'adjusts the starting position of the x-axis to the first measurement, not average',
-        () => {
+      it('adjusts the starting position of the x-axis to the first measurement, not average', () => {
           const firstMeasurement: number = 1516521585107;
           const slightlyLaterThanFirstAverage: MeasurementsApiResponse = [
             {

@@ -108,7 +108,5 @@ export const prettyRange = ({start, period, customDateRange}: CurrentPeriod): st
 export const shortTimestamp = (input: moment.MomentInput): string =>
   displayDate(input, 'MMM D, HH:mm');
 
-export const timestamp = (input: moment.MomentInput): string => displayDate(input);
-
 export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string =>
   momentAtUtcPlusOneFrom(input).format(format);

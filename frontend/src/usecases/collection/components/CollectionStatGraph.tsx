@@ -1,3 +1,4 @@
+import {toArray} from 'lodash';
 import {Paper} from 'material-ui';
 import * as React from 'react';
 import {AxisDomain, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
@@ -7,10 +8,9 @@ import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
-import {shortTimestamp, timestamp} from '../../../helpers/dateHelpers';
+import {displayDate, shortTimestamp} from '../../../helpers/dateHelpers';
 import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {DispatchToProps, StateToProps} from '../containers/CollectionGraphContainer';
-import {toArray} from 'lodash';
 
 export type Props = StateToProps & DispatchToProps;
 
@@ -33,7 +33,7 @@ const CustomizedTooltip = (props) => {
       <Paper style={{...paperStyle, ...style}}>
         <Column>
           <Row>
-            <Normal style={{marginRight: 4}}>{timestamp(id * 1000)}:</Normal>
+            <Normal style={{marginRight: 4}}>{displayDate(id * 1000)}:</Normal>
             <Bold>{collectionPercentage}</Bold>
           </Row>
         </Column>

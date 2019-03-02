@@ -1,4 +1,4 @@
-import {LegendPayload} from 'recharts';
+import {LegendPayload, LineType} from 'recharts';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {Medium, Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
@@ -56,16 +56,22 @@ export interface AxesProps {
   right?: string;
 }
 
-export interface LineProps {
-  id: string;
+interface TooltipLineProps {
   dataKey: string;
-  key: string;
   name: string;
+  stroke: string;
+  strokeWidth: number;
+  unit: string;
+}
+
+export interface LineProps extends TooltipLineProps {
+  id: string;
+  key: string;
   city?: string;
   address?: string;
   medium?: string;
-  stroke: string;
-  strokeWidth?: number;
+  strokeDasharray?: string;
+  type?: LineType;
   yAxisId: string;
 }
 
@@ -76,15 +82,17 @@ export interface GraphContents {
   lines: LineProps[];
 }
 
-export interface ActiveDataPoint {
+export interface ActivePointPayload {
+  timestamp: number;
+  name: number;
+
+  [key: string]: number;
+}
+
+export interface ActiveDataPoint extends TooltipLineProps {
   color: any;
-  dataKey: uuid;
   fill: any;
-  name: uuid;
-  payload: {name: number; [key: string]: number};
-  stroke: any;
-  strokeWidth: number;
-  unit: string;
+  payload: ActivePointPayload;
   value: number;
 }
 

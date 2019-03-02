@@ -34,11 +34,11 @@ import {
 } from '../measurementActions';
 import {
   allQuantitiesMap,
-  MeasurementsApiResponse,
   MeasurementParameters,
   MeasurementResponsePart,
+  MeasurementsApiResponse,
   MeasurementState,
-  MeasurementValues,
+  MeasurementValue,
   Medium,
   Quantity,
   toMediumText
@@ -68,12 +68,12 @@ describe('measurementActions', () => {
       return ({id, type: medium, label, isHidden: false, quantities: [allQuantitiesMap[medium][0]]});
     };
 
-    const justValues: MeasurementValues = [
+    const justValues: MeasurementValue[] = [
       {when: 1516521585107, value: 0.0},
       {when: 1516521585109, value: 0.55},
     ];
 
-    const values: MeasurementValues = [
+    const values: MeasurementValue[] = [
       {when: 1516521585107, value: 0.0},
       {when: 1516521583309},
       {when: 1516521585109, value: 0.55},

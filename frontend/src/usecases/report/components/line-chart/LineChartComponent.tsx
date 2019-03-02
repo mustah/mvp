@@ -1,15 +1,16 @@
 import * as React from 'react';
 import {TooltipProps} from 'recharts';
-import {withEmptyContent, WithEmptyContentProps} from '../../../components/hoc/withEmptyContent';
-import {toggle} from '../../../helpers/collections';
-import {firstUpperTranslated} from '../../../services/translationService';
-import {Dictionary, uuid} from '../../../types/Types';
-import {OwnProps, StateToProps} from '../containers/MeasurementLineChartContainer';
-import {ActiveDataPoint} from '../reportModels';
-import {ActiveDot, ActiveDotReChartProps} from './line-chart/ActiveDot';
-import {CustomizedTooltip} from './line-chart/CustomizedTooltip';
-import {Dot, KeyedDotProps} from './line-chart/Dot';
-import {GraphContentProps, LineChart} from './line-chart/LineChart';
+import {withEmptyContent, WithEmptyContentProps} from '../../../../components/hoc/withEmptyContent';
+import {toggle} from '../../../../helpers/collections';
+import {Maybe} from '../../../../helpers/Maybe';
+import {firstUpperTranslated} from '../../../../services/translationService';
+import {Dictionary, uuid} from '../../../../types/Types';
+import {OwnProps, StateToProps} from '../../containers/MeasurementLineChartContainer';
+import {ActiveDataPoint} from '../../reportModels';
+import {ActiveDot, ActiveDotReChartProps} from './ActiveDot';
+import {CustomizedTooltip} from './CustomizedTooltip';
+import {Dot, KeyedDotProps} from './Dot';
+import {GraphContentProps, LineChart} from './LineChart';
 
 interface GraphComponentState {
   hiddenKeys: string[];
@@ -29,7 +30,7 @@ const LineChartWrapper = withEmptyContent<GraphContentWrapperProps>(LineChart);
 
 type Props = StateToProps & OwnProps;
 
-export class GraphComponent extends React.Component<Props, GraphComponentState> {
+export class LineChartComponent extends React.Component<Props, GraphComponentState> {
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
@@ -70,9 +71,7 @@ export class GraphComponent extends React.Component<Props, GraphComponentState> 
       setTooltipPayload: this.setTooltipPayload,
     };
 
-    return (
-      <LineChartWrapper {...wrapperProps}/>
-    );
+    return <LineChartWrapper {...wrapperProps}/>;
   }
 
   legendClick = ({value}) => this.setState({hiddenKeys: toggle(value, this.state.hiddenKeys)});
@@ -94,25 +93,24 @@ export class GraphComponent extends React.Component<Props, GraphComponentState> 
 
   setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
     if (isTooltipActive) {
-      const closestLine = this.findClosestLine(activeTooltipIndex, chartY);
-      if (closestLine !== undefined) {
+      const closestLine = this.findClosestLineDataKey(activeTooltipIndex, chartY);
+      if (closestLine) {
         this.activeDataKey = closestLine;
         this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
       }
     }
   }
 
-  findClosestLine = (index: number, mouseY: number): uuid | undefined => {
-    const activeDots = this.dots[index];
-    if (activeDots === undefined) {
-      return undefined;
-    }
-    const sortedActiveDots = Object.keys(activeDots)
-      .map((id) => activeDots[id])
-      .filter(({cy}) => cy || cy === 0)
-      .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
-      .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
-    return sortedActiveDots.length ? sortedActiveDots[0].dataKey : undefined;
-  }
+  findClosestLineDataKey = (index: number, mouseY: number): uuid | undefined =>
+    Maybe.maybe(this.dots[index])
+      .map(activeDots => {
+        const sortedActiveDots = Object.keys(activeDots)
+          .map((id) => activeDots[id])
+          .filter(({cy}) => cy)
+          .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
+          .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
+        return sortedActiveDots.length ? sortedActiveDots[0].dataKey : undefined;
+      })
+      .getOrElseUndefined()
 
 }

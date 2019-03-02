@@ -53,13 +53,14 @@ const renderLines = ({lines, hiddenKeys, outerHiddenKeys, renderDot, renderActiv
       const newDot = (dotProps: DotProps) => renderDot({...dotProps, dataKey: props.dataKey});
       return (
         <Line
+          activeDot={renderActiveDot}
+          animationEasing="linear"
           animationDuration={600}
+          connectNulls={true}
+          dot={newDot}
           key={index}
           type="monotone"
-          connectNulls={true}
           {...props}
-          activeDot={renderActiveDot}
-          dot={newDot}
         />
       );
     });

@@ -5,7 +5,7 @@ import * as React from 'react';
 import {borderStyle, colors} from '../../../app/themes';
 import {RowMiddle} from '../../../components/layouts/row/Row';
 import {InfoText, Medium as MediumText} from '../../../components/texts/Texts';
-import {timestamp} from '../../../helpers/dateHelpers';
+import {displayDate} from '../../../helpers/dateHelpers';
 import {roundMeasurement} from '../../../helpers/formatters';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {
@@ -86,7 +86,7 @@ export const renderColumns = (measurements: MeasurementsApiResponse): [ListItem[
       const listItem: ListItem = rows[rowKey] || {
         label,
         type: legendType,
-        when: timestamp(when * 1000),
+        when: displayDate(when * 1000),
         values: {},
       };
       listItem.values[quantity] = value !== undefined ? roundMeasurement(value) : '-';
