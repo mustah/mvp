@@ -10,6 +10,7 @@ import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {displayDate, shortTimestamp} from '../../../helpers/dateHelpers';
 import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
+import {colorFor} from '../../report/helpers/graphContentsMapper';
 import {DispatchToProps, StateToProps} from '../containers/CollectionGraphContainer';
 
 export type Props = StateToProps & DispatchToProps;
@@ -43,7 +44,7 @@ const CustomizedTooltip = (props) => {
   return null;
 };
 
-export const CollectionStatGraph = (props: Props) => {
+export const CollectionStatLineChart = (props: Props) => {
   const {
     isFetching,
     parameters,
@@ -78,7 +79,12 @@ export const CollectionStatGraph = (props: Props) => {
             <YAxis/>
             <CartesianGrid strokeDasharray="3 3"/>
             <Tooltip content={<CustomizedTooltip/>}/>
-            <Line dataKey="collectionPercentage" type="monotone" stroke="#00ffFF"/>
+            <Line
+              dataKey="collectionPercentage"
+              stroke={colorFor('collectionPercentage')}
+              strokeWidth={2}
+              type="monotone"
+            />
           </LineChart>
         </ResponsiveContainer>
         <TimestampInfoMessage/>

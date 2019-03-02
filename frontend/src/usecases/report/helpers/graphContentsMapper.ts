@@ -11,10 +11,10 @@ import {Dictionary} from '../../../types/Types';
 import {ActivePointPayload, AxesProps, GraphContents} from '../reportModels';
 
 const colorize =
-  (colorSchema: {[quantity: string]: string}) =>
-    (quantity: Quantity) => colorSchema[quantity as string] || colors.blueA700;
+  (colorSchema: {[key: string]: string}) =>
+    (key: string) => colorSchema[key as string] || colors.blueA700;
 
-export const colorOf = colorize({
+export const colorFor = colorize({
   [Quantity.volume as string]: '#651FFF',
   [Quantity.flow as string]: '#F50057',
   [Quantity.energy as string]: '#00E676',
@@ -51,7 +51,7 @@ const makeLegendPayloads = ({average, measurements}: MeasurementResponse): Legen
         ...prev,
         [quantity]: {
           type: 'line',
-          color: colorOf(quantity),
+          color: colorFor(quantity),
           value: quantity,
         },
       }), {});
@@ -63,7 +63,7 @@ const makeLegendPayloads = ({average, measurements}: MeasurementResponse): Legen
         ...prev,
         [makeAggregateKey({id, label})]: {
           type: 'line',
-          color: colorOf(quantity),
+          color: colorFor(quantity),
           value: `Average ${quantity}`,
         },
       }), {});
@@ -114,7 +114,7 @@ export const toGraphContents =
           dataKey,
           key: dataKey,
           name: label,
-          stroke: colorOf(quantity),
+          stroke: colorFor(quantity),
           strokeWidth: 1,
           unit,
           yAxisId,
@@ -139,7 +139,7 @@ export const toGraphContents =
           dataKey,
           key: makeAggregateKey({id, label}),
           name: label,
-          stroke: colorOf(quantity),
+          stroke: colorFor(quantity),
           strokeWidth: 4,
           unit,
           yAxisId,
