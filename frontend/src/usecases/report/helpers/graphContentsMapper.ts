@@ -1,18 +1,20 @@
+import {toArray} from 'lodash';
 import {LegendPayload} from 'recharts';
 import {colors} from '../../../app/themes';
 import {
   MeasurementResponse,
   MeasurementResponsePart,
+  MeasurementValue,
   Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {Axes, GraphContents} from '../reportModels';
+import {ActivePointPayload, AxesProps, GraphContents} from '../reportModels';
 
 const colorize =
-  (colorSchema: {[quantity: string]: string}) =>
-    (quantity: Quantity) => colorSchema[quantity as string] || colors.blueA700;
+  (colorSchema: {[key: string]: string}) =>
+    (key: string) => colorSchema[key as string] || colors.blueA700;
 
-export const colorOf = colorize({
+export const colorFor = colorize({
   [Quantity.volume as string]: '#651FFF',
   [Quantity.flow as string]: '#F50057',
   [Quantity.energy as string]: '#00E676',
@@ -24,7 +26,7 @@ export const colorOf = colorize({
   [Quantity.relativeHumidity as string]: colors.orange,
 });
 
-const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
+const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefined => {
   if (axes.left === unit) {
     return 'left';
   }
@@ -41,7 +43,7 @@ interface AggregateKey {
 
 const makeAggregateKey = ({label, id}: AggregateKey): string => `aggregate-${label}-${id}`;
 
-const makeLegendPayload = ({average, measurements}: MeasurementResponse): LegendPayload[] => {
+const makeLegendPayloads = ({average, measurements}: MeasurementResponse): LegendPayload[] => {
   const meterLegends: Dictionary<LegendPayload> = measurements.reduce((prev, {quantity}) => (
     prev[quantity]
       ? prev
@@ -49,7 +51,7 @@ const makeLegendPayload = ({average, measurements}: MeasurementResponse): Legend
         ...prev,
         [quantity]: {
           type: 'line',
-          color: colorOf(quantity),
+          color: colorFor(quantity),
           value: quantity,
         },
       }), {});
@@ -61,114 +63,101 @@ const makeLegendPayload = ({average, measurements}: MeasurementResponse): Legend
         ...prev,
         [makeAggregateKey({id, label})]: {
           type: 'line',
-          color: colorOf(quantity),
+          color: colorFor(quantity),
           value: `Average ${quantity}`,
         },
       }), {});
 
-  const legends: Dictionary<LegendPayload> = {...aggregateLegends, ...meterLegends};
+  return toArray({...aggregateLegends, ...meterLegends});
+};
 
-  return Object.keys(legends).map((legend) => legends[legend]);
+const makeAxes = (graphContents: GraphContents, unit: string): void => {
+  if (!graphContents.axes.left) {
+    graphContents.axes.left = unit;
+  } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
+    graphContents.axes.right = unit;
+  }
 };
 
 export const toGraphContents =
   (response: MeasurementResponse): GraphContents => {
     const graphContents: GraphContents = {
-      axes: {
-        left: undefined,
-        right: undefined,
-      },
+      axes: {left: undefined, right: undefined},
       data: [],
       legend: [],
       lines: [],
     };
 
-    const uniqueMeters = new Set<string>();
-    const byDate: {[when: number]: {[label: string]: number}} = {};
+    const byDate: {[when: number]: ActivePointPayload} = {};
 
-    let firstTimestamp;
+    let firstTimestamp = Number.MAX_VALUE;
 
     const {measurements, average} = response;
+
+    const makeByDate = ({when, value, dataKey, timestamp}: MeasurementValue & {dataKey: string, timestamp: number}) => {
+      if (!byDate[when]) {
+        byDate[when] = {name: Number(when), timestamp};
+      }
+      byDate[when][dataKey] = value!;
+    };
 
     measurements.forEach(({id, quantity, label, city, address, medium, values, unit}: MeasurementResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
 
-      values.forEach(({when, value}) => {
-        const created: number = when * 1000;
-        if (!firstTimestamp || created < firstTimestamp) {
-          firstTimestamp = created;
-        }
-        if (!byDate[created]) {
-          byDate[created] = {};
-        }
-        byDate[created][dataKey] = value!;
-      });
-
-      if (!graphContents.axes.left) {
-        graphContents.axes.left = unit;
-      } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
-        graphContents.axes.right = unit;
-      }
+      makeAxes(graphContents, unit);
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
 
-      if (!uniqueMeters.has(dataKey) && yAxisId) {
-        uniqueMeters.add(dataKey);
-
+      if (yAxisId) {
         graphContents.lines.push({
           id,
           dataKey,
           key: dataKey,
           name: label,
-          city,
-          address,
-          medium,
-          stroke: colorOf(quantity),
-          strokeWidth: 2,
+          stroke: colorFor(quantity),
+          strokeWidth: 1,
+          unit,
           yAxisId,
+        });
+
+        values.forEach((it) => {
+          const timestamp: number = it.when * 1000;
+          firstTimestamp = Math.min(firstTimestamp, timestamp);
+          makeByDate({...it, when: timestamp, dataKey, timestamp});
         });
       }
     });
 
     average.forEach(({id, label, quantity, values, unit}: MeasurementResponsePart) => {
-      if (!graphContents.axes.left) {
-        graphContents.axes.left = unit;
-      } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
-        graphContents.axes.right = unit;
-      }
+      makeAxes(graphContents, unit);
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
-      if (!yAxisId) {
-        return;
+      if (yAxisId) {
+        const dataKey: string = `Average ${label}`;
+        graphContents.lines.push({
+          id,
+          dataKey,
+          key: makeAggregateKey({id, label}),
+          name: label,
+          stroke: colorFor(quantity),
+          strokeWidth: 4,
+          unit,
+          yAxisId,
+        });
+        values.forEach(it => {
+          const timestamp: number = it.when * 1000;
+          if (timestamp >= firstTimestamp) {
+            makeByDate({...it, when: timestamp, dataKey, timestamp});
+          }
+        });
       }
-      const dataKey: string = `Average ${label}`;
-      graphContents.lines.push({
-        id,
-        dataKey,
-        key: makeAggregateKey({id, label}),
-        name: label,
-        stroke: colorOf(quantity),
-        strokeWidth: 4,
-        yAxisId,
-      });
-
-      values.forEach(({when, value}) => {
-        const created: number = when * 1000;
-        if (created < firstTimestamp) {
-          return;
-        }
-        if (!byDate[created]) {
-          byDate[created] = {};
-        }
-        byDate[created][dataKey] = value!;
-      });
     });
 
     graphContents.data = Object.keys(byDate)
-      .map(created => ({...byDate[created], name: Number(created)}))
+      .map(created => ({...byDate[created]}))
       .sort(({name: createdA}, {name: createdB}) => createdA - createdB);
 
-    graphContents.legend = makeLegendPayload(response);
+    graphContents.legend = makeLegendPayloads(response);
 
     return graphContents;
   };

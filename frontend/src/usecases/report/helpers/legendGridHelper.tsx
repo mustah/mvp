@@ -12,7 +12,7 @@ import {allQuantitiesMap, Medium, Quantity, toMediumText} from '../../../state/u
 import {OnClick, OnClickWith} from '../../../types/Types';
 import {RowDispatch} from '../containers/LegendContainer';
 import {ColumnQuantities, LegendType, LegendViewOptions, QuantityId, SelectedQuantityColumns} from '../reportModels';
-import {colorOf} from './graphContentsMapper';
+import {colorFor} from './graphContentsMapper';
 import {isGroupHeader} from './measurementGridHelper';
 
 interface CurrentLegendType {
@@ -67,7 +67,7 @@ const renderGroupHeaderTds = ({
       const onClick = () => toggleQuantityByType({type, quantity});
       return (
         <td key={`group-header-td-${type}-${quantity}-${checked}`} className="check-box-td">
-          <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorOf(quantity)}}/>
+          <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorFor(quantity)}}/>
         </td>
       );
     } else {
@@ -134,7 +134,7 @@ const renderQuantityCell =
         const onClick = () => toggleQuantityById({id, quantity});
         return (
           <td key={`item-td-${type}-${quantity}-${checked}`}>
-            <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorOf(quantity)}}/>
+            <Checkbox checked={checked} onCheck={onClick} iconStyle={{fill: colorFor(quantity)}}/>
           </td>);
       } else {
         return <td/>;

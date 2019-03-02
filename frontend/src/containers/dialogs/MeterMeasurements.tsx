@@ -8,7 +8,7 @@ import {Column} from '../../components/layouts/column/Column';
 import '../../components/table/Table.scss';
 import {Error} from '../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../components/timestamp-info-message/TimestampInfoMessage';
-import {newDateRange, timestamp} from '../../helpers/dateHelpers';
+import {displayDate, newDateRange} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {translate} from '../../services/translationService';
@@ -94,8 +94,8 @@ const gridColumnOfQuantity = (q: Quantity) => (
 
 const renderCreated = (created: UnixTimestamp, hasValues: boolean) => {
   const textual = hasValues
-    ? timestamp(created * 1000)
-    : <Error>{timestamp(created * 1000)}</Error>;
+    ? displayDate(created * 1000)
+    : <Error>{displayDate(created * 1000)}</Error>;
   return <td className="no-wrap left-most" key="created">{textual}</td>;
 };
 

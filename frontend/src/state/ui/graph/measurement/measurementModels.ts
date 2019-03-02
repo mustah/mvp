@@ -5,7 +5,7 @@ import {ErrorResponse, Identifiable, UnixTimestamp} from '../../../../types/Type
 import {LegendItem, LegendType} from '../../../../usecases/report/reportModels';
 import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {SelectedParameters} from '../../../user-selection/userSelectionModels';
-import {MeasurementsApiResponse} from './measurementModels';
+import {MeasurementsApiResponse, MeasurementValue} from './measurementModels';
 
 export interface Measurement extends Identifiable {
   created: UnixTimestamp;
@@ -47,10 +47,10 @@ export interface Readings {
   [key: number]: PossibleReading;
 }
 
-export type MeasurementValues = Array<{
+export interface MeasurementValue {
   when: number;
   value?: number;
-}>;
+}
 
 export interface MeasurementResponsePart {
   address?: string;
@@ -60,7 +60,7 @@ export interface MeasurementResponsePart {
   medium?: string;
   quantity: Quantity;
   unit: string;
-  values: MeasurementValues;
+  values: MeasurementValue[];
 }
 
 export type MeasurementsApiResponse = MeasurementResponsePart[];
