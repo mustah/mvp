@@ -32,21 +32,21 @@ import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {
   auth: AuthState;
-  domainModels: DomainModelsState;
-  paginatedDomainModels: PaginatedDomainModelsState;
-  summary: SummaryState;
-  selectionTree: SelectionTreeState;
-  dashboard: DashboardState;
-  routing: RouterState;
-  report: ReportState;
-  measurement: MeasurementState;
-  language: LanguageState;
-  userSelection: UserSelectionState;
-  ui: UiState;
-  map: MapState;
-  search: SearchState;
-  previousSession: PreviousSessionState;
   collection: CollectionState;
+  dashboard: DashboardState;
+  domainModels: DomainModelsState;
+  language: LanguageState;
+  map: MapState;
+  measurement: MeasurementState;
+  paginatedDomainModels: PaginatedDomainModelsState;
+  previousSession: PreviousSessionState;
+  report: ReportState;
+  routing: RouterState;
+  search: SearchState;
+  selectionTree: SelectionTreeState;
+  summary: SummaryState;
+  ui: UiState;
+  userSelection: UserSelectionState;
 }
 
 export type AppState = RootState | undefined;

@@ -6,7 +6,7 @@ import {ErrorResponse, uuid} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {updatePageMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
-import {clearError, fetchIfNeeded, sortTable} from '../paginatedDomainModelsActions';
+import {clearError, fetchIfNeeded, sortTableAction} from '../paginatedDomainModelsActions';
 import {paginatedDeleteRequest} from '../paginatedDomainModelsEntityActions';
 import {Meter} from './meterModels';
 import {meterDataFormatter} from './meterSchema';
@@ -42,4 +42,4 @@ export const deleteMeter: OnDeleteMeter = paginatedDeleteRequest<Meter>(EndPoint
 );
 
 export const clearErrorMeters = clearError(EndPoints.meters);
-export const sortTableMeters = sortTable(EndPoints.meters);
+export const sortTableMeters = sortTableAction(EndPoints.meters);

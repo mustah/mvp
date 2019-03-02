@@ -7,20 +7,19 @@ import {logoutUser} from '../auth/authActions';
 import {setCollectionTimePeriod} from './collectionActions';
 import {CollectionState} from './collectionModels';
 
-export const initialCollectionState: CollectionState = {
+const initialState: CollectionState = {
   timePeriod: {period: Period.latest},
 };
 
 type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<string>;
 
-export const collection =
-  (state: CollectionState = initialCollectionState, action: ActionTypes): CollectionState => {
-    switch (action.type) {
-      case getType(setCollectionTimePeriod):
-        return {...state, timePeriod: {...(action as Action<SelectionInterval>).payload}};
-      case getType(logoutUser):
-        return initialCollectionState;
-      default:
-        return state;
-    }
-  };
+export const collection = (state: CollectionState = initialState, action: ActionTypes): CollectionState => {
+  switch (action.type) {
+    case getType(setCollectionTimePeriod):
+      return {...state, timePeriod: {...(action as Action<SelectionInterval>).payload}};
+    case getType(logoutUser):
+      return initialState;
+    default:
+      return state;
+  }
+};

@@ -166,25 +166,19 @@ const reducerFor = <T extends Identifiable>(
 
 const identity = (state, action, endPoint) => state;
 
-const collectionStateReducer = <T extends Identifiable>(
-  state: NormalizedState<T> = initialDomain<T>(),
-  action: ActionTypes<T>,
-): NormalizedState<T> =>
-  collectionResetReducer<NormalizedState<T>>(state, action, initialDomain<T>());
-
-export const collectionResetReducer = <S>(
+export const resetReducer = <S>(
   state: S,
   {type}: EmptyAction<string>,
   initialState: S,
 ): S => {
   switch (type) {
     case getType(setThresholdAction):
+    case getType(setCollectionTimePeriod):
     case SELECT_SAVED_SELECTION:
     case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
     case RESET_SELECTION:
     case getType(logoutUser):
-    case getType(setCollectionTimePeriod):
       return initialState;
     default:
       return state;
@@ -204,24 +198,6 @@ const resetStateOnLogoutReducer = <S extends Identifiable>(
   switch (type) {
     case getType(logoutUser):
       return initialDomain<S>();
-    default:
-      return state;
-  }
-};
-
-export const resetReducer = <S>(
-  state: S,
-  {type}: EmptyAction<string>,
-  initialState: S,
-): S => {
-  switch (type) {
-    case getType(setThresholdAction):
-    case SELECT_SAVED_SELECTION:
-    case ADD_PARAMETER_TO_SELECTION:
-    case DESELECT_SELECTION:
-    case RESET_SELECTION:
-    case getType(logoutUser):
-      return initialState;
     default:
       return state;
   }
@@ -284,7 +260,7 @@ export const userSelections = reducerFor<UserSelection>(
 export const collectionStats = reducerFor<CollectionStat>(
   'collectionStats',
   EndPoints.collectionStatDate,
-  collectionStateReducer
+  resetStateReducer
 );
 
 export const domainModels = combineReducers<DomainModelsState>({
