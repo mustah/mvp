@@ -138,30 +138,27 @@ export const toGraphContents =
       }
 
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
-      if (!yAxisId) {
-        return;
+      if (yAxisId) {
+        const dataKey: string = `Average ${label}`;
+        graphContents.lines.push({
+          id,
+          dataKey,
+          key: makeAggregateKey({id, label}),
+          name: label,
+          stroke: colorOf(quantity),
+          strokeWidth: 4,
+          yAxisId,
+        });
+        values.forEach(({when, value}) => {
+          const created: number = when * 1000;
+          if (created >= firstTimestamp) {
+            if (!byDate[created]) {
+              byDate[created] = {};
+            }
+            byDate[created][dataKey] = value!;
+          }
+        });
       }
-      const dataKey: string = `Average ${label}`;
-      graphContents.lines.push({
-        id,
-        dataKey,
-        key: makeAggregateKey({id, label}),
-        name: label,
-        stroke: colorOf(quantity),
-        strokeWidth: 4,
-        yAxisId,
-      });
-
-      values.forEach(({when, value}) => {
-        const created: number = when * 1000;
-        if (created < firstTimestamp) {
-          return;
-        }
-        if (!byDate[created]) {
-          byDate[created] = {};
-        }
-        byDate[created][dataKey] = value!;
-      });
     });
 
     graphContents.data = Object.keys(byDate)
