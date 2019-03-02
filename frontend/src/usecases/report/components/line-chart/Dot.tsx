@@ -1,6 +1,9 @@
 import * as React from 'react';
+import {uuid} from '../../../../types/Types';
 
-export interface DotReChartProps {
+export type KeyedDotProps = DotProps & {dataKey: uuid};
+
+interface DotProps {
   cx: number;
   cy: number;
   index: number;
@@ -9,10 +12,5 @@ export interface DotReChartProps {
   [key: string]: any;
 }
 
-export const Dot = ({cx, cy, stroke}: DotReChartProps) => {
-  if (cy) {
-    return (<circle cx={cx} cy={cy} r={1.3} fill={stroke} stroke={stroke}/>);
-  } else {
-    return null;
-  }
-};
+export const Dot = ({cx, cy, stroke}: DotProps) =>
+  cy ? <circle cx={cx} cy={cy} r={1.3} fill={stroke} stroke={stroke}/> : null;

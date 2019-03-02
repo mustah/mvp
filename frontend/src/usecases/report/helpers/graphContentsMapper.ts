@@ -6,7 +6,7 @@ import {
   Quantity
 } from '../../../state/ui/graph/measurement/measurementModels';
 import {Dictionary} from '../../../types/Types';
-import {Axes, GraphContents} from '../reportModels';
+import {AxesProps, GraphContents} from '../reportModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -24,7 +24,7 @@ export const colorOf = colorize({
   [Quantity.relativeHumidity as string]: colors.orange,
 });
 
-const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
+const yAxisIdLookup = (axes: AxesProps, unit: string): 'left' | 'right' | undefined => {
   if (axes.left === unit) {
     return 'left';
   }

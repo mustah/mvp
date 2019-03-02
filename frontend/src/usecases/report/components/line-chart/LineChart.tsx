@@ -3,36 +3,74 @@ import {
   AxisDomain,
   CartesianGrid,
   ContentRenderer,
+  DotProps,
+  LabelProps,
   Legend,
   LegendPayload,
+  Line,
   LineChart as ReChartLineChart,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
-  XAxis
+  XAxis,
+  YAxis
 } from 'recharts';
 import {ColumnCenter} from '../../../../components/layouts/column/Column';
 import {TimestampInfoMessage} from '../../../../components/timestamp-info-message/TimestampInfoMessage';
 import {shortTimestamp} from '../../../../helpers/dateHelpers';
 import {useResizeWindow} from '../../../../hooks/resizeWindowHook';
-import {Children, OnClick} from '../../../../types/Types';
+import {Children, OnClick, uuid} from '../../../../types/Types';
+import {AxesProps, LineProps} from '../../reportModels';
+import {ActiveDotReChartProps} from './ActiveDot';
 
 const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
 
+interface LinesProps {
+  axes: AxesProps;
+  lines: LineProps[];
+  outerHiddenKeys: uuid[];
+  hiddenKeys: string[];
+  renderDot: (props) => React.ReactNode;
+  renderActiveDot: (props: ActiveDotReChartProps) => React.ReactNode;
+}
+
 export interface GraphContentProps {
-  content?: React.ReactElement<any> | React.StatelessComponent<any> | ContentRenderer<TooltipProps>;
+  linesProps: LinesProps;
+  renderTooltipContent: ContentRenderer<TooltipProps>;
   data?: object[];
   key: string;
-  lines: Children[];
   legend: LegendPayload[];
   legendClick: OnClick;
   setTooltipPayload: OnClick;
 }
 
+const renderLines = ({lines, hiddenKeys, outerHiddenKeys, renderDot, renderActiveDot}: LinesProps): Children[] =>
+  lines
+    .filter(line => hiddenKeys.findIndex((hiddenKey) => line.dataKey.startsWith(hiddenKey)) === -1)
+    .filter(line => outerHiddenKeys.indexOf(line.id) === -1)
+    .map((props: LineProps, index: number) => {
+      const newDot = (dotProps: DotProps) => renderDot({...dotProps, dataKey: props.dataKey});
+      return (
+        <Line
+          animationDuration={600}
+          key={index}
+          type="monotone"
+          connectNulls={true}
+          {...props}
+          activeDot={renderActiveDot}
+          dot={newDot}
+        />
+      );
+    });
+
 export const LineChart =
-  ({content, data, key, legendClick, lines, legend, setTooltipPayload}: GraphContentProps) => {
+  ({linesProps, renderTooltipContent, data, key, legendClick, legend, setTooltipPayload}: GraphContentProps) => {
     const {resized} = useResizeWindow();
+
+    const {axes: {left, right}} = linesProps;
+    const leftLabel: LabelProps = {value: left, position: 'insideLeft', angle: -90, dx: 10};
+    const rightLabel: LabelProps = {value: right, position: 'insideRight', angle: 90, dy: -10};
 
     return (
       <ColumnCenter className="align-items" key={`${key}-${resized}`}>
@@ -52,9 +90,11 @@ export const LineChart =
               type="number"
             />
             <CartesianGrid strokeDasharray="3 3"/>
-            <Tooltip content={content}/>
+            <Tooltip content={renderTooltipContent}/>
             <Legend onClick={legendClick} payload={legend}/>
-            {lines}
+            {left && <YAxis key="leftYAxis" label={leftLabel} yAxisId="left"/>}
+            {right && <YAxis key="rightYAxis" label={rightLabel} yAxisId="right" orientation="right"/>}
+            {renderLines(linesProps)}
           </ReChartLineChart>
         </ResponsiveContainer>
         <TimestampInfoMessage/>

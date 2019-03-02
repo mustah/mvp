@@ -51,7 +51,7 @@ export interface ColumnQuantities {
   columnQuantities: Quantity[];
 }
 
-export interface Axes {
+export interface AxesProps {
   left?: string;
   right?: string;
 }
@@ -70,7 +70,7 @@ export interface LineProps {
 }
 
 export interface GraphContents {
-  axes: Axes;
+  axes: AxesProps;
   data: object[];
   legend: LegendPayload[];
   lines: LineProps[];
