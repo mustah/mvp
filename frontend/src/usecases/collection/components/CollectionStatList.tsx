@@ -1,5 +1,6 @@
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridPageChangeEvent,
   GridPagerSettings,
@@ -8,6 +9,7 @@ import {
 } from '@progress/kendo-react-grid';
 import * as React from 'react';
 import {gridStyle} from '../../../app/themes';
+import {MeterListItem} from '../../../components/meters/MeterListItem';
 import {formatCollectionPercentage, formatReadInterval} from '../../../helpers/formatters';
 import {translate} from '../../../services/translationService';
 import {ApiRequestSortingOptions} from '../../../state/ui/pagination/paginationModels';
@@ -26,6 +28,8 @@ const sortable: GridSortSettings = {
   allowUnsort: true,
   mode: 'single'
 };
+
+const renderMeterListItem = ({dataItem}: GridCellProps) => <td><MeterListItem meter={dataItem}/></td>;
 
 const renderReadInterval = ({dataItem: {readInterval}}) =>
   <td>{formatReadInterval(readInterval)}</td>;
@@ -78,6 +82,7 @@ export const CollectionStatList = ({
       <GridColumn
         field="facility"
         title={translate('facility')}
+        cell={renderMeterListItem}
         headerClassName="left-most"
         className="left-most"
       />
