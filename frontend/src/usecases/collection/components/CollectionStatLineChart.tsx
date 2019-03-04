@@ -9,12 +9,14 @@ import {Loader} from '../../../components/loading/Loader';
 import {Bold, Normal} from '../../../components/texts/Texts';
 import {TimestampInfoMessage} from '../../../components/timestamp-info-message/TimestampInfoMessage';
 import {displayDate, shortTimestamp} from '../../../helpers/dateHelpers';
+import {formatPercentage} from '../../../helpers/formatters';
 import {encodeRequestParameters, requestParametersFrom} from '../../../helpers/urlFactory';
 import {colorFor} from '../../report/helpers/graphContentsMapper';
 import {DispatchToProps, StateToProps} from '../containers/CollectionGraphContainer';
 
 export type Props = StateToProps & DispatchToProps;
 
+const ticks: number[] = [0, 20, 40, 60, 80, 100];
 const lineMargins: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 const domains: [AxisDomain, AxisDomain] = ['dataMin', 'dataMax'];
 
@@ -35,7 +37,7 @@ const CustomizedTooltip = (props) => {
         <Column>
           <Row>
             <Normal style={{marginRight: 4}}>{displayDate(id * 1000)}:</Normal>
-            <Bold>{collectionPercentage}</Bold>
+            <Bold>{formatPercentage(collectionPercentage)}</Bold>
           </Row>
         </Column>
       </Paper>
@@ -76,7 +78,7 @@ export const CollectionStatLineChart = (props: Props) => {
               tickFormatter={formatTime}
               type="number"
             />
-            <YAxis/>
+            <YAxis height={100} ticks={ticks}/>
             <CartesianGrid strokeDasharray="3 3"/>
             <Tooltip content={<CustomizedTooltip/>}/>
             <Line
