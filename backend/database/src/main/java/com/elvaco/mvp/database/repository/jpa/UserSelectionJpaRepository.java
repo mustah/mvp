@@ -15,7 +15,7 @@ public interface UserSelectionJpaRepository extends JpaRepository<UserSelectionE
     UUID organisationId
   );
 
-  List<UserSelectionEntity> findByOwnerUserIdAndOrganisationId(
+  List<UserSelectionEntity> findByOwnerUserIdAndOrganisationIdOrderByNameAsc(
     UUID ownerUserId,
     UUID organisationId
   );

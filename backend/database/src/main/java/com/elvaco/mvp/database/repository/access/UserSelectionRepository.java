@@ -37,7 +37,7 @@ public class UserSelectionRepository implements UserSelections {
     UUID ownerUserId,
     UUID organisationId
   ) {
-    return userSelectionJpaRepository.findByOwnerUserIdAndOrganisationId(
+    return userSelectionJpaRepository.findByOwnerUserIdAndOrganisationIdOrderByNameAsc(
       ownerUserId,
       organisationId
     ).stream()
