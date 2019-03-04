@@ -57,7 +57,9 @@ const ListItems = ({
     const onEditSelection: Callback = () => selectSavedSelection(id);
 
     const onSelect: Callback = () => {
-      history.push(routes.meter);
+      if (!isMeterPage) {
+        history.push(routes.meter);
+      }
       if (id === initialSelectionId) {
         resetSelection();
       } else {

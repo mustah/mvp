@@ -13,7 +13,7 @@ export const SummaryComponent = ({
 }: Props) => {
   React.useEffect(() => {
     fetchSummary(parameters);
-  }, [parameters]);
+  }, [parameters, numMeters, numCities, numAddresses]);
 
   return (
     <Row className="SummaryComponent">
