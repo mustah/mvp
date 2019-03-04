@@ -48,6 +48,7 @@ const mapStateToProps = (
     entities: getPaginatedEntities<Meter>(meters),
     error: getPageError<Meter>(meters, page),
     result: getPageResult<Meter>(meters, page),
+
     parameters: getPaginatedMeterParameters({sort, pagination, userSelection, query}),
     isFetching: getPageIsFetching(meters, page),
     isSuperAdmin: isSuperAdmin(user!),

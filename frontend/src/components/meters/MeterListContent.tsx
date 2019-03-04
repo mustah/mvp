@@ -83,8 +83,7 @@ export const MeterListContent = (props: MeterListProps & WithChildren) => {
     sort,
     syncMeters,
   } = props;
-  useFetchMeters({fetchMeters, parameters, sort, page});
-
+  useFetchMeters({fetchMeters, parameters, sort, page, entities});
   const {children, ...otherProps} = props;
   const hasContent = result.length > 0;
   const wrapperProps: MeterListProps & WithEmptyContentProps = {
