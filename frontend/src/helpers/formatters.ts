@@ -5,7 +5,7 @@ import {momentAtUtcPlusOneFrom} from './dateHelpers';
 const isGreaterThan100 = (collectionPercentage: number): boolean =>
   collectionPercentage !== undefined && collectionPercentage > 100;
 
-const formatPercentage = (num: number): string =>
+export const formatPercentage = (num: number): string =>
   round(num, num === 100 ? '' : '0.0') + '%';
 
 export const formatCollectionPercentage =
