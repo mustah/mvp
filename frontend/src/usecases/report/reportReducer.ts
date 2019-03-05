@@ -53,9 +53,6 @@ const getLegendType = (action: ActionTypes): LegendType => (action as Action<Leg
 const toggleLegendItemsRows = (state: SavedReportsState, type: LegendType): LegendItem[] =>
   getLegendItems(state).map(it => it.type === type ? {...it, isRowExpanded: !it.isRowExpanded} : it);
 
-const getLegendItemsMatchingType = (state: SavedReportsState, type: LegendType): LegendItem[] =>
-  getLegendItems(state).filter(it => it.type === type);
-
 const setLegendItems = (state: SavedReportsState, legendItems: LegendItem[]): SavedReportsState => ({
     ...state,
     meterPage: {
@@ -135,8 +132,8 @@ const toggleLegendItemVisibility = (state: SavedReportsState, id: uuid): SavedRe
 
 const showHideAll = (state: SavedReportsState, legendType: LegendType): SavedReportsState => {
   const isAllLinesHidden = getViewOptions(state, legendType).isAllLinesHidden;
-  const meters: LegendItem[] = getLegendItemsMatchingType(state, legendType)
-    .map(it => ({...it, isHidden: !isAllLinesHidden}));
+  const meters: LegendItem[] = getLegendItems(state)
+    .map((prev: LegendItem) => prev.type === legendType ? {...prev, isHidden: !isAllLinesHidden} : prev);
   return toggleHiddenLines(setLegendItems(state, meters), legendType);
 };
 

@@ -33,7 +33,7 @@ describe('reportReducer', () => {
   const meter: LegendItem = {id: 4, label: 'dh', type: Medium.districtHeating, isHidden, quantities};
 
   const savedReportsState: SavedReportsState = savedReportsWith(items);
-
+  const emptySavedReportsState: SavedReportsState = savedReportsWith([]);
   it('makes sure the legend items is set to payload', () => {
     const nextState: ReportState = report(initialState, addLegendItems(items));
 
@@ -103,7 +103,7 @@ describe('reportReducer', () => {
   describe('showHideAllByType', () => {
 
     it('does nothing with empty saved meter reports', () => {
-      const state: SavedReportsState = savedReports(savedReportsState, showHideAllByType(Medium.electricity));
+      const state: SavedReportsState = savedReports(emptySavedReportsState, showHideAllByType(Medium.electricity));
 
       expect(state).toEqual(initialSavedReportState);
     });
@@ -124,9 +124,27 @@ describe('reportReducer', () => {
       expect(getLegendItems(nextState)).toEqual(expected);
     });
 
+    it('does not affect lines for other type', () => {
+      const state: SavedReportsState = savedReportsWith([gasMeter]);
+
+      const nextState: SavedReportsState = savedReports(state, showHideAllByType(Medium.districtHeating));
+
+      const expected: LegendItem[] = [gasMeter];
+      expect(getLegendItems(nextState)).toEqual(expected);
+    });
+
+    it('only hides lines for given type', () => {
+      const state: SavedReportsState = savedReportsWith([gasMeter, waterMeter]);
+
+      const nextState: SavedReportsState = savedReports(state, showHideAllByType(Medium.water));
+
+      const expected: LegendItem[] = [gasMeter, {...waterMeter, isHidden: true}];
+      expect(getLegendItems(nextState)).toEqual(expected);
+    });
+
     it('can show all lines again', () => {
       const gasMeter2 = {...gasMeter, id: 5};
-      const state: SavedReportsState = savedReportsWith([...items, gasMeter2]);
+      const state: SavedReportsState = savedReportsWith([gasMeter, gasMeter2]);
 
       const medium = Medium.gas;
       let nextState: SavedReportsState = savedReports(state, showHideAllByType(medium));
