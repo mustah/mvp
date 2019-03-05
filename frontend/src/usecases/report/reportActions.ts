@@ -1,10 +1,12 @@
 import {find, uniqBy} from 'lodash';
+import {flatMap} from 'tslint/lib/utils';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../components/dates/dateModels';
+import {unique} from '../../helpers/collections';
 import {Maybe} from '../../helpers/Maybe';
 import {GetState} from '../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../services/translationService';
-import {Medium} from '../../state/ui/graph/measurement/measurementModels';
+import {allQuantitiesMap, Medium} from '../../state/ui/graph/measurement/measurementModels';
 import {showFailMessage} from '../../state/ui/message/messageActions';
 import {SelectionInterval} from '../../state/user-selection/userSelectionModels';
 import {Dispatcher, uuid} from '../../types/Types';
@@ -48,7 +50,9 @@ export const addToReport = (legendItem: LegendItem) =>
       const item: LegendItem = Maybe.maybe<LegendItem>(find(legendItems, {type: legendItem.type}))
         .map(it => ({...it, ...legendItem}))
         .orElse(legendItem);
-      const items: LegendItem[] = [...legendItems, item];
+      const numSelectedQuantities = unique(flatMap(legendItems, it => it.quantities)).length;
+      const quantities = numSelectedQuantities < 2 ? [allQuantitiesMap[item.type][0]] : [];
+      const items: LegendItem[] = [...legendItems, {...item, quantities}];
       selectItemsIfWithinLimits({dispatch, items});
     }
   };
