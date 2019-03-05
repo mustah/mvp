@@ -4,7 +4,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {NormalizedState} from '../../../state/domain-models/domainModels';
 import {
   exportToExcelSuccess,
-  fetchMeasurements,
+  fetchMeasurementsForReport,
   measurementClearError
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {
@@ -63,7 +63,7 @@ const mapStateToProps = (rootState: RootState): StateToProps => {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   clearError: measurementClearError,
-  fetchMeasurements,
+  fetchMeasurements: fetchMeasurementsForReport,
   fetchUserSelections,
   addAllToReport,
   exportToExcelSuccess,

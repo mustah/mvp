@@ -26,7 +26,7 @@ import {initialState as initialUserSelectionState} from '../../../../user-select
 import {
   exportToExcel,
   exportToExcelAction,
-  fetchMeasurements,
+  fetchMeasurementsForReport,
   MEASUREMENT_REQUEST,
   MEASUREMENT_SUCCESS,
   measurementFailure,
@@ -109,7 +109,7 @@ describe('measurementActions', () => {
       it('should not dispatch any actions when nothing is pre-selected', async () => {
         const store = storeWith(initialState);
 
-        await store.dispatch(fetchMeasurements(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -122,7 +122,7 @@ describe('measurementActions', () => {
           legendItemOf(Medium.districtHeating),
         ]);
 
-        await store.dispatch(fetchMeasurements(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters));
 
         expect(requestedUrls).toHaveLength(0);
         expect(store.getActions()).toEqual([]);
@@ -131,7 +131,7 @@ describe('measurementActions', () => {
       it('should not fetch when already fetching', async () => {
         const store = storeWith({...initialState, isFetching: true});
 
-        await store.dispatch(fetchMeasurements(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -139,7 +139,7 @@ describe('measurementActions', () => {
       it('should not fetch when is has successfully fetched measurements', async () => {
         const store = storeWith({...initialState, isFetching: false, isSuccessfullyFetched: true});
 
-        await store.dispatch(fetchMeasurements(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -147,7 +147,7 @@ describe('measurementActions', () => {
       it('should not fetch when there is an error that is not cleared yet', async () => {
         const store = storeWith({...initialState, error: Maybe.just({message: 'error'})});
 
-        await store.dispatch(fetchMeasurements(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -160,7 +160,7 @@ describe('measurementActions', () => {
 
         const requestedUrls = onFetchAsync([legendItemOf(Medium.unknown), legendItemOf(Medium.unknown)]);
 
-        await store.dispatch(fetchMeasurements({...parameters}));
+        await store.dispatch(fetchMeasurementsForReport({...parameters}));
 
         expect(requestedUrls).toHaveLength(0);
         expect(store.getActions()).toEqual([]);
@@ -175,7 +175,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = onFetchAsync(legendItems);
 
-        await store.dispatch(fetchMeasurements({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
 
         expect(requestedUrls).toHaveLength(2);
 
@@ -240,7 +240,7 @@ describe('measurementActions', () => {
 
         const requestedUrls: string[] = onFetchAsync(legendItems);
 
-        await store.dispatch(fetchMeasurements({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
 
         expect(requestedUrls).toHaveLength(1);
 
@@ -263,7 +263,7 @@ describe('measurementActions', () => {
 
         onFetchAsync(legendItems);
 
-        await store.dispatch(fetchMeasurements({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -278,7 +278,7 @@ describe('measurementActions', () => {
 
         onFetchAsync(legendItems);
 
-        await store.dispatch(fetchMeasurements({...parameters, legendItems}));
+        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems}));
 
         expect(store.getActions()).toEqual([
           measurementRequest(),
@@ -298,7 +298,7 @@ describe('measurementActions', () => {
 
         onFetchAsync([legendItemOf(Medium.districtHeating), legendItemOf(Medium.districtHeating)]);
 
-        await store.dispatch(fetchMeasurements(parameters));
+        await store.dispatch(fetchMeasurementsForReport(parameters));
 
         expect(store.getActions()).toEqual([]);
       });
@@ -375,7 +375,7 @@ describe('measurementActions', () => {
       const onFetchMeasurements = async () => {
         const meter = legendItemOf(Medium.districtHeating);
 
-        await store.dispatch(fetchMeasurements({...parameters, legendItems: [meter]}));
+        await store.dispatch(fetchMeasurementsForReport({...parameters, legendItems: [meter]}));
       };
 
     });

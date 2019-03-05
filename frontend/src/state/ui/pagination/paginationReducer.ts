@@ -4,7 +4,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {Action, UseCases} from '../../../types/Types';
 import {SEARCH} from '../../../usecases/search/searchActions';
 import {Query, QueryParameter} from '../../../usecases/search/searchModels';
-import {resetReducer} from '../../domain-models/domainModelsReducer';
+import {resetReducer} from '../../../reducers/resetReducer';
 import {CHANGE_PAGE, UPDATE_PAGE_METADATA} from './paginationActions';
 import {
   PaginationChangePayload,

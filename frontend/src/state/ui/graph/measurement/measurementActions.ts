@@ -1,5 +1,6 @@
 import {flatMap, map, sortBy} from 'lodash';
 import {createAction} from 'typesafe-actions';
+import {EmptyAction, PayloadAction} from 'typesafe-actions/dist/types';
 import {DateRange, Period, TemporalResolution} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {isDefined} from '../../../../helpers/commonHelpers';
@@ -7,7 +8,6 @@ import {makeCompareCustomDateRange, makeCompareDateRange} from '../../../../help
 import {Maybe} from '../../../../helpers/Maybe';
 import {
   encodeRequestParameters,
-  makeApiParametersOf,
   makeUrl,
   requestParametersFrom
 } from '../../../../helpers/urlFactory';
@@ -15,7 +15,6 @@ import {GetState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {isTimeoutError, restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {
-  CallbackWith,
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
@@ -23,24 +22,18 @@ import {
   uuid
 } from '../../../../types/Types';
 import {logout} from '../../../../usecases/auth/authActions';
-import {OnLogout} from '../../../../usecases/auth/authModels';
 import {isAggregate, isMedium} from '../../../../usecases/report/reportModels';
 import {FetchIfNeeded, noInternetConnection, requestTimeout, responseMessageOrFallback} from '../../../api/apiActions';
-import {NormalizedPaginated} from '../../../domain-models-paginated/paginatedDomainModels';
 import {getDomainModelById} from '../../../domain-models/domainModelsSelectors';
-import {SelectedParameters, SelectionInterval, UserSelection} from '../../../user-selection/userSelectionModels';
+import {SelectedParameters, UserSelection} from '../../../user-selection/userSelectionModels';
 import {
-  initialMeterMeasurementsState,
-  Measurement,
   MeasurementParameters,
   MeasurementResponse,
   MeasurementResponsePart,
   MeasurementsApiResponse,
   MeasurementState,
-  MeterMeasurementsState,
   Quantity
 } from './measurementModels';
-import {measurementDataFormatter} from './measurementSchema';
 
 export const MEASUREMENT_REQUEST = 'MEASUREMENT_REQUEST';
 export const measurementRequest = createAction(MEASUREMENT_REQUEST);
@@ -58,6 +51,27 @@ export const exportToExcelAction = createAction('EXPORT_TO_EXCEL');
 
 export const EXPORT_TO_EXCEL_SUCCESS = 'EXPORT_TO_EXCEL_SUCCESS';
 export const exportToExcelSuccess = emptyActionOf(EXPORT_TO_EXCEL_SUCCESS);
+
+export const meterDetailMeasurementRequest =
+  createAction('METER_DETAIL_MEASUREMENT_REQUEST');
+
+export const METER_DETAIL_MEASUREMENT_SUCCESS = 'METER_DETAIL_MEASUREMENT_SUCCESS';
+
+export const meterDetailMeasurementSuccess =
+  payloadActionOf<MeasurementResponse>(METER_DETAIL_MEASUREMENT_SUCCESS);
+
+export const METER_DETAIL_MEASUREMENT_FAILURE = 'METER_DETAIL_MEASUREMENT_FAILURE';
+export const meterDetailMeasurementFailure =
+  payloadActionOf<Maybe<ErrorResponse>>(METER_DETAIL_MEASUREMENT_FAILURE);
+
+export const METER_DETAIL_MEASUREMENT_CLEAR_ERROR = 'METER_DETAIL_MEASUREMENT_CLEAR_ERROR';
+export const meterDetailMeasurementClearError =
+  emptyActionOf(METER_DETAIL_MEASUREMENT_CLEAR_ERROR);
+
+export const meterDetailExportToExcelAction = createAction('METER_DETAIL_EXPORT_TO_EXCEL');
+
+export const METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS = 'METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS';
+export const meterDetailExportToExcelSuccess = emptyActionOf(METER_DETAIL_EXPORT_TO_EXCEL_SUCCESS);
 
 export const exportToExcel = () =>
   (dispatch, getState: GetState) => {
@@ -164,14 +178,29 @@ const removeUndefinedValues = (averageEntity: MeasurementResponsePart): Measurem
   values: averageEntity.values.filter(({value}) => value !== undefined),
 });
 
-const shouldFetchMeasurements: FetchIfNeeded = (getState: GetState): boolean => {
+const shouldFetchMeasurementsReport: FetchIfNeeded = (getState: GetState): boolean => {
   const {isFetching, isSuccessfullyFetched, error}: MeasurementState = getState().measurement;
   return !isSuccessfullyFetched && !isFetching && error.isNothing();
 };
 
-export const fetchMeasurements = (parameters: MeasurementParameters) =>
+const shouldFetchMeasurementsMeterDetails: FetchIfNeeded = (getState: GetState): boolean => {
+  const {isFetching, isSuccessfullyFetched, error}: MeasurementState =
+    getState().domainModels.meterDetailMeasurement;
+  return !isSuccessfullyFetched && !isFetching && error.isNothing();
+};
+
+interface RequestHandler {
+  request: () => EmptyAction<string>;
+  success: (payload: MeasurementResponse) => PayloadAction<string, MeasurementResponse>;
+  failure: (payload: Maybe<ErrorResponse>) => PayloadAction<string, Maybe<ErrorResponse>>;
+}
+
+const fetchMeasurements = (
+  parameters: MeasurementParameters,
+  {request, success, failure}: RequestHandler,
+  fetchIfNeeded: FetchIfNeeded) =>
   async (dispatch, getState: GetState) => {
-    if (shouldFetchMeasurements(getState)) {
+    if (fetchIfNeeded(getState)) {
       const meters: GraphDataRequests = metersByQuantityRequests(parameters);
       const average: GraphDataRequests = averageByQuantityRequests(parameters, getState);
       const compare: GraphDataRequests = compareMeterRequests(parameters);
@@ -187,60 +216,42 @@ export const fetchMeasurements = (parameters: MeasurementParameters) =>
             compare: sortBy(flatMap(compareResponses, 'data'), removeUndefinedValues, 'label'),
             measurements: sortBy(flatMap(meterResponses, 'data'), removeUndefinedValues, 'label'),
           };
-          dispatch(measurementSuccess(response));
+          dispatch(success(response));
         } catch (error) {
           if (error instanceof InvalidToken) {
             await dispatch(logout(error));
           } else if (wasRequestCanceled(error)) {
             return;
           } else if (isTimeoutError(error)) {
-            dispatch(measurementFailure(Maybe.maybe(requestTimeout())));
+            dispatch(failure(Maybe.maybe(requestTimeout())));
           } else if (!error.response) {
-            dispatch(measurementFailure(Maybe.maybe(noInternetConnection())));
+            dispatch(failure(Maybe.maybe(noInternetConnection())));
           } else {
-            dispatch(measurementFailure(Maybe.maybe(responseMessageOrFallback(error.response))));
+            dispatch(failure(Maybe.maybe(responseMessageOrFallback(error.response))));
           }
         }
       }
     }
   };
 
-interface MeasurementPagedApiResponse {
-  data: NormalizedPaginated<Measurement>;
-}
+export const fetchMeasurementsForMeterDetails = (measurementParameters: MeasurementParameters) =>
+  fetchMeasurements(
+    measurementParameters,
+    {
+      failure: meterDetailMeasurementFailure,
+      request: meterDetailMeasurementRequest,
+      success: meterDetailMeasurementSuccess
+    },
+    shouldFetchMeasurementsMeterDetails
+  );
 
-export const fetchMeasurementsPaged = async (
-  id: uuid,
-  selectionInterval: SelectionInterval,
-  updateCallback: CallbackWith<MeterMeasurementsState>,
-  logout: OnLogout
-): Promise<void> => {
-  try {
-    const period = makeApiParametersOf(selectionInterval);
-    const measurementUrl: EncodedUriParameters = makeUrl(
-      EndPoints.measurementsPaged,
-      `sort=created,desc&sort=quantity,asc&logicalMeterId=${id}&${period}`,
-    );
-    const {data}: MeasurementPagedApiResponse = await restClient.get(measurementUrl);
-
-    updateCallback({
-      ...initialMeterMeasurementsState,
-      measurementPages: measurementDataFormatter(data),
-    });
-  } catch (error) {
-    if (error instanceof InvalidToken) {
-      await logout(error);
-    } else if (wasRequestCanceled(error)) {
-      return;
-    } else if (isTimeoutError(error)) {
-      updateCallback({...initialMeterMeasurementsState, error: Maybe.maybe(requestTimeout())});
-    } else if (!error.response) {
-      updateCallback({...initialMeterMeasurementsState, error: Maybe.maybe(noInternetConnection())});
-    } else {
-      updateCallback({
-        ...initialMeterMeasurementsState,
-        error: Maybe.maybe(responseMessageOrFallback(error.response)),
-      });
-    }
-  }
-};
+export const fetchMeasurementsForReport = (measurementParameters: MeasurementParameters) =>
+  fetchMeasurements(
+    measurementParameters,
+    {
+      failure: measurementFailure,
+      request: measurementRequest,
+      success: measurementSuccess
+    },
+    shouldFetchMeasurementsReport
+  );

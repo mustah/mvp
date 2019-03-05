@@ -10,7 +10,7 @@ import {
   emptyActionOf,
   EncodedUriParameters,
   ErrorResponse,
-  Identifiable,
+  Identifiable, Omit,
   payloadActionOf,
   uuid,
 } from '../../types/Types';
@@ -108,7 +108,7 @@ const shouldFetchEntity = (
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
-  entityType: keyof DomainModelsState,
+  entityType: keyof Omit<DomainModelsState, 'meterDetailMeasurement'>,
   formatData: DataFormatter<Normalized<T>>,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) =>
@@ -132,7 +132,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
 
 export const fetchEntitiesIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
-  entityType: keyof DomainModelsState,
+  entityType: keyof Omit<DomainModelsState, 'meterDetailMeasurement'>,
   formatData: DataFormatter<Normalized<T>>,
   requestDataFactory: (meterIds: uuid[], gatewayId?: uuid) => string,
 ) =>
@@ -156,7 +156,7 @@ export const fetchEntitiesIfNeeded = <T extends Identifiable>(
 
 export const fetchEntityIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
-  entityType: keyof DomainModelsState,
+  entityType: keyof Omit<DomainModelsState, 'meterDetailMeasurement'>,
 ) =>
   (id: uuid, parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {

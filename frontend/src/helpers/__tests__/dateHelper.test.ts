@@ -1,10 +1,10 @@
-import {DateRange, Period} from '../../components/dates/dateModels';
+import {DateRange, Period, TemporalResolution} from '../../components/dates/dateModels';
 import {
   displayDate,
-  makeCompareCustomDateRange,
-  makeCompareDateRange,
-  momentAtUtcPlusOneFrom,
+ makeCompareCustomDateRange,
+  makeCompareDateRange, momentAtUtcPlusOneFrom,
   prettyRange,
+  readIntervalToTemporal,
   toPeriodApiParameters
 } from '../dateHelpers';
 import {Maybe} from '../Maybe';
@@ -210,5 +210,24 @@ describe('dateHelper', () => {
 
     });
 
+  });
+
+  describe('readIntervalToTemporal', () => {
+
+    it('defaults to hour', () => {
+      expect(readIntervalToTemporal(undefined)).toBe(TemporalResolution.hour);
+    });
+
+    it('handles hour resolution', () => {
+      expect(readIntervalToTemporal(60)).toBe(TemporalResolution.hour);
+    });
+
+    it('handles day resolution', () => {
+      expect(readIntervalToTemporal(1440)).toBe(TemporalResolution.day);
+    });
+
+    it('defaults to month for intervals higher than day', () => {
+      expect(readIntervalToTemporal(1441)).toBe(TemporalResolution.month);
+    });
   });
 });

@@ -1,8 +1,9 @@
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {MeasurementState} from '../ui/graph/measurement/measurementModels';
 import {UserSelection} from '../user-selection/userSelectionModels';
-import {MeterDefinition, Medium, Quantity} from './meter-definitions/meterDefinitionModels';
 import {CollectionStat} from './collection-stat/collectionStatModels';
+import {Medium, MeterDefinition, Quantity} from './meter-definitions/meterDefinitionModels';
 import {MeterDetails} from './meter-details/meterDetailsModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
@@ -41,6 +42,7 @@ export interface DomainModelsState {
   mediums: NormalizedState<Medium>;
   quantities: NormalizedState<Quantity>;
   collectionStats: NormalizedState<CollectionStat>;
+  meterDetailMeasurement: MeasurementState;
 }
 
 export const enum RequestType {

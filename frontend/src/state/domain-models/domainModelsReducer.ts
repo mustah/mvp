@@ -1,20 +1,14 @@
 import {combineReducers} from 'redux';
 import {getType} from 'typesafe-actions';
 import {EmptyAction} from 'typesafe-actions/dist/types';
+import {meterDetailMeasurement} from '../../usecases/meter/measurements/meterDetailMeasurementReducer';
+import {resetReducer} from '../../reducers/resetReducer';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logoutUser} from '../../usecases/auth/authActions';
-import {setCollectionTimePeriod} from '../../usecases/collection/collectionActions';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {SEARCH} from '../../usecases/search/searchActions';
 import {QueryParameter} from '../../usecases/search/searchModels';
-import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
-  RESET_SELECTION,
-  SELECT_SAVED_SELECTION,
-  setThresholdAction,
-} from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
 import {CollectionStat} from './collection-stat/collectionStatModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById} from './domainModels';
@@ -166,25 +160,6 @@ const reducerFor = <T extends Identifiable>(
 
 const identity = (state, action, endPoint) => state;
 
-export const resetReducer = <S>(
-  state: S,
-  {type}: EmptyAction<string>,
-  initialState: S,
-): S => {
-  switch (type) {
-    case getType(setThresholdAction):
-    case getType(setCollectionTimePeriod):
-    case SELECT_SAVED_SELECTION:
-    case ADD_PARAMETER_TO_SELECTION:
-    case DESELECT_SELECTION:
-    case RESET_SELECTION:
-    case getType(logoutUser):
-      return initialState;
-    default:
-      return state;
-  }
-};
-
 const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
@@ -266,6 +241,7 @@ export const collectionStats = reducerFor<CollectionStat>(
 export const domainModels = combineReducers<DomainModelsState>({
   gatewayMapMarkers,
   meters,
+  meterDetailMeasurement,
   meterMapMarkers,
   organisations,
   meterDefinitions,
