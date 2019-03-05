@@ -7,7 +7,7 @@ import {logoutUser} from '../auth/authActions';
 import {selectResolution, setReportTimePeriod, toggleComparePeriod} from './reportActions';
 import {TemporalReportState} from './reportModels';
 
-type ActionTypes = Action<TemporalResolution | SelectionInterval | undefined> | EmptyAction<string>;
+type ActionTypes = Action<TemporalResolution | SelectionInterval> | EmptyAction<string>;
 
 export const initialState: TemporalReportState = {
   resolution: TemporalResolution.hour,
