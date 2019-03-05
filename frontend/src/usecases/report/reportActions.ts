@@ -1,5 +1,4 @@
-import {find, uniqBy} from 'lodash';
-import {flatMap} from 'tslint/lib/utils';
+import {find, flatMap, uniqBy} from 'lodash';
 import {createAction, createStandardAction} from 'typesafe-actions';
 import {TemporalResolution} from '../../components/dates/dateModels';
 import {unique} from '../../helpers/collections';
