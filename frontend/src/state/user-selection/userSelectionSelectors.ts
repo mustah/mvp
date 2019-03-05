@@ -100,7 +100,7 @@ const determineActivePeriod = (
     return selectionPeriod;
   }
 
-  if (threshold) {
+  if (threshold && threshold.dateRange) {
     if (threshold.dateRange.customDateRange || threshold.dateRange.period === Period.custom) {
       return {period: Period.custom, customDateRange: Maybe.maybe(threshold.dateRange.customDateRange)};
     } else {
